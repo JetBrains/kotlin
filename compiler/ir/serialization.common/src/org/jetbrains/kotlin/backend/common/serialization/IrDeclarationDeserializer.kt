@@ -575,9 +575,6 @@ class IrDeclarationDeserializer(
                         isFakeOverride = flags.isFakeOverride,
                     )
                 }
-            }.apply {
-                overriddenSymbols =
-                    proto.overriddenList.memoryOptimizedMap { deserializeIrSymbol(it).checkSymbolType(FUNCTION_SYMBOL) }
             }
         }
 
