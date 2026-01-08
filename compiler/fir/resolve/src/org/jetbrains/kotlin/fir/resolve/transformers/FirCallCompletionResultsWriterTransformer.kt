@@ -1476,9 +1476,8 @@ internal fun FirQualifiedAccessExpression.addNonFatalDiagnostics(candidate: Cand
     }
 
     for (diagnostic in candidate.diagnostics) {
-        when (diagnostic) {
-            is CallToDeprecatedOverrideOfHidden -> newNonFatalDiagnostics += ConeCallToDeprecatedOverrideOfHidden
-            else -> null
+        if (diagnostic is CallToDeprecatedOverrideOfHidden) {
+            newNonFatalDiagnostics += ConeCallToDeprecatedOverrideOfHidden
         }
     }
 
