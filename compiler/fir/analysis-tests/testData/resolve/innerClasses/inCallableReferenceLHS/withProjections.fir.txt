@@ -1,0 +1,39 @@
+FILE: withProjections.kt
+    public final class Outer<A> : R|kotlin/Any| {
+        public constructor<A>(): R|Outer<A>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner<B, Outer(A)> : R|kotlin/Any| {
+            public Outer<A>.constructor<B>(): R|Outer.Inner<B, A>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(b: R|B|): R|kotlin/Unit| {
+            }
+
+            public final fun bar(): R|B| {
+                ^bar Null(null)!!
+            }
+
+        }
+
+        public final val refBarIn: R|Outer.Inner<in kotlin/CharSequence, A>.() -> kotlin/CharSequence| = Q|Outer.Inner|<in R|kotlin/CharSequence|>::R|SubstitutionOverride</Outer.Inner.bar: R|CapturedType(in kotlin/CharSequence)|>|
+            public get(): R|Outer.Inner<in kotlin/CharSequence, A>.() -> kotlin/CharSequence|
+
+        public final val refFooIn: R|Outer.Inner<in kotlin/CharSequence, A>.(kotlin/CharSequence) -> kotlin/Unit| = Q|Outer.Inner|<in R|kotlin/CharSequence|>::R|SubstitutionOverride</Outer.Inner.foo: R|kotlin/Unit|>|
+            public get(): R|Outer.Inner<in kotlin/CharSequence, A>.(kotlin/CharSequence) -> kotlin/Unit|
+
+        public final val refBarOut: R|Outer.Inner<out kotlin/CharSequence, A>.() -> kotlin/CharSequence| = Q|Outer.Inner|<out R|kotlin/CharSequence|>::R|SubstitutionOverride</Outer.Inner.bar: R|CapturedType(out kotlin/CharSequence)|>|
+            public get(): R|Outer.Inner<out kotlin/CharSequence, A>.() -> kotlin/CharSequence|
+
+        public final val refFooOut: R|Outer.Inner<out kotlin/CharSequence, A>.(kotlin/CharSequence) -> kotlin/Unit| = Q|Outer.Inner|<out R|kotlin/CharSequence|>::R|SubstitutionOverride</Outer.Inner.foo: R|kotlin/Unit|>|
+            public get(): R|Outer.Inner<out kotlin/CharSequence, A>.(kotlin/CharSequence) -> kotlin/Unit|
+
+        public final val refBarStar: R|kotlin/reflect/KFunction2<Outer.Inner<*, *>, *, kotlin/Unit>| = Q|Outer.Inner|<*>::R|SubstitutionOverride</Outer.Inner.foo: R|kotlin/Unit|>|
+            public get(): R|kotlin/reflect/KFunction2<Outer.Inner<*, *>, *, kotlin/Unit>|
+
+        public final val refFooStar: R|kotlin/reflect/KFunction1<Outer.Inner<*, *>, kotlin/Any?>| = Q|Outer.Inner|<*>::R|SubstitutionOverride</Outer.Inner.bar: R|CapturedType(*)|>|
+            public get(): R|kotlin/reflect/KFunction1<Outer.Inner<*, *>, kotlin/Any?>|
+
+    }
