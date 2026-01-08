@@ -211,8 +211,13 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
     context(context: CheckerContext)
     private fun getImpossibleCastDiagnostic(expression: FirTypeOperatorCall, lType: ConeKotlinType, rType: ConeKotlinType): KtDiagnosticFactory0? {
-        fun isGenerallyApplicable(l: ConeKotlinType, r: ConeKotlinType) =
-            checkApplicability(expression, l.toTypeInfo(context.session), r.toTypeInfo(context.session)) != Applicability.IMPOSSIBLE_CAST
+        val generalApplicabilityChecker = object : TypeOperationApplicabilityChecker() {
+            override fun isApplicable(leftType: ConeKotlinType, rightType: ConeKotlinType) = checkApplicability(
+                expression,
+                leftType.toTypeInfo(context.session),
+                rightType.toTypeInfo(context.session)
+            ) != Applicability.IMPOSSIBLE_CAST
+        }
 
         return when {
             !LanguageFeature.EnableDfaWarningsInK2.isEnabled() -> null
@@ -220,7 +225,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 context.session,
                 lType,
                 rType,
-                ::isGenerallyApplicable
+                generalApplicabilityChecker
             ) -> null
             else -> FirErrors.CAST_NEVER_SUCCEEDS
         }
@@ -228,15 +233,20 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
     context(context: CheckerContext)
     private fun getImpossibleIsCheckDiagnostic(expression: FirTypeOperatorCall, lType: ConeKotlinType, rType: ConeKotlinType): KtDiagnosticFactoryForDeprecation1<Boolean>? {
-        fun isGenerallyApplicable(l: ConeKotlinType, r: ConeKotlinType) =
-            checkApplicability(expression, l.toTypeInfo(context.session), r.toTypeInfo(context.session)) != Applicability.IMPOSSIBLE_IS_CHECK
+        val generalApplicabilityChecker = object : TypeOperationApplicabilityChecker() {
+            override fun isApplicable(leftType: ConeKotlinType, rightType: ConeKotlinType) = checkApplicability(
+                expression,
+                leftType.toTypeInfo(context.session),
+                rightType.toTypeInfo(context.session)
+            ) != Applicability.IMPOSSIBLE_IS_CHECK
+        }
 
         return when {
             context.session.firPlatformSpecificCastChecker.shouldSuppressImpossibleIsCheck(
                 context.session,
                 lType,
                 rType,
-                ::isGenerallyApplicable
+                generalApplicabilityChecker
             ) -> null
             else -> FirErrors.IMPOSSIBLE_IS_CHECK
         }

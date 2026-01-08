@@ -6,20 +6,21 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.TypeOperationApplicabilityChecker
 
 abstract class FirPlatformSpecificCastChecker : FirSessionComponent {
     abstract fun shouldSuppressImpossibleCast(
         session: FirSession,
         fromType: ConeKotlinType,
         toType: ConeKotlinType,
-        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean,
+        generalApplicabilityChecker: TypeOperationApplicabilityChecker,
     ): Boolean
 
     abstract fun shouldSuppressImpossibleIsCheck(
         session: FirSession,
         fromType: ConeKotlinType,
         toType: ConeKotlinType,
-        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean,
+        generalApplicabilityChecker: TypeOperationApplicabilityChecker,
     ): Boolean
 
     object Default : FirPlatformSpecificCastChecker() {
@@ -27,7 +28,7 @@ abstract class FirPlatformSpecificCastChecker : FirSessionComponent {
             session: FirSession,
             fromType: ConeKotlinType,
             toType: ConeKotlinType,
-            generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+            generalApplicabilityChecker: TypeOperationApplicabilityChecker
         ): Boolean {
             return false
         }
@@ -36,7 +37,7 @@ abstract class FirPlatformSpecificCastChecker : FirSessionComponent {
             session: FirSession,
             fromType: ConeKotlinType,
             toType: ConeKotlinType,
-            generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+            generalApplicabilityChecker: TypeOperationApplicabilityChecker
         ): Boolean {
             return false
         }

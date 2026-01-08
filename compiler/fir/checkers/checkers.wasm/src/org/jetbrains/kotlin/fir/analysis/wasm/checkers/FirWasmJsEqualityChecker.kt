@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.TypeOperationApplicabilityChecker
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
@@ -39,7 +40,7 @@ object FirWasmJsEqualityChecker : FirPlatformSpecificEqualityChecker() {
     override fun shouldSuppressInapplicableEquality(
         leftType: ConeKotlinType,
         rightType: ConeKotlinType,
-        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean,
+        generalApplicabilityChecker: TypeOperationApplicabilityChecker,
     ): Boolean {
         if (isIntersectionWithJsAnyOrJsReference(leftType)) {
             return (leftType as ConeIntersectionType).intersectedTypes
@@ -63,7 +64,7 @@ object FirWasmJsEqualityChecker : FirPlatformSpecificEqualityChecker() {
         if (leftClassId == JsStandardClassIds.JsReference || rightClassId == JsStandardClassIds.JsReference) {
             val unwrappedLeftType = tryUnwrapReferenceType(leftType) ?: return true
             val unwrappedRightType = tryUnwrapReferenceType(rightType) ?: return true
-            return generalApplicabilityChecker.invoke(unwrappedLeftType, unwrappedRightType)
+            return generalApplicabilityChecker.isApplicable(unwrappedLeftType, unwrappedRightType)
         }
 
         return false
