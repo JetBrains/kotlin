@@ -97,6 +97,7 @@ data class DumpIrTreeOptions(
     val printDispatchReceiverTypeInFakeOverrides: Boolean = true,
     val printParameterNamesInOverriddenSymbols: Boolean = true,
     val printFakeOverrideSymbolsInPropertiesOfAnonymousClasses: Boolean = true,
+    val printFakeOverrideSymbolsInFunctionsOfAnonymousClasses: Boolean = true,
     val printMemberAccessExpressionArgumentNames: Boolean = true,
     val printSealedSubclasses: Boolean = true,
     val replaceImplicitSetterParameterNameWith: Name? = null,
@@ -263,7 +264,11 @@ class DumpIrTreeVisitor(
                 dumpAnnotations(declaration)
             }
             declaration.correspondingPropertySymbol?.dumpAsDeclaration("correspondingProperty")
-            declaration.overriddenSymbols.dumpFakeOverrideSymbols()
+
+            if (options.printFakeOverrideSymbolsInFunctionsOfAnonymousClasses ||
+                !declaration.parent.let { it is IrClass && it.name == SpecialNames.NO_NAME_PROVIDED }
+            ) declaration.overriddenSymbols.dumpFakeOverrideSymbols()
+
             declaration.body?.accept(this, "")
         }
     }

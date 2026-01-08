@@ -10,8 +10,6 @@
 
 // IGNORE_BACKEND_K2: NATIVE
 // ^^^ Test failed with: C C make make
-// IGNORE_IR_DESERIALIZATION_TEST: JS_IR, NATIVE
-// ^^^ after deserialization, for anonfuns within makeA and makeB: not only A.foo is listed in overridden symbols, but B.foo as well
 
 fun box(): String {
     var result = ""

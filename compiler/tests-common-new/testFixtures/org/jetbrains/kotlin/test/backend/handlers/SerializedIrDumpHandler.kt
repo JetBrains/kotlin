@@ -135,6 +135,16 @@ class SerializedIrDumpHandler(
                 .supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization),
 
             /**
+             * Similar to the previous setting of printFakeOverrideSymbolsInPropertiesOfAnonymousClasses
+             * The following tests with pre-serialization IR Inliner have empty `overriddenSymbols` before serialization,
+             * and populated `overriddenSymbols` after deserialization
+             * - `compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutines.kt`
+             * To make IR dumps the same before and after the serialization, let's simply not dump `overriddenSymbols` in presence of IR Inliner.
+             */
+            printFakeOverrideSymbolsInFunctionsOfAnonymousClasses = !testServices.moduleStructure.modules.first().languageVersionSettings
+                .supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization),
+
+            /**
              * Names of type and value parameters are not a part of ABI (except for the single existing case in Kotlin/Native related to
              * names of value parameters, which should be covered with a separate bunch of tests).
              *
