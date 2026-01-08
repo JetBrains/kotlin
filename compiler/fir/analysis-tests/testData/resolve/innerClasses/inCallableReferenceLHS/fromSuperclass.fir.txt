@@ -32,40 +32,40 @@ FILE: fromSuperclass.kt
         public final val refBar: R|A.Inner<kotlin/String>.() -> kotlin/Int| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.bar: R|kotlin/Int|>|
             public get(): R|A.Inner<kotlin/String>.() -> kotlin/Int|
 
-        public final val kRefFoo: R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
-            public get(): R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>|
+        public final val kRefFoo: R|kotlin/reflect/KFunction1<A.Inner<kotlin/String>, kotlin/Unit>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+            public get(): R|kotlin/reflect/KFunction1<A.Inner<kotlin/String>, kotlin/Unit>|
 
-        public final val kRefBar: R|kotlin/reflect/KProperty1<A.Inner<*>, kotlin/Int>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.bar: R|kotlin/Int|>|
-            public get(): R|kotlin/reflect/KProperty1<A.Inner<*>, kotlin/Int>|
+        public final val kRefBar: R|kotlin/reflect/KProperty1<A.Inner<kotlin/String>, kotlin/Int>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.bar: R|kotlin/Int|>|
+            public get(): R|kotlin/reflect/KProperty1<A.Inner<kotlin/String>, kotlin/Int>|
 
-        public final val refIncorrect: R|A.Inner<kotlin/String>.() -> kotlin/Unit| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+        public final val refIncorrect: R|A.Inner<kotlin/String>.() -> kotlin/Unit| = Q|A.Inner|::<Unresolved reference: foo>#
             public get(): R|A.Inner<kotlin/String>.() -> kotlin/Unit|
 
-        public final val kRefIncorrect: R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
-            public get(): R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>|
+        public final val kRefIncorrect: <ERROR TYPE REF: Unresolved reference: foo> = Q|A.Inner|::<Unresolved reference: foo>#
+            public get(): <ERROR TYPE REF: Unresolved reference: foo>
 
         public final class Nested : R|kotlin/Any| {
             public constructor(): R|B.Nested| {
                 super<R|kotlin/Any|>()
             }
 
-            public final val refFoo: R|A.Inner<*>.() -> kotlin/Unit| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+            public final val refFoo: R|A.Inner<*>.() -> kotlin/Unit| = Q|A.Inner|::<Unresolved reference: foo>#
                 public get(): R|A.Inner<*>.() -> kotlin/Unit|
 
-            public final val refBar: R|A.Inner<*>.() -> kotlin/Int| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.bar: R|kotlin/Int|>|
+            public final val refBar: R|A.Inner<*>.() -> kotlin/Int| = Q|A.Inner|::<Unresolved reference: bar>#
                 public get(): R|A.Inner<*>.() -> kotlin/Int|
 
-            public final val kRefFoo: R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
-                public get(): R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>|
+            public final val kRefFoo: <ERROR TYPE REF: Unresolved reference: foo> = Q|A.Inner|::<Unresolved reference: foo>#
+                public get(): <ERROR TYPE REF: Unresolved reference: foo>
 
-            public final val kRefBar: R|kotlin/reflect/KProperty1<A.Inner<*>, kotlin/Int>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.bar: R|kotlin/Int|>|
-                public get(): R|kotlin/reflect/KProperty1<A.Inner<*>, kotlin/Int>|
+            public final val kRefBar: <ERROR TYPE REF: Unresolved reference: bar> = Q|A.Inner|::<Unresolved reference: bar>#
+                public get(): <ERROR TYPE REF: Unresolved reference: bar>
 
-            public final val refIncorrect: R|A.Inner<*>.() -> kotlin/Unit| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+            public final val refIncorrect: R|A.Inner<*>.() -> kotlin/Unit| = Q|A.Inner|::<Unresolved reference: foo>#
                 public get(): R|A.Inner<*>.() -> kotlin/Unit|
 
-            public final val kRefIncorrect: R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
-                public get(): R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>|
+            public final val kRefIncorrect: <ERROR TYPE REF: Unresolved reference: foo> = Q|A.Inner|::<Unresolved reference: foo>#
+                public get(): <ERROR TYPE REF: Unresolved reference: foo>
 
         }
 

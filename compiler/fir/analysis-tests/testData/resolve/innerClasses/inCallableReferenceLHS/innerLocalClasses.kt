@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-66344
 
 fun <T> withGenericArg() {
@@ -10,11 +10,11 @@ fun <T> withGenericArg() {
             }
             fun foo() {}
         }
-        val ref = Inner<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>::foo
-        val innermostRef = Inner<String>.Innermost<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>::bar
+        val ref = Inner<String>::foo
+        val innermostRef = Inner<String>.Innermost<Int>::bar
 
         // Should be red once KT-82122 is fixed
-        val innermostMisplacedRef = Inner.Innermost<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, String><!>::bar
+        val innermostMisplacedRef = Inner.Innermost<Int, String>::bar
     }
 
     Outer<Int>.Inner<String>::foo

@@ -8,22 +8,22 @@ abstract class Outer<X> {
 
         inner class Innermost {
             fun foo() {
-                val refX: Inner.() -> X <!INITIALIZER_TYPE_MISMATCH!>=<!> <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>::x
-                val kRefX = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>::x
+                val refX: Inner.() -> X = Inner::x
+                val kRefX = Inner::x
             }
         }
     }
 
-    val refFoo: Inner.() -> Unit = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>::foo
-    val refBar: Inner.() -> Int = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>::bar
-    val refX: Inner.() -> X <!INITIALIZER_TYPE_MISMATCH!>=<!> <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>::x
-    val kRefFoo = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>::foo
-    val kRefBar = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>::bar
-    val kRefX = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>::x
+    val refFoo: Inner.() -> Unit = Inner::foo
+    val refBar: Inner.() -> Int = Inner::bar
+    val refX: Inner.() -> X = Inner::x
+    val kRefFoo = Inner::foo
+    val kRefBar = Inner::bar
+    val kRefX = Inner::x
 
     class Nested {
-        val refX: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>.() -> <!UNRESOLVED_REFERENCE!>X<!> = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>::x
-        val kRefX = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>::x
+        val refX: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>.() -> <!UNRESOLVED_REFERENCE!>X<!> = <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>::<!UNRESOLVED_REFERENCE!>x<!>
+        val kRefX = <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>::<!UNRESOLVED_REFERENCE!>x<!>
     }
 }
 

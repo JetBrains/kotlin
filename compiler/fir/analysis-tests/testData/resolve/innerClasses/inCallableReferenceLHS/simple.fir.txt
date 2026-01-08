@@ -24,42 +24,42 @@ FILE: simple.kt
                 }
 
                 public final fun foo(): R|kotlin/Unit| {
-                    lval refX: R|Outer.Inner<X>.() -> X| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
-                    lval kRefX: R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Any?>| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
+                    lval refX: R|Outer.Inner<X>.() -> X| = Q|Outer.Inner|::R|/Outer.Inner.x|
+                    lval kRefX: R|kotlin/reflect/KProperty1<Outer.Inner<X>, X>| = Q|Outer.Inner|::R|/Outer.Inner.x|
                 }
 
             }
 
         }
 
-        public final val refFoo: R|Outer.Inner<X>.() -> kotlin/Unit| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.foo: R|kotlin/Unit|>|
+        public final val refFoo: R|Outer.Inner<X>.() -> kotlin/Unit| = Q|Outer.Inner|::R|/Outer.Inner.foo|
             public get(): R|Outer.Inner<X>.() -> kotlin/Unit|
 
-        public final val refBar: R|Outer.Inner<X>.() -> kotlin/Int| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.bar: R|kotlin/Int|>|
+        public final val refBar: R|Outer.Inner<X>.() -> kotlin/Int| = Q|Outer.Inner|::R|/Outer.Inner.bar|
             public get(): R|Outer.Inner<X>.() -> kotlin/Int|
 
-        public final val refX: R|Outer.Inner<X>.() -> X| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
+        public final val refX: R|Outer.Inner<X>.() -> X| = Q|Outer.Inner|::R|/Outer.Inner.x|
             public get(): R|Outer.Inner<X>.() -> X|
 
-        public final val kRefFoo: R|kotlin/reflect/KFunction1<Outer.Inner<*>, kotlin/Unit>| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.foo: R|kotlin/Unit|>|
-            public get(): R|kotlin/reflect/KFunction1<Outer.Inner<*>, kotlin/Unit>|
+        public final val kRefFoo: R|kotlin/reflect/KFunction1<Outer.Inner<X>, kotlin/Unit>| = Q|Outer.Inner|::R|/Outer.Inner.foo|
+            public get(): R|kotlin/reflect/KFunction1<Outer.Inner<X>, kotlin/Unit>|
 
-        public final val kRefBar: R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Int>| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.bar: R|kotlin/Int|>|
-            public get(): R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Int>|
+        public final val kRefBar: R|kotlin/reflect/KProperty1<Outer.Inner<X>, kotlin/Int>| = Q|Outer.Inner|::R|/Outer.Inner.bar|
+            public get(): R|kotlin/reflect/KProperty1<Outer.Inner<X>, kotlin/Int>|
 
-        public final val kRefX: R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Any?>| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
-            public get(): R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Any?>|
+        public final val kRefX: R|kotlin/reflect/KProperty1<Outer.Inner<X>, X>| = Q|Outer.Inner|::R|/Outer.Inner.x|
+            public get(): R|kotlin/reflect/KProperty1<Outer.Inner<X>, X>|
 
         public final class Nested : R|kotlin/Any| {
             public constructor(): R|Outer.Nested| {
                 super<R|kotlin/Any|>()
             }
 
-            public final val refX: R|ERROR CLASS: Type arguments should be specified for an outer class.() -> ERROR CLASS: Symbol not found for X| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
+            public final val refX: R|ERROR CLASS: Type arguments should be specified for an outer class.() -> ERROR CLASS: Symbol not found for X| = Q|Outer.Inner|::<Unresolved reference: x>#
                 public get(): R|ERROR CLASS: Type arguments should be specified for an outer class.() -> ERROR CLASS: Symbol not found for X|
 
-            public final val kRefX: R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Any?>| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
-                public get(): R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Any?>|
+            public final val kRefX: <ERROR TYPE REF: Unresolved reference: x> = Q|Outer.Inner|::<Unresolved reference: x>#
+                public get(): <ERROR TYPE REF: Unresolved reference: x>
 
         }
 

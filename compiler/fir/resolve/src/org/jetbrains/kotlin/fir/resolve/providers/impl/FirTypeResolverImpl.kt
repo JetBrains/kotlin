@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector.TypeResolutionResult
@@ -374,6 +375,133 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 attributes
             ),
             diagnostic
+        )
+    }
+
+    private val FirResolvedQualifier.wholeChainConsistsOfInnerClasses: Boolean
+        get() {
+            if (symbol == null) return false
+            var currentQualifier = this
+
+            while (currentQualifier.explicitParent != null) {
+                if ((currentQualifier.symbol as? FirRegularClassSymbol)?.isInner != true) return false
+                currentQualifier = currentQualifier.explicitParent!!
+            }
+            return true
+        }
+
+    /**
+     * @return The first qualifier part if it is non-package (i.e., class).
+     */
+    private val FirResolvedQualifier.firstClassQualifierSymbolIfNotFullyQualified: FirClassLikeSymbol<*>?
+        get() {
+            require(symbol != null)
+            var currentQualifier = this
+
+            while (currentQualifier.explicitParent?.symbol != null) {
+                currentQualifier = currentQualifier.explicitParent!!
+            }
+
+            return currentQualifier.takeIf { it.explicitParent == null }?.symbol
+        }
+
+    private fun computeSubstitutorForLHS(
+        firstQualifierSymbol: FirClassLikeSymbol<*>?,
+        configuration: TypeResolutionConfiguration,
+    ): ConeSubstitutor? {
+        val name = firstQualifierSymbol?.name ?: return null
+
+        var result: ConeSubstitutor? = null
+
+        val processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit = { symbolFromScope, substitutor ->
+            if (symbolFromScope == firstQualifierSymbol) {
+                result = substitutor
+            }
+        }
+
+        for (scope in configuration.scopes) {
+            if (scope is FirDefaultStarImportingScope) {
+                scope.processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(name) { symbol, substitutor ->
+                    processor(symbol, substitutor)
+                    result != null
+                }
+            } else {
+                scope.processClassifiersByNameWithSubstitution(name, processor)
+            }
+            if (result != null) break
+        }
+        return result
+    }
+
+    private fun computeExpectedNumberOfExplicitTypeArguments(
+        qualifier: FirResolvedQualifier,
+        classDeclaration: FirClassLikeDeclaration,
+        firstSymbolInChain: FirClassLikeSymbol<*>?,
+    ): Int {
+        val outerTypeParametersForFirstClassInChain = when {
+            firstSymbolInChain == null -> 0
+            !qualifier.wholeChainConsistsOfInnerClasses -> 0
+            else -> firstSymbolInChain.fir.typeParameters.count { it.symbol.containingDeclarationSymbol != firstSymbolInChain }
+        }
+
+        return classDeclaration.typeParameters.size - outerTypeParametersForFirstClassInChain
+    }
+
+    private fun MutableList<ConeTypeProjection>.matchQualifierPartsAndClassesForLHS(
+        qualifier: FirResolvedQualifier,
+        classSymbol: FirClassLikeSymbol<*>,
+        firstSymbolInChain: FirClassLikeSymbol<*>?,
+    ): ConeDiagnostic? {
+        val expectedNumberOfExplicitTypeArguments =
+            computeExpectedNumberOfExplicitTypeArguments(qualifier, classSymbol.fir, firstSymbolInChain)
+
+        if (qualifier.typeArguments.size != expectedNumberOfExplicitTypeArguments) {
+            val diagnostic = ConeWrongNumberOfTypeArgumentsError(expectedNumberOfExplicitTypeArguments, classSymbol, qualifier.source!!)
+            return diagnostic
+        }
+
+        // TODO: Here, we don't have checks that type arguments belong to the correct parts (KT-82122).
+        qualifier.typeArguments.forEachIndexed { index, typeArgument ->
+            if (index < classSymbol.typeParameterSymbols.size) {
+                val coneTypeProjection = when (typeArgument) {
+                    is FirTypeProjectionWithVariance -> {
+                        val type = typeArgument.typeRef.coneType
+                        type.toTypeProjection(typeArgument.variance)
+                    }
+                    else -> ConeStarProjection
+                }
+                add(coneTypeProjection)
+            }
+        }
+
+        return null
+    }
+
+    override fun resolveTypeOnDoubleColonLHS(
+        qualifier: FirResolvedQualifier,
+        configuration: TypeResolutionConfiguration,
+    ): ConeKotlinType? {
+        val classSymbol = qualifier.symbol ?: return null
+        val firstSymbolInChain = qualifier.firstClassQualifierSymbolIfNotFullyQualified
+
+        val allTypeArguments: MutableList<ConeTypeProjection> = mutableListOf()
+        allTypeArguments.matchQualifierPartsAndClassesForLHS(qualifier, classSymbol, firstSymbolInChain)?.let {
+            return ConeErrorType(it)
+        }
+
+        // fast-path `if` to avoid iterating over scopes to retrieve substitutor
+        if (classSymbol.typeParameterSymbols.size != allTypeArguments.size) {
+            val substitutor = computeSubstitutorForLHS(firstSymbolInChain, configuration)
+
+            allTypeArguments.addImplicitTypeArgumentsOrReturnError(
+                classSymbol, configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(), substitutor
+            )?.let { return ConeErrorType(it) }
+        }
+
+        return ConeClassLikeTypeImpl(
+            classSymbol.toLookupTag(),
+            allTypeArguments.toTypedArray(),
+            qualifier.isNullableLHSForCallableReference,
         )
     }
 

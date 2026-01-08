@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequired
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePlaceholderProjectionInQualifierResolution
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -39,19 +41,29 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
             }
         }
 
-        // TODO(KT-66344) Support inner classes
+        for (diagnostic in expression.nonFatalDiagnostics) {
+            when (diagnostic) {
+                is ConeWrongNumberOfTypeArgumentsError ->
+                    reporter.reportOn(
+                        diagnostic.source,
+                        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
+                        diagnostic.desiredCount,
+                        diagnostic.symbol,
+                    )
+                is ConeOuterClassArgumentsRequired ->
+                    reporter.reportOn(
+                        lhs.source,
+                        FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED,
+                        diagnostic.symbol,
+                    )
+                else -> continue
+            }
+            return
+        }
+
         var typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
         var typeParameterSymbols = correspondingDeclaration.typeParameterSymbols.filter {
             it.containingDeclarationSymbol is FirClassLikeSymbol
-        }
-        if (typeParameterSymbols.size != typeArgumentsWithSourceInfo.size) {
-            reporter.reportOn(
-                lhs.source,
-                FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
-                correspondingDeclaration.typeParameterSymbols.size,
-                correspondingDeclaration
-            )
-            return
         }
 
         if (correspondingDeclaration is FirTypeAliasSymbol) {
