@@ -32,14 +32,14 @@ object DeprecationAnnotationCommonizer : AssociativeCommonizer<CirAnnotation> {
             val firstReplaceWithExpression = firstReplaceWith.getReplaceWithExpression().orEmpty()
             val secondReplaceWithExpression = secondReplaceWith.getReplaceWithExpression().orEmpty()
 
-            val firstReplaceWithImports = firstReplaceWith.getReplaceWithImports().orEmpty()
-            val secondReplaceWithImports = secondReplaceWith.getReplaceWithImports().orEmpty()
+            val firstReplaceWithImports = firstReplaceWith.getReplaceWithImports()
+            val secondReplaceWithImports = secondReplaceWith.getReplaceWithImports()
 
             if (
                 firstReplaceWithExpression == secondReplaceWithExpression &&
                 firstReplaceWithImports == secondReplaceWithImports &&
                 /* Empty replace with */
-                (firstReplaceWithExpression.isNotEmpty() || firstReplaceWithImports.isNotEmpty())
+                (firstReplaceWithExpression.isNotEmpty() || firstReplaceWithImports.orEmpty().isNotEmpty())
             ) firstReplaceWithExpression.toReplaceWithValue(firstReplaceWithImports) else null
         }
 
@@ -125,7 +125,7 @@ object DeprecationAnnotationCommonizer : AssociativeCommonizer<CirAnnotation> {
     private fun CirAnnotation.getReplaceWithImports(): List<String>? =
         constantValueArguments.getStringArray(PROPERTY_NAME_IMPORTS)
 
-    private fun String.toReplaceWithValue(imports: List<String>): CirAnnotation =
+    private fun String.toReplaceWithValue(imports: List<String>?): CirAnnotation =
         createReplaceWithAnnotation(this, imports)
 
     private inline fun Map<CirName, CirConstantValue>.getString(name: CirName): String? =
@@ -152,13 +152,21 @@ object DeprecationAnnotationCommonizer : AssociativeCommonizer<CirAnnotation> {
         return result
     }
 
-    private inline fun createReplaceWithAnnotation(expression: String, imports: List<String>): CirAnnotation =
-        CirAnnotation.createInterned(
-            type = REPLACE_WITH_ANNOTATION_TYPE,
-            constantValueArguments = compactMapOf(
+    private inline fun createReplaceWithAnnotation(expression: String, imports: List<String>?): CirAnnotation {
+        val constantValueArguments = when (imports) {
+            null -> compactMapOf(
+                PROPERTY_NAME_EXPRESSION, CirConstantValue.StringValue(expression),
+            )
+            else -> compactMapOf(
                 PROPERTY_NAME_EXPRESSION, CirConstantValue.StringValue(expression),
                 PROPERTY_NAME_IMPORTS, CirConstantValue.ArrayValue(imports.compactMap(CirConstantValue::StringValue))
-            ),
+            )
+        }
+
+        return CirAnnotation.createInterned(
+            type = REPLACE_WITH_ANNOTATION_TYPE,
+            constantValueArguments = constantValueArguments,
             annotationValueArguments = emptyMap()
         )
+    }
 }
