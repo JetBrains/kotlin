@@ -128,7 +128,9 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         if (frontendOutput is FirOutput.ShouldNotGenerateCode) return null
         require(frontendOutput is FirOutput.Full)
 
-        return if (config.metadataKlib || (config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode) && !containsInlineFunctions(frontendOutput))
+        return if (config.metadataKlib || (config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
+                        config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerModeTarget) == "compilation" &&
+                        !containsInlineFunctions(frontendOutput))
         ) {
             performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
                 engine.runFirSerializer(frontendOutput)

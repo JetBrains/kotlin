@@ -49,6 +49,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.fragmentSources = from.fragmentSources?.copyOf()
     to.fragments = from.fragments?.copyOf()
     to.headerMode = from.headerMode
+    to.headerModeTarget = from.headerModeTarget
     to.ignoreConstOptimizationErrors = from.ignoreConstOptimizationErrors
     to.incrementalCompilation = from.incrementalCompilation
     to.inlineClasses = from.inlineClasses

@@ -2346,6 +2346,37 @@
                         }
                     },
                     {
+                        "name": "Xheader-mode-target",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "                Generates output based on the downstream target it is used for:\n-Xheader-mode-target=compilation: Skips the IR generation for modules that don't have inline functions.\n-Xheader-mode-target=any: Can be used for any downstream target which doesn't require linking.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": "any",
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": "{any|compilation}",
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.3.20",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
                         "name": "Xignore-const-optimization-errors",
                         "shortName": null,
                         "deprecatedName": null,

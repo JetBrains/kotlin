@@ -31,6 +31,12 @@ class AnalysisFlag<out T> internal constructor(
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, defaultValue)
         }
 
+        open class String(val defaultValue: kotlin.String) {
+            companion object : String(defaultValue = "")
+
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, defaultValue)
+        }
+
         object ApiModeDisabledByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, ExplicitApiMode.DISABLED)
         }
@@ -40,11 +46,11 @@ class AnalysisFlag<out T> internal constructor(
         }
 
         object ListOfStrings {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, emptyList<String>())
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, emptyList<kotlin.String>())
         }
 
         object WarningLevelMap {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>): Delegate<Map<String, WarningLevel>> = Delegate(property.name, emptyMap())
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>): Delegate<Map<kotlin.String, WarningLevel>> = Delegate(property.name, emptyMap())
         }
     }
 }
