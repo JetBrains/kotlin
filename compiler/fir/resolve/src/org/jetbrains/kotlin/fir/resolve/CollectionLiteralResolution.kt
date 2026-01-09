@@ -175,13 +175,16 @@ context(resolutionContext: ResolutionContext)
 fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(): FirRegularClassSymbol? {
     return when (this) {
         is ConeFlexibleType -> lowerBound.getClassRepresentativeForCollectionLiteralResolution()
+        is ConeCapturedType -> constructor.lowerType?.getClassRepresentativeForCollectionLiteralResolution()
+        is ConeDefinitelyNotNullType -> {
+            // very rarely, but still needed, because there might be an expected type of form `Captured(in SomeCollection?) & Any`
+            original.getClassRepresentativeForCollectionLiteralResolution()
+        }
         is ConeDynamicType,
         is ConeIntersectionType,
         is ConeStubType,
         is ConeTypeVariableType,
         is ConeIntegerLiteralType,
-        is ConeCapturedType,
-        is ConeDefinitelyNotNullType, // `original` is anyway a type that already returns null
             -> null
         is ConeLookupTagBasedType ->
             when (val symbol = lookupTag.toSymbol()) {

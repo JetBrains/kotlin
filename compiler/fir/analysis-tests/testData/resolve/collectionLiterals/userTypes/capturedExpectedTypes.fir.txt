@@ -21,7 +21,20 @@ FILE: capturedExpectedTypes.kt
 
     }
     public final fun test(d: R|Setter<in C>|, e: R|Setter<out C>|, f: R|Setter<*>|): R|kotlin/Unit| {
-        R|<local>/d|.R|SubstitutionOverride</Setter.set: R|kotlin/Unit|>|(<collectionLiteralCall>())
+        R|<local>/d|.R|SubstitutionOverride</Setter.set: R|kotlin/Unit|>|(Q|C.Companion|.R|/C.Companion.of|())
         R|<local>/e|.R|SubstitutionOverride</Setter.set: R|kotlin/Unit|>|(<collectionLiteralCall>())
         R|<local>/f|.R|SubstitutionOverride</Setter.set: R|kotlin/Unit|>|(<collectionLiteralCall>())
+        lval x: R|kotlin/Any?| = R|/select|<R|CapturedType(in C)|>(R|/materializeIn|<R|C|>(), Q|C|.R|/C.Companion.of|())
+        lval y: R|kotlin/Any?| = R|/select|<R|CapturedType(in C)|>(R|/materializeIn|<R|C|>(), Q|C.Companion|.R|/C.Companion.of|())
+        R|/selectDnn|<R|CapturedType(in C?)|>(R|/materializeIn|<R|C?|>(), Q|C|.R|/C.Companion.of|())
+        R|/selectDnn|<R|CapturedType(in C?)|>(R|/materializeIn|<R|C?|>(), Q|C.Companion|.R|/C.Companion.of|())
+    }
+    public final fun <D> materializeIn(): R|Setter<in D>| {
+        ^materializeIn Null(null)!!
+    }
+    public final fun <E> select(x: R|Setter<E>|, y: R|E|): R|E| {
+        ^select R|<local>/y|
+    }
+    public final fun <F> selectDnn(x: R|Setter<F>|, y: R|F & Any|): R|F & Any| {
+        ^selectDnn R|<local>/y|
     }
