@@ -23,16 +23,19 @@ class AllArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructor
 
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     override fun getFieldsForParameters(classSymbol: FirClassSymbol<*>): List<FirJavaField> {
-        return classSymbol.fir.declarations
-            .filterIsInstance<FirJavaField>()
-            .filter { it.isFieldAllowed() }
-    }
+        val isAllArgsConstructor = lombokService.getAllArgsConstructor(classSymbol) != null
 
-    private fun FirJavaField.isFieldAllowed(): Boolean {
-        if (isStatic) return false
+        return buildList {
+            for (declaration in classSymbol.fir.declarations) {
+                if (declaration !is FirJavaField || declaration.isStatic) continue
 
-        // TODO: consider adding `hasInitializer` property directly to java model
-        val hasInitializer = (source?.psi as? PsiField)?.hasInitializer() ?: false
-        return isVar || !hasInitializer
+                // TODO: consider adding `hasInitializer` property directly to java model
+                val hasInitializer = (declaration.source?.psi as? PsiField)?.hasInitializer() ?: false
+
+                if (hasInitializer && (!isAllArgsConstructor || !declaration.isVar)) continue
+
+                add(declaration)
+            }
+        }
     }
 }

@@ -22,8 +22,8 @@ public class TestJavaUsage {
 // FILE: TestKotlinUsage.kt
 
 fun box(): String {
-    val test = <!NONE_APPLICABLE!>TestJava<!>(1)  // It should be OK
-    test.<!UNRESOLVED_REFERENCE!>b<!>             // It should be OK
+    val test = TestJava(1)
+    test.b
 
     return "OK"
 }
