@@ -239,8 +239,8 @@ abstract class LlvmOptimizationPipeline(
                     Profile = it,
             )
         }
-        require(errorCode == null) {
-            LLVMGetErrorMessage(errorCode)!!.toKString()
+        check(errorCode == null) {
+            "Failed to run llvm passes '$passDescription': ${LLVMGetErrorMessage(errorCode)?.toKString()}"
         }
         profile?.let {
             performanceManager?.addLlvmPassesProfile(it)
