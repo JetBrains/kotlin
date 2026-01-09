@@ -562,43 +562,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 fun JavaType.makeNullable(): JavaType = withAnnotations(annotations + NullabilityJavaAnnotation.Nullable)
 fun JavaType.makeNotNullable(): JavaType = withAnnotations(annotations + NullabilityJavaAnnotation.NotNull)
 
-fun FirClassSymbol<*>.createJavaMethod(
-    name: Name,
-    valueParameters: List<ConeLombokValueParameter>,
-    returnTypeRef: FirTypeRef,
-    visibility: Visibility,
-    modality: Modality,
-    dispatchReceiverType: ConeSimpleKotlinType? = this.defaultType(),
-    isStatic: Boolean = false,
-): FirJavaMethod {
-    return buildJavaMethod {
-        containingClassSymbol = this@createJavaMethod
-        moduleData = this@createJavaMethod.moduleData
-        this.returnTypeRef = returnTypeRef
-        this.dispatchReceiverType = dispatchReceiverType
-        this.name = name
-        symbol = FirNamedFunctionSymbol(CallableId(classId, name))
-        status = FirResolvedDeclarationStatusImpl(visibility, modality, visibility.toEffectiveVisibility(this@createJavaMethod)).apply {
-            this.isStatic = isStatic
-        }
-        isFromSource = true
-        for (valueParameter in valueParameters) {
-            this.valueParameters += buildJavaValueParameter {
-                moduleData = this@createJavaMethod.moduleData
-                this.returnTypeRef = valueParameter.typeRef
-                containingDeclarationSymbol = this@buildJavaMethod.symbol
-                this.name = valueParameter.name
-                isVararg = false
-                isFromSource = true
-            }
-        }
-    }.apply {
-        if (isStatic) {
-            containingClassForStaticMemberAttr = this@createJavaMethod.toLookupTag()
-        }
-    }
-}
-
 fun FirClassSymbol<*>.createDefaultJavaConstructor(
     visibility: Visibility,
 ): FirJavaConstructor {
@@ -627,5 +590,3 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
         typeParameters += outerClassSymbol.typeParameterSymbols.map { buildConstructedClassTypeParameterRef { symbol = it } }
     }
 }
-
-class ConeLombokValueParameter(val name: Name, val typeRef: FirTypeRef)
