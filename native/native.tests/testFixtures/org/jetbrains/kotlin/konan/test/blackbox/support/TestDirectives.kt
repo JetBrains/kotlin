@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_RE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.WITH_PLATFORM_LIBS
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedPaths
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
@@ -409,7 +410,8 @@ internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives, l
 internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, location: Location, settings: Settings): TestCompilerArgs {
     val assertionsMode = registeredDirectives.singleOrZeroValue(ASSERTIONS_MODE) ?: AssertionsMode.DEFAULT
     val freeCInteropArgs = registeredDirectives[FREE_CINTEROP_ARGS]
-    val freeCompilerArgs = registeredDirectives[FREE_COMPILER_ARGS]
+    val rawFreeCompilerArgs = registeredDirectives[FREE_COMPILER_ARGS]
+    val freeCompilerArgs = rawFreeCompilerArgs.map { PredefinedPaths.substitutePlaceholders(it, settings) }
     if (freeCompilerArgs.isNotEmpty()) {
         val forbiddenCompilerArgs = TestCompilerArgs.findForbiddenArgs(freeCompilerArgs)
         assertTrue(forbiddenCompilerArgs.isEmpty()) {
