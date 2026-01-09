@@ -193,6 +193,7 @@ class WasmSerializer(outputStream: OutputStream) {
             is WasmFunctionType -> withTag(TypeDeclarationTags.FUNCTION) { serializeWasmFunctionType(typeDecl) }
             is WasmStructDeclaration -> withTag(TypeDeclarationTags.STRUCT) { serializeWasmStructDeclaration(typeDecl) }
             is WasmArrayDeclaration -> withTag(TypeDeclarationTags.ARRAY) { serializeWasmArrayDeclaration(typeDecl) }
+            is WasmContType -> TODO()
         }
 
     private fun serializeWasmStructDeclaration(structDecl: WasmStructDeclaration) {
@@ -248,6 +249,7 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmStructRef -> setTag(TypeTags.STRUCT_REF)
             WasmUnreachableType -> setTag(TypeTags.UNREACHABLE_TYPE)
             WasmV128 -> setTag(TypeTags.V12)
+            WasmContRefType -> setTag(TypeTags.CONT_TYPE)
         }
 
     private fun serializeWasmHeapType(type: WasmHeapType) =
@@ -260,6 +262,8 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmHeapType.Simple.None -> setTag(HeapTypeTags.NONE)
             WasmHeapType.Simple.NoFunc -> setTag(HeapTypeTags.NO_FUNC)
             WasmHeapType.Simple.Struct -> setTag(HeapTypeTags.STRUCT)
+            WasmHeapType.Simple.Cont -> setTag(HeapTypeTags.CONT)
+            WasmHeapType.Simple.NoCont -> setTag(HeapTypeTags.NO_CONT)
             is WasmHeapType.Type -> withTag(HeapTypeTags.HEAP_TYPE) { serializeWasmSymbolReadOnly(type.type) { serializeWasmTypeDeclaration(it) } }
         }
 
@@ -315,6 +319,7 @@ class WasmSerializer(outputStream: OutputStream) {
             is WasmImmediate.TagIdx -> withTag(ImmediateTags.TAG_INDEX) { serializeWasmSymbolReadOnly(i.value) { b.writeUInt32(it.toUInt()) } }
             is WasmImmediate.TypeIdx -> withTag(ImmediateTags.TYPE_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeWasmTypeDeclaration(it) } }
             is WasmImmediate.ValTypeVector -> withTag(ImmediateTags.VALUE_TYPE_VECTOR) { serializeList(i.value, ::serializeWasmType) }
+            is WasmImmediate.ContHandle -> withTag(ImmediateTags.CONT_HANDLE) { TODO() }
         }
 
     private fun serializeCatchImmediate(catch: WasmImmediate.Catch) {

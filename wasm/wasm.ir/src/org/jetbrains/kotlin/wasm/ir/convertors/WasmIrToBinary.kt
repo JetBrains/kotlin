@@ -27,6 +27,7 @@ private object WasmBinary {
     const val FUNC_TYPE: Byte = -0x20 // 0x60
     const val STRUCT_TYPE: Byte = -0x21 // 0x5F
     const val ARRAY_TYPE: Byte = -0x22 // 0x5E
+    const val CONT_TYPE: Byte = -0x23
     const val SUB_TYPE: Byte = -0x30 // 0x50
     const val SUB_FINAL_TYPE: Byte = -0x31 // 0x4F
     const val REC_GROUP: Byte = -0x32 // 0x4E
@@ -88,6 +89,7 @@ class WasmIrToBinary(
                 is WasmStructDeclaration -> appendStructTypeDeclaration(type)
                 is WasmArrayDeclaration -> appendArrayTypeDeclaration(type)
                 is WasmFunctionType -> appendFunctionTypeDeclaration(type)
+                is WasmContType -> appendContTypeDeclaration(type)
             }
         }
     }
@@ -280,8 +282,25 @@ class WasmIrToBinary(
             b.writeByte(opcode.toByte())
         }
 
-        instr.immediates.forEach {
-            appendImmediate(it)
+        when (opcode) {
+            WasmOp.RESUME.opcode -> {
+                require(instr.immediates.size == 2)
+                appendImmediate(instr.immediates[0])
+                b.writeByte(1.toByte())
+                appendImmediate(instr.immediates[1])
+            }
+            WasmOp.RESUME_THROW.opcode -> {
+                require(instr.immediates.size == 3)
+                appendImmediate(instr.immediates[0])
+                appendImmediate(instr.immediates[1])
+                b.writeByte(1.toByte())
+                appendImmediate(instr.immediates[2])
+            }
+            else -> {
+                instr.immediates.forEach {
+                    appendImmediate(it)
+                }
+            }
         }
     }
 
@@ -333,6 +352,11 @@ class WasmIrToBinary(
                 b.writeVarUInt32(x.type.opcode)
                 x.immediates.forEach(this::appendImmediate)
             }
+
+            is WasmImmediate.ContHandle -> {
+                b.writeVarUInt32(x.type.opcode)
+                x.immediates.forEach(this::appendImmediate)
+            }
         }
     }
 
@@ -370,6 +394,11 @@ class WasmIrToBinary(
         type.parameterTypes.forEach { appendType(it) }
         b.writeVarUInt32(type.resultTypes.size)
         type.resultTypes.forEach { appendType(it) }
+    }
+
+    private fun appendContTypeDeclaration(type: WasmContType) {
+        b.writeVarInt7(WasmBinary.CONT_TYPE)
+        appendHeapType(WasmHeapType.Type(type.funType))
     }
 
     private fun appendBlockType(type: WasmImmediate.BlockType) {

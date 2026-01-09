@@ -14,6 +14,7 @@ internal object TypeDeclarationTags {
     const val FUNCTION = 0u
     const val STRUCT = 1u
     const val ARRAY = 2u
+    const val CONT = 3u
 }
 
 internal object TypeTags {
@@ -37,6 +38,7 @@ internal object TypeTags {
     const val STRUCT_REF = 17u
     const val UNREACHABLE_TYPE = 18u
     const val V12 = 19u
+    const val CONT_TYPE = 20u
 }
 
 internal object HeapTypeTags {
@@ -49,6 +51,8 @@ internal object HeapTypeTags {
     const val NO_FUNC = 5u
     const val STRUCT = 6u
     const val HEAP_TYPE = 7u
+    const val CONT = 8u
+    const val NO_CONT = 9u
 }
 
 internal object InstructionTags {
@@ -83,6 +87,7 @@ internal object ImmediateTags {
     const val TAG_INDEX = 23u
     const val TYPE_INDEX = 24u
     const val VALUE_TYPE_VECTOR = 25u
+    const val CONT_HANDLE = 26u
     const val BLOCK_TYPE_NULL_VALUE = 129u
 }
 
@@ -91,6 +96,11 @@ internal object ImmediateCatchTags {
     const val CATCH_REF = 1u
     const val CATCH_ALL = 2u
     const val CATCH_ALL_REF = 3u
+}
+
+internal object ImmediateContTags {
+    const val ON = 0u
+    const val ON_SWITCH = 1u
 }
 
 internal object TableValueTags {

@@ -301,6 +301,57 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         buildInstr(WasmOp.NOP, location)
     }
 
+    fun createNewContHandle(tagIdx: WasmSymbol<Int>, absoluteBlockLevel: Int) =
+        createNewContHandleImmediate(WasmImmediate.ContHandle.ContHandleType.ON, tagIdx, absoluteBlockLevel)
+
+    private fun createNewContHandleImmediate(
+        handleType: WasmImmediate.ContHandle.ContHandleType,
+        tagIdx: WasmSymbol<Int>,
+        absolutBlockLevel: Int,
+    ): WasmImmediate.ContHandle {
+        val relativeLevel = numberOfNestedBlocks - absolutBlockLevel
+        return WasmImmediate.ContHandle(
+            handleType,
+            listOfNotNull(
+                WasmImmediate.TagIdx(tagIdx),
+                WasmImmediate.LabelIdx(relativeLevel)
+            )
+        )
+    }
+
+    fun buildContNew(contType: WasmSymbol<WasmTypeDeclaration>, location: SourceLocation) {
+        buildInstr(WasmOp.CONT_NEW, location, WasmImmediate.TypeIdx(contType))
+    }
+
+    fun buildContBind(contType: WasmSymbol<WasmTypeDeclaration>, bindContType: WasmSymbol<WasmTypeDeclaration>, location: SourceLocation) {
+        buildInstr(
+            WasmOp.CONT_BIND, location,
+            WasmImmediate.TypeIdx(contType),
+            WasmImmediate.TypeIdx(bindContType),
+        )
+    }
+
+    fun buildSuspend(tag: WasmSymbol<Int>, location: SourceLocation) {
+        buildInstr(WasmOp.SUSPEND, location, WasmImmediate.TagIdx(tag))
+    }
+
+    fun buildResume(
+        contType: WasmHeapType,
+        contHandle: WasmImmediate.ContHandle,
+        location: SourceLocation
+    ) {
+        buildInstr(WasmOp.RESUME, location, WasmImmediate.HeapType(contType), contHandle)
+    }
+
+    fun buildResumeThrow(
+        contType: WasmHeapType,
+        exceptionTag: WasmSymbol<Int>,
+        contHandle: WasmImmediate.ContHandle,
+        location: SourceLocation
+    ) {
+        buildInstr(WasmOp.RESUME_THROW, location, WasmImmediate.HeapType(contType), WasmImmediate.TagIdx(exceptionTag), contHandle)
+    }
+
     inline fun commentPreviousInstr(text: () -> String) {
         if (!skipCommentInstructions) {
             buildInstr(

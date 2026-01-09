@@ -85,6 +85,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                 is WasmStructDeclaration ->
                                     gcTypes += type
                                 is WasmArrayDeclaration -> {}
+                                is WasmContType -> {}
                             }
                         }
                     }
@@ -440,6 +441,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                 WasmImmediateKind.HEAP_TYPE -> WasmImmediate.HeapType(readRefType())
                 WasmImmediateKind.LOCAL_DEFS -> TODO()
                 WasmImmediateKind.CATCH_VECTOR -> TODO()
+                WasmImmediateKind.ON_VECTOR -> TODO()
             }
         }
 
