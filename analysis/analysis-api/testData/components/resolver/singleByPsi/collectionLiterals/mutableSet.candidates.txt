@@ -1,2 +1,48 @@
 KtCollectionLiteralExpression(45,47): '[]'
-  NO_CANDIDATES
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.MutableSet<kotlin.String>
+          symbol = kotlin/collections/mutableSetOf(): kotlin.collections.MutableSet<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/mutableSetOf
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.MutableSet<kotlin.String>
+          symbol = kotlin/collections/mutableSetOf(vararg elements: T): kotlin.collections.MutableSet<T>
+          valueParameters = [
+            KaVariableSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.String
+              symbol = vararg elements: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/mutableSetOf
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+    isInBestCandidates = false

@@ -1,9 +1,9 @@
 KT element: KtValueArgument
-FIR element: FirResolvedNamedReferenceImpl
+FIR element: FirFunctionCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-R|kotlin/collections/mutableSetOf|
+Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(vararg(Int(1)))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] stdlibSet.kt

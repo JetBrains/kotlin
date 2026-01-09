@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,12 +35,8 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch
-import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.calls.TypeVariableReplacement
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
-import org.jetbrains.kotlin.fir.resolve.calls.removeTypeVariableTypes
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
@@ -435,7 +431,7 @@ class FirSyntheticCallGenerator(
                 // completed collection literal
                 check(
                     session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
-                            && source?.kind == KtFakeSourceElementKind.OperatorOfCall
+                            && calleeReference.source?.kind == KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall
                 ) {
                     "Expected ${FirFunctionCall::class.simpleName} originating from ${FirCollectionLiteral::class.simpleName}"
                 }

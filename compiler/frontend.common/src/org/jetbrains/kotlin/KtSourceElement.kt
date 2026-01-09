@@ -604,9 +604,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object CollectionPackageForOperatorOfCall : KtFakeSourceElementKind()
 
     /**
-     * For the function call to operator `of` generated instead of a collection literal.
+     * When resolving a collection literal, this is used as a source for the generated callee reference.
      */
-    object OperatorOfCall : KtFakeSourceElementKind()
+    object CalleeReferenceForOperatorOfCall : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {
