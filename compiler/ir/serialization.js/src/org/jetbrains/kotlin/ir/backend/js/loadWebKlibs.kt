@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqu
 import org.jetbrains.kotlin.backend.common.loadFriendLibraries
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.klibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.ir.backend.js.checkers.WasmLibrarySpecialCompatibilityChecker
@@ -43,7 +44,7 @@ fun loadWebKlibsInProductionPipeline(
 
     val isWasm = platformChecker is KlibPlatformChecker.Wasm
     val checker = if (isWasm) WasmLibrarySpecialCompatibilityChecker else JsLibrarySpecialCompatibilityChecker
-    checker.check(klibs.all, configuration.messageCollector)
+    checker.check(klibs.all, configuration.messageCollector, configuration.klibAbiCompatibilityLevel)
 
     return klibs
 }
