@@ -35446,6 +35446,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     public void testInterface0() {
       runTest("compiler/testData/codegen/box/interfaceCallsNCasts/interface0.kt");
     }
+
+    @Test
+    @TestMetadata("kt83308.kt")
+    public void testKt83308() {
+      runTest("compiler/testData/codegen/box/interfaceCallsNCasts/kt83308.kt");
+    }
   }
 
   @Nested
