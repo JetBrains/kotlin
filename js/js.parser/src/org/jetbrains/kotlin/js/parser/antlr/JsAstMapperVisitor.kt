@@ -35,6 +35,10 @@ internal class JsAstMapperVisitor(
             return visitNode<JsFunction>(it).makeStmt().applyComments(ctx)
         }
 
+        ctx.classDeclaration()?.let {
+            return visitNode<JsClass>(it).makeStmt().applyComments(ctx)
+        }
+
         return super.visitStatement(ctx).expect<JsStatement?>()?.applyComments(ctx)
     }
 
@@ -417,32 +421,109 @@ internal class JsAstMapperVisitor(
         }.applyLocation(ctx)
     }
 
-    override fun visitClassDeclaration(ctx: JavaScriptParser.ClassDeclarationContext): JsNode? {
-        reportError("Classes are not supported yet", ctx)
+    override fun visitClassDeclaration(ctx: JavaScriptParser.ClassDeclarationContext): JsClass {
+        val tail = ctx.classTail()
+        val name = visitNode<JsNameRef>(ctx.identifier()).name
+        val baseClass = tail.singleExpression()?.let { visitNode<JsExpression>(it) }
+        val (ctors, methods) = tail.classElement()
+            .mapNotNull { visitNode<JsFunction?>(it) }
+            .partition { it.name?.ident == "constructor" }
+        check(ctors.size <= 1, ctx.identifier().startPosition) { "A class may only have one constructor" }
+
+        return JsClass(name, baseClass, ctors.singleOrNull(), methods.toMutableList())
+            .applyLocation(ctx)
     }
 
     override fun visitClassTail(ctx: JavaScriptParser.ClassTailContext): JsNode? {
-        reportError("Classes are not supported yet", ctx)
+        raiseParserException("JS AST doesn't have a node representing a class tail.", ctx)
     }
 
-    override fun visitClassElement(ctx: JavaScriptParser.ClassElementContext): JsNode? {
-        reportError("Classes are not supported yet", ctx)
+    override fun visitClassElement(ctx: JavaScriptParser.ClassElementContext): JsFunction? {
+        check(ctx.fieldDefinition() == null) { "Class fields are not supported yet" }
+        check(ctx.block() == null) { "Static initializers are not supported yet" }
+
+        if (ctx.emptyStatement_() != null) return null
+
+        return visitNode<JsFunction>(ctx.methodDefinition()).apply {
+            // Both `Static()` and `identifier()` grammar rules will resolve into "static", just in different cases
+            if (ctx.Static() != null || ctx.identifier() != null)
+                modifiers.add(Modifier.STATIC)
+        }
     }
 
-    override fun visitMethodDefinition(ctx: JavaScriptParser.MethodDefinitionContext): JsNode? {
-        reportError("Classes are not supported yet", ctx)
+    override fun visitMethodDefinition(ctx: JavaScriptParser.MethodDefinitionContext): JsFunction {
+        check(ctx.Async() == null) { "Async methods are not supported yet"}
+
+        val isGenerator = ctx.Multiply() != null
+        val isGetter = ctx.getter() != null
+        val isSetter = ctx.setter() != null
+
+        val paramList = ctx.formalParameterList()
+        val restParam = paramList?.restParameterArg()
+        val formalParams = paramList?.formalParameterArg() ?: emptyList()
+
+        fun JsFunction.applyMethodName() {
+            ctx.classElementName()?.propertyName()?.identifierName()?.let {
+                name = scopeContext.localNameFor(it.text)
+                return
+            }
+            ctx.classElementName()?.let {
+                computedName = visitNode<JsExpression>(it)
+                return
+            }
+            ctx.getter()?.classElementName()?.propertyName()?.identifierName()?.let {
+                name = scopeContext.localNameFor(it.text)
+                return
+            }
+            ctx.getter()?.classElementName()?.let {
+                computedName = visitNode<JsExpression>(it)
+                return
+            }
+            ctx.setter()?.classElementName()?.propertyName()?.identifierName()?.let {
+                name = scopeContext.localNameFor(it.text)
+                return
+            }
+            ctx.setter()?.classElementName()?.let {
+                computedName = visitNode<JsExpression>(it)
+                return
+            }
+
+            name = null
+        }
+
+        fun JsFunction.applyModifiers() {
+            if (isGenerator) modifiers.add(Modifier.GENERATOR)
+            if (isGetter) modifiers.add(Modifier.GET)
+            if (isSetter) modifiers.add(Modifier.SET)
+        }
+
+        return scopeContext.enterFunction().apply {
+            applyMethodName()
+            applyModifiers()
+
+            formalParams.mapTo(parameters) {
+                visitNode<JsParameter>(it).applyLocation(it)
+            }
+            restParam?.let {
+                parameters.add(visitNode<JsParameter>(it).applyLocation(it))
+            }
+            body = visitNode<JsBlock>(ctx.functionBody())
+            scopeContext.exitFunction()
+        }.applyLocation(ctx)
     }
 
     override fun visitFieldDefinition(ctx: JavaScriptParser.FieldDefinitionContext): JsNode? {
-        reportError("Classes are not supported yet", ctx)
+        reportError("Fields are not supported yet", ctx)
     }
 
-    override fun visitClassElementName(ctx: JavaScriptParser.ClassElementNameContext): JsNode? {
-        reportError("Classes are not supported yet", ctx)
+    override fun visitClassElementName(ctx: JavaScriptParser.ClassElementNameContext): JsExpression {
+        check(ctx.privateIdentifier() == null) { "Private class members are not supported yet" }
+
+        return visitNode<JsExpression>(ctx.propertyName())
     }
 
     override fun visitPrivateIdentifier(ctx: JavaScriptParser.PrivateIdentifierContext): JsNode? {
-        reportError("Private fields are not supported yet", ctx)
+        reportError("Private class members are not supported yet", ctx)
     }
 
     override fun visitFormalParameterList(ctx: JavaScriptParser.FormalParameterListContext): JsNode? {
@@ -794,8 +875,8 @@ internal class JsAstMapperVisitor(
             .applyLocation(ctx.BitXOr())
     }
 
-    override fun visitSuperExpression(ctx: JavaScriptParser.SuperExpressionContext): JsNode? {
-        reportError("Super calls are not supported yet", ctx)
+    override fun visitSuperExpression(ctx: JavaScriptParser.SuperExpressionContext): JsSuperRef {
+        return JsSuperRef().applyLocation(ctx)
     }
 
     override fun visitImportMetaExpression(ctx: JavaScriptParser.ImportMetaExpressionContext): JsNameRef {
