@@ -66,7 +66,6 @@ fun TestConfigurationBuilder.commonConfigurationForNativeFirstStage(
     )
     useAfterAnalysisCheckers(
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, null),
-        ::FirMetaInfoDiffSuppressor,
     )
 
     facadeStep(frontendFacade)
