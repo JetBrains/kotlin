@@ -2,8 +2,9 @@ KtCollectionLiteralExpression(55,58): '[1]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'setOf' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf]
     symbols:
-      Nothing (Unresolved reference)
+      (in kotlin.collections) fun <T> setOf(element: T): kotlin.collections.Set<T>
 
 KtCallExpression(48,59): 'accept([1])'
   KtInvokeFunctionReference:

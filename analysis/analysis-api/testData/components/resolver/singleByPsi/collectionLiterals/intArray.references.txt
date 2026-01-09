@@ -3,7 +3,7 @@ KtCollectionLiteralExpression(57,60): '[1]'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      Nothing (Unresolved reference)
+      (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
 KtCallExpression(50,61): 'accept([1])'
   KtInvokeFunctionReference:

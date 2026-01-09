@@ -2,5 +2,6 @@ KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'sequenceOf' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf]
     symbols:
-      Nothing (Unresolved reference)
+      (in kotlin.sequences) fun <T> sequenceOf(vararg elements: T): kotlin.sequences.Sequence<T>

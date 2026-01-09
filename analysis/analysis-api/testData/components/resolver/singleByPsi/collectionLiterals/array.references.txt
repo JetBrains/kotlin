@@ -3,4 +3,4 @@ KtCollectionLiteralExpression(40,42): '[]'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      Nothing (Unresolved reference)
+      (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>

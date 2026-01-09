@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.resolve.ArrayFqNames
 abstract class KtCollectionLiteralReference(expression: KtCollectionLiteralExpression) :
     KtSimpleReference<KtCollectionLiteralExpression>(expression), MultiRangeReference {
     companion object {
-        private val COLLECTION_LITERAL_CALL_NAMES = ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY.values + ArrayFqNames.ARRAY_OF_FUNCTION
+        private val COLLECTION_LITERAL_CALL_NAMES: List<Name> = buildList {
+            addAll(ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY.values)
+            add(ArrayFqNames.ARRAY_OF_FUNCTION)
+        }.sorted()
     }
 
     override fun getRangeInElement(): TextRange = element.normalizeRange()
