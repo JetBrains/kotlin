@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.resolve.classTypeParameterSymbols
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePlaceholderProjectionInQualifierResolution
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
@@ -39,20 +40,22 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
             }
         }
 
-        // TODO(KT-66344) Support inner classes
+        for (diagnostic in expression.nonFatalDiagnostics) {
+            when (diagnostic) {
+                is ConeWrongNumberOfTypeArgumentsError -> {
+                    reporter.reportOn(
+                        diagnostic.source,
+                        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
+                        diagnostic.desiredCount,
+                        diagnostic.symbol,
+                    )
+                    return
+                }
+            }
+        }
+
         var typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
-        var typeParameterSymbols = correspondingDeclaration.typeParameterSymbols.filter {
-            it.containingDeclarationSymbol is FirClassLikeSymbol
-        }
-        if (typeParameterSymbols.size != typeArgumentsWithSourceInfo.size) {
-            reporter.reportOn(
-                lhs.source,
-                FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
-                correspondingDeclaration.typeParameterSymbols.size,
-                correspondingDeclaration
-            )
-            return
-        }
+        var typeParameterSymbols = correspondingDeclaration.classTypeParameterSymbols
 
         if (correspondingDeclaration is FirTypeAliasSymbol) {
             val qualifierType = correspondingDeclaration.constructType(typeArgumentsWithSourceInfo.toTypedArray())

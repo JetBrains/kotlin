@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReferenc
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallableReferenceInfo
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
@@ -1470,6 +1471,11 @@ internal fun Candidate.doesResolutionResultOverrideOtherToPreserveCompatibility(
 
 internal fun FirQualifiedAccessExpression.addNonFatalDiagnostics(candidate: Candidate) {
     val newNonFatalDiagnostics = mutableListOf<ConeDiagnostic>()
+    (candidate.callInfo as? CallableReferenceInfo)?.lhs.let { lhs ->
+        if (lhs is DoubleColonLHS.Type && lhs.diagnostic != null) {
+            newNonFatalDiagnostics.add(lhs.diagnostic)
+        }
+    }
 
     if (candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
         newNonFatalDiagnostics += ConeResolutionResultOverridesOtherToPreserveCompatibility

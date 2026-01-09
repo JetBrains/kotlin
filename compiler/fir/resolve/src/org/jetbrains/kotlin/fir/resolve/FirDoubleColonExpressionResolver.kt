@@ -8,17 +8,14 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.types.Variance
 
 sealed class DoubleColonLHS(val type: ConeKotlinType) {
     /**
@@ -34,10 +31,17 @@ sealed class DoubleColonLHS(val type: ConeKotlinType) {
      */
     class Expression(type: ConeKotlinType, val isObjectQualifier: Boolean) : DoubleColonLHS(type)
 
-    class Type(type: ConeKotlinType) : DoubleColonLHS(type)
+    /**
+     * [type] is always non-error type, errors/deprecation errors are stored in [diagnostic].
+     */
+    class Type(type: ConeKotlinType, val diagnostic: ConeDiagnostic?) : DoubleColonLHS(type)
 }
 
-class FirDoubleColonExpressionResolver(private val session: FirSession) {
+class FirDoubleColonExpressionResolver(
+    private val components: BodyResolveComponents,
+    private val context: BodyResolveContext,
+) {
+    private val session = components.session
 
     // Returns true if the expression is not a call expression without value arguments (such as "A<B>") or a qualified expression
     // which contains such call expression as one of its parts.
@@ -142,42 +146,14 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
         val resolvedExpression = expression.unwrapSmartcastExpression() as? FirResolvedQualifier
             ?: return null
 
-        val firClassLikeDeclaration = resolvedExpression.symbol?.fir
-            ?: return null
-
-        val type = ConeClassLikeTypeImpl(
-            firClassLikeDeclaration.symbol.toLookupTag(),
-            Array(firClassLikeDeclaration.typeParameters.size) { index ->
-                val typeArgument = resolvedExpression.typeArguments.getOrNull(index)
-                if (typeArgument == null) {
-                    // We currently only support local classes with captured type parameters from non-classes
-                    // (i.e. local class in generic function).
-                    // TODO(KT-66344) Support inner classes
-                    val typeParameter = firClassLikeDeclaration.typeParameters[index]
-                    if (firClassLikeDeclaration.isLocal && typeParameter is FirOuterClassTypeParameterRef &&
-                        typeParameter.symbol.containingDeclarationSymbol !is FirClassSymbol
-                    ) {
-                        typeParameter.symbol.defaultType
-                    } else {
-                        ConeStarProjection
-                    }
-                } else {
-                    when (typeArgument) {
-                        is FirTypeProjectionWithVariance -> {
-                            val coneType = typeArgument.typeRef.coneType
-                            when (typeArgument.variance) {
-                                Variance.INVARIANT -> coneType
-                                Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(coneType)
-                                Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(coneType)
-                            }
-                        }
-                        else -> ConeStarProjection
-                    }
-                }
-            },
-            isMarkedNullable = resolvedExpression.isNullableLHSForCallableReference
+        return session.typeResolver.resolveTypeOnDoubleColonLHS(
+            resolvedExpression,
+            TypeResolutionConfiguration(
+                components.createCurrentScopeList(),
+                context.containingClassDeclarations,
+                context.file,
+                context.topContainerForTypeResolution,
+            )
         )
-
-        return DoubleColonLHS.Type(type)
     }
 }
