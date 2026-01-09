@@ -153,7 +153,8 @@ class MutableVariableWithConstraints private constructor(
                             constraint.typeHashCode,
                             derivedFrom = constraint.derivedFrom,
                             isNullabilityConstraint = false,
-                            isFromFlexiblePosition = false, // Should we use && instead?
+                            // Note: in fact, only non-upper constraint can be from a flexible position
+                            isFromFlexiblePosition = constraint.isFromFlexiblePosition || previousConstraint.isFromFlexiblePosition,
                             isNoInfer = constraint.isNoInfer && previousConstraint.isNoInfer,
                         ).also {
                             inferenceLogger.withOrigins(
