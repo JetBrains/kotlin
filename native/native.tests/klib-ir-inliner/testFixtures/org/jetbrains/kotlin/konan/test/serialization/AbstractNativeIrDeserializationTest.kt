@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -53,6 +54,8 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
             serializerFacade,
             IGNORE_IR_DESERIALIZATION_TEST,
         )
+        useAfterAnalysisCheckers(::FirMetaInfoDiffSuppressor)
+
         facadeStep(deserializerFacade)
         klibArtifactsHandlersStep {
             useHandlers(::KlibBackendDiagnosticsHandler)

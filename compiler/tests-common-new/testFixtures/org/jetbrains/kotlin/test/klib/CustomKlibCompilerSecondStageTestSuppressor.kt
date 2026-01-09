@@ -65,10 +65,7 @@ class CustomKlibCompilerSecondStageTestSuppressor(
                     else -> processException(wrappedException, IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE)
                 }
                 is WrappedException.FromAfterAnalysisChecker -> {
-                    if (wrappedException.cause is AssertionError && wrappedException.message == "java.lang.AssertionError: Test contains IGNORE_FIR_DIAGNOSTICS_DIFF directive but no errors was reported. Please remove directive")
-                        emptyList()  // TODO try remove this clause after K1 code will be removed and tests cleaned up from FIR-difference directives
-                    else
-                        listOf(wrappedException)
+                    listOf(wrappedException)
                 }
                 else -> error("Yet unsupported wrapped exception type: ${wrappedException::class.qualifiedName} ")
             }
