@@ -75,6 +75,7 @@ internal fun createGradleCompilerRunner(
     diagnosticsReporter: UsesKotlinToolingDiagnostics,
 ): GradleCompilerRunner {
     if (runViaBuildToolsApi) {
+        @Suppress("DEPRECATION")
         if (compilerExecutionSettings.strategy != KotlinCompilerExecutionStrategy.OUT_OF_PROCESS) {
             return GradleBuildToolsApiCompilerRunner(
                 taskProvider,

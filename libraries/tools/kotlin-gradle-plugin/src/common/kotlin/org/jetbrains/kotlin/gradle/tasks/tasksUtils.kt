@@ -75,6 +75,7 @@ internal class CompilationErrorException(message: String) : FailedCompilationExc
 internal class OOMErrorException(message: String) : FailedCompilationException(message)
 
 private fun OOMErrorException(executionStrategy: KotlinCompilerExecutionStrategy): OOMErrorException {
+    @Suppress("DEPRECATION")
     val exceptionMessage = when (executionStrategy) {
         KotlinCompilerExecutionStrategy.DAEMON -> kotlinDaemonOOMHelperMessage
         KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinInProcessOOMHelperMessage

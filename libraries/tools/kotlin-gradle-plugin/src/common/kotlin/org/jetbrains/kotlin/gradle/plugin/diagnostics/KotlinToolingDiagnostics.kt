@@ -2159,6 +2159,22 @@ internal object KotlinToolingDiagnostics {
                 .solution("Please set `kotlin.compiler.runViaBuildToolsApi=true` to enable compilation via Build Tools API.")
         }
     }
+
+    internal object OutOfProcessExecutionStrategyUsage : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Deprecation,
+    ) {
+        operator fun invoke() = build {
+            title("Deprecated usage of 'out-of-process' Kotlin compiler execution strategy")
+                .description(
+                    """
+                The 'out-of-process' Kotlin compiler execution strategy is deprecated and will be removed in future versions.
+                Consider using a default 'daemon' strategy for improved performance and stability.
+                """.trimIndent()
+                )
+                .solution("Please remove 'kotlin.compiler.executionStrategy=out-of-process' from project 'gradle.properties' file.")
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

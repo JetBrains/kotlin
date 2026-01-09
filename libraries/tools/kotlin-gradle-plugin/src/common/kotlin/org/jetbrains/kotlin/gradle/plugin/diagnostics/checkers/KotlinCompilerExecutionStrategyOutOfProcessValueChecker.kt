@@ -1,0 +1,29 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
+
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportOncePerGradleBuild
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+
+internal object KotlinCompilerExecutionStrategyOutOfProcessValueChecker : KotlinGradleProjectChecker {
+    override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
+        KotlinPluginLifecycle.Stage.ReadyForExecution.await()
+
+        @Suppress("DEPRECATION")
+        if (kotlinPropertiesProvider.kotlinCompilerExecutionStrategy == KotlinCompilerExecutionStrategy.OUT_OF_PROCESS) {
+            collector.reportOncePerGradleBuild(
+                project,
+                KotlinToolingDiagnostics.OutOfProcessExecutionStrategyUsage(),
+            )
+        }
+    }
+}

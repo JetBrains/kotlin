@@ -82,6 +82,7 @@ class RunToolInSeparateProcessTest {
             add("Args size: ${args.size}")
             addAll(args.map { "Arg: $it" })
             add("OK")
+            @Suppress("DEPRECATION")
             add(KotlinCompilerExecutionStrategy.OUT_OF_PROCESS.asFinishLogMessage)
         }
         assertEquals(expectedOutput, logger.messages)
