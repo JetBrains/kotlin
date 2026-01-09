@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.getResolvedKtSymbolOfNameReference
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
+import org.jetbrains.kotlin.resolve.ArrayFqNames
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirCollectionLiteralReference(
@@ -25,7 +25,7 @@ internal class KaFirCollectionLiteralReference(
 ) : KtCollectionLiteralReference(expression), KaFirReference {
     override fun KaFirSession.computeSymbols(): Collection<KaSymbol> = when (val fir = element.getOrBuildFir(resolutionFacade)) {
         // Collection literals inside annotations
-        is FirCollectionLiteral -> listOfNotNull(arrayOfSymbol(fir) ?: arrayOfSymbol(KaFirArrayOfSymbolProvider.arrayOf))
+        is FirCollectionLiteral -> listOfNotNull(arrayOfSymbol(fir) ?: arrayOfSymbol(ArrayFqNames.ARRAY_OF_FUNCTION))
 
         // Non-annotations position
         is FirFunctionCall -> listOfNotNull(fir.calleeReference.getResolvedKtSymbolOfNameReference(firSymbolBuilder))
