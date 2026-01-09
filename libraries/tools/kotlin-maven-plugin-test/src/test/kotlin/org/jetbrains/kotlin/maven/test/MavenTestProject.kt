@@ -11,6 +11,7 @@ import groovy.util.GroovyScriptEngine
 import org.apache.maven.shared.verifier.Verifier
 import org.jetbrains.kotlin.maven.test.TestVersions
 import org.jetbrains.kotlin.maven.test.checkOrWriteKotlinMavenTestSettingsXml
+import org.jetbrains.kotlin.maven.test.configureMavenWrapperInProjectDirectory
 import org.jetbrains.kotlin.maven.test.isTeamCityRun
 import org.jetbrains.kotlin.maven.test.printLog
 import org.junit.jupiter.api.AfterEach
@@ -28,12 +29,9 @@ import java.nio.file.Path
 import kotlin.io.bufferedReader
 import kotlin.io.path.*
 
-class MavenDistribution(val mavenHome: Path)
-
 class MavenTestProject(
     val name: String,
     val context: MavenTestExecutionContext,
-    val mavenDistribution: MavenDistribution,
     val workDir: Path,
     val settingsFile: Path,
     val buildOptions: MavenBuildOptions,
@@ -49,7 +47,6 @@ class MavenTestProject(
             workDir.absolutePathString(),
             null, // settingsFile is used only to extract local repo from there, but we pass it explicitly below
             false,
-            mavenDistribution.mavenHome.absolutePathString(),
         )
 
         val javaHome = context.javaHomeProvider(buildOptions.javaVersion).absolutePathString()
@@ -186,22 +183,21 @@ abstract class KotlinMavenTestBase {
 
     fun testProject(
         projectDir: String,
-        mavenVersion: String,
+        mavenVersion: TestVersions.Maven,
         buildOptions: MavenBuildOptions = this.buildOptions,
         code: (MavenTestProject.() -> Unit)? = null,
     ): MavenTestProject {
-        val workDir = copyProjectDir(projectDir, mavenVersion)
+        val workDir = copyProjectDir(projectDir, mavenVersion.version)
+        configureMavenWrapperInProjectDirectory(workDir, mavenVersion.version)
 
         context.verifyCommonBshLocation.copyTo(workDir.resolve("verify-common.bsh"))
 
         val settingsXml = workDir.resolve("settings.xml")
         settingsXml.checkOrWriteKotlinMavenTestSettingsXml(context.kotlinBuildRepo)
 
-        val mavenDistribution = context.mavenDistributionProvider(mavenVersion)
         val project = MavenTestProject(
             name = projectDir,
             context = context,
-            mavenDistribution = mavenDistribution,
             workDir = workDir,
             settingsFile = settingsXml,
             buildOptions = buildOptions
