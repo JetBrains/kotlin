@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -88,7 +89,22 @@ class DeclarationGenerator(
                 parameterTypes = irParameters.map { wasmModuleTypeTransformer.transformValueParameterType(it) },
                 resultTypes = listOfNotNull(resultType)
             )
+        val arity = irParameters.size
         wasmFileCodegenContext.defineFunctionType(declaration.symbol, wasmFunctionType)
+        val wasmFunctionTypeRef = wasmFileCodegenContext.referenceFunctionType(declaration.symbol)
+        val suspendFunctionNames = buildSet { repeat(3) { add(FqName("kotlin.coroutines.SuspendFunction$size.invoke")) } }
+        val suspendFunArity = suspendFunctionNames.indexOfFirst { declaration.hasEqualFqName(it) }.takeIf { it >= 0 }
+        if (suspendFunArity != null) {
+            wasmFileCodegenContext.defineContFunctionType(wasmFunctionType)
+            wasmFileCodegenContext.defineContType(WasmContType(arity, wasmFunctionTypeRef))
+
+            val kotlinAny = wasmModuleTypeTransformer.transformType(irBuiltIns.anyType)
+            val suspendedContFunctionType = WasmFunctionType(listOf(kotlinAny), listOf(kotlinAny))
+            wasmFileCodegenContext.defineContFunctionType(suspendedContFunctionType)
+            val suspendedContFunctionTypeRef = wasmFileCodegenContext.referenceContFunctionType(1)
+            val suspendedContType = WasmContType(1, suspendedContFunctionTypeRef)
+            wasmFileCodegenContext.defineContType(suspendedContType)
+        }
 
         if (declaration is IrSimpleFunction && declaration.modality == Modality.ABSTRACT) {
             return
@@ -609,6 +625,7 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
             is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NoExtern, location)
             is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any, location)
             is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location)
+            is WasmContRefType -> g.buildRefNull(WasmHeapType.Simple.Cont, location)
             WasmUnreachableType -> error("Unreachable type can't be initialized")
             else -> error("Unknown value type ${type.name}")
         }

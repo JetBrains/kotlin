@@ -337,11 +337,6 @@ private val innerClassConstructorCallsLoweringPhase = makeIrModulePhase<WasmBack
     name = "InnerClassConstructorCallsLowering",
 )
 
-private val suspendFunctionsLoweringPhase = makeIrModulePhase(
-    ::JsSuspendFunctionsLowering,
-    name = "SuspendFunctionsLowering",
-)
-
 private val addContinuationToNonLocalSuspendFunctionsLoweringPhase = makeIrModulePhase(
     ::AddContinuationToNonLocalSuspendFunctionsLowering,
     name = "AddContinuationToNonLocalSuspendFunctionsLowering",
@@ -676,7 +671,6 @@ fun getWasmLowerings(
         enumUsageLoweringPhase,
         enumEntryRemovalLoweringPhase,
 
-        suspendFunctionsLoweringPhase,
         initializersLoweringPhase,
         initializersCleanupLoweringPhase,
 
