@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_REFINES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_SOURCES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_HEADER_MODE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_HEADER_MODE_TARGET
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_IGNORE_CONST_OPTIMIZATION_ERRORS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INLINE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INTELLIJ_PLUGIN_ROOT
@@ -211,6 +212,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if (X_FRAGMENT_SOURCES in this) { arguments.fragmentSources = get(X_FRAGMENT_SOURCES)}
     if (X_FRAGMENTS in this) { arguments.fragments = get(X_FRAGMENTS)}
     if (X_HEADER_MODE in this) { arguments.headerMode = get(X_HEADER_MODE)}
+    if (X_HEADER_MODE_TARGET in this) { arguments.headerModeTarget = get(X_HEADER_MODE_TARGET)}
     if (X_IGNORE_CONST_OPTIMIZATION_ERRORS in this) { arguments.ignoreConstOptimizationErrors = get(X_IGNORE_CONST_OPTIMIZATION_ERRORS)}
     if (X_INLINE_CLASSES in this) { arguments.inlineClasses = get(X_INLINE_CLASSES)}
     if (X_INTELLIJ_PLUGIN_ROOT in this) { arguments.intellijPluginRoot = get(X_INTELLIJ_PLUGIN_ROOT)}
@@ -314,6 +316,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     try { this[X_FRAGMENT_SOURCES] = arguments.fragmentSources } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENTS] = arguments.fragments } catch (_: NoSuchMethodError) {  }
     try { this[X_HEADER_MODE] = arguments.headerMode } catch (_: NoSuchMethodError) {  }
+    try { this[X_HEADER_MODE_TARGET] = arguments.headerModeTarget } catch (_: NoSuchMethodError) {  }
     try { this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.ignoreConstOptimizationErrors } catch (_: NoSuchMethodError) {  }
     try { this[X_INLINE_CLASSES] = arguments.inlineClasses } catch (_: NoSuchMethodError) {  }
     try { this[X_INTELLIJ_PLUGIN_ROOT] = arguments.intellijPluginRoot } catch (_: NoSuchMethodError) {  }
@@ -505,6 +508,9 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
     public val X_HEADER_MODE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_HEADER_MODE")
+
+    public val X_HEADER_MODE_TARGET: CommonCompilerArgument<String> =
+        CommonCompilerArgument("X_HEADER_MODE_TARGET")
 
     public val X_IGNORE_CONST_OPTIMIZATION_ERRORS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_IGNORE_CONST_OPTIMIZATION_ERRORS")

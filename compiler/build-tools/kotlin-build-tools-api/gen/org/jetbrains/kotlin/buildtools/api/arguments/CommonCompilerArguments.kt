@@ -362,6 +362,18 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_HEADER_MODE", KotlinReleaseVersion(2, 3, 20))
 
     /**
+     *                 Generates output based on the downstream target it is used for:
+     * -Xheader-mode-target=compilation: Skips the IR generation for modules that don't have inline functions.
+     * -Xheader-mode-target=any: Can be used for any downstream target which doesn't require linking.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_HEADER_MODE_TARGET: CommonCompilerArgument<String> =
+        CommonCompilerArgument("X_HEADER_MODE_TARGET", KotlinReleaseVersion(2, 3, 20))
+
+    /**
      * Ignore all compilation exceptions while optimizing some constant expressions.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
