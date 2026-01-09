@@ -17,13 +17,16 @@ fun main(args: Array<String>) {
 
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
     val k1BoxTestDir = "multiplatform/k1"
+    // KT-68538: `box/inference/pcla/nestedNonExhaustiveIf.kt` times out with first stage version 2.0.0, and it's not convenient to add a timeout to test runner,
+    //           so this test is simply excluded from klib compatibility testing. Fixed in 2.0.20
+    val CUSTOM_FIRST_STAGE_EXCLUSION_PATTERN = "^nestedNonExhaustiveIf.kt\$"
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomJsCompilerFirstStageTest>(
                 annotations = listOf(annotation(HeavyTest::class.java))
             ) {
-                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, excludedPattern = CUSTOM_FIRST_STAGE_EXCLUSION_PATTERN)
                 model("boxInline")
             }
         }
