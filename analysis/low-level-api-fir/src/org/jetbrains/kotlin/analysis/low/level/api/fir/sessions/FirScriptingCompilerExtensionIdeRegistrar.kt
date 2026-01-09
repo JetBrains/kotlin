@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptConfiguratorExtensionImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptDefinitionProviderService
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptResolutionConfigurationExtensionImpl
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -30,21 +32,32 @@ internal class FirScriptingCompilerExtensionIdeRegistrar(
     private val scriptDefinitions: List<ScriptDefinition>,
 ) : FirExtensionRegistrar() {
 
+    @OptIn(K1SpecificScriptingServiceAccessor::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
-        val legacyDefinitionsProvider = ScriptDefinitionProvider.getInstance(project) ?: run {
-            if (scriptDefinitionSources.isNotEmpty() || scriptDefinitions.isNotEmpty()) {
-                CliScriptDefinitionProvider().also {
-                    it.setScriptDefinitionsSources(scriptDefinitionSources)
-                    it.setScriptDefinitions(scriptDefinitions)
-                }
-            } else return
-        }
         +FirScriptDefinitionProviderService.getFactory {
             hostConfiguration.with {
-                scriptCompilationConfigurationProvider(
-                    ScriptCompilationConfigurationProviderOverDefinitionProvider(legacyDefinitionsProvider)
-                )
-                scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
+                scriptCompilationConfigurationProvider.replaceOnlyDefault {
+                    val provider = ScriptDefinitionProvider.getInstance(project) ?: run {
+                        if (scriptDefinitionSources.isNotEmpty() || scriptDefinitions.isNotEmpty()) {
+                            CliScriptDefinitionProvider().also {
+                                it.setScriptDefinitionsSources(scriptDefinitionSources)
+                                it.setScriptDefinitions(scriptDefinitions)
+                            }
+                        } else null
+                    }
+                    provider?.let {
+                        ScriptCompilationConfigurationProviderOverDefinitionProvider(it)
+                    }
+                }
+                scriptRefinedCompilationConfigurationsCache.replaceOnlyDefault {
+                    val providerFromProject = ScriptConfigurationsProvider.getInstance(project)
+                    providerFromProject?.let {
+                        ScriptRefinedCompilationConfigurationCacheOverConfigurationsProvider(
+                            legacyConfigurationsProvider = it,
+                            definitionsProvider = this@with[ScriptingHostConfiguration.scriptCompilationConfigurationProvider]
+                        )
+                    } ?: ScriptRefinedCompilationConfigurationCacheImpl()
+                }
             }
         }
 
