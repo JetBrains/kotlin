@@ -94,9 +94,9 @@ class CollectionLiteralResolverThroughCompanion(context: ResolutionContext) : Co
                     components,
                     collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.DesugaredReceiverForOperatorOfCall),
                 )
-            source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.OperatorOfCall)
+            source = collectionLiteral.source
             calleeReference = buildSimpleNamedReference {
-                source = collectionLiteral.source
+                source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall)
                 name = OperatorNameConventions.OF
             }
             argumentList = collectionLiteral.argumentList
@@ -124,9 +124,9 @@ class CollectionLiteralResolverForStdlibType(context: ResolutionContext) : Colle
             }.apply {
                 setTypeOfQualifier(components)
             }
-            source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.OperatorOfCall)
+            source = collectionLiteral.source
             calleeReference = buildSimpleNamedReference {
-                source = collectionLiteral.source
+                source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall)
                 name = functionName
             }
             argumentList = collectionLiteral.argumentList

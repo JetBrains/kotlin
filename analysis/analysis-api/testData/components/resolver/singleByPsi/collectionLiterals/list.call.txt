@@ -1,2 +1,18 @@
 KtCollectionLiteralExpression(40,42): '[]'
-  null
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.List<kotlin.Boolean>
+        symbol = kotlin/collections/listOf(): kotlin.collections.List<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/collections/listOf
+    typeArgumentsMapping = {
+      T -> (kotlin.Boolean)
+    }

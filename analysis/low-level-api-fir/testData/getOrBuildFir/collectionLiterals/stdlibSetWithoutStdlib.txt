@@ -1,9 +1,9 @@
 KT element: KtValueArgument
-FIR element: FirErrorNamedReferenceImpl
+FIR element: FirFunctionCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-<Unresolved name: mutableSetOf>#
+Q|kotlin/collections|.<Unresolved name: mutableSetOf>#(Int(1))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] stdlibSetWithoutStdlib.kt
