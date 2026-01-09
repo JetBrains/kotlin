@@ -16,10 +16,10 @@ class A
 fun test() {
     <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(MyList.<!CANNOT_INFER_PARAMETER_TYPE!>of<!>("1", "2", "3")) // should not pass
     <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(MyList.<!CANNOT_INFER_PARAMETER_TYPE!>of<!>("0", <!ARGUMENT_TYPE_MISMATCH!>A()<!>)) // should not pass
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>["1", "2", "3"]<!>) // should not pass
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>["0", A()]<!>) // should not pass
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>["1", "2", "3"]<!>) // should not pass
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>["0", <!ARGUMENT_TYPE_MISMATCH!>A()<!>]<!>) // should not pass
     acceptList(MyList.of<String>())
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[]<!>) // should not pass
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>) // should not pass
 
     acceptStringList([])
     acceptStringList(["1", "2", "3"])

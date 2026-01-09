@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralAtomMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.K2Only
@@ -68,6 +69,23 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
         }
 
         return analyzeArgumentWithFixedParameterTypes(postponedArguments, analyze)
+    }
+
+    fun <A : CollectionLiteralAtomMarker> analyzeCollectionLiteralArgument(
+        postponedArguments: List<A>,
+        predicate: (KotlinTypeMarker) -> Boolean,
+        analyze: (A) -> Unit
+    ): Boolean {
+        val argumentToAnalyze = postponedArguments.firstOrNull { atom ->
+            !atom.analyzed && atom.expectedType?.let { predicate(it) } == true
+        }
+
+        if (argumentToAnalyze != null) {
+            analyze(argumentToAnalyze)
+            return true
+        }
+
+        return false
     }
 
     fun <A : PostponedResolvedAtomMarker> analyzeRemainingNotAnalyzedPostponedArgument(

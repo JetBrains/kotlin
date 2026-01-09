@@ -25,10 +25,10 @@ fun returnUnit() {
 fun returnWrappedInRunLike() = runLikeListInt { [1, 2, 3] }
 fun returnWrappedInRunLikeWrongType() = runLikeListInt { <!RETURN_TYPE_MISMATCH!>["1", "2", "3"]<!> }
 fun returnWrappedInRunLikeWrongExpectedType(): MyList<String> = <!RETURN_TYPE_MISMATCH!>runLikeListInt { [1, 2, 3] }<!>
-fun returnWrappedInGenericRunLike() = <!CANNOT_INFER_PARAMETER_TYPE!>runLike<!> { <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[1, 2, 3]<!> }
+fun returnWrappedInGenericRunLike() = runLike { [1, 2, 3] }
 fun returnWrappedInGenericRunLikeWithExpectedType(): MyList<Int> = runLike { [1, 2, 3] }
 fun returnWrappedInGenericRunLikeWithWrongExpectedType(): MyList<String> = runLike { <!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!> }
-fun <D> returnWrappedInGenericRunLikeWithTypeParameter(d: D) = <!CANNOT_INFER_PARAMETER_TYPE!>runLike<!> { <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[d, d, d]<!> }
+fun <D> returnWrappedInGenericRunLikeWithTypeParameter(d: D) = runLike { [d, d, d] }
 fun <E> returnWrappedInGenericRunLikeWithTypeParameterAndExpectedType(e: E): MyList<E> = runLike { [e, e, e] }
 
 val property: MyList<Int> get() = [1, 2, 3]

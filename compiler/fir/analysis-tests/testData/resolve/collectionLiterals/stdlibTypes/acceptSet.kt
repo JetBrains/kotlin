@@ -12,9 +12,9 @@ fun acceptListString(set: Set<List<String>>) {
 }
 
 fun test() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGeneric<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGeneric<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[1, 2, 3]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGeneric<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[42, "42"]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGeneric<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    acceptGeneric([1, 2, 3])
+    acceptGeneric([42, "42"])
 
     acceptString([])
     acceptString(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)

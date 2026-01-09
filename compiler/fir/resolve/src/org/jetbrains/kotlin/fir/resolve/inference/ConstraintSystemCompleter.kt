@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpect
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -77,6 +78,15 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             if (analyzeArgumentWithFixedParameterTypes(postponedArguments) {
                     analyzer.analyze(it, withPCLASession = false)
                 }
+            ) continue
+
+            val postponedCollectionLiterals = postponedArguments.filterIsInstance<ConeCollectionLiteralAtom>()
+
+            if (analyzeCollectionLiteralArgument(
+                    postponedCollectionLiterals,
+                    predicate = { it.typeConstructor() !is TypeVariableTypeConstructorMarker },
+                    analyze = { analyzer.analyze(it, withPCLASession = false) }
+                )
             ) continue
 
             val variableForFixation = findFirstVariableForFixation(

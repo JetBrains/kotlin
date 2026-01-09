@@ -30,6 +30,8 @@ interface PostponedResolvedAtomMarker {
     val analyzed: Boolean
 }
 
+interface CollectionLiteralAtomMarker : PostponedResolvedAtomMarker
+
 interface PostponedAtomWithRevisableExpectedType : PostponedResolvedAtomMarker {
     val revisedExpectedType: KotlinTypeMarker?
 
