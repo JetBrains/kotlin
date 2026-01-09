@@ -24,8 +24,8 @@ public class TestJavaUsage {
 // FILE: TestKotlinUsage.kt
 
 fun foo(a: TestJavaClass) {
-    TestJavaClass.getAge()      // It should be unresolved
-    TestJavaClass.setAge(1)     // It should be unresolved
+    TestJavaClass.<!UNRESOLVED_REFERENCE!>getAge<!>()
+    TestJavaClass.<!UNRESOLVED_REFERENCE!>setAge<!>(1)
 
     a.<!UNRESOLVED_REFERENCE!>getAge<!>()
     a.<!UNRESOLVED_REFERENCE!>setAge<!>(1)

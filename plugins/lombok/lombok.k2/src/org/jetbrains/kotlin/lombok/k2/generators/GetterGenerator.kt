@@ -87,7 +87,7 @@ class GetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
         return classSymbol.fir.declarations
             .filterIsInstance<FirJavaField>()
-            .collectWithNotNull { lombokService.getGetter(it.symbol) ?: classGetter }
+            .collectWithNotNull { lombokService.getGetter(it.symbol) ?: runIf(!it.isStatic) { classGetter } }
             .takeIf { it.isNotEmpty() }
     }
 

@@ -100,7 +100,7 @@ class SetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         return classSymbol.fir.declarations
             .filterIsInstance<FirJavaField>()
             .filter { it.isVar }
-            .collectWithNotNull { lombokService.getSetter(it.symbol) ?: classSetter }
+            .collectWithNotNull { lombokService.getSetter(it.symbol) ?: runIf(!it.isStatic) { classSetter } }
             .takeIf { it.isNotEmpty() }
     }
 
