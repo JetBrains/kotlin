@@ -171,6 +171,10 @@ where advanced options include:
                              build systems where header libraries can be used to replace downstream dependencies for which we only need to
                              see the type names and method signatures required to compile a given translation unit. Inline functions are still kept
                              with bodies.
+  -Xheader-mode-type={any|compilation}
+                             Generates output based on what it is used for:
+                             -Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
+                             -Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.
   -Xignore-const-optimization-errors
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xinline-classes           Enable experimental inline classes.
