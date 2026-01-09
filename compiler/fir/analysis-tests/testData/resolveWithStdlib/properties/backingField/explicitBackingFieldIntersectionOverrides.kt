@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-83589
 
 interface I {
@@ -11,7 +11,7 @@ open class A(x: String) {
 
     fun test(x: A?) {
         if (x is I) {
-            println(x.y.<!UNRESOLVED_REFERENCE!>length<!>)
+            println(x.y.length)
         }
     }
 }
