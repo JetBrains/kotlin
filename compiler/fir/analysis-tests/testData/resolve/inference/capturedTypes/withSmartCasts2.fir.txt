@@ -6,8 +6,8 @@ FILE: withSmartCasts2.kt
             R|<local>/state|.R|/State.id|.R|kotlin/CharSequence.length|
         }
         )
-        R|<local>/state|.R|/State.Custom.id|.R|kotlin/String.compareTo|(String())
-        R|<local>/state|.R|/State.Custom.index|
+        R|<local>/state|.R|/State.id|.<Unresolved name: compareTo>#(String())
+        R|<local>/state|.R|/State.index|
         R|<local>/state| = Q|State|.R|/State.Default.Default|()
     }
     public sealed interface State : R|kotlin/Any| {

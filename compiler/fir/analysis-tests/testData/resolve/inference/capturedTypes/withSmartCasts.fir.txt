@@ -6,7 +6,7 @@ FILE: withSmartCasts.kt
             R|<local>/state|.R|/State.id|
         }
         )
-        R|<local>/state|.R|/State.Custom.index|
+        R|<local>/state|.R|/State.index|
         R|<local>/state| = Q|State|.R|/State.Default.Default|()
     }
     public sealed interface State : R|kotlin/Any| {

@@ -189,6 +189,8 @@ object CheckDispatchReceiver : ResolutionStage() {
             )
         } else if (isReceiverNullable) {
             sink.yieldDiagnostic(InapplicableNullableReceiver(dispatchReceiverValueType))
+        } else if (isCandidateFromUnstableSmartcast) {
+            sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = dispatchReceiverValueType))
         }
     }
 }

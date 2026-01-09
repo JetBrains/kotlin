@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83449
 // LANGUAGE: +CacheLocalVariableScopes
 // FIR_DUMP
@@ -9,7 +9,7 @@ fun test() {
         state = State.Custom()
         state.id.length
     }
-    state.id.compareTo("")
+    state.id.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
     state.index
     state = State.Default()
 }
