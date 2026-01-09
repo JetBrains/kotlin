@@ -18,8 +18,7 @@ abstract class KtCollectionLiteralReference(expression: KtCollectionLiteralExpre
     KtSimpleReference<KtCollectionLiteralExpression>(expression), MultiRangeReference {
     companion object {
         private val COLLECTION_LITERAL_CALL_NAMES: List<Name> = buildList {
-            addAll(ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY.values)
-            add(ArrayFqNames.ARRAY_OF_FUNCTION)
+            addAll(ArrayFqNames.ARRAY_CALL_NAMES)
         }.sorted()
     }
 

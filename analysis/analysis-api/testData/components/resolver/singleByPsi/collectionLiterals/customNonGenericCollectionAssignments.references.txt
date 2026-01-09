@@ -2,6 +2,6 @@ KtCollectionLiteralExpression(136,138): '[]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'of' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf]
+    resolvesByNamesViolations: 'of' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, emptyArray, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf, ubyteArrayOf, uintArrayOf, ulongArrayOf, ushortArrayOf]
     symbols:
       (in MyList.Companion) operator fun of(vararg vals: kotlin.String): MyList

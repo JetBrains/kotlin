@@ -2,6 +2,6 @@ KtCollectionLiteralExpression(46,48): '[]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'mutableListOf' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf]
+    resolvesByNamesViolations: 'mutableListOf' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, emptyArray, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf, ubyteArrayOf, uintArrayOf, ulongArrayOf, ushortArrayOf]
     symbols:
       (in kotlin.collections) inline fun <T> mutableListOf(): kotlin.collections.MutableList<T>

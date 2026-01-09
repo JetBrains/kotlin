@@ -2,7 +2,7 @@ KtCollectionLiteralExpression(211,226): '["1", "2", "3"]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'of' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf]
+    resolvesByNamesViolations: 'of' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, emptyArray, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf, ubyteArrayOf, uintArrayOf, ulongArrayOf, ushortArrayOf]
     symbols:
       (in MyList.Companion) operator fun <T1> of(vararg vals: T1): MyList<T1>
 
