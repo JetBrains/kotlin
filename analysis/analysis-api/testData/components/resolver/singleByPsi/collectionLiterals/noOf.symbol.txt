@@ -1,5 +1,4 @@
 KtCollectionLiteralExpression(73,88): '["1", "2", "3"]'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-    ]
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNSUPPORTED_COLLECTION_LITERAL_TYPE: No 'of' operator is defined for the expected type.>
