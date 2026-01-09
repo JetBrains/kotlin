@@ -1,5 +1,5 @@
 {
-    "schemaVersion": 2,
+    "schemaVersion": 3,
     "releases": [
         {
             "name": "1.0.0",
@@ -2340,6 +2340,37 @@
                         },
                         "releaseVersionsMetadata": {
                             "introducedVersion": "2.3.20",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
+                        "name": "Xheader-mode-type",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Generates output based on what it is used for:\n-Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.\n-Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinHeaderModeType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": "any",
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": "{any|compilation}",
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.4.0",
                             "stabilizedVersion": null,
                             "deprecatedVersion": null,
                             "removedVersion": null

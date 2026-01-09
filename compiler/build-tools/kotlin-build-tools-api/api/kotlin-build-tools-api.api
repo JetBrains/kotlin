@@ -232,6 +232,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field X_EXPLICIT_API Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_EXPLICIT_BACKING_FIELDS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_HEADER_MODE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field X_HEADER_MODE_TYPE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_IGNORE_CONST_OPTIMIZATION_ERRORS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_INLINE_CLASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_LIST_PHASES Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
@@ -454,6 +455,14 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitA
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode : java/lang/Enum {
+	public static final field ANY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
+	public static final field COMPILATION Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget : java/lang/Enum {

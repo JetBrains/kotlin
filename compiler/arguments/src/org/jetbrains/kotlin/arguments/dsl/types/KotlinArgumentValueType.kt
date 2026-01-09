@@ -142,6 +142,19 @@ class KotlinExplicitApiModeType(
 }
 
 /**
+ * A value which accepts [HeaderMode] type.
+ */
+@Serializable
+class KotlinHeaderModeType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
+    override val defaultValue: ReleaseDependent<HeaderMode?> = ReleaseDependent(HeaderMode.any),
+) : KotlinArgumentValueType<HeaderMode> {
+    override fun stringRepresentation(value: HeaderMode?): String {
+        return value?.modeName.valueOrNullStringLiteral
+    }
+}
+
+/**
  * A value which accepts [ReturnValueCheckerMode] type.
  */
 @Serializable
