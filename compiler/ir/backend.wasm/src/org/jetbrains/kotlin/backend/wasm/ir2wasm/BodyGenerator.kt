@@ -872,6 +872,30 @@ class BodyGenerator(
         }
     }
 
+    private fun castAnyToInvokable(function: IrFunction, parentClass: IrClass, location: SourceLocation) {
+        require(function is IrSimpleFunction && function.isOverridable)
+        val realOverrideTargetClass = function.parentAsClass
+        val klass = when {
+            !realOverrideTargetClass.isInterface || parentClass.isInterface -> realOverrideTargetClass
+            else -> parentClass
+        }
+
+        val klassSymbol = klass.symbol
+        val vTableGcTypeReference = wasmFileCodegenContext.referenceVTableGcType(klassSymbol)
+
+        require(klass.isInterface)
+        require(!klassSymbol.isFunction())
+        body.commentGroupStart { "Interface call: ${function.fqNameWhenAvailable}" }
+        body.buildConstI64(wasmFileCodegenContext.referenceTypeId(klassSymbol), location)
+        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
+
+        body.buildRefCastStatic(vTableGcTypeReference, location)
+        val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
+            .indexOfFirst { it.function == function }
+        body.buildStructGet(vTableGcTypeReference, WasmSymbol(vfSlot), location)
+        body.commentGroupEnd()
+    }
+
     private fun generateRefCast(fromType: IrType, toType: IrType, isRefNullCast: Boolean, location: SourceLocation) {
         when {
             isDownCastAlwaysSuccessInRuntime(fromType, toType) -> {
@@ -1151,6 +1175,69 @@ class BodyGenerator(
                     body.buildInstr(WasmOp.RETURN, location)
                 }
                 body.buildDrop(location)
+            }
+
+            wasmSymbols.suspendIntrinsic -> {
+                body.buildSuspend(contTagId, location)
+            }
+
+            wasmSymbols.resumeThrowIntrinsic -> {
+                val wasmContinuation = functionContext.referenceLocal(1)
+
+                val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
+                val kotlinAnyRefType = WasmRefNullType(WasmHeapType.Type(kotlinAny))
+                val zeroArgContType = WasmHeapType.Type(wasmFileCodegenContext.referenceContType(1))
+                val blockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContType)))
+                wasmFileCodegenContext.defineContBlockType(blockType)
+                val blockTypeSymbol = wasmFileCodegenContext.referenceContBlockType(blockType)
+                body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
+                    // Throwable
+                    body.buildGetLocal(functionContext.referenceLocal(0), location)
+                    body.buildGetLocal(wasmContinuation, location)
+                    val contHandle = body.createNewContHandle(contTagId, idx)
+                    body.buildResumeThrow(zeroArgContType, exceptionTagId, contHandle, location)
+                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicValueResult), location)
+                    body.buildInstr(WasmOp.RETURN, location)
+                }
+                body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
+            }
+
+            wasmSymbols.resumeWithIntrinsic -> {
+                val wasmContinuation = functionContext.referenceLocal(0)
+
+                val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
+                val kotlinAnyRefType = WasmRefNullType(WasmHeapType.Type(kotlinAny))
+                val zeroArgContType = WasmHeapType.Type(wasmFileCodegenContext.referenceContType(1))
+                val blockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContType)))
+                wasmFileCodegenContext.defineContBlockType(blockType)
+                val blockTypeSymbol = wasmFileCodegenContext.referenceContBlockType(blockType)
+                body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
+                    // result: Result<T>
+                    body.buildGetLocal(functionContext.referenceLocal(1), location)
+                    body.buildGetLocal(wasmContinuation, location)
+                    val contHandle = body.createNewContHandle(contTagId, idx)
+                    body.buildResume(zeroArgContType, contHandle, location)
+                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicValueResult), location)
+                    body.buildInstr(WasmOp.RETURN, location)
+                }
+                body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
+            }
+
+            in wasmSymbols.suspendFunctionToContref -> {
+                val intrinsicIndex = wasmSymbols.suspendFunctionToContref.indexOfFirst { it == function.symbol }
+                val arity = intrinsicIndex + 2
+                val suspendFunctionClassType = function.parameters[0].type
+                val suspendFunctionInvoke = suspendFunctionClassType.classOrFail.functions.singleOrNull {
+                    it.owner.name.asString() == "invoke"
+                } ?: error("No `invoke` function for suspend function type\n${suspendFunctionClassType.dumpKotlinLike()}")
+                val contType = wasmFileCodegenContext.referenceContType(arity)
+                val bindContType = wasmFileCodegenContext.referenceContType(1)
+
+                body.buildGetLocal(functionContext.referenceLocal(0), location)
+                castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
+                body.buildContNew(contType, location)
+                body.buildContBind(contType, bindContType, location)
+                body.buildInstr(WasmOp.RETURN, location)
             }
 
             wasmSymbols.wasmArrayCopy -> {
@@ -1613,6 +1700,7 @@ class BodyGenerator(
         val rttiQualifierGetterFieldId = WasmSymbol(6)
         val rttiSimpleNameGetterFieldId = WasmSymbol(7)
         private val exceptionTagId = WasmSymbol(0)
+        private val contTagId = WasmSymbol(1)
         private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx(0)
     }
 }
