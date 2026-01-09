@@ -15,4 +15,4 @@ public class ValueDefaultChild extends ValueFinalDefault { }  // error: cannot i
 
 // FILE: TestKotlinUsage.kt
 
-class KotlinChild : ValueFinalDefault(1) // It shouldn't be OK
+class KotlinChild : <!FINAL_SUPERTYPE!>ValueFinalDefault<!>(1)

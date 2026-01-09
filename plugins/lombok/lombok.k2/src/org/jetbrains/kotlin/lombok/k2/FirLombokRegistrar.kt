@@ -19,7 +19,7 @@ class FirLombokRegistrar(private val lombokConfigFile: File?) : FirExtensionRegi
         +::LombokConstructorsGenerator
         +::BuilderGenerator
         +::SuperBuilderGenerator
-        +::ValueFieldVisibilityTransformer
+        +::DeclarationWithValueAnnStatusTransformer
 
         registerDiagnosticContainers(LombokDiagnostics)
     }
