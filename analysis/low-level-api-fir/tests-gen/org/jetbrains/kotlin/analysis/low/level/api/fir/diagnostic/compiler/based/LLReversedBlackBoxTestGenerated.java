@@ -60452,6 +60452,18 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("samWithAbstractToString2.kt")
+    public void testSamWithAbstractToString2() {
+      runTest("compiler/testData/codegen/box/sam/samWithAbstractToString2.kt");
+    }
+
+    @Test
+    @TestMetadata("samWithAbstractToString3.kt")
+    public void testSamWithAbstractToString3() {
+      runTest("compiler/testData/codegen/box/sam/samWithAbstractToString3.kt");
+    }
+
+    @Test
     @TestMetadata("smartCastSamConversion.kt")
     public void testSmartCastSamConversion() {
       runTest("compiler/testData/codegen/box/sam/smartCastSamConversion.kt");
