@@ -1,7 +1,6 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 @Suppress("NOTHING_TO_INLINE")
 inline fun foo(i4: Int, i5: Int): Int {
     try {
@@ -10,6 +9,9 @@ inline fun foo(i4: Int, i5: Int): Int {
         return i4
     }
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun bar(i1: Int, i2: Int, i3: Int): Int {
     return i1 + foo(i2, i3)

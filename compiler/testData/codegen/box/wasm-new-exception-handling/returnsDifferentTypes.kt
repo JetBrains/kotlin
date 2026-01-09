@@ -3,7 +3,7 @@
 // USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 // TODO: remove the test when KT-66906 will be resolved
 
-import kotlin.test.*
+// FILE: lib.kt
 
 val sb = StringBuilder()
 
@@ -25,6 +25,8 @@ inline fun <E> ReceiveChannel<E>.elementAtOrElse(index: Int, defaultValue: (Int)
             return 42 as E
         }
 
+// FILE: main.kt
+import kotlin.test.*
 fun <E> ReceiveChannel<E>.elementAt(index: Int): E =
         elementAtOrElse(index) { throw IndexOutOfBoundsException("qxx") }
 

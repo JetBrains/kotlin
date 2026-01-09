@@ -5,8 +5,10 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // REASON: SyntaxError: Undefined label '$l$loop'
 
+// FILE: lib.kt
 inline fun foo(block: () -> Unit) { js("block()") }
 
+// FILE: main.kt
 fun box(): String {
     while (true) {
         foo { break }

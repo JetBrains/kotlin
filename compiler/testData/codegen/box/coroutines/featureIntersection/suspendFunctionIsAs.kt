@@ -2,7 +2,16 @@
 // WASM_MUTE_REASON: SUSPEND_FUNCTION_CAST
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
 
+// FILE: lib.kt
+import kotlin.coroutines.*
+
+inline fun <reified T : suspend () -> Unit> checkReified(noinline x: (Any?) -> Unit) {
+    if(x is T) throw IllegalStateException("x is T")
+}
+
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 
@@ -24,10 +33,6 @@ suspend fun Any.suspendExtFun() {}
 class A {
     fun foo(a: Any) {}
     suspend fun suspendFoo() {}
-}
-
-inline fun <reified T : suspend () -> Unit> checkReified(noinline x: (Any?) -> Unit) {
-    if(x is T) throw IllegalStateException("x is T")
 }
 
 fun box(): String {

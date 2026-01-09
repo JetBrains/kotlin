@@ -1,11 +1,16 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-import helpers.*
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 import kotlin.coroutines.*
 
 inline fun inlinedLambda(block: () -> Unit) {
     return block()
 }
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
 
 suspend fun useInlined(): Boolean {
     inlinedLambda { return coroutineContext === EmptyCoroutineContext }

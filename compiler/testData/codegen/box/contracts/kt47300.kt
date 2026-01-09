@@ -1,6 +1,7 @@
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // WITH_STDLIB
 
+// FILE: lib.kt
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -27,6 +28,8 @@ inline fun <R, T> Content<T>.fold(
     return onContent(value)
 }
 
+// FILE: main.kt
+import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalContracts
 fun box(): String {

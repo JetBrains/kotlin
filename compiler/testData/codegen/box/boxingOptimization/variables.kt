@@ -1,13 +1,15 @@
 // WITH_STDLIB
 
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun <R, T> foo(x : R, block : (R) -> T) : T {
     var y = x
     var z = y
     z = x
     return block(z)
 }
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 fun box() : String {
     assertEquals(1, foo(1) { x -> x })

@@ -1,5 +1,15 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
+
+inline fun foo(x: (Int) -> Unit) {
+    for (i in 1..2) {
+        x(i)
+    }
+}
+
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -13,12 +23,6 @@ class Controller {
 
 fun builder(c: suspend Controller.() -> Unit) {
     c.startCoroutine(Controller(), EmptyContinuation)
-}
-
-inline fun foo(x: (Int) -> Unit) {
-    for (i in 1..2) {
-        x(i)
-    }
 }
 
 fun box(): String {

@@ -1,9 +1,15 @@
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +ContextParameters
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
+
 class A
 
-fun funWithContextType(x: context(A) () -> A) {}
 inline fun inlineFunWithContextType(x: context(A) () -> A) {}
+
+// FILE: main.kt
+
+fun funWithContextType(x: context(A) () -> A) {}
 
 val A.extensionProperty: A
     get() = A()

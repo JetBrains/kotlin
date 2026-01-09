@@ -2,6 +2,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z(val int: Int)
 
@@ -19,6 +20,7 @@ inline fun <R> s1L(x: L, fn: (Int, L) -> R) = fn(1, x)
 inline fun <R> s1Str(x: Str, fn: (Int, Str) -> R) = fn(1, x)
 inline fun <R> s1Obj(x: Obj, fn: (Int, Obj) -> R) = fn(1, x)
 
+// FILE: main.kt
 fun testS1Z(a: Z) = s1Z(a) { i, xx -> Z(xx.int + i) }
 fun testS1L(a: L) = s1L(a) { i, xx -> L(xx.long + i.toLong()) }
 fun testS1Str(a: Str) = s1Str(a) { i, xx -> Str(xx.string + i.toString()) }

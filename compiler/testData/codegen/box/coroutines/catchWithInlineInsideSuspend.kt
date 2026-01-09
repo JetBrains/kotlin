@@ -1,5 +1,17 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
+
+inline fun exceptionGet(a: () -> String): String {
+    try {
+        return a()
+    } catch (e: Throwable) {
+        return e.message!!
+    }
+}
+
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -9,14 +21,6 @@ class Controller {
 }
 
 fun faz(): String { throw IllegalStateException("OK") }
-
-inline fun exceptionGet(a: () -> String): String {
-    try {
-        return a()
-    } catch (e: Throwable) {
-        return e.message!!
-    }
-}
 
 suspend fun baz() {}
 

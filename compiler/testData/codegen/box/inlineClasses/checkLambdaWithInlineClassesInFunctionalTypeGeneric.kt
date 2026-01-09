@@ -1,14 +1,18 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// NO_CHECK_LAMBDA_INLINING
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class UInt<T: Int>(val value: T)
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class ULong<T: Long>(val value: T)
 
-fun foo(u: UInt<Int>, f: (UInt<Int>) -> ULong<Long>): ULong<Long> = f(u)
 inline fun inlinedFoo(u: UInt<Int>, f: (UInt<Int>) -> ULong<Long>): ULong<Long> = f(u)
+
+// FILE: main.kt
+fun foo(u: UInt<Int>, f: (UInt<Int>) -> ULong<Long>): ULong<Long> = f(u)
 
 fun mapUIntToULong(u: UInt<Int>): ULong<Long> = ULong(u.value.toLong())
 

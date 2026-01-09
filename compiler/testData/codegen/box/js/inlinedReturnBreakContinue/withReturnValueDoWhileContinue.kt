@@ -5,8 +5,10 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // REASON: SyntaxError: Undefined label '$l$loop'
 
+// FILE: lib.kt
 inline fun foo(block: () -> Int): Int  = js("block()")
 
+// FILE: main.kt
 fun box(): String {
     var sum = 0
     var i = 1

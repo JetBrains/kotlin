@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // TARGET_BACKEND: WASM
 
+// FILE: lib.kt
 import kotlin.reflect.KProperty1
 
 inline fun <reified T> tryCast(x: Any?, expected: String?): String? {
@@ -12,6 +13,17 @@ inline fun <reified T> tryCast(x: Any?, expected: String?): String? {
     return "Expected ClassCastException with message <$expected> but no exception was throwed"
 }
 
+inline fun <reified T : Any> nullAsT(): T = null as T
+
+inline fun <reified T> expectOk(x: Any?): String? =
+    try {
+        x as T
+        null
+    } catch (cce: ClassCastException) {
+        "Unexpected CCE: ${cce.message}"
+    }
+
+// FILE: main.kt
 fun tryCastToNothing(x: Any?, expected: String): String? {
     try {
         x as Nothing
@@ -78,16 +90,6 @@ fun tryCastGenericArray(): String? {
     }
     return "Expected ClassCastException with message <$expected> but no exception was thrown"
 }
-
-inline fun <reified T : Any> nullAsT(): T = null as T
-
-inline fun <reified T> expectOk(x: Any?): String? =
-    try {
-        x as T
-        null
-    } catch (cce: ClassCastException) {
-        "Unexpected CCE: ${cce.message}"
-    }
 
 interface I
 open class Base: I

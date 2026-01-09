@@ -3,12 +3,14 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 @Suppress("NOTHING_TO_INLINE")
 inline fun <reified T> foo (i2: Any): Boolean {
     return i2 is T
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun bar(i1: Int): Boolean {
     return foo<Double>(i1)

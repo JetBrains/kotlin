@@ -3,6 +3,13 @@
 // WASM_FAILS_IN: Wasmtime, WasmEdge
 // WITH_STDLIB
 // WITH_COROUTINES
+// FILE: lib.kt
+
+inline fun run(block: () -> Unit) {
+    block()
+}
+
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -17,10 +24,6 @@ class Controller {
 
 fun builder(c: suspend Controller.() -> Unit) {
     c.startCoroutine(Controller(), EmptyContinuation)
-}
-
-inline fun run(block: () -> Unit) {
-    block()
 }
 
 fun box(): String {

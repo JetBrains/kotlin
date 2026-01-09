@@ -1,7 +1,6 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 open class A<T1>()
 class B<T2>() : A<T2>()
 
@@ -9,6 +8,9 @@ class B<T2>() : A<T2>()
 inline fun <reified T: A<*>> foo(f: Any?): Boolean {
     return f is T?
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun bar(): Boolean {
     return foo<B<Int>>(B<Int>())

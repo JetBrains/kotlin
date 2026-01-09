@@ -2,14 +2,17 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
+// FILE: lib.kt
+inline fun <T> inlinedId(x: T): T = x
+inline fun <T> T.inlinedIdExtension(): T = this
+
+// FILE: main.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Foo(val value: Int)
 
 fun <T> id(x: T): T = x
-inline fun <T> inlinedId(x: T): T = x
 
 fun <T> T.idExtension(): T = this
-inline fun <T> T.inlinedIdExtension(): T = this
 
 fun test(f: Foo) {
     inlinedId(f) // box

@@ -1,11 +1,16 @@
 // WITH_STDLIB
-
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 import kotlin.test.*
 
 inline fun call(block1: () -> Unit, noinline block2: () -> Int): Int {
     block1()
     return block2()
 }
+
+// FILE: main.kt
+
+import kotlin.test.*
 
 fun box(): String {
     var x = 5

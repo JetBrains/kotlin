@@ -1,11 +1,19 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
 // WITH_REFLECT
-@file:OptIn(ExperimentalStdlibApi::class)
+
+// FILE: lib.kt
 import kotlin.reflect.typeOf
 
 inline fun <reified T> gBefore() = typeOf<List<T>>()
 inline fun <reified U> fBefore() = gBefore<List<U>>()
+
+inline fun <reified T> gAfter() = typeOf<List<T>>()
+inline fun <reified U> fAfter() = gAfter<List<U>>()
+
+// FILE: main.kt
+@file:OptIn(ExperimentalStdlibApi::class)
+import kotlin.reflect.typeOf
 
 fun box(): String {
     val before = fBefore<Int>().toString()
@@ -18,6 +26,3 @@ fun box(): String {
         return "FAIL: $before, $after"
     return "OK"
 }
-
-inline fun <reified T> gAfter() = typeOf<List<T>>()
-inline fun <reified U> fAfter() = gAfter<List<U>>()

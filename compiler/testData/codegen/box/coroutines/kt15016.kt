@@ -1,11 +1,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-import helpers.*
-
-import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
-import kotlin.coroutines.*
-
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 class Bar(val x: Any)
 inline fun Any.map(transform: (Any) -> Any) {
     when (this) {
@@ -22,6 +18,12 @@ class Foo(val value: Any) {
         }
     }
 }
+
+// FILE: main.kt
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.*
+import helpers.*
 
 suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume("OK")

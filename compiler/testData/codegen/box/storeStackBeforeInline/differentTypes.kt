@@ -1,8 +1,10 @@
 // WITH_STDLIB
 
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun bar(x: Int, y: Long, z: Byte, s: String) = x.toString() + y.toString() + z.toString() + s
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 fun foobar(x: Int, y: Long, s: String, z: Byte) = x.toString() + y.toString() + s + z.toString()
 

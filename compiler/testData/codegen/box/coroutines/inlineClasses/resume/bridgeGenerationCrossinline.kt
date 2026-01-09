@@ -1,22 +1,11 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-import helpers.*
+// FILE: lib.kt
 import kotlin.coroutines.*
-
-fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(EmptyContinuation)
-}
 
 @Suppress("UNSUPPORTED_FEATURE")
 inline class Result<T>(val a: Any?) {
     fun getOrThrow(): T = a as T
-}
-
-var c: Continuation<Any>? = null
-
-suspend fun <T> suspendMe(): T = suspendCoroutine {
-    @Suppress("UNCHECKED_CAST")
-    c = it as Continuation<Any>
 }
 
 abstract class ResultReceiver<T> {
@@ -29,6 +18,21 @@ inline fun <T> ResultReceiver(crossinline f: (Result<T>) -> Unit): ResultReceive
             f(result)
         }
     }
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
+
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(EmptyContinuation)
+}
+
+var c: Continuation<Any>? = null
+
+suspend fun <T> suspendMe(): T = suspendCoroutine {
+    @Suppress("UNCHECKED_CAST")
+    c = it as Continuation<Any>
+}
 
 fun test() {
     var invoked = false

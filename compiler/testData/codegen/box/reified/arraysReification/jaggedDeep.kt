@@ -1,9 +1,11 @@
+// FILE: lib.kt
 inline fun <reified T> jaggedArray(x: (Int, Int, Int) -> T): Array<Array<Array<T>>> = Array(1) { i ->
     Array(1) {
         j -> Array(1) { k -> x(i, j, k)  }
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     val x1: Array<Array<Array<String>>> = jaggedArray<String>() { x, y, z -> "$x-$y-$z" }
     if (x1[0][0][0] != "0-0-0") return "fail 1"

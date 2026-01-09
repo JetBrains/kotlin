@@ -29,7 +29,7 @@ FUN name:typeOfTriple1 visibility:private modality:FINAL returnType:kotlin.refle
         RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
           INLINED_BLOCK type=kotlin.reflect.KType origin=null
             inlinedFunctionSymbol: public final fun typeOfX <T1> (x: T1 of <root>.typeOfX): kotlin.reflect.KType [inline] declared in <root>
-            inlinedFunctionFileEntry: FILE_ENTRY path:funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt
+            inlinedFunctionFileEntry: FILE_ENTRY path:lib.kt
             VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:<root>.Triple<T2 of <root>.typeOfTriple1, T3 of <root>.typeOfTriple1, kotlin.Any?> [val]
               GET_VAR 'val tmp0: <root>.Triple<T2 of <root>.typeOfTriple1, T3 of <root>.typeOfTriple1, kotlin.Any?> [val] declared in <root>.typeOfTriple1' type=<root>.Triple<T2 of <root>.typeOfTriple1, T3 of <root>.typeOfTriple1, kotlin.Any?> origin=null
             RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
@@ -57,7 +57,7 @@ FUN name:typeOfTriple2 visibility:private modality:FINAL returnType:kotlin.refle
         RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
           INLINED_BLOCK type=kotlin.reflect.KType origin=null
             inlinedFunctionSymbol: public final fun typeOfX <T1> (x: T1 of <root>.typeOfX): kotlin.reflect.KType [inline] declared in <root>
-            inlinedFunctionFileEntry: FILE_ENTRY path:funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt
+            inlinedFunctionFileEntry: FILE_ENTRY path:lib.kt
             VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:<root>.Triple<T2 of <root>.typeOfTriple2, kotlin.Any?, T4 of <root>.typeOfTriple2> [val]
               GET_VAR 'val tmp0: <root>.Triple<T2 of <root>.typeOfTriple2, kotlin.Any?, T4 of <root>.typeOfTriple2> [val] declared in <root>.typeOfTriple2' type=<root>.Triple<T2 of <root>.typeOfTriple2, kotlin.Any?, T4 of <root>.typeOfTriple2> origin=null
             RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'

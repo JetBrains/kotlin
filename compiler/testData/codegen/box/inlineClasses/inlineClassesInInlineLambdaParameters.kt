@@ -2,15 +2,17 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
+// FILE: lib.kt
+inline fun <T, R> s0(x: T, fn: (Int, T) -> R) = fn(0, x)
+
+inline fun <T, R> weirdMix(x: T, fn: (Int, T, Long, T) -> R) = fn(0, x, 0L, x)
+
+// FILE: main.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z(val int: Int)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class L(val long: Long)
-
-inline fun <T, R> s0(x: T, fn: (Int, T) -> R) = fn(0, x)
-
-inline fun <T, R> weirdMix(x: T, fn: (Int, T, Long, T) -> R) = fn(0, x, 0L, x)
 
 fun testS0Z(x: Z) = s0(x) { _, xx -> Z(xx.int + 1) }
 fun testS0L(x: L) = s0(x) { _, xx -> L(xx.long + 1L) }

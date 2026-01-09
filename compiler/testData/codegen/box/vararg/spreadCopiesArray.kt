@@ -2,6 +2,7 @@
 
 import kotlin.test.*
 
+// FILE: lib.kt
 fun <T> copyArray(vararg data: T): Array<out T> = data
 
 inline fun <reified T> reifiedCopyArray(vararg data: T): Array<out T> = data
@@ -15,6 +16,9 @@ fun copyLongArray(vararg data: Long): LongArray = data
 fun copyFloatArray(vararg data: Float): FloatArray = data
 fun copyDoubleArray(vararg data: Double): DoubleArray = data
 fun copyStringArray(vararg data: String): Array<out String> = data
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun box(): String {
     val sarr = arrayOf("OK")

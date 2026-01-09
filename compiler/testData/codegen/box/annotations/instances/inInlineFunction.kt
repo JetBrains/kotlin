@@ -1,7 +1,7 @@
 // IGNORE_DEXING
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
-
+// FILE: lib.kt
 import kotlin.test.*
 
 annotation class A(val i: Int)
@@ -9,6 +9,10 @@ annotation class A(val i: Int)
 inline fun foo(i: Int): A = A(i)
 
 inline fun bar(f: () -> Int): A = A(f())
+
+// FILE: main.kt
+
+import kotlin.test.*
 
 class C {
     fun one(): A = foo(1)

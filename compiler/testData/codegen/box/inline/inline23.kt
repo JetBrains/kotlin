@@ -1,10 +1,12 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 inline fun <reified T> foo(i2: Any): T {
     return i2 as T
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun bar(i1: Int): Int {
     return foo<Int>(i1)

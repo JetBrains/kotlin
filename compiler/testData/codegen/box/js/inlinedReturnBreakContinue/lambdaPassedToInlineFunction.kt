@@ -8,13 +8,15 @@
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^^^ Source code is not compiled in JS.
 
+// FILE: lib.kt
+inline fun foo(<!UNUSED_PARAMETER!>block<!>: () -> Unit) = js("block()")
+
+// FILE: main.kt
 import kotlin.test.assertEquals
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
 public annotation class SomeAnnotation
-
-inline fun foo(<!UNUSED_PARAMETER!>block<!>: () -> Unit) = js("block()")
 
 fun box(): String {
     val visited = mutableListOf<Pair<Int, Int>>()

@@ -1,7 +1,9 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
+// FILE: lib.kt
 inline fun <T : CharSequence> Int.foo(a: T) = a.length + this
 
+// FILE: main.kt
 fun <T : CharSequence> Int.bar(a: T) = a.length + this
 
 fun box(): String {

@@ -2,13 +2,15 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
+// FILE: lib.kt
+inline fun <reified T> Any?.checkcast(): T = this as T
+
+// FILE: main.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class AsAny<T>(val x: Any?)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class AsInt(val x: Int)
-
-inline fun <reified T> Any?.checkcast(): T = this as T
 
 object Reference {
     fun <T, R> transform(a: AsAny<T>): AsAny<R> = a as AsAny<R>

@@ -4,17 +4,10 @@
 // TARGET_BACKEND: JS_IR
 // TARGET_BACKEND: JS_IR_ES6
 
+// FILE: lib.kt
 interface Foo {
     fun foo(): String
     fun bar(): String
-}
-
-value class Value(val x: Int) : Foo, Comparable<Value> {
-    override fun foo() = "FOO $x"
-
-    override fun bar() = "BAR $x"
-
-    override fun compareTo(other: Value) = x.compareTo(other.x)
 }
 
 inline fun <T> foo(a: T, b: T): String where T: Foo, T: Comparable<T> {
@@ -23,6 +16,15 @@ inline fun <T> foo(a: T, b: T): String where T: Foo, T: Comparable<T> {
 
 inline fun <T> bar(a: T, b: T): String where T: Comparable<T>, T: Foo {
     return if (a > b) a.bar() else b.bar()
+}
+
+// FILE: main.kt
+value class Value(val x: Int) : Foo, Comparable<Value> {
+    override fun foo() = "FOO $x"
+
+    override fun bar() = "BAR $x"
+
+    override fun compareTo(other: Value) = x.compareTo(other.x)
 }
 
 fun box(): String {

@@ -1,11 +1,14 @@
 // ISSUE: KT-58874
 // WITH_STDLIB
 
+// FILE: lib.kt
+inline fun <M> remember(block: () -> M): M = block()
+
+// FILE: main.kt
 import kotlin.reflect.KProperty
 
 class State<S>(var value: S)
 operator fun <V> State<V>.getValue(thisRef: Any?, property: KProperty<*>) = value
-inline fun <M> remember(block: () -> M): M = block()
 
 // list should have a type of List<Int>, not Any?
 val list0 by remember { State(listOf(1)) }

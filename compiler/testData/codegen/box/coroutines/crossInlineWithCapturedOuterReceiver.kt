@@ -1,8 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-import helpers.*
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+// FILE: lib.kt
 
 interface Consumer { fun consume(s: String) }
 
@@ -13,6 +11,11 @@ inline fun crossInlineBuilderConsumer(crossinline block: (String) -> Unit) = obj
 }
 
 inline fun inlineBuilder(block: () -> Consumer) = block()
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)

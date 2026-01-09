@@ -6,8 +6,10 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // REASON: SyntaxError: Undefined label '$l$loop'
 
+// FILE: lib.kt
 inline fun foo(block: () -> Int): Int  = js("block()")
 
+// FILE: main.kt
 fun box(): String {
     val resultNonLabeled = testNonLabeledBreaks()
     if (resultNonLabeled != (1)+(1+2)+(1+2)+(1+2)) return "FAIL testNonLabeledBreaks: $resultNonLabeled"

@@ -1,3 +1,4 @@
+// FILE: lib.kt
 inline fun less(a: Comparable<Double>, b: Double): Boolean {
     return a < b
 }
@@ -30,6 +31,7 @@ inline fun equals754(a: Double, b: Double): Boolean {
     return a == b
 }
 
+// FILE: main.kt
 fun box(): String {
     if (!less(-0.0, 0.0)) return "fail 1"
     if (equals(-0.0, 0.0)) return "fail 2"

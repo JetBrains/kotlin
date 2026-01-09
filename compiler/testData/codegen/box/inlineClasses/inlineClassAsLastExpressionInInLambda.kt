@@ -1,7 +1,12 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
+// NO_CHECK_LAMBDA_INLINING
 
+// FILE: lib.kt
+inline fun <R> inlinedRun(block: () -> R): R = block()
+
+// FILE: main.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Name(private val value: String) {
     fun asValue(): String = value
@@ -42,5 +47,4 @@ fun box(): String {
     return "OK"
 }
 
-inline fun <R> inlinedRun(block: () -> R): R = block()
 fun <R> notInlinedRun(block: () -> R): R = block()

@@ -1,10 +1,12 @@
 // WITH_STDLIB
 
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun <reified T> copy(c: Collection<T>): Array<T> {
     return c.toTypedArray()
 }
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 fun box(): String {
     val a: Array<String> = copy(listOf("a", "b", "c"))

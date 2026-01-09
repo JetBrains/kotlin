@@ -25,7 +25,7 @@ FUN name:fBefore visibility:private modality:FINAL returnType:kotlin.reflect.KTy
         RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
           INLINED_BLOCK type=kotlin.reflect.KType origin=null
             inlinedFunctionSymbol: public final fun gBefore <T1> (x: T1 of <root>.gBefore): kotlin.reflect.KType [inline] declared in <root>
-            inlinedFunctionFileEntry: FILE_ENTRY path:twoFunWithReifiedTypeParametersInlineFunWithTwoTypeParameters.kt
+            inlinedFunctionFileEntry: FILE_ENTRY path:lib.kt
             VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:kotlin.Pair<T2 of <root>.fBefore, kotlin.Any?> [val]
               GET_VAR 'val tmp0: kotlin.Pair<T2 of <root>.fBefore, kotlin.Any?> [val] declared in <root>.fBefore' type=kotlin.Pair<T2 of <root>.fBefore, kotlin.Any?> origin=null
             RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
@@ -57,7 +57,7 @@ FUN name:fAfter visibility:private modality:FINAL returnType:kotlin.reflect.KTyp
         RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
           INLINED_BLOCK type=kotlin.reflect.KType origin=null
             inlinedFunctionSymbol: public final fun gAfter <T1> (x: T1 of <root>.gAfter): kotlin.reflect.KType [inline] declared in <root>
-            inlinedFunctionFileEntry: FILE_ENTRY path:twoFunWithReifiedTypeParametersInlineFunWithTwoTypeParameters.kt
+            inlinedFunctionFileEntry: FILE_ENTRY path:lib.kt
             VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:kotlin.Pair<T2 of <root>.fAfter, kotlin.Any?> [val]
               GET_VAR 'val tmp0: kotlin.Pair<T2 of <root>.fAfter, kotlin.Any?> [val] declared in <root>.fAfter' type=kotlin.Pair<T2 of <root>.fAfter, kotlin.Any?> origin=null
             RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'

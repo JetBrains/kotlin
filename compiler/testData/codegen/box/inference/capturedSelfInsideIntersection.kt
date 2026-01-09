@@ -5,6 +5,7 @@
 // IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: 2.0.0 2.1.0
 // ^^^ KT-74999 fixed in 2.2.0-Beta2
 
+// FILE: lib.kt
 import kotlin.reflect.KClass
 
 interface GraphQlTester {
@@ -24,6 +25,9 @@ inline fun <reified U : Any> GraphQlTester.Path.isEqualTo(expected: U?) {
     // Type parameter T of isEqualTo shouldn't be inferred to Nothing
     else entity(U::class).isEqualTo(expected)
 }
+
+// FILE: main.kt
+import kotlin.reflect.KClass
 
 open class EntityImpl<D> : GraphQlTester.Entity<D, EntityImpl<D>> {
     override fun <T : EntityImpl<D>> isEqualTo(expected: Any?): T = this as T

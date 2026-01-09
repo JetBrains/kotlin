@@ -2,6 +2,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Result<out T>(val value: Any?) {
     fun exceptionOrNull(): Throwable? =
@@ -39,6 +40,7 @@ inline fun <R, T : R> Result<T>.getOrElse(onFailure: (exception: Throwable) -> R
     }
 }
 
+// FILE: main.kt
 
 class A {
     fun f() = runCatching { "OK" }.getOrElse { throw it }

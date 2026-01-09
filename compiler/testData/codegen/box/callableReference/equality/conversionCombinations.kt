@@ -1,15 +1,19 @@
 // LANGUAGE: +SuspendConversion
 // WITH_STDLIB
 // IGNORE_BACKEND: JVM_IR, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR, JVM_IR_SERIALIZE
+// FILE: lib.kt
+
+inline fun inlineF(a:Int, vararg b: String, c: Int = 0) = 0
+inline fun <reified T> inlineReifiedF(a: T, vararg b: String, c: Int = 0) = 0
+
+// FILE: main.kt
 
 fun checkEqual(x: Any, y: Any) {
     if (x != y || y != x) throw AssertionError("$x and $y should be equal")
     if (x.hashCode() != y.hashCode()) throw AssertionError("$x and $y should have the same hash code")
 }
 
-
-inline fun inlineF(a:Int, vararg b: String, c: Int = 0) = 0
-inline fun <reified T> inlineReifiedF(a: T, vararg b: String, c: Int = 0) = 0
 fun normalF(a:Int, vararg b: String, c: Int = 0) = 0
 
 fun noConversion(ref: (Int, Array<String>, Int) -> Int) = ref

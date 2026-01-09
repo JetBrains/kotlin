@@ -1,7 +1,6 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 var log: String = ""
 
 inline fun <T> runLogged(entry: String, action: () -> T): T {
@@ -11,6 +10,9 @@ inline fun <T> runLogged(entry: String, action: () -> T): T {
 
 inline operator fun String.provideDelegate(host: Any?, p: Any): String =
         runLogged("tdf($this);") { this }
+
+// FILE: main.kt
+import kotlin.test.*
 
 operator fun String.getValue(receiver: Any?, p: Any): String =
         runLogged("get($this);") { this }

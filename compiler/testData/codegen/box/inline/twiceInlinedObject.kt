@@ -1,7 +1,6 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 val sb = StringBuilder()
 
 inline fun exec(f: () -> Unit) = f()
@@ -14,6 +13,9 @@ inline fun test2() {
 }
 
 inline fun noExec(f: () -> Unit) { }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun box(): String {
     exec {

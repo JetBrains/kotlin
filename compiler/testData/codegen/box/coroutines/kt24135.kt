@@ -1,10 +1,10 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 
+// FILE: main.kt
 import helpers.EmptyContinuation
 import kotlin.coroutines.*
 
-var result = ""
 lateinit var c: Continuation<Unit>
 
 fun builder(block: suspend () -> Unit) {
@@ -28,6 +28,11 @@ suspend fun bar() {
         c = cont
     }
 }
+
+// FILE: lib.kt
+import kotlin.coroutines.*
+
+var result = ""
 
 inline fun foo(crossinline coroutine: suspend () -> Unit): suspend () -> Unit {
     return {

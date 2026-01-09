@@ -1,10 +1,12 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 var log = ""
 
 inline fun foo(x: Int, action: (Int) -> Unit) = action(x)
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun box(): String {
     var x = 23

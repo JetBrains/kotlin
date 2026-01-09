@@ -1,3 +1,4 @@
+// FILE: lib.kt
 inline fun (Int.() -> String).foo(): String {
     return noInlineRun(this)
 }
@@ -10,4 +11,5 @@ inline var (Int.() -> String).bar: String
 
 fun noInlineRun(f: Int.() -> String): String { return f(1) }
 
+// FILE: main.kt
 fun box() = { a: Int -> if (a == 1) "O" else "FA" }.foo() + { a: Int -> if (a == 1) "K" else "IL" }.bar

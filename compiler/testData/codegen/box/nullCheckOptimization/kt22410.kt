@@ -1,11 +1,4 @@
-fun box(): String {
-    defineFunc<String>()
-
-    func(1)
-
-    return if (testedEquals) "OK" else "Fail"
-}
-
+// FILE: lib.kt
 var func: (Any) -> Unit = {}
 
 var testedEquals = false
@@ -17,4 +10,13 @@ inline fun <reified T> defineFunc() {
         if (nullable == null)
             testedEquals = true
     }
+}
+
+// FILE: main.kt
+fun box(): String {
+    defineFunc<String>()
+
+    func(1)
+
+    return if (testedEquals) "OK" else "Fail"
 }

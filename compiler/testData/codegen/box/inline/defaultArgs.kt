@@ -1,7 +1,6 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 val sb = StringBuilder()
 
 class Z
@@ -9,6 +8,9 @@ class Z
 inline fun Z.foo(x: Int = 42, y: Int = x) {
     sb.appendLine(y)
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun box(): String {
     val z = Z()

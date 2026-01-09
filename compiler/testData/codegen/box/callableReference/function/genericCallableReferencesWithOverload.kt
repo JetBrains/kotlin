@@ -1,16 +1,20 @@
 // WITH_STDLIB
 // WITH_REFLECT
+// FILE: lib.kt
+import kotlin.test.assertEquals
+
+inline fun <reified T> bar(f: (T) -> Unit, tType: String): T? {
+    assertEquals(tType, T::class.simpleName)
+    return null
+}
+
+// FILE: main.kt
 
 import kotlin.test.assertEquals
 
 fun foo(x: Int?) {}
 fun foo(y: String?) {}
 fun foo(z: Boolean) {}
-
-inline fun <reified T> bar(f: (T) -> Unit, tType: String): T? {
-    assertEquals(tType, T::class.simpleName)
-    return null
-}
 
 fun box(): String {
     val a1: Int? = bar(::foo, "Int")

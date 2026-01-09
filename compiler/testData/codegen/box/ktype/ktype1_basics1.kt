@@ -5,13 +5,17 @@
 // WITH_STDLIB
 // WITH_REFLECT
 
-import kotlin.test.*
+// FILE: lib.kt
 import kotlin.reflect.*
 
 @OptIn(ExperimentalStdlibApi::class)
 inline fun <reified R> kType() = typeOf<R>()
 
 inline fun <reified R> kType(obj: R) = kType<R>()
+
+// FILE: main.kt
+import kotlin.test.*
+import kotlin.reflect.*
 
 class C<T>
 class D

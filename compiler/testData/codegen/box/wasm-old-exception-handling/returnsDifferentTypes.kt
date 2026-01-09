@@ -3,8 +3,7 @@
 // USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 // WASM_FAILS_IN: Wasmtime, WasmEdge
 
-import kotlin.test.*
-
+// FILE: lib.kt
 val sb = StringBuilder()
 
 class ReceiveChannel<out E>
@@ -19,11 +18,14 @@ inline fun <E, R> ReceiveChannel<E>.consume(block: ReceiveChannel<E>.() -> R): R
 }
 
 inline fun <E> ReceiveChannel<E>.elementAtOrElse(index: Int, defaultValue: (Int) -> E): E =
-        consume {
-            if (index < 0)
-                return defaultValue(index)
-            return 42 as E
-        }
+    consume {
+        if (index < 0)
+            return defaultValue(index)
+        return 42 as E
+    }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun <E> ReceiveChannel<E>.elementAt(index: Int): E =
         elementAtOrElse(index) { throw IndexOutOfBoundsException("qxx") }

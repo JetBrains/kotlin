@@ -1,10 +1,19 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 
+// FILE: lib.kt
 import kotlin.experimental.ExperimentalTypeInference
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 import helpers.*
+
+interface Flow<out T> {
+    suspend fun collect(collector: FlowCollector<T>)
+}
+
+fun interface FlowCollector<in T> {
+    suspend fun emit(value: T)
+}
 
 @OptIn(ExperimentalTypeInference::class)
 inline fun <T, R> Flow<T>.unsafeTransform(
@@ -14,14 +23,6 @@ inline fun <T, R> Flow<T>.unsafeTransform(
         // kludge, without it Unit will be returned and TCE won't kick in, KT-28938
         return@collect transform(value)
     }
-}
-
-interface Flow<out T> {
-    suspend fun collect(collector: FlowCollector<T>)
-}
-
-fun interface FlowCollector<in T> {
-    suspend fun emit(value: T)
 }
 
 @OptIn(ExperimentalTypeInference::class)
@@ -37,6 +38,7 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
+// FILE: main.kt
 fun box(): String {
     var x = "init"
     

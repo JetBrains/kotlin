@@ -1,12 +1,15 @@
 // WITH_STDLIB
 // WITH_REFLECT
-
-
-import kotlin.test.*
+// FILE: lib.kt
 import kotlin.reflect.*
 
 @OptIn(ExperimentalStdlibApi::class)
 inline fun <reified R> kType() = typeOf<R>()
+
+// FILE: main.kt
+
+import kotlin.test.*
+import kotlin.reflect.*
 
 class D
 class Outer<T> {

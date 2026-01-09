@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// FILE: lib.kt
 import kotlin.test.*
 import kotlin.coroutines.*
 
@@ -48,6 +49,10 @@ inline fun <T, R: Any> Flow<T>.mapNotNull(crossinline transform: suspend (value:
 fun <T> flowOf(value: T): Flow<T> = unsafeFlow {
     emit(value)
 }
+
+// FILE: main.kt
+import kotlin.test.*
+import kotlin.coroutines.*
 
 suspend fun <T> Flow<T>.toList(): List<T> {
     val result = mutableListOf<T>()

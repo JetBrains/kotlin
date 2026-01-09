@@ -1,6 +1,7 @@
 // IGNORE_BACKEND_K1: ANY
 // REASON: KT-25341
 
+// FILE: lib.kt
 inline fun foo(): String {
     return object {
         fun func(): String {
@@ -37,4 +38,5 @@ inline val bar: String get() {
     }.func()
 }
 
+// FILE: main.kt
 fun box(): String = foo() + bar

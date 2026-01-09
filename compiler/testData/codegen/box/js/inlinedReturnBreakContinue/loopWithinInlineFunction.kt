@@ -6,11 +6,29 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // REASON: SyntaxError: Undefined label '$l$loop'
 
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun <T> Iterable<T>.myForEach(action: (T) -> Unit): Unit {
     for (element in this) js("action(element)")
 }
+
+inline fun <T> Iterable<T>.myForEachWithBreak(dealBreaker: T, action: (T) -> Unit): Unit {
+    for (element in this) {
+        if (element == dealBreaker)
+            break
+        action(element)
+    }
+}
+
+inline fun <T> Iterable<T>.myForEachWithContinue(skipper: T, action: (T) -> Unit): Unit {
+    for (element in this) {
+        if (element == skipper)
+            continue
+        action(element)
+    }
+}
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 private fun testMyForEach() {
     val visited = mutableListOf<Pair<Int, Int>>()
@@ -27,14 +45,6 @@ private fun testMyForEach() {
     assertEquals(listOf(1 to 1, 1 to 2), visited)
 }
 
-inline fun <T> Iterable<T>.myForEachWithBreak(dealBreaker: T, action: (T) -> Unit): Unit {
-    for (element in this) {
-        if (element == dealBreaker)
-            break
-        action(element)
-    }
-}
-
 private fun testMyForEachWithBreak() {
     val visited = mutableListOf<Pair<Int, Int>>()
 
@@ -48,14 +58,6 @@ private fun testMyForEachWithBreak() {
     }
 
     assertEquals(listOf(1 to 1, 1 to 2, 2 to 1, 2 to 2), visited)
-}
-
-inline fun <T> Iterable<T>.myForEachWithContinue(skipper: T, action: (T) -> Unit): Unit {
-    for (element in this) {
-        if (element == skipper)
-            continue
-        action(element)
-    }
 }
 
 private fun testMyForEachWithContinue() {

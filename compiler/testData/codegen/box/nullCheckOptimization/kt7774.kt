@@ -1,3 +1,4 @@
+// FILE: lib.kt
 var flag = false
 
 inline fun foo(c: String? = null) {
@@ -6,6 +7,7 @@ inline fun foo(c: String? = null) {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     foo()
     return if (flag) "fail" else "OK"

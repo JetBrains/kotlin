@@ -2,6 +2,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Result<T>(val a: Any?) {
     fun getOrThrow(): T = a as T
@@ -18,6 +19,7 @@ inline fun <T> ResultReceiver(crossinline f: (Result<T>) -> Unit): ResultReceive
         }
     }
 
+// FILE: main.kt
 fun test() {
     var invoked = false
     val receiver = ResultReceiver<String> { result ->

@@ -1,3 +1,4 @@
+// FILE: lib.kt
 inline fun <reified T> Any?.check(): Boolean {
     return this is T
 }
@@ -6,7 +7,7 @@ inline fun <reified T> Any?.check2(): Boolean {
     return check<T>()
 }
 
-
+// FILE: main.kt
 var log = ""
 fun log(a: Any?) {
     log += a.toString() + ";"

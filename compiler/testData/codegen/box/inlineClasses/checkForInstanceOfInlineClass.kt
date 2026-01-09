@@ -2,6 +2,10 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
+// FILE: lib.kt
+inline fun <reified T> Any?.instanceOf(): Boolean = this is T
+
+// FILE: main.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class UInt(val u: Int) {
     override fun toString(): String {
@@ -11,8 +15,6 @@ value class UInt(val u: Int) {
 
 fun Any.isUInt(): Boolean = this is UInt
 fun Any.notIsUInt(): Boolean = this !is UInt
-
-inline fun <reified T> Any?.instanceOf(): Boolean = this is T
 
 fun UInt.extension(): String = "OK:"
 

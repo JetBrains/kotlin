@@ -2,14 +2,16 @@
 // WITH_STDLIB
 // DUMP_IR
 
+// FILE: lib.kt
+inline fun inlinedUInt(vararg us: UInt): UIntArray = us
+
+// FILE: main.kt
 fun uint(vararg us: UInt): UIntArray = us
 
 fun nullableUInt(vararg us: UInt?): UIntArray {
     val ls = us.filterNotNull()
     return UIntArray(ls.size) { ls[it] }
 }
-
-inline fun inlinedUInt(vararg us: UInt): UIntArray = us
 
 annotation class AnnoUByte(vararg val args: UByte)
 @AnnoUByte()

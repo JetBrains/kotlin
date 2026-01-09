@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// FILE: main.kt
 import kotlin.test.*
 
 fun box(): String {
@@ -9,6 +10,13 @@ fun box(): String {
 
 // Based on https://youtrack.jetbrains.com/issue/KT-42000#focus=Comments-27-4404934.0-0
 
+class Reproducer {
+    private var someListOfLongs = mutableListOf<Long>(1L)
+
+    fun repro() = someListOfLongs.median()
+}
+
+// FILE: lib.kt
 val Int.isEven get() = this % 2 == 0
 
 inline operator fun <reified T : Number> T.plus(other: T): T = when (T::class) {
@@ -28,10 +36,4 @@ inline fun <reified T : Number> Collection<T>.median(): Double {
     } else {
         sorted[size / 2] + sorted[size / 2 + 1]
     }.toDouble()
-}
-
-class Reproducer {
-    private var someListOfLongs = mutableListOf<Long>(1L)
-
-    fun repro() = someListOfLongs.median()
 }

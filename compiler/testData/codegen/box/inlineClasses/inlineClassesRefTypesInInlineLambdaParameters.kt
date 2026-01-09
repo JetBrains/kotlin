@@ -2,15 +2,17 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
+// FILE: lib.kt
+inline fun <T, R> s0(x: T, fn: (Int, T) -> R) = fn(0, x)
+
+inline fun <T, R> weirdMix(x: T, fn: (Int, T, Long, T) -> R) = fn(0, x, 0L, x)
+
+// FILE: main.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Str(val string: String)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Obj(val obj: Any)
-
-inline fun <T, R> s0(x: T, fn: (Int, T) -> R) = fn(0, x)
-
-inline fun <T, R> weirdMix(x: T, fn: (Int, T, Long, T) -> R) = fn(0, x, 0L, x)
 
 fun testS0Str(x: Str) = s0(x) { _, xx -> Str(xx.string + "123") }
 fun testS0Any(x: Obj) = s0(x) { _, xx -> Obj(xx.obj.toString() + "123") }

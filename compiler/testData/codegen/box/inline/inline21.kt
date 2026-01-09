@@ -1,7 +1,6 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 val sb = StringBuilder()
 
 inline fun foo2(block2: () -> Int) : Int {
@@ -13,6 +12,9 @@ inline fun foo1(block1: () -> Int) : Int {
     sb.appendLine("foo1")
     return foo2(block1)
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun bar(block: () -> Int) : Int {
     sb.appendLine("bar")

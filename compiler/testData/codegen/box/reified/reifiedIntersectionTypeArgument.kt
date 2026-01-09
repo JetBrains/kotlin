@@ -1,18 +1,14 @@
 // LANGUAGE: -ProhibitIntersectionReifiedTypeParameter
 // WITH_STDLIB
+// NO_CHECK_LAMBDA_INLINING
 
 // See KT-37163
 
+// FILE: lib.kt
 import kotlin.reflect.typeOf
-
-class In<in T>
 
 interface A
 interface B
-class C() : A, B
-
-// TODO check real effects to fix the behavior when we reach consensus
-//  and to be sure that something is not dropped by optimizations.
 
 var l = ""
 fun log(s: String) {
@@ -33,6 +29,16 @@ inline fun <reified K> select(x: K, y: Any): K where K : A, K : B {
     log("array was created")
     return x as K
 }
+
+// FILE: main.kt
+import kotlin.reflect.typeOf
+
+class In<in T>
+
+class C() : A, B
+
+// TODO check real effects to fix the behavior when we reach consensus
+//  and to be sure that something is not dropped by optimizations.
 
 fun test(a: Any, b: Any) {
     if (a is A && a is B) {

@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
 var order = StringBuilder()
 
 inline fun expectOrder(at: String, expected: String, body: () -> Unit) {
@@ -8,6 +9,7 @@ inline fun expectOrder(at: String, expected: String, body: () -> Unit) {
     if (order.toString() != expected) throw AssertionError("$at: expected: $expected, actual: $order")
 }
 
+// FILE: main.kt
 fun list(): List<Int> {
     order.append("L")
     return emptyList()

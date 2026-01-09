@@ -1,11 +1,7 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
 inline fun <reified T> baz(value: T): String = "OK" + value
-
-fun test(): String {
-    val f: (Any) -> String = ::baz
-    return f(1)
-}
 
 object Foo {
     val log = "123"
@@ -14,8 +10,6 @@ object Foo {
 public inline fun <reified T> Foo.foo(value: T): String =
     log + value
 
-val test2 = { "OK".let(Foo::foo) }
-
 object Bar {
     val log = "321"
 
@@ -23,41 +17,15 @@ object Bar {
         log + value
 }
 
-val test3 = { "OK".let(Bar::bar) }
-
 class C {
     inline fun <reified T: String> qux(value: T): String = "OK" + value
 }
 
-fun test4(): String {
-    val c = C()
-    val cr: (String) -> String = c::qux
-    return cr("456")
-}
-
 inline fun <reified T: Any> ((Any) -> String).cux(value: T): String = this(value)
-
-fun test5(): String {
-    val foo: (Any) -> String = ({ b: Any ->
-        val a: (Any) -> String = ::baz
-        a(b)
-    })::cux
-    return foo(3)
-}
 
 inline fun <reified T, K, reified S> bak(value1: T, value2: K, value3: S): String = "OK" + value1 + value2 + value3
 
-fun test6(): String {
-    val f: (Any, Int, String) -> String = ::bak
-    return f(1, 37, "joo")
-}
-
 inline fun <reified T, K> bal(value1: Array<K>, value2: Array<T>): String = "OK" + value1.joinToString() + value2.joinToString()
-
-fun test7(): String {
-    val f: (Array<Any>, Array<Int>) -> String = ::bal
-    return f(arrayOf("mer", "nas"), arrayOf(73, 37))
-}
 
 class E<T>
 public inline fun <reified T> E<T>.foo(value: T): String = "OK" + value
@@ -68,18 +36,51 @@ class F<T1> {
 
 inline fun <reified T, K> bam(value1: K?, value2: T?): String = "OK" + value1.toString() + value2.toString()
 
-fun <T> test10(): String {
-    val f: (T?, String?) -> String = ::bam
-    return f(null, "abc")
-}
-
 inline fun <T> test11Impl() : String {
     val f: (T?, String?) -> String = ::bam
     return f(null, "def")
 }
 
-fun <T> test11() = test11Impl<T>()
+// FILE: main.kt
+fun test(): String {
+    val f: (Any) -> String = ::baz
+    return f(1)
+}
 
+val test2 = { "OK".let(Foo::foo) }
+
+val test3 = { "OK".let(Bar::bar) }
+
+fun test4(): String {
+    val c = C()
+    val cr: (String) -> String = c::qux
+    return cr("456")
+}
+
+fun test5(): String {
+    val foo: (Any) -> String = ({ b: Any ->
+        val a: (Any) -> String = ::baz
+        a(b)
+    })::cux
+    return foo(3)
+}
+
+fun test6(): String {
+    val f: (Any, Int, String) -> String = ::bak
+    return f(1, 37, "joo")
+}
+
+fun test7(): String {
+    val f: (Array<Any>, Array<Int>) -> String = ::bal
+    return f(arrayOf("mer", "nas"), arrayOf(73, 37))
+}
+
+fun <T> test10(): String {
+    val f: (T?, String?) -> String = ::bam
+    return f(null, "abc")
+}
+
+fun <T> test11() = test11Impl<T>()
 
 fun box(): String {
     val test1 = test()

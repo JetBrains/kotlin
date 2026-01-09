@@ -13,6 +13,7 @@
 // All thansformations, except the third, shall generate state-machine.
 // The third shall not generate state-machine, since it is retransformed.
 
+// FILE: lib.kt
 package flow
 
 import kotlin.coroutines.*
@@ -39,6 +40,12 @@ inline fun <T : Any, R : Any> Flow<T>.flowWith(crossinline builderBlock: suspend
     flow {
         builderBlock()
     }
+
+// FILE: main.kt
+package flow
+
+import kotlin.coroutines.*
+import helpers.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)

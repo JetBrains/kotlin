@@ -1,5 +1,6 @@
 // WITH_STDLIB
-
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 import kotlin.coroutines.*
 
 suspend fun <T> withCorutine(block: suspend () -> Unit): Unit {
@@ -17,6 +18,7 @@ inline fun f(): Int {
     return 67890
 }
 
+// FILE: main.kt
 fun box(): String {
     builder {
         check(f() == 67890)

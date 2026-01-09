@@ -1,3 +1,4 @@
+// FILE: lib.kt
 sealed class A {
     class B : A()
 
@@ -6,6 +7,7 @@ sealed class A {
 
 inline fun foo(): A = A.B()
 
+// FILE: main.kt
 fun box(): String {
     val a: A = foo()
     val b: Boolean

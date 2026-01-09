@@ -1,11 +1,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-import helpers.*
+// FILE: lib.kt
 import kotlin.coroutines.*
-
-fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(EmptyContinuation)
-}
 
 @Suppress("UNSUPPORTED_FEATURE")
 inline class Result<T>(val a: Any?) {
@@ -22,6 +18,14 @@ inline fun <T> ResultReceiver(crossinline f: (Result<T>) -> Unit): ResultReceive
             f(result)
         }
     }
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
+
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(EmptyContinuation)
+}
 
 fun test() {
     var invoked = false

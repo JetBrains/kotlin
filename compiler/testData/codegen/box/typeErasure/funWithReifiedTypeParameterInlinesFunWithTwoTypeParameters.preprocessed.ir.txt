@@ -25,7 +25,7 @@ FUN name:typeOfPair visibility:private modality:FINAL returnType:kotlin.reflect.
         RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
           INLINED_BLOCK type=kotlin.reflect.KType origin=null
             inlinedFunctionSymbol: public final fun typeOfX <T1> (x: T1 of <root>.typeOfX): kotlin.reflect.KType [inline] declared in <root>
-            inlinedFunctionFileEntry: FILE_ENTRY path:funWithReifiedTypeParameterInlinesFunWithTwoTypeParameters.kt
+            inlinedFunctionFileEntry: FILE_ENTRY path:lib.kt
             VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:<root>.Pair<T2 of <root>.typeOfPair, kotlin.Any?> [val]
               GET_VAR 'val tmp0: <root>.Pair<T2 of <root>.typeOfPair, kotlin.Any?> [val] declared in <root>.typeOfPair' type=<root>.Pair<T2 of <root>.typeOfPair, kotlin.Any?> origin=null
             RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'

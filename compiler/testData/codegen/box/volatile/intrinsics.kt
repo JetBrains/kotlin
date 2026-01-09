@@ -1,6 +1,7 @@
 // TARGET_BACKEND: NATIVE
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
 
+// FILE: lib.kt
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:OptIn(kotlin.ExperimentalStdlibApi::class)
 
@@ -109,6 +110,7 @@ inline fun testFail(block: () -> Unit, onSuccess: () -> Nothing) {
     }
 }
 
+// FILE: main.kt
 fun <T> test(one: T, two: T, three: T, wrap: (T) -> Wrapper<T>) : String? {
     val w = wrap(one)
     if (w.compareAndSet(one, two) != true) return "FAIL 4"

@@ -2,6 +2,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z(val int: Int)
 
@@ -21,6 +22,7 @@ inline fun <R> withDefaultStr(fn: (Str) -> R, x: Str = Str("abc")) = fn(x)
 inline fun <R> withDefaultObj(fn: (Obj) -> R, x: Obj = Obj("abc")) = fn(x)
 inline fun <R> withDefaultObj2(x: Obj = Obj("abc"), fn: (Obj) -> R) = fn(x)
 
+// FILE: main.kt
 fun testWithDefaultZ() = withDefaultZ({ Z(it.int + 1) })
 fun testWithDefaultL() = withDefaultL({ L(it.long + 1L) })
 fun testWithDefaultL2() = withDefaultL2(fn = { L(it.long + 1L) })

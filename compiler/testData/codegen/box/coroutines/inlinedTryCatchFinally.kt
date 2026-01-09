@@ -1,5 +1,25 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
+
+inline fun tryCatch(t: () -> String, onException: (Exception) -> String) =
+    try {
+        t()
+    } catch (e: RuntimeException) {
+        onException(e)
+    }
+
+inline fun tryCatchFinally(t: () -> String, onException: (Exception) -> String, f: () -> Unit) =
+    try {
+        t()
+    } catch (e: RuntimeException) {
+        onException(e)
+    } finally {
+        f()
+    }
+
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -65,22 +85,6 @@ fun builder(expectException: Boolean = false, c: suspend Controller.() -> String
 fun commonThrow(t: Throwable) {
     throw t
 }
-
-inline fun tryCatch(t: () -> String, onException: (Exception) -> String) =
-        try {
-            t()
-        } catch (e: RuntimeException) {
-            onException(e)
-        }
-
-inline fun tryCatchFinally(t: () -> String, onException: (Exception) -> String, f: () -> Unit) =
-        try {
-            t()
-        } catch (e: RuntimeException) {
-            onException(e)
-        } finally {
-            f()
-        }
 
 fun box(): String {
     builder {

@@ -1,3 +1,8 @@
+// FILE: lib.kt
+@Suppress("UNCHECKED_CAST")
+inline fun <reified T> array(vararg t : T) : Array<T> = t as Array<T>
+
+// FILE: main.kt
 fun box(): String {
     main(array())
     return "OK"
@@ -11,6 +16,3 @@ fun main(args: Array<String>) {
 object D {
     fun foo(array: Array<out String>) = array
 }
-
-@Suppress("UNCHECKED_CAST")
-inline fun <reified T> array(vararg t : T) : Array<T> = t as Array<T>

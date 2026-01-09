@@ -4,14 +4,7 @@
 
 // WITH_STDLIB
 
-fun charRange(x: Char?, y: Char) = x?.rangeTo(y)
-fun byteRange(x: Byte?, y: Byte) = x?.rangeTo(y)
-fun shortRange(x: Short?, y: Short) = x?.rangeTo(y)
-fun intRange(x: Int?, y: Int) = x?.rangeTo(y)
-fun longRange(x: Long?, y: Long) = x?.rangeTo(y)
-fun floatRange(x: Float?, y: Float) = x?.rangeTo(y)
-fun dougleRange(x: Double?, y: Double) = x?.rangeTo(y)
-
+// FILE: lib.kt
 inline fun <reified T, R> testSafeRange(x: T, y: T, expectStr: String, safeRange: (T?, T) -> R?) {
     val rNull = safeRange(null, y)
     require (rNull == null) { "${T::class.simpleName}: Expected: null, got $rNull" }
@@ -19,6 +12,15 @@ inline fun <reified T, R> testSafeRange(x: T, y: T, expectStr: String, safeRange
     val rxy = safeRange(x, y)
     require (rxy?.toString() == expectStr) { "${T::class.simpleName}: Expected: $expectStr, got $rxy" }
 }
+
+// FILE: main.kt
+fun charRange(x: Char?, y: Char) = x?.rangeTo(y)
+fun byteRange(x: Byte?, y: Byte) = x?.rangeTo(y)
+fun shortRange(x: Short?, y: Short) = x?.rangeTo(y)
+fun intRange(x: Int?, y: Int) = x?.rangeTo(y)
+fun longRange(x: Long?, y: Long) = x?.rangeTo(y)
+fun floatRange(x: Float?, y: Float) = x?.rangeTo(y)
+fun dougleRange(x: Double?, y: Double) = x?.rangeTo(y)
 
 fun box(): String {
     testSafeRange('0', '1', "0..1", ::charRange)

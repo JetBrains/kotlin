@@ -1,6 +1,8 @@
+// FILE: lib.kt
 inline fun eq(a: Any, b: Any) = a == b
 inline fun ne(a: Any, b: Any) = a != b
 
+// FILE: main.kt
 val ONE = 1
 val ONEL = 1L
 
