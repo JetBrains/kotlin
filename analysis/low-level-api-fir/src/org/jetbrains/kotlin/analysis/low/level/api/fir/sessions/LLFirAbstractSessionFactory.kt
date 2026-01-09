@@ -65,8 +65,6 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
-import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal abstract class LLFirAbstractSessionFactory(protected val project: Project) {
@@ -170,11 +168,11 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
     @OptIn(ExperimentalCompilerApi::class)
     private fun FirSessionConfigurator.registerScriptExtensions(file: KtFile) {
-        val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {}
         val scriptDefinition = file.findScriptDefinition()
             ?: errorWithAttachment("Cannot load script definition") {
                 withVirtualFileEntry("file", file.virtualFile)
             }
+        val hostConfiguration = scriptDefinition.hostConfiguration
 
         val compilerArguments = makeScriptCompilerArguments(scriptDefinition.compilerOptions.toList())
         val commandLineProcessors = listOf(AssignmentCommandLineProcessor())

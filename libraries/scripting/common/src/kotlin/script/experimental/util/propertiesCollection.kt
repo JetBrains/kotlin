@@ -143,6 +143,12 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
             }
         }
 
+        fun <T> Key<T>.replaceOnlyDefault(create: () -> T?) {
+            if (!data.containsKey(this) || data[this] == this.getDefaultValue(PropertiesCollection(data))) {
+                data[this] = create()
+            }
+        }
+
         fun <T> Key<T>.update(body: (T?) -> T?) {
             putIfNotNull(body(data[this]?.let {
                 @Suppress("UNCHECKED_CAST")
