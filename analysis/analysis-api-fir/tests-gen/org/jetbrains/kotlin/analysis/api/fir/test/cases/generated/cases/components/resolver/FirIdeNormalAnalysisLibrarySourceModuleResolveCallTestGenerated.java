@@ -2152,6 +2152,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCallTestGenerated ext
     public void testSet() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/set.kt");
     }
+
+    @Test
+    @TestMetadata("uintArray.kt")
+    public void testUintArray() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/uintArray.kt");
+    }
+
+    @Test
+    @TestMetadata("uintArrayAnnotation.kt")
+    public void testUintArrayAnnotation() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/uintArrayAnnotation.kt");
+    }
   }
 
   @Nested
