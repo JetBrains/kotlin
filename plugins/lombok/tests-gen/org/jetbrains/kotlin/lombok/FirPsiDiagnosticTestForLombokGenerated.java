@@ -90,6 +90,12 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
     runTest("plugins/lombok/testData/diagnostics/superBuilderSingular.kt");
   }
 
+  @Test
+  @TestMetadata("withStaticField.kt")
+  public void testWithStaticField() {
+    runTest("plugins/lombok/testData/diagnostics/withStaticField.kt");
+  }
+
   @Nested
   @TestMetadata("plugins/lombok/testData/diagnostics/k1+k2")
   @TestDataPath("$PROJECT_ROOT")
