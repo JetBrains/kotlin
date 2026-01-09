@@ -7173,6 +7173,18 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         public void testHugeMixedCapturedType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypes/hugeMixedCapturedType.kt");
         }
+
+        @Test
+        @TestMetadata("withSmartCasts.kt")
+        public void testWithSmartCasts() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypes/withSmartCasts.kt");
+        }
+
+        @Test
+        @TestMetadata("withSmartCasts2.kt")
+        public void testWithSmartCasts2() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypes/withSmartCasts2.kt");
+        }
       }
 
       @Nested
