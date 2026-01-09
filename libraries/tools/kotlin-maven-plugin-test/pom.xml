@@ -157,6 +157,19 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <nonFilteredFileExtensions>
+                        <!--
+                            This is needed to avoid bug: https://github.com/apache/maven-resources-plugin/issues/276
+                            When packaging maven-wrapper.jar from resources to jar.
+                         -->
+                        <nonFilteredFileExtension>jar</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
