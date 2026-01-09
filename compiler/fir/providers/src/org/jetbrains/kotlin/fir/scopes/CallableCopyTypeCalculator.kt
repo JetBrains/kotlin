@@ -71,7 +71,8 @@ abstract class CallableCopyTypeCalculator {
                     declaration.setter?.valueParameters?.firstOrNull()?.replaceReturnTypeRef(returnTypeRef)
 
                     declaration.getExplicitBackingField()?.let { backingField ->
-                        val backingFieldReturnType = computeReturnTypeOrNull(backingField) ?: return@let
+                        val backingFieldReturnType = computeReturnTypeOrNull(backingField)
+                            ?: error("Couldn't compute the return type of the backing field: $backingField")
                         val backingFieldReturnTypeRef = backingField.returnTypeRef.resolvedTypeFromPrototype(
                             type = backingFieldReturnType,
                             fallbackSource =  backingField.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)

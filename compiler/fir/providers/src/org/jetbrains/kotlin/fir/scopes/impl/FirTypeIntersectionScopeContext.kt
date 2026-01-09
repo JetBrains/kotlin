@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -400,6 +401,7 @@ class FirTypeIntersectionScopeContext(
                 newReturnType = returnType,
                 newSource = dispatchReceiverType.toSymbol(session)?.source,
                 newSetterVisibility = setterVisibility,
+                explicitBackingFieldNewReturnType = fir.getExplicitBackingField()?.returnTypeRef?.coneType,
             )
         }
     }
