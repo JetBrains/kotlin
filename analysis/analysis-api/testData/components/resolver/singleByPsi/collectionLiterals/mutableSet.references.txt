@@ -2,5 +2,6 @@ KtCollectionLiteralExpression(45,47): '[]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'mutableSetOf' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf]
     symbols:
-      Nothing (Unresolved reference)
+      (in kotlin.collections) inline fun <T> mutableSetOf(): kotlin.collections.MutableSet<T>

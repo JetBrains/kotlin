@@ -24,29 +24,27 @@ KtCollectionLiteralExpression(211,226): '["1", "2", "3"]'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = ["1", "2", "3"]
-          isSafeNavigation = false
-          type = MyList.Companion
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyList<kotlin.String>
-          symbol = /MyList.Companion.of(<dispatch receiver>: MyList.Companion, vararg vals: T1): MyList<T1>
-          valueParameters = [
-            KaVariableSignature:
-              name = vals
-              receiverType = null
-              returnType = kotlin.String
-              symbol = vararg vals: T1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyList.Companion.of
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ["1", "2", "3"]
+        isSafeNavigation = false
+        type = MyList.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyList<kotlin.String>
+        symbol = /MyList.Companion.of(<dispatch receiver>: MyList.Companion, vararg vals: T1): MyList<T1>
+        valueParameters = [
+          KaVariableSignature:
+            name = vals
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg vals: T1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyList.Companion.of
       typeArgumentsMapping = {
         T1 -> (kotlin.String)
       }

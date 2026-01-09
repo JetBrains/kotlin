@@ -2,18 +2,16 @@ KtCollectionLiteralExpression(55,58): '[1]'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Set<kotlin.Int>
-          symbol = kotlin/collections/setOf(): kotlin.collections.Set<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/setOf
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.Set<kotlin.Int>
+        symbol = kotlin/collections/setOf(): kotlin.collections.Set<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/collections/setOf
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
@@ -31,26 +29,24 @@ KtCollectionLiteralExpression(55,58): '[1]'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Set<kotlin.Int>
-          symbol = kotlin/collections/setOf(element: T): kotlin.collections.Set<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = element
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = element: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/setOf
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.Set<kotlin.Int>
+        symbol = kotlin/collections/setOf(element: T): kotlin.collections.Set<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = element: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/setOf
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
@@ -67,26 +63,24 @@ KtCollectionLiteralExpression(55,58): '[1]'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Set<kotlin.Int>
-          symbol = kotlin/collections/setOf(vararg elements: T): kotlin.collections.Set<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/setOf
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.Set<kotlin.Int>
+        symbol = kotlin/collections/setOf(vararg elements: T): kotlin.collections.Set<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/setOf
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }

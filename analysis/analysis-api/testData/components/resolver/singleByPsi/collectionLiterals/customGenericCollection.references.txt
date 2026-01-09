@@ -2,8 +2,9 @@ KtCollectionLiteralExpression(211,226): '["1", "2", "3"]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'of' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf]
     symbols:
-      Nothing (Unresolved reference)
+      (in MyList.Companion) operator fun <T1> of(vararg vals: T1): MyList<T1>
 
 KtCallExpression(192,227): 'acceptList<String>(["1", "2", "3"])'
   KtInvokeFunctionReference:
