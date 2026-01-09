@@ -122,6 +122,162 @@ fun main(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
+            testClass<AbstractFirWasmSpecCodegenBoxTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirWasmSpecCodegenBoxCoroutineTest> {
+                model("codegen/box/coroutines", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
+            testClass<AbstractFirWasmSpecCodegenBoxFailingTest> {
+                // Hardcoded failing tests extracted from
+                // "Test Results - failed tests FirWasmSpecCodegenBoxTestGenerated.xml".
+                // Keep this section in sync when failures change.
+
+                // codegen/box/bridges (root)
+                model(
+                    "codegen/box/bridges",
+                    pattern = "^(diamond|manyTypeArgumentsSubstitutedSuccessively|test13|test5)\\.kt$"
+                )
+                // codegen/box/bridges/substitutionInSuperClass
+                model(
+                    "codegen/box/bridges/substitutionInSuperClass",
+                    pattern = "^(boundedTypeArguments|upperBound)\\.kt$"
+                )
+
+                // codegen/box/closures/capturedVarsOptimization
+                model(
+                    "codegen/box/closures/capturedVarsOptimization",
+                    pattern = "^(closureBoxedVarOptimizations)\\.kt$"
+                )
+
+                // codegen/box/collections
+                model(
+                    "codegen/box/collections",
+                    pattern = "^(inheritFromAbstractMutableListInt)\\.kt$"
+                )
+
+                // codegen/box/coroutines (root)
+                model(
+                    "codegen/box/coroutines",
+                    pattern = "^(dispatchResume|kt21080)\\.kt$"
+                )
+                // codegen/box/coroutines/controlFlow
+                model(
+                    "codegen/box/coroutines/controlFlow",
+                    pattern = "^(doubleBreak|throwFromFinally)\\.kt$"
+                )
+                // codegen/box/coroutines/inlineClasses/direct
+                model(
+                    "codegen/box/coroutines/inlineClasses/direct",
+                    pattern = "^(boxUnboxInsideCoroutine_nonLocalReturn|genericOverrideSuspendFun|genericOverrideSuspendFun_Any|genericOverrideSuspendFun_Any_NullableInlineClassUpperBound|genericOverrideSuspendFun_Int|genericOverrideSuspendFun_NullableAny|genericOverrideSuspendFun_NullableAny_null|genericOverrideSuspendFun_NullableInt|genericOverrideSuspendFun_NullableInt_null)\\.kt$"
+                )
+                // codegen/box/coroutines/inlineClasses/resume
+                model(
+                    "codegen/box/coroutines/inlineClasses/resume",
+                    pattern = "^(boxUnboxInsideCoroutine_nonLocalReturn)\\.kt$"
+                )
+                // codegen/box/coroutines/inlineClasses/resumeWithException
+                model(
+                    "codegen/box/coroutines/inlineClasses/resumeWithException",
+                    pattern = "^(boxTypeParameterOfSuperType|boxUnboxInsideCoroutine_nonLocalReturn)\\.kt$"
+                )
+                // codegen/box/coroutines/intrinsicSemantics
+                model(
+                    "codegen/box/coroutines/intrinsicSemantics",
+                    pattern = "^(intercepted|releaseIntercepted|startCoroutine|startCoroutineUninterceptedOrReturn|startCoroutineUninterceptedOrReturnInterception|suspendCoroutineUninterceptedOrReturn)\\.kt$"
+                )
+                // codegen/box/coroutines/stackUnwinding
+                model(
+                    "codegen/box/coroutines/stackUnwinding",
+                    pattern = "^(suspendInCycle)\\.kt$"
+                )
+                // codegen/box/coroutines/suspendFunctionAsCoroutine
+                model(
+                    "codegen/box/coroutines/suspendFunctionAsCoroutine",
+                    pattern = "^(dispatchResume)\\.kt$"
+                )
+
+                // codegen/box/delegatedProperty
+                model(
+                    "codegen/box/delegatedProperty",
+                    pattern = "^(genericSetValueViaSyntheticAccessor)\\.kt$"
+                )
+
+                // codegen/box/funInterface
+                model(
+                    "codegen/box/funInterface",
+                    pattern = "^(primitiveConversions|samConstructorExplicitInvocation)\\.kt$"
+                )
+
+                // codegen/box/inference
+                model(
+                    "codegen/box/inference",
+                    pattern = "^(overrideGenericDefaultMethod)\\.kt$"
+                )
+
+                // codegen/box/inlineClasses (root)
+                model(
+                    "codegen/box/inlineClasses",
+                    pattern = "^(checkBoxingForComplexClassHierarchy|checkBoxingForComplexClassHierarchyGeneric|defaultInterfaceMethodsInInlineClass|defaultInterfaceMethodsInInlineClassGeneric|kt38680a|kt38680aGeneric|kt38680b|kt38680bGeneric)\\.kt$"
+                )
+                // codegen/box/inlineClasses/interfaceMethodCalls
+                model(
+                    "codegen/box/inlineClasses/interfaceMethodCalls",
+                    pattern = "^(genericDefaultInterfaceExtensionFunCall|genericDefaultInterfaceExtensionFunCallGeneric|genericDefaultInterfaceMethodCall|genericDefaultInterfaceMethodCallGeneric)\\.kt$"
+                )
+
+                // codegen/box/interfaceCallsNCasts
+                model(
+                    "codegen/box/interfaceCallsNCasts",
+                    pattern = "^(diamond)\\.kt$"
+                )
+
+                // codegen/box/operatorConventions
+                model(
+                    "codegen/box/operatorConventions",
+                    pattern = "^(kt20387)\\.kt$"
+                )
+
+                // codegen/box/strings
+                model(
+                    "codegen/box/strings",
+                    pattern = "^(kt13213)\\.kt$"
+                )
+
+                // codegen/box/syntheticAccessors
+                model(
+                    "codegen/box/syntheticAccessors",
+                    pattern = "^(accessorForGenericMethod)\\.kt$"
+                )
+
+                // codegen/box/traits
+                model(
+                    "codegen/box/traits",
+                    pattern = "^(kt2541|traitImplGenericDelegation)\\.kt$"
+                )
+
+                // codegen/box/typealias
+                model(
+                    "codegen/box/typealias",
+                    pattern = "^(simple)\\.kt$"
+                )
+
+                // codegen/boxInline/anonymousObject (root)
+                model(
+                    "codegen/boxInline/anonymousObject",
+                    pattern = "^(fakeOverrideGenericBase|fakeOverrideReferenceGenericBase)\\.kt$"
+                )
+
+                // codegen/boxInline/anonymousObject/properRecapturingInClass
+                model(
+                    "codegen/boxInline/anonymousObject/properRecapturingInClass",
+                    pattern = "^(inlinelambdaChain|lambdaChain|lambdaChainSimple|lambdaChainSimple_2|lambdaChain_2|lambdaChain_3)\\.kt$"
+                )
+            }
+
             testClass<AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest> {
                 model("codegen/boxWasmWasi")
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)

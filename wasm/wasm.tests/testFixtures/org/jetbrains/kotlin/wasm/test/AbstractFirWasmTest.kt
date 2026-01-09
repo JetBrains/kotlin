@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.test.services.SplittingTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
+import org.jetbrains.kotlin.wasm.test.handlers.SpecBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
@@ -281,6 +282,28 @@ open class AbstractFirWasmWasiTest(
     }
 }
 
+open class AbstractFirWasmSpecTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+) : AbstractFirWasmTest(TargetBackend.WASM_WASI, WasmPlatforms.wasmWasi, pathToTestDir, testGroupOutputDirPrefix) {
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::SpecBoxRunner
+
+    override val wasmTarget: WasmTarget
+        get() = WasmTarget.WASI
+
+    override val additionalSourceProvider: Constructor<AdditionalSourceProvider>?
+        get() = ::WasmWasiBoxTestHelperSourceProvider
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
+            +WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
+        }
+    }
+}
+
 open class AbstractFirWasmWasiCodegenBoxTest(
     testGroupOutputDirPrefix: String = "codegen/wasi/"
 ) : AbstractFirWasmWasiTest(
@@ -292,6 +315,21 @@ open class AbstractFirWasmWasiCodegenBoxTest(
         builder.configureCodegenFirHandlerSteps()
     }
 }
+
+open class AbstractFirWasmSpecCodegenBoxTest(
+    testGroupOutputDirPrefix: String = "codegen/spec/"
+) : AbstractFirWasmSpecTest(
+    pathToTestDir = "compiler/testData/codegen/",
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureCodegenFirHandlerSteps()
+    }
+}
+
+open class AbstractFirWasmSpecCodegenBoxCoroutineTest : AbstractFirWasmSpecCodegenBoxTest("codegen/spec/coroutines")
+open class AbstractFirWasmSpecCodegenBoxFailingTest : AbstractFirWasmSpecCodegenBoxTest()
 
 open class AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest : AbstractFirWasmWasiCodegenBoxTest(
     testGroupOutputDirPrefix = "codegen/wasiBoxInlKlib/"

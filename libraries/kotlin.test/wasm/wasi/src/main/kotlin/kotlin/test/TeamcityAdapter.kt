@@ -14,8 +14,8 @@ import kotlin.wasm.unsafe.*
  * `args_sizes_get`. Each argument is expected to be `\0` terminated.
  */
 @ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "args_get")
-private external fun wasiRawArgsGet(
+@WasmImport("ssw_util", "args_get")
+private external fun rawArgsGet(
     argvPtr: Int,
     argvBuf: Int,
 ): Int
@@ -23,8 +23,8 @@ private external fun wasiRawArgsGet(
 
 /** Return command-line argument data sizes. */
 @ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "args_sizes_get")
-private external fun wasiRawArgsSizesGet(
+@WasmImport("ssw_util", "args_sizes_get")
+private external fun rawArgsSizesGet(
     argumentNumberPtr: Int,
     argumentStringSizePtr: Int,
 ): Int
@@ -33,7 +33,7 @@ private external fun wasiRawArgsSizesGet(
 internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { allocator ->
     val numberOfArgumentsPtr = allocator.allocate(4)
     val sizeOfArgumentStringPtr = allocator.allocate(4)
-    val argNumRes = wasiRawArgsSizesGet(
+    val argNumRes = rawArgsSizesGet(
         argumentNumberPtr = numberOfArgumentsPtr.address.toInt(),
         argumentStringSizePtr = sizeOfArgumentStringPtr.address.toInt()
     )
@@ -42,19 +42,19 @@ internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { a
     }
 
     val argumentNumber = numberOfArgumentsPtr.loadInt()
-    if (argumentNumber <= 2) return emptyList()
+    if (argumentNumber == 0) return@withScopedMemoryAllocator emptyList()
 
     val argumentStringSize = sizeOfArgumentStringPtr.loadInt()
     val stringBufferPtr = allocator.allocate(argumentStringSize)
 
     val argvPtr = allocator.allocate(argumentNumber * Int.SIZE_BYTES)
 
-    val argRes = wasiRawArgsGet(argvPtr.address.toInt(), stringBufferPtr.address.toInt())
+    val argRes = rawArgsGet(argvPtr.address.toInt(), stringBufferPtr.address.toInt())
     if (argRes != 0) {
         throw IllegalStateException("Wasi error code $argNumRes")
     }
 
-    val startAddress = (argvPtr + 2 * Int.SIZE_BYTES).loadInt().toUInt()
+    val startAddress = (argvPtr).loadInt().toUInt()
     val endAddress = stringBufferPtr.address + argumentStringSize.toUInt()
     decodeStrings(argumentStringSize, startAddress, endAddress)
 }

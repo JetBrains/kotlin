@@ -18,7 +18,7 @@ import kotlin.wasm.unsafe.withScopedMemoryAllocator
  * seed a pseudo-random number generator, rather than to provide the random data directly.
  */
 @ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "random_get")
+@WasmImport("ssw_util", "random_get")
 internal external fun wasiRawRandomGet(address: Int, size: Int): Int
 
 @OptIn(ExperimentalWasmInterop::class)
