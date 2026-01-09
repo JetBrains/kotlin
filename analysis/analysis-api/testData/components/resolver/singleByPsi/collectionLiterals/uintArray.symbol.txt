@@ -1,0 +1,5 @@
+KtCollectionLiteralExpression(36,40): '[1u]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
+    ]
