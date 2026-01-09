@@ -120,7 +120,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
     @get:Classpath
     @get:Optional
     val dist: File? by lazy {
-        if (!shouldDownload.get()) return@lazy null
+        if (!shouldDownload.get()) return@lazy File(env.get().executable)
 
         withUrlRepo {
             val startDownloadTime = System.currentTimeMillis()
@@ -151,7 +151,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         extractWithUpToDate(
             destinationProvider.getFile(),
             destinationHashFileProvider.getFile(),
-            dist!!,
+            dist ?: error("no dist"),
             fileHasher,
             ::extract
         )

@@ -26,19 +26,17 @@ abstract class CommonEnvSpec(
 
     final override fun produceEnv(): Provider<CommonEnv> {
         return download.map { downloadValue ->
-            val versionValue = version.get()
+            val versionValue = version.orNull
 
-            val dirName = downloadBaseUrl.get().hashCode().toByte().toString(16)
+            val dirName = downloadBaseUrl.orNull.hashCode().toByte().toString(16)
             val dir = installationDirectory.getFile().resolve(dirName)
 
             val downloadUrl = downloadBaseUrl.orNull
 
-            val extensionValue = extension.getOrElse(
-                downloadUrl?.let { findExtension(it) }
-                    ?: error("Can't detect extension type. Set extension")
-            )
+            val extensionValue = extension.orNull ?: downloadUrl?.let { findExtension(it) }
 
             fun getIvyDependency(): String {
+                if (downloadUrl == null) return ""
                 return "$moduleGroup:$name:$versionValue@$extensionValue"
             }
 

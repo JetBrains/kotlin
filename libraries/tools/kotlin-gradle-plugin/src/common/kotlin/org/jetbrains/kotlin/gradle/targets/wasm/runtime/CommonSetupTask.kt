@@ -45,13 +45,14 @@ abstract class CommonSetupTask @Inject constructor(
     abstract val archiveOperation: Property<ArchiveOperationsProvider>
 
     override fun extract(archive: File) {
-        val archiveOperationValue: ArchiveOperationsProvider = archiveOperation.getOrElse { ao: ArchiveOperations, path: Path ->
-            when {
-                path.fileName.toString().endsWith(".tar.gz") -> ao.tarTree(path)
-                path.fileName.toString().endsWith(".zip") -> ao.zipTree(path)
-                else -> error("Can't detect archive type for $path. Set archiveOperation.")
-            }
-        }
+        val archiveOperationValue: ArchiveOperationsProvider =
+            if (archiveOperation.isPresent) archiveOperation.getOrElse { ao: ArchiveOperations, path: Path ->
+                when {
+                    path.fileName.toString().endsWith(".tar.gz") -> ao.tarTree(path)
+                    path.fileName.toString().endsWith(".zip") -> ao.zipTree(path)
+                    else -> error("Can't detect archive type for $path. Set archiveOperation.")
+                }
+            } else return
 
         fs.copy {
             it.from(

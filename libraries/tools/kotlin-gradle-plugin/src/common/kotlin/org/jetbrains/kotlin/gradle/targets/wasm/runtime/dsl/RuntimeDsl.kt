@@ -73,6 +73,10 @@ interface WasmWasiRuntimeDsl {
         ) -> String
     )
 
+    fun executable(
+        path: String
+    )
+
     fun runArgs(
         configure: (
             isolationDir: Path,
@@ -132,6 +136,11 @@ class WasmWasiRuntimeImpl(
                 }
             }
         )
+    }
+
+    override fun executable(path: String) {
+        subTarget.envSpec.download.set(false)
+        subTarget.envSpec.executableCommand.set { path }
     }
 
     override fun runArgs(configure: (isolationDir: Path, entry: Path) -> List<String>) {
