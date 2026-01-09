@@ -1,0 +1,1 @@
+operator fun of(string: kotlin.String, int: kotlin.Int): MyList
