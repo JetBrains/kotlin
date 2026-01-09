@@ -1,0 +1,6 @@
+KtCollectionLiteralExpression(213,223): '["1", "2"]'
+  KtCollectionLiteralReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in MyList.Companion) operator fun of(string1: kotlin.String, another: kotlin.String): MyList

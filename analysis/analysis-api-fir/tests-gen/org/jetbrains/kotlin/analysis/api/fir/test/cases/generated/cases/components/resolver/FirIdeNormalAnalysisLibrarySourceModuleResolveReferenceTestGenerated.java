@@ -2112,6 +2112,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
     }
 
     @Test
+    @TestMetadata("customNonGenericCollectionOverload.kt")
+    public void testCustomNonGenericCollectionOverload() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/customNonGenericCollectionOverload.kt");
+    }
+
+    @Test
     @TestMetadata("intArray.kt")
     public void testIntArray() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/intArray.kt");
