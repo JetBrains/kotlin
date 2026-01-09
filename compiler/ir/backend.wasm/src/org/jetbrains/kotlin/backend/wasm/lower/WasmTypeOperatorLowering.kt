@@ -77,6 +77,24 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         return super.visitVariable(declaration)
     }
 
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
+        if (expression.value.type != expression.symbol.owner.type) {
+            builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)
+            expression.value = narrowType(expression.value.type, expression.symbol.owner.type, expression.value)
+        }
+
+        return super.visitSetValue(expression)
+    }
+
+    override fun visitSetField(expression: IrSetField): IrExpression {
+        if (expression.value.type != expression.symbol.owner.type) {
+            builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)
+            expression.value = narrowType(expression.value.type, expression.symbol.owner.type, expression.value)
+        }
+
+        return super.visitSetField(expression)
+    }
+
     private fun lowerInstanceOf(
         expression: IrTypeOperatorCall,
         inverted: Boolean
