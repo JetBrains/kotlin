@@ -14,9 +14,9 @@
 
     <properties>
         <jdk8Home>${env.JDK_1_8}</jdk8Home>
-        <jdk11Home>${env.JDK_11}</jdk11Home>
-        <jdk17Home>${env.JDK_17}</jdk17Home>
-        <jdk21Home>${env.JDK_21}</jdk21Home>
+        <jdk11Home>${env.JDK_11_0}</jdk11Home>
+        <jdk17Home>${env.JDK_17_0}</jdk17Home>
+        <jdk21Home>${env.JDK_21_0}</jdk21Home>
     </properties>
 
     <dependencyManagement>

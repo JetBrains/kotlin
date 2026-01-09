@@ -107,7 +107,6 @@ kotlin {
         }
     }
     jvm {
-        withJava()
         compilations {
             val compileOnlyDeclarations by creating {
                 compileTaskProvider.configure {
@@ -374,7 +373,7 @@ kotlin {
                 "jvm/runtime",
                 "jvm/builtins",
             )
-            project.sourceSets["main"].java.srcDirs(*jvmSrcDirs.toTypedArray())
+            project.sourceSets["jvmMain"].java.srcDirs(*jvmSrcDirs.toTypedArray())
             kotlin.setSrcDirs(jvmSrcDirs)
             kotlin.exclude("kotlin/internal/InternalAnnotations.kt")
         }
