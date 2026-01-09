@@ -97,4 +97,6 @@ object AnalysisFlags {
     val hierarchicalMultiplatformCompilation by AnalysisFlag.Delegates.Boolean(defaultValue = false)
 
     val headerMode by AnalysisFlag.Delegates.Boolean
+
+    val headerModeTarget by AnalysisFlag.Delegates.String
 }

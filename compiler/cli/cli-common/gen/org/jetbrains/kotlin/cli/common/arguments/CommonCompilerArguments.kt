@@ -516,6 +516,19 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Xheader-mode-target",
+        valueDescription = "{any|compilation}",
+        description = """                Generates output based on the downstream target it is used for:
+-Xheader-mode-target=compilation: Skips the IR generation for modules that don't have inline functions.
+-Xheader-mode-target=any: Can be used for any downstream target which doesn't require linking.""",
+    )
+    var headerModeTarget: String = "any"
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xignore-const-optimization-errors",
         description = "Ignore all compilation exceptions while optimizing some constant expressions.",
     )
