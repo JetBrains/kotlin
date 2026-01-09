@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedCommonJsArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedCommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedCommonToolsArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedJsArguments
@@ -33,12 +34,17 @@ val kotlinCompilerArguments = compilerArguments {
                 mergeWith = setOf(actualCommonKlibBasedArguments, removedCommonKlibBasedCompilerArguments)
             ) {
                 subLevel(
-                    name = CompilerArgumentsLevelNames.wasmArguments,
-                    mergeWith = setOf(actualWasmArguments, removedWasmArguments)
+                    name = CompilerArgumentsLevelNames.commonJsArguments,
+                    mergeWith = setOf(actualCommonJsArguments, removedCommonJsArguments)
                 ) {
                     subLevel(
                         name = CompilerArgumentsLevelNames.jsArguments,
                         mergeWith = setOf(actualJsArguments, removedJsArguments)
+                    ) {}
+
+                    subLevel(
+                        name = CompilerArgumentsLevelNames.wasmArguments,
+                        mergeWith = setOf(actualWasmArguments, removedWasmArguments)
                     ) {}
                 }
                 subLevel(

@@ -10,13 +10,14 @@ package org.jetbrains.kotlin.platform.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.wasm.*
 
 abstract class WasmIdePlatformKind : IdePlatformKind() {
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
-        return if (arguments is K2JSCompilerArguments && arguments.wasm) {
+        return if (arguments is K2WasmCompilerArguments && arguments.wasm) {
             val wasmTarget = arguments.wasmTarget?.let { WasmTarget.fromName(it) }
             wasmTarget?.let {
                 WasmPlatforms.wasmPlatformByTargetVersion(it)

@@ -120,7 +120,7 @@ class Ir2JsTransformer private constructor(
 }
 
 internal class K2JsCompilerImpl(
-    arguments: K2JSCompilerArguments,
+    override val arguments: K2JSCompilerArguments,
     configuration: CompilerConfiguration,
     moduleName: String,
     outputName: String,
@@ -212,7 +212,7 @@ internal class K2JsCompilerImpl(
             return OK
         }
 
-        JsConfigurationUpdater.checkWasmArgumentsUsage(arguments, messageCollector)
+//        JsConfigurationUpdater.checkWasmArgumentsUsage(arguments, messageCollector)
 
         configuration.phaseConfig = createPhaseConfig(arguments).also {
             if (arguments.listPhases) it.list(jsLowerings)

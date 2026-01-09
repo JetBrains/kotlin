@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.wasm.getWasmLowerings
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.list
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
 
 internal class K2WasmCompilerImpl(
-    arguments: K2JSCompilerArguments,
+    override val arguments: K2WasmCompilerArguments,
     configuration: CompilerConfiguration,
     moduleName: String,
     outputName: String,

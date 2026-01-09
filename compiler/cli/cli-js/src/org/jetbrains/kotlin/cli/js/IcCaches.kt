@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.cli.js
 
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContext
+import org.jetbrains.kotlin.cli.common.arguments.K2CommonJSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -33,23 +35,24 @@ sealed class IcCachesConfigurationData {
 
 internal fun prepareIcCaches(
     cacheDirectory: String,
-    arguments: K2JSCompilerArguments,
+    arguments: K2CommonJSCompilerArguments,
     messageCollector: MessageCollector,
     outputDir: File,
     targetConfiguration: CompilerConfiguration,
     mainCallArguments: List<String>?,
     icCacheReadOnly: Boolean,
 ): IcCachesArtifacts {
-    val data = when {
-        arguments.wasm -> IcCachesConfigurationData.Wasm(
+    val data = when(arguments) {
+        is K2WasmCompilerArguments if arguments.wasm -> IcCachesConfigurationData.Wasm(
             wasmDebug = arguments.wasmDebug,
             preserveIcOrder = arguments.preserveIcOrder,
             generateWat = arguments.wasmGenerateWat,
             generateDebugInformation = arguments.sourceMap || arguments.generateDwarf
         )
-        else -> IcCachesConfigurationData.Js(
+        is K2JSCompilerArguments -> IcCachesConfigurationData.Js(
             arguments.granularity
         )
+        else -> error("Unexpected arguments type: ${arguments::class.java}")
     }
     return prepareIcCaches(
         cacheDirectory,

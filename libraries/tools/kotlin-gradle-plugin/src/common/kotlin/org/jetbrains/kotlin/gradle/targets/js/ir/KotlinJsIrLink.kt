@@ -132,7 +132,7 @@ abstract class KotlinJsIrLink @Inject constructor(
             }
 
             if (isWasmPlatform && modeProperty.get() == DEVELOPMENT) {
-                args.debuggerCustomFormatters = true
+//                args.debuggerCustomFormatters = true // TODO
             }
         }
     }

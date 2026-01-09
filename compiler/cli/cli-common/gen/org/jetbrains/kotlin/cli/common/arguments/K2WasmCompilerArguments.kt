@@ -4,11 +4,13 @@
  */
 package org.jetbrains.kotlin.cli.common.arguments
 
+import com.intellij.util.xmlb.annotations.Transient
+
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/WasmCompilerArguments.kt
 // DO NOT MODIFY IT MANUALLY.
 
-abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
+class K2WasmCompilerArguments : K2CommonJSCompilerArguments() {
     @Argument(
         value = "-Xir-dce-dump-reachability-info-to-file",
         valueDescription = "<path>",
@@ -201,4 +203,9 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
             field = value
         }
 
+    @get:Transient
+    @field:kotlin.jvm.Transient
+    override val configurator: CommonCompilerArgumentsConfigurator = K2WasmCompilerArgumentsConfigurator()
+
+    override fun copyOf(): Freezable = copyK2WasmCompilerArguments(this, K2WasmCompilerArguments())
 }

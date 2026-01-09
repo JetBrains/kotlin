@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.klib
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
@@ -47,7 +48,7 @@ class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlib
             module.customWebCompilerSettings(testServices).customCompiler.callCompiler(
                 output = printStream,
                 listOfNotNull(
-                    K2JSCompilerArguments::wasm.cliArgument.takeIf { module.isWasmModule(testServices) },
+                    K2WasmCompilerArguments::wasm.cliArgument.takeIf { module.isWasmModule(testServices) },
                     K2JSCompilerArguments::irProduceKlibFile.cliArgument,
                     K2JSCompilerArguments::outputDir.cliArgument, outputKlibFile.parentFile.path,
                     K2JSCompilerArguments::moduleName.cliArgument, outputKlibFile.nameWithoutExtension,

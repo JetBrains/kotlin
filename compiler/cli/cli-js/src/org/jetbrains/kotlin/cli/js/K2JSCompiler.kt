@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.*
+import org.jetbrains.kotlin.cli.common.arguments.K2CommonJSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_LOG
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -51,7 +53,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 
-class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
+class K2JSCompiler : CLICompiler<K2CommonJSCompilerArguments>() {
     override val platform: TargetPlatform
         get() = JsPlatforms.defaultJsPlatform
 
@@ -60,7 +62,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
     }
 
     override fun doExecutePhased(
-        arguments: K2JSCompilerArguments,
+        arguments: K2CommonJSCompilerArguments,
         services: Services,
         basicMessageCollector: MessageCollector,
     ): ExitCode? {
@@ -68,7 +70,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
     }
 
     override fun doExecute(
-        arguments: K2JSCompilerArguments,
+        arguments: K2CommonJSCompilerArguments,
         configuration: CompilerConfiguration,
         rootDisposable: Disposable,
         paths: KotlinPaths?,
@@ -91,27 +93,32 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         val moduleName = arguments.irModuleName ?: outputName
         val outputDir = File(outputDirPath)
 
-        val compilerImpl: K2JsCompilerImplBase
-        if (arguments.wasm) {
-            compilerImpl = K2WasmCompilerImpl(
-                arguments = arguments,
-                configuration = configuration,
-                moduleName = moduleName,
-                outputName = outputName,
-                outputDir = outputDir,
-                messageCollector = messageCollector,
-                performanceManager = performanceManager,
-            )
-        } else {
-            compilerImpl = K2JsCompilerImpl(
-                arguments = arguments,
-                configuration = configuration,
-                moduleName = moduleName,
-                outputName = outputName,
-                outputDir = outputDir,
-                messageCollector = messageCollector,
-                performanceManager = performanceManager,
-            )
+        val compilerImpl: K2JsCompilerImplBase = when (arguments) {
+            is K2WasmCompilerArguments -> {
+                K2WasmCompilerImpl(
+                    arguments = arguments,
+                    configuration = configuration,
+                    moduleName = moduleName,
+                    outputName = outputName,
+                    outputDir = outputDir,
+                    messageCollector = messageCollector,
+                    performanceManager = performanceManager,
+                )
+            }
+            is K2JSCompilerArguments -> {
+                K2JsCompilerImpl(
+                    arguments = arguments,
+                    configuration = configuration,
+                    moduleName = moduleName,
+                    outputName = outputName,
+                    outputDir = outputDir,
+                    messageCollector = messageCollector,
+                    performanceManager = performanceManager,
+                )
+            }
+            else -> {
+                error("Unexpected arguments type: ${arguments::class.java}")
+            }
         }
 
         compilerImpl.checkTargetArguments()?.let { return it }
@@ -147,7 +154,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 return OK
         }
 
-        if (!arguments.irProduceJs) {
+        if (arguments is K2JSCompilerArguments && !arguments.irProduceJs) {
             return OK
         }
 
@@ -160,7 +167,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         messageCollector.report(LOGGING, "Cache directory: $cacheDirectory")
 
         if (cacheDirectory != null) {
-            val icCacheReadOnly = arguments.wasm && arguments.icCacheReadonly
+            val icCacheReadOnly = arguments is K2WasmCompilerArguments && arguments.wasm && arguments.icCacheReadonly
             val cacheGuard = IncrementalCacheGuard(cacheDirectory, icCacheReadOnly)
             when (cacheGuard.acquire()) {
                 IncrementalCacheGuard.AcquireStatus.CACHE_CLEARED -> {
@@ -225,7 +232,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
     private fun produceSourceModule(
         environmentForJS: KotlinCoreEnvironment,
         klibs: LoadedKlibs,
-        arguments: K2JSCompilerArguments,
+        arguments: K2CommonJSCompilerArguments,
         outputKlibPath: String,
     ): ModulesStructure {
         val performanceManager = environmentForJS.configuration.perfManager
@@ -235,7 +242,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) {
             do {
                 @Suppress("DEPRECATION_ERROR")
-                val analyzerFacade = when (arguments.wasm) {
+                val analyzerFacade = when (arguments is K2WasmCompilerArguments) {
                     true -> TopDownAnalyzerFacadeForWasm.facadeFor(environmentForJS.configuration.get(WasmConfigurationKeys.WASM_TARGET))
                     else -> TopDownAnalyzerFacadeForJSIR
                 }
@@ -282,13 +289,13 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 sourceModule,
                 outputKlibPath,
                 nopack = arguments.irProduceKlibDir,
-                jsOutputName = arguments.irPerModuleOutputName,
+                jsOutputName = if (arguments is K2JSCompilerArguments) arguments.irPerModuleOutputName else null,
                 icData = icData,
                 moduleFragment = moduleFragment,
                 irBuiltIns = irPluginContext.irBuiltIns,
                 diagnosticReporter = irDiagnosticReporter,
-                builtInsPlatform = if (arguments.wasm) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
-                wasmTarget = if (!arguments.wasm) null else arguments.wasmTarget?.let(WasmTarget::fromName),
+                builtInsPlatform = if (arguments is K2WasmCompilerArguments && arguments.wasm) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
+                wasmTarget = if (arguments !is K2WasmCompilerArguments) null else arguments.wasmTarget?.let(WasmTarget::fromName),
                 performanceManager = performanceManager,
             )
 
@@ -302,7 +309,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
     override fun setupPlatformSpecificArgumentsAndServices(
         configuration: CompilerConfiguration,
-        arguments: K2JSCompilerArguments,
+        arguments: K2CommonJSCompilerArguments,
         services: Services,
     ) {
         CommonWebConfigurationUpdater.setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
@@ -314,7 +321,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         return MetadataVersion(*versionArray)
     }
 
-    override fun MutableList<String>.addPlatformOptions(arguments: K2JSCompilerArguments) {}
+    override fun MutableList<String>.addPlatformOptions(arguments: K2CommonJSCompilerArguments) {}
 
     companion object {
         @JvmStatic

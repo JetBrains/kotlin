@@ -88,9 +88,15 @@ val levelToClassNameMap = listOf(
         levelIsFinal = false,
     ),
     ArgumentsInfo(
+        levelName = CompilerArgumentsLevelNames.commonJsArguments,
+        className = "K2CommonJSCompilerArguments",
+        levelIsFinal = false,
+        originFileName = "CommonJsCompilerArguments",
+    ),
+    ArgumentsInfo(
         levelName = CompilerArgumentsLevelNames.wasmArguments,
         className = "K2WasmCompilerArguments",
-        levelIsFinal = false,
+        levelIsFinal = true,
         originFileName = "WasmCompilerArguments",
     ),
     ArgumentsInfo(

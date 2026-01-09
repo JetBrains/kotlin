@@ -6742,14 +6742,14 @@
                         ],
                         "nestedLevels": [
                             {
-                                "name": "wasmArguments",
+                                "name": "commonJsArguments",
                                 "arguments": [
                                     {
-                                        "name": "Xir-dce-dump-reachability-info-to-file",
+                                        "name": "Xcache-directory",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.",
+                                            "current": "Path to the cache directory.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
@@ -6769,18 +6769,49 @@
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
+                                            "introducedVersion": "1.8.20",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
                                             "removedVersion": null
                                         }
                                     },
                                     {
-                                        "name": "Xir-dump-declaration-ir-sizes-to-file",
+                                        "name": "Xfake-override-validator",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Dump the IR size of each declaration into a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.",
+                                            "current": "Enable the IR fake override validator.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "1.4.30",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "Xfriend-modules",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Paths to friend modules.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
@@ -6800,18 +6831,18 @@
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
+                                            "introducedVersion": "1.1.3",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
                                             "removedVersion": null
                                         }
                                     },
                                     {
-                                        "name": "Xwasm",
+                                        "name": "Xfriend-modules-disabled",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Use the WebAssembly compiler backend.",
+                                            "current": "Disable internal declaration export.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
@@ -6831,80 +6862,49 @@
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
+                                            "introducedVersion": "1.1.3",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
                                             "removedVersion": null
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-debug-friendly",
+                                        "name": "Xinclude",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Avoid optimizations that can break debugging.",
+                                            "current": "Path to an intermediate library that should be processed in the same manner as source files.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
-                                        "name": "Xwasm-debug-info",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Add debug info to the compiled WebAssembly module.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
                                                 "current": true,
                                                 "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
                                             }
                                         },
                                         "valueDescription": {
-                                            "current": null,
+                                            "current": "<path>",
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
+                                            "introducedVersion": "1.4.0",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
                                             "removedVersion": null
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-debugger-custom-formatters",
+                                        "name": "Xir-dce",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values",
+                                            "current": "Perform experimental dead code elimination.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
@@ -6924,18 +6924,18 @@
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
+                                            "introducedVersion": "1.3.70",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
                                             "removedVersion": null
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-enable-array-range-checks",
+                                        "name": "Xir-dce-print-reachability-info",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Turn on range checks for array access functions.",
+                                            "current": "Print reachability information about declarations to 'stdout' while performing DCE.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
@@ -6955,297 +6955,80 @@
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
+                                            "introducedVersion": "1.4.0",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
                                             "removedVersion": null
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-enable-asserts",
+                                        "name": "Xir-dce-runtime-diagnostic",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Turn on asserts.",
+                                            "current": "Enable runtime diagnostics instead of removing declarations when performing DCE.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
-                                        "name": "Xwasm-generate-dwarf",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Generate DWARF debug information.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
-                                        "name": "Xwasm-generate-wat",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Generate a .wat file.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
-                                        "name": "Xwasm-ic-cache-readonly",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Do not commit IC cache updates.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
-                                        "name": "Xwasm-included-module-only",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Compile only a module passed using `-include` option.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.3.0",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
-                                        "name": "Xwasm-kclass-fqn",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Enable support for 'KClass.qualifiedName'.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
                                                 "current": true,
                                                 "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
                                             }
                                         },
                                         "valueDescription": {
-                                            "current": null,
+                                            "current": "{log|exception}",
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
+                                            "introducedVersion": "1.5.0",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
                                             "removedVersion": null
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-no-jstag",
+                                        "name": "Xir-module-name",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Don't use WebAssembly.JSTag for throwing and catching exceptions",
+                                            "current": "Specify the name of the compilation module for the IR backend.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
-                                                "current": false,
+                                                "current": true,
                                                 "valueInVersions": []
                                             },
                                             "defaultValue": {
-                                                "current": false,
+                                                "current": null,
                                                 "valueInVersions": []
                                             }
                                         },
                                         "valueDescription": {
-                                            "current": null,
+                                            "current": "<name>",
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.2.20",
+                                            "introducedVersion": "1.4.0",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
                                             "removedVersion": null
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-preserve-ic-order",
+                                        "name": "Xir-per-module-output-name",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Preserve wasm file structure between IC runs.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
-                                        "name": "Xwasm-source-map-include-mappings-from-unavailable-sources",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Insert source mappings from libraries even if their sources are unavailable on the end-user machine.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
-                                        "name": "Xwasm-target",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Set up the Wasm target (wasm-js or wasm-wasi).",
+                                            "current": "Add a custom output name to the split .js files.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
@@ -7265,42 +7048,154 @@
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
+                                            "introducedVersion": "1.5.30",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
                                             "removedVersion": null
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-use-new-exception-proposal",
+                                        "name": "Xir-produce-klib-dir",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Use an updated version of the exception proposal with try_table.",
+                                            "current": "Generate an unpacked klib into the parent directory of the output JS file.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "1.3.70",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "Xir-produce-klib-file",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Generate a packed klib into the directory specified by '-ir-output-dir'.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "1.3.70",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "Xir-property-lazy-initialization",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Perform lazy initialization for properties.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
                                                 "current": true,
-                                                "valueInVersions": [
-                                                    {
-                                                        "minReleaseVersion": "2.1.20",
-                                                        "maxReleaseVersion": "2.2.20",
-                                                        "value": false
-                                                    }
-                                                ]
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "1.4.30",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "ir-output-dir",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Destination for generated files.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
                                             },
                                             "defaultValue": {
                                                 "current": null,
-                                                "valueInVersions": [
-                                                    {
-                                                        "minReleaseVersion": "2.1.20",
-                                                        "maxReleaseVersion": "2.2.20",
-                                                        "value": false
-                                                    }
-                                                ]
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<directory>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "1.8.20",
+                                            "stabilizedVersion": "1.8.20",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "ir-output-name",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Base name of generated files.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
                                             }
                                         },
                                         "valueDescription": {
@@ -7308,18 +7203,80 @@
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
-                                            "stabilizedVersion": null,
+                                            "introducedVersion": "1.8.20",
+                                            "stabilizedVersion": "1.8.20",
                                             "deprecatedVersion": null,
                                             "removedVersion": null
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-use-traps-instead-of-exceptions",
+                                        "name": "libraries",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Use traps instead of throwing exceptions.",
+                                            "current": "Paths to Kotlin libraries with .meta.js and .kjsm files, separated by the system path separator.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "1.1.0",
+                                            "stabilizedVersion": "1.1.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "main",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Specify whether the 'main' function should be called upon execution.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "{call|noCall}",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "1.0.0",
+                                            "stabilizedVersion": "1.0.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "source-map",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Generate a source map.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
@@ -7339,8 +7296,132 @@
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
-                                            "stabilizedVersion": null,
+                                            "introducedVersion": "1.0.0",
+                                            "stabilizedVersion": "1.0.0",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "source-map-base-dirs",
+                                        "shortName": null,
+                                        "deprecatedName": "source-map-source-roots",
+                                        "description": {
+                                            "current": "Base directories for calculating relative paths to source files in the source map.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "1.1.60",
+                                            "stabilizedVersion": "1.1.60",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "source-map-embed-sources",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Embed source files into the source map.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "{always|never|inlining}",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "1.1.4",
+                                            "stabilizedVersion": "1.1.4",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "source-map-names-policy",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Mode for mapping generated names to original names.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "{no|simple-names|fully-qualified-names}",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "1.8.20",
+                                            "stabilizedVersion": "1.8.20",
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "source-map-prefix",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Add the specified prefix to the paths in the source map.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "1.1.4",
+                                            "stabilizedVersion": "1.1.4",
                                             "deprecatedVersion": null,
                                             "removedVersion": null
                                         }
@@ -7350,37 +7431,6 @@
                                     {
                                         "name": "jsArguments",
                                         "arguments": [
-                                            {
-                                                "name": "Xcache-directory",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Path to the cache directory.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": "<path>",
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.8.20",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
                                             {
                                                 "name": "Xenable-extension-functions-in-externals",
                                                 "shortName": null,
@@ -7568,99 +7618,6 @@
                                                 }
                                             },
                                             {
-                                                "name": "Xfake-override-validator",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Enable the IR fake override validator.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                                    "isNullable": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": null,
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.4.30",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "Xfriend-modules",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Paths to friend modules.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": "<path>",
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.1.3",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "Xfriend-modules-disabled",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Disable internal declaration export.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                                    "isNullable": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": null,
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.1.3",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
                                                 "name": "Xgenerate-dts",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -7723,37 +7680,6 @@
                                                 }
                                             },
                                             {
-                                                "name": "Xinclude",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Path to an intermediate library that should be processed in the same manner as source files.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": "<path>",
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.4.0",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
                                                 "name": "Xir-build-cache",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -7779,99 +7705,6 @@
                                                 },
                                                 "releaseVersionsMetadata": {
                                                     "introducedVersion": "1.5.30",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "Xir-dce",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Perform experimental dead code elimination.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                                    "isNullable": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": null,
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.3.70",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "Xir-dce-print-reachability-info",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Print reachability information about declarations to 'stdout' while performing DCE.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                                    "isNullable": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": null,
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.4.0",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "Xir-dce-runtime-diagnostic",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Enable runtime diagnostics instead of removing declarations when performing DCE.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": "{log|exception}",
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.5.0",
                                                     "stabilizedVersion": null,
                                                     "deprecatedVersion": null,
                                                     "removedVersion": null
@@ -7971,37 +7804,6 @@
                                                 }
                                             },
                                             {
-                                                "name": "Xir-module-name",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Specify the name of the compilation module for the IR backend.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": "<name>",
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.4.0",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
                                                 "name": "Xir-per-file",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -8064,37 +7866,6 @@
                                                 }
                                             },
                                             {
-                                                "name": "Xir-per-module-output-name",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Add a custom output name to the split .js files.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": null,
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.5.30",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
                                                 "name": "Xir-produce-js",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -8120,99 +7891,6 @@
                                                 },
                                                 "releaseVersionsMetadata": {
                                                     "introducedVersion": "1.3.70",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "Xir-produce-klib-dir",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Generate an unpacked klib into the parent directory of the output JS file.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                                    "isNullable": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": null,
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.3.70",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "Xir-produce-klib-file",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Generate a packed klib into the directory specified by '-ir-output-dir'.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                                    "isNullable": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": null,
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.3.70",
-                                                    "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "Xir-property-lazy-initialization",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Perform lazy initialization for properties.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                                    "isNullable": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": null,
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.4.30",
                                                     "stabilizedVersion": null,
                                                     "deprecatedVersion": null,
                                                     "removedVersion": null
@@ -8405,130 +8083,6 @@
                                                 }
                                             },
                                             {
-                                                "name": "ir-output-dir",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Destination for generated files.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": "<directory>",
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.8.20",
-                                                    "stabilizedVersion": "1.8.20",
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "ir-output-name",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Base name of generated files.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": null,
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.8.20",
-                                                    "stabilizedVersion": "1.8.20",
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "libraries",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Paths to Kotlin libraries with .meta.js and .kjsm files, separated by the system path separator.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": "<path>",
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.1.0",
-                                                    "stabilizedVersion": "1.1.0",
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "main",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Specify whether the 'main' function should be called upon execution.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": "{call|noCall}",
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.0.0",
-                                                    "stabilizedVersion": "1.0.0",
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
                                                 "name": "module-kind",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -8591,161 +8145,6 @@
                                                 }
                                             },
                                             {
-                                                "name": "source-map",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Generate a source map.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                                    "isNullable": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": false,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": null,
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.0.0",
-                                                    "stabilizedVersion": "1.0.0",
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "source-map-base-dirs",
-                                                "shortName": null,
-                                                "deprecatedName": "source-map-source-roots",
-                                                "description": {
-                                                    "current": "Base directories for calculating relative paths to source files in the source map.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": "<path>",
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.1.60",
-                                                    "stabilizedVersion": "1.1.60",
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "source-map-embed-sources",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Embed source files into the source map.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": "{always|never|inlining}",
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.1.4",
-                                                    "stabilizedVersion": "1.1.4",
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "source-map-names-policy",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Mode for mapping generated names to original names.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": "{no|simple-names|fully-qualified-names}",
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.8.20",
-                                                    "stabilizedVersion": "1.8.20",
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
-                                                "name": "source-map-prefix",
-                                                "shortName": null,
-                                                "deprecatedName": null,
-                                                "description": {
-                                                    "current": "Add the specified prefix to the paths in the source map.",
-                                                    "valueInVersions": []
-                                                },
-                                                "delimiter": null,
-                                                "valueType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                                    "isNullable": {
-                                                        "current": true,
-                                                        "valueInVersions": []
-                                                    },
-                                                    "defaultValue": {
-                                                        "current": null,
-                                                        "valueInVersions": []
-                                                    }
-                                                },
-                                                "valueDescription": {
-                                                    "current": null,
-                                                    "valueInVersions": []
-                                                },
-                                                "releaseVersionsMetadata": {
-                                                    "introducedVersion": "1.1.4",
-                                                    "stabilizedVersion": "1.1.4",
-                                                    "deprecatedVersion": null,
-                                                    "removedVersion": null
-                                                }
-                                            },
-                                            {
                                                 "name": "target",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -8772,6 +8171,613 @@
                                                 "releaseVersionsMetadata": {
                                                     "introducedVersion": "1.0.0",
                                                     "stabilizedVersion": "1.0.0",
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            }
+                                        ],
+                                        "nestedLevels": []
+                                    },
+                                    {
+                                        "name": "wasmArguments",
+                                        "arguments": [
+                                            {
+                                                "name": "Xir-dce-dump-reachability-info-to-file",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                                    "isNullable": {
+                                                        "current": true,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": null,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": "<path>",
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xir-dump-declaration-ir-sizes-to-file",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Dump the IR size of each declaration into a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                                    "isNullable": {
+                                                        "current": true,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": null,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": "<path>",
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Use the WebAssembly compiler backend.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-debug-friendly",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Avoid optimizations that can break debugging.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-debug-info",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Add debug info to the compiled WebAssembly module.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": true,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-debugger-custom-formatters",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-enable-array-range-checks",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Turn on range checks for array access functions.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-enable-asserts",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Turn on asserts.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-generate-dwarf",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Generate DWARF debug information.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-generate-wat",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Generate a .wat file.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-ic-cache-readonly",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Do not commit IC cache updates.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-included-module-only",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Compile only a module passed using `-include` option.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.3.0",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-kclass-fqn",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Enable support for 'KClass.qualifiedName'.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": true,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-no-jstag",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Don't use WebAssembly.JSTag for throwing and catching exceptions",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.2.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-preserve-ic-order",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Preserve wasm file structure between IC runs.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-source-map-include-mappings-from-unavailable-sources",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Insert source mappings from libraries even if their sources are unavailable on the end-user machine.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-target",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Set up the Wasm target (wasm-js or wasm-wasi).",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                                    "isNullable": {
+                                                        "current": true,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": null,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-use-new-exception-proposal",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Use an updated version of the exception proposal with try_table.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": true,
+                                                        "valueInVersions": [
+                                                            {
+                                                                "minReleaseVersion": "2.1.20",
+                                                                "maxReleaseVersion": "2.2.20",
+                                                                "value": false
+                                                            }
+                                                        ]
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": null,
+                                                        "valueInVersions": [
+                                                            {
+                                                                "minReleaseVersion": "2.1.20",
+                                                                "maxReleaseVersion": "2.2.20",
+                                                                "value": false
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-use-traps-instead-of-exceptions",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Use traps instead of throwing exceptions.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
                                                     "deprecatedVersion": null,
                                                     "removedVersion": null
                                                 }
