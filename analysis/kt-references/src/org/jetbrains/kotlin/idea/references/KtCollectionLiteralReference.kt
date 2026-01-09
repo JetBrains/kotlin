@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.CollectionNames
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtCollectionLiteralReference(expression: KtCollectionLiteralExpression) :
@@ -21,6 +22,7 @@ abstract class KtCollectionLiteralReference(expression: KtCollectionLiteralExpre
         private val COLLECTION_LITERAL_CALL_NAMES: List<Name> = buildList {
             addAll(ArrayFqNames.ARRAY_CALL_NAMES)
             addAll(CollectionNames.FACTORY_NAMES)
+            add(OperatorNameConventions.OF)
         }.sorted()
     }
 
