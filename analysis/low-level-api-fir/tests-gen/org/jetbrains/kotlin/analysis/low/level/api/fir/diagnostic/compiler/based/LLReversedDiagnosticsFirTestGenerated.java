@@ -11775,6 +11775,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldIntersectionOverrides.kt")
+        public void testExplicitBackingFieldIntersectionOverrides() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldIntersectionOverrides.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldOptIns.kt")
         public void testExplicitBackingFieldOptIns() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldOptIns.kt");
