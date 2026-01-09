@@ -338,6 +338,11 @@ private val singleAbstractMethodPhase = createFileLoweringPhase(
         prerequisite = setOf(functionReferencePhase)
 )
 
+private val removeCastsFromNothing = createFileLoweringPhase(
+        ::RemoveCastsFromNothingLowering,
+        name = "RemoveCastsFromNothing",
+)
+
 private val builtinOperatorPhase = createFileLoweringPhase(
         ::BuiltinOperatorLowering,
         name = "BuiltinOperators",
@@ -657,6 +662,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         objectClassesPhase,
         staticInitializersPhase,
         computeTypesPhase,
+        removeCastsFromNothing,
         optimizeCastsPhase.takeIf { this.genericSafeCasts },
         typeOperatorPhase,
         builtinOperatorPhase,
