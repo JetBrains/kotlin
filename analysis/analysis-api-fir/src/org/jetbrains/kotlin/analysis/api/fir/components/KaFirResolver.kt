@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.diagnostic.logger
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.*
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
@@ -66,6 +68,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -180,7 +184,7 @@ internal class KaFirResolver(
         val originalFir = psi.getOrBuildFir(resolutionFacade) ?: return null
         return when (val unwrappedFir = originalFir.unwrapSafeCall()) {
             is FirResolvable -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
-            is FirCollectionLiteral -> unwrappedFir.toKaSymbolResolutionAttempt()
+            is FirCollectionLiteral -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
             is FirVariableAssignment -> unwrappedFir.calleeReference?.toKaSymbolResolutionAttempt(psi)
             is FirResolvedQualifier -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
             is FirReference -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
@@ -290,7 +294,19 @@ internal class KaFirResolver(
         return KaBaseSymbolResolutionSuccess(backingSymbol = symbol)
     }
 
-    private fun FirCollectionLiteral.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt = with(analysisSession) {
+    private fun FirCollectionLiteral.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt = with(analysisSession) {
+        val resolvedType = resolvedType as? ConeClassLikeType
+        if (resolvedType is ConeErrorType) {
+            return KaBaseSymbolResolutionError(
+                backingDiagnostic = createKaDiagnostic(
+                    source = source,
+                    coneDiagnostic = resolvedType.diagnostic,
+                    psi = psi,
+                ),
+                backingCandidateSymbols = emptyList(),
+            )
+        }
+
         val resolvedSymbol = arrayOfSymbol(this@toKaSymbolResolutionAttempt)
         if (resolvedSymbol != null) {
             return KaBaseSymbolResolutionSuccess(resolvedSymbol)
@@ -366,12 +382,36 @@ internal class KaFirResolver(
         return when (val fir = psiToResolve.getOrBuildFir(analysisSession.resolutionFacade)) {
             null -> emptyList()
             is FirDiagnosticHolder -> fir.onError(psiToResolve)
-            else -> fir.onSuccess(
-                psiToResolve,
-                psiToResolve == containingCallExpressionForCalleeExpression,
-                psiToResolve == containingBinaryExpressionForLhs || psiToResolve == containingUnaryExpressionForIncOrDec,
-            )
+            else -> {
+                val specialErrorCase = specialErrorCase(fir)
+                specialErrorCase?.onError(psiToResolve) ?: fir.onSuccess(
+                    psiToResolve,
+                    psiToResolve == containingCallExpressionForCalleeExpression,
+                    psiToResolve == containingBinaryExpressionForLhs || psiToResolve == containingUnaryExpressionForIncOrDec,
+                )
+            }
         }
+    }
+
+    /**
+     * Some [FirElement] might not implement [FirDiagnosticHolder] directly, but still effectively hold diagnostics
+     */
+    private fun specialErrorCase(fir: FirElement): FirDiagnosticHolder? = when (fir) {
+        is FirCollectionLiteral -> {
+            val resolvedType = fir.resolvedType
+            if (resolvedType is ConeErrorType) {
+                object : FirDiagnosticHolder {
+                    override val source: KtSourceElement? get() = fir.source
+                    override val diagnostic: ConeDiagnostic get() = resolvedType.diagnostic
+                    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+                    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement = this
+                }
+            } else {
+                null
+            }
+        }
+
+        else -> null
     }
 
     private val stringPlusSymbol by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -1848,10 +1888,14 @@ internal class KaFirResolver(
         }
     }
 
-    private fun FirDiagnosticHolder.createKaDiagnostic(psi: KtElement?): KaDiagnostic {
-        return (source?.let { diagnostic.asKaDiagnostic(it, psi?.toKtPsiSourceElement()) }
-            ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, token))
-    }
+    private fun createKaDiagnostic(
+        source: KtSourceElement?,
+        coneDiagnostic: ConeDiagnostic,
+        psi: KtElement?,
+    ): KaDiagnostic = source?.let { coneDiagnostic.asKaDiagnostic(it, psi?.toKtPsiSourceElement()) }
+        ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, coneDiagnostic.reason, token)
+
+    private fun FirDiagnosticHolder.createKaDiagnostic(psi: KtElement?): KaDiagnostic = createKaDiagnostic(source, diagnostic, psi)
 }
 
 private val FirReference.isContextSensitive: Boolean
