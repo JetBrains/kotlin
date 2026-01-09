@@ -132,6 +132,12 @@ public class IrBlackBoxCodegenTestForLombokGenerated extends AbstractIrBlackBoxC
   }
 
   @Test
+  @TestMetadata("constructorFromValueAndInitializingFields.kt")
+  public void testConstructorFromValueAndInitializingFields() {
+    runTest("plugins/lombok/testData/box/constructorFromValueAndInitializingFields.kt");
+  }
+
+  @Test
   @TestMetadata("customBuilderAndFunctions.kt")
   public void testCustomBuilderAndFunctions() {
     runTest("plugins/lombok/testData/box/customBuilderAndFunctions.kt");
