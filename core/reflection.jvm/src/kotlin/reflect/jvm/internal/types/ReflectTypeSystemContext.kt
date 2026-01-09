@@ -6,10 +6,12 @@
 package kotlin.reflect.jvm.internal.types
 
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.ErrorTypeParameter
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KTypeParameterImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
@@ -24,7 +26,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun KotlinTypeMarker.isError(): Boolean {
-        return false
+        return this is AbstractKType && classifier is ErrorTypeParameter || (this as? DescriptorKType)?.type?.isError == true
     }
 
     override fun TypeConstructorMarker.isError(): Boolean {

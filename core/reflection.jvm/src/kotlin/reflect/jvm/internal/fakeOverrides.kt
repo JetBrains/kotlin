@@ -415,6 +415,8 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
  * (e.g. `String?` != `String` but (`String?` == `String!` and `String` == `String!`)
  */
 private fun KType.coerceFlexibleTypesAndMutabilityRecursive(memberNameForDebug: String): KType {
+    val self = this
+    if (with(ReflectTypeSystemContext) { (self as? AbstractKType)?.isError() == true }) return self
     val classifier = classifier
         ?: error(
             "Non-denotable parameter types are not possible. " +

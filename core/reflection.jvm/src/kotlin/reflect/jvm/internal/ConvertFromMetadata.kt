@@ -196,7 +196,7 @@ private fun KmClassifier.toClassifier(
         }
 }
 
-private class ErrorTypeParameter(private val id: Int) : KClassifier {
+internal class ErrorTypeParameter(private val id: Int) : KClassifier {
     override fun toString(): String = "[Error type parameter $id]"
 }
 
