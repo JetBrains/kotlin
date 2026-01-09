@@ -10,17 +10,17 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class JavaAnnotationDirectImpl(
-    node: DirectSyntaxNode,
+class JavaAnnotationOverAst(
+    node: JavaSyntaxNode,
     source: CharSequence
-) : JavaElementDirectImpl(node, source), JavaAnnotation {
+) : JavaElementOverAst(node, source), JavaAnnotation {
     override val arguments: Collection<JavaAnnotationArgument>
         get() {
             val parameterList = node.findChildByType("ANNOTATION_PARAMETER_LIST")
             if (parameterList == null) return emptyList()
             
             return parameterList.getChildrenByType("NAME_VALUE_PAIR").map { 
-                JavaAnnotationArgumentDirectImpl(it, source)
+                JavaAnnotationArgumentOverAst(it, source)
             }
         }
 
@@ -33,10 +33,10 @@ class JavaAnnotationDirectImpl(
     override fun resolve(): JavaClass? = null
 }
 
-class JavaAnnotationArgumentDirectImpl(
-    node: DirectSyntaxNode,
+class JavaAnnotationArgumentOverAst(
+    node: JavaSyntaxNode,
     source: CharSequence
-) : JavaElementDirectImpl(node, source), JavaAnnotationArgument {
+) : JavaElementOverAst(node, source), JavaAnnotationArgument {
     override val name: Name?
         get() = node.findChildByType("IDENTIFIER")?.let { Name.identifier(it.text) }
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -14,18 +13,18 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @Suppress("UNCHECKED_CAST")
-class JavaClassDirectImpl(
-    node: DirectSyntaxNode,
+class JavaClassOverAst(
+    node: JavaSyntaxNode,
     source: CharSequence,
     override val outerClass: JavaClass? = null
-) : JavaElementDirectImpl(node, source), JavaClass {
+) : JavaElementOverAst(node, source), JavaClass {
 
     override val name: Name
         get() = Name.identifier(node.children.find { it.type.toString() == "IDENTIFIER" }?.text ?: "<error>")
 
     override val fqName: FqName?
         get() {
-            var currentRoot: DirectSyntaxNode? = node
+            var currentRoot: JavaSyntaxNode? = node
             while (currentRoot?.parent != null) {
                 currentRoot = currentRoot.parent
             }
@@ -47,7 +46,7 @@ class JavaClassDirectImpl(
             return result
         }
 
-    private val modifierList: DirectSyntaxNode?
+    private val modifierList: JavaSyntaxNode?
         get() = node.findChildByType("MODIFIER_LIST")
 
     private fun hasModifier(modifier: String): Boolean {
@@ -67,16 +66,16 @@ class JavaClassDirectImpl(
         } as Visibility
 
     override val typeParameters: List<JavaTypeParameter>
-        get() = node.findChildByType("TYPE_PARAMETER_LIST")?.getChildrenByType("TYPE_PARAMETER")?.map { JavaTypeParameterDirectImpl(it, source) } ?: emptyList()
+        get() = node.findChildByType("TYPE_PARAMETER_LIST")?.getChildrenByType("TYPE_PARAMETER")?.map { JavaTypeParameterOverAst(it, source) } ?: emptyList()
 
     override val supertypes: Collection<JavaClassifierType>
         get() {
             val result = mutableListOf<JavaClassifierType>()
             node.findChildByType("EXTENDS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
-                result.add(JavaClassifierTypeDirectImpl(it, source))
+                result.add(JavaClassifierTypeOverAst(it, source))
             }
             node.findChildByType("IMPLEMENTS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
-                result.add(JavaClassifierTypeDirectImpl(it, source))
+                result.add(JavaClassifierTypeOverAst(it, source))
             }
             return result
         }
@@ -89,7 +88,7 @@ class JavaClassDirectImpl(
         val innerClassNode = node.children.find { 
             it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == name.asString()
         }
-        return innerClassNode?.let { JavaClassDirectImpl(it, source, this) }
+        return innerClassNode?.let { JavaClassOverAst(it, source, this) }
     }
 
     override val isInterface: Boolean get() = node.findChildByType("INTERFACE_KEYWORD") != null
@@ -101,19 +100,19 @@ class JavaClassDirectImpl(
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override val methods: Collection<JavaMethod>
-        get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") != null }.map { JavaMethodDirectImpl(it, source, this) }
+        get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") != null }.map { JavaMethodOverAst(it, source, this) }
 
     override val fields: Collection<JavaField>
-        get() = node.getChildrenByType("FIELD").map { JavaFieldDirectImpl(it, source, this) }
+        get() = node.getChildrenByType("FIELD").map { JavaFieldOverAst(it, source, this) }
 
     override val constructors: Collection<JavaConstructor>
-        get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") == null }.map { JavaConstructorDirectImpl(it, source, this) }
+        get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") == null }.map { JavaConstructorOverAst(it, source, this) }
     override val recordComponents: Collection<JavaRecordComponent> get() = emptyList()
 
     override fun hasDefaultConstructor(): Boolean = false
 
     override val annotations: Collection<JavaAnnotation>
-        get() = modifierList?.getChildrenByType("ANNOTATION")?.map { JavaAnnotationDirectImpl(it, source) } ?: emptyList()
+        get() = modifierList?.getChildrenByType("ANNOTATION")?.map { JavaAnnotationOverAst(it, source) } ?: emptyList()
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 

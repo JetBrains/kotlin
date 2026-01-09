@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-abstract class JavaTypeDirectImpl(
-    val node: DirectSyntaxNode,
+abstract class JavaTypeOverAst(
+    val node: JavaSyntaxNode,
     val source: CharSequence
 ) : JavaType, JavaAnnotationOwner {
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
@@ -18,10 +18,10 @@ abstract class JavaTypeDirectImpl(
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 }
 
-class JavaClassifierTypeDirectImpl(
-    node: DirectSyntaxNode,
+class JavaClassifierTypeOverAst(
+    node: JavaSyntaxNode,
     source: CharSequence
-) : JavaTypeDirectImpl(node, source), JavaClassifierType {
+) : JavaTypeOverAst(node, source), JavaClassifierType {
     override val classifier: JavaClassifier? get() = null // TODO: Implement resolution
     override val classifierQualifiedName: String get() = node.text
     override val presentableText: String get() = node.text
@@ -29,10 +29,10 @@ class JavaClassifierTypeDirectImpl(
     override val typeArguments: List<JavaType> get() = emptyList()
 }
 
-class JavaPrimitiveTypeDirectImpl(
-    node: DirectSyntaxNode,
+class JavaPrimitiveTypeOverAst(
+    node: JavaSyntaxNode,
     source: CharSequence
-) : JavaTypeDirectImpl(node, source), JavaPrimitiveType {
+) : JavaTypeOverAst(node, source), JavaPrimitiveType {
     override val type: org.jetbrains.kotlin.builtins.PrimitiveType?
         get() = when (node.text) {
             "boolean" -> org.jetbrains.kotlin.builtins.PrimitiveType.BOOLEAN
@@ -47,31 +47,31 @@ class JavaPrimitiveTypeDirectImpl(
         }
 }
 
-class JavaVoidTypeDirectImpl(
-    node: DirectSyntaxNode,
+class JavaVoidTypeOverAst(
+    node: JavaSyntaxNode,
     source: CharSequence
-) : JavaTypeDirectImpl(node, source), JavaType // JavaType is enough for void in some contexts, but let's check if there is JavaVoidType
+) : JavaTypeOverAst(node, source), JavaType // JavaType is enough for void in some contexts, but let's check if there is JavaVoidType
 
-fun createJavaType(node: DirectSyntaxNode, source: CharSequence): JavaType {
+fun createJavaType(node: JavaSyntaxNode, source: CharSequence): JavaType {
     val typeNode = node.findChildByType("TYPE") ?: node
     val primitiveNode = typeNode.children.find { it.type.toString().endsWith("_KEYWORD") && it.type.toString() != "VOID_KEYWORD" }
     if (primitiveNode != null) {
-        return JavaPrimitiveTypeDirectImpl(primitiveNode, source)
+        return JavaPrimitiveTypeOverAst(primitiveNode, source)
     }
     if (typeNode.findChildByType("VOID_KEYWORD") != null) {
-        return JavaVoidTypeDirectImpl(typeNode.findChildByType("VOID_KEYWORD")!!, source)
+        return JavaVoidTypeOverAst(typeNode.findChildByType("VOID_KEYWORD")!!, source)
     }
     val referenceNode = typeNode.findChildByType("JAVA_CODE_REFERENCE")
     if (referenceNode != null) {
-        return JavaClassifierTypeDirectImpl(referenceNode, source)
+        return JavaClassifierTypeOverAst(referenceNode, source)
     }
-    return JavaClassifierTypeDirectImpl(typeNode, source)
+    return JavaClassifierTypeOverAst(typeNode, source)
 }
 
-class JavaTypeParameterDirectImpl(
-    node: DirectSyntaxNode,
+class JavaTypeParameterOverAst(
+    node: JavaSyntaxNode,
     source: CharSequence
-) : JavaElementDirectImpl(node, source), JavaTypeParameter {
+) : JavaElementOverAst(node, source), JavaTypeParameter {
     override val name: Name get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")
     override val upperBounds: Collection<JavaClassifierType> get() = emptyList()
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
