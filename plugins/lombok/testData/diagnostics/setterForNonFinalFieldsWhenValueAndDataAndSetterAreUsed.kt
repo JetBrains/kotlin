@@ -41,9 +41,9 @@ public class TestJavaUsage {
 
 fun usage() {
     val valuePlusDataBasic = ValuePlusDataBasic("John", "Snow")
-    valuePlusDataBasic.setName("")            // Shouldn't be ok
-    valuePlusDataBasic.setLastName("")        // Shouldn't be ok
+    valuePlusDataBasic.<!UNRESOLVED_REFERENCE!>setName<!>("")
+    valuePlusDataBasic.<!UNRESOLVED_REFERENCE!>setLastName<!>("")
 
     val valueSetterFinalField = ValueSetterFinalField(1)
-    valueSetterFinalField.setX(1)     // Shouldn't be ok
+    valueSetterFinalField.<!UNRESOLVED_REFERENCE!>setX<!>(1)
 }
