@@ -1,0 +1,5 @@
+KtCollectionLiteralExpression(213,223): '["1", "2"]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyList.Companion.of(<dispatch receiver>: MyList.Companion, string1: kotlin.String, another: kotlin.String): MyList
+    ]

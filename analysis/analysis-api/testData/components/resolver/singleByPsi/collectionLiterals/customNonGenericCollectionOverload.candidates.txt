@@ -1,0 +1,95 @@
+KtCollectionLiteralExpression(213,223): '["1", "2"]'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        "1" -> (KaVariableSignature:
+          name = string1
+          receiverType = null
+          returnType = kotlin.String
+          symbol = string1: kotlin.String
+          contextParameters = []
+          callableId = null),
+        "2" -> (KaVariableSignature:
+          name = another
+          receiverType = null
+          returnType = kotlin.String
+          symbol = another: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = ["1", "2"]
+          isSafeNavigation = false
+          type = MyList.Companion
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyList
+          symbol = /MyList.Companion.of(<dispatch receiver>: MyList.Companion, string1: kotlin.String, another: kotlin.String): MyList
+          valueParameters = [
+            KaVariableSignature:
+              name = string1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = string1: kotlin.String
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = another
+              receiverType = null
+              returnType = kotlin.String
+              symbol = another: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /MyList.Companion.of
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        "1" -> (KaVariableSignature:
+          name = vals
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg vals: kotlin.String
+          contextParameters = []
+          callableId = null),
+        "2" -> (KaVariableSignature:
+          name = vals
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg vals: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = ["1", "2"]
+          isSafeNavigation = false
+          type = MyList.Companion
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyList
+          symbol = /MyList.Companion.of(<dispatch receiver>: MyList.Companion, vararg vals: kotlin.String): MyList
+          valueParameters = [
+            KaVariableSignature:
+              name = vals
+              receiverType = null
+              returnType = kotlin.String
+              symbol = vararg vals: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /MyList.Companion.of
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
