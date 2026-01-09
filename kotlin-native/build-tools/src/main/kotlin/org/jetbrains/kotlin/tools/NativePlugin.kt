@@ -11,6 +11,8 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.process.ExecOperations
@@ -196,16 +198,11 @@ open class NativeToolsExtension(val project: Project) {
     val llvmDir by nativeDependenciesExtension::llvmPath
     val hostPlatform by nativeDependenciesExtension::hostPlatform
 
-    // This is copied from `ClangArgs`
     private val jdkDir: File
-        get() = File(System.getProperty("java.home")).canonicalFile.let { home ->
-            if (home.resolve("include").exists()) {
-                home
-            } else {
-                home.parentFile.also {
-                    check(it.resolve("include").exists())
-                }
-            }
+        get() {
+            return project.extensions.getByType(JavaToolchainService::class.java).launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(11))
+            }.get().metadata.installationPath.asFile
         }
 
     private val reproducibilityRootsMap: Map<File, String>

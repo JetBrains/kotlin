@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
     id("native")
+    id("jvm-toolchains")
 }
 
 val library = lib("debugInfo")
