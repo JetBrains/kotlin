@@ -55,6 +55,12 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
   }
 
   @Test
+  @TestMetadata("classWithValueAnnIsNotFinal.kt")
+  public void testClassWithValueAnnIsNotFinal() {
+    runTest("plugins/lombok/testData/diagnostics/classWithValueAnnIsNotFinal.kt");
+  }
+
+  @Test
   @TestMetadata("getterSetterIfClassIsAnnotated.kt")
   public void testGetterSetterIfClassIsAnnotated() {
     runTest("plugins/lombok/testData/diagnostics/getterSetterIfClassIsAnnotated.kt");
