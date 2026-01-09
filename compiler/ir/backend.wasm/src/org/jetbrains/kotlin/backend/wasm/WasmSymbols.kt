@@ -252,8 +252,16 @@ class WasmSymbols(
 
     val returnArgumentIfItIsKotlinAny = getInternalWasmFunction("returnArgumentIfItIsKotlinAny")
 
-    val startCoroutineUninterceptedOrReturnIntrinsics =
-        (0..2).map { getInternalWasmFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
+    val suspendFunctionToContref = (0..2).map { getInternalWasmFunction("suspendFunction${it}ToContref") }
+
+    val suspendIntrinsic = getInternalWasmFunction("suspendIntrinsic")
+    val resumeThrowIntrinsic = getInternalWasmFunction("resumeThrowIntrinsic")
+    val resumeWithIntrinsic = getInternalWasmFunction("resumeWithIntrinsic")
+    val setWasmContinuation = getInternalWasmFunction("setWasmContinuation")
+    val buildResumeIntrinsicSuspendResult = getInternalWasmFunction("buildResumeIntrinsicSuspendResult")
+    val buildResumeIntrinsicValueResult = getInternalWasmFunction("buildResumeIntrinsicValueResult")
+    val resumeCompletionWithValue = getInternalWasmFunction("resumeCompletionWithValue")
+    val resumeCompletionWithException = getInternalWasmFunction("resumeCompletionWithException")
 
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = getInternalWasmClass("KLocalDelegatedPropertyImpl")
@@ -287,6 +295,7 @@ class WasmSymbols(
     val wasmStructRefType by lazy { wasmStructRefClass.defaultType }
 
     val wasmAnyRefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.anyref"))
+    val wasmCont1RefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.contref1"))
 
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalWasmFunction("kotlinToJsStringAdapter")
