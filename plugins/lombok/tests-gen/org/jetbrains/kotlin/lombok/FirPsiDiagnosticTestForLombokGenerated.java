@@ -67,6 +67,12 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
   }
 
   @Test
+  @TestMetadata("setterForNonFinalFieldsWhenValueAndDataAndSetterAreUsed.kt")
+  public void testSetterForNonFinalFieldsWhenValueAndDataAndSetterAreUsed() {
+    runTest("plugins/lombok/testData/diagnostics/setterForNonFinalFieldsWhenValueAndDataAndSetterAreUsed.kt");
+  }
+
+  @Test
   @TestMetadata("superBuilderAccessTypeParameterBoundsSafely.kt")
   public void testSuperBuilderAccessTypeParameterBoundsSafely() {
     runTest("plugins/lombok/testData/diagnostics/superBuilderAccessTypeParameterBoundsSafely.kt");
