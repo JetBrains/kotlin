@@ -476,6 +476,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("customNonGenericCollectionNonVararg.kt")
+    public void testCustomNonGenericCollectionNonVararg() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/collectionLiterals/customNonGenericCollectionNonVararg.kt");
+    }
+
+    @Test
     @TestMetadata("ofOperator.kt")
     public void testOfOperator() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/collectionLiterals/ofOperator.kt");
