@@ -149,14 +149,24 @@ class Constraint(
     /**
      * A constraint has this flag in case its initial lower constraint has a flexible type variable.
      *
+     * Only a lower constraint (directly) or equal constraint (with the help of lower/upper simplification)
+     * may have [isFromFlexiblePosition] of true.
+     *
      * This flag changes the incorporation rules:
-     * with A? <: &alpha; <: B and A? <: &alpha; having [isFromFlexiblePosition] we infer A? <: B!. Without the flag, we infer A? <: B.
+     * with A? <:(=) &alpha; <:(=) B and A? <:(=) &alpha; having [isFromFlexiblePosition] we infer A? <: B!.
+     * Without the flag, we infer A? <: B.
      */
     val isFromFlexiblePosition: Boolean,
     // Can only be true in K2
     val isNoInfer: Boolean,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
 ) {
+    init {
+        if (isFromFlexiblePosition) {
+            require(kind != ConstraintKind.UPPER)
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
