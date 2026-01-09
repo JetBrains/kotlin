@@ -27060,6 +27060,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("primitiveVsBoxedOverloadAndSecondParameter.kt")
+      public void testPrimitiveVsBoxedOverloadAndSecondParameter() {
+        runTest("compiler/testData/diagnostics/tests/j+k/primitiveVsBoxedOverloadAndSecondParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("primitiveVsBoxedOverloads.kt")
+      public void testPrimitiveVsBoxedOverloads() {
+        runTest("compiler/testData/diagnostics/tests/j+k/primitiveVsBoxedOverloads.kt");
+      }
+
+      @Test
       @TestMetadata("privateFieldOverridesNothing.kt")
       public void testPrivateFieldOverridesNothing() {
         runTest("compiler/testData/diagnostics/tests/j+k/privateFieldOverridesNothing.kt");
@@ -34403,6 +34415,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("LocalFunctions.kt")
       public void testLocalFunctions() {
         runTest("compiler/testData/diagnostics/tests/overload/LocalFunctions.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableIntVsLongOverload.kt")
+      public void testNullableIntVsLongOverload() {
+        runTest("compiler/testData/diagnostics/tests/overload/nullableIntVsLongOverload.kt");
       }
 
       @Test
