@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.resolve.ArrayFqNames
+import org.jetbrains.kotlin.resolve.CollectionNames
 
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtCollectionLiteralReference(expression: KtCollectionLiteralExpression) :
@@ -19,6 +20,7 @@ abstract class KtCollectionLiteralReference(expression: KtCollectionLiteralExpre
     companion object {
         private val COLLECTION_LITERAL_CALL_NAMES: List<Name> = buildList {
             addAll(ArrayFqNames.ARRAY_CALL_NAMES)
+            addAll(CollectionNames.Factories.NAMES)
         }.sorted()
     }
 

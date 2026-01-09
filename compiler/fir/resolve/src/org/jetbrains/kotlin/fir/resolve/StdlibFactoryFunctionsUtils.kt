@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,16 +9,12 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.isNonPrimitiveArray
-import org.jetbrains.kotlin.fir.types.isPrimitiveArray
-import org.jetbrains.kotlin.fir.types.isUnsignedArray
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ArrayFqNames
+import org.jetbrains.kotlin.resolve.CollectionNames
 import kotlin.collections.get
 
 fun toArrayOfFactoryName(
@@ -57,11 +53,11 @@ fun toCollectionOfFactoryPackageAndName(
     }
 
     return when (expectedClass.classId) {
-        StandardClassIds.List -> StandardNames.COLLECTIONS_PACKAGE_FQ_NAME to Name.identifier("listOf")
-        StandardClassIds.MutableList -> StandardNames.COLLECTIONS_PACKAGE_FQ_NAME to Name.identifier("mutableListOf")
-        StandardClassIds.Set -> StandardNames.COLLECTIONS_PACKAGE_FQ_NAME to Name.identifier("setOf")
-        StandardClassIds.MutableSet -> StandardNames.COLLECTIONS_PACKAGE_FQ_NAME to Name.identifier("mutableSetOf")
-        StandardClassIds.Sequence -> StandardNames.SEQUENCES_PACKAGE_FQ_NAME to Name.identifier("sequenceOf")
+        StandardClassIds.List -> StandardNames.COLLECTIONS_PACKAGE_FQ_NAME to CollectionNames.Factories.LIST_OF
+        StandardClassIds.MutableList -> StandardNames.COLLECTIONS_PACKAGE_FQ_NAME to CollectionNames.Factories.MUTABLE_LIST_OF
+        StandardClassIds.Set -> StandardNames.COLLECTIONS_PACKAGE_FQ_NAME to CollectionNames.Factories.SET_OF
+        StandardClassIds.MutableSet -> StandardNames.COLLECTIONS_PACKAGE_FQ_NAME to CollectionNames.Factories.MUTABLE_SET_OF
+        StandardClassIds.Sequence -> StandardNames.SEQUENCES_PACKAGE_FQ_NAME to CollectionNames.Factories.SEQUENCE_OF
         else -> null
     }
 }
