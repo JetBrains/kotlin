@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.maven.plugin.test
 
-import org.jetbrains.kotlin.maven.test.JdkVersions
 import org.jetbrains.kotlin.maven.test.MavenTest
+import org.jetbrains.kotlin.maven.test.MavenVersions
 import org.jetbrains.kotlin.maven.test.TestVersions
 import org.jetbrains.kotlin.maven.test.assertBuildLogContains
 import org.jetbrains.kotlin.maven.test.isWindowsHost
@@ -21,6 +21,7 @@ import kotlin.io.path.absolutePathString
 class LegacyIT : KotlinMavenTestBase() {
     private fun verifyWithLegacyBsh(
         projectName: String,
+        mavenVersion: TestVersions.Maven,
         withDebug: Boolean = true,
         buildOptions: MavenBuildOptions = this.buildOptions,
         disableKotlinDaemonOnWindows: Boolean = false,
@@ -29,7 +30,7 @@ class LegacyIT : KotlinMavenTestBase() {
             buildOptions.copy(useKotlinDaemon = false)
         } else buildOptions
 
-        testProject(projectName, "default", buildOptions) {
+        testProject(projectName, mavenVersion, buildOptions) {
             val args = mutableListOf<String>()
 
             // enable debug output by default, as some verification scripts are checking for dependencies hits
@@ -48,176 +49,202 @@ class LegacyIT : KotlinMavenTestBase() {
         }
     }
 
-    @Test
-    fun `test-helloworld`() = verifyWithLegacyBsh("test-helloworld",)
-
-    @Test
-    fun `test-helloworld-kts`() = verifyWithLegacyBsh("test-helloworld-kts",)
-
-    @Test
-    fun `test-accessToInternal`() = verifyWithLegacyBsh("test-accessToInternal",)
-
-    @Test
-    fun `test-allopen-simple`() = verifyWithLegacyBsh("test-allopen-simple",)
-
-    @Test
-    fun `test-allopen-spring`() = verifyWithLegacyBsh("test-allopen-spring",)
-
-    @Test
-    fun `test-apiVersion`() = verifyWithLegacyBsh("test-apiVersion",)
-
-    @Test
-    fun `test-bom`() = verifyWithLegacyBsh("test-bom",)
-
-    @JdkVersions(versions = [TestVersions.Java.JDK_1_8, TestVersions.Java.JDK_17])
     @MavenTest
-    fun `test-customJdk`(jdkVersion: TestVersions.Java) {
-        val failureExpected = jdkVersion == TestVersions.Java.JDK_1_8
-        testProject("test-customJdk", "default") {
+    fun `test-helloworld`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-helloworld", mavenVersion)
+
+    @MavenTest
+    fun `test-helloworld-kts`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-helloworld-kts", mavenVersion)
+
+    @MavenTest
+    fun `test-accessToInternal`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-accessToInternal", mavenVersion)
+
+    @MavenTest
+    fun `test-allopen-simple`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-allopen-simple", mavenVersion)
+
+    @MavenTest
+    fun `test-allopen-spring`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-allopen-spring", mavenVersion)
+
+    @MavenTest
+    fun `test-apiVersion`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-apiVersion", mavenVersion)
+
+    @MavenTest
+    fun `test-bom`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-bom", mavenVersion)
+
+    @MavenTest
+    fun `test-customJdk-1_8`(mavenVersion: TestVersions.Maven) {
+        testProject("test-customJdk", mavenVersion) {
             build(
                 "package",
-                expectedToFail = failureExpected,
+                expectedToFail = true,
                 buildOptions = buildOptions.copy(
-                    javaVersion = jdkVersion,
-                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.javaHomeProvider(jdkVersion).absolutePathString())
+                    javaVersion = TestVersions.Java.JDK_1_8,
+                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.javaHomeProvider(TestVersions.Java.JDK_1_8).absolutePathString())
                 )
             ) {
-                if (!failureExpected) {
-                    assertBuildLogContains("[INFO] BUILD SUCCESS")
-                } else {
-                    assertBuildLogContains(
-                        "[INFO] BUILD FAILURE",
-                        "[INFO] Overriding JDK home path with",
-                        "Unresolved reference 'StackWalker'"
-                    )
-                }
+                assertBuildLogContains(
+                    "[INFO] BUILD FAILURE",
+                    "[INFO] Overriding JDK home path with",
+                    "Unresolved reference 'StackWalker'"
+                )
             }
         }
     }
 
-    @Test
-    fun `test-empty-argument`() = verifyWithLegacyBsh("test-empty-argument",)
-
-    @Test
-    fun `test-enable-extensions`() = verifyWithLegacyBsh("test-enable-extensions",)
-
-    @Test
-    fun `test-executeKotlinScriptBuildAccess`() = verifyWithLegacyBsh("test-executeKotlinScriptBuildAccess",)
-
-    @Test
-    fun `test-executeKotlinScriptCompileError`() = verifyWithLegacyBsh("test-executeKotlinScriptCompileError",)
-
-    @Test
-    fun `test-executeKotlinScriptFile`() = verifyWithLegacyBsh("test-executeKotlinScriptFile",)
-
-    @Test
-    fun `test-executeKotlinScriptInline`() = verifyWithLegacyBsh("test-executeKotlinScriptInline",)
-
-    @Test
-    fun `test-executeKotlinScriptScriptException`() = verifyWithLegacyBsh("test-executeKotlinScriptScriptException",)
-
-    @Test
-    fun `test-executeKotlinScriptWithDependencies`() = verifyWithLegacyBsh("test-executeKotlinScriptWithDependencies",)
-
-    @Test
-    fun `test-executeKotlinScriptWithTemplate`() = verifyWithLegacyBsh("test-executeKotlinScriptWithTemplate",)
-
-    @Test
-    fun `test-extraArguments`() = verifyWithLegacyBsh("test-extraArguments",)
-
-    @Test
-    fun `test-jvmTarget`() = verifyWithLegacyBsh("test-jvmTarget",)
-
-    @Test
-    fun `test-kapt-annotationProcessorPaths-without-version`() = verifyWithLegacyBsh(
-        "test-kapt-annotationProcessorPaths-without-version",
-        disableKotlinDaemonOnWindows = true
-    )
-
-    @Test
-    fun `test-kapt-generateKotlinCode`() = verifyWithLegacyBsh(
-        "test-kapt-generateKotlinCode",
-        disableKotlinDaemonOnWindows = true
-    )
-
-    @Test
-    fun `test-kotlin-dataframe`() = verifyWithLegacyBsh("test-kotlin-dataframe",)
-
-    @Test
-    fun `test-kotlin-version-in-manifest`() = verifyWithLegacyBsh("test-kotlin-version-in-manifest",)
-
-    @Test
-    fun `test-languageVersion`() = verifyWithLegacyBsh("test-languageVersion",)
-
-    @JdkVersions(versions = [TestVersions.Java.JDK_17])
     @MavenTest
-    fun `test-lombok-simple`(javaVersion: TestVersions.Java) =
-        verifyWithLegacyBsh("test-lombok-simple", buildOptions = buildOptions.copy(javaVersion = javaVersion))
+    fun `test-customJdk-17`(mavenVersion: TestVersions.Maven) {
+        testProject("test-customJdk", mavenVersion) {
+            build(
+                "package",
+                expectedToFail = false,
+                buildOptions = buildOptions.copy(
+                    javaVersion = TestVersions.Java.JDK_17,
+                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.javaHomeProvider(TestVersions.Java.JDK_17).absolutePathString())
+                )
+            ) {
+                assertBuildLogContains("[INFO] BUILD SUCCESS")
+            }
+        }
+    }
 
-    @Test
-    fun `test-lombok-with-kapt`() = verifyWithLegacyBsh("test-lombok-with-kapt",)
+    @MavenTest
+    fun `test-empty-argument`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-empty-argument", mavenVersion)
 
-    @Test
-    fun `test-moduleName`() = verifyWithLegacyBsh("test-moduleName",)
+    @MavenTest
+    fun `test-enable-extensions`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-enable-extensions", mavenVersion)
 
-    @Test
-    fun `test-moduleNameDefault`() = verifyWithLegacyBsh("test-moduleNameDefault",)
+    @MavenTest
+    fun `test-executeKotlinScriptBuildAccess`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-executeKotlinScriptBuildAccess", mavenVersion)
 
-    @Test
-    fun `test-multimodule`() = verifyWithLegacyBsh("test-multimodule",)
+    @MavenTest
+    fun `test-executeKotlinScriptCompileError`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-executeKotlinScriptCompileError", mavenVersion)
 
-    @Test
-    fun `test-multimodule-in-process`() = verifyWithLegacyBsh("test-multimodule-in-process",)
+    @MavenTest
+    fun `test-executeKotlinScriptFile`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-executeKotlinScriptFile", mavenVersion)
 
-    @Test
-    fun `test-multimodule-srcdir`() = verifyWithLegacyBsh("test-multimodule-srcdir",)
+    @MavenTest
+    fun `test-executeKotlinScriptInline`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-executeKotlinScriptInline", mavenVersion)
 
-    @Test
-    fun `test-multimodule-srcdir-absolute`() = verifyWithLegacyBsh("test-multimodule-srcdir-absolute",)
+    @MavenTest
+    fun `test-executeKotlinScriptScriptException`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-executeKotlinScriptScriptException", mavenVersion)
 
-    @Test
-    fun `test-noarg-jpa`() = verifyWithLegacyBsh("test-noarg-jpa",)
+    @MavenTest
+    fun `test-executeKotlinScriptWithDependencies`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-executeKotlinScriptWithDependencies", mavenVersion)
 
-    @Test
-    fun `test-noarg-simple`() = verifyWithLegacyBsh("test-noarg-simple",)
+    @MavenTest
+    fun `test-executeKotlinScriptWithTemplate`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-executeKotlinScriptWithTemplate", mavenVersion)
 
-    @Test
-    fun `test-plugins`() = verifyWithLegacyBsh("test-plugins", withDebug = false,)
+    @MavenTest
+    fun `test-extraArguments`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-extraArguments", mavenVersion)
 
-    @Test
-    fun `test-power-assert`() = verifyWithLegacyBsh("test-power-assert",)
+    @MavenTest
+    fun `test-jvmTarget`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-jvmTarget", mavenVersion)
 
-    @Test
-    fun `test-reflection`() = verifyWithLegacyBsh("test-reflection",)
+    @MavenTest
+    fun `test-kapt-annotationProcessorPaths-without-version`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh(
+        "test-kapt-annotationProcessorPaths-without-version",
+        mavenVersion,
+        disableKotlinDaemonOnWindows = true
+    )
 
-    @Test
-    fun `test-respect-compile-source-root`() = verifyWithLegacyBsh("test-respect-compile-source-root",)
+    @MavenTest
+    fun `test-kapt-generateKotlinCode`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh(
+        "test-kapt-generateKotlinCode",
+        mavenVersion,
+        disableKotlinDaemonOnWindows = true
+    )
 
-    @Test
-    fun `test-sam-with-receiver-simple`() = verifyWithLegacyBsh("test-sam-with-receiver-simple",)
+    @MavenTest
+    fun `test-kotlin-dataframe`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-kotlin-dataframe", mavenVersion)
 
-    @Test
-    fun `test-suppressWarnings`() = verifyWithLegacyBsh("test-suppressWarnings",)
+    @MavenTest
+    fun `test-kotlin-version-in-manifest`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-kotlin-version-in-manifest", mavenVersion)
 
-    @Test
-    fun `test-smart-defaults-custom-source-dirs`() = verifyWithLegacyBsh("test-smart-defaults-custom-source-dirs")
+    @MavenTest
+    fun `test-languageVersion`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-languageVersion", mavenVersion)
 
-    @Test
-    fun `test-smart-defaults-disabled`() = verifyWithLegacyBsh("test-smart-defaults-disabled")
+    @MavenTest
+    fun `test-lombok-simple`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-lombok-simple", mavenVersion, buildOptions = buildOptions.copy(javaVersion = TestVersions.Java.JDK_17))
 
-    @Test
-    fun `test-smart-defaults-disabled-via-property`() = verifyWithLegacyBsh("test-smart-defaults-disabled-via-property")
+    @MavenTest
+    fun `test-lombok-with-kapt`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-lombok-with-kapt", mavenVersion)
 
-    @Test
-    fun `test-smart-defaults-enabled`() = verifyWithLegacyBsh("test-smart-defaults-enabled")
+    @MavenTest
+    fun `test-moduleName`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-moduleName", mavenVersion)
 
-    @Test
-    fun `test-smart-defaults-source-roots`() = verifyWithLegacyBsh("test-smart-defaults-source-roots")
+    @MavenTest
+    fun `test-moduleNameDefault`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-moduleNameDefault", mavenVersion)
 
-    @Test
-    fun `test-smart-defaults-stdlib`() = verifyWithLegacyBsh("test-smart-defaults-stdlib")
+    @MavenTest
+    fun `test-multimodule`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-multimodule", mavenVersion)
 
-    @Test
-    fun `test-smart-defaults-stdlib-exists`() = verifyWithLegacyBsh("test-smart-defaults-stdlib-exists")
+    @MavenTest
+    fun `test-multimodule-in-process`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-multimodule-in-process", mavenVersion)
+
+    @MavenTest
+    fun `test-multimodule-srcdir`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-multimodule-srcdir", mavenVersion)
+
+    @MavenTest
+    fun `test-multimodule-srcdir-absolute`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-multimodule-srcdir-absolute", mavenVersion)
+
+    @MavenTest
+    fun `test-noarg-jpa`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-noarg-jpa", mavenVersion)
+
+    @MavenTest
+    fun `test-noarg-simple`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-noarg-simple", mavenVersion)
+
+    @MavenTest
+    @MavenVersions(max = TestVersions.Maven.MAVEN_3_6_3) // since maven 3.7+ they've introduced custom "goalPrefix" that breaks expected build log
+    fun `test-plugins`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-plugins", mavenVersion, withDebug = false)
+
+    @MavenTest
+    fun `test-power-assert`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-power-assert", mavenVersion)
+
+    @MavenTest
+    fun `test-reflection`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-reflection", mavenVersion)
+
+    @MavenTest
+    fun `test-respect-compile-source-root`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-respect-compile-source-root", mavenVersion)
+
+    @MavenTest
+    fun `test-sam-with-receiver-simple`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-sam-with-receiver-simple", mavenVersion)
+
+    @MavenTest
+    fun `test-suppressWarnings`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-suppressWarnings", mavenVersion)
+
+    @MavenTest
+    fun `test-smart-defaults-custom-source-dirs`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-smart-defaults-custom-source-dirs", mavenVersion)
+
+    @MavenTest
+    fun `test-smart-defaults-disabled`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-smart-defaults-disabled", mavenVersion)
+
+    @MavenTest
+    fun `test-smart-defaults-disabled-via-property`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-smart-defaults-disabled-via-property", mavenVersion)
+
+    @MavenTest
+    fun `test-smart-defaults-enabled`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-smart-defaults-enabled", mavenVersion)
+
+    @MavenTest
+    fun `test-smart-defaults-source-roots`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-smart-defaults-source-roots", mavenVersion)
+
+    @MavenTest
+    fun `test-smart-defaults-stdlib`(mavenVersion: TestVersions.Maven) = verifyWithLegacyBsh("test-smart-defaults-stdlib", mavenVersion)
+
+    @MavenTest
+    fun `test-smart-defaults-stdlib-exists`(mavenVersion: TestVersions.Maven) =
+        verifyWithLegacyBsh("test-smart-defaults-stdlib-exists", mavenVersion)
 
 }
