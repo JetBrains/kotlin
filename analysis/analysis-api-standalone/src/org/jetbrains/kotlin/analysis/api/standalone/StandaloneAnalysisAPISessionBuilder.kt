@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone
 
+import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
@@ -121,6 +123,14 @@ public class StandaloneAnalysisAPISessionBuilder(
         kotlinCoreProjectEnvironment.environment.application.apply {
             registerService(serviceImplementation)
         }
+    }
+
+    public fun <T : Any> registerProjectExtensionPoint(extensionPointName: ExtensionPointName<T>, extensionClass: Class<T>) {
+        CoreApplicationEnvironment.registerExtensionPoint(
+            project.extensionArea,
+            extensionPointName,
+            extensionClass,
+        )
     }
 
     private fun registerProjectServices(

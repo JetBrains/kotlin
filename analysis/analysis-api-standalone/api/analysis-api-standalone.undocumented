@@ -11,7 +11,7 @@ org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.project
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerApplicationService(Class<T>)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerApplicationService(Class<T>, T)
-org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerProjectExtensionPoint(ProjectExtensionDescriptor<T>)
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerProjectExtensionPoint(ExtensionPointName<T>, Class<T>)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerProjectService(Class<T>)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerProjectService(Class<T>, T)
 org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession(Disposable, Boolean, StandaloneAnalysisAPISessionBuilder.() -> Unit)
