@@ -2,7 +2,6 @@ KtCollectionLiteralExpression(55,58): '[1]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: 'setOf' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, emptyArray, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf, ubyteArrayOf, uintArrayOf, ulongArrayOf, ushortArrayOf]
     symbols:
       (in kotlin.collections) fun <T> setOf(element: T): kotlin.collections.Set<T>
 
