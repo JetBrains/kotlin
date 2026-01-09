@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.types.makeConeTypeDefinitelyNotNullOrNotNull
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private fun FirVisibilityChecker.isVisible(
@@ -182,7 +183,7 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
 }
 
 private fun FirMemberDeclaration.getBackingFieldIfApplicable(): FirBackingField? {
-    val field = (this as? FirProperty)?.getExplicitBackingField() ?: return null
+    val field = (this as? FirProperty)?.unwrapSubstitutionOverrides()?.getExplicitBackingField() ?: return null
 
     // This check prevents resolving protected and
     // public fields.

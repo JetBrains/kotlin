@@ -8,7 +8,7 @@ open class A<T: Any>(x: T) {
 
 class B : A<String>("OK") {
     fun foo() {
-        println(y.length)
+        println(y.<!UNRESOLVED_REFERENCE!>length<!>)
     }
 }
 
