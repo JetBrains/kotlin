@@ -37916,6 +37916,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("constValAsAnnotationArgumentInJava.kt")
+    public void testConstValAsAnnotationArgumentInJava() {
+      runTest("compiler/testData/codegen/box/javaInterop/constValAsAnnotationArgumentInJava.kt");
+    }
+
+    @Test
     @TestMetadata("delegationToJavaDnn.kt")
     public void testDelegationToJavaDnn() {
       runTest("compiler/testData/codegen/box/javaInterop/delegationToJavaDnn.kt");
