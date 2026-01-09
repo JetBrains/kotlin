@@ -94,7 +94,9 @@ class ConstraintIncorporator(
                         typeVariable, it,
                         typeVariable, constraint,
                     ) {
-                        val upperType = if (!it.isFromFlexiblePosition) constraint.type else constraint.type.toFlexible()
+                        val upperType = if (!it.isFromFlexiblePosition ||
+                            constraint.type.isMarkedNullable()
+                        ) constraint.type else constraint.type.toFlexible()
                         c.processNewInitialConstraintFromIncorporation(
                             lowerType = it.type,
                             upperType = upperType,
@@ -120,7 +122,9 @@ class ConstraintIncorporator(
                         typeVariable, constraint,
                         typeVariable, it,
                     ) {
-                        val upperType = if (!constraint.isFromFlexiblePosition) it.type else it.type.toFlexible()
+                        val upperType = if (!constraint.isFromFlexiblePosition ||
+                            it.type.isMarkedNullable()
+                        ) it.type else it.type.toFlexible()
                         c.processNewInitialConstraintFromIncorporation(
                             lowerType = constraint.type,
                             upperType = upperType,
