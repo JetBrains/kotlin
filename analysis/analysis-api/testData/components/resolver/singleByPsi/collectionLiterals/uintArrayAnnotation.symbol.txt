@@ -1,6 +1,5 @@
 KtCollectionLiteralExpression(51,55): '[1u]'
-  KaSymbolResolutionError:
-    candidateSymbols = [
-      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
     ]
-    diagnostic = ERROR<OTHER_ERROR: type of arrayOf call is not resolved>

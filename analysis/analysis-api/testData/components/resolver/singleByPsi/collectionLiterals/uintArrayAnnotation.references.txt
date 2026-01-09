@@ -2,8 +2,9 @@ KtCollectionLiteralExpression(51,55): '[1u]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'uintArrayOf' !in [arrayOf, booleanArrayOf, byteArrayOf, charArrayOf, doubleArrayOf, floatArrayOf, intArrayOf, longArrayOf, shortArrayOf]
     symbols:
-      (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
+      (in kotlin) inline fun uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
 
 KtValueArgument(51,55): '[1u]'
   KtDefaultAnnotationArgumentReference:

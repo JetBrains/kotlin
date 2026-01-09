@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.references.ClassicKDocReferenceResolver
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOf
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
@@ -57,6 +55,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toArrayOfFactoryName
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -79,6 +78,7 @@ import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
 import org.jetbrains.kotlin.psi.psiUtil.topParenthesizedParentOrMe
+import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.toKtPsiSourceElement
@@ -296,7 +296,7 @@ internal class KaFirResolver(
             return KaBaseSymbolResolutionSuccess(resolvedSymbol)
         }
 
-        val defaultSymbol = arrayOfSymbol(arrayOf)
+        val defaultSymbol = arrayOfSymbol(ArrayFqNames.ARRAY_OF_FUNCTION)
         return KaBaseSymbolResolutionError(
             backingDiagnostic = unresolvedArrayOfDiagnostic,
             backingCandidateSymbols = listOfNotNull(defaultSymbol),
@@ -1657,7 +1657,7 @@ internal class KaFirResolver(
     private fun FirCollectionLiteral.toKaResolutionAttempt(): KaCallResolutionAttempt? {
         val arrayOfSymbol = with(analysisSession) {
             val type = resolvedType as? ConeClassLikeType ?: return run {
-                val defaultArrayOfSymbol = arrayOfSymbol(arrayOf) ?: return null
+                val defaultArrayOfSymbol = arrayOfSymbol(ArrayFqNames.ARRAY_OF_FUNCTION) ?: return null
                 val substitutor = createSubstitutorFromTypeArguments(defaultArrayOfSymbol)
                 val partiallyAppliedSymbol = KaBasePartiallyAppliedSymbol(
                     backingSignature = with(useSiteSession) { defaultArrayOfSymbol.substitute(substitutor) },
@@ -1678,8 +1678,13 @@ internal class KaFirResolver(
                 )
             }
 
-            val call = arrayTypeToArrayOfCall[type.lookupTag.classId] ?: arrayOf
-            arrayOfSymbol(call)
+            val factoryName = toArrayOfFactoryName(
+                expectedType = type,
+                session = analysisSession.firSession,
+                eagerlyReturnNonPrimitive = true
+            ) ?: return null
+
+            arrayOfSymbol(factoryName)
         } ?: return null
 
         val substitutor = createSubstitutorFromTypeArguments(arrayOfSymbol)
