@@ -12,19 +12,15 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
-import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
-import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Accessors
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Getter
@@ -65,17 +61,15 @@ class GetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             if (explicitlyDeclaredFunctions[getterName]?.valueParameterSymbols?.isEmpty() == true) {
                 return@mapNotNull null
             }
-            val function = buildJavaMethod {
-                containingClassSymbol = classSymbol
-                moduleData = field.moduleData
-                returnTypeRef = field.returnTypeRef
-                dispatchReceiverType = classSymbol.defaultType()
-                name = getterName
-                symbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, getterName))
-                val visibility = getterInfo.visibility.toVisibility()
-                status = FirResolvedDeclarationStatusImpl(visibility, Modality.OPEN, visibility.toEffectiveVisibility(classSymbol))
-                isFromSource = true
-            }
+
+            val function = classSymbol.createJavaMethod(
+                name = getterName,
+                valueParameters = emptyList(),
+                returnTypeRef = field.returnTypeRef,
+                visibility = getterInfo.visibility.toVisibility(),
+                modality = Modality.OPEN,
+            )
+
             getterName to function
         }.toMap()
     }

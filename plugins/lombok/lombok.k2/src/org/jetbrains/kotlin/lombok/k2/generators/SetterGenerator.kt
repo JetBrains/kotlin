@@ -13,20 +13,16 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
-import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
-import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Accessors
@@ -74,34 +70,20 @@ class SetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             if (existing != null && existing.valueParameterSymbols.size == 1) {
                 return@mapNotNull null
             }
-            val function = buildJavaMethod {
-                containingClassSymbol = classSymbol
-                moduleData = field.moduleData
-                returnTypeRef = if (accessors.chain) {
-                    buildResolvedTypeRef {
-                        coneType = classSymbol.defaultType()
-                    }
-                } else {
-                    session.builtinTypes.unitType
-                }
 
-                dispatchReceiverType = classSymbol.defaultType()
-                name = setterName
-                symbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, setterName))
-                val visibility = setterInfo.visibility.toVisibility()
-                status = FirResolvedDeclarationStatusImpl(visibility, Modality.OPEN, visibility.toEffectiveVisibility(classSymbol))
-
-                valueParameters += buildJavaValueParameter {
-                    moduleData = field.moduleData
-                    containingDeclarationSymbol = this@buildJavaMethod.symbol
-                    returnTypeRef = field.returnTypeRef
-                    name = field.name
-                    isVararg = false
-                    isFromSource = true
-                }
-
-                isFromSource = true
+            val returnTypeRef = if (accessors.chain) {
+                buildResolvedTypeRef { coneType = classSymbol.defaultType() }
+            } else {
+                session.builtinTypes.unitType
             }
+
+            val function = classSymbol.createJavaMethod(
+                name = setterName,
+                valueParameters = listOf(ConeLombokValueParameter(field.name, field.returnTypeRef)),
+                returnTypeRef = returnTypeRef,
+                visibility = setterInfo.visibility.toVisibility(),
+                modality = Modality.OPEN,
+            )
             setterName to function
         }.toMap()
     }
