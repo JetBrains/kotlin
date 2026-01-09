@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 
-abstract class JavaMemberDirectImpl(
-    node: DirectSyntaxNode,
+abstract class JavaMemberOverAst(
+    node: JavaSyntaxNode,
     source: CharSequence,
     override val containingClass: JavaClass
-) : JavaElementDirectImpl(node, source), JavaMember {
+) : JavaElementOverAst(node, source), JavaMember {
 
     override val name: Name
         get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")
 
-    private val modifierList: DirectSyntaxNode?
+    private val modifierList: JavaSyntaxNode?
         get() = node.findChildByType("MODIFIER_LIST")
 
     private fun hasModifier(modifier: String): Boolean {
@@ -43,11 +43,11 @@ abstract class JavaMemberDirectImpl(
     override fun findAnnotation(fqName: org.jetbrains.kotlin.name.FqName): JavaAnnotation? = null
 }
 
-class JavaFieldDirectImpl(
-    node: DirectSyntaxNode,
+class JavaFieldOverAst(
+    node: JavaSyntaxNode,
     source: CharSequence,
     containingClass: JavaClass
-) : JavaMemberDirectImpl(node, source, containingClass), JavaField {
+) : JavaMemberOverAst(node, source, containingClass), JavaField {
     override val isEnumEntry: Boolean get() = node.type.toString() == "ENUM_CONSTANT"
     override val type: JavaType get() = createJavaType(node, source)
     override val initializerValue: Any? get() = null
@@ -55,11 +55,11 @@ class JavaFieldDirectImpl(
     override val isFromSource: Boolean get() = true
 }
 
-class JavaMethodDirectImpl(
-    node: DirectSyntaxNode,
+class JavaMethodOverAst(
+    node: JavaSyntaxNode,
     source: CharSequence,
     containingClass: JavaClass
-) : JavaMemberDirectImpl(node, source, containingClass), JavaMethod {
+) : JavaMemberOverAst(node, source, containingClass), JavaMethod {
     override val valueParameters: List<JavaValueParameter> get() = emptyList()
     override val returnType: JavaType get() = createJavaType(node, source)
     override val annotationParameterDefaultValue: JavaAnnotationArgument? get() = null
@@ -69,11 +69,11 @@ class JavaMethodDirectImpl(
     override val isFromSource: Boolean get() = true
 }
 
-class JavaConstructorDirectImpl(
-    node: DirectSyntaxNode,
+class JavaConstructorOverAst(
+    node: JavaSyntaxNode,
     source: CharSequence,
     containingClass: JavaClass
-) : JavaMemberDirectImpl(node, source, containingClass), JavaConstructor {
+) : JavaMemberOverAst(node, source, containingClass), JavaConstructor {
     override val valueParameters: List<JavaValueParameter> get() = emptyList()
     override val typeParameters: List<JavaTypeParameter> get() = emptyList()
     override val isFromSource: Boolean get() = true

@@ -10,13 +10,13 @@ import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 
 import com.intellij.platform.syntax.parser.prepareProduction
 
-class DirectSyntaxNode(
+class JavaSyntaxNode(
     val type: SyntaxElementType,
-    val children: List<DirectSyntaxNode>,
+    val children: List<JavaSyntaxNode>,
     val source: CharSequence,
     val startOffset: Int,
     val endOffset: Int,
-    var parent: DirectSyntaxNode? = null
+    var parent: JavaSyntaxNode? = null
 ) {
     val text: String get() = source.subSequence(startOffset, endOffset).toString()
 
@@ -30,21 +30,21 @@ class DirectSyntaxNode(
     }
 }
 
-fun buildDirectSyntaxTree(builder: SyntaxTreeBuilder, source: CharSequence): DirectSyntaxNode {
+fun buildSyntaxTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaSyntaxNode {
     val productionMarkers = prepareProduction(builder).productionMarkers
     val tokens = builder.tokens
-    val childrenStack = mutableListOf<MutableList<DirectSyntaxNode>>()
+    val childrenStack = mutableListOf<MutableList<JavaSyntaxNode>>()
     childrenStack.add(mutableListOf())
 
     var prevTokenIndex = 0
 
-    fun MutableList<DirectSyntaxNode>.appendTokens(lastTokenIndex: Int) {
+    fun MutableList<JavaSyntaxNode>.appendTokens(lastTokenIndex: Int) {
         for (i in prevTokenIndex until lastTokenIndex) {
             val tokenType = tokens.getTokenType(i) ?: continue
             val start = tokens.getTokenStart(i)
             val end = tokens.getTokenEnd(i)
             if (start == end) continue
-            add(DirectSyntaxNode(tokenType, emptyList(), source, start, end))
+            add(JavaSyntaxNode(tokenType, emptyList(), source, start, end))
         }
         prevTokenIndex = lastTokenIndex
     }
@@ -54,7 +54,7 @@ fun buildDirectSyntaxTree(builder: SyntaxTreeBuilder, source: CharSequence): Dir
         if (productionMarkers.isDoneMarker(i)) {
             val lastChildren = childrenStack.removeAt(childrenStack.size - 1)
             lastChildren.appendTokens(production.getEndTokenIndex())
-            val node = DirectSyntaxNode(production.getNodeType(), lastChildren, source, production.getStartOffset(), production.getEndOffset())
+            val node = JavaSyntaxNode(production.getNodeType(), lastChildren, source, production.getStartOffset(), production.getEndOffset())
             for (child in lastChildren) {
                 child.parent = node
             }
@@ -67,7 +67,7 @@ fun buildDirectSyntaxTree(builder: SyntaxTreeBuilder, source: CharSequence): Dir
 
     val rootNodeType = productionMarkers.getMarker(productionMarkers.size - 1).getNodeType()
     val rootChildren = childrenStack.single()
-    val root = DirectSyntaxNode(rootNodeType, rootChildren, source, 0, source.length)
+    val root = JavaSyntaxNode(rootNodeType, rootChildren, source, 0, source.length)
     for (child in rootChildren) {
         child.parent = root
     }
@@ -76,18 +76,18 @@ fun buildDirectSyntaxTree(builder: SyntaxTreeBuilder, source: CharSequence): Dir
 
 private fun <T> MutableList<T>.peek(): T = last()
 
-fun DirectSyntaxNode.findChildByType(typeName: String): DirectSyntaxNode? {
+fun JavaSyntaxNode.findChildByType(typeName: String): JavaSyntaxNode? {
     return children.find { it.type.toString() == typeName }
 }
 
-fun DirectSyntaxNode.getChildrenByType(typeName: String): List<DirectSyntaxNode> {
+fun JavaSyntaxNode.getChildrenByType(typeName: String): List<JavaSyntaxNode> {
     return children.filter { it.type.toString() == typeName }
 }
 
-fun DirectSyntaxNode.findChildByType(type: SyntaxElementType): DirectSyntaxNode? {
+fun JavaSyntaxNode.findChildByType(type: SyntaxElementType): JavaSyntaxNode? {
     return children.find { it.type == type }
 }
 
-fun DirectSyntaxNode.getChildrenByType(type: SyntaxElementType): List<DirectSyntaxNode> {
+fun JavaSyntaxNode.getChildrenByType(type: SyntaxElementType): List<JavaSyntaxNode> {
     return children.filter { it.type == type }
 }

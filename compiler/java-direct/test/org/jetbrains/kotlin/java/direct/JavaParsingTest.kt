@@ -13,9 +13,9 @@ class JavaParsingTest {
     fun testBasicJavaParsing() {
         val source = "public final class A {}"
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildDirectSyntaxTree(builder, source)
+        val root = buildSyntaxTree(builder, source)
         println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassDirectImpl(it, source) }
+        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
         assert(javaClass.name.asString() == "A")
         assert(javaClass.isFinal)
         assert(!javaClass.isAbstract)
@@ -26,9 +26,9 @@ class JavaParsingTest {
     fun testAbstractInterface() {
         val source = "interface I {}"
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildDirectSyntaxTree(builder, source)
+        val root = buildSyntaxTree(builder, source)
         println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassDirectImpl(it, source) }
+        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
         assert(javaClass.name.asString() == "I")
         assert(javaClass.isInterface)
         assert(javaClass.isAbstract)
@@ -43,9 +43,9 @@ class JavaParsingTest {
             }
         """.trimIndent()
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildDirectSyntaxTree(builder, source)
+        val root = buildSyntaxTree(builder, source)
         println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassDirectImpl(it, source) }
+        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
         
         assert(javaClass.fields.size == 1)
         assert(javaClass.fields.first().name.asString() == "field")
@@ -60,9 +60,9 @@ class JavaParsingTest {
     fun testSupertypesAndTypeParameters() {
         val source = "class A<T> extends B implements C, D {}"
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildDirectSyntaxTree(builder, source)
+        val root = buildSyntaxTree(builder, source)
         println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassDirectImpl(it, source) }
+        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
         
         assert(javaClass.typeParameters.size == 1)
         assert(javaClass.typeParameters.first().name.asString() == "T")
@@ -80,9 +80,9 @@ class JavaParsingTest {
             class A {}
         """.trimIndent()
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildDirectSyntaxTree(builder, source)
+        val root = buildSyntaxTree(builder, source)
         println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassDirectImpl(it, source) }
+        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
         
         assert(javaClass.fqName?.asString() == "com.example.A")
     }
@@ -93,9 +93,9 @@ class JavaParsingTest {
             class A {}
         """.trimIndent()
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildDirectSyntaxTree(builder, source)
+        val root = buildSyntaxTree(builder, source)
         println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassDirectImpl(it, source) }
+        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
         
         assert(javaClass.annotations.size == 1)
         assert(javaClass.annotations.first().classId?.asSingleFqName()?.asString() == "Deprecated")
