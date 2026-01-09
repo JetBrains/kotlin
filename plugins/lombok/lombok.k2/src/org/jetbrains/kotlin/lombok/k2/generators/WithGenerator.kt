@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
@@ -51,8 +52,8 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
     }
 
     private fun createWith(classSymbol: FirClassSymbol<*>): Map<Name, FirJavaMethod>? {
-        val fieldsWithWith = computeFieldsWithWithAnnotation(classSymbol) ?: return null
-        return fieldsWithWith.mapNotNull { (field, withInfo) ->
+        val nonStaticFieldsWithWith = computeNonStaticFieldsWithWithAnnotation(classSymbol) ?: return null
+        return nonStaticFieldsWithWith.mapNotNull { (field, withInfo) ->
             val withName = computeWithName(field, withInfo) ?: return@mapNotNull null
 
             val function = classSymbol.createJavaMethod(
@@ -70,11 +71,12 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
     }
 
     @OptIn(SymbolInternals::class)
-    private fun computeFieldsWithWithAnnotation(classSymbol: FirClassSymbol<*>): List<Pair<FirJavaField, With>>? {
+    private fun computeNonStaticFieldsWithWithAnnotation(classSymbol: FirClassSymbol<*>): List<Pair<FirJavaField, With>>? {
         val classWith = lombokService.getWith(classSymbol)
 
         return classSymbol.fir.declarations
             .filterIsInstance<FirJavaField>()
+            .filter { !it.isStatic }
             .collectWithNotNull { lombokService.getWith(it.symbol) ?: classWith }
             .takeIf { it.isNotEmpty() }
     }

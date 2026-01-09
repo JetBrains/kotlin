@@ -25,5 +25,5 @@ public class TestJavaUsage {
 // FILE: UsageFromKotlin.kt
 
 fun main() {
-    TestJava("a").withStaticField("") // It shouldn't be OK
+    TestJava("a").<!UNRESOLVED_REFERENCE!>withStaticField<!>("")
 }
