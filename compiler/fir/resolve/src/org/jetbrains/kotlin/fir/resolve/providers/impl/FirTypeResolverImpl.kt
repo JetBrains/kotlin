@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector.TypeResolutionResult
@@ -374,6 +375,63 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 attributes
             ),
             diagnostic
+        )
+    }
+
+    private fun MutableList<ConeTypeProjection>.matchQualifierPartsAndClassesForLHS(
+        qualifier: FirResolvedQualifier,
+        classSymbol: FirClassLikeSymbol<*>,
+    ): ConeDiagnostic? {
+        val expectedNumberOfExplicitTypeArguments = classSymbol.classTypeParameterSymbols.size
+
+        var diagnostic: ConeDiagnostic? = null
+
+        if (qualifier.typeArguments.size != expectedNumberOfExplicitTypeArguments) {
+            diagnostic = ConeWrongNumberOfTypeArgumentsError(expectedNumberOfExplicitTypeArguments, classSymbol, qualifier.source!!)
+        }
+
+        // TODO: Here, we don't have checks that type arguments belong to the correct parts (KT-82122).
+        for (typeArgumentIndex in 0..<expectedNumberOfExplicitTypeArguments) {
+            val coneTypeProjection = when (val typeArgument = qualifier.typeArguments.getOrNull(typeArgumentIndex)) {
+                is FirTypeProjectionWithVariance -> typeArgument.typeRef.coneType.toTypeProjection(typeArgument.variance)
+
+                null, // in this case, the diagnostic is already not null
+                is FirPlaceholderProjection, // reported separately in the checker
+                is FirStarProjection,
+                    -> ConeStarProjection
+            }
+            add(coneTypeProjection)
+        }
+
+        return diagnostic
+    }
+
+    override fun resolveTypeOnDoubleColonLHS(
+        qualifier: FirResolvedQualifier,
+        configuration: TypeResolutionConfiguration,
+    ): DoubleColonLHS.Type? {
+        val classSymbol = qualifier.symbol ?: return null
+        val typeParametersSize = classSymbol.typeParameterSymbols.size
+
+        val allTypeArguments: MutableList<ConeTypeProjection> = mutableListOf()
+        val diagnostic = allTypeArguments.matchQualifierPartsAndClassesForLHS(qualifier, classSymbol)
+
+        for (outerTypeParamIndex in allTypeArguments.size..<typeParametersSize) {
+            val typeParam = classSymbol.typeParameterSymbols[outerTypeParamIndex]
+
+            check(typeParam.containingDeclarationSymbol is FirCallableSymbol) {
+                "Type parameters of classes are expected to be matched already."
+            }
+            allTypeArguments.add(typeParam.defaultType)
+        }
+
+        return DoubleColonLHS.Type(
+            ConeClassLikeTypeImpl(
+                classSymbol.toLookupTag(),
+                allTypeArguments.toTypedArray(),
+                qualifier.isNullableLHSForCallableReference,
+            ),
+            diagnostic,
         )
     }
 
