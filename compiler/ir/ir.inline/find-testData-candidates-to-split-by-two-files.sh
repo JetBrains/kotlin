@@ -34,7 +34,16 @@
   # - compiler/testData/codegen/box/casts/kt55005.kt
 # --- Junie prompt end ---
 
-find compiler/testData/codegen/box -name "*.kt" -type f | while read -r file; do
+find compiler/testData/codegen/box -name "*.kt" -type f |
+    grep -v compiler/testData/codegen/box/reified/overrideResolutionWithInlinedFunInKlib.kt |
+    grep -v compiler/testData/codegen/box/reified/overrideResolution.kt |
+    grep -v compiler/testData/codegen/box/reified/reifiedTypeArgumentWithIntersectionTypeAsTypeArgument.kt |
+    grep -v compiler/testData/codegen/box/reified/kt39256_privateInlineWithAnonymousObject.kt |
+    grep -v compiler/testData/codegen/box/contextParameters/inlineContextualReceiverLambda.kt |
+    grep -v compiler/testData/codegen/box/inline/nestedLabelsInlinedClashingAtFunctionsWithClosure.kt |
+    grep -v compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArgumentsNonJVM.kt |
+    grep -v compiler/testData/codegen/box/coroutines/kt56407.kt |
+    while read -r file; do
     if grep -q "inline fun" "$file" &&
       ! grep -q "^// FILE:" "$file" &&
       ! grep -q "^// MODULE:" "$file" &&
