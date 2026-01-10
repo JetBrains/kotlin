@@ -23,8 +23,9 @@
   # - `// FILE: main.kt`
   # to mark a need for a further processing to split to two compilable source files.
   # Goal:
-  # After directive `// FILE: lib.kt` there should be definitions of all inline functions, and declarations they use
-  # After directive `// FILE: main.kt` there should be all other declarations including `box()` function.
+  # After directive `// FILE: lib.kt` there should be a copy of all import directives(if any),
+  #   definitions of all inline functions, classes having inline functions, and declarations they use.
+  # After directive `// FILE: main.kt` there should be  a copy of all import directives(if any) and all other declarations including `box()` function
   # Don't insert new directives before first lines starting with `//`
   # In case more changes are needed, than just couple lines insertion, place new `lib` section before `main` section.
   # See examples of such test directives in tests:
@@ -34,7 +35,7 @@
 # --- Junie prompt end ---
 
 find compiler/testData/codegen/box -name "*.kt" -type f | while read -r file; do
-    if grep -q "^inline fun" "$file" &&
+    if grep -q "inline fun" "$file" &&
       ! grep -q "^// FILE:" "$file" &&
       ! grep -q "^// MODULE:" "$file" &&
       ! grep -q "^// TARGET_BACKEND: JVM$" "$file" &&
