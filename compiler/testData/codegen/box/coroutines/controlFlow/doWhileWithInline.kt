@@ -1,7 +1,9 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // KT-27830
+// NO_CHECK_LAMBDA_INLINING
 
+// FILE: main.kt
 import helpers.EmptyContinuation
 import kotlin.coroutines.*
 
@@ -17,6 +19,7 @@ fun box(): String {
     return result
 }
 
+// FILE: lib.kt
 suspend inline fun go(block: suspend () -> Unit) {
     block()
 }

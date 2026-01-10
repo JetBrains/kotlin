@@ -2,14 +2,16 @@
 
 // WITH_STDLIB
 // WITH_COROUTINES
-
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.startCoroutine
-
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 suspend inline fun foo(f: suspend () -> String) = f()
 
 suspend inline fun bar(f: () -> String) = foo(f)
+
+// FILE: main.kt
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.startCoroutine
 
 suspend fun test(): String {
     bar { return "OK" }

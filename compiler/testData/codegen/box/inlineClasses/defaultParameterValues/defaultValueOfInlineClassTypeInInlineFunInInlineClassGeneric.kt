@@ -2,6 +2,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z<T: Int>(val int: T)
 
@@ -31,6 +32,7 @@ value class Host<T: Int>(val xx: T) {
     fun testWithDefaultObj2() = withDefaultObj2(fn = { Obj(it.obj.toString() + "1") })
 }
 
+// FILE: main.kt
 fun box(): String {
     val h = Host(42)
     if (h.testWithDefaultZ().int != 43) throw AssertionError()

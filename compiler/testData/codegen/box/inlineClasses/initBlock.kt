@@ -1,7 +1,9 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
+// NO_CHECK_LAMBDA_INLINING
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class SingleInitBlock(val s: String) {
     init {
@@ -136,6 +138,7 @@ value class InlineClass(val s: String) {
 
 var res: String = "FAIL"
 
+// FILE: main.kt
 fun box(): String {
     SingleInitBlock("OK")
     if (res != "OK") return "FAIL 1: $res"

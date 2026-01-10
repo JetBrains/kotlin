@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// FILE: lib.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -12,6 +13,11 @@ suspend fun suspendThere(v: String): String = suspendCoroutineUninterceptedOrRet
 suspend inline fun suspendHere(crossinline block: () -> String): String {
     return suspendThere(block()) + suspendThere(block())
 }
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)

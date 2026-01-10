@@ -3,6 +3,7 @@
 // WITH_STDLIB
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 
+// FILE: lib.kt
 import kotlin.contracts.*
 
 class Smth {
@@ -20,6 +21,7 @@ class Smth {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     val s = Smth()
     return "OK"

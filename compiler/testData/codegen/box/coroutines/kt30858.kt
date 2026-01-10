@@ -1,12 +1,15 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
 
+// FILE: lib.kt
 class MyReceiveChannel<out E>
 interface MyProducerScope<in E>
 interface MyCoroutineScope
 
 suspend inline fun <E> MyReceiveChannel<E>.myConsumeEach(action: (E) -> Unit) {}
 
+// FILE: main.kt
 suspend fun myDelay(timeMillis: Long) {}
 
 fun myLaunch(

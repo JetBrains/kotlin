@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+
+// FILE: lib.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -31,6 +33,9 @@ public suspend inline fun doInline(owner: Controller, action: () -> Unit): Unit 
     }
 }
 
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
 
 fun builder(c: suspend Controller.() -> Unit): String {
     val controller = Controller()

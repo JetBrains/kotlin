@@ -1,5 +1,7 @@
 // WITH_STDLIB
+// NO_CHECK_LAMBDA_INLINING
 
+// FILE: lib.kt
 class Test {
     suspend fun discardSuspend(discarded0: Long, max: Long) {
         while (isClosedForRead) {
@@ -27,4 +29,5 @@ class Test {
     private fun setupStateForRead(): Any? = null
 }
 
+// FILE: main.kt
 fun box() = "OK"

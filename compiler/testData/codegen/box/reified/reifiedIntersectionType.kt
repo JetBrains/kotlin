@@ -4,13 +4,8 @@
 // KT-37163
 // Case that was found in kotlinx.coroutines
 
-fun test1() {
-    val flow = combine(
-        flowOf("1"),
-        flowOf(2)
-    ) { arr -> arr.joinToString() }
-}
 
+// FILE: lib.kt
 fun <T> Array<out T>.joinToString(): String = ""
 
 public inline fun <reified T, R> combine(
@@ -20,6 +15,14 @@ public inline fun <reified T, R> combine(
 
 fun <T> flowOf(value: T): Flow<T> = TODO()
 interface Flow<out T>
+
+// FILE: main.kt
+fun test1() {
+    val flow = combine(
+        flowOf("1"),
+        flowOf(2)
+    ) { arr -> arr.joinToString() }
+}
 
 fun box(): String {
     return "OK"

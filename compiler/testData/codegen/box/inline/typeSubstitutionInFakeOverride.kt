@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
 import kotlin.test.*
 
 abstract class A {
@@ -16,6 +17,7 @@ class B : A() {
 
 class OK
 
+// FILE: main.kt
 fun box(): String {
     return B().bar()
 }

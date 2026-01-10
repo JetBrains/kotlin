@@ -2,6 +2,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Test<T: Int>(val x: T) {
     private companion object {
@@ -15,4 +16,5 @@ value class Test<T: Int>(val x: T) {
     }
 }
 
+// FILE: main.kt
 fun box() = Test(1).crash()

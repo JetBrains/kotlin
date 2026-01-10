@@ -1,3 +1,4 @@
+// FILE: lib.kt
 import kotlin.reflect.KProperty
 
 class Delegate {
@@ -35,6 +36,7 @@ class A {
     inline fun get3() = s3
 }
 
+// FILE: main.kt
 fun box(): String {
     val a = A()
     if (a.f() != "OK") return "FAIL0"
