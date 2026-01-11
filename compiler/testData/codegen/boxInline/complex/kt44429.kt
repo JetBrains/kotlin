@@ -4,6 +4,8 @@
 // IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_EVERYWHERE
 // IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_PER_FILE_EVERYWHERE
 // https://youtrack.jetbrains.com/issue/KT-44571/Segfault-on-unnecessary-int-unboxing
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:*
+// ^^^ Native Klib compatibility tests are executed in DEBUG mode, so this testcase should be muted.
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 package test
