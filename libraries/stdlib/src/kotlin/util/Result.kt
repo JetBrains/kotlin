@@ -135,6 +135,8 @@ internal fun Result<*>.throwOnFailure() {
 /**
  * Calls the specified function [block] and returns its encapsulated result if invocation was successful,
  * catching any [Throwable] exception that was thrown from the [block] function execution and encapsulating it as a failure.
+ *
+ * @sample samples.misc.result.Result.runCatching
  */
 @InlineOnly
 @SinceKotlin("1.3")
@@ -149,6 +151,8 @@ public inline fun <R> runCatching(block: () -> R): Result<R> {
 /**
  * Calls the specified function [block] with `this` value as its receiver and returns its encapsulated result if invocation was successful,
  * catching any [Throwable] exception that was thrown from the [block] function execution and encapsulating it as a failure.
+ *
+ * @sample samples.misc.result.Result.runCatchingWithReceiver
  */
 @InlineOnly
 @SinceKotlin("1.3")
@@ -167,6 +171,8 @@ public inline fun <T, R> T.runCatching(block: T.() -> R): Result<R> {
  * if it is [failure][Result.isFailure].
  *
  * This function is a shorthand for `getOrElse { throw it }` (see [getOrElse]).
+ *
+ * @sample samples.misc.result.Result.getOrThrow
  */
 @InlineOnly
 @SinceKotlin("1.3")
@@ -182,6 +188,8 @@ public inline fun <T> Result<T>.getOrThrow(): T {
  * Note, that this function rethrows any [Throwable] exception thrown by [onFailure] function.
  *
  * This function is a shorthand for `fold(onSuccess = { it }, onFailure = onFailure)` (see [fold]).
+ *
+ * @sample samples.misc.result.Result.getOrElse
  */
 @InlineOnly
 @SinceKotlin("1.3")
@@ -200,6 +208,8 @@ public inline fun <R, T : R> Result<T>.getOrElse(onFailure: (exception: Throwabl
  * [defaultValue] if it is [failure][Result.isFailure].
  *
  * This function is a shorthand for `getOrElse { defaultValue }` (see [getOrElse]).
+ *
+ * @sample samples.misc.result.Result.getOrDefault
  */
 @InlineOnly
 @SinceKotlin("1.3")
@@ -213,6 +223,8 @@ public inline fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R {
  * or the result of [onFailure] function for the encapsulated [Throwable] exception if it is [failure][Result.isFailure].
  *
  * Note, that this function rethrows any [Throwable] exception thrown by [onSuccess] or by [onFailure] function.
+ *
+ * @sample samples.misc.result.Result.fold
  */
 @InlineOnly
 @SinceKotlin("1.3")
@@ -239,6 +251,8 @@ public inline fun <R, T> Result<T>.fold(
  *
  * Note, that this function rethrows any [Throwable] exception thrown by [transform] function.
  * See [mapCatching] for an alternative that encapsulates exceptions.
+ *
+ * @sample samples.misc.result.Result.map
  */
 @InlineOnly
 @SinceKotlin("1.3")
@@ -259,6 +273,8 @@ public inline fun <R, T> Result<T>.map(transform: (value: T) -> R): Result<R> {
  *
  * This function catches any [Throwable] exception thrown by [transform] function and encapsulates it as a failure.
  * See [map] for an alternative that rethrows exceptions from `transform` function.
+ *
+ * @sample samples.misc.result.Result.mapCatching
  */
 @InlineOnly
 @SinceKotlin("1.3")
@@ -276,6 +292,8 @@ public inline fun <R, T> Result<T>.mapCatching(transform: (value: T) -> R): Resu
  *
  * Note, that this function rethrows any [Throwable] exception thrown by [transform] function.
  * See [recoverCatching] for an alternative that encapsulates exceptions.
+ *
+ * @sample samples.misc.result.Result.recover
  */
 @InlineOnly
 @SinceKotlin("1.3")
@@ -296,6 +314,8 @@ public inline fun <R, T : R> Result<T>.recover(transform: (exception: Throwable)
  *
  * This function catches any [Throwable] exception thrown by [transform] function and encapsulates it as a failure.
  * See [recover] for an alternative that rethrows exceptions.
+ *
+ * @sample samples.misc.result.Result.recoverCatching
  */
 @InlineOnly
 @SinceKotlin("1.3")
@@ -311,6 +331,8 @@ public inline fun <R, T : R> Result<T>.recoverCatching(transform: (exception: Th
 /**
  * Performs the given [action] on the encapsulated [Throwable] exception if this instance represents [failure][Result.isFailure].
  * Returns the original `Result` unchanged.
+ *
+ * @sample samples.misc.result.Result.onFailure
  */
 @InlineOnly
 @SinceKotlin("1.3")
@@ -326,6 +348,8 @@ public inline fun <T> Result<T>.onFailure(action: (exception: Throwable) -> Unit
 /**
  * Performs the given [action] on the encapsulated value if this instance represents [success][Result.isSuccess].
  * Returns the original `Result` unchanged.
+ *
+ * @sample samples.misc.result.Result.onSuccess
  */
 @InlineOnly
 @SinceKotlin("1.3")
