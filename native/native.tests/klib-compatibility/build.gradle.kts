@@ -1,4 +1,4 @@
-import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -36,14 +36,6 @@ tasks.test {
     enabled = false
 }
 
-fun Test.setUpNativeBoxTests(tag: String) {
-    dependsOn(":dist")
-    useJUnitPlatform { includeTags(tag) }
-    workingDir = rootDir
-}
-
-val hostSpecificArtifact = "${HostManager.platformName()}@${if (HostManager.hostIsMingw) "zip" else "tar.gz"}"
-
 fun Project.customCompilerTest(
     version: CustomCompilerVersion,
     taskName: String,
@@ -51,7 +43,7 @@ fun Project.customCompilerTest(
     body: Test.() -> Unit = {},
 ): TaskProvider<out Task> {
     val customCompiler: Configuration = getOrCreateConfiguration("customCompiler_$version") {
-        project.dependencies.add(name, "org.jetbrains.kotlin:kotlin-native-prebuilt:${version.rawVersion}:$hostSpecificArtifact")
+        project.dependencies.add(name, "org.jetbrains.kotlin:kotlin-native-prebuilt:${version.rawVersion}:${HostManager.platformName()}@tar.gz")
         dependencies {
             // declared to be included in verification-metadata.xml, to be executed on developer's and CI computers.
             implicitDependencies("org.jetbrains.kotlin:kotlin-native-prebuilt:${version.rawVersion}:macos-aarch64@tar.gz")
@@ -62,7 +54,7 @@ fun Project.customCompilerTest(
     // Should it be so, Gradle fails on implicit dependency: task `:kotlin-native:llvmInterop:genInteropStubs` uses files in `~/.konan/dependencies/llvm-19-aarch64*`
     // So, a subfolder within `~/.konan/` is needed for output of `unarchiveCustomCompiler_` task
     val customCompilersCollectionDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-prebuilt-releases")
-    val unarchiveCustomCompiler = tasks.register("unarchiveCustomCompiler_${taskName}", Sync::class) {
+    val unarchiveCustomCompiler = tasks.register("unarchiveCustomCompiler_${taskName}", Copy::class) {
         val archiveTree = { archive: File -> if (HostManager.hostIsMingw) zipTree(archive) else tarTree(archive) }
         from(archiveTree(customCompiler.singleFile))
         into(customCompilersCollectionDir)
