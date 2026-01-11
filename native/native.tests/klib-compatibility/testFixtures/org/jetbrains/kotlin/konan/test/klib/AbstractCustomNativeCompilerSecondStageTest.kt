@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStage
 import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.konan.test.handlers.NativeRunner
-import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.nativeArtifactsHandlersStep
@@ -29,10 +27,9 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSI
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
@@ -41,16 +38,6 @@ import org.junit.jupiter.api.Tag
 
 @Tag("custom-second-stage")
 open class AbstractCustomNativeCompilerSecondStageTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
-    val targetFrontend = FrontendKinds.FIR
-    val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
-    val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrNativeResultsConverter
-    open val irPreSerializationLoweringFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
-        get() = ::NativePreSerializationLoweringFacade
-    val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::NativeKlibSerializerFacade
-
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useMetaTestConfigurators(
             ::UnsupportedFeaturesTestConfigurator,
@@ -67,19 +54,19 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractKotlinCompilerW
             }
         }
 
-        val customNativeHome = customNativeCompilerSettings.nativeHome.absoluteFile.takeIf(
-            { customNativeCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE }
-        )
+        val customNativeHome = customNativeCompilerSettings.nativeHome.absoluteFile.takeIf {
+            customNativeCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE
+        }
         useConfigurators(::NativeEnvironmentConfigurator.bind(customNativeHome))
         useAdditionalSourceProviders(
             ::NativeLauncherAdditionalSourceProvider,
         )
         commonConfigurationForNativeFirstStage(
-            targetFrontend,
-            frontendFacade,
-            frontendToIrConverter,
-            irPreSerializationLoweringFacade,
-            serializerFacade,
+            FrontendKinds.FIR,
+            ::FirFrontendFacade,
+            ::Fir2IrNativeResultsConverter,
+            ::NativePreSerializationLoweringFacade,
+            ::NativeKlibSerializerFacade,
         )
         configureFirHandlersStep {
             commonFirHandlersForCodegenTest()
