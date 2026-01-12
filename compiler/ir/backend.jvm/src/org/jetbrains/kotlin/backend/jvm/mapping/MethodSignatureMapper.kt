@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFq
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -475,7 +475,17 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             when (current) {
                 is IrLazyClassBase -> {
                     val moduleName = if (current.isK2) current.moduleName else current.irLazyClassModuleName
-                    return moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
+                    return moduleName ?: if (context.config.noFallbackToDefaultModuleName) {
+                        throw IllegalStateException(
+                            "No module name found in metadata of a class from another module, and fallback to default module name 'main' is disabled.\n" +
+                                    "Remove '-Xno-fallback-to-default-module-name' to allow falling back to 'main'.\n" +
+                                    "Function: ${function.render()} (${function::class.java.simpleName})\n" +
+                                    "Class: ${function.parent.render()} (${function.parent::class.java.simpleName})"
+                        )
+                    } else {
+                        JvmProtoBufUtil.DEFAULT_MODULE_NAME
+                    }
+
                 }
                 is IrExternalPackageFragment -> {
                     val source = current.containerSource ?: return null

@@ -962,4 +962,14 @@ The default value is 'inline'.""".asReleaseDependent()
             introducedVersion = KotlinReleaseVersion.v2_2_20
         )
     }
+
+    compilerArgument {
+        name = "Xno-fallback-to-default-module-name"
+        description = "Throw exception when generating calls to symbols from a module with no name, instead of falling back to 'main'.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
 }

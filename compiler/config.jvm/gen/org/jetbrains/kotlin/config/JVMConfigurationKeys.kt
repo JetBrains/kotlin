@@ -158,6 +158,9 @@ object JVMConfigurationKeys {
     @JvmField
     val WHEN_GENERATION_SCHEME = CompilerConfigurationKey.create<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions")
 
+    @JvmField
+    val NO_FALLBACK_TO_DEFAULT_MODULE_NAME = CompilerConfigurationKey.create<Boolean>("No fallback to default module name")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -348,3 +351,6 @@ var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
     get() = get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME)
     set(value) { put(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, requireNotNull(value) { "nullable values are not allowed" }) }
 
+var CompilerConfiguration.noFallbackToDefaultModuleName: Boolean
+    get() = getBoolean(JVMConfigurationKeys.NO_FALLBACK_TO_DEFAULT_MODULE_NAME)
+    set(value) { put(JVMConfigurationKeys.NO_FALLBACK_TO_DEFAULT_MODULE_NAME, value) }
