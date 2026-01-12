@@ -19,6 +19,9 @@ enum class KlibAbiCompatibilityLevel(val major: Int, val minor: Int) {
     fun isAtLeast(other: KlibAbiCompatibilityLevel): Boolean =
         major > other.major || major == other.major && minor >= other.minor
 
+    fun previous(): KlibAbiCompatibilityLevel? =
+        if (ordinal > 0) KlibAbiCompatibilityLevel.entries[ordinal - 1] else null
+
     companion object {
         val LATEST_STABLE = ABI_LEVEL_2_3
     }
