@@ -57,14 +57,11 @@ object FirWasmJsEqualityChecker : FirPlatformSpecificEqualityChecker() {
         leftType: ConeKotlinType,
         rightType: ConeKotlinType,
         checker: FirEqualityCompatibilityChecker,
-    ): Applicability =
-        checker.checkApplicability(expression.operation, leftType.toTypeInfo(context.session), rightType.toTypeInfo(context.session))
-            .takeIf { it == Applicability.APPLICABLE }
-            ?: minApplicabilityAmongJsTypesComponents(leftType) { leftType ->
-                minApplicabilityAmongJsTypesComponents(rightType) { rightType ->
-                    runCheckForIntersectionComponents(expression.operation, leftType, rightType, checker)
-                }
-            }
+    ): Applicability = minApplicabilityAmongJsTypesComponents(leftType) { leftType ->
+        minApplicabilityAmongJsTypesComponents(rightType) { rightType ->
+            runCheckForIntersectionComponents(expression.operation, leftType, rightType, checker)
+        }
+    }
 
     context(context: CheckerContext)
     private fun runCheckForIntersectionComponents(
@@ -80,17 +77,13 @@ object FirWasmJsEqualityChecker : FirPlatformSpecificEqualityChecker() {
             return Applicability.APPLICABLE
 
         // allow equality checks between JsReference<C> and Kotlin types K if a corresponding check between K and C is allowed
-        if (leftClassId == JsStandardClassIds.JsReference || rightClassId == JsStandardClassIds.JsReference) {
-            val unwrappedLeftType = tryUnwrapReferenceType(leftType) ?: return Applicability.APPLICABLE
-            val unwrappedRightType = tryUnwrapReferenceType(rightType) ?: return Applicability.APPLICABLE
+        val unwrappedLeftType = tryUnwrapReferenceType(leftType) ?: return Applicability.APPLICABLE
+        val unwrappedRightType = tryUnwrapReferenceType(rightType) ?: return Applicability.APPLICABLE
 
-            return checker.checkApplicability(
-                operation,
-                unwrappedLeftType.toTypeInfo(context.session),
-                unwrappedRightType.toTypeInfo(context.session),
-            )
-        }
-
-        return Applicability.GENERALLY_INAPPLICABLE
+        return checker.checkApplicability(
+            operation,
+            unwrappedLeftType.toTypeInfo(context.session),
+            unwrappedRightType.toTypeInfo(context.session),
+        )
     }
 }
