@@ -1,6 +1,8 @@
 // IGNORE_BACKEND: WASM_JS, WASM_WASI
 // IGNORE_NATIVE: optimizationMode=DEBUG
-// IGNORE_NATIVE: optimizationMode=NO
+// IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_EVERYWHERE
+// IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_PER_FILE_EVERYWHERE
 // https://youtrack.jetbrains.com/issue/KT-44571/Segfault-on-unnecessary-int-unboxing
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
