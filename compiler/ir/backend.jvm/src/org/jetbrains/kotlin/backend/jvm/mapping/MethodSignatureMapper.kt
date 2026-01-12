@@ -155,7 +155,18 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     private fun getModuleNameForClassMember(function: IrSimpleFunction): String {
         val parent = function.parent
         return if (parent is IrLazyClassBase) {
-            (if (parent.isK2) parent.moduleName else parent.irLazyClassModuleName) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
+            (if (parent.isK2) parent.moduleName else parent.irLazyClassModuleName) ?: run {
+                if (context.config.noFallbackToDefaultModuleName) {
+                    throw IllegalStateException(
+                        "No module name found in metadata of a class from another module, and fallback to default module name 'main' is disabled.\n" +
+                                "Remove '-Xno-fallback-to-default-module-name' to allow falling back to 'main'.\n" +
+                                "Function: ${function.render()} (${function::class.java.simpleName})\n" +
+                                "Class: ${parent.render()} (${parent::class.java.simpleName})"
+                    )
+                } else {
+                    JvmProtoBufUtil.DEFAULT_MODULE_NAME
+                }
+            }
         } else context.state.moduleName
     }
 

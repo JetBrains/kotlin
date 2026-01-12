@@ -5153,6 +5153,37 @@
                                 }
                             },
                             {
+                                "name": "Xno-fallback-to-default-module-name",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Throw exception when generating calls to symbols from a module with no name, instead of falling back to 'main'.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.3.20",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                }
+                            },
+                            {
                                 "name": "Xno-new-java-annotation-targets",
                                 "shortName": null,
                                 "deprecatedName": null,

@@ -712,6 +712,39 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
+    open fun testNoFallbackToDefaultModuleName() {
+        val library = compileLibrary("library")
+        val (output, exitCode) = compileKotlin(
+            "source.kt",
+            tmpdir,
+            listOf(library),
+            additionalOptions = listOf(
+                K2JVMCompilerArguments::friendPaths.cliArgument(library.path),
+                K2JVMCompilerArguments::noFallbackToDefaultModuleName.cliArgument,
+            ),
+            expectedFileName = null,
+        )
+        assertEquals(ExitCode.INTERNAL_ERROR, exitCode)
+
+        // Check that exception is thrown (see `MethodSignatureMapper.getModuleNameForClassMember`).
+        assertTrue("IllegalStateException: No module name found" in output)
+    }
+
+    open fun testNoFallbackToDefaultModuleNameDisabled() {
+        val library = compileLibrary("library")
+        val (output, exitCode) = compileKotlin(
+            "source.kt",
+            tmpdir,
+            listOf(library),
+            additionalOptions = listOf(
+                K2JVMCompilerArguments::friendPaths.cliArgument(library.path),
+                K2JVMCompilerArguments::noFallbackToDefaultModuleName.cliArgument("false"),
+            ),
+            expectedFileName = null,
+        )
+        assertEquals(ExitCode.OK, exitCode)
+    }
+
     private fun doTestAnonymousObjectTypeMetadata(
         extraCommandLineArguments: List<String> = emptyList(),
         filterOutput: (String) -> String = { output -> output }

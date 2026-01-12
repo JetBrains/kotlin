@@ -161,6 +161,9 @@ object JVMConfigurationKeys {
     @JvmField
     val IGNORED_ANNOTATIONS_FOR_BRIDGES = CompilerConfigurationKey.create<List<String>>("Annotations fqNames that shall be skipped while copying the annotations from the target to the bridge functions")
 
+    @JvmField
+    val NO_FALLBACK_TO_DEFAULT_MODULE_NAME = CompilerConfigurationKey.create<Boolean>("No fallback to default module name")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -354,4 +357,8 @@ var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
 var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
     get() = getList(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES)
     set(value) { put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, value) }
+
+var CompilerConfiguration.noFallbackToDefaultModuleName: Boolean
+    get() = getBoolean(JVMConfigurationKeys.NO_FALLBACK_TO_DEFAULT_MODULE_NAME)
+    set(value) { put(JVMConfigurationKeys.NO_FALLBACK_TO_DEFAULT_MODULE_NAME, value) }
 

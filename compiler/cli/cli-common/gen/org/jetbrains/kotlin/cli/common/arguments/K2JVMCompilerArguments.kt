@@ -421,6 +421,16 @@ It has no effect when -language-version is 2.0 or higher.""",
         }
 
     @Argument(
+        value = "-Xno-fallback-to-default-module-name",
+        description = "Throw exception when generating calls to symbols from a module with no name, instead of falling back to 'main'.",
+    )
+    var noFallbackToDefaultModuleName: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xno-new-java-annotation-targets",
         description = "Don't generate Java 1.8+ targets for Kotlin annotation classes.",
     )
