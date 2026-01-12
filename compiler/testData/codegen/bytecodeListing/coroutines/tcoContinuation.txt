@@ -207,8 +207,13 @@ public final class TcoContinuationKt$transform$$inlined$flow$1 {
 }
 
 @kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 public final class TcoContinuationKt$transform$lambda$0$$inlined$collect$1$1 {
     enclosing method TcoContinuationKt$transform$lambda$0$$inlined$collect$1.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+    field I$0: int
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$lambda$0$$inlined$collect$1

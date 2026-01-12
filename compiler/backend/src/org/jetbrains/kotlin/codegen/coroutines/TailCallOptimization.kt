@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
+import org.jetbrains.kotlin.codegen.InsnSequence
+import org.jetbrains.kotlin.codegen.inline.isBeforeSuspendUnitCallMarker
+import org.jetbrains.kotlin.codegen.inline.isBeforeSuspendMarker
 import org.jetbrains.kotlin.codegen.inline.isInlineMarker
+import org.jetbrains.kotlin.codegen.inline.isSuspendInlineMarker
 import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
 import org.jetbrains.kotlin.codegen.optimization.common.ControlFlowGraph
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
@@ -24,17 +28,20 @@ internal fun MethodNode.allSuspensionPointsAreTailCalls(suspensionPoints: List<S
     val frames = MethodTransformer.analyze("fake", this, TcoInterpreter(suspensionPoints))
     val controlFlowGraph = ControlFlowGraph.build(this)
 
-    fun AbstractInsnNode.isSafe(): Boolean =
-        !isMeaningful || opcode in SAFE_OPCODES || isInvisibleInDebugVarInsn(this@allSuspensionPointsAreTailCalls) || isInlineMarker(this)
+    fun AbstractInsnNode.isPartOfSuspendInlineMarker(): Boolean =
+        isSuspendInlineMarker(this) || (next?.let(::isSuspendInlineMarker) == true)
 
-    fun AbstractInsnNode.transitiveSuccessorsAreSafeOrReturns(): Boolean {
+    fun AbstractInsnNode.isSafe(): Boolean =
+        !isMeaningful || opcode in SAFE_OPCODES || isInvisibleInDebugVarInsn(this@allSuspensionPointsAreTailCalls) || isInlineMarker(this) || isPartOfSuspendInlineMarker()
+
+    fun AbstractInsnNode.transitiveSuccessorsAreSafeOrReturns(isUnitSuspendCall: Boolean): Boolean {
         val visited = mutableSetOf(this)
         val stack = mutableListOf(this)
         while (stack.isNotEmpty()) {
             val insn = stack.popLast()
-            // In Unit-returning functions, the last statement is followed by POP + GETSTATIC Unit.INSTANCE
+            // In Unit-returning functions, the last statement is followed by POP + GETSTATIC Unit.INSTANCE + ARETURN
             // if it is itself not Unit-returning.
-            if (insn.opcode == Opcodes.ARETURN || (optimizeReturnUnit && insn.isPopBeforeReturnUnit)) {
+            if (insn.opcode == Opcodes.ARETURN || (optimizeReturnUnit && isUnitSuspendCall && insn.isPopBeforeReturnUnit)) {
                 if (frames[instructions.indexOf(insn)]?.top() !is FromSuspensionPointValue?) {
                     return false
                 }
@@ -55,8 +62,35 @@ internal fun MethodNode.allSuspensionPointsAreTailCalls(suspensionPoints: List<S
     return suspensionPoints.all { suspensionPoint ->
         val index = instructions.indexOf(suspensionPoint.suspensionCallBegin)
         tryCatchBlocks.all { index < instructions.indexOf(it.start) || instructions.indexOf(it.end) <= index } &&
-                suspensionPoint.suspensionCallEnd.transitiveSuccessorsAreSafeOrReturns()
+                (suspensionPoint.isNoCall() ||
+                        suspensionPoint.suspensionCallEnd.transitiveSuccessorsAreSafeOrReturns(suspensionPoint.isUnitSuspendCall()))
     }
+}
+
+// After chains of inline, some "suspension points" may contain no actual suspend calls (and no inlined
+// suspendCoroutineUninterceptedOrReturn()).
+// Ideally, such leftovers shall be removed at some point before this, but at least they shall not prevent tail-call optimization
+private fun SuspensionPoint.isNoCall(): Boolean {
+    for (insn in InsnSequence(suspensionCallBegin.next, suspensionCallEnd)) {
+        when (insn.opcode) {
+            Opcodes.INVOKEVIRTUAL,
+            Opcodes.INVOKESPECIAL,
+            Opcodes.INVOKEINTERFACE,
+            Opcodes.INVOKEDYNAMIC,
+                -> return false
+            Opcodes.INVOKESTATIC if !isInlineMarker(insn) && !isSuspendInlineMarker(insn)
+                -> return false
+        }
+    }
+    return true
+}
+
+private fun SuspensionPoint.isUnitSuspendCall(): Boolean =
+    suspensionCallBegin.skipBeforeSuspendMarker()?.nextMeaningfulOrMarker?.let { isBeforeSuspendUnitCallMarker(it) } ?: false
+
+private fun AbstractInsnNode.skipBeforeSuspendMarker(): AbstractInsnNode? {
+    require(next != null && isBeforeSuspendMarker(next)) { "Expected BeforeSuspendMarker" }
+    return next.next
 }
 
 internal fun MethodNode.addCoroutineSuspendedChecks(suspensionPoints: List<SuspensionPoint>) {
@@ -76,13 +110,14 @@ internal fun MethodNode.addCoroutineSuspendedChecks(suspensionPoints: List<Suspe
     }
 }
 
-private fun AbstractInsnNode?.skipUntilMeaningful(): AbstractInsnNode? {
+private fun AbstractInsnNode?.skipUntilMeaningful(skipSuspendMarkers: Boolean): AbstractInsnNode? {
     var cursor: AbstractInsnNode? = this ?: return null
     val visited = mutableSetOf<AbstractInsnNode>()
     while (cursor != null) {
         if (!visited.add(cursor)) return null
         when {
             cursor.opcode == Opcodes.NOP || !cursor.isMeaningful -> cursor = cursor.next
+            skipSuspendMarkers && cursor.next != null && isSuspendInlineMarker(cursor.next) -> cursor = cursor.next.next
             cursor.opcode == Opcodes.GOTO -> cursor = (cursor as JumpInsnNode).label
             else -> return cursor
         }
@@ -91,7 +126,10 @@ private fun AbstractInsnNode?.skipUntilMeaningful(): AbstractInsnNode? {
 }
 
 private val AbstractInsnNode.nextMeaningful: AbstractInsnNode?
-    get() = next.skipUntilMeaningful()
+    get() = next.skipUntilMeaningful(true)
+
+private val AbstractInsnNode.nextMeaningfulOrMarker: AbstractInsnNode?
+    get() = next.skipUntilMeaningful(false)
 
 private val AbstractInsnNode.isReturnUnit: Boolean
     get() = isUnitInstance() && nextMeaningful?.let { it.opcode == Opcodes.ARETURN || it.isPopBeforeReturnUnit } == true

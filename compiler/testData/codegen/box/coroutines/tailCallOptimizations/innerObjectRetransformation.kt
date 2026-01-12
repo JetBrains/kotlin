@@ -4,13 +4,12 @@
 // CHECK_BYTECODE_LISTING
 // FIR_IDENTICAL
 
-// In this test the following transformation are occuring:
+// In this test the following transformation of flow$1 are occuring:
 //   flow$1 -> flowWith$$inlined$flow$1
 //   flow$1 -> check$$inlined$flow$1
-//   flow$1 -> flowWith$$inlined$flow$2
-//   flowWith$$inlined$flow$2 -> check$$inlined$flowWith$1
+//   flowWith$$inlined$flow$1 -> check$$inlined$flowWith$1
 
-// All thansformations, except the third, shall generate state-machine.
+// From these thansformations, only the fist one shall generate state-machine in collect()
 // The third shall not generate state-machine, since it is retransformed.
 
 // FILE: lib.kt

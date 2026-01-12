@@ -7,14 +7,14 @@ Kotlin
 + 1 inline.kt
 InlineKt
 *L
-1#1,16:1
-11#1,2:17
+1#1,14:1
+10#1:15
 *S KotlinDebug
 *F
 + 1 inline.kt
 InlineKt
 *L
-14#1:17,2
+12#1:15
 *E
 
 // FILE: box.kt
@@ -28,15 +28,15 @@ BoxKt$box$1
 + 2 inline.kt
 InlineKt
 *L
-1#1,39:1
-14#2:40
-11#2,2:41
+1#1,37:1
+12#2:38
+10#2:39
 *S KotlinDebug
 *F
 + 1 box.kt
 BoxKt$box$1
 *L
-32#1:40
-32#1:41,2
+30#1:38
+30#1:39
 *E
 

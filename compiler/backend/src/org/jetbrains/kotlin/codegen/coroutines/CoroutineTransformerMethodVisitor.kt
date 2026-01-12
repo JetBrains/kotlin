@@ -436,7 +436,9 @@ class CoroutineTransformerMethodVisitor(
         }
     }
 
-    /* Put { POP, GETSTATIC Unit } after suspension point if suspension point is a call of suspend function, that returns Unit.
+    /* NOTE: Obsolete! No INLINE_MARKER_RETURNS_UNIT are added anymore. This processing code is left for the backward compatibility only.
+     *
+     * Put { POP, GETSTATIC Unit } after suspension point if suspension point is a call of suspend function, that returns Unit.
      *
      * Otherwise, upon resume, the function would seem to not return Unit, despite being declared as returning Unit.
      *
@@ -752,7 +754,9 @@ class CoroutineTransformerMethodVisitor(
 
     private fun dropSuspensionMarkers(methodNode: MethodNode) {
         // Drop markers, including ones, which we ignored in recognizing phase
-        for (marker in methodNode.instructions.asSequence().filter { isBeforeSuspendMarker(it) || isAfterSuspendMarker(it) }.toList()) {
+        fun isSuspensionMarkerToRemove(insn: AbstractInsnNode) =
+            isBeforeSuspendMarker(insn) || isAfterSuspendMarker(insn) || isBeforeSuspendUnitCallMarker(insn)
+        for (marker in methodNode.instructions.asSequence().filter { isSuspensionMarkerToRemove(it) }.toList()) {
             methodNode.instructions.removeAll(listOf(marker.previous, marker))
         }
     }
@@ -1607,6 +1611,8 @@ fun Type.normalize(): Type =
  * Suspension call may consists of several instructions:
  * ICONST_0
  * INVOKESTATIC InlineMarker.mark()
+ * BIPUSH 11                        // \
+ * INVOKESTATIC InlineMarker.mark() // -- optional: if suspensionMethod is originally Unit-returning
  * INVOKEVIRTUAL suspensionMethod()Ljava/lang/Object; // actually it could be some inline method instead of plain call
  * CHECKCAST Type
  * ICONST_1

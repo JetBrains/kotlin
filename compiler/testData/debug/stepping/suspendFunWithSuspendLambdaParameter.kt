@@ -18,6 +18,7 @@ suspend fun box() {
 // called via code in the kotlin package.
 
 // EXPECTATIONS JVM_IR
+// test.kt:9 box
 // test.kt:10 box
 // test.kt:6 foo
 // test.kt:10 box

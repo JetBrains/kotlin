@@ -16869,6 +16869,18 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("tailSuspendInlineNoCallLambda.kt")
+      public void testTailSuspendInlineNoCallLambda() {
+        runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tailSuspendInlineNoCallLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("tailSuspendInlineUnitFunLambda.kt")
+      public void testTailSuspendInlineUnitFunLambda() {
+        runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tailSuspendInlineUnitFunLambda.kt");
+      }
+
+      @Test
       @TestMetadata("tailSuspendUnitFun.kt")
       public void testTailSuspendUnitFun() {
         runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tailSuspendUnitFun.kt");
@@ -16917,6 +16929,24 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
         @TestMetadata("inline.kt")
         public void testInline() {
           runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/inline.kt");
+        }
+
+        @Test
+        @TestMetadata("kt55559.kt")
+        public void testKt55559() {
+          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/kt55559.kt");
+        }
+
+        @Test
+        @TestMetadata("kt72710.kt")
+        public void testKt72710() {
+          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/kt72710.kt");
+        }
+
+        @Test
+        @TestMetadata("kt76672.kt")
+        public void testKt76672() {
+          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/kt76672.kt");
         }
 
         @Test
