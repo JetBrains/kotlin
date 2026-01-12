@@ -172,4 +172,26 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
         // val projectFooDotBar = projectWithCinterops("foo.bar", rootProject)
         // assertTasksOutputsDoesntIntersect(projectFooBar, projectFooDotBar)
     }
+
+    @Test
+    fun `test IDE task does not depend on project structure metadata`() = project.runLifecycleAwareTest {
+        enableCInteropCommonization(true)
+        kotlin.linuxX64()
+        kotlin.linuxArm64()
+
+        val commonMain = kotlin.sourceSets.getByName("commonMain")
+        val nativeMain = kotlin.sourceSets.create("nativeMain") as DefaultKotlinSourceSet
+        nativeMain.dependsOn(commonMain)
+        
+        kotlin.sourceSets.getByName("linuxX64Main").dependsOn(nativeMain)
+        kotlin.sourceSets.getByName("linuxArm64Main").dependsOn(nativeMain)
+
+        val task = locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(nativeMain)?.get()
+            ?: fail("Expected transformation task registered for 'nativeMain'")
+
+        assertTrue(
+            task.inputs.projectStructureMetadataFileCollection.isEmpty,
+            "Expected projectStructureMetadataFileCollection to be empty for CInterop IDE task"
+        )
+    }
 }
