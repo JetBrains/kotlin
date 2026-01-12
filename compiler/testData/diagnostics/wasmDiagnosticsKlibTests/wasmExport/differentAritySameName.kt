@@ -4,10 +4,14 @@
 @file:Suppress("OPT_IN_USAGE")
 package a
 
-<!EXPORTING_JS_NAME_CLASH!>@JsExport @JsName("x") fun foo() = 1<!>
+import kotlin.wasm.*
+
+<!WASM_EXPORT_CLASH!>@WasmExport("f") fun foo() = 0<!>
 
 // FILE: B.kt
 @file:Suppress("OPT_IN_USAGE")
 package b
 
-<!EXPORTING_JS_NAME_CLASH!>@JsExport @JsName("x") suspend fun bar() = 2<!>
+import kotlin.wasm.*
+
+<!WASM_EXPORT_CLASH!>@WasmExport("f") fun bar(x: Int) = x<!>
