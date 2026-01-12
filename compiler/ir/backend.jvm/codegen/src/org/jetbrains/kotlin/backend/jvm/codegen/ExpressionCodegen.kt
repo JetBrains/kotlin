@@ -558,6 +558,18 @@ class ExpressionCodegen(
 
         if (suspensionPointKind != SuspensionPointKind.NEVER) {
             addSuspendMarker(mv, isStartNotEnd = true, suspensionPointKind == SuspensionPointKind.NOT_INLINE)
+
+            if (expression.type.isUnit()) {
+                // Although we cannot be sure in type of suspendCoroutineUninterceptedOrReturn<T>() with non-inlined lambda due to
+                // the possibility of "unsafe" casts of the lambda types, we can ignore it for tail-call optimization aim, as unsafe
+                // casts can break it in any case (e.g. cast Continuation<Int> to Continuation<String> and call `resumeWith` with
+                // a wrong result type).
+                addBeforeSuspendUnitCallMarker(mv)
+                // This code adds "SuspendUnit" markers for suspension points from non-inlined calls
+                // and for directly inlined calls of suspendCoroutineUninterceptedOrReturn().
+                // Another case is suspendCoroutineUninterceptedOrReturn() call in the chain of inlined methods;
+                // for such cases, the marker is added during inlining in IrInlineCallGenerator
+            }
         }
 
         callGenerator.genCall(callable, this, expression, isInsideCondition)
@@ -1543,8 +1555,19 @@ class ExpressionCodegen(
             config.languageVersionSettings,
             config.unifiedNullChecks,
         )
-
-        return IrInlineCodegen(this, state, callee, signature, mappings, sourceCompiler, reifiedTypeInliner)
+        // additional "hack" to support TCO with Unit-returning `suspendCoroutine` calls - we know that the type of built-in
+        // `suspendCoroutine` is the same as the type of `suspendCoroutineUninterceptedOrReturn` called by it
+        val markInlinedSuspensionPointAsUnitReturning = callee.isBuiltInSuspendCoroutine() && element.type.isUnit()
+        return IrInlineCodegen(
+            this,
+            state,
+            callee,
+            signature,
+            mappings,
+            sourceCompiler,
+            reifiedTypeInliner,
+            markInlinedSuspensionPointAsUnitReturning
+        )
     }
 
     private fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.genThrow
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
@@ -44,6 +45,7 @@ class IrInlineCodegen(
     private val typeParameterMappings: TypeParameterMappings<IrType>,
     private val sourceCompiler: SourceCompilerForInline,
     private val reifiedTypeInliner: ReifiedTypeInliner<IrType>,
+    private val markInlinedSuspensionPointAsUnitReturning: Boolean,
 ) : IrInlineCallGenerator {
 
     private val inlineArgumentsInPlace = canInlineArgumentsInPlace()
@@ -277,6 +279,14 @@ class IrInlineCodegen(
                     param.remapValue = StackValue.Local(codegen.frameMap.enterTemp(param.type), param.type, null)
                     param.isSynthetic = true
                 }
+            }
+        }
+
+        if (markInlinedSuspensionPointAsUnitReturning) {
+            node.instructions.firstOrNull { isBeforeSuspendMarker(it) }?.let {
+                node.instructions.insert(it, withInstructionAdapter {
+                    addBeforeSuspendUnitCallMarker(this)
+                })
             }
         }
 

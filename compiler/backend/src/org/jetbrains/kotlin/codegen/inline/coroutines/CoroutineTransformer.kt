@@ -214,6 +214,8 @@ fun surroundInvokesWithSuspendMarkersIfNeeded(node: MethodNode) {
         node.instructions.insertBefore(load, withInstructionAdapter {
             addInlineMarker(this, isStartNotEnd = true)
         })
+        // We cannot add INLINE_MARKER_BEFORE_SUSPEND_UNIT_CALL here, as we do not know the type of the non-inlined lambda.
+        // But it seems fine, as it won't happen for inlined lambdas
         node.instructions.insertBefore(invoke, withInstructionAdapter {
             addSuspendMarker(this, isStartNotEnd = true, inlinable = conditional)
         })
