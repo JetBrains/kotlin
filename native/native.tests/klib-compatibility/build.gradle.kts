@@ -126,9 +126,10 @@ customFirstStageTest("2.0.0")
 customFirstStageTest("2.1.0")
 customFirstStageTest("2.2.0")
 customFirstStageTest("2.3.0")
+// add `customFirstStageTest("2.4.0"-Beta1)`, when it is released
 
-customSecondStageTest("2.2.0")
 customSecondStageTest("2.3.0")
+// add `customSecondStageTest("2.4.0-Beta1")`, when it is released
 
 projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true) {
