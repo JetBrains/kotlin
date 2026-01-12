@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.utils
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 object LombokNames {
 
@@ -40,6 +41,8 @@ object LombokNames {
     val REQUIRED_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(REQUIRED_ARGS_CONSTRUCTOR)
 
     val TABLE_CLASS_ID = ClassId.topLevel(TABLE)
+
+    val CAN_EQUAL = Name.identifier("canEqual")
 
     //taken from idea lombok plugin
     val NON_NULL_ANNOTATIONS = listOf(

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.lombok.k2.generators
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
@@ -25,12 +26,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lombok.config.AccessLevel
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Accessors
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Getter
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Setter
 import org.jetbrains.kotlin.lombok.k2.config.LombokService
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.utils.AccessorNames
+import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.lombok.utils.capitalize
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -43,7 +46,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         get() = session.lombokService
 
     private val cache: FirCache<Pair<FirClassSymbol<*>, FirClassDeclaredMemberScope?>, Map<Name, List<FirJavaMethod>>?, Nothing?> =
-        session.firCachesFactory.createCache(::createAccessors)
+        session.firCachesFactory.createCache(::createMethods)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableJavaClass()) return emptySet()
@@ -57,9 +60,10 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         return accessor.map { it.symbol }
     }
 
-    private fun createAccessors(key: Pair<FirClassSymbol<*>, FirClassDeclaredMemberScope?>): Map<Name, List<FirJavaMethod>>? {
+    private fun createMethods(key: Pair<FirClassSymbol<*>, FirClassDeclaredMemberScope?>): Map<Name, List<FirJavaMethod>>? {
         val (classSymbol, declaredScope) = key
-        val fieldsWithAccessor = computeFieldsWithAccessors(classSymbol) ?: return null
+        val data = lombokService.getData(classSymbol)
+        val fieldsWithAccessor = computeFieldsWithAccessors(classSymbol, data) ?: return null
         val globalAccessors = lombokService.getAccessors(classSymbol)
         val explicitlyDeclaredFunctions = declaredScope?.collectAllFunctions()?.associateBy { it.name }.orEmpty()
         return buildMap {
@@ -104,6 +108,18 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                     getOrPut(setterName) { mutableListOf() }.add(function)
                 }
             }
+
+            if (data != null) {
+                getOrPut(LombokNames.CAN_EQUAL) { mutableListOf() }.add(
+                    classSymbol.createJavaMethod(
+                        name = LombokNames.CAN_EQUAL,
+                        valueParameters = listOf(ConeLombokValueParameter(Name.identifier("other"), session.builtinTypes.nullableAnyType)),
+                        returnTypeRef = session.builtinTypes.booleanType,
+                        visibility = JavaVisibilities.ProtectedAndPackage,
+                        modality = Modality.OPEN,
+                    )
+                )
+            }
         }.takeIf { it.isNotEmpty() }
     }
 
@@ -114,9 +130,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
     )
 
     @OptIn(SymbolInternals::class)
-    private fun computeFieldsWithAccessors(classSymbol: FirClassSymbol<*>): List<FieldWithAccessors>? {
-        val data = lombokService.getData(classSymbol)
-
+    private fun computeFieldsWithAccessors(classSymbol: FirClassSymbol<*>, data: ConeLombokAnnotations.Data?): List<FieldWithAccessors>? {
         val classGetter = lombokService.getGetter(classSymbol)
             ?: data?.asGetter()
             ?: lombokService.getValue(classSymbol)?.asGetter()

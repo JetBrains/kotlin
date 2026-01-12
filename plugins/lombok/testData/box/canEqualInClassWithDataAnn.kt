@@ -22,12 +22,12 @@ public class TestJavaUsage {
 // FILE: test.kt
 
 fun usage(testJava: TestJava): Boolean {
-    return testJava.<!UNRESOLVED_REFERENCE!>canEqual<!>(1)
+    return testJava.canEqual(1)
 }
 
 class KotlinChild : TestJava() {
-    <!NOTHING_TO_OVERRIDE!>override<!> fun canEqual(other: Any?): Boolean {
-        return super.<!UNRESOLVED_REFERENCE!>canEqual<!>(other)
+    override fun canEqual(other: Any?): Boolean {
+        return super.canEqual(other)
     }
 }
 
