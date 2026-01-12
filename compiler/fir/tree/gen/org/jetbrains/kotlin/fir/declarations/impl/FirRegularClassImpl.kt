@@ -125,6 +125,12 @@ internal class FirRegularClassImpl(
         controlFlowGraphReference = newControlFlowGraphReference
     }
 
+    override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {
+        if (declarations === newDeclarations) return
+        declarations.clear()
+        declarations.addAll(newDeclarations)
+    }
+
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
     }
