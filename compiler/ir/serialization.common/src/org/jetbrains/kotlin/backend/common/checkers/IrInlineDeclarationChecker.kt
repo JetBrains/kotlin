@@ -45,13 +45,17 @@ class IrInlineDeclarationChecker(
         }
     }
 
+    private fun IrDeclarationWithVisibility.isEffectivelyPrivateInNonPrivateDeclaration(data: InlineFunctionInfo): Boolean {
+        val inlineFunction = data.inlineFunction ?: return false
+        return !data.insideEffectivelyPrivateDeclaration &&
+                isEffectivelyPrivate() &&
+                parents.none { it == inlineFunction } // local/private declarations declared in the current inline function are legal.
+    }
+
     override fun visitType(container: IrElement, type: IrType, data: InlineFunctionInfo?) {
         val inlineFunction = data?.inlineFunction ?: return
         val klass = type.classifierOrNull?.takeIf { it.isBound }?.owner as? IrClass ?: return
-        if (!data.insideEffectivelyPrivateDeclaration &&
-            klass.isEffectivelyPrivate() &&
-            klass.parents.none { it == inlineFunction } // local/private classed declared in the current inline function are legal.
-        ) {
+        if (klass.isEffectivelyPrivateInNonPrivateDeclaration(data)) {
             if (data.inliningPath.isNotEmpty()) {
                 diagnosticReporter.at(data.inliningPath.first(), data.file).report(
                     SerializationErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
@@ -82,7 +86,7 @@ class IrInlineDeclarationChecker(
 
         val inlineFunction = data?.inlineFunction ?: return
         val reflectionTarget = expression.reflectionTargetSymbol?.owner as? IrDeclarationWithVisibility ?: return
-        if (reflectionTarget.isEffectivelyPrivate() && !data.insideEffectivelyPrivateDeclaration) {
+        if (reflectionTarget.isEffectivelyPrivateInNonPrivateDeclaration(data)) {
             if (data.inliningPath.isNotEmpty()) {
                 diagnosticReporter.at(data.inliningPath.first(), data.file).report(
                     SerializationErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
