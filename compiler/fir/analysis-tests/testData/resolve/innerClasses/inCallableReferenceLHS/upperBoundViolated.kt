@@ -13,20 +13,20 @@ open class Container<K: Key> {
     inner class Inner<T: Element<K>>
 
     private fun foo() {
-        Inner<!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!><Alpha><!>::toString
-        Inner<!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!><Element<K>><!>::toString
+        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Alpha><!>::toString
+        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Element<K>><!>::toString
     }
 }
 
 class ImplAlpha : Container<AlphaKey>() {
     private fun foo() {
-        Inner<!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!><Alpha><!>::toString
+        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Alpha><!>::toString
     }
 }
 
 class ImplBeta : Container<BetaKey>() {
     private fun foo() {
-        Inner<!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!><Alpha><!>::toString
+        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Alpha><!>::toString
     }
 }
 
