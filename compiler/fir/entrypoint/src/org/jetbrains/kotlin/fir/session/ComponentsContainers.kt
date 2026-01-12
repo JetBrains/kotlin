@@ -173,7 +173,7 @@ fun FirSession.registerJavaComponents(
 
     register(FirJavaVisibilityChecker)
     register(JvmCallConflictResolverFactory)
-    register(FirTypeSpecificityComparatorProvider.of(JvmTypeSpecificityComparator(typeContext)))
+    register(FirTypeSpecificityComparatorProvider.of(JvmTypeSpecificityComparator(typeContext, languageVersionSettings)))
     register(FirJavaClassMapper(this))
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
     register(FirJvmOverridesBackwardCompatibilityHelper)

@@ -269,6 +269,9 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun KotlinTypeMarker.isSpecial(): Boolean
 
+    @K2Only
+    fun KotlinTypeMarker.hasEnhancedNullability(): Boolean
+
     fun TypeConstructorMarker.isTypeVariable(): Boolean
     fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean
 

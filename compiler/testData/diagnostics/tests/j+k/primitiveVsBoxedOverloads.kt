@@ -1,6 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 // ISSUE: KT-55548
 // ISSUE: KT-9182
+// ISSUE: KTLC-387
 
 // FILE: JavaUtils.java
 import org.jetbrains.annotations.NotNull;

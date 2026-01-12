@@ -480,6 +480,7 @@ enum class LanguageFeature(
     JsAllowExportingSuspendFunctions(sinceVersion = KOTLIN_2_4, "KT-56281"),
     ImprovedResolutionInSecondaryConstructors(sinceVersion = KOTLIN_2_4, "KT-77275"),
     CacheLocalVariableScopes(sinceVersion = KOTLIN_2_4, "KT-68606"),
+    OverloadResolutionSpecificityForEnhancedJvmPrimitiveWrappers(sinceVersion = KOTLIN_2_4, "KT-9182"),
     ForbidTypeAliasToCompilerRequiredAnnotation(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-79369"),
     ForbidArrayLiteralsInNonAnnotationContexts(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-369"),
     LexicographicVariableReadinessCalculation(KOTLIN_2_4, enabledInProgressiveMode = false, "KT-77939"),
