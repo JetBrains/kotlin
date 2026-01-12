@@ -50,6 +50,8 @@ abstract class FirFile : FirDeclaration(), FirControlFlowGraphOwner {
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
+    abstract fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFile
 
     abstract fun <D> transformImports(transformer: FirTransformer<D>, data: D): FirFile

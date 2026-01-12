@@ -75,6 +75,8 @@ abstract class FirRegularClass : FirClass() {
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
+    abstract override fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
+
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract fun replaceCompanionObjectSymbol(newCompanionObjectSymbol: FirRegularClassSymbol?)

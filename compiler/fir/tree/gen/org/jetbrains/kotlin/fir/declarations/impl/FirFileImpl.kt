@@ -91,4 +91,10 @@ internal class FirFileImpl(
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
     }
+
+    override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {
+        if (declarations === newDeclarations) return
+        declarations.clear()
+        declarations.addAll(newDeclarations)
+    }
 }
