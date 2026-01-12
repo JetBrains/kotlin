@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -175,10 +174,10 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
             this.parent = parent
             createThisReceiverParameter()
         }
-        val superClass = getSuperClassType(functionReference)
+        val superClassType = getSuperClassType(functionReference)
         val superInterfaceType = functionReference.type.removeProjections()
         functionReferenceClass.superTypes =
-            listOf(superClass, superInterfaceType) memoryOptimizedPlus getAdditionalInterfaces(functionReference)
+            listOf(superClassType, superInterfaceType) memoryOptimizedPlus getAdditionalInterfaces(functionReference)
         val constructor = functionReferenceClass.addConstructor {
             origin = getConstructorOrigin(functionReference)
             isPrimary = true
@@ -193,7 +192,7 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
                 }
             } + getExtraConstructorParameters(this, functionReference)
             body = context.createIrBuilder(symbol, this.startOffset, this.endOffset).irBlockBody {
-                +generateSuperClassConstructorCall(this@apply, superClass, functionReference)
+                +generateSuperClassConstructorCall(this@apply, superClassType, functionReference)
                 +IrInstanceInitializerCallImpl(this.startOffset, this.endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
             }
         }
@@ -274,7 +273,14 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
                 )
             }
             this.parameters += nonDispatchParameters
-            overriddenSymbols += superFunction.symbol
+            val overriddenMethodsOfAny = superFunction.allOverridden().filter { it.parentAsClass == anyClass }
+            overriddenSymbols = if (overriddenMethodsOfAny.isEmpty())
+                listOf(superFunction.symbol)
+            else overriddenMethodsOfAny.flatMap { method ->
+                functionReferenceClass.superTypes.mapNotNull { superType ->
+                    superType.classOrFail.owner.functions.firstOrNull { it.overrides(method) }?.symbol
+                }
+            }
 
             val builder = context.createIrBuilder(symbol).applyIf(isLambda) { at(invokeFunction.body!!) }
             body = builder.irBlockBody {
