@@ -16,7 +16,7 @@ fun whenWithEquals(e: SealedWithEquals): Int {
     if (e == SealedWithEquals.A) return 1
     if (e == SealedWithEquals.B) return 2
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    return <!WHEN_ON_SEALED!>when (e) {
         SealedWithEquals.A -> 3
         SealedWithEquals.B -> 4
         SealedWithEquals.C -> 5

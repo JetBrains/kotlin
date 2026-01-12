@@ -20,13 +20,13 @@ fun test_1(e: JavaEnum) {
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> 3
     }.plus(0)
 
-    val c = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val c = <!WHEN_ON_SEALED!>when (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3
     }<!>.plus(0)
 
-    val d = <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (e) {
+    val d = <!WHEN_ON_SEALED!>when (e) {
         JavaEnum.A -> 1
         else -> 2
     }<!>.plus(0)
@@ -39,14 +39,14 @@ fun test_2(e: JavaEnum?) {
         JavaEnum.C -> 3
     }.plus(0)
 
-    val b = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val b = <!WHEN_ON_SEALED!>when (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3
         null -> 4
     }<!>.plus(0)
 
-    val c = <!WHEN_ON_SEALED_WEL_ELSE!>when (e) {
+    val c = <!WHEN_ON_SEALED!>when (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3
@@ -55,7 +55,7 @@ fun test_2(e: JavaEnum?) {
 }
 
 fun test_3(e: JavaEnum) {
-    val a = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val a = <!WHEN_ON_SEALED!>when (e) {
         JavaEnum.A, JavaEnum.B -> 1
         JavaEnum.C -> 2
     }<!>.plus(0)

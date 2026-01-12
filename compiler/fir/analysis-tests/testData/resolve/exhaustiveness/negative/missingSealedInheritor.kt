@@ -20,7 +20,7 @@ fun test_1(base: Base) {
         B -> 1
     }
 
-    val z = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
+    val z = <!WHEN_ON_SEALED!>when (base) {
         is A -> 1
         B -> 2
     }<!>
@@ -37,7 +37,7 @@ fun test_2(base: Base?) {
         B -> 2
     }
 
-    val z = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
+    val z = <!WHEN_ON_SEALED!>when (base) {
         is A -> 1
         B -> 2
         null -> 3

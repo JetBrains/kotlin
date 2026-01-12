@@ -15,7 +15,7 @@ sealed class Operation(val left: Int, val right: Int) {
     }
 }
 
-fun priority(op: Operation) = <!WHEN_ON_SEALED_GEEN_ELSE!>when(op) {
+fun priority(op: Operation) = <!WHEN_ON_SEALED!>when(op) {
     is Operation.Plus, is Operation.Minus  -> 1
     is Operation.Times, is Operation.Slash -> 2
 }<!>

@@ -8,7 +8,7 @@ fun test_1(enum: SomeEnum) {
         SomeEnum.A -> 1
     }
 
-    val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when (enum) {
+    val y = <!WHEN_ON_SEALED!>when (enum) {
         SomeEnum.A -> 1
         SomeEnum.B -> 2
     }<!>
@@ -20,7 +20,7 @@ fun test_2(enum: SomeEnum?) {
         SomeEnum.B -> 2
     }
 
-    val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when (enum) {
+    val y = <!WHEN_ON_SEALED!>when (enum) {
         SomeEnum.A -> 1
         SomeEnum.B -> 2
         null -> 3

@@ -11,23 +11,23 @@
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(value_1: SealedClass): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when (value_1) {
+fun case_1(value_1: SealedClass): String = <!WHEN_ON_SEALED!>when (value_1) {
     is SealedChild1, !is SealedChild3 -> ""
     is SealedChild3 -> ""
 }<!>
 
 // TESTCASE NUMBER: 2
-fun case_2(value_1: SealedClass) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (value_1) {
+fun case_2(value_1: SealedClass) = <!WHEN_ON_SEALED!>when (value_1) {
     !is SealedChild1, <!USELESS_IS_CHECK!>!is SealedChild2<!>, <!USELESS_IS_CHECK!>!is SealedChild3<!> -> {}
 }<!>
 
 // TESTCASE NUMBER: 3
-fun case_3(value_1: SealedClass): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when (value_1) {
+fun case_3(value_1: SealedClass): String = <!WHEN_ON_SEALED!>when (value_1) {
     is SealedChild2, !is SealedChild2 -> ""
 }<!>
 
 // TESTCASE NUMBER: 4
-fun case_4(value_1: SealedClass): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when (value_1) {
+fun case_4(value_1: SealedClass): String = <!WHEN_ON_SEALED!>when (value_1) {
     !is SealedChild1, <!USELESS_IS_CHECK!>is SealedChild1<!> -> ""
 }<!>
 

@@ -15,7 +15,7 @@ sealed class Sealed {
 object A
 class B
 
-fun sealed(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
+fun sealed(s: Sealed): Int = <!WHEN_ON_SEALED!>when (s) {
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
     <!IMPOSSIBLE_IS_CHECK_WARNING!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
     C -> 3
@@ -24,13 +24,13 @@ fun sealed(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
     else -> 6
 }<!>
 
-fun sealedExplicit(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
+fun sealedExplicit(s: Sealed): Int = <!WHEN_ON_SEALED!>when (s) {
     Sealed.A -> 1
     is Sealed.B -> 2
     else -> 6
 }<!>
 
-fun topLevelExplicit(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
+fun topLevelExplicit(s: Sealed): Int = <!WHEN_ON_SEALED!>when (s) {
     foo.A -> 1
     <!IMPOSSIBLE_IS_CHECK_WARNING!>is foo.B<!> -> 2
     else -> 6

@@ -5637,6 +5637,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("investigation.kt")
+        public void testInvestigation() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/investigation.kt");
+        }
+
+        @Test
         @TestMetadata("nestedIfInLambda.kt")
         public void testNestedIfInLambda() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/nestedIfInLambda.kt");

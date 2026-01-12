@@ -11,7 +11,7 @@ interface Left<T> {
     val z: String
 }
 
-fun MySealed.getOrElse() = <!WHEN_ON_SEALED_WEL_ELSE!>when (this) {
+fun MySealed.getOrElse() = <!WHEN_ON_SEALED!>when (this) {
     is <!NO_TYPE_ARGUMENTS_ON_RHS!>Left<!> -> <!UNRESOLVED_REFERENCE!>z<!>
     is Right -> y
     else -> ""

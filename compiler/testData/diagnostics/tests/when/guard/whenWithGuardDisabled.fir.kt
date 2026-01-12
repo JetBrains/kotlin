@@ -46,7 +46,7 @@ fun NonExhaustiveWithGuard(x: BooleanHolder) {
 }
 
 fun ExhaustiveWithGuard(x: BooleanHolder) {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is True -> Unit
         is False <!UNSUPPORTED_FEATURE!>if x.value<!> -> Unit
         is False -> Unit

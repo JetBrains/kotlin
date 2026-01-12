@@ -22,7 +22,7 @@ enum class Color(val rgb : Int) {
     BLUE(0x0000FF)
 }
 
-fun foo(d: Direction) = <!WHEN_ON_SEALED_GEEN_ELSE!>when(d) { //no 'else' should be requested
+fun foo(d: Direction) = <!WHEN_ON_SEALED!>when(d) { //no 'else' should be requested
     Direction.NORTH -> 1
     Direction.SOUTH -> 2
     <!INCOMPATIBLE_TYPES!>A<!> -> 1
@@ -36,7 +36,7 @@ fun foo1(d: Direction) = <!NO_ELSE_IN_WHEN!>when<!>(d) {
     Direction.WEST -> 3
 }
 
-fun bar(c: Color) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (c) {
+fun bar(c: Color) = <!WHEN_ON_SEALED!>when (c) {
     Color.RED -> 1
     Color.GREEN -> 2
     Color.BLUE -> 3

@@ -26,7 +26,7 @@ actual sealed class Base
 class C : Base()
 
 fun testPlatformGood(base: Base) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) { // must be OK
+    val x = <!WHEN_ON_SEALED!>when (base) { // must be OK
         is A -> 1
         B -> 2
         is C -> 3

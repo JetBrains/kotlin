@@ -5,10 +5,10 @@ class Foo
 enum class E { A, B }
 
 fun test(foo: Foo, enum: E): Pair<Foo, Foo> {
-    return when (enum) {
+    return <!WHEN_ON_SEALED!>when (enum) {
         E.A -> foo to foo
         E.B -> foo.<!UNRESOLVED_REFERENCE!>bar<!>() <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>to<!> foo
-    }
+    }<!>
 }
 
 fun test2(foo: Foo, enum: E): Pair<Foo, Foo> {

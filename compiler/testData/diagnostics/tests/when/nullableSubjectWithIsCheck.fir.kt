@@ -159,7 +159,7 @@ fun testWhenStatementWithComma(arg: Int?): Int {
 sealed class Value
 
 fun test(value: Value?) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (value) {
+    val x = <!WHEN_ON_SEALED!>when (value) {
         is Value -> 1
         null -> 2
     }<!>

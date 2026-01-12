@@ -7,7 +7,7 @@ enum class Sample {
 }
 
 fun trivial(s: Sample): Int {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (s) {
+    return <!WHEN_ON_SEALED!>when (s) {
         FIRST -> 1
         SECOND -> 2
         THIRD -> 3
@@ -28,7 +28,7 @@ class Container {
 
     fun priority(s: Sample): Int {
         val FIRST = test.Sample.THIRD
-        return <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
+        return <!WHEN_ON_SEALED!>when (s) {
             FIRST -> 3
             <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>SECOND<!> -> 2
             test.Sample.FIRST -> 1

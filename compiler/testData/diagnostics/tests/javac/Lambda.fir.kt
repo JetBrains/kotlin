@@ -14,7 +14,7 @@ sealed class Result<out Success, out Error> {
     class Error<out Error>(val error: Error) : Result<Nothing, Error>()
 
     inline fun <Mapped> mapError(transform: (Error) -> Mapped): Result<Success, Mapped> =
-        <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
+        <!WHEN_ON_SEALED!>when (this) {
             is Result.Success -> this
             is Result.Error -> Error(transform(error))
         }<!>

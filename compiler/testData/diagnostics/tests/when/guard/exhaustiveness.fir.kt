@@ -29,7 +29,7 @@ fun nonExhaustiveWithElseIf(x: BooleanHolder) {
 }
 
 fun exhaustiveWithGuard(x: BooleanHolder) {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is True -> Unit
         is False if x.value -> Unit
         is False -> Unit
@@ -37,7 +37,7 @@ fun exhaustiveWithGuard(x: BooleanHolder) {
 }
 
 fun exhaustiveWithElseIf(x: BooleanHolder) {
-    return <!WHEN_ON_SEALED_WEL_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is True -> Unit
         else if true -> Unit
         else -> Unit

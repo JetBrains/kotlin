@@ -5,7 +5,7 @@ sealed class Maybe<T> {
     class Nope<T>(val reasonForLog: String, val reasonForUI: String) : Maybe<T>()
     class Yeah<T>(val meat: T) : Maybe<T>()
 
-    fun unwrap() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
+    fun unwrap() = <!WHEN_ON_SEALED!>when (this) {
         is Nope -> throw Exception("")
         is Yeah -> meat
     }<!>

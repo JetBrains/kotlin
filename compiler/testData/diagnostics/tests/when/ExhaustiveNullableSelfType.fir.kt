@@ -20,12 +20,12 @@ sealed class Sealed {
     object B : Sealed()
 }
 
-fun testNullableSealed(arg: Sealed?) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (arg) {
+fun testNullableSealed(arg: Sealed?) = <!WHEN_ON_SEALED!>when (arg) {
     null -> 1
     is Sealed -> 2
 }<!>
 
-fun testNullableSealed2(arg: Sealed?) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (arg) {
+fun testNullableSealed2(arg: Sealed?) = <!WHEN_ON_SEALED!>when (arg) {
     <!USELESS_IS_CHECK!>is Sealed?<!> -> 2
 }<!>
 
@@ -33,12 +33,12 @@ enum class MyEnum {
     A, B
 }
 
-fun testNullableEnum(arg: MyEnum?) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (arg) {
+fun testNullableEnum(arg: MyEnum?) = <!WHEN_ON_SEALED!>when (arg) {
     is MyEnum -> 1
     null -> null
 }<!>
 
-fun testNullableEnum2(arg: MyEnum?) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (arg) {
+fun testNullableEnum2(arg: MyEnum?) = <!WHEN_ON_SEALED!>when (arg) {
     <!USELESS_IS_CHECK!>is MyEnum?<!> -> 1
 }<!>
 

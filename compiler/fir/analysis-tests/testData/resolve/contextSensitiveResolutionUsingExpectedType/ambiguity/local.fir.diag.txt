@@ -1,4 +1,4 @@
-/local.kt:(582,716): warning: Exhaustive 'when' on sealed or enum class with 'else' --- Sealed
+/local.kt:(582,716): warning: Exhaustive 'when' on sealed or enum class --- Sealed --- OTHER
 
 /local.kt:(601,605): warning: Check for instance is always 'false'. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-365.
 
@@ -18,9 +18,9 @@ val CompanionB: Sealed, defined in foo.Sealed.Companion
 
 /local.kt:(675,685): error: Incompatible types 'Sealed' and 'Int'.
 
-/local.kt:(805,974): warning: Exhaustive 'when' on sealed or enum class with 'else' --- Sealed
+/local.kt:(805,974): warning: Exhaustive 'when' on sealed or enum class --- Sealed --- OTHER
 
-/local.kt:(1114,1323): warning: Exhaustive 'when' on sealed or enum class with 'else' --- Sealed
+/local.kt:(1114,1323): warning: Exhaustive 'when' on sealed or enum class --- Sealed --- OTHER
 
 /local.kt:(1137,1138): error: Ambiguity with context-sensitive resolution:
 class foo.Test.A
@@ -48,12 +48,14 @@ val CompanionB: Sealed, defined in foo.Sealed.Companion
 
 /local.kt:(1274,1284): error: Incompatible types 'Sealed' and 'Int'.
 
-/local.kt:(1382,1632): warning: Exhaustive 'when' on sealed or enum class with 'else' --- Sealed
+/local.kt:(1382,1632): warning: Exhaustive 'when' on sealed or enum class --- Sealed --- OTHER
 
 /local.kt:(1429,1438): warning: Check for instance is always 'false'. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-365.
 
 /local.kt:(1511,1527): warning: Check for instance is always 'false'. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-365.
 
 /local.kt:(1578,1593): error: Incompatible types 'Sealed' and 'Int'.
+
+/local.kt:(1692,1950): warning: Exhaustive 'when' on sealed or enum class --- Sealed --- REDUNDANT
 
 /local.kt:(1929,1933): warning: 'when' is exhaustive so 'else' is redundant here.

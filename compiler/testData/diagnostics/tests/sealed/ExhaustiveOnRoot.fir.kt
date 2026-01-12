@@ -8,7 +8,7 @@ sealed class Expr : Stmt() {
 }
 
 fun test(x: Stmt): String =
-        <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+        <!WHEN_ON_SEALED!>when (x) {
             is Expr -> "expr"
             is Stmt -> "stmt"
         }<!>
@@ -19,7 +19,7 @@ fun test2(x: Stmt): String =
         }
 
 fun test3(x: Expr): String =
-        <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+        <!WHEN_ON_SEALED!>when (x) {
             <!USELESS_IS_CHECK!>is Stmt<!> -> "stmt"
         }<!>
 

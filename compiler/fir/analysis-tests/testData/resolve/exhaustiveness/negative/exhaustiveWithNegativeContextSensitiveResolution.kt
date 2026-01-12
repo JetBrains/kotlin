@@ -11,7 +11,7 @@ sealed interface MySealedInterface {
 
 fun simpleSealedCSR(x: MySealedInterface): Int {
     if (x is A) return 1
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         B -> 2
         C -> 3
     }<!>
@@ -19,7 +19,7 @@ fun simpleSealedCSR(x: MySealedInterface): Int {
 
 fun simpleEnumCSR(x: MyEnum): Int {
     if (x == C) return 1
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         A -> 2
         B -> 3
     }<!>
@@ -27,7 +27,7 @@ fun simpleEnumCSR(x: MyEnum): Int {
 
 fun simpleEnumCSR2(x: MyEnum): Int {
     if (x == C) return 1
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         A, B -> 3
     }<!>
 }

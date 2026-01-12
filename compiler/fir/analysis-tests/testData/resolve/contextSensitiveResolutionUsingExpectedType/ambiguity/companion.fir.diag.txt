@@ -8,6 +8,6 @@ static enum entry A: MyEnum, defined in foo.MyEnum
 val A: Any, defined in foo.Test.Companion
 static enum entry A: MyEnum, defined in foo.MyEnum
 
-/companion.kt:(583,636): warning: Exhaustive 'when' on sealed or enum class without 'else' --- MyEnum
+/companion.kt:(583,636): warning: Exhaustive 'when' on sealed or enum class --- MyEnum --- EXHAUSTIVE
 
 /companion.kt:(679,683): error: 'when' expression must be exhaustive. Add the 'A' branch or an 'else' branch.

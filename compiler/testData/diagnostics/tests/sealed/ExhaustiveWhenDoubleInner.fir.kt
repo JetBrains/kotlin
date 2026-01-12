@@ -9,7 +9,7 @@ sealed class Sealed() {
     }    
 }
 
-fun foo(s: Sealed) = <!WHEN_ON_SEALED_GEEN_ELSE!>when(s) {
+fun foo(s: Sealed) = <!WHEN_ON_SEALED!>when(s) {
     Sealed.First -> 1
     is Sealed.NonFirst -> 2
     Sealed.NonFirst.Fourth -> 4

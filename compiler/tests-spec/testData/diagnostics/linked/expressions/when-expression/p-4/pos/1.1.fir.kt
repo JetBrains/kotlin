@@ -24,17 +24,17 @@ enum JavaEnum {
 // TESTCASE NUMBER: 1
 fun case1() {
     val z = JavaEnum.Val_1
-    val when1 = when (z) {
+    val when1 = <!WHEN_ON_SEALED!>when (z) {
         JavaEnum.Val_1 -> { }
         JavaEnum.Val_2 -> { }
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> {}
-    }
+    }<!>
 
-    val when2 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (z) {
+    val when2 = <!WHEN_ON_SEALED!>when (z) {
         JavaEnum.Val_1 -> { }
         JavaEnum.Val_2 -> { }
     }<!>
-    val when3 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (z) {
+    val when3 = <!WHEN_ON_SEALED!>when (z) {
         JavaEnum.Val_1 -> { }
         JavaEnum.Val_2 -> { }
         <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>JavaEnum.Val_2<!> -> { }
@@ -87,19 +87,19 @@ fun case3() {
 fun case4() {
     val x: SClass = SClass.B()
 
-    val when1 = when (x){
+    val when1 = <!WHEN_ON_SEALED!>when (x){
         is  SClass.A ->{ }
         is  SClass.B ->{ }
         is  SClass.C ->{ }
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> { }
-    }
+    }<!>
 
-    val when2 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x){
+    val when2 = <!WHEN_ON_SEALED!>when (x){
         is  SClass.A ->{ }
         is  SClass.B ->{ }
         is  SClass.C ->{ }
     }<!>
-    val when3 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x){
+    val when3 = <!WHEN_ON_SEALED!>when (x){
         is  SClass.A ->{ }
         is  SClass.B ->{ }
         is  <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>SClass.B<!> ->{ }

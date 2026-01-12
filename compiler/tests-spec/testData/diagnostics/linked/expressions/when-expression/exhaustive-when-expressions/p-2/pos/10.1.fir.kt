@@ -11,7 +11,7 @@
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(dir: EnumClass): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when (dir) {
+fun case_1(dir: EnumClass): String = <!WHEN_ON_SEALED!>when (dir) {
     EnumClass.EAST -> ""
     EnumClass.NORTH -> ""
     EnumClass.SOUTH -> ""
@@ -19,6 +19,6 @@ fun case_1(dir: EnumClass): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when (dir) {
 }<!>
 
 // TESTCASE NUMBER: 2
-fun case_2(value_1: EnumClassSingle): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when (value_1) {
+fun case_2(value_1: EnumClassSingle): String = <!WHEN_ON_SEALED!>when (value_1) {
     EnumClassSingle.EVERYTHING -> ""
 }<!>

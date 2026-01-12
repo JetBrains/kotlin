@@ -11,7 +11,7 @@ enum class SomeEnum {
 // MODULE: main()()(common)
 fun Some.test() {
     if (e == null) return
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val x = <!WHEN_ON_SEALED!>when (e) {
         SomeEnum.A -> "a"
         SomeEnum.B -> "B"
     }<!>

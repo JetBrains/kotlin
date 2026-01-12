@@ -24,7 +24,7 @@ actual sealed class SealedClass {
 }
 
 fun whenForSealed(s: SealedClass): Int {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (s) { // Should be OK
+    return <!WHEN_ON_SEALED!>when (s) { // Should be OK
         is SealedClass.Nested.NestedDeeper -> 7
         is SealedClass.Nested -> 8
     }<!>

@@ -23,7 +23,7 @@ public enum J {
 // FILE: K.kt
 
 fun foo(): Int {
-    return <!WHEN_ON_SEALED_WEL_ELSE!>when (J.create()) {
+    return <!WHEN_ON_SEALED!>when (J.create()) {
         J.A -> 1
         J.B -> 2
         else -> 0

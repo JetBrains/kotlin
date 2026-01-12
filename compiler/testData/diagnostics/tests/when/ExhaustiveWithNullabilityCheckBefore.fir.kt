@@ -16,7 +16,7 @@ fun foo(arg: X?): Int {
     if (arg == null) {
         return 0
     }
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (arg) {
+    return <!WHEN_ON_SEALED!>when (arg) {
         X.A -> 1
         X.B -> 2
         // else or null branch should not be required here!

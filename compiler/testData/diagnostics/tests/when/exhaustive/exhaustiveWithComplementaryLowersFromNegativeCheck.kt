@@ -10,7 +10,7 @@ enum class MyEnum { A, B, C }
 fun negSimpleEnum(x: MyEnum): Int {
     if (x != MyEnum.C) return 0
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         MyEnum.C -> 3
     }<!>
 }
@@ -20,7 +20,7 @@ fun simpleVar(i: MyEnum): Int {
     if (x == MyEnum.A) return 1
     x = MyEnum.A
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         MyEnum.A -> 2
     }<!>
 }
@@ -45,7 +45,7 @@ fun exactlyOnceEnum(i: MyEnum): Int {
         x = MyEnum.A
     }
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         MyEnum.A -> 3
         MyEnum.C -> 4
     }<!>

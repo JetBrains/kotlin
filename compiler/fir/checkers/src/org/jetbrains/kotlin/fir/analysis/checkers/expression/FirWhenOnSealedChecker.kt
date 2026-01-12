@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -15,14 +19,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
-import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.expressions.isImplicitWhenSubjectVariable
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtWhenConditionInRange
 
 object FirWhenOnSealedChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -30,7 +35,7 @@ object FirWhenOnSealedChecker : FirWhenExpressionChecker(MppCheckerKind.Common) 
         // only important if we had to be exhaustive
         if (!expression.usedAsExpression || expression.subjectVariable == null) return
         // redundant 'else' and problems are not important here
-        if (expression.exhaustivenessStatus != ExhaustivenessStatus.ProperlyExhaustive) return
+        if (expression.exhaustivenessStatus is ExhaustivenessStatus.NotExhaustive) return
 
         val types = getSubjectType(context.session, expression)
             ?.minimumBoundIfFlexible(context.session)
@@ -38,13 +43,34 @@ object FirWhenOnSealedChecker : FirWhenExpressionChecker(MppCheckerKind.Common) 
         if (!shouldReportType(context.session, types)) return
 
         val typeToReport = ConeTypeIntersector.intersectTypes(context.session.typeContext, types!!)
-        val errorToReport = when {
-            expression.branches.none { it.condition is FirElseIfTrueCondition } -> FirErrors.WHEN_ON_SEALED_GEEN_ELSE
-            expression.branches.size == 2 -> FirErrors.WHEN_ON_SEALED_EEN_EN_ELSE
-            else -> FirErrors.WHEN_ON_SEALED_WEL_ELSE
+        val diagnosticKind = when {
+            expression.branches.none { it.condition is FirElseIfTrueCondition } -> "EXHAUSTIVE"
+            expression.exhaustivenessStatus == ExhaustivenessStatus.RedundantlyExhaustive -> "REDUNDANT"
+            expression.exhaustivenessStatus == ExhaustivenessStatus.ExhaustiveAsNothing -> "NOTHING"
+            expression.isNodeKind<KtIfExpression>(KtNodeTypes.IF) -> "IF"
+            expression.branches.any {
+                it.condition.isNodeKind<KtWhenConditionInRange>(KtNodeTypes.WHEN_CONDITION_IN_RANGE)
+            } -> "RANGE"
+            expression.branches.size == 2 -> "SPECIAL_CASE"
+            else -> "OTHER"
         }
-        reporter.reportOn(expression.source, errorToReport, typeToReport, context)
+
+        val singleElseThing = expression.branches.singleOrNull { it.condition is FirElseIfTrueCondition }?.result?.statements?.singleOrNull()
+        val finalDiagnosticKind = when (singleElseThing) {
+            is FirThrowExpression -> "$diagnosticKind+THROW"
+            is FirReturnExpression -> "$diagnosticKind+RETURN"
+            else -> diagnosticKind
+        }
+
+        reporter.reportOn(expression.source, FirErrors.WHEN_ON_SEALED, typeToReport, finalDiagnosticKind, context)
     }
+
+    inline fun <reified T : KtElement> FirExpression.isNodeKind(lighterType: IElementType): Boolean =
+        when (val s = source) {
+            is KtPsiSourceElement -> s.psi is T
+            is KtLightSourceElement -> s.lighterASTNode.tokenType == lighterType
+            else -> false
+        }
 
     fun shouldReportType(session: FirSession, types: Collection<ConeKotlinType>?): Boolean =
         !types.isNullOrEmpty() && types.all {

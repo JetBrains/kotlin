@@ -6,14 +6,14 @@ class C : B()
 class D : B()
 
 fun test(a: A): Any {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
+    return <!WHEN_ON_SEALED!>when (a) {
         is C -> ""
         is D -> ""
     }<!>
 }
 
 fun test2(a: A): Any {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
+    return <!WHEN_ON_SEALED!>when (a) {
         is B -> ""
     }<!>
 }

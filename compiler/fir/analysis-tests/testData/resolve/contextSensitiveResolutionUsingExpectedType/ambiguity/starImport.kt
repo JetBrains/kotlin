@@ -40,7 +40,7 @@ import foo.E
 import foo.F
 import bar.*
 
-fun sealed(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
+fun sealed(s: Sealed): Int = <!WHEN_ON_SEALED!>when (s) {
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
     <!IMPOSSIBLE_IS_CHECK_WARNING!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
     C -> 3
@@ -53,7 +53,7 @@ fun sealed(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
     else -> 100
 }<!>
 
-fun sealedExplicit(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
+fun sealedExplicit(s: Sealed): Int = <!WHEN_ON_SEALED!>when (s) {
     bar.Sealed.A -> 1
     is bar.Sealed.B -> 2
     is bar.Sealed.String -> 5
@@ -64,7 +64,7 @@ fun sealedExplicit(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
     else -> 100
 }<!>
 
-fun topLevelExplicit(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
+fun topLevelExplicit(s: Sealed): Int = <!WHEN_ON_SEALED!>when (s) {
     foo.A -> 1
     <!IMPOSSIBLE_IS_CHECK_WARNING!>is foo.B<!> -> 2
     <!IMPOSSIBLE_IS_CHECK_WARNING!>is kotlin.String<!> -> 5

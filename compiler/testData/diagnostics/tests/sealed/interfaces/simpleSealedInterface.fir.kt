@@ -19,7 +19,7 @@ enum class C : Base {
 object D : Base
 
 fun test_1(base: Base) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
+    val x = <!WHEN_ON_SEALED!>when (base) {
         is A -> 1
         is B -> 2
         is C -> 3
@@ -28,7 +28,7 @@ fun test_1(base: Base) {
 }
 
 fun test_2(base: Base) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
+    val x = <!WHEN_ON_SEALED!>when (base) {
         is A -> 1
         is B.First -> 2
         is B.Second -> 3

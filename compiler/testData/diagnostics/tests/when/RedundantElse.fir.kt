@@ -28,18 +28,18 @@ sealed class X {
     class B : X()
 }
 
-fun foo(x: X) = when (x) {
+fun foo(x: X) = <!WHEN_ON_SEALED!>when (x) {
     is X.A -> {}
     is X.B -> {}
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> {}
-}
+}<!>
 
-fun bar(x: X?): String = when (x) {
+fun bar(x: X?): String = <!WHEN_ON_SEALED!>when (x) {
     is X.A -> "A"
     is X.B -> "B"
     null -> "null"
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> "Unreachable"
-}
+}<!>
 
 fun justUse(x: X) {
     when (x) {
@@ -54,13 +54,13 @@ enum class E {
     A, B
 }
 
-fun foo(e: E): String = when (e) {
+fun foo(e: E): String = <!WHEN_ON_SEALED!>when (e) {
     E.A -> "A"
     E.B -> "B"
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
-}
+}<!>
 
-fun bar(e: E?): String = <!WHEN_ON_SEALED_WEL_ELSE!>when (e) {
+fun bar(e: E?): String = <!WHEN_ON_SEALED!>when (e) {
     E.A -> "A"
     E.B -> "B"
     else -> "" // no warning
@@ -74,7 +74,7 @@ fun foo(b: Boolean) = when (b) {
 
 fun useJava(): String {
     val me = MyEnum.getInstance()
-    return <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (me) {
+    return <!WHEN_ON_SEALED!>when (me) {
         MyEnum.SINGLE -> "OK"
         else -> "FAIL" // no warning
     }<!>

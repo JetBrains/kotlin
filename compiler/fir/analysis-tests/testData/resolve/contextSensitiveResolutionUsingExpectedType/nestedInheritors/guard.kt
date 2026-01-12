@@ -8,7 +8,7 @@ sealed class SealedClass {
 }
 
 fun testIsInWhenGuardSealedClass(instance: SealedClass): String {
-    return <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (instance) {
+    return <!WHEN_ON_SEALED!>when (instance) {
         is SealedInheritor if instance is IndirectSealedInheritor -> instance.prop
         else -> "100"
     }<!>

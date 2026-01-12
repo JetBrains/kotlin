@@ -6,14 +6,14 @@ class SealedInterfaceOverAbstractClassImpl1 : BaseAbstractClass(), SealedInterfa
 class SealedInterfaceOverAbstractClassImpl2 : BaseAbstractClass(), SealedInterfaceOverAbstractClass
 
 fun testExhaustiveByImplementations(x: SealedInterfaceOverAbstractClass): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is SealedInterfaceOverAbstractClassImpl1 -> ""
         is SealedInterfaceOverAbstractClassImpl2 -> ""
     }<!>
 }
 
 fun testExhaustiveBySuperClass(x: SealedInterfaceOverAbstractClass): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is BaseAbstractClass -> ""
     }<!>
 }
@@ -24,14 +24,14 @@ class SealedInterfaceOverSealedClassImpl1 : BaseSealedClass(), SealedInterfaceOv
 class SealedInterfaceOverSealedClassImpl2 : BaseSealedClass(), SealedInterfaceOverSealedClass
 
 fun testExhaustiveByImplementations(x: SealedInterfaceOverSealedClass): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is SealedInterfaceOverSealedClassImpl1 -> ""
         is SealedInterfaceOverSealedClassImpl2 -> ""
     }<!>
 }
 
 fun testExhaustiveBySuperClass(x: SealedInterfaceOverSealedClass): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is BaseSealedClass -> ""
     }<!>
 }
@@ -42,7 +42,7 @@ class SealedInterfaceOverInterfaceImpl1 : SealedInterfaceOverInterface
 class SealedInterfaceOverInterfaceImpl2 : SealedInterfaceOverInterface
 
 fun testExhaustiveByImplementations(x: SealedInterfaceOverInterface): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is SealedInterfaceOverInterfaceImpl1 -> ""
         is SealedInterfaceOverInterfaceImpl2 -> ""
     }<!>
@@ -60,14 +60,14 @@ class SealedInterfaceOverSealedInterfaceImpl1 : BaseSealedInterface, SealedInter
 class SealedInterfaceOverSealedInterfaceImpl2 : BaseSealedInterface, SealedInterfaceOverSealedInterface
 
 fun testExhaustiveByImplementations(x: SealedInterfaceOverSealedInterface): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is SealedInterfaceOverSealedInterfaceImpl1 -> ""
         is SealedInterfaceOverSealedInterfaceImpl2 -> ""
     }<!>
 }
 
 fun testExhaustiveBySuperInterface(x: SealedInterfaceOverSealedInterface): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is BaseSealedInterface -> ""
     }<!>
 }
@@ -81,7 +81,7 @@ class SealedInterfaceOverDisjointSealedClassImpl3 : BaseDisjointSealedClass2(), 
 class SealedInterfaceOverDisjointSealedClassImpl4 : BaseDisjointSealedClass2(), SealedInterfaceOverDisjointSealedClass
 
 fun testExhaustiveByImplementations(x: SealedInterfaceOverDisjointSealedClass): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is SealedInterfaceOverDisjointSealedClassImpl1 -> ""
         is SealedInterfaceOverDisjointSealedClassImpl2 -> ""
         is SealedInterfaceOverDisjointSealedClassImpl3 -> ""
@@ -90,7 +90,7 @@ fun testExhaustiveByImplementations(x: SealedInterfaceOverDisjointSealedClass): 
 }
 
 fun testExhaustiveBySuperClass(x: SealedInterfaceOverDisjointSealedClass): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is BaseDisjointSealedClass1 -> ""
         is BaseDisjointSealedClass2 -> ""
     }<!>
@@ -105,7 +105,7 @@ class SealedInterfaceOverDisjointSealedInterfaceImpl3 : BaseDisjointSealedInterf
 class SealedInterfaceOverDisjointSealedInterfaceImpl4 : BaseDisjointSealedInterface2, SealedInterfaceOverDisjointSealedInterface
 
 fun testExhaustiveByImplementations(x: SealedInterfaceOverDisjointSealedInterface): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is SealedInterfaceOverDisjointSealedInterfaceImpl1 -> ""
         is SealedInterfaceOverDisjointSealedInterfaceImpl2 -> ""
         is SealedInterfaceOverDisjointSealedInterfaceImpl3 -> ""
@@ -114,7 +114,7 @@ fun testExhaustiveByImplementations(x: SealedInterfaceOverDisjointSealedInterfac
 }
 
 fun testExhaustiveBySuperInterface(x: SealedInterfaceOverDisjointSealedInterface): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         is BaseDisjointSealedInterface1 -> ""
         is BaseDisjointSealedInterface2 -> ""
     }<!>

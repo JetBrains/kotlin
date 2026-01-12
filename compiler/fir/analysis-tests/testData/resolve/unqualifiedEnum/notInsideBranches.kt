@@ -5,7 +5,7 @@ enum class Some {
     SECOND;
 }
 
-fun foo(s: Some) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (s) {
+fun foo(s: Some) = <!WHEN_ON_SEALED!>when (s) {
     FIRST -> <!UNRESOLVED_REFERENCE!>SECOND<!>
     SECOND -> <!UNRESOLVED_REFERENCE!>FIRST<!>
 }<!>

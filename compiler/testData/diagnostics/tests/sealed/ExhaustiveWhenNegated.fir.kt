@@ -8,7 +8,7 @@ sealed class Sealed(val x: Int) {
 }
 
 fun foo(s: Sealed): Int {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when(s) {
+    return <!WHEN_ON_SEALED!>when(s) {
         is Sealed.First -> 1
         !is Sealed.First -> 0
         // no else required

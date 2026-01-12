@@ -9,7 +9,7 @@ object C : A()
 fun takeString(s: String) {}
 
 fun test_1(a: A) {
-    val s = <!WHEN_ON_SEALED_GEEN_ELSE!>when(a) {
+    val s = <!WHEN_ON_SEALED!>when(a) {
         is B -> ""
         is C -> ""
     }<!>
@@ -17,7 +17,7 @@ fun test_1(a: A) {
 }
 
 fun test_2(a: A) {
-    val s = <!WHEN_ON_SEALED_GEEN_ELSE!>when(a) {
+    val s = <!WHEN_ON_SEALED!>when(a) {
         is B -> ""
         C -> ""
     }<!>

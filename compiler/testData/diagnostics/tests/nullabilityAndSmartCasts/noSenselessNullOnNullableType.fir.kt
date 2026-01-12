@@ -9,10 +9,10 @@ class A {
 
 // FILE: 1.kt
 
-fun bar() = when (A.foo()) {
+fun bar() = <!WHEN_ON_SEALED!>when (A.foo()) {
     null -> "null"
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> "else"
-}
+}<!>
 
 fun <T : Number?> baz(t: T) = when (t) {
     is Int -> "int"

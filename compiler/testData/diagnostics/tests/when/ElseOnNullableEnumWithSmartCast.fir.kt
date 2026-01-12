@@ -13,7 +13,7 @@ enum class E { A, B }
 fun foo(e: E, something: Any?): Int {
     if (something != null) return 0
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    return <!WHEN_ON_SEALED!>when (e) {
         E.A -> 1
         E.B -> 2
         <!SENSELESS_NULL_IN_WHEN!>something<!> -> 3

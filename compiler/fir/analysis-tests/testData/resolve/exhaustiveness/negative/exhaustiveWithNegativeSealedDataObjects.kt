@@ -14,7 +14,7 @@ fun foo(v: Variants): String {
         return "A"
     }
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
+    return <!WHEN_ON_SEALED!>when (v) {
         Variants.B -> "B"
         Variants.C -> "C"
     }<!>
@@ -25,14 +25,14 @@ fun simpleSealed1 (v: Variants): String {
         return "A"
     }
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
+    return <!WHEN_ON_SEALED!>when (v) {
         Variants.B, Variants.C -> "B, C"
     }<!>
 }
 
 fun simpleSealed2(x: Variants): Int {
     if (x is Variants.C || x is Variants.A) return 1
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         Variants.B -> 3
     }<!>
 }
@@ -46,7 +46,7 @@ fun negSimpleSealed(x: Variants): Int {
 
 fun simpleSealedThrow(x: Variants): Int {
     if (x is Variants.A) throw IllegalArgumentException("A")
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         Variants.B -> 2
         Variants.C -> 3
     }<!>
@@ -54,7 +54,7 @@ fun simpleSealedThrow(x: Variants): Int {
 
 fun simpleSealedThrow2(x: Variants): Int {
     (x is Variants.A) && throw IllegalArgumentException("A")
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         Variants.B -> 2
         Variants.C -> 3
     }<!>
@@ -69,7 +69,7 @@ fun bar(v: Variants): String {
         return "B"
     }
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
+    return <!WHEN_ON_SEALED!>when (v) {
         Variants.C -> "C"
     }<!>
 }
@@ -79,7 +79,7 @@ fun baz(v: Variants): String {
         return "A"
     }
 
-    return <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (v) {
+    return <!WHEN_ON_SEALED!>when (v) {
         Variants.B -> "B"
         else -> v.<!UNRESOLVED_REFERENCE!>test<!>()
     }<!>

@@ -23,7 +23,7 @@ fun test(s: Sealed): Int {
     class B
     val CompanionB: Int = 0
 
-    return <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
+    return <!WHEN_ON_SEALED!>when (s) {
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
         C -> 3
         is D -> 4
@@ -37,7 +37,7 @@ fun testSealed(s: Sealed): Int {
     class B
     val CompanionB: Int = 0
 
-    return <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
+    return <!WHEN_ON_SEALED!>when (s) {
         is Sealed.B -> 2
         Sealed.C -> 3
         is Sealed.D -> 4
@@ -55,7 +55,7 @@ class Test {
     val CompanionB: Int = 0
 
     fun test(s: Sealed): Int {
-        return <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
+        return <!WHEN_ON_SEALED!>when (s) {
             <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
             <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
             C -> 3
@@ -68,7 +68,7 @@ class Test {
     }
 
     fun testClass(s: Sealed): Int {
-        return <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
+        return <!WHEN_ON_SEALED!>when (s) {
             Test.A -> 1
             <!IMPOSSIBLE_IS_CHECK_ERROR!>is Test.B<!> -> 2
             Sealed.C -> 3
@@ -81,7 +81,7 @@ class Test {
     }
 
     fun testSealed(s: Sealed): Int {
-        return when (s) {
+        return <!WHEN_ON_SEALED!>when (s) {
             Sealed.A -> 1
             is Sealed.B -> 2
             Sealed.C -> 3
@@ -90,7 +90,7 @@ class Test {
             Sealed.CompanionA -> 6
             Sealed.CompanionB -> 7
             <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 100
-        }
+        }<!>
     }
 }
 

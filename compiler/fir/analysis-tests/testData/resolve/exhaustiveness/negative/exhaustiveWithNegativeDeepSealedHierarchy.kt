@@ -14,7 +14,7 @@ fun foo(v: Variants): String {
         return "B"
     }
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
+    return <!WHEN_ON_SEALED!>when (v) {
         is Variants.A -> "A"
     }<!>
 }

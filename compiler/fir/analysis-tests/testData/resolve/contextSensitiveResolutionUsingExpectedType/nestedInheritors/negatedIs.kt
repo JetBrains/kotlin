@@ -7,11 +7,11 @@ sealed interface Simple {
     class Right: Simple
 }
 
-fun testWithSubject(s: Simple) = when(s) {
+fun testWithSubject(s: Simple) = <!WHEN_ON_SEALED!>when(s) {
     !is Left -> "not a left"
     <!USELESS_IS_CHECK!>!is Right<!> -> "not a right"
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, isExpression, nestedClass, sealed,
 smartcast, stringLiteral, whenExpression, whenWithSubject */

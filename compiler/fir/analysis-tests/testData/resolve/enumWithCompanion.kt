@@ -3,7 +3,7 @@ enum class EC {
     A, B;
     companion object {
         fun u(ec: EC): Boolean {
-            return <!WHEN_ON_SEALED_GEEN_ELSE!>when (ec) {
+            return <!WHEN_ON_SEALED!>when (ec) {
                 A -> true
                 B -> false
             }<!>

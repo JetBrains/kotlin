@@ -7,7 +7,7 @@ enum class ECCurve {
     A;
 
     val a by lazy {
-        val bString = <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
+        val bString = <!WHEN_ON_SEALED!>when (this) {
             A -> ""
         }<!>
     }

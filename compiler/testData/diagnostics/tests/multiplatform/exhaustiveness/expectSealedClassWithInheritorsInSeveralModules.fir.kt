@@ -21,7 +21,7 @@ actual sealed class Base actual constructor()
 class PlatformDerived : Base()
 
 // should be ok
-fun platformTest_1(x: Base) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+fun platformTest_1(x: Base) = <!WHEN_ON_SEALED!>when (x) {
     is CommonDerived -> 1
     is PlatformDerived -> 2
 }<!>

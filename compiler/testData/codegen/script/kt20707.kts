@@ -1,6 +1,6 @@
 enum class Build { Debug, Release }
 
-fun applySomething(build: Build) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (build) {
+fun applySomething(build: Build) = <!WHEN_ON_SEALED!>when (build) {
     Build.Debug -> "OK"
     Build.Release -> "fail"
 }<!>

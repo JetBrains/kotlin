@@ -18,7 +18,7 @@ fun foo(v: Variants): String {
         return "B"
     }
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE("Variants")!>when (v) {
+    return <!WHEN_ON_SEALED("Variants; EXHAUSTIVE")!>when (v) {
         Variants.A -> "B"
         Variants.D -> "D"
         Variants.C -> "C"
@@ -30,12 +30,12 @@ fun bar(v: Variants): String {
         return "B"
     }
 
-    return when (v) {
+    return <!WHEN_ON_SEALED("Variants; REDUNDANT")!>when (v) {
         Variants.A -> "A"
         Variants.D -> "D"
         Variants.C -> "C"
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> "B?"
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, ifExpression,

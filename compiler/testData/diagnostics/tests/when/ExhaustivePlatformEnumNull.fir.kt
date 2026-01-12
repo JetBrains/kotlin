@@ -24,7 +24,7 @@ public enum J {
 
 fun foo(): Int {
     // When is exhaustive including null
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (J.create()) {
+    return <!WHEN_ON_SEALED!>when (J.create()) {
         J.A -> 1
         J.B -> 2
         null -> 0

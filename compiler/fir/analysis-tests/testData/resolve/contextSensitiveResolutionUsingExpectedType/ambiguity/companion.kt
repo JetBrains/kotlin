@@ -30,7 +30,7 @@ class Test {
         B -> 2
     }
 
-    fun test2enum(x: MyEnum): Int = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    fun test2enum(x: MyEnum): Int = <!WHEN_ON_SEALED!>when (x) {
         MyEnum.A -> 1
         B -> 2
     }<!>

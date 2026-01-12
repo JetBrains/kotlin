@@ -11,7 +11,7 @@ object CC : C()
 fun foo(a: A) {
     if (a is B) {
         if (a is C) {
-            val t = <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
+            val t = <!WHEN_ON_SEALED!>when (a) {
                 is CC -> "CC"
             }<!>
         }
@@ -21,7 +21,7 @@ fun foo(a: A) {
 fun foo2(a: A) {
     if (a is C) {
         if (<!USELESS_IS_CHECK!>a is B<!>) {
-            val t = <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
+            val t = <!WHEN_ON_SEALED!>when (a) {
                 is CC -> "CC"
             }<!>
         }

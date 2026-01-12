@@ -11,7 +11,7 @@ interface Left {
     val z: String
 }
 
-fun MySealed.getOrElse() = <!WHEN_ON_SEALED_WEL_ELSE!>when (this) {
+fun MySealed.getOrElse() = <!WHEN_ON_SEALED!>when (this) {
     is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>Left<!> -> z
     is Right -> y
     else -> ""

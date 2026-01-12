@@ -43,7 +43,7 @@ fun testSealedJClassInIf(instance: SealedJClass): Int {
     return 0
 }
 
-fun testSealedJClassInWhenWithSubject(instance: SealedJClass): Int = <!WHEN_ON_SEALED_GEEN_ELSE!>when (instance) {
+fun testSealedJClassInWhenWithSubject(instance: SealedJClass): Int = <!WHEN_ON_SEALED!>when (instance) {
     is SCOption1 -> instance.prop1
     is SCOption2 -> instance.prop2
 }<!>

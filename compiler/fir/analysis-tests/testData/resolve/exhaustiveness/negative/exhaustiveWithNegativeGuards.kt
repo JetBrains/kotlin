@@ -32,7 +32,7 @@ fun guardedAfterIf(e: MySealedInterfaceDataClasses) {
     }
 }
 
-fun negGuard(e: MySealedInterfaceDataClasses) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+fun negGuard(e: MySealedInterfaceDataClasses) = <!WHEN_ON_SEALED!>when (e) {
     is MySealedInterfaceDataClasses.Num if !(e.n % 2 == 0) -> 0
     is MySealedInterfaceDataClasses.Num -> 1
     is MySealedInterfaceDataClasses.Str -> 2

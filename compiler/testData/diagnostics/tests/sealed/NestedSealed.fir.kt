@@ -11,35 +11,35 @@ sealed class Base {
     }
 }
 
-fun foo(b: Base) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (b) {
-    is Base.A -> <!WHEN_ON_SEALED_GEEN_ELSE!>when(b) {
+fun foo(b: Base) = <!WHEN_ON_SEALED!>when (b) {
+    is Base.A -> <!WHEN_ON_SEALED!>when(b) {
         is Base.A.A1 -> 1
         is Base.A.A2 -> 2
     }<!>
-    is Base.B -> <!WHEN_ON_SEALED_GEEN_ELSE!>when(b) {
+    is Base.B -> <!WHEN_ON_SEALED!>when(b) {
         is Base.B.B1 -> 3
         is Base.B.B2 -> 4
     }<!>
 }<!>
 
-fun bar(b: Base?) = if (b == null) 0 else <!WHEN_ON_SEALED_GEEN_ELSE!>when (b) {
-    is Base.A -> <!WHEN_ON_SEALED_GEEN_ELSE!>when(b) {
+fun bar(b: Base?) = if (b == null) 0 else <!WHEN_ON_SEALED!>when (b) {
+    is Base.A -> <!WHEN_ON_SEALED!>when(b) {
         is Base.A.A1 -> 1
         is Base.A.A2 -> 2
     }<!>
-    is Base.B -> <!WHEN_ON_SEALED_GEEN_ELSE!>when(b) {
+    is Base.B -> <!WHEN_ON_SEALED!>when(b) {
         is Base.B.B1 -> 3
         is Base.B.B2 -> 4
     }<!>
 }<!>
 
-fun gav(b: Base?) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (b) {
+fun gav(b: Base?) = <!WHEN_ON_SEALED!>when (b) {
     null -> 0
-    is Base.A -> <!WHEN_ON_SEALED_GEEN_ELSE!>when(b) {
+    is Base.A -> <!WHEN_ON_SEALED!>when(b) {
         is Base.A.A1 -> 1
         is Base.A.A2 -> 2
     }<!>
-    is Base.B -> <!WHEN_ON_SEALED_GEEN_ELSE!>when(b) {
+    is Base.B -> <!WHEN_ON_SEALED!>when(b) {
         is Base.B.B1 -> 3
         is Base.B.B2 -> 4
     }<!>

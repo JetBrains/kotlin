@@ -23,7 +23,7 @@ actual enum class Base {
 }
 
 fun testPlatformGood(base: Base) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) { // must be OK
+    val x = <!WHEN_ON_SEALED!>when (base) { // must be OK
         Base.A -> 1
         Base.B -> 2
         Base.C -> 3

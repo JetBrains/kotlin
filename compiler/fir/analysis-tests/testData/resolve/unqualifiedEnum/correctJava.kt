@@ -9,7 +9,7 @@ public enum JavaEnum {
 
 // FILE: test.kt
 
-fun foo(javaEnum: JavaEnum) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (javaEnum) {
+fun foo(javaEnum: JavaEnum) = <!WHEN_ON_SEALED!>when (javaEnum) {
     FIRST -> 1
     SECOND -> 2
 }<!>

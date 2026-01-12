@@ -35,7 +35,7 @@ fun exactlyOnceEnum(x0: MyEnum): Int {
         x = MyEnum.A
     }
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         MyEnum.A -> 2
         MyEnum.C -> 4
     }<!>
@@ -79,7 +79,7 @@ fun atMostOnceEnum(x0: MyEnum, shouldRun: Boolean): Int {
         }
                         x = MyEnum.A
                     }, shouldRun)
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
+    return <!WHEN_ON_SEALED!>when (x) {
         MyEnum.A -> 2
         MyEnum.C -> 4
     }<!>
@@ -121,7 +121,7 @@ fun test(): Int {
             return@myRunUnknown
         }
     }
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (y) {
+    return <!WHEN_ON_SEALED!>when (y) {
         is MySealedInterface.A -> 1
         is MySealedInterface.B -> 2
         is MySealedInterface.C -> 3

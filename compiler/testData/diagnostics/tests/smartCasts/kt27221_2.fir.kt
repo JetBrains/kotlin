@@ -15,7 +15,7 @@ fun foo1(a: A) {
         if (a is D) {
             if (<!USELESS_IS_CHECK!>a is C<!>) {
                 val t =
-                    <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
+                    <!WHEN_ON_SEALED!>when (a) {
                         is DD -> "DD"
                     }<!>
             }
@@ -28,7 +28,7 @@ fun foo2(a: A) {
         if (a is D) {
             if (<!USELESS_IS_CHECK!>a is C<!>) {
                 val t =
-                    <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
+                    <!WHEN_ON_SEALED!>when (a) {
                         is DD -> "DD"
                     }<!>
             }

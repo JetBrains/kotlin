@@ -15,14 +15,14 @@ class SomeClass {
     val e = E.VALUE
 
     val withoutType: LambdaWithReceiver
-        get() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+        get() = <!WHEN_ON_SEALED!>when (e) {
             E.VALUE -> { param ->
                 method(param)
             }
         }<!>
 
     val withExplicitType: LambdaWithReceiver
-        get() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+        get() = <!WHEN_ON_SEALED!>when (e) {
             E.VALUE -> { param: Parameter ->
                 method(param)
             }
@@ -38,7 +38,7 @@ class OtherClass {
 
 val e2 = E.VALUE
 val staticWithExplicitType: LambdaWithReceiver
-    get() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e2) {
+    get() = <!WHEN_ON_SEALED!>when (e2) {
         E.VALUE -> { param: Parameter ->
             method(param)
         }

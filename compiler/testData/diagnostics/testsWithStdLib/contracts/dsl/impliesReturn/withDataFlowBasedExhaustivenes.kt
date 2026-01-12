@@ -19,7 +19,7 @@ fun ensureA(v: Variants): Variants? {
 }
 
 fun foo(v: Variants.A): String {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (ensureA(v)) {
+    return <!WHEN_ON_SEALED!>when (ensureA(v)) {
         is Variants.B -> "B"
         is Variants.A -> "A"
     }<!>

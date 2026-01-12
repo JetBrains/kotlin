@@ -29,11 +29,11 @@ object Object1 {
 // From KT-6054
 enum class MyEnum {
     A, B;
-    val x = when(this) {
+    val x = <!WHEN_ON_SEALED!>when(this) {
         <!UNINITIALIZED_ENUM_ENTRY!>A<!> -> 1
         <!UNINITIALIZED_ENUM_ENTRY!>B<!> -> 2
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 3
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, integerLiteral, nestedClass, objectDeclaration,

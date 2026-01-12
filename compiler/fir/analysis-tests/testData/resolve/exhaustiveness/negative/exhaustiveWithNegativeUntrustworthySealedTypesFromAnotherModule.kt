@@ -27,7 +27,7 @@ fun foo(v: Variants): String {
         return "A"
     }
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
+    return <!WHEN_ON_SEALED!>when (v) {
         Variants.B -> "B"
         Variants.C -> "C"
         Variants.D -> "D"
@@ -39,7 +39,7 @@ fun baz(v: Options): String {
         return "A"
     }
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
+    return <!WHEN_ON_SEALED!>when (v) {
         is Options.B -> "B"
     }<!>
 }

@@ -18,7 +18,7 @@ fun foo(v: Variants): String {
         return "A"
     }
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE("Variants")!>when (v) {
+    return <!WHEN_ON_SEALED("Variants; EXHAUSTIVE")!>when (v) {
         Variants.B -> "B"
         Variants.C -> "C"
         Variants.D -> "D"
@@ -30,12 +30,12 @@ fun bar(v: Variants): String {
         return "A"
     }
 
-    return when (v) {
+    return <!WHEN_ON_SEALED("Variants; REDUNDANT")!>when (v) {
         Variants.B -> "B"
         Variants.C -> "C"
         Variants.D -> "D"
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> "A?"
-    }
+    }<!>
 }
 
 sealed class Options {
@@ -50,7 +50,7 @@ fun baz(v: Options): String {
         return "A"
     }
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE("Options")!>when (v) {
+    return <!WHEN_ON_SEALED("Options; EXHAUSTIVE")!>when (v) {
         is Options.B -> "B"
     }<!>
 }

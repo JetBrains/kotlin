@@ -6,7 +6,7 @@ fun full() {
         fun analyzeCollectedElements(): Int {
             val result = analyzeQualifiedElement()
 
-            return <!WHEN_ON_SEALED_GEEN_ELSE!>when (result) {
+            return <!WHEN_ON_SEALED!>when (result) {
                 AnalyzeQualifiedElementResult.Skip -> 1
             }<!>
         }

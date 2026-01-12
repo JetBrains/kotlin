@@ -17,7 +17,7 @@ enum class E {
 
 fun test_1() {
     val e = Utils.getEnum()
-    val s = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val s = <!WHEN_ON_SEALED!>when (e) {
         null -> return
         E.A -> ""
         E.B -> ""
@@ -28,7 +28,7 @@ fun test_1() {
 
 fun test_2() {
     val e = Utils.getEnum()
-    val s = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val s = <!WHEN_ON_SEALED!>when (e) {
         E.A -> ""
         E.B -> ""
         E.C -> ""

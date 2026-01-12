@@ -20,13 +20,13 @@ fun test_1(e: Base) {
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> 3
     }
 
-    val c = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val c = <!WHEN_ON_SEALED!>when (e) {
         is Base.A -> 1
         is Base.A.B -> 2
         is C -> 3
     }<!>
 
-    val d = <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (e) {
+    val d = <!WHEN_ON_SEALED!>when (e) {
         is Base.A -> 1
         else -> 2
     }<!>
@@ -39,14 +39,14 @@ fun test_2(e: Base?) {
         is C -> 3
     }
 
-    val b = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val b = <!WHEN_ON_SEALED!>when (e) {
         is Base.A -> 1
         is Base.A.B -> 2
         is C -> 3
         null -> 4
     }<!>
 
-    val c = <!WHEN_ON_SEALED_WEL_ELSE!>when (e) {
+    val c = <!WHEN_ON_SEALED!>when (e) {
         is Base.A -> 1
         is Base.A.B -> 2
         is C -> 3
@@ -55,7 +55,7 @@ fun test_2(e: Base?) {
 }
 
 fun test_3(e: Base) {
-    val a = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val a = <!WHEN_ON_SEALED!>when (e) {
         is Base.A, is Base.A.B -> 1
         is C -> 2
     }<!>

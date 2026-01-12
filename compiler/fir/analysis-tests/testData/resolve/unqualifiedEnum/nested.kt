@@ -9,9 +9,9 @@ enum class Inner {
 }
 
 fun foo(o: Outer, i: Inner): Int {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (o) {
+    return <!WHEN_ON_SEALED!>when (o) {
         FIRST -> 1
-        SECOND -> <!WHEN_ON_SEALED_GEEN_ELSE!>when (i) {
+        SECOND -> <!WHEN_ON_SEALED!>when (i) {
             SECOND -> 2
             THIRD -> 3
         }<!>
@@ -19,11 +19,11 @@ fun foo(o: Outer, i: Inner): Int {
 }
 
 fun bar(o: Outer, i: Inner): Int {
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (o) {
+    return <!WHEN_ON_SEALED!>when (o) {
         FIRST -> 1
         SECOND -> {
             fun baz(): Int {
-                return <!WHEN_ON_SEALED_GEEN_ELSE!>when (i) {
+                return <!WHEN_ON_SEALED!>when (i) {
                     SECOND -> 2
                     THIRD -> 3
                 }<!>

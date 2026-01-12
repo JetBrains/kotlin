@@ -4686,23 +4686,12 @@ internal class InferredInvisibleWhenTypeWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InferredInvisibleWhenTypeWarning
 
-internal class WhenOnSealedGeenElseImpl(
+internal class WhenOnSealedImpl(
     override val whenType: KaType,
+    override val kind: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtWhenExpression>(firDiagnostic, token), KaFirDiagnostic.WhenOnSealedGeenElse
-
-internal class WhenOnSealedEenEnElseImpl(
-    override val whenType: KaType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtWhenExpression>(firDiagnostic, token), KaFirDiagnostic.WhenOnSealedEenEnElse
-
-internal class WhenOnSealedWelElseImpl(
-    override val whenType: KaType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtWhenExpression>(firDiagnostic, token), KaFirDiagnostic.WhenOnSealedWelElse
+) : KaAbstractFirDiagnostic<KtWhenExpression>(firDiagnostic, token), KaFirDiagnostic.WhenOnSealed
 
 internal class TypeParameterIsNotAnExpressionImpl(
     override val typeParameter: KaTypeParameterSymbol,

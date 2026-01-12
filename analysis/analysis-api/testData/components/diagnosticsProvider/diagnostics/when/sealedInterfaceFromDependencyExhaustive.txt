@@ -3,5 +3,5 @@ Diagnostics from MySealedInterface.kt:
 
 Diagnostics from main.kt:
   for PSI element of type KtWhenExpression at (14,12) - (17,6)
-    WHEN_ON_SEALED_GEEN_ELSE      text ranges: [(113,195)]
+    WHEN_ON_SEALED      text ranges: [(113,195)]
       PSI: KtWhenExpression at (14,12) - (17,6)

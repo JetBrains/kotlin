@@ -19,7 +19,7 @@ sealed interface MySealed {
     class Right(val y: String): MySealed
 }
 
-fun MySealed.getOrElse1() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
+fun MySealed.getOrElse1() = <!WHEN_ON_SEALED!>when (this) {
     is Left -> x
     is Right -> y
 }<!>

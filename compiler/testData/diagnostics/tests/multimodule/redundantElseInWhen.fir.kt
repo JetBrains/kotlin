@@ -19,16 +19,16 @@ package other
 
 import test.*
 
-fun foo(e: E) = when (e) {
+fun foo(e: E) = <!WHEN_ON_SEALED!>when (e) {
     E.FIRST -> 42
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> -42
-}
+}<!>
 
-fun bar(s: S?) = when (s) {
+fun bar(s: S?) = <!WHEN_ON_SEALED!>when (s) {
     is Derived -> "Derived"
     null -> ""
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> TODO("What?!?!")
-}
+}<!>
 
 fun baz(b: Boolean?) = when (b) {
     true -> 1

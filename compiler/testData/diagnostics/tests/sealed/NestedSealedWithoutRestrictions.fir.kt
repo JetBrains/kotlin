@@ -32,7 +32,7 @@ class BContainer {
 package foo
 
 fun test(base: Container.Base) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
+    val x = <!WHEN_ON_SEALED!>when (base) {
         is A -> 1
         is BContainer.B -> 2
         is BContainer.C -> 3

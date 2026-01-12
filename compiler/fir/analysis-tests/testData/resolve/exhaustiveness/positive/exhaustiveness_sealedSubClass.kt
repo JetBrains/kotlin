@@ -8,25 +8,25 @@ sealed class D : B()
 sealed class E : B()
 
 fun test_1(e: A) {
-    val a = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val a = <!WHEN_ON_SEALED!>when (e) {
         is C -> 1
         is D -> 2
         is E -> 3
     }<!>.plus(0)
 
-    val b = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val b = <!WHEN_ON_SEALED!>when (e) {
         is B -> 1
         is C -> 2
     }<!>.plus(0)
 
-    val c = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val c = <!WHEN_ON_SEALED!>when (e) {
         is B -> 1
         is C -> 2
         is E -> 3
         is D -> 4
     }<!>.plus(0)
 
-    val d = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val d = <!WHEN_ON_SEALED!>when (e) {
         is E -> 1
         is A -> 2
     }<!>.plus(0)
@@ -49,7 +49,7 @@ fun test_2(e: A) {
         is D -> 2
     }.plus(0)
 
-    val d = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val d = <!WHEN_ON_SEALED!>when (e) {
         is C -> 1
     }<!>.plus(0)
 }

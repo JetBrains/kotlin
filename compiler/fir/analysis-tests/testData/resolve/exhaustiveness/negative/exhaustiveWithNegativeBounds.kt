@@ -49,7 +49,7 @@ fun <T> nestedBounded(u: T): Int where T : MySealedInterface, T : java.io.Serial
 
     if (sealedValue is MySealedInterface.C) return 1
 
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (sealedValue) {
+    return <!WHEN_ON_SEALED!>when (sealedValue) {
         MySealedInterface.A -> 2
         MySealedInterface.B -> 3
     }<!>

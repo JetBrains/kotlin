@@ -897,9 +897,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WHEN_GUARD_WITHOUT_SUBJECT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WHEN_ON_SEALED_EEN_EN_ELSE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WHEN_ON_SEALED_GEEN_ELSE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WHEN_ON_SEALED_WEL_ELSE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WHEN_ON_SEALED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRAPPED_LHS_IN_ASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET_WARNING
@@ -3289,19 +3287,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             STRING,
         )
         map.put(
-            WHEN_ON_SEALED_GEEN_ELSE,
-            "Exhaustive ''when'' on sealed or enum class without ''else'' --- {0}",
+            WHEN_ON_SEALED,
+            "Exhaustive ''when'' on sealed or enum class --- {0} --- {1}",
             RENDER_TYPE,
-        )
-        map.put(
-            WHEN_ON_SEALED_EEN_EN_ELSE,
-            "Exhaustive ''when'' on sealed or enum class with ''else'' and just other branch --- {0}",
-            RENDER_TYPE
-        )
-        map.put(
-            WHEN_ON_SEALED_WEL_ELSE,
-            "Exhaustive ''when'' on sealed or enum class with ''else'' --- {0}",
-            RENDER_TYPE
+            STRING,
         )
 
         // Context tracking

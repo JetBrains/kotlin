@@ -20,6 +20,6 @@
 
 /whenWithGuardDisabled.fir.kt:(1091,1101): error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.fir.kt:(1174,1275): warning: Exhaustive 'when' on sealed or enum class without 'else' --- BooleanHolder
+/whenWithGuardDisabled.fir.kt:(1174,1275): warning: Exhaustive 'when' on sealed or enum class --- BooleanHolder --- EXHAUSTIVE
 
 /whenWithGuardDisabled.fir.kt:(1226,1236): error: The feature "when guards" is disabled

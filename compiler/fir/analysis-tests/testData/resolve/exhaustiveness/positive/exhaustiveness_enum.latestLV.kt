@@ -16,13 +16,13 @@ fun test_1(e: Enum) {
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> 3
     }
 
-    val c = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val c = <!WHEN_ON_SEALED!>when (e) {
         Enum.A -> 1
         Enum.B -> 2
         Enum.C -> 3
     }<!>
 
-    val d = <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (e) {
+    val d = <!WHEN_ON_SEALED!>when (e) {
         Enum.A -> 1
         else -> 2
     }<!>
@@ -35,14 +35,14 @@ fun test_2(e: Enum?) {
         Enum.C -> 3
     }
 
-    val b = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val b = <!WHEN_ON_SEALED!>when (e) {
         Enum.A -> 1
         Enum.B -> 2
         Enum.C -> 3
         null -> 4
     }<!>
 
-    val c = <!WHEN_ON_SEALED_WEL_ELSE!>when (e) {
+    val c = <!WHEN_ON_SEALED!>when (e) {
         Enum.A -> 1
         Enum.B -> 2
         Enum.C -> 3
@@ -51,7 +51,7 @@ fun test_2(e: Enum?) {
 }
 
 fun test_3(e: Enum) {
-    val a = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+    val a = <!WHEN_ON_SEALED!>when (e) {
         Enum.A, Enum.B -> 1
         Enum.C -> 2
     }<!>

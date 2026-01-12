@@ -6,4 +6,4 @@
 
 /whenWithGuardEnabled.fir.kt:(1051,1055): error: 'when' expression must be exhaustive. Add the 'False' branch or an 'else' branch.
 
-/whenWithGuardEnabled.fir.kt:(1186,1287): warning: Exhaustive 'when' on sealed or enum class without 'else' --- BooleanHolder
+/whenWithGuardEnabled.fir.kt:(1186,1287): warning: Exhaustive 'when' on sealed or enum class --- BooleanHolder --- EXHAUSTIVE

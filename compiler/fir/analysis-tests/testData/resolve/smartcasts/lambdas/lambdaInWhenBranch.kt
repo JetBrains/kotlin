@@ -17,7 +17,7 @@ private fun foo(p: Sealed) {
 
     p.<!UNRESOLVED_REFERENCE!>t<!> // should not be resolved, but it has a smartcast to SubClass1 because of the lambda
 
-    <!WHEN_ON_SEALED_GEEN_ELSE!>when (p) {
+    <!WHEN_ON_SEALED!>when (p) {
         is SubClass1 -> p.t
         is SubClass2 -> "2"
     }<!>.length // should be resolved, but when is not considered as sealed because type of p is not a sealed class

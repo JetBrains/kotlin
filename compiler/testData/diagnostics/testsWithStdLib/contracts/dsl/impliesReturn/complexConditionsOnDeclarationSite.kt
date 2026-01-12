@@ -37,7 +37,7 @@ fun decodeE(encoded: E): String? {
     contract {
         <!ERROR_IN_CONTRACT_DESCRIPTION!>(encoded != E.Zero) implies (returnsNotNull())<!>
     }
-    return <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (encoded) {
+    return <!WHEN_ON_SEALED!>when (encoded) {
         E.One -> "one"
         else -> null
     }<!>

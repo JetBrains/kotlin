@@ -21,7 +21,7 @@ abstract class <!CLASSIFIER_REDECLARATION!>SE<!> : SEB(), SND, SDC
 class SES : SE<!NO_CONSTRUCTOR!>()<!>, SMDC
 
 public val SDP.x: String?
-    get() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
+    get() = <!WHEN_ON_SEALED!>when (this) {
         is SM -> null
         is SC -> null
         is SE -> null
