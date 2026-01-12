@@ -113,7 +113,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         if (kotlinReflectDumpMismatch) {
             assertions.assertFalse(skipAsserts) {
                 "Cannot use both directives: " +
-                        "SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK and KOTLIN_REFLECT_DUMP_MISMATCH. " +
+                        "${::SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK.name} and ${::KOTLIN_REFLECT_DUMP_MISMATCH.name}. " +
                         "Pick one"
             }
             val a = runCatching { assertions.assertEqualsToFile(k1ReflectFile, k1ReflectDump) }
@@ -122,7 +122,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             b.getOrThrow()
 
             assertions.assertTrue(k1ReflectDump != newReflectDump) {
-                "K1 and new kotlin-reflect dumps are the same. Please drop KOTLIN_REFLECT_DUMP_MISMATCH directive"
+                "K1 and new kotlin-reflect dumps are the same. Please drop ${::KOTLIN_REFLECT_DUMP_MISMATCH.name} directive"
             }
         } else {
             k1ReflectFile.delete()
@@ -130,7 +130,8 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             if (skipAsserts) return
             if (k1ReflectDump != newReflectDump) {
                 val tip =
-                    "// Tip: you can use KOTLIN_REFLECT_DUMP_MISMATCH / SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK directives to suppress the test\n"
+                    "// Tip: you can use ${::KOTLIN_REFLECT_DUMP_MISMATCH.name} or ${::SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK.name} " +
+                            "directive to suppress the test\n"
                 val k1ReflectHeader = "$tip// K1 kotlin-reflect dump\n"
                 val newReflectHeader = "$tip// New kotlin-reflect dump\n"
                 assertions.assertEquals(k1ReflectHeader + k1ReflectDump, newReflectHeader + newReflectDump)
@@ -252,7 +253,8 @@ class RunInAlienClassLoader {
 
                 append(str)
             }
-        }.sortedWith(compareBy({ it.first }, { it.second })).forEach { dump(it.second) }
+        }.sortedWith(compareBy(/* Sorting by it.first helps with readability when dumps mismatch */ { it.first }, { it.second }))
+            .forEach { dump(it.second) }
     }
 
     private class IndentedStringBuilder {
