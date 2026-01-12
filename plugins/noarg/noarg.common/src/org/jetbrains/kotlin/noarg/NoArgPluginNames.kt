@@ -7,8 +7,14 @@ package org.jetbrains.kotlin.noarg
 
 object NoArgPluginNames {
     val SUPPORTED_PRESETS = mapOf(
-        "jpa" to listOf("javax.persistence.Entity", "javax.persistence.Embeddable", "javax.persistence.MappedSuperclass",
-                        "jakarta.persistence.Entity", "jakarta.persistence.Embeddable", "jakarta.persistence.MappedSuperclass")
+        "jpa" to listOf(
+            "javax.persistence.Entity",
+            "javax.persistence.Embeddable",
+            "javax.persistence.MappedSuperclass",
+            "jakarta.persistence.Entity",
+            "jakarta.persistence.Embeddable",
+            "jakarta.persistence.MappedSuperclass"
+        )
     )
 
     const val PLUGIN_ID = "org.jetbrains.kotlin.noarg"
