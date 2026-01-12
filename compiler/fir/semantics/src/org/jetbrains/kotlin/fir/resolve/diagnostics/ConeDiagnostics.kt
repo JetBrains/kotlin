@@ -288,7 +288,8 @@ sealed interface ConeUnmatchedTypeArgumentsError : ConeDiagnosticWithSymbol<FirC
 class ConeWrongNumberOfTypeArgumentsError(
     override val desiredCount: Int,
     override val symbol: FirClassLikeSymbol<*>,
-    source: KtSourceElement
+    source: KtSourceElement,
+    val isNewErrorForCallableReferenceLHS: Boolean = false,
 ) : ConeDiagnosticWithSource(source), ConeUnmatchedTypeArgumentsError {
     override val reason: String get() = "Wrong number of type arguments"
 }

@@ -1259,6 +1259,19 @@ object PositioningStrategies {
         }
     }
 
+    val TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            val selector = (element as? KtQualifiedExpression)?.selectorExpression
+            (selector ?: element).getChildOfType<KtTypeArgumentList>()?.let {
+                return markElement(it)
+            }
+            selector?.let {
+                return markElement(it)
+            }
+            return super.mark(element)
+        }
+    }
+
     val PACKAGE_DIRECTIVE_NAME_EXPRESSION: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
         override fun mark(element: KtElement): List<TextRange> {
             val packageNameExpression = (element as? KtPackageDirective)?.packageNameExpression

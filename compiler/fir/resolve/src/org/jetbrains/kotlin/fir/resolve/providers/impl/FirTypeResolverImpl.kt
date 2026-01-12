@@ -378,6 +378,24 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         )
     }
 
+    private val FirResolvedQualifier.ownTypeArguments: List<FirTypeProjection>
+        get() = typeArguments.subList(0, typeArguments.size - (explicitParent?.typeArguments?.size ?: 0))
+
+    private fun FirTypeProjection?.toConeTypeProjectionInLHS(): ConeTypeProjection = when (this) {
+        is FirTypeProjectionWithVariance -> typeRef.coneType.toTypeProjection(variance)
+
+        null, // in this case, the diagnostic is already not null
+        is FirPlaceholderProjection, // reported separately in the checker
+        is FirStarProjection,
+            -> ConeStarProjection
+    }
+
+    private fun MutableList<ConeTypeProjection>.addOwnTypeArguments(qualifier: FirResolvedQualifier) {
+        for (typeArgument in qualifier.ownTypeArguments) {
+            add(typeArgument.toConeTypeProjectionInLHS())
+        }
+    }
+
     private fun MutableList<ConeTypeProjection>.matchQualifierPartsAndClassesForLHS(
         qualifier: FirResolvedQualifier,
         classSymbol: FirClassLikeSymbol<*>,
@@ -390,17 +408,42 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             diagnostic = ConeWrongNumberOfTypeArgumentsError(expectedNumberOfExplicitTypeArguments, classSymbol, qualifier.source!!)
         }
 
-        // TODO: Here, we don't have checks that type arguments belong to the correct parts (KT-82122).
-        for (typeArgumentIndex in 0..<expectedNumberOfExplicitTypeArguments) {
-            val coneTypeProjection = when (val typeArgument = qualifier.typeArguments.getOrNull(typeArgumentIndex)) {
-                is FirTypeProjectionWithVariance -> typeArgument.typeRef.coneType.toTypeProjection(typeArgument.variance)
-
-                null, // in this case, the diagnostic is already not null
-                is FirPlaceholderProjection, // reported separately in the checker
-                is FirStarProjection,
-                    -> ConeStarProjection
+        if (diagnostic != null) {
+            for (typeArgumentIndex in 0..<expectedNumberOfExplicitTypeArguments) {
+                val coneTypeProjection = qualifier.typeArguments.getOrNull(typeArgumentIndex).toConeTypeProjectionInLHS()
+                add(coneTypeProjection)
             }
-            add(coneTypeProjection)
+        } else {
+            var currentQualifier = qualifier
+            var currentClass = classSymbol
+
+            while (true) {
+                if (currentQualifier.ownTypeArguments.size != currentClass.ownTypeParameterSymbols.size) {
+                    // in case of many mismatches, we will report the leftmost one
+                    diagnostic = ConeWrongNumberOfTypeArgumentsError(
+                        currentClass.ownTypeParameterSymbols.size,
+                        currentClass,
+                        currentQualifier.source!!,
+                        isNewErrorForCallableReferenceLHS = true,
+                    )
+                }
+
+                addOwnTypeArguments(currentQualifier)
+
+                when (val nextClass = currentQualifier.explicitParent?.symbol) {
+                    is FirClassLikeSymbol if currentClass.isInner -> {
+                        currentClass = nextClass
+                        currentQualifier = currentQualifier.explicitParent!!
+                    }
+                    else -> break
+                }
+            }
+
+            // If `Outer<Arg>.Nested.Inner`, `Arg` is included in type arguments of qualifier, so we need to add it.
+            while (currentQualifier.explicitParent != null) {
+                currentQualifier = currentQualifier.explicitParent!!
+                addOwnTypeArguments(currentQualifier)
+            }
         }
 
         return diagnostic

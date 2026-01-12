@@ -17,8 +17,8 @@ fun <T> withGenericArg() {
     }
 
     Outer<Int>.Inner<String>::foo
-    Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_WARNING!><String, Int><!>.Inner::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_WARNING!>Outer<!>.Inner<String, Int>::foo
+    Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!><String, Int><!>.Inner::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>Outer<!>.Inner<String, Int>::foo
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, inner, localClass, nullableType,

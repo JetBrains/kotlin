@@ -43,7 +43,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
 
         for (diagnostic in expression.nonFatalDiagnostics) {
             when (diagnostic) {
-                is ConeWrongNumberOfTypeArgumentsError -> {
+                is ConeWrongNumberOfTypeArgumentsError if !diagnostic.isNewErrorForCallableReferenceLHS -> {
                     reporter.reportOn(
                         diagnostic.source,
                         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
@@ -52,13 +52,22 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                         // here, `desiredCount` corresponds to the number of type parameters for all parts of the qualifier altogether
                         positioningStrategy = SourceElementPositioningStrategies.DEFAULT,
                     )
-                    return
+                }
+                is ConeWrongNumberOfTypeArgumentsError -> {
+                    reporter.reportOn(
+                        diagnostic.source,
+                        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS,
+                        diagnostic.desiredCount,
+                        diagnostic.symbol,
+                    )
                 }
             }
         }
 
         var typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
         var typeParameterSymbols = correspondingDeclaration.classTypeParameterSymbols
+
+        if (typeArgumentsWithSourceInfo.size != typeParameterSymbols.size) return
 
         if (correspondingDeclaration is FirTypeAliasSymbol) {
             val qualifierType = correspondingDeclaration.constructType(typeArgumentsWithSourceInfo.toTypedArray())

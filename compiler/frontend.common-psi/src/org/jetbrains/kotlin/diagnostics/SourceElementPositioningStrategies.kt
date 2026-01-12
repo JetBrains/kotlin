@@ -450,6 +450,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF,
     )
 
+    val TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER,
+        PositioningStrategies.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER,
+    )
+
     val PACKAGE_DIRECTIVE_NAME_EXPRESSION = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
         PositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
