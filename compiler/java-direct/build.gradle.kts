@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
     api(project(":compiler:frontend.java"))
+    api(project(":core:compiler.common.jvm"))
     compileOnly(intellijCore())
 
     implementation(libs.org.jetbrains.syntax.api)
