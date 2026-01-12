@@ -35,9 +35,6 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-            <!-- FIXME: KTIJ-36857/kotlin-stdlib-is-not-visible -->
-            <!-- Uncomment line to work locally -->
-<!--            <version>2.3.0</version>-->
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -45,9 +42,6 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
-            <!-- FIXME: KTIJ-36857/kotlin-stdlib-is-not-visible -->
-            <!-- Uncomment line to work locally -->
-<!--            <version>2.3.0</version>-->
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -56,22 +50,19 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.1</version>
-<!--        FIXME: KTIJ-36856/Kotlin-Maven-test-scope-is-not-visible-in-tests -->
-<!--            <scope>test</scope>-->
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-<!--         FIXME: KTIJ-36856/Kotlin-Maven-test-scope-is-not-visible-in-tests -->
-<!--            <scope>test</scope>-->
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-<!--         FIXME: KTIJ-36856/Kotlin-Maven-test-scope-is-not-visible-in-tests -->
-<!--            <scope>test</scope>-->
+            <scope>test</scope>
         </dependency>
 
         <dependency>
