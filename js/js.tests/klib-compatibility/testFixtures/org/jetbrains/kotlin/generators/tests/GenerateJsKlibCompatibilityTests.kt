@@ -19,7 +19,8 @@ fun main(args: Array<String>) {
     val k1BoxTestDir = "multiplatform/k1"
     // KT-68538: `box/inference/pcla/nestedNonExhaustiveIf.kt` times out with first stage version 2.0.0, and it's not convenient to add a timeout to test runner,
     //           so this test is simply excluded from klib compatibility testing. Fixed in 2.0.20
-    val CUSTOM_FIRST_STAGE_EXCLUSION_PATTERN = "^nestedNonExhaustiveIf.kt\$"
+    // KT-68747: `box/fir/inferenceWithTypeAliasFromOtherModule.kt` takes infinite time to compile. Fixed in 2.0.20
+    val CUSTOM_FIRST_STAGE_EXCLUSION_PATTERN = "^(nestedNonExhaustiveIf|inferenceWithTypeAliasFromOtherModule).kt\$"
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
