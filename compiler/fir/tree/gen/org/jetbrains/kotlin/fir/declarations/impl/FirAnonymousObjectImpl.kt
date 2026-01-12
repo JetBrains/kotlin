@@ -117,6 +117,12 @@ internal class FirAnonymousObjectImpl(
         superTypeRefs.addAll(newSuperTypeRefs)
     }
 
+    override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {
+        if (declarations === newDeclarations) return
+        declarations.clear()
+        declarations.addAll(newDeclarations)
+    }
+
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
     }

@@ -496,6 +496,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField("superTypeRefs", typeRef, withReplace = true, withTransform = true)
         +declarations {
             withTransform = true
+            withReplace = true
         }
         +annotations
     }
@@ -947,6 +948,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField(import, withTransform = true)
         +declarations {
             withTransform = true
+            withReplace = true
         }
         +field("name", string)
         +field("sourceFile", sourceFileType, nullable = true)
