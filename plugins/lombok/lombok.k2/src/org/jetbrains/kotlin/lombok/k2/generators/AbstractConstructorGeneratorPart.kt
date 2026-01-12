@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.lombok.k2.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
@@ -39,6 +41,11 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
     protected abstract fun getConstructorInfo(classSymbol: FirClassSymbol<*>): T?
     protected abstract fun getFieldsForParameters(classSymbol: FirClassSymbol<*>): List<FirJavaField>
+
+    @OptIn(DirectDeclarationsAccess::class)
+    protected fun containsExplicitConstructor(classSymbol: FirClassSymbol<*>): Boolean {
+        return classSymbol.declarationSymbols.any { it is FirConstructorSymbol && it.source?.kind is KtRealSourceElementKind }
+    }
 
     @OptIn(SymbolInternals::class)
     fun createConstructor(classSymbol: FirClassSymbol<*>): FirFunction? {

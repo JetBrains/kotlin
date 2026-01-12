@@ -14,11 +14,14 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AllArgsConstructor
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class AllArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructorGeneratorPart<AllArgsConstructor>(session) {
     override fun getConstructorInfo(classSymbol: FirClassSymbol<*>): AllArgsConstructor? {
         return lombokService.getAllArgsConstructor(classSymbol)
-            ?: lombokService.getValue(classSymbol)?.asAllArgsConstructor()
+            ?: runIf(!containsExplicitConstructor(classSymbol)) {
+                lombokService.getValue(classSymbol)?.asAllArgsConstructor()
+            }
     }
 
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)

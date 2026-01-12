@@ -13,16 +13,18 @@ import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.RequiredArgsConstructor
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @OptIn(DirectDeclarationsAccess::class)
 class RequiredArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructorGeneratorPart<RequiredArgsConstructor>(session) {
     override fun getConstructorInfo(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? {
         return lombokService.getRequiredArgsConstructor(classSymbol)
-            ?: lombokService.getData(classSymbol)?.asRequiredArgsConstructor()
+            ?: runIf(!containsExplicitConstructor(classSymbol)) {
+                lombokService.getData(classSymbol)?.asRequiredArgsConstructor()
+            }
     }
 
     @OptIn(SymbolInternals::class)
