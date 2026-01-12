@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import java.io.File
 import java.util.*
 import java.util.jar.Manifest
@@ -31,19 +33,17 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
+    abstract val isWasm: Boolean
 
     fun testSameBasicCompilerVersion() {
         for (versionsWithSameBasicVersion in SORTED_TEST_COMPILER_VERSION_GROUPS) {
             for (libraryVersion in versionsWithSameBasicVersion) {
                 for (compilerVersion in versionsWithSameBasicVersion) {
-                    for (isWasm in listOf(false, true)) {
-                        compileDummyLibrary(
-                            libraryVersion = libraryVersion,
-                            compilerVersion = compilerVersion,
-                            isWasm = isWasm,
-                            expectedWarningStatus = WarningStatus.NO_WARNINGS
-                        )
-                    }
+                    compileDummyLibrary(
+                        libraryVersion = libraryVersion,
+                        compilerVersion = compilerVersion,
+                        expectedWarningStatus = WarningStatus.NO_WARNINGS
+                    )
                 }
             }
         }
@@ -51,43 +51,34 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
 
     fun testNewerCompilerVersion() {
         testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
-            for (isWasm in listOf(false, true)) {
-                compileDummyLibrary(
-                    libraryVersion = currentVersion,
-                    compilerVersion = nextVersion,
-                    isWasm = isWasm,
-                    expectedWarningStatus = WarningStatus.OLD_LIBRARY_WARNING
-                )
-            }
+            compileDummyLibrary(
+                libraryVersion = currentVersion,
+                compilerVersion = nextVersion,
+                expectedWarningStatus = WarningStatus.OLD_LIBRARY_WARNING
+            )
         }
     }
 
     fun testOlderCompilerVersion() {
         testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
             val sameLanguageVersion = haveSameLanguageVersion(currentVersion, nextVersion)
-            for (isWasm in listOf(false, true)) {
-                compileDummyLibrary(
-                    libraryVersion = nextVersion,
-                    compilerVersion = currentVersion,
-                    isWasm = isWasm,
-                    expectedWarningStatus = if (sameLanguageVersion) WarningStatus.NO_WARNINGS else WarningStatus.TOO_NEW_LIBRARY_WARNING
-                )
-            }
+            compileDummyLibrary(
+                libraryVersion = nextVersion,
+                compilerVersion = currentVersion,
+                expectedWarningStatus = if (sameLanguageVersion) WarningStatus.NO_WARNINGS else WarningStatus.TOO_NEW_LIBRARY_WARNING
+            )
         }
     }
 
     fun testExportToOlderAbiVersionWithOlderLibrary() {
         for (compilerVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
             for (libraryVersion in SORTED_TEST_OLD_LIBRARY_VERSION_GROUPS) {
-                for (isWasm in listOf(false, true)) {
-                    compileDummyLibrary(
-                        libraryVersion = libraryVersion,
-                        compilerVersion = compilerVersion,
-                        isWasm = isWasm,
-                        expectedWarningStatus = WarningStatus.NO_WARNINGS,
-                        exportKlibToOlderAbiVersion = true,
-                    )
-                }
+                compileDummyLibrary(
+                    libraryVersion = libraryVersion,
+                    compilerVersion = compilerVersion,
+                    expectedWarningStatus = WarningStatus.NO_WARNINGS,
+                    exportKlibToOlderAbiVersion = true,
+                )
             }
         }
     }
@@ -95,15 +86,12 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     fun testExportToOlderAbiVersionWithCurrentLibrary() {
         for (compilerVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
             for (libraryVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
-                for (isWasm in listOf(false, true)) {
-                    compileDummyLibrary(
-                        libraryVersion = libraryVersion,
-                        compilerVersion = compilerVersion,
-                        isWasm = isWasm,
-                        expectedWarningStatus = WarningStatus.TOO_NEW_LIBRARY_WARNING,
-                        exportKlibToOlderAbiVersion = true,
-                    )
-                }
+                compileDummyLibrary(
+                    libraryVersion = libraryVersion,
+                    compilerVersion = compilerVersion,
+                    expectedWarningStatus = WarningStatus.TOO_NEW_LIBRARY_WARNING,
+                    exportKlibToOlderAbiVersion = true,
+                )
             }
         }
     }
@@ -126,32 +114,27 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
             TestVersion(2, 0, 0) to null,
             null to TestVersion(2, 0, 0),
         ).forEach { (libraryVersion, compilerVersion) ->
-            for (isWasm in listOf(false, true)) {
-                compileDummyLibrary(
-                    libraryVersion = libraryVersion,
-                    compilerVersion = compilerVersion,
-                    isWasm = isWasm,
-                    expectedWarningStatus = WarningStatus.NO_WARNINGS
-                )
-            }
+            compileDummyLibrary(
+                libraryVersion = libraryVersion,
+                compilerVersion = compilerVersion,
+                expectedWarningStatus = WarningStatus.NO_WARNINGS
+            )
         }
     }
 
     private fun compileDummyLibrary(
         libraryVersion: TestVersion?,
         compilerVersion: TestVersion?,
-        isWasm: Boolean,
         expectedWarningStatus: WarningStatus,
         exportKlibToOlderAbiVersion: Boolean = false,
     ) {
-        compileDummyLibrary(libraryVersion, compilerVersion, isWasm, isZipped = false, expectedWarningStatus, exportKlibToOlderAbiVersion)
-        compileDummyLibrary(libraryVersion, compilerVersion, isWasm, isZipped = true, expectedWarningStatus, exportKlibToOlderAbiVersion)
+        compileDummyLibrary(libraryVersion, compilerVersion, isZipped = false, expectedWarningStatus, exportKlibToOlderAbiVersion)
+        compileDummyLibrary(libraryVersion, compilerVersion, isZipped = true, expectedWarningStatus, exportKlibToOlderAbiVersion)
     }
 
     protected abstract val libraryDisplayName: String
 
     private fun MessageCollectorImpl.hasOldLibraryError(
-        isWasm: Boolean,
         specificVersions: Pair<TestVersion, TestVersion>? = null,
     ): Boolean {
         val platformDisplayName = if (isWasm) "Kotlin/Wasm" else "Kotlin/JS"
@@ -164,7 +147,6 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     }
 
     private fun MessageCollectorImpl.hasTooNewLibraryError(
-        isWasm: Boolean,
         libraryVersion: TestVersion? = null,
         abiCompatibilityLevel: KlibAbiCompatibilityLevel? = null,
     ): Boolean {
@@ -179,19 +161,15 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     }
 
     private fun MessageCollectorImpl.checkMessage(
-        isWasm: Boolean,
         expectedWarningStatus: WarningStatus,
         libraryVersion: TestVersion?,
         compilerVersion: TestVersion?,
         abiCompatibilityLevel: KlibAbiCompatibilityLevel?,
     ) {
         val success = when (expectedWarningStatus) {
-            WarningStatus.NO_WARNINGS -> !hasOldLibraryError(isWasm = false) &&
-                    !hasTooNewLibraryError(isWasm = false) &&
-                    !hasOldLibraryError(isWasm = true) &&
-                    !hasTooNewLibraryError(isWasm = true)
-            WarningStatus.OLD_LIBRARY_WARNING -> hasOldLibraryError(isWasm, libraryVersion!! to compilerVersion!!)
-            WarningStatus.TOO_NEW_LIBRARY_WARNING -> hasTooNewLibraryError(isWasm, libraryVersion!!, abiCompatibilityLevel)
+            WarningStatus.NO_WARNINGS -> !hasOldLibraryError() && !hasTooNewLibraryError()
+            WarningStatus.OLD_LIBRARY_WARNING -> hasOldLibraryError(libraryVersion!! to compilerVersion!!)
+            WarningStatus.TOO_NEW_LIBRARY_WARNING -> hasTooNewLibraryError(libraryVersion!!, abiCompatibilityLevel)
         }
         if (!success) fail(
             buildString {
@@ -205,7 +183,6 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     private fun compileDummyLibrary(
         libraryVersion: TestVersion?,
         compilerVersion: TestVersion?,
-        isWasm: Boolean,
         isZipped: Boolean,
         expectedWarningStatus: WarningStatus,
         exportKlibToOlderAbiVersion: Boolean,
@@ -220,14 +197,14 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
 
         withCustomCompilerVersion(compilerVersion) {
             val fakeLibrary = if (isZipped)
-                createFakeZippedLibraryWithSpecificVersion(isWasm, libraryVersion)
+                createFakeZippedLibraryWithSpecificVersion(libraryVersion)
             else
-                createFakeUnzippedLibraryWithSpecificVersion(isWasm, libraryVersion)
+                createFakeUnzippedLibraryWithSpecificVersion(libraryVersion)
 
             val expectedExitCode = if (expectedWarningStatus == WarningStatus.NO_WARNINGS) ExitCode.OK else ExitCode.COMPILATION_ERROR
             runJsCompiler(messageCollector, expectedExitCode) {
                 this.freeArgs = listOf(sourceFile.absolutePath)
-                this.libraries = (additionalLibraries(isWasm) + fakeLibrary.absolutePath).joinToString(File.pathSeparator)
+                this.libraries = (additionalLibraries() + fakeLibrary.absolutePath).joinToString(File.pathSeparator)
                 this.outputDir = outputDir.absolutePath
                 this.moduleName = moduleName
                 this.irProduceKlibFile = true
@@ -248,16 +225,16 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
 
         val klibAbiCompatibilityLevel =
             if (exportKlibToOlderAbiVersion) KlibAbiCompatibilityLevel.LATEST_STABLE.previous()!! else KlibAbiCompatibilityLevel.LATEST_STABLE
-        messageCollector.checkMessage(isWasm, expectedWarningStatus, libraryVersion, compilerVersion, klibAbiCompatibilityLevel)
+        messageCollector.checkMessage(expectedWarningStatus, libraryVersion, compilerVersion, klibAbiCompatibilityLevel)
     }
 
     private fun haveSameLanguageVersion(a: TestVersion, b: TestVersion): Boolean =
         a.basicVersion.major == b.basicVersion.major && a.basicVersion.minor == b.basicVersion.minor
 
     protected abstract val originalLibraryPath: String
-    protected open fun additionalLibraries(isWasm: Boolean): List<String> = listOf()
+    protected open fun additionalLibraries(): List<String> = listOf()
 
-    private fun createFakeUnzippedLibraryWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
+    private fun createFakeUnzippedLibraryWithSpecificVersion(version: TestVersion?): File {
         val rawVersion = version?.toString()
 
         val patchedLibraryDir = createDir("dependencies/fakeLib-${rawVersion ?: "unknown"}-${if (isWasm) "wasm" else "js"}")
@@ -301,13 +278,13 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         return patchedLibraryDir
     }
 
-    private fun createFakeZippedLibraryWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
+    private fun createFakeZippedLibraryWithSpecificVersion(version: TestVersion?): File {
         val rawVersion = version?.toString()
 
         val patchedLibraryFile = createFile("dependencies/fakeLib-${rawVersion ?: "unknown"}-${if (isWasm) "wasm" else "js"}.klib")
         if (patchedLibraryFile.exists()) return patchedLibraryFile
 
-        val unzippedLibraryDir = createFakeUnzippedLibraryWithSpecificVersion(isWasm, version)
+        val unzippedLibraryDir = createFakeUnzippedLibraryWithSpecificVersion(version)
         zipDirectory(directory = unzippedLibraryDir, zipFile = patchedLibraryFile)
 
         return patchedLibraryFile
@@ -363,17 +340,28 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
             createPatchedStdlib(JsEnvironmentConfigurator.stdlibPath)
         }
 
+        val patchedWasmStdlibWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+            createPatchedStdlib(WasmEnvironmentConfigurator.stdlibPath(WasmTarget.JS))
+        }
+
         val patchedJsTestWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             createPatchedStdlib(JsEnvironmentConfigurator.kotlinTestPath)
         }
 
-        private fun createPatchedStdlib(stdlibPath: String): String {
-            val stdlibName = File(stdlibPath).nameWithoutExtension
-            val patchedStdlibDir = createTempDir(stdlibName).apply {
-                KlibFile(stdlibPath).unzipTo(KlibFile(absolutePath))
-                File(absolutePath).resolve(KLIB_JAR_MANIFEST_FILE).delete()
-            }
+        val patchedWasmTestWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+            createPatchedStdlib(WasmEnvironmentConfigurator.kotlinTestPath(WasmTarget.JS))
+        }
 
+        private fun createPatchedStdlib(stdlibPath: String): String {
+            val src = File(stdlibPath)
+            val stdlibName = (if (src.isDirectory) src.name else src.nameWithoutExtension)
+            val patchedStdlibDir = File(createTempDir(stdlibName).absolutePath)
+            if (src.isDirectory) {
+                src.copyRecursively(patchedStdlibDir, overwrite = true)
+            } else {
+                KlibFile(stdlibPath).unzipTo(KlibFile(patchedStdlibDir.absolutePath))
+            }
+            patchedStdlibDir.resolve(KLIB_JAR_MANIFEST_FILE).delete()
             return patchedStdlibDir.absolutePath
         }
     }
