@@ -67,6 +67,12 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
   }
 
   @Test
+  @TestMetadata("noExplicitCtorOverridingWithDataAndValueAnns.kt")
+  public void testNoExplicitCtorOverridingWithDataAndValueAnns() {
+    runTest("plugins/lombok/testData/diagnostics/noExplicitCtorOverridingWithDataAndValueAnns.kt");
+  }
+
+  @Test
   @TestMetadata("setterForNonFinalFieldsWhenValueAndDataAndSetterAreUsed.kt")
   public void testSetterForNonFinalFieldsWhenValueAndDataAndSetterAreUsed() {
     runTest("plugins/lombok/testData/diagnostics/setterForNonFinalFieldsWhenValueAndDataAndSetterAreUsed.kt");
