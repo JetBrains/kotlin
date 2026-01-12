@@ -53,5 +53,47 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => Euro;
             }
         }
+        abstract class AbstractClassWithProtected {
+            constructor();
+            protected abstract protectedAbstractFun(): number;
+            protected abstract get protectedAbstractVal(): number;
+        }
+        namespace AbstractClassWithProtected {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => AbstractClassWithProtected;
+            }
+            class N extends foo.AbstractClassWithProtected.$metadata$.constructor {
+                constructor();
+                protected protectedAbstractFun(): number;
+                protected get protectedAbstractVal(): number;
+            }
+            namespace N {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => N;
+                }
+            }
+        }
+        abstract class AbstractInheritorOfAbstractClass extends foo.AbstractClassWithProtected.$metadata$.constructor {
+            constructor();
+            protected protectedAbstractFun(): number;
+        }
+        namespace AbstractInheritorOfAbstractClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => AbstractInheritorOfAbstractClass;
+            }
+        }
+        class InheritorOfAbstractClass extends foo.AbstractInheritorOfAbstractClass.$metadata$.constructor {
+            constructor();
+            protected get protectedAbstractVal(): number;
+        }
+        namespace InheritorOfAbstractClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => InheritorOfAbstractClass;
+            }
+        }
     }
 }

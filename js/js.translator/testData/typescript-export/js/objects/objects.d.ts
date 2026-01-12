@@ -376,5 +376,29 @@ declare namespace JS_TESTS {
                 }
             }
         }
+        abstract class AbstractClassWithProtected {
+            constructor();
+            protected abstract protectedAbstractFun(): number;
+            protected abstract get protectedAbstractVal(): number;
+        }
+        namespace AbstractClassWithProtected {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => AbstractClassWithProtected;
+            }
+        }
+        abstract class ObjectWithProtected extends KtSingleton<ObjectWithProtected.$metadata$.constructor>() {
+            private constructor();
+        }
+        namespace ObjectWithProtected {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                abstract class constructor extends foo.AbstractClassWithProtected.$metadata$.constructor {
+                    protected protectedAbstractFun(): number;
+                    protected get protectedAbstractVal(): number;
+                    private constructor();
+                }
+            }
+        }
     }
 }
