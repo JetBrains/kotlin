@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
 import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibCheckers
+import org.jetbrains.kotlin.ir.backend.js.wasm.collectAllExportNames
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
@@ -504,7 +505,7 @@ fun serializeModuleIntoKlib(
     wasmTarget: WasmTarget? = null,
     performanceManager: PerformanceManager? = null
 ) {
-    val moduleExportedNames = moduleFragment.collectExportedNames()
+    val moduleJsExportNames = moduleFragment.collectJsExportNames()
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
     val empty = ByteArray(0)
     val serializerOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
@@ -520,7 +521,7 @@ fun serializeModuleIntoKlib(
                     settings = IrSerializationSettings(configuration),
                     irDiagnosticReporter,
                     irBuiltIns,
-                ) { JsIrFileMetadata(moduleExportedNames[it]?.values?.toSmartList() ?: emptyList()) }
+                ) { JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: emptyList()) }
             },
             metadataSerializer = metadataSerializer,
             platformKlibCheckers = listOfNotNull(
@@ -532,7 +533,7 @@ fun serializeModuleIntoKlib(
                         doCheckCalls = true,
                         doModuleLevelChecks = true,
                         cleanFilesIrData,
-                        moduleExportedNames,
+                        moduleJsExportNames,
                     )
                 }.takeIf {
                     builtInsPlatform == BuiltInsPlatform.JS
@@ -544,7 +545,7 @@ fun serializeModuleIntoKlib(
                         irDiagnosticReporter,
                         configuration,
                         cleanFilesIrData,
-                        moduleExportedNames,
+                        moduleFragment.collectAllExportNames(),
                     )
                 }.takeIf { builtInsPlatform == BuiltInsPlatform.WASM }
             ),

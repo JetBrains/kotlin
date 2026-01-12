@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.originalFqName
 import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.wasm.getWasmExportName
+import org.jetbrains.kotlin.ir.backend.js.wasm.isWasmExportDeclaration
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -210,7 +212,8 @@ class DeclarationGenerator(
 
         val nameIfExported = when {
             declaration.isExplicitlyExported() -> declaration.getJsNameOrKotlinName().identifier
-            else -> declaration.getWasmExportNameIfWasmExport()
+            declaration.isWasmExportDeclaration() -> declaration.getWasmExportName()
+            else -> null
         }
 
         if (nameIfExported != null) {
@@ -665,7 +668,7 @@ fun IrFunction.getEffectiveValueParameters(): List<IrValueParameter> {
 }
 
 fun IrFunction.isExported(): Boolean =
-    isExplicitlyExported() || getWasmExportNameIfWasmExport() != null
+    isExplicitlyExported() || isWasmExportDeclaration()
 
 fun generateConstExpression(
     expression: IrConst,

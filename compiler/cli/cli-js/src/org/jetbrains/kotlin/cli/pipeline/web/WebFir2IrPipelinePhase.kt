@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectExportedNames
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectJsExportNames
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.incrementalDataProvider
@@ -134,7 +134,7 @@ private fun runJsKlibCallCheckers(
             doCheckCalls = true,
             doModuleLevelChecks = true,
             cleanFiles = cleanFilesIrData,
-            exportedNames = irModuleFragment.collectExportedNames(),
+            exportedNames = irModuleFragment.collectJsExportNames(),
         )
     )
 }
