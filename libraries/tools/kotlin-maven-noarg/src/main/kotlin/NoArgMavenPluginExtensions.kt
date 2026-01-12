@@ -54,6 +54,10 @@ class KotlinJpaMavenPluginExtension : KotlinMavenPluginExtension {
 
     override fun getPluginOptions(project: MavenProject, execution: MojoExecution): List<PluginOption> {
         logger.debug("Loaded Maven plugin " + javaClass.name)
-        return listOf(PluginOption("jpa", NOARG_COMPILER_PLUGIN_ID, PRESET_ARG_NAME, "jpa"))
+        // all-open plugin should be auto-applied by kotlin-maven-plugin in the presence of jpa plugin
+        return listOf(
+            PluginOption("jpa", NOARG_COMPILER_PLUGIN_ID, PRESET_ARG_NAME, "jpa"),
+            PluginOption("all-open", ALLOPEN_COMPILER_PLUGIN_ID, PRESET_ARG_NAME, "jpa")
+        )
     }
 }

@@ -301,6 +301,10 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             try {
                 KotlinMavenPluginExtension extension = container.lookup(KotlinMavenPluginExtension.class, pluginName);
                 loadedPlugins.put(pluginName, extension);
+                if ("jpa".equals(pluginName)) {
+                    // "jpa" compiler plugin should also apply 'all-open' plugin
+                    loadedPlugins.put("all-open", container.lookup(KotlinMavenPluginExtension.class, "all-open"));
+                }
                 getLog().debug("Got plugin instance " + pluginName + " of type " + extension.getClass().getName());
             } catch (ComponentLookupException e) {
                 getLog().debug("Unable to get plugin instance " + pluginName);
