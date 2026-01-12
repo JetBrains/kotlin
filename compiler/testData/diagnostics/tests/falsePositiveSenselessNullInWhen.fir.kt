@@ -10,12 +10,12 @@ class C {
 
     fun test(): Int {
         return if (e2 != null) {
-            when (e2) {
+            <!WHEN_ON_SEALED!>when (e2) {
                 E.A -> 1
                 E.B -> 10
                 E.C -> 100
                 null -> 0
-            }
+            }<!>
         } else {
             0
         }

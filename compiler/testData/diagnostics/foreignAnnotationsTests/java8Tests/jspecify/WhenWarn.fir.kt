@@ -47,12 +47,12 @@ fun test_3(): Int {
 }
 
 fun test_4(): Int {
-    return when (J.getPlatform()) {
+    return <!WHEN_ON_SEALED!>when (J.getPlatform()) {
         J.A -> 1
         J.B -> 2
         null -> 3
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
-    }
+    }<!>
 }
 
 fun test_5(): Int {
@@ -79,12 +79,12 @@ fun test_7(): Int {
 }
 
 fun test_8(): Int {
-    return when (J.getNonNull()) {
+    return <!WHEN_ON_SEALED!>when (J.getNonNull()) {
         J.A -> 1
         J.B -> 2
         null -> 3
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
-    }
+    }<!>
 }
 
 
@@ -112,10 +112,10 @@ fun test_11(): Int {
 }
 
 fun test_12(): Int {
-    return when (J.getNullable()) {
+    return <!WHEN_ON_SEALED!>when (J.getNullable()) {
         J.A -> 1
         J.B -> 2
         null -> 3
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
-    }
+    }<!>
 }

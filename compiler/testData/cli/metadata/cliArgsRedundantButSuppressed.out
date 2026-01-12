@@ -1,4 +1,4 @@
-compiler/testData/cli/metadata/cliArgs.kt:19:38: warning: exhaustive 'when' on sealed or enum class with 'else' --- Status
+compiler/testData/cli/metadata/cliArgs.kt:19:38: warning: exhaustive 'when' on sealed or enum class --- Status --- OTHER
 fun render(status: Status): String = when (status) {
                                      ^^^^^^^^^^^^^^^
 OK

@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/diagnosticTests/javaSealedClass/javaSealedClass.kt:1:28: warning: exhaustive 'when' on sealed or enum class without 'else' --- SealedJava
+compiler/testData/cli/jvm/diagnosticTests/javaSealedClass/javaSealedClass.kt:1:28: warning: exhaustive 'when' on sealed or enum class --- SealedJava --- EXHAUSTIVE
 fun test(sj: SealedJava) = when (sj) {
                            ^^^^^^^^^^^
 OK
