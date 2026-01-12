@@ -460,6 +460,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return false
     }
 
+    @K2Only
+    override fun KotlinTypeMarker.hasEnhancedNullability(): Boolean {
+        require(this is ConeKotlinType)
+        return hasEnhancedNullability
+    }
+
     override fun TypeConstructorMarker.isTypeVariable(): Boolean {
         return this is ConeTypeVariableTypeConstructor
     }

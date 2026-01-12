@@ -26,9 +26,9 @@ public class JavaUtils {
 // FILE: main.kt
 fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>JavaUtils.foo1(1)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>JavaUtils.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo2<!>(1)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>JavaUtils.foo2(1)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>JavaUtils.foo3(1)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>JavaUtils.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo4<!>(1)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: foo4, [/JavaUtils.foo4, /JavaUtils.foo4]")!>JavaUtils.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo4<!>(1)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>JavaUtils.foo5(1)<!>
 }
 

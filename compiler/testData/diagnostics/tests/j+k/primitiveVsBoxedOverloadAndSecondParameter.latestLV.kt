@@ -19,7 +19,7 @@ public class J {
 // FILE: main.kt
 fun main() {
     J.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1, "hello")
-    J.bar(1, "hello").length
+    J.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>(1, "hello").<!UNRESOLVED_REFERENCE!>length<!>
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, stringLiteral */

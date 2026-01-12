@@ -1,5 +1,6 @@
 // SKIP_JAVAC
 // JSR305_GLOBAL_REPORT: strict
+// LANGUAGE: +OverloadResolutionSpecificityForEnhancedJvmPrimitiveWrappers
 // ISSUE: KT-55548
 
 // FILE: spr/NonNullApi.java

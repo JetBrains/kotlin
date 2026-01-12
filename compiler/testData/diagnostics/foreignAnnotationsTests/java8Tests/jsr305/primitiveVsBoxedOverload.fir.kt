@@ -1,5 +1,6 @@
 // SKIP_JAVAC
 // JSR305_GLOBAL_REPORT: strict
+// LANGUAGE: +OverloadResolutionSpecificityForEnhancedJvmPrimitiveWrappers
 // ISSUE: KT-55548
 
 // FILE: spr/NonNullApi.java
@@ -42,5 +43,5 @@ interface TemplateRepository {
 interface SpringTemplateRepository : TemplateRepository, CrudRepository<String, Long>
 
 fun foo(r: SpringTemplateRepository) {
-    r.<!OVERLOAD_RESOLUTION_AMBIGUITY!>findById<!>(123).<!UNRESOLVED_REFERENCE!>get<!>(0)
+    r.findById(123).get(0)
 }
