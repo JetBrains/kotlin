@@ -219,11 +219,7 @@ internal object RuntimeTypeMapper {
             }
         }
 
-        if (isKnownBuiltInFunction(function)) {
-            return mapJvmFunctionSignature(function)
-        }
-
-        throw KotlinReflectionInternalError("Unknown origin of $function (${function.javaClass})")
+        return mapJvmFunctionSignature(function)
     }
 
     fun mapPropertySignature(possiblyOverriddenProperty: PropertyDescriptor): JvmPropertySignature {
@@ -252,14 +248,6 @@ internal object RuntimeTypeMapper {
             property.getter!!.let(this::mapJvmFunctionSignature),
             property.setter?.let(this::mapJvmFunctionSignature)
         )
-    }
-
-    private fun isKnownBuiltInFunction(descriptor: FunctionDescriptor): Boolean {
-        if (DescriptorFactory.isEnumValueOfMethod(descriptor) || DescriptorFactory.isEnumValuesMethod(descriptor)) return true
-
-        if (descriptor.name == CloneableClassScope.CLONE_NAME && descriptor.valueParameters.isEmpty()) return true
-
-        return false
     }
 
     private fun mapJvmFunctionSignature(descriptor: FunctionDescriptor): JvmFunctionSignature.KotlinFunction =

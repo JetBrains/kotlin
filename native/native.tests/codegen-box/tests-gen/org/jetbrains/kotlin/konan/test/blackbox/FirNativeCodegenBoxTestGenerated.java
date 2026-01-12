@@ -54661,6 +54661,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("functionClassMembers.kt")
+        public void testFunctionClassMembers() {
+          runTest("compiler/testData/codegen/box/reflection/builtins/functionClassMembers.kt");
+        }
+
+        @Test
         @TestMetadata("stringLength.kt")
         public void testStringLength() {
           runTest("compiler/testData/codegen/box/reflection/builtins/stringLength.kt");
