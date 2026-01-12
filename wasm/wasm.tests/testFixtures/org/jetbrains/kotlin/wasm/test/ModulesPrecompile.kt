@@ -77,6 +77,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
     val configuration = CompilerConfiguration().also {
         it.put(WasmConfigurationKeys.WASM_DEBUG, true)
         it.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
+        it.put(JSConfigurationKeys.WASM_COMPILATION, true)
         it.put(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
         it.put(WasmConfigurationKeys.WASM_GENERATE_WAT, debugMode >= DebugMode.DEBUG)
         it.put(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS, debugMode >= DebugMode.DEBUG)

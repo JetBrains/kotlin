@@ -7,16 +7,12 @@ package org.jetbrains.kotlin.ir.backend.js.wasm
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibDiagnosticContext
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibExportingDeclaration
 import org.jetbrains.kotlin.ir.backend.js.wasm.declarations.WasmKlibExportsChecker
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
 
 object WasmKlibCheckers {
@@ -25,13 +21,14 @@ object WasmKlibCheckers {
         diagnosticReporter: IrDiagnosticReporter,
         configuration: CompilerConfiguration,
         cleanFiles: List<SerializedIrFile> = listOf(),
-        exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>> = mapOf(),
+        exportedNames: ExportNamesMap = mapOf()
     ): IrVisitorVoid {
         return object : IrVisitorVoid() {
             private val diagnosticContext = JsKlibDiagnosticContext(configuration)
 
             override fun visitModuleFragment(declaration: IrModuleFragment) {
-                val exportedDeclarations = JsKlibExportingDeclaration.collectDeclarations(cleanFiles, declaration.files, exportedNames)
+                val exportedDeclarations =
+                    WasmKlibExportingDeclaration.collectDeclarations(cleanFiles, declaration.files, exportedNames)
                 WasmKlibExportsChecker.check(exportedDeclarations, this.diagnosticContext, diagnosticReporter)
             }
         }

@@ -92,10 +92,3 @@ fun IrAnnotationContainer.getJsFunAnnotation(): String? =
 
 fun IrAnnotationContainer.getJsPrimitiveType(): String? =
     getAnnotation(jsPrimitiveFqName)?.getSingleConstStringArgument()
-
-fun IrFunction.getWasmExportNameIfWasmExport(): String? {
-    val annotation = getAnnotation(wasmExportFqName) ?: return null
-    if (annotation.arguments.isEmpty()) return name.identifier
-    val nameFromAnnotation = (annotation.arguments[0] as? IrConst)?.value as? String
-    return nameFromAnnotation ?: name.identifier
-}

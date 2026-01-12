@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":wasm:wasm.config"))
     implementation(project(":compiler:cli-base"))
+    implementation(project(":core:compiler.common.wasm"))
 
     compileOnly(intellijCore())
     compileOnly(project(":compiler:cli-common"))
