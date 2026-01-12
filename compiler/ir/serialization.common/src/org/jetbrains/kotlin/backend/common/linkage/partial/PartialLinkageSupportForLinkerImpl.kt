@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.PartialLinkageErrorsLogged
+import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus.Unusable.*
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -30,7 +31,7 @@ else
     PartialLinkageSupportForLinker.DISABLED
 
 internal class PartialLinkageSupportForLinkerImpl(
-    builtIns: IrBuiltIns,
+    val builtIns: IrBuiltIns,
     private val logger: PartialLinkageLogger,
 ) : PartialLinkageSupportForLinker {
     private val stubGenerator = MissingDeclarationStubGenerator(builtIns)
@@ -62,18 +63,9 @@ internal class PartialLinkageSupportForLinkerImpl(
     }
 
     override fun exploreClassifiers(fakeOverrideBuilder: IrLinkerFakeOverrideProvider) {
-        val entries = fakeOverrideBuilder.fakeOverrideCandidates
-        if (entries.isEmpty()) return
-
-        val toExclude = buildSet {
-            for (clazz in entries.keys) {
-                if (classifierExplorer.exploreSymbol(clazz.symbol) != null) {
-                    this += clazz
-                }
-            }
+        for (clazz in fakeOverrideBuilder.fakeOverrideCandidates.keys) {
+            classifierExplorer.exploreSymbol(clazz.symbol)
         }
-
-        entries -= toExclude
     }
 
     override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) {
@@ -98,7 +90,26 @@ internal class PartialLinkageSupportForLinkerImpl(
             PartialLinkageErrorsLogged.raiseIssue(logger.messageCollector)
     }
 
-    override fun generateStubsForClassifiers(symbolTable: SymbolTable) {
+    override fun preprocessBeforeFakeOverridesBuilding(symbolTable: SymbolTable, fakeOverrideBuilder: IrLinkerFakeOverrideProvider) {
+        // Strip off supertypes from some `Unusable` classes to fix unclear/broken inheritance structure.
+        for (candidateClass in fakeOverrideBuilder.fakeOverrideCandidates.keys) {
+            candidateClass.partialLinkageStatus?.let {
+                when (it) {
+                    is ClassifierPartialLinkageStatus.Usable -> {}
+                    is AnnotationWithUnacceptableParameter -> {} // no problems with inheritance structure, so should not be treated here.
+                    is MissingClassifier -> {
+                        // Should not reach here, since if a class was not deserialized, it will not be enqueued into fakeOverrideCandidates.
+                        // Should it ever reach here, most probably, it should have either no supertypes, or only kotlin/Any.
+                    }
+                    is DueToOtherClassifier, is InvalidInheritance -> {
+                        // these usecases are tested by `js/js.translator/testData/incremental/invalidationWithPL/interfaceBecomeClass/`
+                        candidateClass.superTypes = listOf(builtIns.anyType)
+                    }
+                }
+            }
+        }
+
+        // Generate stubs for classifiers
         symbolTable.descriptorExtension.allUnboundSymbols
             .filter { it is IrClassifierSymbol || it is IrTypeAliasSymbol }
             .forEach { stubGenerator.getDeclaration(it) }
