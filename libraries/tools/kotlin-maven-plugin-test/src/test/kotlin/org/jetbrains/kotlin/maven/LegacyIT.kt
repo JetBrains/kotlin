@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.maven.plugin.test
 
+import org.jetbrains.kotlin.maven.test.KotlinMavenTestBase
+import org.jetbrains.kotlin.maven.test.MavenBuildOptions
 import org.jetbrains.kotlin.maven.test.MavenTest
 import org.jetbrains.kotlin.maven.test.MavenVersions
 import org.jetbrains.kotlin.maven.test.TestVersions

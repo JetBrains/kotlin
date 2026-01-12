@@ -9,24 +9,14 @@ import bsh.Interpreter
 import groovy.lang.Binding
 import groovy.util.GroovyScriptEngine
 import org.apache.maven.shared.verifier.Verifier
-import org.jetbrains.kotlin.maven.test.TestVersions
-import org.jetbrains.kotlin.maven.test.checkOrWriteKotlinMavenTestSettingsXml
-import org.jetbrains.kotlin.maven.test.configureMavenWrapperInProjectDirectory
+import org.jetbrains.kotlin.maven.test.MavenBuildOptions
 import org.jetbrains.kotlin.maven.test.isTeamCityRun
 import org.jetbrains.kotlin.maven.test.printLog
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
-import org.junit.jupiter.api.io.TempDir
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.PrintStream
 import java.io.StringReader
 import java.nio.file.Path
-import kotlin.io.bufferedReader
 import kotlin.io.path.*
 
 class MavenTestProject(
@@ -140,83 +130,3 @@ class MavenTestProject(
     }
 }
 
-data class MavenBuildOptions(
-    val javaVersion: TestVersions.Java = TestVersions.Java.JDK_17,
-    val useKotlinDaemon: Boolean? = null,
-    val extraMavenProperties: Map<String, String> = emptyMap(),
-) {
-    fun asCliArgs(): List<String> = buildList {
-        useKotlinDaemon?.let { add("-Dkotlin.compiler.daemon=$it") }
-        extraMavenProperties.forEach { (key, value) -> add("-D$key=$value") }
-    }
-}
-
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
-abstract class KotlinMavenTestBase {
-
-    @TempDir
-    lateinit var tmpDir: Path
-
-    lateinit var context: MavenTestExecutionContext
-    open val buildOptions: MavenBuildOptions = MavenBuildOptions()
-
-    @BeforeEach
-    fun setup() {
-        context = createMavenTestExecutionContextFromEnvironment(tmpDir)
-    }
-
-    @AfterEach
-    @EnabledOnOs(OS.WINDOWS)
-    fun cleanup() {
-        try {
-            @OptIn(kotlin.io.path.ExperimentalPathApi::class)
-            tmpDir.deleteRecursively()
-            return
-        } catch (_: Throwable) {
-            System.gc();
-        }
-
-        // try again, and fail otherwise
-        @OptIn(kotlin.io.path.ExperimentalPathApi::class)
-        tmpDir.deleteRecursively()
-    }
-
-    fun testProject(
-        projectDir: String,
-        mavenVersion: TestVersions.Maven,
-        buildOptions: MavenBuildOptions = this.buildOptions,
-        code: (MavenTestProject.() -> Unit)? = null,
-    ): MavenTestProject {
-        val workDir = copyProjectDir(projectDir, mavenVersion.version)
-        configureMavenWrapperInProjectDirectory(workDir, mavenVersion.version)
-
-        context.verifyCommonBshLocation.copyTo(workDir.resolve("verify-common.bsh"))
-
-        val settingsXml = workDir.resolve("settings.xml")
-        settingsXml.checkOrWriteKotlinMavenTestSettingsXml(context.kotlinBuildRepo)
-
-        val project = MavenTestProject(
-            name = projectDir,
-            context = context,
-            workDir = workDir,
-            settingsFile = settingsXml,
-            buildOptions = buildOptions
-        )
-
-        if (code != null) code(project)
-        return project
-    }
-
-    private fun copyProjectDir(projectDir: String, mavenVersion: String): Path {
-        val originalProjectDir = context.testProjectsDir.resolve(projectDir)
-        if (!originalProjectDir.exists()) error("Project dir $originalProjectDir does not exist")
-
-        val copyTo = context.testWorkDir.resolve(projectDir).resolve(mavenVersion)
-        copyTo.createDirectories()
-
-        @OptIn(ExperimentalPathApi::class)
-        originalProjectDir.copyToRecursively(copyTo, overwrite = false, followLinks = true)
-
-        return copyTo
-    }
-}
