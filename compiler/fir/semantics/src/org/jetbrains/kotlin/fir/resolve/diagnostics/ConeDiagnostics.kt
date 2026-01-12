@@ -288,7 +288,17 @@ sealed interface ConeUnmatchedTypeArgumentsError : ConeDiagnosticWithSymbol<FirC
 class ConeWrongNumberOfTypeArgumentsError(
     override val desiredCount: Int,
     override val symbol: FirClassLikeSymbol<*>,
-    source: KtSourceElement
+    source: KtSourceElement,
+    /**
+     * Right now, in LHS of callable reference, both diagnostic with this flag and without it can be encountered.
+     * If this flag is `true`, `WRONG_NUMBER_OF_TYPE_ARGUMENTS_FOR_CALLABLE_REFERENCE_LHS` diagnostic will be emitted
+     * (which is either deprecation warning or error). Otherwise, just old `WRONG_NUMBER_OF_TYPE_ARGUMENTS`.
+     *
+     * In case [org.jetbrains.kotlin.config.LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS] is on, only
+     * diagnostics *with* this flag are left in LHSs (i.e., only `WRONG_NUMBER_OF_TYPE_ARGUMENTS_FOR_CALLABLE_REFERENCE_LHS_ERROR`s
+     * can be reported there).
+     */
+    val isDeprecationErrorForCallableReferenceLHS: Boolean = false,
 ) : ConeDiagnosticWithSource(source), ConeUnmatchedTypeArgumentsError {
     override val reason: String get() = "Wrong number of type arguments"
 }

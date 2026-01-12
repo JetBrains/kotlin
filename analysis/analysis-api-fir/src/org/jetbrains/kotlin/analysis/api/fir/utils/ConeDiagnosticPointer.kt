@@ -128,11 +128,12 @@ private class ConeWrongNumberOfTypeArgumentsErrorDiagnosticPointer(
     private val desiredCount = coneDiagnostic.desiredCount
     private val symbolPointer = builder.classifierBuilder.buildClassLikeSymbol(coneDiagnostic.symbol).createPointer()
     private val sourcePointer = coneDiagnostic.source.createPointer()
+    private val forDeprecation = coneDiagnostic.isDeprecationErrorForCallableReferenceLHS
 
     override fun restore(session: KaFirSession): ConeDiagnostic? {
         val symbol = with(session) { symbolPointer.restoreSymbol() } ?: return null
         val source = sourcePointer.restore() ?: return null
-        return ConeWrongNumberOfTypeArgumentsError(desiredCount, symbol.firSymbol, source)
+        return ConeWrongNumberOfTypeArgumentsError(desiredCount, symbol.firSymbol, source, forDeprecation)
     }
 }
 

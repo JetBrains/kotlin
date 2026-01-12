@@ -44,21 +44,32 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
         for (diagnostic in expression.nonFatalDiagnostics) {
             when (diagnostic) {
                 is ConeWrongNumberOfTypeArgumentsError -> {
-                    reporter.reportOn(
-                        diagnostic.source,
-                        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
-                        diagnostic.desiredCount,
-                        diagnostic.symbol,
-                        // here, `desiredCount` corresponds to the number of type parameters for all parts of the qualifier altogether
-                        positioningStrategy = SourceElementPositioningStrategies.DEFAULT,
-                    )
-                    return
+                    if (diagnostic.isDeprecationErrorForCallableReferenceLHS) {
+                        reporter.reportOn(
+                            diagnostic.source,
+                            FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS,
+                            diagnostic.desiredCount,
+                            diagnostic.symbol,
+                        )
+                    } else {
+                        reporter.reportOn(
+                            diagnostic.source,
+                            FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
+                            diagnostic.desiredCount,
+                            diagnostic.symbol,
+                            // here, `desiredCount` corresponds to the number of type parameters for all parts of the qualifier altogether,
+                            // hence reporting on the whole qualifier
+                            positioningStrategy = SourceElementPositioningStrategies.DEFAULT,
+                        )
+                    }
                 }
             }
         }
 
         var typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
         var typeParameterSymbols = correspondingDeclaration.classTypeParameterSymbols
+
+        if (typeArgumentsWithSourceInfo.size != typeParameterSymbols.size) return
 
         if (correspondingDeclaration is FirTypeAliasSymbol) {
             val qualifierType = correspondingDeclaration.constructType(typeArgumentsWithSourceInfo.toTypedArray())
