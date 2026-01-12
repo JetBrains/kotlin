@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.hasAnnotationOrInsideAnnotatedClass
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 
 private val FirBasedSymbol<*>.isExternal
     get() = when (this) {
@@ -46,6 +48,11 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
 
     return getContainingClassSymbol()?.isEffectivelyExternal(session) == true
 }
+
+context(context: CheckerContext)
+fun FirCallableSymbol<*>.isEffectivelyExternalOrOverridingExternal(): Boolean =
+    isEffectivelyExternal(context.session) || directOverriddenSymbolsSafe()
+        .any { it.isEffectivelyExternalOrOverridingExternal() }
 
 fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
     if (hasAnnotationOrInsideAnnotatedClass(WebCommonStandardClassIds.Annotations.JsNative, session) || isEffectivelyExternal(session)) {

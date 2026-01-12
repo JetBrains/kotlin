@@ -35,7 +35,7 @@ object FirJsBuiltinNameClashChecker : FirBasicDeclarationChecker(MppCheckerKind.
             return
         }
 
-        val stableName = FirJsStableName.createStableNameOrNull(declaration.symbol, context.session)?.name ?: return
+        val stableName = FirJsStableName.createStableNameOrNull(declaration.symbol)?.name ?: return
 
         if (declaration.couldBeCompiledAsStaticMember && stableName in PROHIBITED_STATIC_NAMES) {
             reporter.reportOn(declaration.source, FirJsErrors.JS_BUILTIN_NAME_CLASH, "Function.$stableName")

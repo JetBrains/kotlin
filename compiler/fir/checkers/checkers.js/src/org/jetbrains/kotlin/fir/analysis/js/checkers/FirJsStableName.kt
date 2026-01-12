@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.js.checkers
 
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -16,33 +13,15 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 internal data class FirJsStableName(
     val name: String,
     val symbol: FirBasedSymbol<*>,
-    val canBeMangled: Boolean,
     val isPresentInGeneratedCode: Boolean,
 ) {
     companion object {
-        private fun hasPublicName(symbol: FirBasedSymbol<*>): Boolean {
-            return when (symbol) {
-                is FirClassLikeSymbol -> !symbol.isLocal
-                is FirCallableSymbol -> {
-                    val parentClass = symbol.getContainingClassSymbol()
-                    if (parentClass != null) {
-                        when (symbol.visibility) {
-                            is Visibilities.Public -> true
-                            is Visibilities.Protected -> !parentClass.isFinal && parentClass.visibility.isPublicAPI
-                            else -> false
-                        }
-                    } else {
-                        !symbol.isLocal && symbol.effectiveVisibility.publicApi
-                    }
-                }
-                else -> false
-            }
-        }
-
-        fun createStableNameOrNull(symbol: FirBasedSymbol<*>, session: FirSession): FirJsStableName? {
+        context(context: CheckerContext)
+        fun createStableNameOrNull(symbol: FirBasedSymbol<*>): FirJsStableName? {
+            val session = context.session
             val jsName = symbol.getJsName(session)
             if (jsName != null) {
-                return FirJsStableName(jsName, symbol, false, symbol.isPresentInGeneratedCode(session))
+                return FirJsStableName(jsName, symbol, symbol.isPresentInGeneratedCode(session))
             }
 
             when (symbol) {
@@ -56,27 +35,18 @@ internal data class FirJsStableName(
 
             val hasStableNameInJavaScript = when {
                 symbol.isEffectivelyExternal(session) -> true
+                symbol is FirCallableSymbol<*> && symbol.isEffectivelyExternalOrOverridingExternal() -> true
                 symbol.isExportedObject(session) -> true
                 else -> false
             }
 
-            if (hasStableNameInJavaScript ||
-                // TODO: The behavior (using hasPublicName()) is inherited from K1 frontend checks for the Legacy backend.
-                //  However, it is entirely unnecessary in the IR backend.
-                //  This is a trying to replicate the K1 Legacy logic for the sake of consistency,
-                //  but we should redesign and overhaul it later: KT-60554
-                // TODO: After that, FirJsStableName.canBeMangled should always be false,
-                //  and all related code can be removed, such as methods:
-                //  - FirJsStableName.hasPublicName();
-                //  - FirBasedSymbol<*>.doesJSManglingChangeName();
-                //  - FirJsStableName.shouldClashBeCaughtByCommonFrontendCheck().
-                hasPublicName(symbol)
-            ) {
+            if (hasStableNameInJavaScript) {
                 val name = symbol.memberDeclarationNameOrNull?.identifierOrNullIfSpecial
                 if (name != null) {
-                    return FirJsStableName(name, symbol, !hasStableNameInJavaScript, symbol.isPresentInGeneratedCode(session))
+                    return FirJsStableName(name, symbol, symbol.isPresentInGeneratedCode(session))
                 }
             }
+
             return null
         }
     }
@@ -98,8 +68,7 @@ internal data class FirJsStableName(
             isExternalRedeclarable() || other.isExternalRedeclarable() -> false
             symbol.isActual != other.symbol.isActual -> false
             symbol.isExpect != other.symbol.isExpect -> false
-            canBeMangled != other.canBeMangled -> false
-            else -> !canBeMangled
+            else -> true
         }
     }
 }

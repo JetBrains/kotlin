@@ -2,21 +2,21 @@
 // OPT_IN: kotlin.js.ExperimentalJsExport, kotlin.js.ExperimentalJsStatic
 // FILE: f0.kt
 class C {
-    class <!JS_BUILTIN_NAME_CLASH!>prototype<!>
+    class prototype
 
-    class <!JS_BUILTIN_NAME_CLASH!>length<!>
+    class length
 
-    class <!JS_BUILTIN_NAME_CLASH!>`$metadata$`<!>
+    class `$metadata$`
 
-    <!JS_BUILTIN_NAME_CLASH!>fun constructor()<!> {}
+    fun constructor() {}
 }
 
 class D {
-    private class <!JS_BUILTIN_NAME_CLASH!>prototype<!>
+    private class prototype
 
-    private class <!JS_BUILTIN_NAME_CLASH!>length<!>
+    private class length
 
-    private class <!JS_BUILTIN_NAME_CLASH!>`$metadata$`<!>
+    private class `$metadata$`
 
     private fun constructor() {}
 }
@@ -58,7 +58,7 @@ class H {
 }
 
 class I {
-    <!JS_BUILTIN_NAME_CLASH!>val constructor<!> = 1
+    val constructor = 1
 }
 
 class prototype
@@ -88,7 +88,8 @@ class NonExternalChild : ExternalInterface {
 }
 
 // JsStatic: previously prohibited static names as companion members
-class StaticByJsStatic {
+@JsExport
+class ExportedStaticByJsStatic {
     companion object {
         <!JS_BUILTIN_NAME_CLASH!>@JsStatic
         fun prototype()<!> {}
@@ -98,6 +99,19 @@ class StaticByJsStatic {
 
         <!JS_BUILTIN_NAME_CLASH!>@JsStatic
         fun `$metadata$`()<!> {}
+    }
+}
+
+class NotExportedStaticByJsStatic {
+    companion object {
+        @JsStatic
+        fun prototype() {}
+
+        @JsStatic
+        fun length() {}
+
+        @JsStatic
+        fun `$metadata$`() {}
     }
 }
 

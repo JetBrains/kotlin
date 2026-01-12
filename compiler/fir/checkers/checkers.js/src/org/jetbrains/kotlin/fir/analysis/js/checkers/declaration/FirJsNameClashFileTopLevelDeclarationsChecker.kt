@@ -23,7 +23,7 @@ object FirJsNameClashFileTopLevelDeclarationsChecker : FirFileChecker(MppChecker
     private fun MutableMap<String, MutableList<FirJsStableName>>.addStableName(
         symbol: FirBasedSymbol<*>
     ) {
-        val stableName = FirJsStableName.createStableNameOrNull(symbol, context.session)
+        val stableName = FirJsStableName.createStableNameOrNull(symbol)
         if (stableName != null) {
             getOrPut(stableName.name) { mutableListOf() }.add(stableName)
         }
