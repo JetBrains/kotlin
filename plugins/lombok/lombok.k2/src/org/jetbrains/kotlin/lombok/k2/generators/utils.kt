@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
@@ -95,8 +94,6 @@ private fun sameSignature(a: FirFunction, b: FirFunction): Boolean {
             bVararg && aSize >= (bSize - 1) ||
             aSize == bSize
 }
-
-internal inline fun <A, B, C> uncurry(crossinline f: (A, B) -> C): (Pair<A, B>) -> C = { (a, b) -> f(a, b) }
 
 fun FirClassSymbol<*>.createJavaMethod(
     name: Name,

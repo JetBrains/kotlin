@@ -43,7 +43,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         get() = session.lombokService
 
     private val cache: FirCache<Pair<FirClassSymbol<*>, FirClassDeclaredMemberScope?>, Map<Name, List<FirJavaMethod>>?, Nothing?> =
-        session.firCachesFactory.createCache(uncurry(::createAccessors))
+        session.firCachesFactory.createCache(::createAccessors)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableJavaClass()) return emptySet()
@@ -57,10 +57,8 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         return accessor.map { it.symbol }
     }
 
-    private fun createAccessors(
-        classSymbol: FirClassSymbol<*>,
-        declaredScope: FirClassDeclaredMemberScope?
-    ): Map<Name, List<FirJavaMethod>>? {
+    private fun createAccessors(key: Pair<FirClassSymbol<*>, FirClassDeclaredMemberScope?>): Map<Name, List<FirJavaMethod>>? {
+        val (classSymbol, declaredScope) = key
         val fieldsWithAccessor = computeFieldsWithAccessors(classSymbol) ?: return null
         val globalAccessors = lombokService.getAccessors(classSymbol)
         val explicitlyDeclaredFunctions = declaredScope?.collectAllFunctions()?.associateBy { it.name }.orEmpty()
