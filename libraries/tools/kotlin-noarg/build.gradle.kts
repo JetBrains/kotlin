@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
+    commonImplementation(project(":kotlin-allopen"))
 
     testImplementation(gradleApi())
     testImplementation(libs.junit4)

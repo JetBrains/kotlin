@@ -252,6 +252,39 @@
             "dependencies": [
                 {
                     "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-allopen",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
                     "module": "kotlin-gradle-plugin-api",
                     "version": {
                         "requires": "ArtifactsTest.version"
@@ -510,6 +543,39 @@
                 "org.gradle.plugin.api-version": "8.11"
             },
             "dependencies": [
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-allopen",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
                 {
                     "group": "org.jetbrains.kotlin",
                     "module": "kotlin-gradle-plugin-api",
@@ -772,6 +838,39 @@
             "dependencies": [
                 {
                     "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-allopen",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
                     "module": "kotlin-gradle-plugin-api",
                     "version": {
                         "requires": "ArtifactsTest.version"
@@ -1030,6 +1129,39 @@
                 "org.gradle.plugin.api-version": "8.1"
             },
             "dependencies": [
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-allopen",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
                 {
                     "group": "org.jetbrains.kotlin",
                     "module": "kotlin-gradle-plugin-api",
@@ -1292,6 +1424,39 @@
             "dependencies": [
                 {
                     "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-allopen",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
                     "module": "kotlin-gradle-plugin-api",
                     "version": {
                         "requires": "ArtifactsTest.version"
@@ -1550,6 +1715,39 @@
                 "org.gradle.plugin.api-version": "8.5"
             },
             "dependencies": [
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-allopen",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
                 {
                     "group": "org.jetbrains.kotlin",
                     "module": "kotlin-gradle-plugin-api",
@@ -1812,6 +2010,39 @@
             "dependencies": [
                 {
                     "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-allopen",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
                     "module": "kotlin-gradle-plugin-api",
                     "version": {
                         "requires": "ArtifactsTest.version"
@@ -2072,6 +2303,39 @@
             "dependencies": [
                 {
                     "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-allopen",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
                     "module": "kotlin-gradle-plugin-api",
                     "version": {
                         "requires": "ArtifactsTest.version"
@@ -2219,6 +2483,39 @@
                 "org.gradle.libraryelements": "jar"
             },
             "dependencies": [
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-allopen",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
                 {
                     "group": "org.jetbrains.kotlin",
                     "module": "kotlin-gradle-plugin-api",
