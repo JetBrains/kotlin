@@ -17,13 +17,15 @@ fun main(args: Array<String>) {
 
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
     val k1BoxTestDir = "multiplatform/k1"
+    // KT-68747: `box/fir/inferenceWithTypeAliasFromOtherModule.kt` takes infinite time to compile. Fixed in 2.0.20
+    val CUSTOM_FIRST_STAGE_EXCLUSION_PATTERN = "^inferenceWithTypeAliasFromOtherModule.kt\$"
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomNativeCompilerFirstStageTest>(
                 annotations = listOf(annotation(HeavyTest::class.java))
             ) {
-                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, excludedPattern = CUSTOM_FIRST_STAGE_EXCLUSION_PATTERN)
                 model("boxInline")
             }
             testClass<AbstractCustomNativeCompilerSecondStageTest>(
