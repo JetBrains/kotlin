@@ -8,6 +8,7 @@
 #include <llvm/Passes/StandardInstrumentations.h>
 #include <llvm/Transforms/Utils/Cloning.h>
 
+#include "KotlinHiddenPass.h"
 #include "PassesProfileHandler.h"
 
 using namespace llvm;
@@ -58,6 +59,16 @@ extern "C" LLVMErrorRef LLVMKotlinRunPasses(
     PTO.MaxDevirtIterations = 0;
     PassInstrumentationCallbacks PIC;
     PassBuilder PB(Machine, PTO, std::nullopt, &PIC);
+
+    PB.registerPipelineParsingCallback(
+        [](StringRef Name, ModulePassManager& PM, ArrayRef<PassBuilder::PipelineElement>) {
+            if (Name == "kotlin-hidden") {
+                PM.addPass(KotlinHiddenPass());
+                return true;
+            }
+            return false;
+        }
+    );
 
     LoopAnalysisManager LAM;
     FunctionAnalysisManager FAM;
