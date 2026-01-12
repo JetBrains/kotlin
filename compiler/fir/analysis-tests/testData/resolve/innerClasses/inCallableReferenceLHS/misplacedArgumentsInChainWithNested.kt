@@ -19,9 +19,9 @@ fun testWithThreeArgs() {
 }
 
 fun testWithFourArgs() {
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>Outer<Any>.Middle<String, Int><!>.Inner<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Char><!>::foo
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>Outer<Int, Any>.Middle<String><!>.Inner<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Char><!>::foo
-    Outer.Middle<String, Int, Any>.Inner<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Char><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>Outer<Any>.Middle<String, Int><!>.Inner<Char><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>Outer<Int, Any>.Middle<String><!>.Inner<Char><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer.Middle<String, Int, Any>.Inner<Char><!>::foo
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration, inner,

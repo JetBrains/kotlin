@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.FE10LikeConeSubstitutor
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -48,6 +49,8 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
                         diagnostic.desiredCount,
                         diagnostic.symbol,
+                        // here, `desiredCount` corresponds to the number of type parameters for all parts of the qualifier altogether
+                        positioningStrategy = SourceElementPositioningStrategies.DEFAULT,
                     )
                     return
                 }
