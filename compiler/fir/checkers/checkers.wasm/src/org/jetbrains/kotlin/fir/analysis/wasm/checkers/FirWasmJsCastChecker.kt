@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers
 
-import org.jetbrains.kotlin.fir.FirPlatformSpecificCastChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformSpecificCastChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.TypeOperationApplicabilityChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.TypeOperationApplicabilityChecker
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 

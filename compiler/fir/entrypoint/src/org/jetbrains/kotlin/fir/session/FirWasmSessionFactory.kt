@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.FirPlatformSpecificCastChecker
-import org.jetbrains.kotlin.fir.FirPlatformSpecificEqualityChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformSpecificCastChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformSpecificEqualityChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.FirWasmJsCastChecker

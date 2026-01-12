@@ -3,7 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.types
+package org.jetbrains.kotlin.fir.analysis.checkers
+
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 // an abstract general checker for applicability of type operations, with a simple "yes"/"no" result
 abstract class TypeOperationApplicabilityChecker {

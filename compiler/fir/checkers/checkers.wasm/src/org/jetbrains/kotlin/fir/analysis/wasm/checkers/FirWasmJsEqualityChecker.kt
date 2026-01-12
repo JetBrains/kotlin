@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers
 
-import org.jetbrains.kotlin.fir.FirPlatformSpecificEqualityChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformSpecificEqualityChecker
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.TypeOperationApplicabilityChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.TypeOperationApplicabilityChecker
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 

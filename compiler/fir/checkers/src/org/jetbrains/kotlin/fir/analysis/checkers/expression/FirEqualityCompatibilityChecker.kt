@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.firPlatformSpecificEqualityChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.firPlatformSpecificEqualityChecker
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.types.*
 

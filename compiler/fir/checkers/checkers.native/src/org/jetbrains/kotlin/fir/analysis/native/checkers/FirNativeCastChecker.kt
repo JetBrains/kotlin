@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
-import org.jetbrains.kotlin.fir.FirPlatformSpecificCastChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformSpecificCastChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.TypeOperationApplicabilityChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.TypeOperationApplicabilityChecker
 
 object FirNativeCastChecker : FirPlatformSpecificCastChecker() {
     override fun shouldSuppressImpossibleCast(
