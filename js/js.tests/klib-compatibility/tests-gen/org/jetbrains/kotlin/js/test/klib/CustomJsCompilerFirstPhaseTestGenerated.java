@@ -53409,6 +53409,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
+        @TestMetadata("functionClassMembers.kt")
+        public void testFunctionClassMembers() {
+          runTest("compiler/testData/codegen/box/reflection/builtins/functionClassMembers.kt");
+        }
+
+        @Test
         @TestMetadata("stringLength.kt")
         public void testStringLength() {
           runTest("compiler/testData/codegen/box/reflection/builtins/stringLength.kt");
