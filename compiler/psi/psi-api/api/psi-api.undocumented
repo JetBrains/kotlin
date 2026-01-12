@@ -2337,7 +2337,6 @@ org.jetbrains.kotlin.resolve.source.PsiSourceElement
 org.jetbrains.kotlin.resolve.source.PsiSourceElement.psi
 org.jetbrains.kotlin.resolve.source.PsiSourceFile
 org.jetbrains.kotlin.resolve.source.getPsi()
-org.jetbrains.kotlin.types.expressions.OperatorConventions
 org.jetbrains.kotlin.types.expressions.OperatorConventions:ASSIGNMENT_OPERATIONS
 org.jetbrains.kotlin.types.expressions.OperatorConventions:ASSIGNMENT_OPERATION_COUNTERPARTS
 org.jetbrains.kotlin.types.expressions.OperatorConventions:ASSIGN_METHOD

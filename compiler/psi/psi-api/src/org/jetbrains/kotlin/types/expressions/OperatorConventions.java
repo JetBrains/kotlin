@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.name.Name;
 
 import static org.jetbrains.kotlin.util.OperatorNameConventions.*;
 
+/**
+ * Should be consistent with {@link org.jetbrains.kotlin.util.OperatorNameConventions}
+ */
 public class OperatorConventions {
 
     private OperatorConventions() {}
