@@ -127,7 +127,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     return if (this is BaseContinuationImpl)
         create(probeCompletion)
     else
-        createCoroutineFromSuspendFunction(probeCompletion) {
+        createCoroutineFromSuspendFunction(probeCompletion, this is SuspendUnitFunctionReference) {
             (this as Function1<Continuation<T>, Any?>).invoke(it)
         }
 }
@@ -162,7 +162,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     return if (this is BaseContinuationImpl)
         create(receiver, probeCompletion)
     else {
-        createCoroutineFromSuspendFunction(probeCompletion) {
+        createCoroutineFromSuspendFunction(probeCompletion, this is SuspendUnitFunctionReference) {
             (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, it)
         }
     }
@@ -199,46 +199,100 @@ public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
 @SinceKotlin("1.3")
 private inline fun <T> createCoroutineFromSuspendFunction(
     completion: Continuation<T>,
+    isUnitFunction: Boolean = false,
     crossinline block: (Continuation<T>) -> Any?
 ): Continuation<Unit> {
     val context = completion.context
     // label == 0 when coroutine is not started yet (initially) or label == 1 when it was
-    return if (context === EmptyCoroutineContext)
-        object : RestrictedContinuationImpl(completion as Continuation<Any?>) {
-            private var label = 0
+    return when {
+        context === EmptyCoroutineContext && isUnitFunction ->
+            object : RestrictedContinuationImpl(completion as Continuation<Any?>) {
+                private var label = 0
 
-            override fun invokeSuspend(result: Result<Any?>): Any? =
-                when (label) {
-                    0 -> {
-                        label = 1
-                        val _ = result.getOrThrow() // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
-                        block(this) // run the block, may return or suspend
+                override fun invokeSuspend(result: Result<Any?>): Any? =
+                    when (label) {
+                        0 -> {
+                            label = 1
+                            // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
+                            val _ = result.getOrThrow()
+                            // run the block, may return or suspend
+                            block(this)
+                        }
+                        1 -> {
+                            label = 2
+                            // this is the result if the block had suspended
+                            result.throwOnFailure()
+                            // even if resumed with a non-Unit result due to tailcall optimization, only return Unit from Unit functions
+                        }
+                        else -> error("This coroutine had already completed")
                     }
-                    1 -> {
-                        label = 2
-                        result.getOrThrow() // this is the result if the block had suspended
-                    }
-                    else -> error("This coroutine had already completed")
-                }
-        }
-    else
-        object : ContinuationImpl(completion as Continuation<Any?>, context) {
-            private var label = 0
+            }
 
-            override fun invokeSuspend(result: Result<Any?>): Any? =
-                when (label) {
-                    0 -> {
-                        label = 1
-                        val _ = result.getOrThrow() // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
-                        block(this) // run the block, may return or suspend
+        context === EmptyCoroutineContext ->
+            object : RestrictedContinuationImpl(completion as Continuation<Any?>) {
+                private var label = 0
+
+                override fun invokeSuspend(result: Result<Any?>): Any? =
+                    when (label) {
+                        0 -> {
+                            label = 1
+                            // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
+                            val _ = result.getOrThrow()
+                            // run the block, may return or suspend
+                            block(this)
+                        }
+                        1 -> {
+                            label = 2
+                            result.getOrThrow() // this is the result if the block had suspended
+                        }
+                        else -> error("This coroutine had already completed")
                     }
-                    1 -> {
-                        label = 2
-                        result.getOrThrow() // this is the result if the block had suspended
+            }
+
+        isUnitFunction ->
+            object : ContinuationImpl(completion as Continuation<Any?>, context) {
+                private var label = 0
+
+                override fun invokeSuspend(result: Result<Any?>): Any? =
+                    when (label) {
+                        0 -> {
+                            label = 1
+                            // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
+                            val _ = result.getOrThrow()
+                            // run the block, may return or suspend
+                            block(this)
+                        }
+                        1 -> {
+                            label = 2
+                            // this is the result if the block had suspended
+                            result.throwOnFailure()
+                            // even if resumed with a non-Unit result due to tailcall optimization, only return Unit from Unit functions
+                        }
+                        else -> error("This coroutine had already completed")
                     }
-                    else -> error("This coroutine had already completed")
-                }
-        }
+            }
+
+        else ->
+            object : ContinuationImpl(completion as Continuation<Any?>, context) {
+                private var label = 0
+
+                override fun invokeSuspend(result: Result<Any?>): Any? =
+                    when (label) {
+                        0 -> {
+                            label = 1
+                            // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
+                            val _ = result.getOrThrow()
+                            // run the block, may return or suspend
+                            block(this)
+                        }
+                        1 -> {
+                            label = 2
+                            result.getOrThrow() // this is the result if the block had suspended
+                        }
+                        else -> error("This coroutine had already completed")
+                    }
+            }
+    }
 }
 
 /**

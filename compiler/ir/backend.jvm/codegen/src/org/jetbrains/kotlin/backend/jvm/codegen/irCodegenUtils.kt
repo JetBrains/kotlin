@@ -220,6 +220,9 @@ private val KOTLIN_MARKER_INTERFACES: Map<FqName, String> = run {
     kotlinMarkerInterfaces
 }
 
+private fun IrType.isSuspendUnitFunction(): Boolean =
+    isSuspendFunction() && this is IrSimpleType && arguments.lastOrNull()?.typeOrNull?.isUnit() == true
+
 internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type, generateBodies: Boolean): JvmClassSignature {
     val sw = BothSignatureWriter(BothSignatureWriter.Mode.CLASS)
     writeFormalTypeParameters(irClass.typeParameters, sw)
@@ -242,6 +245,9 @@ internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type, genera
         // the Function{n} type and fails, because that type doesn't need an import in the Kotlin source (kotlin.Function{n}), but needs one
         // in the Java source (kotlin.jvm.functions.Function{n}), and kapt3 doesn't perform any Kotlin->Java name lookup.
         kotlinMarkerInterfaces.add("kotlin/coroutines/jvm/internal/SuspendFunction")
+        if (superClassAsmType == AsmTypes.FUNCTION_REFERENCE_IMPL && irClass.superTypes.any { it.isSuspendUnitFunction() }) {
+            kotlinMarkerInterfaces.add("kotlin/coroutines/jvm/internal/SuspendUnitFunctionReference")
+        }
     }
 
     val superInterfaces = LinkedHashSet<String>()

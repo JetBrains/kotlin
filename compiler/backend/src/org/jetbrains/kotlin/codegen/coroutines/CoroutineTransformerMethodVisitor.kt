@@ -432,7 +432,9 @@ class CoroutineTransformerMethodVisitor(
         }
     }
 
-    /* Put { POP, GETSTATIC Unit } after suspension point if suspension point is a call of suspend function, that returns Unit.
+    /* NOTE: Obsolete! No INLINE_MARKER_RETURNS_UNIT are added anymore. This processing code is left for the backward compatibility only.
+     *
+     * Put { POP, GETSTATIC Unit } after suspension point if suspension point is a call of suspend function, that returns Unit.
      *
      * Otherwise, upon resume, the function would seem to not return Unit, despite being declared as returning Unit.
      *

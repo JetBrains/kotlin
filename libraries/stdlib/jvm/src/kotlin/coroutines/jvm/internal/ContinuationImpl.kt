@@ -137,6 +137,10 @@ internal object CompletedContinuation : Continuation<Any?> {
 // To distinguish suspend function types from ordinary function types all suspend function types shall implement this interface
 internal interface SuspendFunction
 
+@SinceKotlin("2.3")
+// Marks suspend functions references as returning Unit
+internal interface SuspendUnitFunctionReference
+
 @SinceKotlin("1.3")
 // Restricted suspension lambdas inherit from this class
 internal abstract class RestrictedSuspendLambda(
