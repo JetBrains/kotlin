@@ -3,7 +3,7 @@
 // DISABLE_NATIVE: gcScheduler=AGGRESSIVE
 // DISABLE_NATIVE: gcScheduler=MANUAL
 // The test checks GC, we need to allocate everything on the heap.
-// FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative -Xdisable-phases=EscapeAnalysis -friend-modules=$KOTLIN_NATIVE_DISTRIBUTION$/klib/common/stdlib
+// FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative -Xdisable-phases=EscapeAnalysis -friend-modules=$KOTLIN_NATIVE_DISTRIBUTION$/klib/common/stdlib -Xruntime-logs=gc=debug
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class, kotlin.native.concurrent.ObsoleteWorkersApi::class)
 
 import kotlin.concurrent.AtomicInt
