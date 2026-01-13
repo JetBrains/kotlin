@@ -339,7 +339,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 """.trimIndent()
                 }
                 fileWithBoxFun.module.files += TestFile.createUncommitted(
-                    location = fileWithBoxFun.location.parentFile.resolve("main.kt"),
+                    location = fileWithBoxFun.location.parentFile.resolve("Generated_Box_Main.kt"),
                     module = fileWithBoxFun.module,
                     text = mainSource
                 )

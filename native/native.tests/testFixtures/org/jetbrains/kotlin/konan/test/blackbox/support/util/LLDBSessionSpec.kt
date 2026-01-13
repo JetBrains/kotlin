@@ -198,10 +198,10 @@ internal class SteppingLLDBSessionSpec(
             }
 
             val (sourceName, lineStr, funRawName) = stepLine.split('\u001f', limit = 3)
-            if (funRawName == "") {
-                return@mapNotNull null
-            }
 
+            // Function names in K/N are mangled in a quite obscure way, so here we try to extract
+            // the original, simple function name from it, plus its container (a class or package
+            // where the function is defined).
             val funNameMatch = KFunNameStaticSuspendRe.matchAt(funRawName, 0)
                 ?: KFunNameInternalRe.matchAt(funRawName, 0)
                 ?: KFunNameRegularRe.matchAt(funRawName, 0)
