@@ -69,7 +69,7 @@ internal fun getAllMembers(kClass: KClassImpl<*>): Collection<DescriptorKCallabl
     return membersMutable.values + kotlinDeclaredPrivates.values
 }
 
-internal fun starProjectionInTopLevelTypeIsNotNotPossible(containerForDebug: Any): Nothing =
+internal fun starProjectionInTopLevelTypeIsNotPossible(containerForDebug: Any): Nothing =
     error(
         "Star projection in top level type is not possible. " +
                 "Star projection appeared in the following container: '$containerForDebug'"
@@ -85,7 +85,7 @@ private object CovariantOverrideComparator : Comparator<DescriptorKCallable<*>> 
             )
         val aReturnType =
             typeParametersEliminator.substitute(a.returnType).type
-                ?: starProjectionInTopLevelTypeIsNotNotPossible(containerForDebug = a.name)
+                ?: starProjectionInTopLevelTypeIsNotPossible(containerForDebug = a.name)
         val bReturnType = b.returnType
 
         val aIsSubtypeOfB = aReturnType.isSubtypeOf(bReturnType)
@@ -390,7 +390,7 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
                 val equalUpperBounds = typeParameterA.upperBounds
                     .map {
                         functionTypeParametersEliminator.substitute(it).type
-                            ?: starProjectionInTopLevelTypeIsNotNotPossible(containerForDebug = name)
+                            ?: starProjectionInTopLevelTypeIsNotPossible(containerForDebug = name)
                     }
                     .sortedUpperBounds(memberNameForDebug = name)
                     .zip(typeParameterB.upperBounds.sortedUpperBounds(memberNameForDebug = other.name))
@@ -399,7 +399,7 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
             }
             for (i in kotlinParameterTypes.indices) {
                 val a = functionTypeParametersEliminator.substitute(kotlinParameterTypes[i]).type
-                    ?: starProjectionInTopLevelTypeIsNotNotPossible(containerForDebug = name)
+                    ?: starProjectionInTopLevelTypeIsNotPossible(containerForDebug = name)
                 val b = other.kotlinParameterTypes[i]
                 if (!areEqualKTypes(a, b)) return false
             }

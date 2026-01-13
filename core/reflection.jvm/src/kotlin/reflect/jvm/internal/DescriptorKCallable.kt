@@ -104,7 +104,7 @@ internal abstract class DescriptorKCallable<out R>(
     private val _returnType = ReflectProperties.lazySoft {
         val type = computeReturnType()
         overriddenStorage.typeSubstitutor.substitute(type).type
-            ?: starProjectionInTopLevelTypeIsNotNotPossible(containerForDebug = name)
+            ?: starProjectionInTopLevelTypeIsNotPossible(containerForDebug = name)
     }
 
     override val returnType: KType
