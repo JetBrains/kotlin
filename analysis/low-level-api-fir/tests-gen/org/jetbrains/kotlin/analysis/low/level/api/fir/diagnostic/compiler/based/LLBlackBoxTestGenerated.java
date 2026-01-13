@@ -57665,12 +57665,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
-      @TestMetadata("propertyOrder.kt")
-      public void testPropertyOrder() {
-        runTest("compiler/testData/codegen/box/reflection/properties/propertyOrder.kt");
-      }
-
-      @Test
       @TestMetadata("protectedClassVar.kt")
       public void testProtectedClassVar() {
         runTest("compiler/testData/codegen/box/reflection/properties/protectedClassVar.kt");
