@@ -10,7 +10,7 @@ package kotlin.text
 
 /**
  * Trims leading whitespace characters followed by [marginPrefix] from every line of a source string and removes
- * the first and the last lines if they are blank (notice difference blank vs empty).
+ * the first and the last lines if they are blank (notice difference [isBlank] vs. [isEmpty]).
  *
  * Doesn't affect a line if it doesn't contain [marginPrefix] except the first and the last blank lines.
  *
