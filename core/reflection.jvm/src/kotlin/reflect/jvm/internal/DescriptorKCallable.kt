@@ -26,7 +26,10 @@ internal abstract class DescriptorKCallable<out R>(
 
     protected abstract fun computeReturnType(): DescriptorKType
 
-    internal abstract fun shallowCopy(overriddenStorage: KCallableOverriddenStorage): DescriptorKCallable<R>
+    internal abstract fun shallowCopy(
+        container: KDeclarationContainerImpl,
+        overriddenStorage: KCallableOverriddenStorage,
+    ): DescriptorKCallable<R>
 
     private val _annotations = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
