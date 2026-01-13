@@ -14,7 +14,6 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationLegacyDumpExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
@@ -35,11 +34,12 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
 
     override val keepUnsupportedTargets: Property<Boolean> = objects.property<Boolean>()
 
+    @Suppress("DEPRECATION")
     @Deprecated(
         "A separate 'legacyDump' property was removed. Please place all its properties on a higher level.",
         level = DeprecationLevel.WARNING
     )
-    override val legacyDump: AbiValidationLegacyDumpExtension = AbiValidationLegacyDumpExtensionImpl(referenceDumpDir)
+    override val legacyDump: org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationLegacyDumpExtension = AbiValidationLegacyDumpExtensionImpl(referenceDumpDir)
 
     override val checkTaskProvider: TaskProvider<Task>
         get() = tasks.named(KotlinAbiCheckTaskImpl.NAME)
@@ -53,11 +53,11 @@ internal fun Project.AbiValidationExtensionImpl(): AbiValidationExtensionImpl =
     objects.newInstance(AbiValidationExtensionImpl::class.java, objects, tasks)
 
 
+@Suppress("DEPRECATION")
 private class AbiValidationLegacyDumpExtensionImpl(
     @Deprecated(
         "A separate block 'legacyDump' was removed. All its properties have been moved to a higher level.",
         level = DeprecationLevel.WARNING
     )
     override val referenceDumpDir: DirectoryProperty,
-) : AbiValidationLegacyDumpExtension {
-}
+) : org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationLegacyDumpExtension
