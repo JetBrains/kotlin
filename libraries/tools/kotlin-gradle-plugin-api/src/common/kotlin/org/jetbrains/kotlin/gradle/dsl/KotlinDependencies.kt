@@ -60,7 +60,7 @@ interface KotlinDependencies : Dependencies, PlatformDependencyModifiers {
     val testImplementation: DependencyCollector
 
     /**
-     * Add a dependency to the [commonTest][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME] source sets
+     * Add a dependency to the [commonTest][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME] source set's
      * [compileOnly][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.compileOnlyConfigurationName] configuration.
      *
      * @see compileOnly
