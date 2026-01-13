@@ -1,8 +1,7 @@
 // WITH_STDLIB
 // WITH_REFLECT
 
-// KT-47030
-// KOTLIN_REFLECT_DUMP_MISMATCH
+// Related: KT-47030
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass

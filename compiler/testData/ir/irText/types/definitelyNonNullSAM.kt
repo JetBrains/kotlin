@@ -1,8 +1,7 @@
 // LANGUAGE: +DefinitelyNonNullableTypes
 // SKIP_KT_DUMP
 
-// KT-47030
-// KOTLIN_REFLECT_DUMP_MISMATCH
+// Related: KT-47030
 
 fun interface FIn<in T> {
     fun f(x: T)

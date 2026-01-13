@@ -89,6 +89,7 @@ KClass: class J : Java5
   members:
     public open fun J.bar(): kotlin.Int?
     public open operator fun J.equals(kotlin.Any?): kotlin.Boolean
+    public open fun J.foo(kotlin.Int): kotlin.Unit
     public open fun J.foo(kotlin.Int?): kotlin.Unit
     public open fun J.hashCode(): kotlin.Int
     public open fun J.toString(): kotlin.String

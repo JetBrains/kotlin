@@ -21,6 +21,7 @@ KClass: abstract class B : Java1, Any
   declaredMembers:
 KClass: class C : Java1, Any
   members:
+    public abstract fun C.bar(kotlin.Int): kotlin.Unit
     public open fun C.bar(kotlin.Int?): kotlin.Unit
     public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
     public open fun C.foo(): kotlin.Int

@@ -137,10 +137,10 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
                     originalContainerIfFakeOverride = notSubstitutedMember.originalContainer,
                     originalCallableTypeParameters = notSubstitutedMember.typeParameters,
                 )
-            val member = notSubstitutedMember.shallowCopy(notSubstitutedMember.container, overriddenStorage)
+            val member = notSubstitutedMember.shallowCopy(kClass, overriddenStorage)
             val kotlinSignature = member.toEquatableCallableSignature(EqualityMode.KotlinSignature)
             if (declaredKotlinMembers.contains(kotlinSignature)) continue
-            // Inherited signatures are always compared by JvmSignatures. Even for kotlin classes.
+            // Inherited signatures are always compared by the JvmSignatures. Even for kotlin classes.
             javaSignaturesMap.mergeWith(kotlinSignature.withEqualityMode(EqualityMode.JavaSignature), member) { a, b ->
                 val c = minOf(a, b, CovariantOverrideComparator)
                 when (a is KFunction<*> && b is KFunction<*>) {

@@ -2,7 +2,8 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 
-// Minor parameter types' flexibility mismatch
+// Bug: mismatch on some parameters' types flexibility.
+// The duplicated `bar` member mismatch should automatically get fixed when the flexibility bug is fixed
 // KOTLIN_REFLECT_DUMP_MISMATCH
 
 // FILE: Java1.java
