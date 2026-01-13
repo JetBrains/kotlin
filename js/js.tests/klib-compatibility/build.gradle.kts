@@ -112,6 +112,15 @@ fun Project.customFirstStageTest(rawVersion: String, addWritePermissionsForAllPr
                 // So to invoke older compilers, more permissions are given.
                 extraPermissions.add("""permission java.util.PropertyPermission "*", "write";""")
             }
+        System.getenv("GRADLE_RO_DEP_CACHE")?.let {
+            extensions.configure<TestInputsCheckExtension> {
+                extraPermissions.addAll(listOf(
+                        """grant codeBase "file:${File(it).absolutePath}/-" {""",
+                        """    permission java.security.AllPermission;""",
+                        """};""",
+                    ))
+            }
+        }
     }
 }
 
