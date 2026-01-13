@@ -76,7 +76,7 @@ interface KotlinDependencies : Dependencies, PlatformDependencyModifiers {
     val testRuntimeOnly: DependencyCollector
 
     /**
-     * Generates a "org.jetbrains.kotlin:kotlin-${module}" dependency.
+     * Generates a `org.jetbrains.kotlin:kotlin-${module}` dependency.
      */
     fun kotlin(module: String): Dependency
 
