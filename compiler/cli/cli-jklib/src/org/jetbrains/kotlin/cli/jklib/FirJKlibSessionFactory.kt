@@ -211,7 +211,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
         get() = false
     override val isFactoryForMetadataCompilation: Boolean
-        get() = TODO("Not yet implemented")
+        get() = false
 
     // ==================================== Common parts ====================================
 
