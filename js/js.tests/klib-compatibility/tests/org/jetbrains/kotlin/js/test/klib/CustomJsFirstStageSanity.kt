@@ -57,4 +57,12 @@ class CustomJsCompilerFirstStageSanity :
         }
         assertEquals(null, exception.message)
     }
+
+    @Test
+    fun checkRecompileIgnored() {
+        val exception = assertThrows<TestAbortedException> {
+            runTest(testDataRoot + "recompile.kt")
+        }
+        assertEquals(null, exception.message)
+    }
 }
