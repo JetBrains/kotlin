@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ATTACH_DEBUGGE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_LEGACY_REFLECTION_IMPLEMENTATION
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PREFER_IN_TEST_OVER_STDLIB
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -290,6 +291,10 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         reportProblems: Boolean
     ): GeneratedClassLoader {
         val classLoader = generatedTestClassLoader(testServices, module, classFileFactory)
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
+        if (USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION in module.directives && configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
+            classLoader.enableNewFakeOverridesImplementation()
+        }
         if (REQUIRES_SEPARATE_PROCESS !in module.directives && module.directives.singleOrZeroValue(JDK_KIND)?.requiresSeparateProcess != true) {
             val verificationSucceeded = CodegenTestUtil.verifyAllFilesWithAsm(classFileFactory, reportProblems)
             if (!verificationSucceeded) {
