@@ -58,13 +58,6 @@ class VariableReadinessCalculator(
         //  Related issues: KT-32358 (especially kt32358_3.kt test)
         REIFIED,
 
-        // *** "ready for fixation" kinds ***
-        // Prefer `LOWER` `T :> SomeRegularType` to `UPPER` `T <: SomeRegularType` for KT-41934.
-        // Prefer `LOWER` constraint also to `EQUALS` `T = SomeRegularType` because of the test
-        // FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated.testJavaFunctionParamNullability.
-        // TODO: KT-82574 (consider preferring EQUALS constraints)
-        HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT,
-
         // *** The following block constitutes what "with complex dependency" used to mean in the old fixation code ***
         // Prioritizers needed for KT-67335 (the `greater.kt` case with ILTs).
         // ILT type = Integer literal type = yet unknown choice from Byte/Short/Int/Long (at least two of them)
@@ -123,25 +116,11 @@ class VariableReadinessCalculator(
             !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
 
         readiness[Q.REIFIED] = isReified()
-        readiness[Q.HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT] = hasLowerNonNothingNonIltProperConstraint()
 
         val (_, hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
         readiness[Q.HAS_PROPER_NON_ILT_CONSTRAINT] = hasProperNonIltConstraint
 
         return readiness
-    }
-
-    context(c: Context)
-    private fun TypeConstructorMarker.hasLowerNonNothingNonIltProperConstraint(): Boolean {
-        val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
-
-        return constraints.any { constraint ->
-            // TODO: KT-82574 (it's strange that lower constraint is stronger than equals constraint here)
-            constraint.kind.isLower()
-                    && constraint.isProperArgumentConstraint()
-                    && !constraint.type.typeConstructor().isNothingConstructor()
-                    && !constraint.type.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
-        }
     }
 
     context(c: Context)

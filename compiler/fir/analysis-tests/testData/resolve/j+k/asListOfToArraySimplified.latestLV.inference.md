@@ -29,7 +29,6 @@ R|<local>/x|.toArray#(R|<local>/y|)
    	false HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
-   	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    )`
 
@@ -82,7 +81,6 @@ Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
    	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
-   	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    )`
     1. `TypeVariable(T)` is `Readiness(
@@ -96,7 +94,6 @@ Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
        	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
-       	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
        )`
 2. `TypeVariable(F) == kotlin/String!` _from Fix variable F_
@@ -115,7 +112,6 @@ Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
    	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
-   	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    )`
 6. `TypeVariable(T) == kotlin/String?` _from Fix variable T_

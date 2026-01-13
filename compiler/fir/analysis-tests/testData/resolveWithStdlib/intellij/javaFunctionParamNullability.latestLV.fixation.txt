@@ -9,11 +9,10 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	false HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     )
 ********************************
-CHOSEN for fixation: TypeVariable(S) --- Readiness(
+CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -24,30 +23,28 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    )
-     >: TypeVariable(T)?
-     >: kotlin/String!
-     = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
-    FIXED TO: kotlin/String!
-TypeVariable(T) --- Readiness(
-    	 true ALLOWED
-    	 true HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false REIFIED
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     )
      = kotlin/String
      <: kotlin/String!
+    FIXED TO: kotlin/String
+TypeVariable(S) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    )
+     >: TypeVariable(T)?
+     >: kotlin/String!
+     = kotlin/String! (inferred during fixation)
+     >: kotlin/Nothing? (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true ALLOWED
@@ -60,7 +57,6 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     )
      >: TypeVariable(T)?
@@ -79,7 +75,6 @@ TypeVariable(T) --- Readiness(
     	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     )
      = kotlin/String
@@ -96,7 +91,6 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     )
      = kotlin/String
@@ -114,11 +108,10 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	false HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     )
 ********************************
-CHOSEN for fixation: TypeVariable(S) --- Readiness(
+CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -129,30 +122,28 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    )
-     >: TypeVariable(T)?
-     >: kotlin/String!
-     = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
-    FIXED TO: kotlin/String!
-TypeVariable(T) --- Readiness(
-    	 true ALLOWED
-    	 true HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false REIFIED
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     )
      = kotlin/String
      <: kotlin/String!
+    FIXED TO: kotlin/String
+TypeVariable(S) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    )
+     >: TypeVariable(T)?
+     >: kotlin/String!
+     = kotlin/String! (inferred during fixation)
+     >: kotlin/Nothing? (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true ALLOWED
@@ -165,7 +156,6 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     )
      >: TypeVariable(T)?
@@ -184,7 +174,6 @@ TypeVariable(T) --- Readiness(
     	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     )
      = kotlin/String
@@ -201,7 +190,6 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     )
      >: kotlin/String
@@ -220,7 +208,6 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     )
      >: kotlin/String
@@ -239,7 +226,6 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     )
      = kotlin/String
