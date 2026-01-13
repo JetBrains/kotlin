@@ -23,6 +23,7 @@
 # OWNER_LIST: "Kotlin Language Evolution"
 # OWNER_LIST: "Google Compose"
 # OWNER_LIST: "Parcelize"
+# OWNER_LIST: "JKlib"
 # OWNER_LIST: mikhail.glukhikh@jetbrains.com dmitriy.novozhilov@jetbrains.com kirill.rakhman@jetbrains.com
 # OWNER_LIST: yan.zhulanow@jetbrains.com
 # OWNER_LIST: alexander.udalov@jetbrains.com
@@ -69,6 +70,7 @@
 /compiler/build-tools/kotlin-build-tools-compat/gen/ "Kotlin"
 /compiler/build-tools/kotlin-build-tools-api/api/kotlin-build-tools-api.api "Kotlin"
 /compiler/cli/ "Kotlin Frontend"
+/compiler/cli/cli-jklib/ "JKlib"
 /compiler/cli/cli-js/ "Kotlin JS" "Kotlin Wasm"
 /compiler/cli/cli-native-klib/ "Kotlin Frontend" "Kotlin Common Backend"
 /compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt "Kotlin Native"
@@ -109,6 +111,7 @@
 /compiler/ir/ir.tree/tree-generator "Kotlin Common Backend" sergej.jaskiewicz@jetbrains.com
 /compiler/ir/ir.objcinterop/ "Kotlin Native"
 /compiler/ir/serialization.common/ "Kotlin Common Backend"
+/compiler/ir/serialization.jklib/ "JKlib"
 /compiler/ir/serialization.js/ "Kotlin JS"
 /compiler/ir/serialization.jvm/ "Kotlin JVM"
 /compiler/ir/serialization.native/ "Kotlin Native"
