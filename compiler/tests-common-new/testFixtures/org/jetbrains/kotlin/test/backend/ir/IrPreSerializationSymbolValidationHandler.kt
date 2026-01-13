@@ -16,12 +16,15 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.isAnnotationWithEqualFqName
 import org.jetbrains.kotlin.ir.util.isPublishedApi
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.backend.handlers.AbstractIrHandler
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -30,8 +33,6 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KVisibility
 
 abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
-    private val preSerializationAnnotation = FqName.fromSegments(listOf("kotlin", "internal", "UsedFromCompilerGeneratedCode"))
-
     protected abstract fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols>
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
@@ -77,8 +78,8 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
     protected fun checkForSpecialAnnotation(declaration: IrDeclaration) {
         val annotations = declaration.annotations +
                 (declaration as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.annotations.orEmpty()
-        if (annotations.none { it.isAnnotationWithEqualFqName(preSerializationAnnotation) }) {
-            error("Declaration ${declaration.render()} is not annotated with @${preSerializationAnnotation.shortName()}")
+        if (annotations.none { it.symbol.owner.constructedClass.classId == StandardClassIds.Annotations.UsedFromCompilerGeneratedCode }) {
+            error("Declaration ${declaration.render()} is not annotated with @${StandardClassIds.Annotations.UsedFromCompilerGeneratedCode}")
         }
     }
 }
