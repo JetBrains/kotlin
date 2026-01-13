@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-56186
+// LANGUAGE: -ProperSupportOfInnerClassesInCallableReferenceLHS
 
 class Foo<I, J : Number, K> {
     val value: String = "OK"

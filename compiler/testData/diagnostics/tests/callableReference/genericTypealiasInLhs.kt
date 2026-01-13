@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProperSupportOfInnerClassesInCallableReferenceLHS
 class Some { fun foo() {} }
 
 typealias SomeAlias = Some

@@ -212,3 +212,8 @@ tailrec fun FirExpression.unwrapAnonymousFunctionExpression(): FirAnonymousFunct
     is FirWrappedArgumentExpression -> expression.unwrapAnonymousFunctionExpression()
     else -> null
 }
+
+tailrec fun FirResolvedQualifier.firstQualifierPart(): FirResolvedQualifier {
+    val parent = explicitParent ?: return this
+    return parent.firstQualifierPart()
+}
