@@ -10,6 +10,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
+    testFixturesImplementation(project(":compiler:cli-jklib"))
 
     testFixturesCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
@@ -29,6 +30,7 @@ projectTests {
     // - compiler/testData/codegen/boxKlib/properties.kt
     // - compiler/testData/codegen/boxKlib/simple.kt
     testData(project(":compiler").isolated, "testData/codegen/boxKlib")
+    testData(project(":compiler").isolated, "testData/codegen/jklib")
 
     withJvmStdlibAndReflect()
 
