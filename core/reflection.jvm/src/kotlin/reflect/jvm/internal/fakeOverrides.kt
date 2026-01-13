@@ -37,7 +37,7 @@ internal fun getAllMembers(kClass: KClassImpl<*>): Collection<DescriptorKCallabl
             )
         ) { (_, member) ->
             doNeedToFilterOutStatics && member.isStatic ||
-                    member.isPackagePrivate && member.container.jClass.`package` != kClass.java.`package`
+                    member.isPackagePrivate && member.originalContainer.jClass.`package` != kClass.java.`package`
         }
         false -> HashMap(fakeOverrideMembers.members)
     }
@@ -133,8 +133,7 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
             val overriddenStorage = notSubstitutedMember.overriddenStorage.copy(
                 instanceReceiverParameter = if (notSubstitutedMember.isStatic) null else thisReceiver,
                 typeSubstitutor = notSubstitutedMember.overriddenStorage.typeSubstitutor.combinedWith(substitutor),
-                originalContainerIfFakeOverride = notSubstitutedMember.overriddenStorage.originalContainerIfFakeOverride
-                    ?: notSubstitutedMember.container,
+                originalContainerIfFakeOverride = notSubstitutedMember.originalContainer,
             )
             val member = notSubstitutedMember.shallowCopy(notSubstitutedMember.container, overriddenStorage)
             val kotlinSignature = member.toEquatableCallableSignature(EqualityMode.KotlinSignature)
@@ -184,11 +183,14 @@ private inline fun <K, V : Any> MutableMap<K, V>.mergeWith(key: K, value: V, rem
 
 private val modalityIntersectionOverrideComparator: Comparator<DescriptorKCallable<*>> = compareBy(
     // Deprioritize interfaces, prioritize classes
-    { (it.container as? KClass<*>)?.java?.isInterface == true },
+    { (it.originalContainer as? KClass<*>)?.java?.isInterface == true },
     // If there are multiple superclasses (not interfaces), deprioritize kotlin.Any.
     // For instance, equals/hashCode/toString which come from interfaces have kotlin.Any container.
-    { it.container == Any::class },
+    { it.originalContainer == Any::class },
 )
+
+private val DescriptorKCallable<*>.originalContainer: KDeclarationContainerImpl
+    get() = overriddenStorage.originalContainerIfFakeOverride ?: container
 
 internal val DescriptorKCallable<*>.isStatic: Boolean
     get() = instanceReceiverParameter == null
