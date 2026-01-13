@@ -83,5 +83,7 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val USE_LEGACY_REFLECTION_IMPLEMENTATION by directive("Use legacy reflection implementation")
 
+    val USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION by directive("Use new reflection fake override implementation")
+
     val IGNORED_ANNOTATIONS_FOR_BRIDGES by stringDirective("Ignored annotations for bridges")
 }
