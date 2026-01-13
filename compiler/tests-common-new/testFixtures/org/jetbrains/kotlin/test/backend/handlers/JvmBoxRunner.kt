@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ATTACH_DEBUGGE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_LEGACY_REFLECTION_IMPLEMENTATION
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PREFER_IN_TEST_OVER_STDLIB
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -323,20 +324,26 @@ fun generatedTestClassLoader(
 ): GeneratedClassLoader {
     val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
     val classpath = computeTestRuntimeClasspath(testServices, module)
+    val withReflection = configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true
     if (PREFER_IN_TEST_OVER_STDLIB in module.directives) {
         val libPathProvider = testServices.standardLibrariesPathProvider
         classpath += libPathProvider.runtimeJarForTests()
-        if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
+        if (withReflection) {
             classpath += libPathProvider.reflectJarForTests()
         }
         classpath += libPathProvider.scriptRuntimeJarForTests()
         classpath += libPathProvider.kotlinTestJarForTests()
-        return GeneratedClassLoader(classFileFactory, null, *(classpath.map { it.toURI().toURL() }.toTypedArray()))
+        val classLoader = GeneratedClassLoader(classFileFactory, null, *(classpath.map { it.toURI().toURL() }.toTypedArray()))
+        if (withReflection && USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION in module.directives) {
+            classLoader.enableNewFakeOverridesImplementation()
+        }
+        return classLoader
     } else {
-        val parentClassLoader = if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
-            testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader()
-        } else {
-            testServices.standardLibrariesPathProvider.getRuntimeJarClassLoader()
+        val parentClassLoader = when {
+            !withReflection -> testServices.standardLibrariesPathProvider.getRuntimeJarClassLoader()
+            USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION in module.directives ->
+                testServices.standardLibrariesPathProvider.getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader()
+            else -> testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader()
         }
         return GeneratedClassLoader(classFileFactory, parentClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray())
     }
