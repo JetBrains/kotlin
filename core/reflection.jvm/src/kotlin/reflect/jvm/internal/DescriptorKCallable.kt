@@ -142,7 +142,7 @@ internal data class KCallableOverriddenStorage(
     val instanceReceiverParameter: ReceiverParameterDescriptor?,
     val typeSubstitutor: KTypeSubstitutor,
     val modality: Modality?,
-    val isFakeOverride: Boolean,
+    val originalContainerIfFakeOverride: KDeclarationContainerImpl?,
 
     val forceIsExternal: Boolean,
     val forceIsOperator: Boolean,
@@ -154,11 +154,13 @@ internal data class KCallableOverriddenStorage(
             null,
             KTypeSubstitutor.EMPTY,
             null,
-            isFakeOverride = false,
+            originalContainerIfFakeOverride = null,
             forceIsExternal = false,
             forceIsOperator = false,
             forceIsInfix = false,
             forceIsInline = false,
         )
     }
+
+    val isFakeOverride: Boolean get() = originalContainerIfFakeOverride != null
 }
