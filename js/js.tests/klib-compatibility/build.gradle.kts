@@ -112,6 +112,20 @@ fun Project.customFirstStageTest(rawVersion: String, addWritePermissionsForAllPr
                 // So to invoke older compilers, more permissions are given.
                 extraPermissions.add("""permission java.util.PropertyPermission "*", "write";""")
             }
+        System.getenv("GRADLE_RO_DEP_CACHE")?.let {
+            extensions.configure<TestInputsCheckExtension> {
+                extraPermissions.addAll(listOf(
+                        """grant codeBase "file:${File(it).absolutePath}/-" {""",
+                        """    permission java.security.AllPermission;""",
+                        """};""",
+                    ))
+            }
+            // kotlin-test-js version 1.9.20 was placed to Maven as JAR file, not KLIB: `kotlin-test-js-1.9.20.jar`.
+            // In order to find it within folder `$GRADLE_RO_DEP_CACHE/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-test-js/1.9.20/`
+            //   compiler v1.9.20 first tries to read non-existent file
+            //   `$GRADLE_RO_DEP_CACHE/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-test-js/1.9.20/118a42100da2fe897da48f85333d03ebb0fd20a0/kotlin-test-js-1.9.20.jar.klib`
+            //   which requires extra permissions. And only then it tries to resolve JAR file, which does exist.
+        }
     }
 }
 
