@@ -71,12 +71,15 @@ fun checkKotlinLambda() {
 
     assertEquals(null, klass.qualifiedName)
 
-    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
-        // Legacy implementation uses a predefined class with the single supertype `Any`, see `KClassImpl.createSyntheticClass`.
-        check(klass, expectedSupertypes = "[kotlin.Any]")
-    } else {
-        // JVM backend generates a raw Lambda type as a superclass for non-indy lambdas.
-        check(klass, expectedSupertypes = "[kotlin.jvm.internal.Lambda<(raw) kotlin.Any!>, () -> kotlin.Unit!]")
+    when {
+        Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true ->
+            // Legacy implementation uses a predefined class with the single supertype `Any`, see `KClassImpl.createSyntheticClass`.
+            check(klass, expectedSupertypes = "[kotlin.Any]")
+        Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getNewFakeOverridesImplementation").invoke(null) == true ->
+            check(klass, expectedSupertypes = "[kotlin.jvm.internal.Lambda<(raw) kotlin.Any!>, () -> kotlin.Unit!]", expectedMembers = setOf("equals", "hashCode", "toString", "arity", "invoke"))
+        else ->
+            // JVM backend generates a raw Lambda type as a superclass for non-indy lambdas.
+            check(klass, expectedSupertypes = "[kotlin.jvm.internal.Lambda<(raw) kotlin.Any!>, () -> kotlin.Unit!]")
     }
 
     assertTrue(klass.isInstance(lambda))
@@ -88,12 +91,15 @@ fun checkKotlinLambda() {
 fun checkJavaLambda() {
     val lambda = JavaClass.lambda()
     val klass = lambda::class
-    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
-        // Legacy implementation uses a predefined class with the single supertype `Any`, see `KClassImpl.createSyntheticClass`.
-        check(klass, expectedSupertypes = "[kotlin.Any]")
-    } else {
-        // JVM backend generates a raw Lambda type as a superclass for non-indy lambdas.
-        check(klass, expectedSupertypes = "[java.lang.Runnable, kotlin.Any]")
+    when {
+        Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true ->
+            // Legacy implementation uses a predefined class with the single supertype `Any`, see `KClassImpl.createSyntheticClass`.
+            check(klass, expectedSupertypes = "[kotlin.Any]")
+        Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getNewFakeOverridesImplementation").invoke(null) == true ->
+            check(klass, expectedSupertypes = "[java.lang.Runnable, kotlin.Any]", expectedMembers = setOf("equals", "hashCode", "toString", "run"))
+        else ->
+            // JVM backend generates a raw Lambda type as a superclass for non-indy lambdas.
+            check(klass, expectedSupertypes = "[java.lang.Runnable, kotlin.Any]")
     }
 
     assertTrue(klass.isInstance(lambda))
