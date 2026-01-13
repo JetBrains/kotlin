@@ -1,8 +1,10 @@
 // ISSUE: KT-79977, KT-79916
 // WITH_STDLIB
 
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: 2.1.0 2.2.0
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: 2.1.0 2.2.0 JS:*
 // ^^^ KT-79916 fixed in 2.3.0-Beta1
+//     For JS IC, current compiler cannot read incremental cache built by old compiler,
+//     and it's fine, since backward compatibility for incremental caches is not needed/provided.
 
 // IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: 2.2.0
 // ^^^ KT-82292: Incremental compilation to ABI 2.2.0 is not supported in 2.3.x compiler:
