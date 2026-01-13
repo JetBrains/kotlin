@@ -1,0 +1,224 @@
+CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_UPPER
+     = kotlin/Int
+    FIXED TO: kotlin/Int
+********************************
+CHOSEN for fixation: TypeVariable(T) --- FORBIDDEN
+     <: kotlin/Comparable<in TypeVariable(T)!>!
+********************************
+CHOSEN for fixation: TypeVariable(E) --- FORBIDDEN
+     <: TypeVariable(T)!
+     <: kotlin/Comparable<in TypeVariable(T)!>?
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+TypeVariable(T) --- FORBIDDEN
+     <: kotlin/Comparable<in TypeVariable(T)!>!
+     >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
+********************************
+CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_LOWER
+     >: MergeFragment
+     = MergeFragment (inferred during fixation)
+    FIXED TO: MergeFragment
+TypeVariable(R) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+     <: TypeVariable(E)
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
+     <: kotlin/Comparable<TypeVariable(R)!>!
+     <: kotlin/Comparable<TypeVariable(R)!>?
+     >: kotlin/Int
+     <: kotlin/Int?
+     <: kotlin/Int!
+     <: kotlin/Comparable<kotlin/Int!>! (inferred during fixation)
+     <: kotlin/Comparable<kotlin/Int!>? (inferred during fixation)
+     <: kotlin/Comparable<in kotlin/Int!>? (inferred during fixation)
+     <: kotlin/Comparable<in kotlin/Int!>! (inferred during fixation)
+     = kotlin/Int (inferred during fixation)
+TypeVariable(C) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+     <: kotlin/collections/MutableCollection<in kotlin/Int>
+     >: java/util/TreeSet<kotlin/Int>
+     = java/util/TreeSet<kotlin/Int> (inferred during fixation)
+TypeVariable(E) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     >: kotlin/Int
+     <: kotlin/Int?
+     <: kotlin/Comparable<kotlin/Int!>?
+     <: kotlin/Int!
+     <: kotlin/Comparable<in kotlin/Int!>?
+     = kotlin/Int (inferred during fixation)
+TypeVariable(T) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+     <: kotlin/Comparable<in TypeVariable(T)!>!
+     >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
+     >: TypeVariable(R)!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
+     <: kotlin/Comparable<TypeVariable(R)!>!
+     >: kotlin/Int! (inferred during fixation)
+     = kotlin/Int! (inferred during fixation)
+     <: kotlin/Comparable<kotlin/Int!>! (inferred during fixation)
+     <: kotlin/Comparable<in kotlin/Int!>! (inferred during fixation)
+********************************
+CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_LOWER
+     >: MergeFragment
+     = MergeFragment (inferred during fixation)
+TypeVariable(R) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+     <: TypeVariable(E)
+     <: TypeVariable(T)!
+     <: kotlin/Comparable<in TypeVariable(T)!>?
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     <: kotlin/Comparable<in TypeVariable(T)!>!
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
+     <: kotlin/Comparable<TypeVariable(R)!>!
+     <: kotlin/Comparable<TypeVariable(R)!>?
+TypeVariable(C) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+     <: kotlin/collections/MutableCollection<in TypeVariable(R)>
+     >: java/util/TreeSet<TypeVariable(E)>
+TypeVariable(E) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+     <: TypeVariable(T)!
+     <: kotlin/Comparable<in TypeVariable(T)!>?
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     >: TypeVariable(R)
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
+     <: kotlin/Comparable<TypeVariable(R)!>?
+TypeVariable(T) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+     <: kotlin/Comparable<in TypeVariable(T)!>!
+     >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
+     >: TypeVariable(R)!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
+     <: kotlin/Comparable<TypeVariable(R)!>!
+********************************
+CHOSEN for fixation: TypeVariable(T) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY
+     <: kotlin/Comparable<in TypeVariable(T)!>!
+     >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
+     >: TypeVariable(R)!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
+     <: kotlin/Comparable<TypeVariable(R)!>!
+     = kotlin/Int!
+     <: kotlin/Comparable<kotlin/Int!>!
+     <: kotlin/Comparable<in kotlin/Int!>!
+    FIXED TO: kotlin/Int!
+TypeVariable(R) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
+     <: TypeVariable(E)
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
+     <: kotlin/Comparable<TypeVariable(R)!>!
+     <: kotlin/Comparable<TypeVariable(R)!>?
+     >: kotlin/Int
+     <: kotlin/Int?
+     <: kotlin/Int!
+     <: kotlin/Comparable<kotlin/Int!>!
+     <: kotlin/Comparable<kotlin/Int!>?
+     <: kotlin/Comparable<in kotlin/Int!>?
+     <: kotlin/Comparable<in kotlin/Int!>!
+     = kotlin/Int
+TypeVariable(C) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+     <: kotlin/collections/MutableCollection<in kotlin/Int>
+     >: java/util/TreeSet<kotlin/Int>
+     = java/util/TreeSet<kotlin/Int> (inferred during fixation)
+TypeVariable(E) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     >: kotlin/Int
+     <: kotlin/Int?
+     <: kotlin/Comparable<kotlin/Int!>?
+     <: kotlin/Int!
+     <: kotlin/Comparable<in kotlin/Int!>?
+     = kotlin/Int
+TypeVariable(_R) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
+     >: kotlin/collections/MutableSet<kotlin/Int>
+     <: kotlin/collections/Iterable<kotlin/Int?>
+     <: kotlin/collections/Iterable<kotlin/Int!>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
+     <: kotlin/collections/Iterable<kotlin/Int>
+     = kotlin/collections/MutableSet<kotlin/Int> (inferred during fixation)
+********************************
+CHOSEN for fixation: TypeVariable(R) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
+     <: TypeVariable(E)
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
+     <: kotlin/Comparable<TypeVariable(R)!>!
+     <: kotlin/Comparable<TypeVariable(R)!>?
+     >: kotlin/Int
+     <: kotlin/Int?
+     <: kotlin/Int!
+     <: kotlin/Comparable<kotlin/Int!>!
+     <: kotlin/Comparable<kotlin/Int!>?
+     <: kotlin/Comparable<in kotlin/Int!>?
+     <: kotlin/Comparable<in kotlin/Int!>!
+     = kotlin/Int (inferred during fixation)
+    FIXED TO: kotlin/Int
+TypeVariable(C) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+     <: kotlin/collections/MutableCollection<in kotlin/Int>
+     >: java/util/TreeSet<kotlin/Int>
+     = java/util/TreeSet<kotlin/Int> (inferred during fixation)
+TypeVariable(E) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     >: kotlin/Int
+     <: kotlin/Int?
+     <: kotlin/Comparable<kotlin/Int!>?
+     <: kotlin/Int!
+     <: kotlin/Comparable<in kotlin/Int!>?
+     = kotlin/Int
+TypeVariable(_R) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
+     >: kotlin/collections/MutableSet<kotlin/Int>
+     <: kotlin/collections/Iterable<kotlin/Int?>
+     <: kotlin/collections/Iterable<kotlin/Int!>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
+     <: kotlin/collections/Iterable<kotlin/Int>
+     = kotlin/collections/MutableSet<kotlin/Int> (inferred during fixation)
+********************************
+CHOSEN for fixation: TypeVariable(E) --- READY_FOR_FIXATION_LOWER
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     >: kotlin/Int
+     <: kotlin/Int?
+     <: kotlin/Comparable<kotlin/Int!>?
+     <: kotlin/Int!
+     <: kotlin/Comparable<in kotlin/Int!>?
+     = kotlin/Int (inferred during fixation)
+    FIXED TO: kotlin/Int
+TypeVariable(C) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
+     <: kotlin/collections/MutableCollection<in kotlin/Int>
+     >: java/util/TreeSet<kotlin/Int>
+     = java/util/TreeSet<kotlin/Int> (inferred during fixation)
+TypeVariable(_R) --- READY_FOR_FIXATION_LOWER
+     >: kotlin/collections/MutableSet<kotlin/Int>
+     <: kotlin/collections/Iterable<kotlin/Int?>
+     <: kotlin/collections/Iterable<kotlin/Int!>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
+     <: kotlin/collections/Iterable<kotlin/Int>
+     = kotlin/collections/MutableSet<kotlin/Int> (inferred during fixation)
+********************************
+CHOSEN for fixation: TypeVariable(C) --- READY_FOR_FIXATION_LOWER
+     <: kotlin/collections/MutableCollection<in kotlin/Int>
+     >: java/util/TreeSet<kotlin/Int>
+     = java/util/TreeSet<kotlin/Int> (inferred during fixation)
+    FIXED TO: java/util/TreeSet<kotlin/Int>
+TypeVariable(_R) --- READY_FOR_FIXATION_LOWER
+     >: kotlin/collections/MutableSet<kotlin/Int>
+     <: kotlin/collections/Iterable<kotlin/Int?>
+     <: kotlin/collections/Iterable<kotlin/Int!>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
+     <: kotlin/collections/Iterable<kotlin/Int>
+     = kotlin/collections/MutableSet<kotlin/Int> (inferred during fixation)
+********************************
+CHOSEN for fixation: TypeVariable(_R) --- READY_FOR_FIXATION_LOWER
+     >: kotlin/collections/MutableSet<kotlin/Int>
+     <: kotlin/collections/Iterable<kotlin/Int?>
+     <: kotlin/collections/Iterable<kotlin/Int!>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
+     <: kotlin/collections/Iterable<kotlin/Int>
+     = kotlin/collections/MutableSet<kotlin/Int> (inferred during fixation)
+    FIXED TO: kotlin/collections/MutableSet<kotlin/Int>
+********************************
