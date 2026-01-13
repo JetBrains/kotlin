@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -12,16 +13,22 @@ import org.jetbrains.kotlin.fir.analysis.checkers.FE10LikeConeSubstitutor
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolated
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isExplicitParentOfResolvedQualifier
+import org.jetbrains.kotlin.fir.analysis.checkers.isStandalone
 import org.jetbrains.kotlin.fir.analysis.checkers.toTypeArgumentsWithSourceInfo
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.firstQualifierPart
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.classTypeParameterSymbols
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequired
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePlaceholderProjectionInQualifierResolution
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.constructType
@@ -61,11 +68,36 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                         diagnostic.symbol,
                     )
                 }
+                is ConeOuterClassArgumentsRequired -> {
+                    reporter.reportOn(
+                        lhs.source,
+                        FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED,
+                        diagnostic.symbol,
+                    )
+                }
             }
         }
 
         var typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
-        var typeParameterSymbols = correspondingDeclaration.classTypeParameterSymbols
+        var typeParameterSymbols = when {
+            LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS.isEnabled() -> {
+                val firstPart = lhs.firstQualifierPart()
+                when (val firstPartSymbol = firstPart.symbol) {
+                    null -> correspondingDeclaration.typeParameterSymbols
+                    else -> {
+                        val outerForFirstPart: Set<FirTypeParameterSymbol> = firstPartSymbol.typeParameterSymbols.filterTo(mutableSetOf()) {
+                            it.containingDeclarationSymbol != firstPartSymbol
+                        }
+                        correspondingDeclaration.typeParameterSymbols.filter {
+                            it !in outerForFirstPart
+                        }
+                    }
+                }
+            }
+            else -> {
+                correspondingDeclaration.classTypeParameterSymbols
+            }
+        }
 
         if (typeArgumentsWithSourceInfo.size != typeParameterSymbols.size) return
 

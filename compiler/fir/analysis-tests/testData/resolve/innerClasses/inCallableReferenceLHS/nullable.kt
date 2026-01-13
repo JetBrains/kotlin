@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-66344
+// LATEST_LV_DIFFERENCE
 
 class A<X> {
     inner open class B<Y> {

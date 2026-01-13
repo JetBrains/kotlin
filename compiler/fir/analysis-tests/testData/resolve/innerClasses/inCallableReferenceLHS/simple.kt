@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-66344
+// LATEST_LV_DIFFERENCE
 
 abstract class Outer<X> {
     inner class Inner(val x: X) {
