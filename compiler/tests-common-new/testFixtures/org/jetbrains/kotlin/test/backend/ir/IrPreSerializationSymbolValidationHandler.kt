@@ -45,10 +45,11 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
 
     private fun validateContainer(symbolsContainer: Any) {
         val klass = symbolsContainer::class
-        klass.members.forEach {
-            if (it !is KProperty<*> || (it.visibility != KVisibility.PUBLIC && it.visibility != KVisibility.INTERNAL)) return@forEach
-            it.getter.call(symbolsContainer).also { result ->
-                validateRecursive(result, klass)
+        for (member in klass.members) {
+            if (member is KProperty<*> && (member.visibility == KVisibility.PUBLIC || member.visibility == KVisibility.INTERNAL)) {
+                member.getter.call(symbolsContainer).also { result ->
+                    validateRecursive(result, klass)
+                }
             }
         }
     }
