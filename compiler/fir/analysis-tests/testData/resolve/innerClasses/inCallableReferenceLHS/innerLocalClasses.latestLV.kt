@@ -11,9 +11,9 @@ fun <T> withGenericArg() {
             }
             fun foo() {}
         }
-        val ref = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<String><!>::foo
-        val innermostRef = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<String>.Innermost<Int><!>::bar
-        val innermostMisplacedRef = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner.Innermost<Int, String><!>::bar
+        val ref = Inner<String>::foo
+        val innermostRef = Inner<String>.Innermost<Int>::bar
+        val innermostMisplacedRef = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>Inner<!>.Innermost<Int, String>::bar
     }
 
     Outer<Int>.Inner<String>::foo

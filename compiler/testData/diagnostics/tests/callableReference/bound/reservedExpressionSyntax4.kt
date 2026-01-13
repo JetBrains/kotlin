@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_STDLIB
+// LANGUAGE: -ProperSupportOfInnerClassesInCallableReferenceLHS
 
 class A {
     class B<T> {

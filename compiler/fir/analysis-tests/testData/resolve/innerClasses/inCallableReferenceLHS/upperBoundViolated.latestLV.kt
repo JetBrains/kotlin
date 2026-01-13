@@ -14,20 +14,20 @@ open class Container<K: Key> {
     inner class Inner<T: Element<K>>
 
     private fun foo() {
-        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Alpha><!>::toString
-        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Element<K>><!>::toString
+        Inner<<!UPPER_BOUND_VIOLATED("Element<K (of class Container<K : Key>)>; Alpha")!>Alpha<!>>::toString
+        Inner<Element<K>>::toString
     }
 }
 
 class ImplAlpha : Container<AlphaKey>() {
     private fun foo() {
-        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Alpha><!>::toString
+        Inner<<!UPPER_BOUND_VIOLATED("Element<K (of class Container<K : Key>)>; Alpha")!>Alpha<!>>::toString
     }
 }
 
 class ImplBeta : Container<BetaKey>() {
     private fun foo() {
-        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Alpha><!>::toString
+        Inner<<!UPPER_BOUND_VIOLATED("Element<K (of class Container<K : Key>)>; Alpha")!>Alpha<!>>::toString
     }
 }
 
