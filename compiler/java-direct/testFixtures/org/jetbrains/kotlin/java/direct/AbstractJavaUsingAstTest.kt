@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.utils.bind
 abstract class AbstractJavaUsingAstTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
-            LATEST_PHASE_IN_PIPELINE with TestPhase.FRONTEND
+            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
             LANGUAGE + "+EnableDfaWarningsInK2"
         }
 

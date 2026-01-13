@@ -42,20 +42,25 @@ kotlin {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
+        dependsOn(":dist")
+        workingDir = rootDir
         useJUnitPlatform()
     }
     testGenerator("org.jetbrains.kotlin.java.direct.TestGeneratorKt", generateTestsInBuildDirectory = true)
     testData(project(":compiler:fir:analysis-tests").isolated, "testData")
+    testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/loadJava")
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
     withTestJar()
+    withScriptingPlugin()
+    withMockJdkRuntime()
     withStdlibCommon()
     withAnnotations()
-    withThirdPartyJsr305()
     withThirdPartyAnnotations()
-    withThirdPartyJava8Annotations()
-    withThirdPartyJava9Annotations()
+    withThirdPartyJsr305()
 }

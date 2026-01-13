@@ -19,6 +19,9 @@ fun main(args: Array<String>) {
             testClass<AbstractJavaUsingAstTest>("JavaUsingAstLegacyDiagnosticTestGenerated") {
                 model("testData/diagnostics/tests/j+k")
             }
+            testClass<AbstractJavaUsingAstBoxTest>("JavaUsingAstLegacyBoxTestGenerated") {
+                model("testData/codegen/box/javaInterop")
+            }
         }
     }
 }
