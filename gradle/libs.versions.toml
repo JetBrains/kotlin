@@ -4,23 +4,21 @@ dokka = "2.0.0"
 gradle-custom-user-data = "2.4.0"
 develocity = "4.1.1"
 gradle-plugin-publish = "1.2.1"
-# Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
+# The version for foojay should be synced with the version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "0.9.0"
 # guava and failureaccess should be aligned relatively
 guava = "33.3.1-jre"
 failureaccess = "1.0.2"
 javaDiffUtils = "4.12"
-jdom2 = "2.0.6.1"
 kotlinx-serialization = "1.7.3"
-# Version of the coroutines should be aligned with the oldest supported IntelliJ IDEA. Intellij IDEA uses 1.6 since 2022.3
+# Version of the coroutines should be aligned with the oldest supported IntelliJ IDEA. IntelliJ IDEA uses 1.6 since 2022.3
 # Check the version in this file: https://github.com/JetBrains/intellij-community/blob/cc37866d3827c51712f9856f5e580d405784d1ef/.idea/libraries/kotlinx_coroutines_core.xml
 kotlinx-coroutines = "1.8.0"
 # 9.2.+ could not be applied because of https://github.com/GradleUp/shadow/issues/1874
-shadow = "9.1.0" # Should be in sync with version in kotlin-native/
+shadow = "9.1.0" # Should be in sync with the version in kotlin-native/
 spdx = "0.10.0-dev-15"
 proguard = "7.4.2"
 ktor = "3.1.3"
-kotlinx-metadataJvm = "0.9.0"
 kotlinx-bcv = "0.17.0"
 gson = "2.11.0"
 jetbrains-ideaExt = "1.0.1"
@@ -80,7 +78,11 @@ org-tukaani-xz = "1.10"
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+# Usages are in gradle-plugins-documentation.gradle.kts
+#noinspection UnusedVersionCatalogEntry
 dokka-versioningPlugin = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
+# Usages are in gradle-plugins-documentation.gradle.kts
+#noinspection UnusedVersionCatalogEntry
 dokka-multiModulePlugin = { module = "org.jetbrains.dokka:all-modules-page-plugin", version.ref = "dokka" }
 downloadTask-gradlePlugin = { module = "de.undercouch:gradle-download-task", version.ref = "downloadTask" }
 gradle-customUserData-gradlePlugin = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradle-custom-user-data" }
@@ -92,13 +94,11 @@ kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutin
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
-kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadataJvm" }
 shadow-gradlePlugin = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
 proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard" }
 node-gradlePlugin = { module = "com.github.node-gradle:gradle-node-plugin", version.ref = "gradle-node-plugin" }
 woodstox-core = { module = "com.fasterxml.woodstox:woodstox-core", version.ref = "woodstox-core" }
-dataframe = { module = "org.jetbrains.kotlinx:dataframe", version.ref = "dataframe" }
 dataframeCore = { module = "org.jetbrains.kotlinx:dataframe-core", version.ref = "dataframe" }
 dataframeCsv = { module = "org.jetbrains.kotlinx:dataframe-csv", version.ref = "dataframe" }
 dataframeJson = { module = "org.jetbrains.kotlinx:dataframe-json", version.ref = "dataframe" }
@@ -115,13 +115,8 @@ apache-commons-text = { module = "org.apache.commons:commons-text", version.ref 
 ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
-ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
-ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
-ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
-ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
-ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 
 jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
@@ -130,7 +125,6 @@ guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guava-failureaccess = { module = "com.google.guava:failureaccess", version.ref = "failureaccess" }
 vavr = { module = "io.vavr:vavr", version.ref = "vavr" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
-jdom2 = { module = "org.jdom:jdom2", version.ref = "jdom2" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit4 = { module = "junit:junit", version.ref = "junit4" }
@@ -139,7 +133,6 @@ junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit5" }
 junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junit5" }
-junit-platform-commons = { module = "org.junit.platform:junit-platform-commons", version.ref = "junit-platform" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 junit-platform-suite = { module = "org.junit.platform:junit-platform-suite", version.ref = "junit-platform" }
 opentest4j = { module = "org.opentest4j:opentest4j", version.ref = "opentest4j" }
@@ -188,6 +181,5 @@ antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 org-tukaani-xz = { module = "org.tukaani:xz", version.ref = "org-tukaani-xz"}
 
 [plugins]
-jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }
 kotlinx-bcv = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-bcv" }
