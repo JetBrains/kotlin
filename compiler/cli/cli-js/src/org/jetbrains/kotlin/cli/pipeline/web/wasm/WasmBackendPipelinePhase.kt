@@ -48,7 +48,9 @@ private val IrModuleFragment.outputFileName
     get() = kotlinLibrary?.jsOutputName ?: (name.asString()
         .replace("<", "_")
         .replace(">", "_")
-        .let { URLEncoder.encode(it, "UTF-8").replace("%", "%25") })
+        .replace(":", "_")
+        .replace(" ", "_")
+        .let { URLEncoder.encode(it, "UTF-8") })
 
 object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, WasmIrModuleConfiguration>("WasmBackendPipelinePhase") {
     override val configFiles: EnvironmentConfigFiles
