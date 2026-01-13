@@ -164,6 +164,22 @@ fun foo() {
             print(1)
         }
     }
+
+    var flag = true
+    var name = "World"
+    var obj: Any = "text"
+    var nullableStr: String? = null
+    barRegular {
+        if (flag && true) {
+            print(1)
+        }
+        println("Hello ${name}")
+        if (obj is String) {
+            print(1)
+        }
+        val s = obj as String
+        val res = nullableStr ?: "default"
+    }
 }
 
 /* GENERATED_FIR_TAGS: assignment, classReference, contractCallsEffect, contracts, functionDeclaration, functionalType,
