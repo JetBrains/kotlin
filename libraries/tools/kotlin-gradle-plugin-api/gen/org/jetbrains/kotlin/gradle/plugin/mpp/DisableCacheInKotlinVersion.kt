@@ -10,20 +10,20 @@ import kotlin.String
 
 /**
  *
- * Provides type-safe constants for Kotlin versions to be used in the DSL for disabling the native cache.
+ * Provides type-safe constants for Kotlin versions, used in the DSL to disable the native cache.
  *
  * Disabling the native cache is not recommended and should only be used as a temporary workaround.
  * This class follows a rolling deprecation cycle to ensure that any cache-disabling configuration
  * is reviewed after a Kotlin update.
  *
- * Only the 3 most recent versions are included:
+ * Only the three most recent versions are included:
  * - **N (Latest):** The version constant is available.
  * - **N-1 (Deprecated):** The constant is marked with a deprecation warning.
  * - **N-2 (Error):** The constant is marked with a deprecation error.
  * - **N-3 (Dropped):** The constant is removed, causing a compilation failure.
  *
  * This forces a review of the cache-disabling configuration. If the problem is resolved,
- * please remove the DSL entry. If not, please update to the latest version constant.
+ * remove the DSL entry. If not, update to the latest version constant.
  *
  * @since 2.3.20
  */
