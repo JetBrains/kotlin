@@ -423,6 +423,8 @@ public actual fun sign(x: Double): Double = when {
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Double, b: Double): Double = when {
@@ -434,6 +436,8 @@ public actual fun min(a: Double, b: Double): Double = when {
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Double, b: Double): Double = when {
@@ -1062,6 +1066,8 @@ public actual fun sign(x: Float): Float = when {
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Float, b: Float): Float = when {
@@ -1073,6 +1079,8 @@ public actual fun min(a: Float, b: Float): Float = when {
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Float, b: Float): Float = when {
@@ -1302,12 +1310,16 @@ external public actual fun abs(n: Int): Int
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Int, b: Int): Int = if (a < b) a else b
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Int, b: Int): Int = if (a > b) a else b
@@ -1358,12 +1370,16 @@ external public actual fun abs(n: Long): Long
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Long, b: Long): Long = if (a < b) a else b
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Long, b: Long): Long = if (a > b) a else b
