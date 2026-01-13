@@ -25,7 +25,7 @@ abstract class LLDBSessionSpec {
         this += "-o"
         this += "command script import ${prettyPrinters.absolutePath}"
         this += "-o"
-        this += "command script import ${File("kotlin-native/llvmDebugInfoC/src/scripts/konan_lldb_test_helper.py").absolutePath}"
+        this += "command script import ${File("native/native.tests/testFixtures/scripts/konan_lldb_test_helper.py").absolutePath}"
     }
 
     abstract fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean
