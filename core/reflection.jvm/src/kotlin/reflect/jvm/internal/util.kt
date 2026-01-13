@@ -309,7 +309,7 @@ internal fun Any?.asReflectCallable(): ReflectKCallable<*>? = when (this) {
 
 internal val DescriptorKCallable<*>.instanceReceiverParameter: ReceiverParameterDescriptor?
     get() {
-        overriddenStorage.instanceReceiverParameter?.let { return it }
+        overriddenStorage.instanceReceiverParameter?.let { return it.descriptor.thisAsReceiverParameter }
         val descriptor = descriptor
         return when {
             descriptor is ConstructorDescriptor -> descriptor.dispatchReceiverParameter

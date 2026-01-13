@@ -5,19 +5,23 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import kotlin.metadata.Modality
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVisibility
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
+import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
 
 internal abstract class DescriptorKCallable<out R>(
     internal val overriddenStorage: KCallableOverriddenStorage,
@@ -132,7 +136,7 @@ internal abstract class DescriptorKCallable<out R>(
         get() = descriptor.visibility.toKVisibility()
 
     internal val modality: Modality
-        get() = overriddenStorage.modality ?: descriptor.modality
+        get() = overriddenStorage.modality ?: descriptor.modality.toMetadataModality()
 
     internal val isPackagePrivate: Boolean
         get() = descriptor.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY
@@ -147,8 +151,15 @@ internal abstract class DescriptorKCallable<out R>(
         get() = modality == Modality.ABSTRACT
 }
 
+private fun DescriptorModality.toMetadataModality(): Modality = when (this) {
+    DescriptorModality.FINAL -> Modality.FINAL
+    DescriptorModality.OPEN -> Modality.OPEN
+    DescriptorModality.ABSTRACT -> Modality.ABSTRACT
+    DescriptorModality.SEALED -> Modality.SEALED
+}
+
 internal data class KCallableOverriddenStorage(
-    val instanceReceiverParameter: ReceiverParameterDescriptor?,
+    val instanceReceiverParameter: KClassImpl<*>?,
     private val classTypeParametersSubstitutor: KTypeSubstitutor,
     val modality: Modality?,
     val originalContainerIfFakeOverride: KDeclarationContainerImpl?,

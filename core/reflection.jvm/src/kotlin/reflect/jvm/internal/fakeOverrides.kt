@@ -108,7 +108,6 @@ private fun isNonTransitiveMember(kClass: KClassImpl<*>, member: DescriptorKCall
 
 internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMembers {
     val javaSignaturesMap: MutableMembersJavaSignatureMap = HashMap()
-    val thisReceiver = kClass.descriptor.thisAsReceiverParameter
     var containsInheritedStatics = false
     var containsPackagePrivate = false
     val isKotlin = kClass.java.isKotlin
@@ -133,7 +132,7 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
             val overriddenStorage = notSubstitutedMember.overriddenStorage
                 .withChainedClassTypeParametersSubstitutor(substitutor)
                 .copy(
-                    instanceReceiverParameter = if (notSubstitutedMember.isStatic) null else thisReceiver,
+                    instanceReceiverParameter = kClass.takeUnless { notSubstitutedMember.isStatic },
                     originalContainerIfFakeOverride = notSubstitutedMember.originalContainer,
                     originalCallableTypeParameters = notSubstitutedMember.typeParameters,
                 )
