@@ -16,7 +16,8 @@ import kotlin.experimental.ExperimentalTypeInference
 /**
  * Builds a [Sequence] lazily yielding values one by one.
  *
- * When the resulting sequence is no longer iterated, the remainder of the computation will not run at all.
+ * If the consuming code stops iterating the sequence before it's completed,
+ * the remainder of the computation will not run at all.
  * In particular, it means that `finally` blocks may fail to run:
  *
  * ```
@@ -44,7 +45,8 @@ public fun <T> sequence(@BuilderInference block: suspend SequenceScope<T>.() -> 
 /**
  * Builds an [Iterator] lazily yielding values one by one.
  *
- * When the resulting iterator is no longer used, the remainder of the computation will not run at all.
+ * If the consuming code stops using the iterator without [Iterator.hasNext] returning `false` first,
+ * the remainder of the computation will not run at all.
  * In particular, it means that `finally` blocks may fail to run:
  *
  * ```
