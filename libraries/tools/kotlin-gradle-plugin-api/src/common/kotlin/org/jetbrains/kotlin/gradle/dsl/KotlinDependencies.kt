@@ -53,7 +53,7 @@ interface KotlinDependencies : Dependencies, PlatformDependencyModifiers {
 
     /**
      * Add a dependency to the [`commonTest`][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME] source set's
-     * [implementation][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.implementationConfigurationName] configuration
+     * [implementation][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.implementationConfigurationName] configuration.
      *
      * @see implementation
      */
