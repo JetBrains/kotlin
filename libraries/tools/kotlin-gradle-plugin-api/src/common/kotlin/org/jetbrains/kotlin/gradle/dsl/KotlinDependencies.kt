@@ -81,7 +81,7 @@ interface KotlinDependencies : Dependencies, PlatformDependencyModifiers {
     fun kotlin(module: String): Dependency
 
     /**
-     * Generates a "org.jetbrains.kotlin:kotlin-${module}:${version}" dependency.
+     * Generates a `org.jetbrains.kotlin:kotlin-${module}:${version}` dependency.
      */
     fun kotlin(module: String, version: String?): Dependency
 }
