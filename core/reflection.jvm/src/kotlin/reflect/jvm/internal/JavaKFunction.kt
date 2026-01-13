@@ -16,7 +16,9 @@ internal abstract class JavaKFunction(
     container: KDeclarationContainerImpl,
     member: Member,
     rawBoundReceiver: Any?,
-) : JavaKCallable<Any?>(container, member, rawBoundReceiver), ReflectKFunction, FunctionBase<Any?>, FunctionWithAllInvokes {
+    overriddenStorage: KCallableOverriddenStorage,
+) : JavaKCallable<Any?>(container, member, rawBoundReceiver, overriddenStorage),
+    ReflectKFunction, FunctionBase<Any?>, FunctionWithAllInvokes {
     abstract val parameterTypes: Array<out Class<*>>
     abstract val genericParameterTypes: Array<Type>
     abstract val isVararg: Boolean

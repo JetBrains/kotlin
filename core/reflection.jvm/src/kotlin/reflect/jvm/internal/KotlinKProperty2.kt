@@ -12,7 +12,8 @@ import kotlin.reflect.KProperty2
 
 internal open class KotlinKProperty2<D, E, out V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
-) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty), KProperty2<D, E, V> {
+    overriddenStorage: KCallableOverriddenStorage,
+) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage), KProperty2<D, E, V> {
     override val getter: Getter<D, E, V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun get(receiver1: D, receiver2: E): V = getter.call(receiver1, receiver2)
@@ -23,6 +24,9 @@ internal open class KotlinKProperty2<D, E, out V>(
 
     override fun invoke(receiver1: D, receiver2: E): V = get(receiver1, receiver2)
 
+    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
+        KotlinKProperty2<D, E, V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage)
+
     class Getter<D, E, out V>(override val property: KotlinKProperty2<D, E, V>) : KotlinKProperty.Getter<V>(), KProperty2.Getter<D, E, V> {
         override fun invoke(receiver1: D, receiver2: E): V = property.get(receiver1, receiver2)
     }
@@ -30,10 +34,14 @@ internal open class KotlinKProperty2<D, E, out V>(
 
 internal class KotlinKMutableProperty2<D, E, V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
-) : KotlinKProperty2<D, E, V>(container, signature, rawBoundReceiver, kmProperty), KMutableProperty2<D, E, V> {
+    overriddenStorage: KCallableOverriddenStorage,
+) : KotlinKProperty2<D, E, V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage), KMutableProperty2<D, E, V> {
     override val setter: Setter<D, E, V> by lazy(PUBLICATION) { Setter(this) }
 
     override fun set(receiver1: D, receiver2: E, value: V): Unit = setter.call(receiver1, receiver2, value)
+
+    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
+        KotlinKMutableProperty2<D, E, V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage)
 
     class Setter<D, E, V>(override val property: KotlinKMutableProperty2<D, E, V>) :
         KotlinKProperty.Setter<V>(), KMutableProperty2.Setter<D, E, V> {

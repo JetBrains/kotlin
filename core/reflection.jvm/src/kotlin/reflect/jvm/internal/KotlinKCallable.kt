@@ -8,23 +8,16 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.name.SpecialNames
 import kotlin.metadata.KmType
 import kotlin.metadata.KmValueParameter
-import kotlin.metadata.Modality
 import kotlin.reflect.KParameter
 
-internal abstract class KotlinKCallable<out R> : ReflectKCallableImpl<R>() {
-    abstract val modality: Modality
+internal abstract class KotlinKCallable<out R>(
+    overriddenStorage: KCallableOverriddenStorage,
+) : ReflectKCallableImpl<R>(overriddenStorage) {
     abstract override val rawBoundReceiver: Any?
 
-    final override val isFinal: Boolean
-        get() = modality == Modality.FINAL
-
-    final override val isOpen: Boolean
-        get() = modality == Modality.OPEN
-
-    final override val isAbstract: Boolean
-        get() = modality == Modality.ABSTRACT
-
     abstract override val annotations: List<Annotation>
+
+    final override val isPackagePrivate: Boolean get() = false
 }
 
 private val KotlinKCallable<*>.isLocalDelegatedProperty: Boolean

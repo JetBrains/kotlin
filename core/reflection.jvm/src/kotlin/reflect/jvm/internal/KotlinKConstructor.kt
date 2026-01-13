@@ -18,7 +18,7 @@ internal class KotlinKConstructor(
     signature: String,
     rawBoundReceiver: Any?,
     private val kmConstructor: KmConstructor,
-) : KotlinKFunction(container, signature, rawBoundReceiver) {
+) : KotlinKFunction(container, signature, rawBoundReceiver, KCallableOverriddenStorage.EMPTY) {
     override val contextParameters: List<KmValueParameter> get() = emptyList()
     override val extensionReceiverType: KmType? get() = null
     override val valueParameters: List<KmValueParameter> get() = kmConstructor.valueParameters
@@ -42,4 +42,7 @@ internal class KotlinKConstructor(
     override val isInfix: Boolean get() = false
 
     override val isPrimaryConstructor: Boolean get() = !kmConstructor.isSecondary
+
+    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
+        error("Constructors cannot be copied: $this")
 }

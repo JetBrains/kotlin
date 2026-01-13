@@ -11,16 +11,24 @@ import kotlin.reflect.KMutableProperty
 
 internal open class KotlinKPropertyN<out V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
-) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty) {
+    overriddenStorage: KCallableOverriddenStorage,
+) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage) {
     override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
+
+    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
+        KotlinKPropertyN(container, signature, rawBoundReceiver, kmProperty, overriddenStorage)
 
     class Getter<out V>(override val property: KotlinKPropertyN<V>) : KotlinKProperty.Getter<V>()
 }
 
 internal class KotlinKMutablePropertyN<V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
-) : KotlinKPropertyN<V>(container, signature, rawBoundReceiver, kmProperty), KMutableProperty<V> {
+    overriddenStorage: KCallableOverriddenStorage,
+) : KotlinKPropertyN<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage), KMutableProperty<V> {
     override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }
+
+    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
+        KotlinKMutablePropertyN(container, signature, rawBoundReceiver, kmProperty, overriddenStorage)
 
     class Setter<V>(override val property: KotlinKMutablePropertyN<V>) : KotlinKProperty.Setter<V>()
 }

@@ -51,10 +51,10 @@ import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.lang.annotation.Inherited
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionReference
@@ -496,3 +496,6 @@ private fun ClassLoader.parseAndLoadType(desc: String, begin: Int = 0, end: Int 
         'D' -> Double::class.java
         else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
     }
+
+internal val Int.isPackagePrivate: Boolean
+    get() = !Modifier.isPublic(this) && !Modifier.isProtected(this) && !Modifier.isPrivate(this)

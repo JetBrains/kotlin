@@ -5,8 +5,21 @@
 
 package kotlin.reflect.jvm.internal
 
-internal abstract class ReflectKCallableImpl<out R> : ReflectKCallable<R> {
+import kotlin.metadata.Modality
+
+internal abstract class ReflectKCallableImpl<out R>(
+    override val overriddenStorage: KCallableOverriddenStorage,
+) : ReflectKCallable<R> {
     private val _absentArguments = ReflectProperties.lazySoft(::computeAbsentArguments)
 
     override fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
+
+    final override val isFinal: Boolean
+        get() = modality == Modality.FINAL
+
+    final override val isOpen: Boolean
+        get() = modality == Modality.OPEN
+
+    final override val isAbstract: Boolean
+        get() = modality == Modality.ABSTRACT
 }

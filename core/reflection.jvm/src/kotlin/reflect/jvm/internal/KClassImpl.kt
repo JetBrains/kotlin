@@ -407,32 +407,32 @@ internal class KClassImpl<T : Any>(
                     isSubclassOf(CharSequence::class) ||
                     isSubclassOf(Number::class)
 
-        val declaredNonStaticMembers: Collection<DescriptorKCallable<*>>
+        val declaredNonStaticMembers: Collection<ReflectKCallable<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
-        private val declaredStaticMembers: Collection<DescriptorKCallable<*>>
+        private val declaredStaticMembers: Collection<ReflectKCallable<*>>
                 by ReflectProperties.lazySoft { getMembers(staticScope, DECLARED) }
-        private val inheritedNonStaticMembers_k1Impl: Collection<DescriptorKCallable<*>>
+        private val inheritedNonStaticMembers_k1Impl: Collection<ReflectKCallable<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, INHERITED) }
-        private val inheritedStaticMembers_k1Impl: Collection<DescriptorKCallable<*>>
+        private val inheritedStaticMembers_k1Impl: Collection<ReflectKCallable<*>>
                 by ReflectProperties.lazySoft { getMembers(staticScope, INHERITED) }
 
-        val allNonStaticMembers: Collection<DescriptorKCallable<*>>
+        val allNonStaticMembers: Collection<ReflectKCallable<*>>
                 by ReflectProperties.lazySoft {
                     when (useK1ImplementationForFakeOverrides()) {
                         true -> declaredNonStaticMembers + inheritedNonStaticMembers_k1Impl
                         false -> allMembers.filter { !it.isStatic }
                     }
                 }
-        val allStaticMembers: Collection<DescriptorKCallable<*>>
+        val allStaticMembers: Collection<ReflectKCallable<*>>
                 by ReflectProperties.lazySoft {
                     when (useK1ImplementationForFakeOverrides()) {
                         true -> declaredStaticMembers + inheritedStaticMembers_k1Impl
                         false -> allMembers.filter { it.isStatic }
                     }
                 }
-        val declaredMembers: Collection<DescriptorKCallable<*>>
+        val declaredMembers: Collection<ReflectKCallable<*>>
                 by ReflectProperties.lazySoft { declaredNonStaticMembers + declaredStaticMembers }
-        val allMembers: Collection<DescriptorKCallable<*>>
+        val allMembers: Collection<ReflectKCallable<*>>
                 by ReflectProperties.lazySoft {
                     when (useK1ImplementationForFakeOverrides()) {
                         true -> allNonStaticMembers + allStaticMembers

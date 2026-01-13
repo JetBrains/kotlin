@@ -21,9 +21,9 @@ package kotlin.reflect.full
 
 import org.jetbrains.kotlin.utils.DFS
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.DescriptorKCallable
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.ReflectKCallable
 import kotlin.reflect.jvm.internal.ReflectKFunction
 import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
@@ -175,10 +175,10 @@ val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KProperty2
     get() = (this as KClassImpl<T>).data.value.declaredNonStaticMembers.filter { it.isExtension && it is KProperty2<*, *, *> } as Collection<KProperty2<T, *, *>>
 
 
-private val DescriptorKCallable<*>.isExtension: Boolean
-    get() = descriptor.extensionReceiverParameter != null
+private val ReflectKCallable<*>.isExtension: Boolean
+    get() = allParameters.any { it.kind == KParameter.Kind.EXTENSION_RECEIVER }
 
-private val DescriptorKCallable<*>.isNotExtension: Boolean
+private val ReflectKCallable<*>.isNotExtension: Boolean
     get() = !isExtension
 
 /**

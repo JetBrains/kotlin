@@ -19,7 +19,7 @@ internal class JavaKConstructor(
     container: KDeclarationContainerImpl,
     constructor: Constructor<*>,
     rawBoundReceiver: Any?,
-) : JavaKFunction(container, constructor, rawBoundReceiver) {
+) : JavaKFunction(container, constructor, rawBoundReceiver, KCallableOverriddenStorage.EMPTY) {
     private val jClass: Class<*> get() = container.jClass
     val jConstructor: Constructor<*> get() = member as Constructor<*>
 
@@ -59,4 +59,7 @@ internal class JavaKConstructor(
     }
 
     override val callerWithDefaults: Caller<*>? get() = null
+
+    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
+        error("Constructors cannot be copied: $this")
 }

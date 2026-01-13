@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.desc
 import java.lang.reflect.Method
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.FunctionBase
+import kotlin.metadata.Modality
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -23,7 +24,7 @@ import kotlin.reflect.jvm.jvmErasure
 
 internal class JavaAnnotationConstructor(
     private val klass: KClassImpl<*>,
-) : ReflectKCallableImpl<Any?>(), ReflectKFunction, FunctionBase<Any?>, FunctionWithAllInvokes {
+) : ReflectKCallableImpl<Any?>(KCallableOverriddenStorage.EMPTY), ReflectKFunction, FunctionBase<Any?>, FunctionWithAllInvokes {
     // Java annotations do not impose any order of methods inside them, so we consider them lexicographic here for stability
     private val methods = klass.java.declaredMethods.sortedBy { it.name }
 
@@ -36,9 +37,7 @@ internal class JavaAnnotationConstructor(
     override val name: String get() = "<init>"
 
     override val visibility: KVisibility? get() = klass.java.modifiers.computeVisibilityForJavaModifiers()
-    override val isFinal: Boolean get() = true
-    override val isOpen: Boolean get() = false
-    override val isAbstract: Boolean get() = false
+    override val modality: Modality get() = Modality.FINAL
     override val isSuspend: Boolean get() = false
     override val isInline: Boolean get() = false
     override val isExternal: Boolean get() = false
@@ -46,6 +45,7 @@ internal class JavaAnnotationConstructor(
     override val isInfix: Boolean get() = false
 
     override val isPrimaryConstructor: Boolean get() = true
+    override val isPackagePrivate: Boolean get() = klass.java.modifiers.isPackagePrivate
 
     override val returnType: KType by lazy(PUBLICATION) {
         klass.createDefaultType()
@@ -69,6 +69,9 @@ internal class JavaAnnotationConstructor(
     override val callerWithDefaults: Caller<*> by lazy(PUBLICATION) {
         AnnotationConstructorCaller(klass.java, methods.map { it.name }, CALL_BY_NAME, JAVA, methods)
     }
+
+    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
+        error("Annotation constructors cannot be copied: $this")
 
     override fun equals(other: Any?): Boolean {
         val that = other.asReflectFunction() ?: return false

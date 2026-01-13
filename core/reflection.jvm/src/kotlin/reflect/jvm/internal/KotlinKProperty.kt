@@ -5,11 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
-import java.lang.reflect.Field
-import java.lang.reflect.Member
-import java.lang.reflect.Method
-import java.lang.reflect.Modifier
-import java.lang.reflect.Type
+import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
@@ -21,7 +17,8 @@ internal abstract class KotlinKProperty<out V>(
     override val signature: String,
     override val rawBoundReceiver: Any?,
     val kmProperty: KmProperty,
-) : KotlinKCallable<V>(), ReflectKProperty<V> {
+    overriddenStorage: KCallableOverriddenStorage,
+) : KotlinKCallable<V>(overriddenStorage), ReflectKProperty<V> {
     override val name: String get() = kmProperty.name
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
@@ -103,7 +100,7 @@ internal abstract class KotlinKProperty<out V>(
         }
 
     abstract class Accessor<out PropertyType, out ReturnType> :
-        KotlinKCallable<ReturnType>(), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
+        KotlinKCallable<ReturnType>(KCallableOverriddenStorage.EMPTY), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
         abstract override val property: KotlinKProperty<PropertyType>
 
         abstract val accessor: KmPropertyAccessorAttributes?
@@ -123,6 +120,11 @@ internal abstract class KotlinKProperty<out V>(
         override val isOperator: Boolean get() = false
         override val isInfix: Boolean get() = false
         override val isSuspend: Boolean get() = false
+
+        final override fun shallowCopy(
+            container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
+        ): ReflectKCallable<ReturnType> =
+            error("Property accessors can only be copied by copying the corresponding property")
 
         override val annotations: List<Annotation>
             get() =

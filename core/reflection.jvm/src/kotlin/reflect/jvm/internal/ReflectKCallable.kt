@@ -7,6 +7,7 @@ package kotlin.reflect.jvm.internal
 
 import kotlin.coroutines.Continuation
 import kotlin.jvm.internal.CallableReference
+import kotlin.metadata.Modality
 import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -48,6 +49,17 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
      * @see computeAbsentArguments
      */
     fun getAbsentArguments(): Array<Any?>
+
+    val overriddenStorage: KCallableOverriddenStorage
+
+    val modality: Modality
+
+    val isPackagePrivate: Boolean
+
+    fun shallowCopy(
+        container: KDeclarationContainerImpl,
+        overriddenStorage: KCallableOverriddenStorage,
+    ): ReflectKCallable<R>
 
     @Suppress("UNCHECKED_CAST")
     override fun call(vararg args: Any?): R = reflectionCall {

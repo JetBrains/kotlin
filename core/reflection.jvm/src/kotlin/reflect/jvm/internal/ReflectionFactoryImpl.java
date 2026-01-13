@@ -86,7 +86,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
             }
             else if (container instanceof KPackageImpl) {
                 KmFunction kmFunction = container.findFunctionMetadata(name, signature);
-                return new KotlinKNamedFunction(container, signature, f.getBoundReceiver(), kmFunction);
+                return new KotlinKNamedFunction(container, signature, f.getBoundReceiver(), kmFunction, KCallableOverriddenStorage.EMPTY);
             }
         }
         return new DescriptorKFunction(container, name, signature, f.getBoundReceiver());
@@ -106,7 +106,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
             }
             if (container instanceof KPackageImpl) {
                 KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
-                return new KotlinKProperty0(container, signature, p.getBoundReceiver(), kmProperty);
+                return new KotlinKProperty0(container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY);
             }
         }
         return new DescriptorKProperty0(container, p.getName(), signature, p.getBoundReceiver());
@@ -124,7 +124,9 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
             }
             if (container instanceof KPackageImpl) {
                 KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
-                return new KotlinKMutableProperty0(container, signature, p.getBoundReceiver(), kmProperty);
+                return new KotlinKMutableProperty0(
+                        container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY
+                );
             }
         }
         return new DescriptorKMutableProperty0(container, p.getName(), signature, p.getBoundReceiver());
@@ -137,7 +139,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         if (!SystemPropertiesKt.getUseK1Implementation()) {
             if (container instanceof KPackageImpl) {
                 KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
-                return new KotlinKProperty1(container, signature, p.getBoundReceiver(), kmProperty);
+                return new KotlinKProperty1(container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY);
             }
         }
         return new DescriptorKProperty1(container, p.getName(), signature, p.getBoundReceiver());
@@ -150,7 +152,9 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         if (!SystemPropertiesKt.getUseK1Implementation()) {
             if (container instanceof KPackageImpl) {
                 KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
-                return new KotlinKMutableProperty1(container, signature, p.getBoundReceiver(), kmProperty);
+                return new KotlinKMutableProperty1(
+                        container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY
+                );
             }
         }
         return new DescriptorKMutableProperty1(container, p.getName(), signature, p.getBoundReceiver());
