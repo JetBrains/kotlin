@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.expandedType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -100,13 +101,14 @@ public class SirTypeProviderImpl(
                     SirFunctionalType(
                         isAsync = kaType.isSuspendFunctionType,
                         parameterTypes = listOfNotNull(
-                            kaType.receiverType?.translateType(
-                                ctx.copy(currentPosition = ctx.currentPosition.flip())
-                            )
-                        ) + kaType.parameterTypes.map { it.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip())) },
+                            kaType.receiverType?.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip()))
+                                ?.withEscapingIfNeeded()
+                        ) + kaType.parameterTypes
+                            .map { it.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip())).withEscapingIfNeeded() },
                         returnType = kaType.returnType.translateType(ctx.copy(currentPosition = ctx.currentPosition)),
-                        attributes = listOf(SirAttribute.Escaping),
-                    ).optionalIfNeeded(kaType)
+                    )
+                        .withEscapingIfNeeded()
+                        .optionalIfNeeded(kaType)
                 }
                 is KaTypeParameterType -> ctx.translateTypeParameterType(kaType)
                 is KaErrorType
@@ -209,5 +211,18 @@ public class SirTypeProviderImpl(
     context(ka: KaSession)
     private val KaType.isTypealiasToNullableType: Boolean
         get() = (symbol as? KaTypeAliasSymbol)?.expandedType?.isMarkedNullable ?: false
+
+    private fun SirType.withEscapingIfNeeded(): SirType = when (this) {
+        is SirFunctionalType -> copyAppendingAttributes(SirAttribute.Escaping)
+        is SirNominalType -> if (isTypealiasOntoFunctionalType) {
+            copyAppendingAttributes(SirAttribute.Escaping)
+        } else {
+            this
+        }
+        else -> this
+    }
+
+    private val SirNominalType.isTypealiasOntoFunctionalType: Boolean
+        get() = (typeDeclaration as? SirTypealias)?.let { it.expandedType is SirFunctionalType } == true
 }
 

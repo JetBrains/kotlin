@@ -97,6 +97,10 @@ typealias Closure = (Int, Int) -> Unit
 
 fun typealias_demo(input: Closure): Closure = TODO()
 
+typealias CallbackWithInnerClosure = ((() -> Int)) -> Int
+
+fun foo_flow_with_callback(callback: CallbackWithInnerClosure): CallbackWithInnerClosure = TODO()
+
 // MODULE: data
 // EXPORT_TO_SWIFT
 // FILE: data.kt
