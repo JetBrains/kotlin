@@ -156,7 +156,9 @@ interface AbiValidationExtension {
         "A separate block 'legacyDump' was removed. Please place all its properties on a higher level.",
         level = DeprecationLevel.WARNING
     )
-    fun legacyDump(action: Action<AbiValidationLegacyDumpExtension>)
+    fun legacyDump(action: Action<AbiValidationLegacyDumpExtension>) {
+        action.execute(legacyDump)
+    }
 
     /**
      * @deprecated Property was renamed to 'internalDumpTaskProvider'.
