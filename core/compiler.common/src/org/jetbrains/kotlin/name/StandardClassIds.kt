@@ -259,6 +259,8 @@ object StandardClassIds {
         val JvmBuiltin = "JvmBuiltin".internalId()
         val SuppressBytecodeGeneration = "SuppressBytecodeGeneration".internalId()
 
+        val UsedFromCompilerGeneratedCode = "UsedFromCompilerGeneratedCode".internalId()
+
         object ParameterNames {
             val value = Name.identifier("value")
 
