@@ -20,7 +20,7 @@ KtPrefixExpression(128,136): '++m["a"]'
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
         precedence = PREFIX
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           "a" -> (KaVariableSignature:
             name = k
@@ -55,7 +55,7 @@ KtPrefixExpression(128,136): '++m["a"]'
       indexArguments = [
         "a"
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           "a" -> (KaVariableSignature:
             name = v

@@ -36,7 +36,7 @@ KtBinaryExpression(182,193): 'm["a"] += 1'
             contextParameters = []
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           "a" -> (KaVariableSignature:
             name = k
@@ -71,7 +71,7 @@ KtBinaryExpression(182,193): 'm["a"] += 1'
       indexArguments = [
         "a"
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           "a" -> (KaVariableSignature:
             name = v

@@ -676,11 +676,11 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaC
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCompoundArrayAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCall, org/jetbrains/kotlin/analysis/api/resolution/KaCompoundAccessCall, org/jetbrains/kotlin/analysis/api/resolution/KaMultiCall {
-	public abstract fun getGetCall ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
 	public abstract fun getGetPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
+	public abstract fun getGetterCall ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
 	public abstract fun getIndexArguments ()Ljava/util/List;
-	public abstract fun getSetCall ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
 	public abstract fun getSetPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
+	public abstract fun getSetterCall ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCompoundOperation : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {

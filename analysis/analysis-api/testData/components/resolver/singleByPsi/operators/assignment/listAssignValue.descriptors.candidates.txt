@@ -28,7 +28,7 @@ KtOperationReferenceExpression(57,59): '+='
             contextParameters = []
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -55,7 +55,7 @@ KtOperationReferenceExpression(57,59): '+='
       indexArguments = [
         0
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

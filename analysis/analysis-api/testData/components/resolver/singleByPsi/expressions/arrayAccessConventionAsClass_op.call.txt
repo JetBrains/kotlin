@@ -36,7 +36,7 @@ KtOperationReferenceExpression(250,252): '+='
             contextParameters = []
             callableId = /MyClass.plus
           typeArgumentsMapping = {}
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           0 -> (KaVariableSignature:
             name = i
@@ -71,7 +71,7 @@ KtOperationReferenceExpression(250,252): '+='
       indexArguments = [
         0
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           0 -> (KaVariableSignature:
             name = v

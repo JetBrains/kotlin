@@ -20,7 +20,7 @@ KtPostfixExpression(128,136): 'm["a"]++'
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
         precedence = POSTFIX
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -47,7 +47,7 @@ KtPostfixExpression(128,136): 'm["a"]++'
       indexArguments = [
         "a"
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

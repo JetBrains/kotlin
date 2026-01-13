@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -376,24 +376,24 @@ public interface KaCompoundArrayAccessCall : KaMultiCall, KaCall, KaCompoundAcce
     /**
      * The `get` function that's invoked when reading values corresponding to the given [indexArguments].
      */
-    @Deprecated("Use 'getCall' instead")
+    @Deprecated("Use 'getterCall' instead")
     public val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
 
     /**
      * Represents a call of the `get` function that's invoked when reading values corresponding to the given [indexArguments]
      */
-    public val getCall: KaFunctionCall<KaNamedFunctionSymbol>
+    public val getterCall: KaFunctionCall<KaNamedFunctionSymbol>
 
     /**
      * The `set` function that's invoked when writing values corresponding to the given [indexArguments] and the computed value from the
      * operation.
      */
-    @Deprecated("Use 'setCall' instead")
+    @Deprecated("Use 'setterCall' instead")
     public val setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
 
     /**
      * Represents a call of the `set` function that's invoked when writing values corresponding to the given [indexArguments] and the computed value from the
      * operation
      */
-    public val setCall: KaFunctionCall<KaNamedFunctionSymbol>
+    public val setterCall: KaFunctionCall<KaNamedFunctionSymbol>
 }

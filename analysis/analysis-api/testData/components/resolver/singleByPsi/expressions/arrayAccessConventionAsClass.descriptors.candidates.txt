@@ -28,7 +28,7 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
             contextParameters = []
             callableId = /MyClass.plus
           typeArgumentsMapping = {}
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -55,7 +55,7 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
       indexArguments = [
         0
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

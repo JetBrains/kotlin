@@ -36,7 +36,7 @@ KtOperationReferenceExpression(151,153): '+='
             contextParameters = []
             callableId = kotlin/String.plus
           typeArgumentsMapping = {}
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           10 -> (KaVariableSignature:
             name = index
@@ -71,7 +71,7 @@ KtOperationReferenceExpression(151,153): '+='
       indexArguments = [
         10
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           10 -> (KaVariableSignature:
             name = value

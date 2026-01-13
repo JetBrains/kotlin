@@ -893,7 +893,7 @@ KtPrefixExpression(245,254): '--list[i]'
             callableId = kotlin/Int.dec
           typeArgumentsMapping = {}
         precedence = PREFIX
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -920,7 +920,7 @@ KtPrefixExpression(245,254): '--list[i]'
       indexArguments = [
         i
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -974,7 +974,7 @@ KtOperationReferenceExpression(245,247): '--'
             callableId = kotlin/Int.dec
           typeArgumentsMapping = {}
         precedence = PREFIX
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1001,7 +1001,7 @@ KtOperationReferenceExpression(245,247): '--'
       indexArguments = [
         i
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

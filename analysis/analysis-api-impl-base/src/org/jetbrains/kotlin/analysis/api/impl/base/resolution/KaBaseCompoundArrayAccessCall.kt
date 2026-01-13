@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.psi.KtExpression
 class KaBaseCompoundArrayAccessCall(
     private val backingCompoundAccess: KaCompoundOperation,
     private val backingIndexArguments: List<KtExpression>,
-    private val backingGetCall: KaFunctionCall<KaNamedFunctionSymbol>,
-    private val backingSetCall: KaFunctionCall<KaNamedFunctionSymbol>,
+    private val backingGetterCall: KaFunctionCall<KaNamedFunctionSymbol>,
+    private val backingSetterCall: KaFunctionCall<KaNamedFunctionSymbol>,
 ) : KaCompoundArrayAccessCall, KaCompoundAccessCall {
     override val token: KaLifetimeToken get() = backingCompoundAccess.token
 
@@ -28,23 +28,23 @@ class KaBaseCompoundArrayAccessCall(
     override val indexArguments: List<KtExpression>
         get() = withValidityAssertion { backingIndexArguments }
 
-    @Deprecated("Use 'getCall' instead")
+    @Deprecated("Use 'getterCall' instead")
     override val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
-        get() = withValidityAssertion { getCall.asPartiallyAppliedSymbol }
+        get() = withValidityAssertion { getterCall.asPartiallyAppliedSymbol }
 
-    override val getCall: KaFunctionCall<KaNamedFunctionSymbol>
-        get() = withValidityAssertion { backingGetCall }
+    override val getterCall: KaFunctionCall<KaNamedFunctionSymbol>
+        get() = withValidityAssertion { backingGetterCall }
 
-    @Deprecated("Use 'setCall' instead")
+    @Deprecated("Use 'setterCall' instead")
     override val setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
-        get() = withValidityAssertion { setCall.asPartiallyAppliedSymbol }
+        get() = withValidityAssertion { setterCall.asPartiallyAppliedSymbol }
 
-    override val setCall: KaFunctionCall<KaNamedFunctionSymbol>
-        get() = withValidityAssertion { backingSetCall }
+    override val setterCall: KaFunctionCall<KaNamedFunctionSymbol>
+        get() = withValidityAssertion { backingSetterCall }
 
     @KaExperimentalApi
     override val calls: List<KaSingleCall<*, *>>
         get() = withValidityAssertion {
-            listOf(backingGetCall, backingCompoundAccess.operationCall, backingSetCall)
+            listOf(backingGetterCall, backingCompoundAccess.operationCall, backingSetterCall)
         }
 }

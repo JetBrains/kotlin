@@ -28,7 +28,7 @@ KtOperationReferenceExpression(250,252): '+='
             contextParameters = []
             callableId = /MyClass.plus
           typeArgumentsMapping = {}
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -55,7 +55,7 @@ KtOperationReferenceExpression(250,252): '+='
       indexArguments = [
         0
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

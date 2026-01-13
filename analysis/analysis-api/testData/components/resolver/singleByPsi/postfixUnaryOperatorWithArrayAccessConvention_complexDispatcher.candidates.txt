@@ -20,7 +20,7 @@ KtPostfixExpression(182,190): 'm["a"]++'
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
         precedence = POSTFIX
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           "a" -> (KaVariableSignature:
             name = k
@@ -55,7 +55,7 @@ KtPostfixExpression(182,190): 'm["a"]++'
       indexArguments = [
         "a"
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           "a" -> (KaVariableSignature:
             name = v

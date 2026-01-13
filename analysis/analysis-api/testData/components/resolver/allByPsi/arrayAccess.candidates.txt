@@ -622,7 +622,7 @@ KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
             contextParameters = []
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           1 -> (KaVariableSignature:
             name = index
@@ -657,7 +657,7 @@ KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
       indexArguments = [
         1
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           1 -> (KaVariableSignature:
             name = element
@@ -889,7 +889,7 @@ KtOperationReferenceExpression(168,170): '+='
             contextParameters = []
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           1 -> (KaVariableSignature:
             name = index
@@ -924,7 +924,7 @@ KtOperationReferenceExpression(168,170): '+='
       indexArguments = [
         1
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           1 -> (KaVariableSignature:
             name = element
@@ -1006,7 +1006,7 @@ KtBinaryExpression(177,191): '(list[2]) += 3'
             contextParameters = []
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           2 -> (KaVariableSignature:
             name = index
@@ -1041,7 +1041,7 @@ KtBinaryExpression(177,191): '(list[2]) += 3'
       indexArguments = [
         2
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           2 -> (KaVariableSignature:
             name = element
@@ -1183,7 +1183,7 @@ KtOperationReferenceExpression(187,189): '+='
             contextParameters = []
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           2 -> (KaVariableSignature:
             name = index
@@ -1218,7 +1218,7 @@ KtOperationReferenceExpression(187,189): '+='
       indexArguments = [
         2
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           2 -> (KaVariableSignature:
             name = element
@@ -1432,7 +1432,7 @@ KtPrefixExpression(245,254): '--list[i]'
             callableId = kotlin/Int.dec
           typeArgumentsMapping = {}
         precedence = PREFIX
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           i -> (KaVariableSignature:
             name = index
@@ -1467,7 +1467,7 @@ KtPrefixExpression(245,254): '--list[i]'
       indexArguments = [
         i
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           i -> (KaVariableSignature:
             name = element
@@ -1530,7 +1530,7 @@ KtOperationReferenceExpression(245,247): '--'
             callableId = kotlin/Int.dec
           typeArgumentsMapping = {}
         precedence = PREFIX
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           i -> (KaVariableSignature:
             name = index
@@ -1565,7 +1565,7 @@ KtOperationReferenceExpression(245,247): '--'
       indexArguments = [
         i
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           i -> (KaVariableSignature:
             name = element
@@ -1724,7 +1724,7 @@ KtPrefixExpression(266,277): '++(list[2])'
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
         precedence = PREFIX
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           2 -> (KaVariableSignature:
             name = index
@@ -1759,7 +1759,7 @@ KtPrefixExpression(266,277): '++(list[2])'
       indexArguments = [
         2
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           2 -> (KaVariableSignature:
             name = element
@@ -1822,7 +1822,7 @@ KtOperationReferenceExpression(266,268): '++'
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
         precedence = PREFIX
-      getCall = KaSimpleFunctionCall:
+      getterCall = KaSimpleFunctionCall:
         argumentMapping = {
           2 -> (KaVariableSignature:
             name = index
@@ -1857,7 +1857,7 @@ KtOperationReferenceExpression(266,268): '++'
       indexArguments = [
         2
       ]
-      setCall = KaSimpleFunctionCall:
+      setterCall = KaSimpleFunctionCall:
         argumentMapping = {
           2 -> (KaVariableSignature:
             name = element
