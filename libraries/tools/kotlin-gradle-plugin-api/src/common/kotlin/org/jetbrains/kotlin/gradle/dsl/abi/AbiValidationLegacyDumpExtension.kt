@@ -15,15 +15,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
  */
 @KotlinGradlePluginDsl
 @ExperimentalAbiValidation
-@Deprecated("This class was removed. All its properties have been moved to 'AbiValidationExtension'.", level = DeprecationLevel.WARNING)
 interface AbiValidationLegacyDumpExtension {
     /**
      * @deprecated A separate block 'legacyDump' was removed. All its properties have been moved to a higher level.
      */
-    @Deprecated(
-        "A separate block 'legacyDump' was removed. All its properties have been moved to a higher level.",
-        level = DeprecationLevel.WARNING
-    )
     val referenceDumpDir: DirectoryProperty
 
     /**

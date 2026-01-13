@@ -140,22 +140,12 @@ interface AbiValidationExtension {
      *
      * @deprecated A separate property 'legacyDump' was removed. Please place all its properties on a higher level.
      */
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        "A separate 'legacyDump' property was removed. Please place all its properties on a higher level.",
-        level = DeprecationLevel.WARNING
-    )
     val legacyDump: AbiValidationLegacyDumpExtension
 
     /**
      * Configures the [legacyDump] with the provided configuration.
      * @deprecated A separate block 'legacyDump' was removed. Please place all its properties on a higher level.
      */
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        "A separate block 'legacyDump' was removed. Please place all its properties on a higher level.",
-        level = DeprecationLevel.WARNING
-    )
     fun legacyDump(action: Action<AbiValidationLegacyDumpExtension>) {
         action.execute(legacyDump)
     }
