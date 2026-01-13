@@ -35,17 +35,21 @@ class CustomKlibCompilerFirstStageTestSuppressor(
                 .map { it.wrap() }
         }
 
+        val sb = StringBuffer()
         val newFailedAssertions = failedAssertions.asSequence().flatMap { wrappedException ->
             if (wrappedException is WrappedException.FromFacade) {
                 if (wrappedException.facade is CustomKlibCompilerFirstStageFacade) {
                     // The test failed on the first stage.
+                    sb.appendLine("First stage exception: ${wrappedException.cause.message} from facade: ${wrappedException.facade::class.simpleName}\nTrace: ${wrappedException.cause.stackTrace.toList().joinToString("\n")}")
                     processFirstStageException(wrappedException)
                 } else {
                     // The test failed not on the first stage.
+                    sb.appendLine("NonFirst stage exception: ${wrappedException.cause.message} from facade: ${wrappedException.facade::class.simpleName}\nTrace: ${wrappedException.cause.stackTrace.toList().joinToString("\n")}")
                     processNonFirstStageException(wrappedException)
                 }
             } else if (wrappedException is WrappedException.FromHandler) {
                 // The test failed on a handler.
+                sb.appendLine("NonFirst stage exception: ${wrappedException.cause.message} from handler: ${wrappedException.handler::class.simpleName}\nTrace: ${wrappedException.cause.stackTrace.toList().joinToString("\n")}")
                 processNonFirstStageException(wrappedException)
             } else {
                 listOf(wrappedException)
@@ -54,7 +58,7 @@ class CustomKlibCompilerFirstStageTestSuppressor(
 
         if (newFailedAssertions.isEmpty()) {
             // Explicitly mark the test as "ignored".
-            throw Assumptions.abort<Nothing>()
+            throw Assumptions.abort(sb.toString())
         } else {
             return newFailedAssertions
         }
