@@ -26,7 +26,7 @@ interface KotlinDependencies : Dependencies, PlatformDependencyModifiers {
 
     /**
      * Add a dependency to the [commonMain][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME] source set's
-     * [api][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.apiConfigurationName] configuration
+     * [api][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.apiConfigurationName] configuration.
      *
      * [`api`](https://kotlinlang.org/docs/gradle-configure-project.html#dependency-types)-scoped dependencies apply during
      * compilation and runtime. Gradle exports them to both the compilation and runtime of library consumers.
