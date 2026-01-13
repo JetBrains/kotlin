@@ -108,8 +108,13 @@ bool kotlin::mm::TryRequestThreadsSuspension(internal::SuspensionReason reason) 
         if (internal::gSuspensionRequestReason.load(std::memory_order_relaxed) != nullptr) {
             return false;
         }
+        // First enable safepoints.
         gSafePointActivator = mm::SafePointActivator();
+        // At this point, the mutators are starting to enter safepoint slow paths, but they are not getting
+        // suspended there and continue executing user code.
+        // Now request the threads suspension.
         internal::gSuspensionRequestReason.store(reason);
+        // The mutators will now start to suspend on their next encountered safepoints.
     }
 
     return true;
