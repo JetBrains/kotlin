@@ -734,6 +734,18 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
 }
 
 /**
+ * KCImm-02
+ *
+ * ```
+ * public fun <T> PersistentCollection<T>.dropLast(n: Int): PersistentList<T>
+ *
+ * // It might help to preserve a persistent structure by `removingAt` call.
+ * public fun <T> PersistentList<T>.dropLast(n: Int): PersistentList<T>
+ *
+ * public fun <T> PersistentSet<T>.dropLast(n: Int): PersistentSet<T>
+ * ```
+ */
+/**
  * Returns a list containing all elements except last [n] elements.
  * 
  * @throws IllegalArgumentException if [n] is negative.
