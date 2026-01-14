@@ -1418,6 +1418,15 @@ public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>):
 }
 
 /**
+ * KCImm-55
+ *
+ * Similar to `associate` - could benefit from returning PersistentMap.
+ *
+ * ```
+ * public inline fun <T, K> PersistentCollection<T>.associateBy(keySelector: (T) -> K): PersistentMap<K, T>
+ * ```
+ */
+/**
  * Returns a [Map] containing the elements from the given collection indexed by the key
  * returned from [keySelector] function applied to each element.
  * 
@@ -1432,6 +1441,15 @@ public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, 
     return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
 }
 
+/**
+ * KCImm-56
+ *
+ * Similar to `associate` - could benefit from returning PersistentMap.
+ *
+ * ```
+ * public inline fun <T, K, V> PersistentCollection<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): PersistentMap<K, V>
+ * ```
+ */
 /**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given collection.
  * 
@@ -1496,6 +1514,15 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateTo(
     return destination
 }
 
+/**
+ * KCImm-57
+ *
+ * Similar to `associate` - could benefit from returning PersistentMap.
+ *
+ * ```
+ * public inline fun <K, V> PersistentCollection<K>.associateWith(valueSelector: (K) -> V): PersistentMap<K, V>
+ * ```
+ */
 /**
  * Returns a [Map] where keys are elements from the given collection and values are
  * produced by the [valueSelector] function applied to each element.
@@ -1625,6 +1652,15 @@ public inline fun <T, R> Iterable<T>.flatMap(transform: (T) -> Sequence<R>): Lis
 }
 
 /**
+ * KCImm-58
+ *
+ * Same as `flatMap` - could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <T, R> PersistentCollection<T>.flatMapIndexed(transform: (index: Int, T) -> Iterable<R>): PersistentList<R>
+ * ```
+ */
+/**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element
  * and its index in the original collection.
  * 
@@ -1743,6 +1779,16 @@ public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List
 }
 
 /**
+ * KCImm-60
+ *
+ * Same as `groupBy` - could benefit from returning a map with PersistentList values.
+ * The map itself could potentially be a PersistentMap.
+ *
+ * ```
+ * public inline fun <T, K, V> PersistentCollection<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): PersistentMap<K, PersistentList<V>>
+ * ```
+ */
+/**
  * Groups values returned by the [valueTransform] function applied to each element of the original collection
  * by the key returned by the given [keySelector] function applied to the element
  * and returns a map where each group key is associated with a list of corresponding values.
@@ -1845,6 +1891,15 @@ public inline fun <T, R> Iterable<T>.mapIndexed(transform: (index: Int, T) -> R)
     return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
 
+/**
+ * KCImm-59
+ *
+ * Same as `mapNotNull` - could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <T, R : Any> PersistentCollection<T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): PersistentList<R>
+ * ```
+ */
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each element and its index in the original collection.
@@ -1986,6 +2041,16 @@ public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
 }
 
 /**
+ * KCImm-46
+ *
+ * For PersistentSet, this is essentially `retainingAll(other.toCollection())`.
+ * Could benefit from preserving the persistent structure.
+ *
+ * ```
+ * public infix fun <T> PersistentSet<T>.intersect(other: Iterable<T>): PersistentSet<T>
+ * ```
+ */
+/**
  * Returns a set containing elements of this collection that are also contained in the specified [other] collection.
  * 
  * The returned set preserves the element iteration order of the original collection.
@@ -2006,6 +2071,16 @@ public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
     return set
 }
 
+/**
+ * KCImm-47
+ *
+ * For PersistentSet, this is essentially `removingAll(other.toCollection())`.
+ * Could benefit from preserving the persistent structure.
+ *
+ * ```
+ * public infix fun <T> PersistentSet<T>.subtract(other: Iterable<T>): PersistentSet<T>
+ * ```
+ */
 /**
  * Returns a set containing all elements that are contained by this collection and not contained by the specified collection.
  * 
@@ -2037,6 +2112,16 @@ public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
     }
 }
 
+/**
+ * KCImm-48
+ *
+ * For PersistentSet, this is essentially `addingAll(other.toCollection())`.
+ * Could benefit from preserving the persistent structure.
+ *
+ * ```
+ * public infix fun <T> PersistentSet<T>.union(other: Iterable<T>): PersistentSet<T>
+ * ```
+ */
 /**
  * Returns a set containing all distinct elements from both collections.
  * 
@@ -3280,6 +3365,15 @@ public inline fun <S, T : S> List<T>.reduceRightOrNull(operation: (T, acc: S) ->
 }
 
 /**
+ * KCImm-49
+ *
+ * Could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <T, R> PersistentCollection<T>.runningFold(initial: R, operation: (acc: R, T) -> R): PersistentList<R>
+ * ```
+ */
+/**
  * Returns a list containing successive accumulation values generated by applying [operation] from left to right
  * to each element and current accumulator value that starts with [initial] value.
  * 
@@ -3303,6 +3397,15 @@ public inline fun <T, R> Iterable<T>.runningFold(initial: R, operation: (acc: R,
     return result
 }
 
+/**
+ * KCImm-50
+ *
+ * Same as `runningFold` - could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <T, R> PersistentCollection<T>.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): PersistentList<R>
+ * ```
+ */
 /**
  * Returns a list containing successive accumulation values generated by applying [operation] from left to right
  * to each element, its index in the original collection and current accumulator value that starts with [initial] value.
@@ -3330,6 +3433,15 @@ public inline fun <T, R> Iterable<T>.runningFoldIndexed(initial: R, operation: (
 }
 
 /**
+ * KCImm-51
+ *
+ * Could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <S, T : S> PersistentCollection<T>.runningReduce(operation: (acc: S, T) -> S): PersistentList<S>
+ * ```
+ */
+/**
  * Returns a list containing successive accumulation values generated by applying [operation] from left to right
  * to each element and current accumulator value that starts with the first element of this collection.
  * 
@@ -3353,6 +3465,15 @@ public inline fun <S, T : S> Iterable<T>.runningReduce(operation: (acc: S, T) ->
     return result
 }
 
+/**
+ * KCImm-52
+ *
+ * Same as `runningReduce` - could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <S, T : S> PersistentCollection<T>.runningReduceIndexed(operation: (index: Int, acc: S, T) -> S): PersistentList<S>
+ * ```
+ */
 /**
  * Returns a list containing successive accumulation values generated by applying [operation] from left to right
  * to each element, its index in the original collection and current accumulator value that starts with the first element of this collection.
@@ -3380,6 +3501,11 @@ public inline fun <S, T : S> Iterable<T>.runningReduceIndexed(operation: (index:
 }
 
 /**
+ * KCImm-53
+ *
+ * Alias for `runningFold`. The same specialization applies.
+ */
+/**
  * Returns a list containing successive accumulation values generated by applying [operation] from left to right
  * to each element and current accumulator value that starts with [initial] value.
  * 
@@ -3395,6 +3521,11 @@ public inline fun <T, R> Iterable<T>.scan(initial: R, operation: (acc: R, T) -> 
     return runningFold(initial, operation)
 }
 
+/**
+ * KCImm-54
+ *
+ * Alias for `runningFoldIndexed`. Same specialization applies.
+ */
 /**
  * Returns a list containing successive accumulation values generated by applying [operation] from left to right
  * to each element, its index in the original collection and current accumulator value that starts with [initial] value.
