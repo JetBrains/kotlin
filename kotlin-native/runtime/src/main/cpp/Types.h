@@ -77,6 +77,7 @@ KBoolean IsSubclassFast(const TypeInfo* obj_type_info, int32_t lo, int32_t hi) R
 void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);
 KBoolean IsArray(KConstRef obj) RUNTIME_PURE;
 bool IsSubInterface(const TypeInfo* thiz, const TypeInfo* other) RUNTIME_PURE;
+const void* Kotlin_Any_getTypeInfo(KConstRef obj) RUNTIME_NOTHROW;
 
 /// Utility function that is used to determine long type size in compile time.
 long Kotlin_longTypeProvider();
