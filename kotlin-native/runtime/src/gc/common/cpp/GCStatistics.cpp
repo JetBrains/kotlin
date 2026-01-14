@@ -17,6 +17,12 @@
 #include "ThreadData.hpp"
 #include "Types.h"
 
+#if KONAN_MACOSX
+#include <libproc.h>
+#include <sys/resource.h>
+#include <sys/time.h>
+#endif
+
 using namespace kotlin;
 
 extern "C" {
@@ -271,6 +277,20 @@ void GCHandle::finished() {
             auto time = (*current.endTime - *current.startTime) / 1000;
             GCLogInfo(epoch_, "Finished. Total GC epoch time is %" PRId64" microseconds.", time);
         }
+        #if KONAN_MACOSX
+        {
+            ::rusage usage;
+            ::getrusage(RUSAGE_SELF, &usage);
+            ::rusage_info_current info;
+            proc_pid_rusage(getpid(), RUSAGE_INFO_CURRENT, (rusage_info_t*)&info);
+            GCLogInfo(epoch_,
+                      "Max RSS: %ld bytes; footprint: %llu bytes; max footprint: %llu bytes",
+                      usage.ru_maxrss,
+                      info.ri_phys_footprint,
+                      info.ri_lifetime_max_phys_footprint
+                  );
+        }
+        #endif
 
         if (stat == &current) {
             last = current;
