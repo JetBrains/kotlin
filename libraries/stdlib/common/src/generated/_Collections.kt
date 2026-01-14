@@ -779,6 +779,18 @@ public inline fun <T> List<T>.dropLastWhile(predicate: (T) -> Boolean): List<T> 
 }
 
 /**
+ * KCImm-04
+ *
+ * ```
+ * public fun <T> PersistentCollection<T>.drop(n: Int): PersistentList<T>
+ *
+ * // It might help to preserve a persistent structure by `removingAt` call.
+ * public fun <T> PersistentList<T>.drop(n: Int): PersistentList<T>
+ *
+ * public fun <T> PersistentSet<T>.drop(n: Int): PersistentSet<T>
+ * ```
+ */
+/**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.drop
