@@ -470,7 +470,7 @@ private fun KotlinToCCallBuilder.finishBuilding(libraryName: String): IrSimpleFu
     val allC = state.getC()
 
     bridge.annotations += buildSimpleAnnotation(
-            stubs.irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.kotlinToCBridge!!.owner,
+            stubs.irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.kotlinToCBridge.owner,
             stubs.language, allC.joinToString("\n") { it }, libraryName
     )
 
@@ -691,7 +691,7 @@ private fun CCallbackBuilder.buildValueReturn(function: IrSimpleFunction, valueR
     }
     val cBridgeDeclaration = "${buildCBridge()};"
     kotlinBridge.annotations += listOf(
-            buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.cToKotlinBridge!!.owner,
+            buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.cToKotlinBridge.owner,
                     stubs.language, cBridgeDeclaration)
     )
     stubs.addKotlin(kotlinBridge)
@@ -809,7 +809,7 @@ private fun CBridgeGenState.createFakeKotlinExternalFunction(
     val allC = getC()
 
     bridge.annotations += buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            symbols.kotlinToCBridge!!.owner, stubs.language, allC.joinToString("\n") { it }, "")
+            symbols.kotlinToCBridge.owner, stubs.language, allC.joinToString("\n") { it }, "")
 
     return bridge
 }

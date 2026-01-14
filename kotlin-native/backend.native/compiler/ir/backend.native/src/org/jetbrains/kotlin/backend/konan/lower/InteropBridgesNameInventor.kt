@@ -194,7 +194,7 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
                         newAnnotations[newAnnotations.indexOf(annotation)] =
                                 buildSimpleAnnotation(
                                         context.irBuiltIns, function.startOffset, function.endOffset,
-                                        context.symbols.cToKotlinBridge!!.owner, language, declaration
+                                        context.symbols.cToKotlinBridge.owner, language, declaration
                                 )
                         newAnnotations.add(
                                 buildSimpleAnnotation(
@@ -212,7 +212,7 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
                         newAnnotations[newAnnotations.indexOf(annotation)] =
                                 buildSimpleAnnotation(
                                         context.irBuiltIns, function.startOffset, function.endOffset,
-                                        context.symbols.kotlinToCBridge!!.owner, language, impl, libraryName
+                                        context.symbols.kotlinToCBridge.owner, language, impl, libraryName
                                 )
                         newAnnotations.add(
                                 buildSimpleAnnotation(
