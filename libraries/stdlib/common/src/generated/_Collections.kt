@@ -809,6 +809,18 @@ public inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T> 
 }
 
 /**
+ * KCImm-05
+ *
+ * If we remove elements using `removing`, we can reuse the persistent structure,
+ * but in this case the same iteration order is not guaranteed after removal.
+ *
+ * ```
+ * public inline fun <T> PersistentList<T>.filter(predicate: (T) -> Boolean): PersistentList<T>
+ *
+ * public inline fun <T> PersistentSet<T>.filter(predicate: (T) -> Boolean): PersistentSet<T> | PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list containing only elements matching the given [predicate].
  * 
  * @sample samples.collections.Collections.Filtering.filter
