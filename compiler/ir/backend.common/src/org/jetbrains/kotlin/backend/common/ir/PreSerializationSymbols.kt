@@ -177,7 +177,7 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
 
 interface PreSerializationSymbols {
     val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
-    val throwUnsupportedOperationException: IrSimpleFunctionSymbol? // KT-83151 Restore non-nullability of symbols available since 2.3
+    val throwUnsupportedOperationException: IrSimpleFunctionSymbol
 
     val syntheticConstructorMarker: IrClassSymbol
     val coroutineContextGetter: IrSimpleFunctionSymbol
@@ -217,8 +217,8 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
         override val syntheticConstructorMarker: IrClassSymbol = ClassIds.SyntheticConstructorMarker.classSymbol()
         override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
             CallableIds.throwUninitializedPropertyAccessException.functionSymbol()
-        override val throwUnsupportedOperationException: IrSimpleFunctionSymbol? =
-            CallableIds.throwUnsupportedOperationException.functionSymbolOrNull()
+        override val throwUnsupportedOperationException: IrSimpleFunctionSymbol =
+            CallableIds.throwUnsupportedOperationException.functionSymbol()
     }
 
     companion object {
