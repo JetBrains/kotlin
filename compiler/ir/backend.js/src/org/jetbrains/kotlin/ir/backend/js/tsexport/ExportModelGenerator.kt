@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js.tsexport
 import org.jetbrains.kotlin.backend.common.report
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -26,17 +28,33 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-private const val magicPropertyName = "__doNotUseOrImplementIt"
+private const val ownImplementableSymbolName = "Symbol"
+private const val notImplementablePropertyName = "__doNotUseOrImplementIt"
 
 class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boolean) {
     private val transitiveExportCollector = TransitiveExportCollector(context)
+    private val allowImplementingInterfaces = context.configuration.languageVersionSettings.supportsFeature(
+        LanguageFeature.JsExportInterfacesInImplementableWay
+    )
+
+    // Some declarations are exported in a special form that even with [LanguageFeature.JsExportInterfacesInImplementableWay]
+    // can't be implementable. As for example, any exported Kotlin collections right now can't be implemented on the JS / TS side
+    private val packagesThatAreNotImplementable: Set<FqName> = hashSetOf(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
+
+    private fun IrClass.shouldContainImplementableSymbolProperty(): Boolean =
+        allowImplementingInterfaces && isInterface && !isExternal && !isJsImplicitExport() && fileOrNull?.packageFqName !in packagesThatAreNotImplementable
+
+    private fun IrClass.shouldContainNotImplementableProperty(): Boolean =
+        isJsImplicitExport() || fileOrNull?.packageFqName in packagesThatAreNotImplementable || !allowImplementingInterfaces && isInterface && !isExternal
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = file.packageFqName
@@ -100,8 +118,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                 ExportedFunction(
                     realOverrideTarget
                         ?.getJsSymbolForOverriddenDeclaration()
-                        ?.let(ExportedFunctionName::WellKnownSymbol)
-                        ?: ExportedFunctionName.Identifier(function.getExportedIdentifier()),
+                        ?.let(ExportedMemberName::WellKnownSymbol)
+                        ?: ExportedMemberName.Identifier(function.getExportedIdentifier()),
                     returnType = specializedType ?: exportType(function.returnType, functionTypeParameterScope, function),
                     typeParameters = function.typeParameters.map { functionTypeParameterScope[it.symbol]!! },
                     isMember = parent is IrClass,
@@ -217,7 +235,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         }
 
         return ExportedProperty(
-            name = property.getExportedIdentifier(),
+            name = ExportedMemberName.Identifier(property.getExportedIdentifier()),
             type = specializeType ?: exportType(property.getter!!.returnType, classTypeParameterScope, property),
             mutable = property.isVar,
             isMember = parentClass != null,
@@ -241,7 +259,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         val ordinal = enumEntries.getValue(irEnumEntry)
 
         fun fakeProperty(name: String, type: ExportedType) =
-            ExportedProperty(name = name, type = type, mutable = false, isMember = true)
+            ExportedProperty(name = ExportedMemberName.Identifier(name), type = type, mutable = false, isMember = true)
 
         val nameProperty = fakeProperty(
             name = "name",
@@ -258,7 +276,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         )
 
         return ExportedProperty(
-            name = irEnumEntry.getExportedIdentifier(),
+            name = ExportedMemberName.Identifier(irEnumEntry.getExportedIdentifier()),
             type = ExportedType.IntersectionType(exportType(parentClass.defaultType, emptyMap()), type),
             mutable = false,
             isMember = true,
@@ -416,10 +434,13 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
             }
         }
 
-        if (klass.shouldContainImplementationOfMagicProperty(superTypes)) {
-            members.addMagicPropertyForInterfaceImplementation(klass, superTypes, typeParameterScope)
-        } else if (klass.shouldNotBeImplemented()) {
-            members.addMagicInterfaceProperty(klass)
+        if (klass.shouldContainImplementableSymbolProperty()) {
+            members.addOwnJsSymbolDeclaration()
+            members.addImplementableSymbolProperty(klass)
+        }
+
+        if (!klass.isExternal) {
+            members.addSuperTypesSpecialProperties(klass, superTypes, typeParameterScope)
         }
 
         return ExportedClassDeclarationsInfo(
@@ -474,54 +495,106 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         val name = getExportedIdentifier()
 
         return ExportedProperty(
-            name = name,
+            name = ExportedMemberName.Identifier(name),
             type = ExportedType.InlineInterfaceType(typeMembers),
             mutable = false,
             isMember = true,
         )
     }
 
-    private fun IrClass.shouldNotBeImplemented(): Boolean {
-        return isInterface && !isExternal || isJsImplicitExport()
-    }
-
     private fun IrValueParameter.shouldBeExported(): Boolean {
         return origin != JsLoweredDeclarationOrigin.JS_SUPER_CONTEXT_PARAMETER && origin != ES6_BOX_PARAMETER
     }
 
-    private fun IrClass.shouldContainImplementationOfMagicProperty(superTypes: Iterable<IrType>): Boolean {
-        return !isExternal && superTypes.any {
-            val superClass = it.classOrNull?.owner ?: return@any false
-            superClass.isInterface && it.shouldAddMagicPropertyOfSuper() || superClass.isJsImplicitExport()
-        }
+    private fun MutableList<ExportedDeclaration>.addOwnJsSymbolDeclaration() =
+        add(
+            ExportedProperty(
+                name = ExportedMemberName.Identifier(ownImplementableSymbolName),
+                type = ExportedType.Primitive.UniqueSymbol,
+                mutable = false,
+                isMember = false,
+                isStatic = true,
+                isField = true
+            )
+        )
+
+    private fun MutableList<ExportedDeclaration>.addNotImplementableProperty(klass: IrClass) {
+        add(
+            ExportedProperty(
+                name = ExportedMemberName.Identifier(notImplementablePropertyName),
+                type = klass.generateNotImplementableBrandType(),
+                mutable = false,
+                isMember = true,
+                isField = true
+            )
+        )
     }
 
-    private fun MutableList<ExportedDeclaration>.addMagicInterfaceProperty(klass: IrClass) {
-        add(ExportedProperty(name = magicPropertyName, type = klass.generateTagType(), mutable = false, isMember = true, isField = true))
-    }
 
-    private fun MutableList<ExportedDeclaration>.addMagicPropertyForInterfaceImplementation(
+    private fun MutableList<ExportedDeclaration>.addImplementableSymbolProperty(klass: IrClass) =
+        add(
+            ExportedProperty(
+                name = ExportedMemberName.SymbolReference(
+                    "${
+                        klass.getFqNameWithJsNameWhenAvailable(
+                            shouldIncludePackage = !isEsModules,
+                            isEsModules = isEsModules
+                        ).asString()
+                    }.$ownImplementableSymbolName"
+                ),
+                type = ExportedType.LiteralType.BooleanLiteralType(true),
+                mutable = false,
+                isMember = true,
+                isStatic = false,
+                isField = true
+            )
+        )
+
+    private fun MutableList<ExportedDeclaration>.addSuperTypesSpecialProperties(
         klass: IrClass,
         superTypes: Iterable<IrType>,
         typeParameterScope: TypeParameterScope,
     ) {
-        val allSuperTypesWithMagicProperty = superTypes.filter { it.shouldAddMagicPropertyOfSuper() }
+        val allSuperTypesWithBrandProperty = klass.collectAllImplementableAndNotImplementableInterfaces(superTypes)
+        val typeItselfShouldNotBeImplemented = klass.shouldContainNotImplementableProperty()
 
-        if (allSuperTypesWithMagicProperty.isEmpty()) {
+        val (implementableSuperTypes, notImplementableSuperTypes) = allSuperTypesWithBrandProperty.partition { it is InterfaceSuperType.ImplementableInterface }
+
+        implementableSuperTypes.forEach { superType ->
+            addImplementableSymbolProperty(superType.irClass)
+        }
+
+        if (notImplementableSuperTypes.isEmpty()) {
+            if (typeItselfShouldNotBeImplemented) addNotImplementableProperty(klass)
             return
         }
 
-        val intersectionOfTypes = allSuperTypesWithMagicProperty
-            .map {
+        val intersectionOfTypes = notImplementableSuperTypes
+            .map { superType ->
+                // TODO: rework it to stricter types instead of `any` for type parameters
+                val mapping = superType.irClass.typeParameters.associate { it.symbol to context.dynamicType }
                 ExportedType.PropertyType(
-                    exportType(it, typeParameterScope),
-                    ExportedType.LiteralType.StringLiteralType(magicPropertyName),
+                    exportType(superType.irClass.defaultType.substitute(mapping), typeParameterScope),
+                    ExportedType.LiteralType.StringLiteralType(notImplementablePropertyName),
                 )
             }
             .reduce(ExportedType::IntersectionType)
-            .let { if (klass.shouldNotBeImplemented()) ExportedType.IntersectionType(klass.generateTagType(), it) else it }
+            .let {
+                if (typeItselfShouldNotBeImplemented) ExportedType.IntersectionType(
+                    klass.generateNotImplementableBrandType(),
+                    it
+                ) else it
+            }
 
-        add(ExportedProperty(name = magicPropertyName, type = intersectionOfTypes, mutable = false, isMember = true, isField = true))
+        add(
+            ExportedProperty(
+                name = ExportedMemberName.Identifier(notImplementablePropertyName),
+                type = intersectionOfTypes,
+                mutable = false,
+                isMember = true,
+                isField = true
+            )
+        )
     }
 
     private fun IrType.shouldAddMagicPropertyOfSuper(): Boolean {
@@ -536,11 +609,16 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         }
     }
 
-    private fun IrClass.generateTagType(): ExportedType {
+    private fun IrClass.generateNotImplementableBrandType(): ExportedType {
         return ExportedType.InlineInterfaceType(
             listOf(
                 ExportedProperty(
-                    name = getFqNameWithJsNameWhenAvailable(shouldIncludePackage = true, isEsModules = isEsModules).asString(),
+                    name = ExportedMemberName.Identifier(
+                        getFqNameWithJsNameWhenAvailable(
+                            shouldIncludePackage = true,
+                            isEsModules = isEsModules
+                        ).asString()
+                    ),
                     type = ExportedType.Primitive.UniqueSymbol,
                     mutable = false,
                     isMember = true,
@@ -898,6 +976,162 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         return exportedType.withNullability(isMarkedNullable)
             .also { currentlyProcessedTypes.remove(type) }
     }
+
+
+    /**
+     * With this method we're collecting all the super types that may contain either implementable or non-implementable properties
+     * - For interfaces we're looking only parents that contain not-implementable properties
+     * - For classes we're looking for both kinds of super-types
+     *
+     * We're collecting such information to copy those properties into the current declaration to generate a valid TypeScript definition
+     *
+     * As an example:
+     * ```kotlin
+     * @JsExport interface Foo
+     * @JsExport interface Bar
+     *
+     * class NotExportedParent : Foo, Bar
+     *
+     * @JsExport
+     * class ExportedChild : NotExportedParent
+     * ```
+     *
+     * For such a class we should do the following:
+     * 1. Implementable interfaces and no strict implicit export
+     * ```typescript
+     * declare interface Foo { readonly [Foo.Symbol]: true }
+     * declare namespace Foo { const Symbol: unique symbol; }
+     *
+     * declare interface Bar { readonly [Bar.Symbol]: true }
+     * declare namespace Bar { const Symbol: unique symbol; }
+     *
+     * declare  class ExportedChild implements Foo, Bar {
+     *   readonly [Foo.Symbol]: true;
+     *   readonly [Bar.Symbol]: true;
+     * }
+     * ```
+     * 2. Implementable interfaces and strict implicit export
+     * ```typescript
+     * declare interface Foo { readonly [Foo.Symbol]: true }
+     * declare namespace Foo { const Symbol: unique symbol; }
+     *
+     * declare interface Bar { readonly [Bar.Symbol]: true }
+     * declare namespace Bar { const Symbol: unique symbol; }
+     *
+     * declare interface NotExportedParent extends Foo, Bar {
+     *    readonly __doNotUseOrImplementIt: {
+     *      readonly "NotExportedParent": unique symbol;
+     *    };
+     * }
+     *
+     * declare class ExportedChild implements NotExportedParent {
+     *   readonly [Foo.Symbol]: true;
+     *   readonly [Bar.Symbol]: true;
+     *   readonly __doNotUseOrImplementIt: {
+     *      readonly "NotExportedParent": unique symbol;
+     *   };
+     * }
+     * ```
+     *
+     * 3. Not-implementable interfaces and no strict implicit export
+     * ```typescript
+     * declare interface Foo {
+     *    readonly __doNotUseOrImplementIt: {
+     *      readonly "Foo": unique symbol;
+     *    };
+     * }
+     *
+     * declare interface Bar {
+     *    readonly __doNotUseOrImplementIt: {
+     *      readonly "Bar": unique symbol;
+     *    };
+     * }
+     *
+     * declare class ExportedChild implements Foo, Bar {
+     *   readonly __doNotUseOrImplementIt: Foo["__doNotUseOrImplementIt"] & Bar["__doNotUseOrImplementIt"]
+     * }
+     * ```
+     *
+     * 3. Not-implementable interfaces and strict implicit export
+     * ```typescript
+     * declare interface Foo {
+     *    readonly __doNotUseOrImplementIt: {
+     *      readonly "Foo": unique symbol;
+     *    };
+     * }
+     *
+     * declare interface Bar {
+     *    readonly __doNotUseOrImplementIt: {
+     *      readonly "Bar": unique symbol;
+     *    };
+     * }
+     *
+     * declare interface NotExportedParent extends Foo, Bar {
+     *    readonly __doNotUseOrImplementIt: Foo["__doNotUseOrImplementIt"] & Bar["__doNotUseOrImplementIt"] & {
+     *      readonly "NotExportedParent": unique symbol;
+     *    };
+     * }
+     *
+     * declare class ExportedChild implements NotExportedParent {
+     *   readonly __doNotUseOrImplementIt: NotExportedParent["__doNotUseOrImplementIt"]
+     * }
+     * ```
+     *
+     * Because of such complications, I believe we should remove the strict-implicit export in future (since it's unstable and we don't have a plan to support it in future)
+     */
+    // TODO: think about per class memoization
+    private fun IrClass.collectAllImplementableAndNotImplementableInterfaces(superTypes: Iterable<IrType>): Collection<InterfaceSuperType> {
+        fun MutableCollection<IrClass>.enqueueSuperTypes(superTypes: Iterable<IrType>) =
+            superTypes.mapNotNullTo(this) { superType ->
+                superType.type.classOrNull?.owner?.takeIf { !it.isExternal }
+            }
+
+        val shouldCopySymbolsOfTransitiveParents = allowImplementingInterfaces && !isInterface
+
+        // If we're processing an interface:
+        // - If it's not implementable, we just need to add its direct not-implementable super types to generate a correct type for __doNotUseOrImplementIt
+        // - If it's implementable, we don't need to generate anything, since it's already receiving all the properties through the inheritance
+        // If we're processing a class, we should collect:
+        // - All the implementable interfaces in the hierarchy to add the correct Symbol
+        // - All the nearest not-implementable interfaces to generate a correct type for __doNotUseOrImplementIt
+        val result = linkedMapOf<IrClass, InterfaceSuperType>()
+        val stack = mutableListOf<IrClass>()
+            .apply { enqueueSuperTypes(superTypes) }
+
+        while (stack.isNotEmpty()) {
+            val processedClass = stack.removeLast().takeIf { it !in result } ?: continue
+
+            if (processedClass.isJsImplicitExport()) {
+                result[processedClass] = InterfaceSuperType.NotImplementableInterface(processedClass)
+                continue
+            }
+
+            if (!processedClass.isExported(context) || processedClass.isExternal) continue
+
+            if (processedClass.isInterface) {
+                if (allowImplementingInterfaces) {
+                    if (!shouldCopySymbolsOfTransitiveParents) continue
+                    result[processedClass] = InterfaceSuperType.ImplementableInterface(processedClass)
+                } else {
+                    result[processedClass] = InterfaceSuperType.NotImplementableInterface(processedClass)
+                    continue
+                }
+            }
+
+            if (result.isNotEmpty()) {
+                stack.enqueueSuperTypes(processedClass.superTypes)
+            }
+        }
+
+        return result.values
+    }
+}
+
+private sealed interface InterfaceSuperType {
+    data class ImplementableInterface(override val irClass: IrClass) : InterfaceSuperType
+    data class NotImplementableInterface(override val irClass: IrClass) : InterfaceSuperType
+
+    val irClass: IrClass
 }
 
 private class ExportedClassDeclarationsInfo(
