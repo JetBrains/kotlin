@@ -8,12 +8,18 @@ package org.jetbrains.kotlin.js.backend.ast
  */
 class JsParameter(
     private var name: JsName,
+    defaultValue: JsExpression?,
     isRest: Boolean
 ) : SourceInfoAwareJsNode(), HasName {
+    var defaultValue: JsExpression? = defaultValue
+        private set
+
     var isRest: Boolean = isRest
         private set
 
-    constructor(name: JsName) : this(name, false)
+    constructor(name: JsName) : this(name, null, false)
+    constructor(name: JsName, isRest: Boolean) : this(name, null, isRest)
+    constructor(name: JsName, defaultValue: JsExpression?) : this(name, defaultValue, false)
 
     override fun getName() = name
 
@@ -25,12 +31,18 @@ class JsParameter(
         v.visitParameter(this)
     }
 
+    override fun acceptChildren(v: JsVisitor) {
+        v.accept(defaultValue)
+    }
+
     override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
-        v.visit(this, ctx)
+        if (v.visit(this, ctx)) {
+            defaultValue = v.accept(defaultValue)
+        }
         v.endVisit(this, ctx)
     }
 
     override fun deepCopy(): JsParameter {
-        return JsParameter(name, isRest).withMetadataFrom(this)
+        return JsParameter(name, defaultValue?.deepCopy(), isRest).withMetadataFrom(this)
     }
 }

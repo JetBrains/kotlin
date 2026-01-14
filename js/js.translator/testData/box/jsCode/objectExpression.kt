@@ -72,5 +72,22 @@ fun box(): String {
     if (one != 1) return "fail: i.oneTwo().first == '$one'"
     if (two != 2) return "fail: i.oneTwo().second == '$two'"
 
+    val j = js("""{ 
+        sumDefaultB(a, b = 2) { return a + b; },
+        sumDefaultAB(a = 1, b = a + 1) { return a + b; },
+        sumDefaultComma(a = 1, b = (a, a + 1)) { return a + b; },
+        sumDefaultComplex(a = 1, b = (() => a + 1)()) { return a + b; }
+    }""")
+    if (!isOrdinaryObject(j)) return "fail: j is not an object"
+    if (Object.keys(j).size != 4) return "fail: j should have four properties"
+    val defaultB = j.sumDefaultB(1)
+    if (defaultB != 3) return "fail: j.sumDefaultB(1) == ${defaultB}"
+    val defaultAB = j.sumDefaultAB()
+    if (defaultAB != 3) return "fail: j.sumDefaultAB() == ${defaultAB}"
+    val defaultComma = j.sumDefaultComma()
+    if (defaultComma != 3) return "fail: j.sumDefaultComma() == ${defaultComma}"
+    val defaultComplex = j.sumDefaultComplex()
+    if (defaultComplex != 3) return "fail: j.sumDefaultComplex() == ${defaultComplex}"
+
     return "OK"
 }

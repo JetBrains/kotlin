@@ -635,6 +635,9 @@ private class JsIrAstSerializer {
 
     private fun DataWriter.writeParameter(parameter: JsParameter) {
         writeInt(internalizeName(parameter.name))
+        ifNotNull(parameter.defaultValue) {
+            writeExpression(it)
+        }
         writeBoolean(parameter.isRest)
         writeBoolean(parameter.hasDefaultValue)
     }

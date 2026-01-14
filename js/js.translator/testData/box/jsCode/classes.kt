@@ -10,6 +10,8 @@ fun initClasses() {
             
             regularMethod(param) { return "regularMethod" + param; }
             
+            regularMethodDefault(param = "Fallback") { return "regularMethodDefault" + param; }
+            
             "stringLiteralNamed"() { return "stringLiteralNamed"; }
             
             123() { return 123; }
@@ -29,6 +31,10 @@ fun initClasses() {
                 else this._positiveValue = val;
             }
             
+            set positiveValueDefault(val = 123) {
+                this.positiveValue = val;
+            }
+            
             get() { return "getCalled"; }
 
             set() { return "setCalled"; }
@@ -46,6 +52,14 @@ fun initClasses() {
             }
         }
         globalThis.B = B;
+        
+        class C extends B {
+            constructor(value = "fallback") {
+                super(123);
+                this.ctorCalledC = value;
+            }
+        }
+        globalThis.C = C;
     """)
 }
 
@@ -53,6 +67,8 @@ fun initClasses() {
 // RECOMPILE
 
 fun box(): String {
+    val jsUndefined = js("undefined")
+
     initClasses()
 
     val a = js("new A();")
@@ -60,6 +76,8 @@ fun box(): String {
     if (a.ctorCalledA != 1) return "fail: a.ctorCalledA == ${a.ctorCalledA}"
 
     if (a.regularMethod(123) != "regularMethod123") return "fail: a.regularMethod() == ${a.regularMethod()}"
+
+    if (a.regularMethodDefault() != "regularMethodDefaultFallback") return "fail: a.regularMethodDefault() == ${a.regularMethodDefault()}"
 
     if (a["stringLiteralNamed"]() != "stringLiteralNamed") return "fail: a[stringLiteralNamed]() == ${a["stringLiteralNamed"]()}"
 
@@ -75,7 +93,10 @@ fun box(): String {
     if (staticMethodValue != "staticCalled") return "fail: A.static == ${staticMethodValue}"
 
     a.positiveValue = -1
-    if (a.positiveValue != 0) return "fail: a.positiveValue == ${a.positiveValue}"
+    if (a.positiveValue != 0) return "fail: a.positiveValue after a.positiveValue set == ${a.positiveValue}"
+
+    a.positiveValueDefault = jsUndefined
+    if (a.positiveValue != 123) return "fail: a.positiveValue after a.positiveValueDefault set == ${a.positiveValue}"
 
     if (a.get() != "getCalled") return "fail: a.get() == ${a.get()}"
     if (a.set() != "setCalled") return "fail: a.set() == ${a.set()}"
@@ -90,6 +111,12 @@ fun box(): String {
 
     if (b.ctorCalledA != 1) return "fail: b.ctorCalledA == ${b.ctorCalledA}"
     if (b.ctorCalledB != 123) return "fail: b.ctorCalledB == ${b.ctorCalledB}"
+
+    val c = js("new C();")
+
+    if (c.ctorCalledA != 1) return "fail: c.ctorCalledA == ${c.ctorCalledA}"
+    if (c.ctorCalledB != 123) return "fail: c.ctorCalledB == ${c.ctorCalledB}"
+    if (c.ctorCalledC != "fallback") return "fail: c.ctorCalledC == ${c.ctorCalledC}"
 
     return "OK"
 }

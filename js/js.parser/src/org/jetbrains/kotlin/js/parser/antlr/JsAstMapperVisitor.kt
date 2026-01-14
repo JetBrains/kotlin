@@ -534,8 +534,9 @@ internal class JsAstMapperVisitor(
         val identifier = ctx.assignable().identifier()
             ?: reportError("Only identifier parameters are supported yet", ctx)
         val paramName = scopeContext.localNameFor(identifier.text)
+        val defaultValue = ctx.singleExpression()?.let { visitNode<JsExpression>(it) }
 
-        return JsParameter(paramName)
+        return JsParameter(paramName, defaultValue)
             .applyLocation(ctx)
             .applyComments(ctx)
     }
