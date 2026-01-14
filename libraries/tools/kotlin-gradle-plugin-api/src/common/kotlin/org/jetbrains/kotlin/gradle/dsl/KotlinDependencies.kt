@@ -7,7 +7,7 @@ import org.gradle.api.plugins.jvm.PlatformDependencyModifiers
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 /**
- * Dependency container for different scopes that Kotlin projects can have.
+ * A dependency container for the different scopes that Kotlin projects can have.
  *
  * @since 2.2.20
  */
