@@ -1,0 +1,24 @@
+external val prop: kotlin.Int
+
+external class ClassC(paramProp: kotlin.String) {
+  external val paramProp: kotlin.String
+
+  external fun kotlin.String.foo(regularParam: kotlin.Int)
+
+  external var baz: kotlin.Int
+
+  external class Nested {
+    external fun bar()
+  }
+
+  constructor()
+}
+
+external enum class EnumE {
+  EnumA,
+  EnumB
+}
+
+external interface InterfaceI {
+  external fun fooI()
+}

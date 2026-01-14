@@ -1,0 +1,3 @@
+open external var count: kotlin.Int
+  get()
+  set(x: kotlin.Int)

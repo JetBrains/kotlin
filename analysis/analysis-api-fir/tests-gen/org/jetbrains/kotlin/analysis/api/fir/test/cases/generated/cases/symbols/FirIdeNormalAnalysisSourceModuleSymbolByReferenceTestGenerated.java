@@ -311,6 +311,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("javaNativeMethod.kt")
+  public void testJavaNativeMethod() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaNativeMethod.kt");
+  }
+
+  @Test
+  @TestMetadata("javaNativeSyntheticProperty.kt")
+  public void testJavaNativeSyntheticProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaNativeSyntheticProperty.kt");
+  }
+
+  @Test
   @TestMetadata("javaNestedAnnotation.kt")
   public void testJavaNestedAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaNestedAnnotation.kt");
