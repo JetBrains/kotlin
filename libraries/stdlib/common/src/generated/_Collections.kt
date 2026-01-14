@@ -858,7 +858,7 @@ public inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Bo
 /**
  * KCImm-07
  *
- * There is no need for a specialization for PersistentCollection since it only uses iteration and does not allocate any additional memory.
+ * There is no need for a specialization for `PersistentCollection` since it only uses iteration and does not allocate any additional memory.
  */
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
@@ -894,7 +894,7 @@ public inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.inter
 /**
  * KCImm-09
  *
- * There is no need for a specialization for PersistentCollection since it only uses iteration and does not allocate any additional memory.
+ * There is no need for a specialization for `PersistentCollection` since it only uses iteration and does not allocate any additional memory.
  */
 /**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
@@ -921,6 +921,13 @@ public inline fun <T> Iterable<T>.filterNot(predicate: (T) -> Boolean): List<T> 
     return filterNotTo(ArrayList<T>(), predicate)
 }
 
+/**
+ * KCImm-11
+ *
+ * ```
+ * public fun <T : Any> PersistentCollection<T?>.filterNotNull(): PersistentList<T>
+ * ```
+ */
 /**
  * Returns a list containing all elements that are not `null`.
  * 
