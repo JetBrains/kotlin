@@ -21,6 +21,7 @@ class AllArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructor
         return lombokService.getAllArgsConstructor(classSymbol)
             ?: runIf(!containsExplicitConstructor(classSymbol)) {
                 lombokService.getValue(classSymbol)?.asAllArgsConstructor()
+                    ?: lombokService.getBuilder(classSymbol)?.let { AllArgsConstructor() }
             }
     }
 
