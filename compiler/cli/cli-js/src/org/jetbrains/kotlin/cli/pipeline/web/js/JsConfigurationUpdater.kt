@@ -35,7 +35,6 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         if (configuration.wasmCompilation) return
         val arguments = input.arguments
         fillConfiguration(configuration, arguments)
-        checkWasmArgumentsUsage(arguments, configuration.messageCollector)
 
         // setup phase config for the second compilation stage (JS codegen)
         if (arguments.includes != null) {
@@ -107,14 +106,5 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
             messageCollector.report(ERROR, "Unsupported ECMA version: ${arguments.target}")
         }
         return targetVersion
-    }
-
-    internal fun checkWasmArgumentsUsage(arguments: K2JSCompilerArguments, messageCollector: MessageCollector) {
-        if (arguments.irDceDumpReachabilityInfoToFile != null) {
-            messageCollector.report(STRONG_WARNING, "Dumping the reachability info to a file is not supported for Kotlin/JS.")
-        }
-        if (arguments.irDceDumpDeclarationIrSizesToFile != null) {
-            messageCollector.report(STRONG_WARNING, "Dumping the sizes of declarations to file is not supported for Kotlin/JS.")
-        }
     }
 }

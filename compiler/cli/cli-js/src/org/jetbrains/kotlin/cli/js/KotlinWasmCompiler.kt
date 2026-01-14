@@ -5,26 +5,26 @@
 
 package org.jetbrains.kotlin.cli.js
 
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 
-class K2JSCompiler : KotlinJsCompilerBase<K2JSCompilerArguments>() {
-    override fun createArguments(): K2JSCompilerArguments {
-        return K2JSCompilerArguments()
+class KotlinWasmCompiler : KotlinJsCompilerBase<K2WasmCompilerArguments>() {
+    override fun createArguments(): K2WasmCompilerArguments {
+        return K2WasmCompilerArguments()
     }
 
     override fun createCompilerImpl(
-        arguments: K2JSCompilerArguments,
+        arguments: K2WasmCompilerArguments,
         configuration: CompilerConfiguration,
         moduleName: String,
         outputName: String,
         outputDir: File,
         messageCollector: MessageCollector,
         performanceManager: PerformanceManager?,
-    ): K2JsCompilerImplBase = K2JsCompilerImpl(
+    ): K2JsCompilerImplBase = K2WasmCompilerImpl(
         arguments = arguments,
         configuration = configuration,
         moduleName = moduleName,

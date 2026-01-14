@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
 import org.jetbrains.kotlin.backend.wasm.getWasmLowerings
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.list
 import org.jetbrains.kotlin.cli.js.K2WasmCompilerImpl
@@ -23,9 +24,9 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
-object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
+object WasmConfigurationUpdater : ConfigurationUpdater<K2WasmCompilerArguments>() {
     override fun fillConfiguration(
-        input: ArgumentsPipelineArtifact<K2JSCompilerArguments>,
+        input: ArgumentsPipelineArtifact<K2WasmCompilerArguments>,
         configuration: CompilerConfiguration,
     ) {
         if (!configuration.wasmCompilation) return
@@ -44,7 +45,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
      * This part of the configuration update is shared between phased K2 CLI and
      * K1 implementation of [K2WasmCompilerImpl.tryInitializeCompiler].
      */
-    internal fun fillConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
+    internal fun fillConfiguration(configuration: CompilerConfiguration, arguments: K2WasmCompilerArguments) {
         initializeFinalArtifactConfiguration(configuration, arguments)
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
         configuration.put(WasmConfigurationKeys.WASM_DEBUG, arguments.wasmDebug)

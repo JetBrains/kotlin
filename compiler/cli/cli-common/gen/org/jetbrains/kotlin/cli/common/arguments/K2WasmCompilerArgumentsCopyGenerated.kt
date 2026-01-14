@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 @OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompilerArguments): K2WasmCompilerArguments {
-    copyCommonKlibBasedCompilerArguments(from, to)
+    copyK2CommonJSCompilerArguments(from, to)
 
     to.debuggerCustomFormatters = from.debuggerCustomFormatters
     to.forceDebugFriendlyCompilation = from.forceDebugFriendlyCompilation
@@ -18,7 +18,6 @@ fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompile
     to.irDceDumpDeclarationIrSizesToFile = from.irDceDumpDeclarationIrSizesToFile
     to.irDceDumpReachabilityInfoToFile = from.irDceDumpReachabilityInfoToFile
     to.preserveIcOrder = from.preserveIcOrder
-    to.wasm = from.wasm
     to.wasmDebug = from.wasmDebug
     to.wasmEnableArrayRangeChecks = from.wasmEnableArrayRangeChecks
     to.wasmEnableAsserts = from.wasmEnableAsserts

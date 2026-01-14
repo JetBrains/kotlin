@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.js.testOld.utils
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.Services
 import kotlin.test.fail
@@ -21,6 +23,27 @@ internal fun runJsCompiler(
     val args = K2JSCompilerArguments().apply(argsBuilder)
 
     val exitCode = K2JSCompiler().exec(messageCollector, Services.EMPTY, args)
+    if (exitCode != expectedExitCode) fail(
+        buildString {
+            appendLine("Unexpected compiler exit code:")
+            appendLine("  Expected: $expectedExitCode")
+            appendLine("  Actual:   $exitCode")
+            appendLine("Command-line arguments: " + args.toArgumentStrings().joinToString(" "))
+            appendLine("Compiler output:")
+            appendLine(messageCollector.toString())
+        }
+    )
+}
+
+
+internal fun runWasmCompiler(
+    messageCollector: MessageCollectorImpl = MessageCollectorImpl(),
+    expectedExitCode: ExitCode = ExitCode.OK,
+    argsBuilder: K2WasmCompilerArguments.() -> Unit,
+) {
+    val args = K2WasmCompilerArguments().apply(argsBuilder)
+
+    val exitCode = KotlinWasmCompiler().exec(messageCollector, Services.EMPTY, args)
     if (exitCode != expectedExitCode) fail(
         buildString {
             appendLine("Unexpected compiler exit code:")

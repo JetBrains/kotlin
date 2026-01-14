@@ -12,9 +12,11 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.ComponentProvider
@@ -80,14 +82,14 @@ class JsIrAnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
 
     fun testShouldNotGenerateCodeWasm() {
         if (jsirStdlib != null && wasmStdlib != null)
-            runTest(K2JSCompiler(), classNotFound, "$jsirStdlib,$wasmStdlib", outjs, listOf(K2JSCompilerArguments::irProduceJs.cliArgument, K2JSCompilerArguments::wasm.cliArgument))
+            runTest(KotlinWasmCompiler(), classNotFound, "$jsirStdlib,$wasmStdlib", outjs, listOf(K2WasmCompilerArguments::irProduceJs.cliArgument))
     }
 
     fun testRepeatedAnalysisWasm() {
         if (jsirStdlib != null && wasmStdlib != null)
             runTest(
-                K2JSCompiler(), repeatedAnalysis, "$jsirStdlib,$wasmStdlib", outjs,
-                listOf(K2JSCompilerArguments::irProduceJs.cliArgument, K2JSCompilerArguments::wasm.cliArgument)
+                KotlinWasmCompiler(), repeatedAnalysis, "$jsirStdlib,$wasmStdlib", outjs,
+                listOf(K2WasmCompilerArguments::irProduceJs.cliArgument)
             )
     }
 }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.test.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2CommonJSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
@@ -46,11 +46,12 @@ class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlib
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
             module.customWebCompilerSettings(testServices).customCompiler.callCompiler(
                 output = printStream,
+                isWasm = module.isWasmModule(testServices),
                 listOfNotNull(
-                    K2JSCompilerArguments::wasm.cliArgument.takeIf { module.isWasmModule(testServices) },
-                    K2JSCompilerArguments::irProduceKlibFile.cliArgument,
-                    K2JSCompilerArguments::outputDir.cliArgument, outputKlibFile.parentFile.path,
-                    K2JSCompilerArguments::moduleName.cliArgument, outputKlibFile.nameWithoutExtension,
+//                    K2WasmCompilerArguments::wasm.cliArgument.takeIf { module.isWasmModule(testServices) },
+                    K2CommonJSCompilerArguments::irProduceKlibFile.cliArgument,
+                    K2CommonJSCompilerArguments::outputDir.cliArgument, outputKlibFile.parentFile.path,
+                    K2CommonJSCompilerArguments::moduleName.cliArgument, outputKlibFile.nameWithoutExtension,
 
                     // Some of the test data files have declarations in the `kotlin` package.
                     // To avoid just suppressing such tests, we allow compiling with the `kotlin` package.
@@ -59,12 +60,12 @@ class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlib
                 ),
                 runIf(regularDependencies.isNotEmpty()) {
                     listOf(
-                        K2JSCompilerArguments::libraries.cliArgument,
+                        K2CommonJSCompilerArguments::libraries.cliArgument,
                         regularDependencies.joinToString(File.pathSeparator),
                     )
                 },
                 runIf(friendDependencies.isNotEmpty()) {
-                    listOf(K2JSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
+                    listOf(K2CommonJSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
                 },
                 customArgs,
                 sources,

@@ -32,7 +32,7 @@ import java.io.File
 /**
  * Updates the compiler configuration using information from the compiler arguments
  */
-abstract class ConfigurationUpdater<in A : CommonCompilerArguments> {
+abstract class ConfigurationUpdater<A : CommonCompilerArguments> {
     abstract fun fillConfiguration(input: ArgumentsPipelineArtifact<A>, configuration: CompilerConfiguration)
 }
 

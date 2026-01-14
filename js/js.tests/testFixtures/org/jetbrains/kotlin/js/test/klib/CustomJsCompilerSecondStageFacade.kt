@@ -60,6 +60,7 @@ class CustomJsCompilerSecondStageFacade(
             val regularAndFriendDependencies = regularDependencies + friendDependencies
             customJsCompilerSettings.customCompiler.callCompiler(
                 output = printStream,
+                isWasm = false,
                 listOfNotNull(
                     K2JSCompilerArguments::irProduceJs.cliArgument,
                     K2JSCompilerArguments::includes.cliArgument(mainLibrary),

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.util.ExceptionUtil
+import org.jetbrains.kotlin.cli.common.arguments.K2CommonJSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
@@ -84,7 +85,7 @@ private fun String.splitByPathSeparator(): List<String> {
 
 internal fun calculateSourceMapSourceRoot(
     messageCollector: MessageCollector,
-    arguments: K2JSCompilerArguments,
+    arguments: K2CommonJSCompilerArguments,
 ): String {
     var commonPath: File? = null
     val pathToRoot = mutableListOf<File>()
@@ -154,13 +155,13 @@ fun reportCollectedDiagnostics(
 internal val CompilerConfiguration.platformChecker: KlibPlatformChecker
     get() = if (wasmCompilation) KlibPlatformChecker.Wasm(wasmTarget.alias) else KlibPlatformChecker.JS
 
-internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
+internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfiguration, arguments: K2CommonJSCompilerArguments) {
     configuration.artifactConfiguration = WebArtifactConfiguration(
         moduleKind = configuration.moduleKind ?: return,
         moduleName = configuration.moduleName ?: return,
         outputDirectory = configuration.outputDir ?: return,
         outputName = configuration.outputName ?: return,
-        granularity = arguments.granularity,
-        tsCompilationStrategy = arguments.dtsStrategy,
+        granularity = (arguments as? K2JSCompilerArguments)?.granularity ?: JsGenerationGranularity.WHOLE_PROGRAM,
+        tsCompilationStrategy = (arguments as? K2JSCompilerArguments)?.dtsStrategy ?: TsCompilationStrategy.NONE,
     )
 }

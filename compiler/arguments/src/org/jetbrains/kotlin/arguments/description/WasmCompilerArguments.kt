@@ -14,15 +14,15 @@ import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
 
 val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wasmArguments) {
-    compilerArgument {
-        name = "Xwasm"
-        description = "Use the WebAssembly compiler backend.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_20,
-        )
-    }
+//    compilerArgument {
+//        name = "Xwasm"
+//        description = "Use the WebAssembly compiler backend.".asReleaseDependent()
+//        valueType = BooleanType.defaultFalse
+//
+//        lifecycle(
+//            introducedVersion = KotlinReleaseVersion.v2_1_20,
+//        )
+//    }
 
     compilerArgument {
         name = "Xwasm-target"

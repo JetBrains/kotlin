@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.wasm.test.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -51,7 +53,7 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
         klibLocation: File,
         abiVersion: KotlinAbiVersion,
     ) {
-        val args = K2JSCompilerArguments().apply {
+        val args = K2WasmCompilerArguments().apply {
             if (asFile) {
                 irProduceKlibFile = true
                 outputDir = klibLocation.parent
@@ -59,7 +61,6 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
                 irProduceKlibDir = true
                 outputDir = klibLocation.path
             }
-            wasm = true
             wasmTarget = this@AbstractWasmKlibLoaderTest.target.alias
             libraries = stdlib
             moduleName = sourceFile.nameWithoutExtension
@@ -70,7 +71,7 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
 
         val messageCollector = MessageCollectorImpl()
 
-        val exitCode = K2JSCompiler().exec(messageCollector, Services.EMPTY, args)
+        val exitCode = KotlinWasmCompiler().exec(messageCollector, Services.EMPTY, args)
         if (exitCode != ExitCode.OK) fail(
             buildString {
                 appendLine("Compilation failed with exit code: $exitCode")

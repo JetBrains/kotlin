@@ -21,7 +21,7 @@ object JsIdePlatformKind : IdePlatformKind() {
     override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform.isJs()
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
-        return if (arguments is K2JSCompilerArguments && !arguments.wasm)
+        return if (arguments is K2JSCompilerArguments)
             JsPlatforms.defaultJsPlatform
         else
             null

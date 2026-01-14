@@ -99,15 +99,19 @@ class CustomWebCompiler(private val compilerClassPath: List<URL>) {
         }
     }
 
-    fun callCompiler(output: PrintStream, vararg args: List<String>?): ExitCode {
+    fun callCompiler(output: PrintStream, isWasm: Boolean, vararg args: List<String>?): ExitCode {
         val allArgs = args.flatMap { it.orEmpty() }.toTypedArray()
-        return callCompiler(output, *allArgs)
+        return callCompiler(output, isWasm, *allArgs)
     }
 
-    fun callCompiler(output: PrintStream, vararg args: String): ExitCode {
+    fun callCompiler(output: PrintStream, isWasm: Boolean, vararg args: String): ExitCode {
         val isolatedClassLoader = getIsolatedClassLoader()
 
-        val compilerClass = Class.forName("org.jetbrains.kotlin.cli.js.K2JSCompiler", true, isolatedClassLoader)
+        val compilerClass = if (isWasm) {
+            Class.forName("org.jetbrains.kotlin.cli.js.KotlinWasmCompiler", true, isolatedClassLoader)
+        } else {
+            Class.forName("org.jetbrains.kotlin.cli.js.K2JSCompiler", true, isolatedClassLoader)
+        }
         val entryPoint = compilerClass.getMethod(
             "execFullPathsInMessages",
             PrintStream::class.java,

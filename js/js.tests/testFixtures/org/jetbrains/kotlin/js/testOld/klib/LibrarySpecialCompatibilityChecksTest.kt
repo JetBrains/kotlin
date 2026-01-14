@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibili
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
+import org.jetbrains.kotlin.js.testOld.utils.runWasmCompiler
 import org.jetbrains.kotlin.konan.file.createTempDir
 import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.file.zipDirAs
@@ -183,14 +184,24 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
                 createFakeUnzippedLibraryWithSpecificVersion(isWasm, libraryVersion)
 
             val expectedExitCode = if (expectedWarningStatus == WarningStatus.NO_WARNINGS) ExitCode.OK else ExitCode.COMPILATION_ERROR
-            runJsCompiler(messageCollector, expectedExitCode) {
-                this.freeArgs = listOf(sourceFile.absolutePath)
-                this.libraries = (additionalLibraries(isWasm) + fakeLibrary.absolutePath).joinToString(File.pathSeparator)
-                this.outputDir = outputDir.absolutePath
-                this.moduleName = moduleName
-                this.irProduceKlibFile = true
-                this.irModuleName = moduleName
-                this.wasm = isWasm
+            if (isWasm) {
+                runWasmCompiler(messageCollector, expectedExitCode) {
+                    this.freeArgs = listOf(sourceFile.absolutePath)
+                    this.libraries = (additionalLibraries(isWasm) + fakeLibrary.absolutePath).joinToString(File.pathSeparator)
+                    this.outputDir = outputDir.absolutePath
+                    this.moduleName = moduleName
+                    this.irProduceKlibFile = true
+                    this.irModuleName = moduleName
+                }
+            } else {
+                runJsCompiler(messageCollector, expectedExitCode) {
+                    this.freeArgs = listOf(sourceFile.absolutePath)
+                    this.libraries = (additionalLibraries(isWasm) + fakeLibrary.absolutePath).joinToString(File.pathSeparator)
+                    this.outputDir = outputDir.absolutePath
+                    this.moduleName = moduleName
+                    this.irProduceKlibFile = true
+                    this.irModuleName = moduleName
+                }
             }
         }
 

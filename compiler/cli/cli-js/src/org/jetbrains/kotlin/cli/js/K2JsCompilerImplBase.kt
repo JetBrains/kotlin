@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.js
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2CommonJSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 
 internal abstract class K2JsCompilerImplBase(
-    val arguments: K2JSCompilerArguments,
+    open val arguments: K2CommonJSCompilerArguments,
     val configuration: CompilerConfiguration,
     val moduleName: String,
     val outputName: String,
