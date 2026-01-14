@@ -46,8 +46,10 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.asComponentWriter
+import org.jetbrains.kotlin.library.writer.asComponentWriters
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -586,10 +588,6 @@ fun serializeModuleIntoKlib(
         if (jsOutputName != null) {
             p.setProperty(KLIB_PROPERTY_JS_OUTPUT_NAME, jsOutputName)
         }
-        val wasmTargets = listOfNotNull(/* in the future there might be multiple WASM targets */ wasmTarget)
-        if (wasmTargets.isNotEmpty()) {
-            p.setProperty(KLIB_PROPERTY_WASM_TARGETS, wasmTargets.joinToString(" ") { it.alias })
-        }
 
         val fingerprints = fullSerializedIr.files.sortedBy { it.path }.map { SerializedIrFileFingerprint(it) }
         p.setProperty(KLIB_PROPERTY_SERIALIZED_IR_FILE_FINGERPRINTS, fingerprints.joinIrFileFingerprints())
@@ -599,16 +597,23 @@ fun serializeModuleIntoKlib(
     }
 
     performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
-        buildKotlinLibrary(
-            ir = fullSerializedIr,
-            metadata = serializerOutput.serializedMetadata ?: error("expected serialized metadata"),
-            manifestProperties = properties,
-            moduleName = moduleName,
-            nopack = nopack,
-            output = klibPath,
-            versions = versions,
-            builtInsPlatform = builtInsPlatform
-        )
+        KlibWriter {
+            format(if (nopack) KlibFormat.Directory else KlibFormat.ZipArchive)
+            manifest {
+                moduleName(moduleName)
+                versions(versions)
+                platformAndTargets(
+                    builtInsPlatform = builtInsPlatform,
+                    targetNames = if (builtInsPlatform == BuiltInsPlatform.WASM)
+                        listOfNotNull(/* in the future there might be multiple WASM targets */wasmTarget?.alias)
+                    else
+                        emptyList()
+                )
+                customProperties { this += properties }
+            }
+            include(serializerOutput.serializedMetadata?.asComponentWriter() ?: error("expected serialized metadata"))
+            include(fullSerializedIr.asComponentWriters())
+        }.writeTo(klibPath)
     }
 }
 
