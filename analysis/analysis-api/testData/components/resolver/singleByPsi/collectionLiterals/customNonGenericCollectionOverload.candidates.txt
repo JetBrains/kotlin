@@ -1,5 +1,5 @@
 KtCollectionLiteralExpression(213,223): '["1", "2"]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "1" -> (KaVariableSignature:
@@ -48,7 +48,7 @@ KtCollectionLiteralExpression(213,223): '["1", "2"]'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "1" -> (KaVariableSignature:

@@ -68,7 +68,7 @@ KtBlockExpression(178,213): '{'
   NO_CANDIDATES
 
 KtCallExpression(184,190): 'foo(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -143,7 +143,7 @@ KtNameReferenceExpression(188,189): 'X'
   NO_CANDIDATES
 
 KtCallExpression(195,211): 'foo(WrongEnum.X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         WrongEnum.X -> (KaVariableSignature:
@@ -230,7 +230,7 @@ KtDeclarationModifierList(215,236): '@DslMarker'
   NO_CANDIDATES
 
 KtAnnotationEntry(215,225): '@DslMarker'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {}
       contextArguments = []
@@ -293,7 +293,7 @@ KtDeclarationModifierList(250,256): '@MyDsl'
   NO_CANDIDATES
 
 KtAnnotationEntry(250,256): '@MyDsl'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {}
       contextArguments = []
@@ -356,7 +356,7 @@ KtDeclarationModifierList(266,272): '@MyDsl'
   NO_CANDIDATES
 
 KtAnnotationEntry(266,272): '@MyDsl'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {}
       contextArguments = []
@@ -479,7 +479,7 @@ KtBlockExpression(340,362): '{'
   NO_CANDIDATES
 
 KtCallExpression(350,356): 'foo(X)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -518,7 +518,7 @@ KtCallExpression(350,356): 'foo(X)'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public fun A.foo(): Unit defined in root package in file noContextSensitiveResolutionShouldHappen.kt>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:

@@ -1,5 +1,5 @@
 KtConstructorDelegationCall(118,130): 'super(i + j)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         i + j -> (KaVariableSignature:

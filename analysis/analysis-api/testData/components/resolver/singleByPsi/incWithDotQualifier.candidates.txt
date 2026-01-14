@@ -1,5 +1,5 @@
 KtCallExpression(93,99): 'peek()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

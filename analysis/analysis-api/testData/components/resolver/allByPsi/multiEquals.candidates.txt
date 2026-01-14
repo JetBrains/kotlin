@@ -227,7 +227,7 @@ KtSuperTypeList(388,405): 'ItemCallback<T>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -528,7 +528,7 @@ KtSuperTypeList(615,632): 'ItemCallback<T>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -781,7 +781,7 @@ KtSuperTypeList(784,801): 'ItemCallback<T>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -1520,7 +1520,7 @@ KtNameReferenceExpression(1002,1003): 'i'
     isInBestCandidates = true
 
 KtCallExpression(1004,1013): 'equals(m)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -1670,7 +1670,7 @@ KtNameReferenceExpression(1018,1019): 'm'
     isInBestCandidates = true
 
 KtCallExpression(1020,1029): 'equals(i)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         i -> (KaVariableSignature:

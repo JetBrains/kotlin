@@ -1,5 +1,5 @@
 KtCallableReferenceExpression(246,251): '::add'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

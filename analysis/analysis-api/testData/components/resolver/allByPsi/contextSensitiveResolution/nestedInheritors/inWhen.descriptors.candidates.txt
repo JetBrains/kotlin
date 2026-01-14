@@ -23,7 +23,7 @@ KtSuperTypeList(130,139): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(130,139): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -140,7 +140,7 @@ KtBlockExpression(220,335): '{'
   NO_CANDIDATES
 
 KtCallExpression(226,333): 'receiveMyClass('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         when {
@@ -308,7 +308,7 @@ KtBlockExpression(396,512): '{'
   NO_CANDIDATES
 
 KtCallExpression(402,510): 'receiveMyClass('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         when {
@@ -488,7 +488,7 @@ KtBlockExpression(587,737): '{'
   NO_CANDIDATES
 
 KtCallExpression(593,735): 'receiveMyClass('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         when {
@@ -664,7 +664,7 @@ KtSuperTypeList(791,803): 'OtherClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(791,803): 'OtherClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -733,7 +733,7 @@ KtSuperTypeList(819,825): 'Base()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(819,825): 'Base()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -802,7 +802,7 @@ KtSuperTypeList(840,846): 'Base()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(840,846): 'Base()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -871,7 +871,7 @@ KtSuperTypeList(863,875): 'OtherClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(863,875): 'OtherClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -1024,7 +1024,7 @@ KtBlockExpression(1006,1141): '{'
   NO_CANDIDATES
 
 KtCallExpression(1012,1139): 'receiveOtherClass('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         when {
@@ -1212,7 +1212,7 @@ KtSuperTypeList(1206,1217): 'OpenClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(1206,1217): 'OpenClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -1329,7 +1329,7 @@ KtBlockExpression(1304,1434): '{'
   NO_CANDIDATES
 
 KtCallExpression(1310,1432): 'receiveOpenClass('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         when {
@@ -1497,7 +1497,7 @@ KtBlockExpression(1506,1635): '{'
   NO_CANDIDATES
 
 KtCallExpression(1512,1633): 'receiveOpenClass('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         when {

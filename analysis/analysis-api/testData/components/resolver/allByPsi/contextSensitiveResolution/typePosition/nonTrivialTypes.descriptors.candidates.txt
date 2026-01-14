@@ -322,7 +322,7 @@ KtNameReferenceExpression(403,412): 'JavaClass'
   NO_CANDIDATES
 
 KtCallExpression(413,418): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

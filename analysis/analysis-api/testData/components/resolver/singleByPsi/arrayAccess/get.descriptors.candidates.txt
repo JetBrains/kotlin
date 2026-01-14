@@ -1,5 +1,5 @@
 KtArrayAccessExpression(70,77): 'list[0]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         0 -> (KaVariableSignature:
@@ -34,7 +34,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         0 -> (KaVariableSignature:
@@ -73,7 +73,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         0 -> (KaVariableSignature:

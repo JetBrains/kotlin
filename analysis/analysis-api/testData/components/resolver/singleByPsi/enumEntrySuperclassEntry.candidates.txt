@@ -1,5 +1,5 @@
 KtSuperTypeCallEntry(107,110): '(1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

@@ -1,5 +1,5 @@
 KtCollectionLiteralExpression(55,58): '[1]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -18,7 +18,7 @@ KtCollectionLiteralExpression(55,58): '[1]'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <T> setOf(): Set<T>'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -52,7 +52,7 @@ KtCollectionLiteralExpression(55,58): '[1]'
       }
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

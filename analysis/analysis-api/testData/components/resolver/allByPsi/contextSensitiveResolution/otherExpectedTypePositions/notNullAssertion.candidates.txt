@@ -41,7 +41,7 @@ KtSuperTypeList(176,185): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(176,185): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -110,7 +110,7 @@ KtNameReferenceExpression(235,242): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(245,254): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -279,7 +279,7 @@ KtBlockExpression(450,609): '{'
   NO_CANDIDATES
 
 KtCallExpression(456,491): 'receive<MyClass>(NestedInheritor!!)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         NestedInheritor!! -> (KaVariableSignature:
@@ -394,7 +394,7 @@ KtOperationReferenceExpression(488,490): '!!'
   NO_CANDIDATES
 
 KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         myClassProp!! -> (KaVariableSignature:
@@ -512,7 +512,7 @@ KtOperationReferenceExpression(524,526): '!!'
   NO_CANDIDATES
 
 KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         stringProp!! -> (KaVariableSignature:
@@ -632,7 +632,7 @@ KtOperationReferenceExpression(559,561): '!!'
   NO_CANDIDATES
 
 KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         getNestedInheritor()!! -> (KaVariableSignature:
@@ -762,7 +762,7 @@ KtProperty(645,791): 'val map = mapOf<MyClass, Int>(MyClass.myClassProp to 1,  M
   NO_CANDIDATES
 
 KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyClass.stringProp to 2, MyClass.NestedInheritor to 3, MyClass.getNestedInheritor() to 4)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -782,7 +782,7 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <K, V> mapOf(): Map<K, V>'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         MyClass.myClassProp to 1 -> (KaVariableSignature:
@@ -818,7 +818,7 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V>'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         MyClass.myClassProp to 1 -> (KaVariableSignature:
@@ -1526,7 +1526,7 @@ KtNameReferenceExpression(757,764): 'MyClass'
     isInBestCandidates = false
 
 KtCallExpression(765,785): 'getNestedInheritor()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1614,7 +1614,7 @@ KtReturnExpression(796,819): 'return map[myClassProp]'
   NO_CANDIDATES
 
 KtArrayAccessExpression(803,819): 'map[myClassProp]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         myClassProp -> (KaVariableSignature:
@@ -1649,7 +1649,7 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         myClassProp -> (KaVariableSignature:
@@ -1732,7 +1732,7 @@ KtReturnExpression(824,846): 'return map[stringProp]'
   NO_CANDIDATES
 
 KtArrayAccessExpression(831,846): 'map[stringProp]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         stringProp -> (KaVariableSignature:
@@ -1768,7 +1768,7 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
     diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun get(key: MyClass): Int?>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         stringProp -> (KaVariableSignature:
@@ -1852,7 +1852,7 @@ KtReturnExpression(851,878): 'return map[NestedInheritor]'
   NO_CANDIDATES
 
 KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         NestedInheritor -> (KaVariableSignature:
@@ -1887,7 +1887,7 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         NestedInheritor -> (KaVariableSignature:
@@ -1967,7 +1967,7 @@ KtReturnExpression(883,915): 'return map[getNestedInheritor()]'
   NO_CANDIDATES
 
 KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         getNestedInheritor() -> (KaVariableSignature:
@@ -2002,7 +2002,7 @@ KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         getNestedInheritor() -> (KaVariableSignature:

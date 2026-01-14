@@ -1,5 +1,5 @@
 KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -62,7 +62,7 @@ KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

@@ -50,7 +50,7 @@ KtParameterList(72,74): '()'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(76,84): 'this(10)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -70,7 +70,7 @@ KtConstructorDelegationCall(76,84): 'this(10)'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor B() defined in r.A.B>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         10 -> (KaVariableSignature:
@@ -106,7 +106,7 @@ KtConstructorDelegationCall(76,84): 'this(10)'
     isInBestCandidates = true
 
 KtConstructorDelegationReferenceExpression(76,80): 'this'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -126,7 +126,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         10 -> (KaVariableSignature:

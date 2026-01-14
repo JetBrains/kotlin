@@ -275,7 +275,7 @@ KtNameReferenceExpression(602,610): 'enumProp'
   NO_CANDIDATES
 
 KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Option1 ?: Option2 -> (KaVariableSignature:
@@ -378,7 +378,7 @@ KtNameReferenceExpression(643,650): 'Option2'
   NO_CANDIDATES
 
 KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         enumProp ?: stringProp -> (KaVariableSignature:
@@ -481,7 +481,7 @@ KtNameReferenceExpression(684,694): 'stringProp'
   NO_CANDIDATES
 
 KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         enumProp ?: getOption() -> (KaVariableSignature:

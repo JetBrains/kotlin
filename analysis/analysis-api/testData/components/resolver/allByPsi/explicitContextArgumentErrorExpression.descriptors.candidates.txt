@@ -44,7 +44,7 @@ KtBlockExpression(43,60): '{'
   NO_CANDIDATES
 
 KtCallExpression(49,58): 'foo(s = )'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

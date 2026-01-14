@@ -1,5 +1,5 @@
 KtCallExpression(110,117): 'x(true)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         true -> (KaVariableSignature:
@@ -35,7 +35,7 @@ KtCallExpression(110,117): 'x(true)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Boolean', but 'Int' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         true -> (KaVariableSignature:
@@ -68,7 +68,7 @@ KtCallExpression(110,117): 'x(true)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Boolean', but 'Char' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         true -> (KaVariableSignature:

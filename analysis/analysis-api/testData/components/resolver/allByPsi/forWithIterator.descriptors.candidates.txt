@@ -449,7 +449,7 @@ KtContainerNode(297,318): 'IntProgression(1, 10)'
   NO_CANDIDATES
 
 KtCallExpression(297,318): 'IntProgression(1, 10)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -495,7 +495,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

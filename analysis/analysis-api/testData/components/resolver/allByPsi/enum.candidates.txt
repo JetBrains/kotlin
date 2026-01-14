@@ -41,7 +41,7 @@ KtInitializerList(54,57): '(1)'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(54,57): '(1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -115,7 +115,7 @@ KtUserType(54,54): ''
   NO_CANDIDATES
 
 KtEnumEntrySuperclassReferenceExpression(54,54): ''
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -164,7 +164,7 @@ KtInitializerList(76,79): '(2)'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(76,79): '(2)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
@@ -238,7 +238,7 @@ KtUserType(76,76): ''
   NO_CANDIDATES
 
 KtEnumEntrySuperclassReferenceExpression(76,76): ''
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
@@ -366,7 +366,7 @@ KtNameReferenceExpression(234,238): 'this'
   NO_CANDIDATES
 
 KtCallExpression(239,244): 'baz()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

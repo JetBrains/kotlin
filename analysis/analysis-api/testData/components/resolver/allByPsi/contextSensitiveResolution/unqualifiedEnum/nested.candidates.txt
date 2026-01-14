@@ -470,7 +470,7 @@ KtConstantExpression(531,532): '3'
   NO_CANDIDATES
 
 KtCallExpression(577,582): 'baz()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

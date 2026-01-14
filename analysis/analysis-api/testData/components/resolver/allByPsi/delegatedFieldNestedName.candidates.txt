@@ -17,7 +17,7 @@ KtDeclarationModifierList(31,72): '@Target(AnnotationTarget.TYPE)'
   NO_CANDIDATES
 
 KtAnnotationEntry(31,61): '@Target(AnnotationTarget.TYPE)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         AnnotationTarget.TYPE -> (KaVariableSignature:
@@ -242,7 +242,7 @@ KtDeclarationModifierList(225,241): '@Anno(0 + outer)'
   NO_CANDIDATES
 
 KtAnnotationEntry(225,241): '@Anno(0 + outer)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         0 + outer -> (KaVariableSignature:
@@ -794,7 +794,7 @@ KtDeclarationModifierList(247,263): '@Anno(1 + outer)'
   NO_CANDIDATES
 
 KtAnnotationEntry(247,263): '@Anno(1 + outer)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         1 + outer -> (KaVariableSignature:
@@ -1346,7 +1346,7 @@ KtDeclarationModifierList(269,285): '@Anno(2 + outer)'
   NO_CANDIDATES
 
 KtAnnotationEntry(269,285): '@Anno(2 + outer)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         2 + outer -> (KaVariableSignature:
@@ -1913,7 +1913,7 @@ KtDeclarationModifierList(310,326): '@Anno(4 + outer)'
   NO_CANDIDATES
 
 KtAnnotationEntry(310,326): '@Anno(4 + outer)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         4 + outer -> (KaVariableSignature:
@@ -2465,7 +2465,7 @@ KtDeclarationModifierList(334,350): '@Anno(5 + outer)'
   NO_CANDIDATES
 
 KtAnnotationEntry(334,350): '@Anno(5 + outer)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         5 + outer -> (KaVariableSignature:
@@ -3044,7 +3044,7 @@ KtDeclarationModifierList(400,416): '@Anno(6 + inner)'
   NO_CANDIDATES
 
 KtAnnotationEntry(400,416): '@Anno(6 + inner)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         6 + inner -> (KaVariableSignature:
@@ -8334,7 +8334,7 @@ KtDeclarationModifierList(422,438): '@Anno(7 + inner)'
   NO_CANDIDATES
 
 KtAnnotationEntry(422,438): '@Anno(7 + inner)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         7 + inner -> (KaVariableSignature:
@@ -13624,7 +13624,7 @@ KtDeclarationModifierList(444,460): '@Anno(8 + inner)'
   NO_CANDIDATES
 
 KtAnnotationEntry(444,460): '@Anno(8 + inner)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         8 + inner -> (KaVariableSignature:
@@ -18938,7 +18938,7 @@ KtDeclarationModifierList(559,575): '@Anno(9 + inner)'
   NO_CANDIDATES
 
 KtAnnotationEntry(559,575): '@Anno(9 + inner)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         9 + inner -> (KaVariableSignature:
@@ -19509,7 +19509,7 @@ KtDeclarationModifierList(583,600): '@Anno(10 + inner)'
   NO_CANDIDATES
 
 KtAnnotationEntry(583,600): '@Anno(10 + inner)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         10 + inner -> (KaVariableSignature:

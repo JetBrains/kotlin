@@ -1,5 +1,5 @@
 KtCallExpression(84,89): 'foo()'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

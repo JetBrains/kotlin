@@ -1,5 +1,5 @@
 KtSuperTypeCallEntry(93,106): 'Foo<String>()'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []

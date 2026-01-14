@@ -23,7 +23,7 @@ KtSuperTypeList(143,152): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(143,152): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -164,7 +164,7 @@ KtBlockExpression(271,374): '{'
   NO_CANDIDATES
 
 KtCallExpression(277,297): 'overload(EnumValue1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:
@@ -196,7 +196,7 @@ KtCallExpression(277,297): 'overload(EnumValue1)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:
@@ -315,7 +315,7 @@ KtNameReferenceExpression(311,317): 'MyEnum'
   NO_CANDIDATES
 
 KtCallExpression(320,340): 'overload(EnumValue1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:
@@ -347,7 +347,7 @@ KtCallExpression(320,340): 'overload(EnumValue1)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:
@@ -454,7 +454,7 @@ KtNameReferenceExpression(329,339): 'EnumValue1'
   NO_CANDIDATES
 
 KtCallExpression(346,371): 'overload(InheritorObject)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         InheritorObject -> (KaVariableSignature:
@@ -486,7 +486,7 @@ KtCallExpression(346,371): 'overload(InheritorObject)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         InheritorObject -> (KaVariableSignature:
@@ -614,7 +614,7 @@ KtBlockExpression(402,429): '{ println("Enum version") }'
   NO_CANDIDATES
 
 KtCallExpression(404,427): 'println("Enum version")'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -631,7 +631,7 @@ KtCallExpression(404,427): 'println("Enum version")'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -663,7 +663,7 @@ KtCallExpression(404,427): 'println("Enum version")'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -696,7 +696,7 @@ KtCallExpression(404,427): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -729,7 +729,7 @@ KtCallExpression(404,427): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -762,7 +762,7 @@ KtCallExpression(404,427): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -795,7 +795,7 @@ KtCallExpression(404,427): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -828,7 +828,7 @@ KtCallExpression(404,427): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -861,7 +861,7 @@ KtCallExpression(404,427): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -894,7 +894,7 @@ KtCallExpression(404,427): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -927,7 +927,7 @@ KtCallExpression(404,427): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -1329,7 +1329,7 @@ KtBlockExpression(446,486): '{ println("Without arguments version") }'
   NO_CANDIDATES
 
 KtCallExpression(448,484): 'println("Without arguments version")'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1346,7 +1346,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
@@ -1378,7 +1378,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
@@ -1411,7 +1411,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
@@ -1444,7 +1444,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
@@ -1477,7 +1477,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
@@ -1510,7 +1510,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
@@ -1543,7 +1543,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
@@ -1576,7 +1576,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
@@ -1609,7 +1609,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
@@ -1642,7 +1642,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
@@ -2044,7 +2044,7 @@ KtBlockExpression(500,529): '{'
   NO_CANDIDATES
 
 KtCallExpression(506,527): 'overload2(EnumValue1)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2061,7 +2061,7 @@ KtCallExpression(506,527): 'overload2(EnumValue1)'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun overload2(): Unit'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:
@@ -2192,7 +2192,7 @@ KtBlockExpression(557,584): '{ println("Enum version") }'
   NO_CANDIDATES
 
 KtCallExpression(559,582): 'println("Enum version")'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2209,7 +2209,7 @@ KtCallExpression(559,582): 'println("Enum version")'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -2241,7 +2241,7 @@ KtCallExpression(559,582): 'println("Enum version")'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -2274,7 +2274,7 @@ KtCallExpression(559,582): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -2307,7 +2307,7 @@ KtCallExpression(559,582): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -2340,7 +2340,7 @@ KtCallExpression(559,582): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -2373,7 +2373,7 @@ KtCallExpression(559,582): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -2406,7 +2406,7 @@ KtCallExpression(559,582): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -2439,7 +2439,7 @@ KtCallExpression(559,582): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -2472,7 +2472,7 @@ KtCallExpression(559,582): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -2505,7 +2505,7 @@ KtCallExpression(559,582): 'println("Enum version")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Enum version" -> (KaVariableSignature:
@@ -2934,7 +2934,7 @@ KtBlockExpression(628,659): '{ println("With 2 arguments") }'
   NO_CANDIDATES
 
 KtCallExpression(630,657): 'println("With 2 arguments")'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2951,7 +2951,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
@@ -2983,7 +2983,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
@@ -3016,7 +3016,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
@@ -3049,7 +3049,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
@@ -3082,7 +3082,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
@@ -3115,7 +3115,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
@@ -3148,7 +3148,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
@@ -3181,7 +3181,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
@@ -3214,7 +3214,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
@@ -3247,7 +3247,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
@@ -3649,7 +3649,7 @@ KtBlockExpression(673,702): '{'
   NO_CANDIDATES
 
 KtCallExpression(679,700): 'overload3(EnumValue1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:
@@ -3681,7 +3681,7 @@ KtCallExpression(679,700): 'overload3(EnumValue1)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:

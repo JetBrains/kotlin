@@ -26,7 +26,7 @@ KtSuperTypeList(122,132): 'MySealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(122,132): 'MySealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -83,7 +83,7 @@ KtSuperTypeList(153,163): 'MySealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(153,163): 'MySealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -224,7 +224,7 @@ KtNameReferenceExpression(263,264): 'T'
   NO_CANDIDATES
 
 KtCallExpression(267,273): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -240,7 +240,7 @@ KtCallExpression(267,273): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -344,7 +344,7 @@ KtNameReferenceExpression(293,294): 'X'
   NO_CANDIDATES
 
 KtCallExpression(297,303): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -360,7 +360,7 @@ KtCallExpression(297,303): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -509,7 +509,7 @@ KtNameReferenceExpression(349,350): 'X'
     isInBestCandidates = false
 
 KtCallExpression(356,433): 'myRunWithMySealed {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -665,7 +665,7 @@ KtNameReferenceExpression(426,427): 'Y'
     isInBestCandidates = false
 
 KtCallExpression(439,524): 'myRunWithMySealed {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -785,7 +785,7 @@ KtLabelReferenceExpression(480,498): '@myRunWithMySealed'
   NO_CANDIDATES
 
 KtCallExpression(499,504): 'id(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -879,7 +879,7 @@ KtNameReferenceExpression(502,503): 'X'
     isInBestCandidates = false
 
 KtCallExpression(513,518): 'id(Y)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Y -> (KaVariableSignature:
@@ -973,7 +973,7 @@ KtNameReferenceExpression(516,517): 'Y'
     isInBestCandidates = false
 
 KtCallExpression(530,593): 'myRun<MySealed> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -1148,7 +1148,7 @@ KtNameReferenceExpression(586,587): 'Y'
     isInBestCandidates = false
 
 KtCallExpression(598,682): 'foo('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         myRun {
@@ -1226,7 +1226,7 @@ KtValueArgument(611,676): 'myRun {'
   NO_CANDIDATES
 
 KtCallExpression(611,676): 'myRun {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -1398,7 +1398,7 @@ KtNameReferenceExpression(695,703): 'MySealed'
   NO_CANDIDATES
 
 KtCallExpression(706,759): 'myRun {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -1558,7 +1558,7 @@ KtNameReferenceExpression(752,753): 'Y'
     isInBestCandidates = false
 
 KtCallExpression(765,818): 'myRun {'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -1690,7 +1690,7 @@ KtNameReferenceExpression(811,812): 'Y'
   NO_CANDIDATES
 
 KtCallExpression(823,885): 'myRun {'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {

@@ -1,5 +1,5 @@
 KtCallExpression(86,92): 'foo(x)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         x -> (KaVariableSignature:

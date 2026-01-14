@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,9 +11,7 @@ import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseErrorCallInfo
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitReceiverValue
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSuccessCallInfo
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.*
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
@@ -160,10 +158,10 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
 
     protected abstract fun performCallCandidatesCollection(psi: KtElement): List<KaCallCandidateInfo>
 
-    final override fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidateInfo> = withValidityAssertion {
+    final override fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> = withValidityAssertion {
         if (this is KtElement) {
             checkValidity()
-            collectCallCandidatesImpl()
+            collectCallCandidatesImpl().flatMap(KaCallCandidateInfo::asKaCallCandidates)
         } else {
             emptyList()
         }
@@ -236,6 +234,24 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     protected companion object {
         private val nonCallBinaryOperator: Set<KtSingleValueToken> = setOf(KtTokens.ELVIS, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ)
     }
+}
+
+internal fun KaCallCandidateInfo.asKaCallCandidates(): List<KaCallCandidate> {
+    val candidateBuilder: (KaSingleCall<*, *>) -> KaCallCandidate = when (this) {
+        is KaApplicableCallCandidateInfo -> fun(singleCall): KaCallCandidate = KaBaseApplicableCallCandidate(
+            backingCandidate = singleCall,
+            backingIsInBestCandidates = isInBestCandidates,
+        )
+
+        is KaInapplicableCallCandidateInfo -> fun(singleCall): KaCallCandidate = KaBaseInapplicableCallCandidate(
+            backingCandidate = singleCall,
+            backingIsInBestCandidates = isInBestCandidates,
+            backingDiagnostic = diagnostic,
+        )
+    }
+
+    val singleCalls = (candidate as KaCallResolutionAttempt).calls
+    return singleCalls.map(candidateBuilder)
 }
 
 @OptIn(KtExperimentalApi::class)

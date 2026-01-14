@@ -604,7 +604,7 @@ KtNameReferenceExpression(397,398): 's'
     isInBestCandidates = true
 
 KtCallExpression(399,409): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -751,7 +751,7 @@ KtStringTemplateExpression(430,432): '""'
   NO_CANDIDATES
 
 KtCallExpression(433,443): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1090,7 +1090,7 @@ KtNameReferenceExpression(514,519): 'value'
     isInBestCandidates = false
 
 KtCallExpression(521,527): 'div(1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1109,7 +1109,7 @@ KtCallExpression(521,527): 'div(1)'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []

@@ -131,7 +131,7 @@ KtProperty(141,193): 'val prop = take {'
   NO_CANDIDATES
 
 KtCallExpression(152,193): 'take {'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {

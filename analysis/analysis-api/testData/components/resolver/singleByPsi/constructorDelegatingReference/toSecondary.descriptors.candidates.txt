@@ -1,5 +1,5 @@
 KtConstructorDelegationReferenceExpression(76,80): 'this'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -17,7 +17,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         "2" -> (KaVariableSignature:
@@ -51,7 +51,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         "2" -> (KaVariableSignature:

@@ -116,7 +116,7 @@ KtNameReferenceExpression(200,201): 'T'
   NO_CANDIDATES
 
 KtCallExpression(204,210): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -132,7 +132,7 @@ KtCallExpression(204,210): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -236,7 +236,7 @@ KtNameReferenceExpression(230,231): 'X'
   NO_CANDIDATES
 
 KtCallExpression(234,240): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -252,7 +252,7 @@ KtCallExpression(234,240): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -904,7 +904,7 @@ KtNameReferenceExpression(567,568): 'i'
     isInBestCandidates = true
 
 KtCallExpression(569,579): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1055,7 +1055,7 @@ KtNameReferenceExpression(689,690): 'L'
     isInBestCandidates = true
 
 KtCallExpression(702,833): 'foo('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         when (i) {
@@ -1244,7 +1244,7 @@ KtNameReferenceExpression(816,817): 'L'
     isInBestCandidates = true
 
 KtCallExpression(839,937): 'foo('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         if (i == 0) X
@@ -1597,7 +1597,7 @@ KtNameReferenceExpression(930,931): 'L'
     isInBestCandidates = true
 
 KtCallExpression(943,1087): 'myRunWithMyEnum {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -1796,7 +1796,7 @@ KtNameReferenceExpression(1070,1071): 'L'
     isInBestCandidates = true
 
 KtCallExpression(1093,1318): 'myRun<MyEnum> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -1986,7 +1986,7 @@ KtNameReferenceExpression(1151,1152): 'i'
     isInBestCandidates = true
 
 KtCallExpression(1153,1163): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2137,7 +2137,7 @@ KtNameReferenceExpression(1301,1302): 'L'
     isInBestCandidates = true
 
 KtCallExpression(1324,1466): 'myRun<MyEnum> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -2355,7 +2355,7 @@ KtNameReferenceExpression(1449,1450): 'L'
     isInBestCandidates = true
 
 KtCallExpression(1472,1581): 'myRun<MyEnum> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -2737,7 +2737,7 @@ KtNameReferenceExpression(1574,1575): 'L'
     isInBestCandidates = true
 
 KtCallExpression(1587,1696): 'myRun<MyEnum> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {

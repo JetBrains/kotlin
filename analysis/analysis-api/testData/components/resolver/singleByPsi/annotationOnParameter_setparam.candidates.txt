@@ -1,5 +1,5 @@
 KtAnnotationEntry(35,49): '@setparam:Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {}
       contextArguments = []

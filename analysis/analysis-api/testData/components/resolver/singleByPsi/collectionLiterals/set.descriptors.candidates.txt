@@ -1,5 +1,5 @@
 KtCollectionLiteralExpression(55,58): '[1]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

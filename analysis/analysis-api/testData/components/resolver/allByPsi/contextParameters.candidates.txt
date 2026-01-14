@@ -124,7 +124,7 @@ KtNameReferenceExpression(130,134): 'this'
   NO_CANDIDATES
 
 KtCallExpression(135,140): 'bar()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -221,7 +221,7 @@ KtNameReferenceExpression(149,150): 'a'
     isInBestCandidates = true
 
 KtCallExpression(151,158): 'foo("")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "" -> (KaVariableSignature:
@@ -367,7 +367,7 @@ KtNameReferenceExpression(243,247): 'this'
   NO_CANDIDATES
 
 KtCallExpression(248,253): 'bar()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -467,7 +467,7 @@ KtNameReferenceExpression(273,274): 'a'
     isInBestCandidates = true
 
 KtCallExpression(275,282): 'foo("")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "" -> (KaVariableSignature:
@@ -575,7 +575,7 @@ KtBlockExpression(339,389): '{'
   NO_CANDIDATES
 
 KtCallExpression(349,360): 'funMember()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = [
@@ -690,7 +690,7 @@ KtBlockExpression(435,544): '{'
   NO_CANDIDATES
 
 KtCallExpression(441,542): 'with(Base()) {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Base() -> (KaVariableSignature:
@@ -806,7 +806,7 @@ KtValueArgument(446,452): 'Base()'
   NO_CANDIDATES
 
 KtCallExpression(446,452): 'Base()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -855,7 +855,7 @@ KtBlockExpression(464,536): 'with(A()) {'
   NO_CANDIDATES
 
 KtCallExpression(464,536): 'with(A()) {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         A() -> (KaVariableSignature:
@@ -967,7 +967,7 @@ KtValueArgument(469,472): 'A()'
   NO_CANDIDATES
 
 KtCallExpression(469,472): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1016,7 +1016,7 @@ KtBlockExpression(488,526): 'funMember()'
   NO_CANDIDATES
 
 KtCallExpression(488,499): 'funMember()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = [
@@ -1242,7 +1242,7 @@ KtBlockExpression(582,637): '{'
   NO_CANDIDATES
 
 KtCallExpression(588,635): 'with(Base()) {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Base() -> (KaVariableSignature:
@@ -1352,7 +1352,7 @@ KtValueArgument(593,599): 'Base()'
   NO_CANDIDATES
 
 KtCallExpression(593,599): 'Base()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1401,7 +1401,7 @@ KtBlockExpression(611,629): 'funMember(a = A())'
   NO_CANDIDATES
 
 KtCallExpression(611,629): 'funMember(a = A())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = [
@@ -1517,7 +1517,7 @@ KtNameReferenceExpression(621,622): 'a'
   NO_CANDIDATES
 
 KtCallExpression(625,628): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

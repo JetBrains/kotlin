@@ -1,5 +1,5 @@
 KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -18,7 +18,7 @@ KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <T> sequenceOf(): Sequence<T>'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "1" -> (KaVariableSignature:
@@ -53,7 +53,7 @@ KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <T> sequenceOf(element: T): Sequence<T>'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "1" -> (KaVariableSignature:

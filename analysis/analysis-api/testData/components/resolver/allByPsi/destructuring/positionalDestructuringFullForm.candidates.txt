@@ -410,7 +410,7 @@ KtBlockExpression(433,435): '{}'
   NO_CANDIDATES
 
 KtCallExpression(441,476): 'foo { [val first, val second,] -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { [val first, val second,] -> } -> (KaVariableSignature:
@@ -503,7 +503,7 @@ KtBlockExpression(475,475): ''
   NO_CANDIDATES
 
 KtCallExpression(481,503): 'foo { [val first] -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { [val first] -> } -> (KaVariableSignature:
@@ -593,7 +593,7 @@ KtBlockExpression(502,502): ''
   NO_CANDIDATES
 
 KtCallExpression(508,538): 'foo { [val first: String] -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { [val first: String] -> } -> (KaVariableSignature:

@@ -122,7 +122,7 @@ KtNameReferenceExpression(224,234): 'EnumValue2'
   NO_CANDIDATES
 
 KtCallExpression(240,263): 'receiveEnum(EnumValue2)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         EnumValue2 -> (KaVariableSignature:
@@ -215,7 +215,7 @@ KtNameReferenceExpression(252,262): 'EnumValue2'
     isInBestCandidates = true
 
 KtCallExpression(268,285): 'receiveEnum(arg1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         arg1 -> (KaVariableSignature:
@@ -305,7 +305,7 @@ KtNameReferenceExpression(280,284): 'arg1'
     isInBestCandidates = true
 
 KtCallExpression(290,307): 'receiveEnum(arg2)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         arg2 -> (KaVariableSignature:
@@ -395,7 +395,7 @@ KtNameReferenceExpression(302,306): 'arg2'
     isInBestCandidates = true
 
 KtCallExpression(312,329): 'receiveEnum(arg3)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         arg3 -> (KaVariableSignature:

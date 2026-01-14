@@ -458,7 +458,7 @@ KtProperty(484,500): 'var foo = Test()'
   NO_CANDIDATES
 
 KtCallExpression(494,500): 'Test()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

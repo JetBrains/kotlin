@@ -1,5 +1,5 @@
 KtCollectionLiteralExpression(136,138): '[]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

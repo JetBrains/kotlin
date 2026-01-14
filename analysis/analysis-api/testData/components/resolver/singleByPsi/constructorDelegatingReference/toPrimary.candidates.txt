@@ -1,5 +1,5 @@
 KtConstructorDelegationReferenceExpression(38,42): 'this'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -17,7 +17,7 @@ KtConstructorDelegationReferenceExpression(38,42): 'this'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         2 -> (KaVariableSignature:

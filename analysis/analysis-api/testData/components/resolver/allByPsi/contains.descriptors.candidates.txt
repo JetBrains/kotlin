@@ -38,7 +38,7 @@ KtNameReferenceExpression(37,40): 'Int'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(43,49): 'this()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -55,7 +55,7 @@ KtConstructorDelegationCall(43,49): 'this()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -82,7 +82,7 @@ KtConstructorDelegationCall(43,49): 'this()'
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(43,47): 'this'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -99,7 +99,7 @@ KtConstructorDelegationReferenceExpression(43,47): 'this'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -265,7 +265,7 @@ KtOperationReferenceExpression(128,130): 'in'
     isInBestCandidates = true
 
 KtCallExpression(131,140): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -281,7 +281,7 @@ KtCallExpression(131,140): 'MyClass()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -390,7 +390,7 @@ KtDotQualifiedExpression(145,166): 'MyClass().contains(2)'
     isInBestCandidates = true
 
 KtCallExpression(145,154): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -406,7 +406,7 @@ KtCallExpression(145,154): 'MyClass()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -477,7 +477,7 @@ KtValueArgumentList(152,154): '()'
   NO_CANDIDATES
 
 KtCallExpression(155,166): 'contains(2)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
@@ -641,7 +641,7 @@ KtOperationReferenceExpression(173,176): '!in'
     isInBestCandidates = true
 
 KtCallExpression(177,186): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -657,7 +657,7 @@ KtCallExpression(177,186): 'MyClass()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -737,7 +737,7 @@ KtWhenEntry(211,231): 'in MyClass() -> true'
   NO_CANDIDATES
 
 KtWhenConditionInRange(211,223): 'in MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -813,7 +813,7 @@ KtOperationReferenceExpression(211,213): 'in'
     isInBestCandidates = true
 
 KtCallExpression(214,223): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -829,7 +829,7 @@ KtCallExpression(214,223): 'MyClass()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -915,7 +915,7 @@ KtWhenEntry(270,292): '!in MyClass() -> false'
   NO_CANDIDATES
 
 KtWhenConditionInRange(270,283): '!in MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         f -> (KaVariableSignature:
@@ -991,7 +991,7 @@ KtOperationReferenceExpression(270,273): '!in'
     isInBestCandidates = true
 
 KtCallExpression(274,283): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1007,7 +1007,7 @@ KtCallExpression(274,283): 'MyClass()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

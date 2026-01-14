@@ -23,7 +23,7 @@ KtDeclarationModifierList(36,41): '@Anno'
   NO_CANDIDATES
 
 KtAnnotationEntry(36,41): '@Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {}
       contextArguments = []

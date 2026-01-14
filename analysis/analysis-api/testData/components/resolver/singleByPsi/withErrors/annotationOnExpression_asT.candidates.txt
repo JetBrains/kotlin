@@ -1,5 +1,5 @@
 KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "UNCHECKED_CAST" -> (KaVariableSignature:

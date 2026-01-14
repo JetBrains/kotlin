@@ -38,7 +38,7 @@ KtBlockExpression(28,44): '{'
   NO_CANDIDATES
 
 KtCallExpression(34,42): 'action()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -88,7 +88,7 @@ KtBlockExpression(58,163): '{'
   NO_CANDIDATES
 
 KtCallExpression(64,102): 'foo label@{'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         label@{

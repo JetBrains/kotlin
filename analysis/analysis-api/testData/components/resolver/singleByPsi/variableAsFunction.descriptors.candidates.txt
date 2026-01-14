@@ -1,5 +1,5 @@
 KtCallExpression(35,39): 'x(1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

@@ -211,7 +211,7 @@ KtNameReferenceExpression(453,459): 'MyEnum'
   NO_CANDIDATES
 
 KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(true)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         true -> (KaVariableSignature:
@@ -246,7 +246,7 @@ KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(t
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         true -> (KaVariableSignature:
@@ -742,7 +742,7 @@ KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
     isInBestCandidates = true
 
 KtCallExpression(975,994): 'contextOf<MyEnum>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

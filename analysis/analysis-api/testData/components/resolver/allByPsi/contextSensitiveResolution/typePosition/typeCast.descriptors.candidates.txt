@@ -50,7 +50,7 @@ KtSuperTypeList(163,176): 'SealedClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(163,176): 'SealedClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -140,7 +140,7 @@ KtSuperTypeList(225,238): 'SealedClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(225,238): 'SealedClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -233,7 +233,7 @@ KtSuperTypeList(308,321): 'SealedClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(308,321): 'SealedClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -302,7 +302,7 @@ KtSuperTypeList(358,376): 'SealedInheritor1()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -401,7 +401,7 @@ KtSuperTypeList(438,451): 'SealedClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(438,451): 'SealedClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -470,7 +470,7 @@ KtSuperTypeList(501,519): 'SealedInheritor1()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(501,519): 'SealedInheritor1()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -590,7 +590,7 @@ KtSuperTypeList(588,601): 'SealedClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(588,601): 'SealedClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -704,7 +704,7 @@ KtNameReferenceExpression(728,735): 'Nothing'
   NO_CANDIDATES
 
 KtCallExpression(738,744): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -720,7 +720,7 @@ KtCallExpression(738,744): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -908,7 +908,7 @@ KtNameReferenceExpression(820,825): 'prop1'
   NO_CANDIDATES
 
 KtCallExpression(826,836): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -927,7 +927,7 @@ KtCallExpression(826,836): 'hashCode()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1086,7 +1086,7 @@ KtNameReferenceExpression(870,875): 'prop2'
   NO_CANDIDATES
 
 KtCallExpression(876,881): 'dec()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -1105,7 +1105,7 @@ KtCallExpression(876,881): 'dec()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1264,7 +1264,7 @@ KtNameReferenceExpression(915,920): 'prop1'
   NO_CANDIDATES
 
 KtCallExpression(921,931): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -1283,7 +1283,7 @@ KtCallExpression(921,931): 'hashCode()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1521,7 +1521,7 @@ KtNameReferenceExpression(1004,1009): 'prop1'
     isInBestCandidates = false
 
 KtCallExpression(1010,1020): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1540,7 +1540,7 @@ KtCallExpression(1010,1020): 'hashCode()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -1699,7 +1699,7 @@ KtNameReferenceExpression(1054,1059): 'prop2'
   NO_CANDIDATES
 
 KtCallExpression(1060,1065): 'dec()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -1718,7 +1718,7 @@ KtCallExpression(1060,1065): 'dec()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1953,7 +1953,7 @@ KtNameReferenceExpression(1107,1112): 'prop1'
     isInBestCandidates = false
 
 KtCallExpression(1113,1123): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -1972,7 +1972,7 @@ KtCallExpression(1113,1123): 'hashCode()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2143,7 +2143,7 @@ KtNameReferenceExpression(1180,1185): 'prop1'
   NO_CANDIDATES
 
 KtCallExpression(1186,1196): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -2162,7 +2162,7 @@ KtCallExpression(1186,1196): 'hashCode()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2406,7 +2406,7 @@ KtNameReferenceExpression(1258,1263): 'prop1'
     isInBestCandidates = false
 
 KtCallExpression(1264,1274): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -2425,7 +2425,7 @@ KtCallExpression(1264,1274): 'hashCode()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2488,7 +2488,7 @@ KtValueArgumentList(1272,1274): '()'
   NO_CANDIDATES
 
 KtCallExpression(1280,1323): 'consume<SealedClass>(i as SealedInheritor1)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         i as SealedInheritor1 -> (KaVariableSignature:
@@ -2614,7 +2614,7 @@ KtNameReferenceExpression(1306,1322): 'SealedInheritor1'
   NO_CANDIDATES
 
 KtCallExpression(1328,1388): 'consume<SealedClass.SealedInheritor1>(i as SealedInheritor1)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         i as SealedInheritor1 -> (KaVariableSignature:
@@ -2921,7 +2921,7 @@ KtNameReferenceExpression(1462,1467): 'prop1'
     isInBestCandidates = false
 
 KtCallExpression(1469,1479): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2940,7 +2940,7 @@ KtCallExpression(1469,1479): 'hashCode()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -3099,7 +3099,7 @@ KtNameReferenceExpression(1515,1520): 'prop2'
   NO_CANDIDATES
 
 KtCallExpression(1522,1527): 'dec()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -3118,7 +3118,7 @@ KtCallExpression(1522,1527): 'dec()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -3353,7 +3353,7 @@ KtNameReferenceExpression(1571,1576): 'prop1'
     isInBestCandidates = false
 
 KtCallExpression(1578,1588): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -3372,7 +3372,7 @@ KtCallExpression(1578,1588): 'hashCode()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -3546,7 +3546,7 @@ KtNameReferenceExpression(1648,1653): 'prop1'
   NO_CANDIDATES
 
 KtCallExpression(1655,1665): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -3565,7 +3565,7 @@ KtCallExpression(1655,1665): 'hashCode()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -3812,7 +3812,7 @@ KtNameReferenceExpression(1730,1735): 'prop1'
     isInBestCandidates = false
 
 KtCallExpression(1737,1747): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -3831,7 +3831,7 @@ KtCallExpression(1737,1747): 'hashCode()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -3894,7 +3894,7 @@ KtValueArgumentList(1745,1747): '()'
   NO_CANDIDATES
 
 KtCallExpression(1753,1798): 'consume<SealedClass?>(i as? SealedInheritor1)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         i as? SealedInheritor1 -> (KaVariableSignature:
@@ -4023,7 +4023,7 @@ KtNameReferenceExpression(1781,1797): 'SealedInheritor1'
   NO_CANDIDATES
 
 KtCallExpression(1803,1865): 'consume<SealedClass.SealedInheritor1?>(i as? SealedInheritor1)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         i as? SealedInheritor1 -> (KaVariableSignature:
@@ -4158,7 +4158,7 @@ KtNameReferenceExpression(1848,1864): 'SealedInheritor1'
   NO_CANDIDATES
 
 KtCallExpression(1870,1932): 'consume<SealedClass.SealedInheritor2?>(i as? SealedInheritor2)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         i as? SealedInheritor2 -> (KaVariableSignature:

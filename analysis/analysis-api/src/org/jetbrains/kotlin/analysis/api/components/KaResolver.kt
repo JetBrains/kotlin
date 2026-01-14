@@ -698,14 +698,16 @@ public interface KaResolver : KaSessionComponent {
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
      * for the call corresponding to the given [KtResolvableCall].
      *
+     * Note: candidates are represented as [KaSingleCall]s only, so all [KaMultiCall]s are flattened.
+     *
      * In contrast, [resolveCall] returns only the final result, i.e., the most specific callable that passes all
-     * compatibility checks
+     * compatibility checks.
      *
      * @see resolveCall
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
-    public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidateInfo>
+    public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate>
 
     /**
      * Resolves the given [KtReference] to symbols.
@@ -1653,8 +1655,10 @@ public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionS
  * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
  * for the call corresponding to the given [KtResolvableCall].
  *
+ * Note: candidates are represented as [KaSingleCall]s only, so all [KaMultiCall]s are flattened.
+ *
  * In contrast, [resolveCall] returns only the final result, i.e., the most specific callable that passes all
- * compatibility checks
+ * compatibility checks.
  *
  * @see resolveCall
  */
@@ -1663,7 +1667,7 @@ public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionS
 @OptIn(KtExperimentalApi::class)
 @KaContextParameterApi
 context(session: KaSession)
-public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidateInfo> {
+public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> {
     return with(session) {
         collectCallCandidates()
     }

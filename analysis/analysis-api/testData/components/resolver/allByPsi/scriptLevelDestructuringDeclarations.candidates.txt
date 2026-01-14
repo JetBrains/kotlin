@@ -74,7 +74,7 @@ KtDeclarationModifierList(101,126): '@Anno("a type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(101,126): '@Anno("a type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "a type $constant" -> (KaVariableSignature:
@@ -203,7 +203,7 @@ KtDeclarationModifierList(132,164): '@Anno("a nested type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "a nested type $constant" -> (KaVariableSignature:
@@ -329,7 +329,7 @@ KtDeclarationModifierList(176,215): '@Anno("a nested nested type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "a nested nested type $constant" -> (KaVariableSignature:
@@ -452,7 +452,7 @@ KtDeclarationModifierList(234,259): '@Anno("b type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(234,259): '@Anno("b type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "b type $constant" -> (KaVariableSignature:
@@ -581,7 +581,7 @@ KtDeclarationModifierList(266,298): '@Anno("b nested type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "b nested type $constant" -> (KaVariableSignature:
@@ -707,7 +707,7 @@ KtDeclarationModifierList(304,343): '@Anno("b nested nested type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "b nested nested type $constant" -> (KaVariableSignature:
@@ -839,7 +839,7 @@ KtDeclarationModifierList(376,398): '@Anno("destr 1 $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "destr 1 $prop" -> (KaVariableSignature:
@@ -953,7 +953,7 @@ KtDeclarationModifierList(404,420): '@Anno("a $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(404,420): '@Anno("a $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "a $prop" -> (KaVariableSignature:
@@ -1067,7 +1067,7 @@ KtDeclarationModifierList(424,440): '@Anno("b $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(424,440): '@Anno("b $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "b $prop" -> (KaVariableSignature:
@@ -1175,7 +1175,7 @@ KtNameReferenceExpression(434,438): 'prop'
     isInBestCandidates = true
 
 KtCallExpression(446,462): 'Pair(null, null)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         null -> (KaVariableSignature:
@@ -1290,7 +1290,7 @@ KtDeclarationModifierList(464,486): '@Anno("destr 1 $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "destr 1 $prop" -> (KaVariableSignature:
@@ -1404,7 +1404,7 @@ KtDeclarationModifierList(492,508): '@Anno("c $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(492,508): '@Anno("c $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "c $prop" -> (KaVariableSignature:
@@ -1518,7 +1518,7 @@ KtDeclarationModifierList(512,528): '@Anno("d $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(512,528): '@Anno("d $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "d $prop" -> (KaVariableSignature:
@@ -1626,7 +1626,7 @@ KtNameReferenceExpression(522,526): 'prop'
     isInBestCandidates = true
 
 KtCallExpression(534,550): 'Pair(null, null)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         null -> (KaVariableSignature:

@@ -53,7 +53,7 @@ KtDeclarationModifierList(157,163): '@A1(X)'
   NO_CANDIDATES
 
 KtAnnotationEntry(157,163): '@A1(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -206,7 +206,7 @@ KtDeclarationModifierList(233,242): '@A2(X, Y)'
   NO_CANDIDATES
 
 KtAnnotationEntry(233,242): '@A2(X, Y)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -359,7 +359,7 @@ KtDeclarationModifierList(259,271): '@A2(*[X, Y])'
   NO_CANDIDATES
 
 KtAnnotationEntry(259,271): '@A2(*[X, Y])'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         [X, Y] -> (KaVariableSignature:
@@ -470,7 +470,7 @@ KtValueArgument(263,270): '*[X, Y]'
   NO_CANDIDATES
 
 KtCollectionLiteralExpression(264,270): '[X, Y]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -570,7 +570,7 @@ KtDeclarationModifierList(342,350): '@A3([X])'
   NO_CANDIDATES
 
 KtAnnotationEntry(342,350): '@A3([X])'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         [X] -> (KaVariableSignature:
@@ -681,7 +681,7 @@ KtValueArgument(346,349): '[X]'
   NO_CANDIDATES
 
 KtCollectionLiteralExpression(346,349): '[X]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -732,7 +732,7 @@ KtDeclarationModifierList(367,382): '@A3(arrayOf(X))'
   NO_CANDIDATES
 
 KtAnnotationEntry(367,382): '@A3(arrayOf(X))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         arrayOf(X) -> (KaVariableSignature:
@@ -843,7 +843,7 @@ KtValueArgument(371,381): 'arrayOf(X)'
   NO_CANDIDATES
 
 KtCallExpression(371,381): 'arrayOf(X)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -960,7 +960,7 @@ KtDeclarationModifierList(443,457): '@A4(MAX_VALUE)'
   NO_CANDIDATES
 
 KtAnnotationEntry(443,457): '@A4(MAX_VALUE)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         MAX_VALUE -> (KaVariableSignature:
@@ -1086,7 +1086,7 @@ KtDeclarationModifierList(473,528): '@Retention(RUNTIME)'
   NO_CANDIDATES
 
 KtAnnotationEntry(473,492): '@Retention(RUNTIME)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         RUNTIME -> (KaVariableSignature:
@@ -1200,7 +1200,7 @@ KtNameReferenceExpression(484,491): 'RUNTIME'
   NO_CANDIDATES
 
 KtAnnotationEntry(493,517): '@Target(CLASS, PROPERTY)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         CLASS -> (KaVariableSignature:
@@ -1347,7 +1347,7 @@ KtDeclarationModifierList(549,562): '@MyAnnotation'
   NO_CANDIDATES
 
 KtAnnotationEntry(549,562): '@MyAnnotation'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {}
       contextArguments = []
@@ -1422,7 +1422,7 @@ KtDeclarationModifierList(579,592): '@MyAnnotation'
   NO_CANDIDATES
 
 KtAnnotationEntry(579,592): '@MyAnnotation'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {}
       contextArguments = []
@@ -1485,7 +1485,7 @@ KtDeclarationModifierList(608,621): '@MyAnnotation'
   NO_CANDIDATES
 
 KtAnnotationEntry(608,621): '@MyAnnotation'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {}
       contextArguments = []

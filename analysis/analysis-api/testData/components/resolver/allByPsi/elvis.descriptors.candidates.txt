@@ -110,7 +110,7 @@ KtNameReferenceExpression(79,84): 'other'
     isInBestCandidates = true
 
 KtCallExpression(86,98): 'equals(this)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         this -> (KaVariableSignature:

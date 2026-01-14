@@ -1,5 +1,5 @@
 KtAnnotationEntry(114,154): '@AnnotationInner(Annotation("v1", "v2"))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         Annotation("v1", "v2") -> (KaVariableSignature:

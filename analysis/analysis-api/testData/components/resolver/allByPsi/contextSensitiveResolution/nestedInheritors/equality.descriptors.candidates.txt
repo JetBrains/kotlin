@@ -221,7 +221,7 @@ KtContainerNodeForControlStructureBody(331,344): 'work("Basic")'
   NO_CANDIDATES
 
 KtCallExpression(331,344): 'work("Basic")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Basic" -> (KaVariableSignature:
@@ -401,7 +401,7 @@ KtContainerNodeForControlStructureBody(389,405): 'work("Specific")'
   NO_CANDIDATES
 
 KtCallExpression(389,405): 'work("Specific")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Specific" -> (KaVariableSignature:
@@ -587,7 +587,7 @@ KtContainerNodeForControlStructureBody(458,474): 'work("Specific")'
   NO_CANDIDATES
 
 KtCallExpression(458,474): 'work("Specific")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Specific" -> (KaVariableSignature:
@@ -683,7 +683,7 @@ KtSuperTypeList(540,554): 'OpenSettings()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(540,554): 'OpenSettings()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -755,7 +755,7 @@ KtSuperTypeList(594,608): 'OpenSettings()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(594,608): 'OpenSettings()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -959,7 +959,7 @@ KtContainerNodeForControlStructureBody(738,751): 'work("Basic")'
   NO_CANDIDATES
 
 KtCallExpression(738,751): 'work("Basic")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Basic" -> (KaVariableSignature:
@@ -1139,7 +1139,7 @@ KtContainerNodeForControlStructureBody(800,816): 'work("Specific")'
   NO_CANDIDATES
 
 KtCallExpression(800,816): 'work("Specific")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Specific" -> (KaVariableSignature:
@@ -1325,7 +1325,7 @@ KtContainerNodeForControlStructureBody(877,893): 'work("Specific")'
   NO_CANDIDATES
 
 KtCallExpression(877,893): 'work("Specific")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "Specific" -> (KaVariableSignature:

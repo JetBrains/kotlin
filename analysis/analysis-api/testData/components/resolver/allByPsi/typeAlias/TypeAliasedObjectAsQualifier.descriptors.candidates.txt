@@ -85,7 +85,7 @@ KtNameReferenceExpression(133,140): 'MyAlias'
   NO_CANDIDATES
 
 KtCallExpression(141,151): 'function()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -173,7 +173,7 @@ KtNameReferenceExpression(164,172): 'property'
     isInBestCandidates = true
 
 KtCallableReferenceExpression(178,195): 'MyAlias::function'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -216,7 +216,7 @@ KtNameReferenceExpression(187,195): 'function'
     isInBestCandidates = true
 
 KtCallableReferenceExpression(200,217): 'MyAlias::property'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

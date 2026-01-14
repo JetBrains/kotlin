@@ -1,5 +1,5 @@
 KtConstructorDelegationCall(144,152): 'super(1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -34,7 +34,7 @@ KtConstructorDelegationCall(144,152): 'super(1)'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

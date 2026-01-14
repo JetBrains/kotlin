@@ -155,7 +155,7 @@ KtBlockExpression(174,763): '{'
   NO_CANDIDATES
 
 KtCallExpression(180,749): 'foo1 {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -281,7 +281,7 @@ KtBlockExpression(195,743): 'foo2 {'
   NO_CANDIDATES
 
 KtCallExpression(195,743): 'foo2 {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -403,7 +403,7 @@ KtBlockExpression(214,733): 'foo3 {'
   NO_CANDIDATES
 
 KtCallExpression(214,733): 'foo3 {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -521,7 +521,7 @@ KtBlockExpression(237,719): 'foo1('
   NO_CANDIDATES
 
 KtCallExpression(237,413): 'foo1('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -637,7 +637,7 @@ KtLabelReferenceExpression(367,372): '@foo1'
   NO_CANDIDATES
 
 KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         label@ fun(s: String) {

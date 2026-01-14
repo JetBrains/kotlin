@@ -38,7 +38,7 @@ KtNameReferenceExpression(57,60): 'Int'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(61,61): ''
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -56,7 +56,7 @@ KtConstructorDelegationCall(61,61): ''
     isInBestCandidates = true
 
 KtConstructorDelegationReferenceExpression(61,61): ''
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -92,7 +92,7 @@ KtNameReferenceExpression(81,87): 'String'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(88,88): ''
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -110,7 +110,7 @@ KtConstructorDelegationCall(88,88): ''
     isInBestCandidates = true
 
 KtConstructorDelegationReferenceExpression(88,88): ''
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -176,7 +176,7 @@ KtNameReferenceExpression(163,166): 'Int'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(170,179): 'super(ci)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ci -> (KaVariableSignature:
@@ -209,7 +209,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ci -> (KaVariableSignature:
@@ -244,7 +244,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(170,175): 'super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ci -> (KaVariableSignature:
@@ -277,7 +277,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ci -> (KaVariableSignature:
@@ -354,7 +354,7 @@ KtNameReferenceExpression(200,206): 'String'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(210,219): 'super(cs)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         cs -> (KaVariableSignature:
@@ -388,7 +388,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         cs -> (KaVariableSignature:
@@ -422,7 +422,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
     isInBestCandidates = true
 
 KtConstructorDelegationReferenceExpression(210,215): 'super'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         cs -> (KaVariableSignature:
@@ -456,7 +456,7 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         cs -> (KaVariableSignature:
@@ -549,7 +549,7 @@ KtNameReferenceExpression(245,250): 'super'
   NO_CANDIDATES
 
 KtCallExpression(251,257): 'call()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -604,7 +604,7 @@ KtSuperTypeList(294,307): 'BaseClass(42)'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         42 -> (KaVariableSignature:
@@ -637,7 +637,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         42 -> (KaVariableSignature:
@@ -844,7 +844,7 @@ KtNameReferenceExpression(329,335): 'String'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(339,345): 'this()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -861,7 +861,7 @@ KtConstructorDelegationCall(339,345): 'this()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -888,7 +888,7 @@ KtConstructorDelegationCall(339,345): 'this()'
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(339,343): 'this'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -905,7 +905,7 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -1007,7 +1007,7 @@ KtParameterList(441,443): '()'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(446,454): 'super(1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -1041,7 +1041,7 @@ KtConstructorDelegationCall(446,454): 'super(1)'
     isInBestCandidates = true
 
 KtConstructorDelegationReferenceExpression(446,451): 'super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

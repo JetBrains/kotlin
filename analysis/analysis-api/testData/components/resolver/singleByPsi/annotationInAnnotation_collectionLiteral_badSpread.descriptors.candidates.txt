@@ -1,5 +1,5 @@
 KtCallExpression(153,177): 'Annotation(["v1", "v2"])'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         ["v1", "v2"] -> (KaVariableSignature:

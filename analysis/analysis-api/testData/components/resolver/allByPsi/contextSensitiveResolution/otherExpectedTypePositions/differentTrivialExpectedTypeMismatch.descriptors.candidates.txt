@@ -35,7 +35,7 @@ KtNameReferenceExpression(132,139): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(142,151): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

@@ -65,7 +65,7 @@ KtBlockExpression(116,152): '{'
   NO_CANDIDATES
 
 KtCallExpression(122,128): 'foo(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -156,7 +156,7 @@ KtNameReferenceExpression(126,127): 'X'
     isInBestCandidates = true
 
 KtCallExpression(133,139): 'foo(Y)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Y -> (KaVariableSignature:
@@ -249,7 +249,7 @@ KtNameReferenceExpression(137,138): 'Y'
     isInBestCandidates = true
 
 KtCallExpression(144,150): 'foo(Z)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Z -> (KaVariableSignature:

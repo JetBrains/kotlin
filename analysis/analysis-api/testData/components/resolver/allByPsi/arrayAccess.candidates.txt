@@ -372,7 +372,7 @@ KtProperty(54,81): 'val implicitIndex = list[0]'
   NO_CANDIDATES
 
 KtArrayAccessExpression(74,81): 'list[0]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         0 -> (KaVariableSignature:
@@ -489,7 +489,7 @@ KtNameReferenceExpression(106,110): 'list'
     isInBestCandidates = true
 
 KtCallExpression(111,129): 'get(implicitIndex)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         implicitIndex -> (KaVariableSignature:
@@ -705,7 +705,7 @@ KtAnnotatedExpression(135,166): '@Suppress("SOME_ERROR") list[1]'
   NO_CANDIDATES
 
 KtAnnotationEntry(135,158): '@Suppress("SOME_ERROR")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "SOME_ERROR" -> (KaVariableSignature:
@@ -792,7 +792,7 @@ KtLiteralStringTemplateEntry(146,156): 'SOME_ERROR'
   NO_CANDIDATES
 
 KtArrayAccessExpression(159,166): 'list[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -1086,7 +1086,7 @@ KtParenthesizedExpression(177,186): '(list[2])'
   NO_CANDIDATES
 
 KtArrayAccessExpression(178,185): 'list[2]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
@@ -1311,7 +1311,7 @@ KtBlockExpression(235,279): '{'
   NO_CANDIDATES
 
 KtCallExpression(241,261): 'foo(--list[i], list)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         --list[i] -> (KaVariableSignature:
@@ -1607,7 +1607,7 @@ KtOperationReferenceExpression(245,247): '--'
     isInBestCandidates = true
 
 KtArrayAccessExpression(247,254): 'list[i]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         i -> (KaVariableSignature:
@@ -1902,7 +1902,7 @@ KtParenthesizedExpression(268,277): '(list[2])'
   NO_CANDIDATES
 
 KtArrayAccessExpression(269,276): 'list[2]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:

@@ -1,5 +1,5 @@
 KtConstructorDelegationCall(111,125): 'this(s.length)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         s.length -> (KaVariableSignature:
@@ -32,7 +32,7 @@ KtConstructorDelegationCall(111,125): 'this(s.length)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         s.length -> (KaVariableSignature:

@@ -1,5 +1,5 @@
 KtCallExpression(146,166): 'test(this::uiMethod)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         this::uiMethod -> (KaVariableSignature:

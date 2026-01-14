@@ -44,7 +44,7 @@ KtProperty(180,193): 'val A = Any()'
   NO_CANDIDATES
 
 KtCallExpression(188,193): 'Any()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
