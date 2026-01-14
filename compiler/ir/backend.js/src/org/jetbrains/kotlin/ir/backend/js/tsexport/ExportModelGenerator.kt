@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
@@ -50,6 +51,9 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
 
     private fun IrClass.shouldContainImplementableSymbolProperty(): Boolean =
         allowImplementingInterfaces && isInterface && !isExternal && !isJsImplicitExport() && fileOrNull?.packageFqName !in packagesThatAreNotImplementable
+
+    private fun IrClass.shouldContainNotImplementableProperty(): Boolean =
+        isJsImplicitExport() || fileOrNull?.packageFqName in packagesThatAreNotImplementable || !allowImplementingInterfaces && isInterface && !isExternal
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = file.packageFqName
@@ -551,8 +555,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         typeParameterScope: TypeParameterScope,
     ) {
         val allSuperTypesWithBrandProperty = klass.collectAllImplementableAndNotImplementableInterfaces(superTypes)
-        val typeItselfShouldNotBeImplemented =
-            klass.isJsImplicitExport() || klass.fileOrNull?.packageFqName in packagesThatAreNotImplementable || !allowImplementingInterfaces && klass.isInterface && !klass.isExternal
+        val typeItselfShouldNotBeImplemented = klass.shouldContainNotImplementableProperty()
 
         val (implementableSuperTypes, notImplementableSuperTypes) = allSuperTypesWithBrandProperty.partition { it is InterfaceSuperType.ImplementableInterface }
 
@@ -973,6 +976,107 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
             .also { currentlyProcessedTypes.remove(type) }
     }
 
+
+    /**
+     * With this method we're collection all the super types that may contain either implementable or not-implementable properties
+     * - For interfaces we're looking only parents that contain not-implementable properties
+     * - For classes we're looking for both kinds of super-types
+     *
+     * We're collecting such information to copy those properties into the current declaration to generate a valid TypeScript definition
+     *
+     * As an example:
+     * ```kotlin
+     * @JsExport interface Foo
+     * @JsExport interface Bar
+     *
+     * class NotExportedParent : Foo, Bar
+     *
+     * @JsExport
+     * class ExportedChild : NotExportedParent
+     * ```
+     *
+     * For such a class we should do the following:
+     * 1. Implementable interfaces and no strict implicit export
+     * ```typescript
+     * declare interface Foo { readonly [Foo.Symbol]: true }
+     * declare namespace Foo { const Symbol: unique symbol; }
+     *
+     * declare interface Bar extends Foo { readonly [Bar.Symbol]: true }
+     * declare namespace Bar { const Symbol: unique symbol; }
+     *
+     * declare  class ExportedChild implements Foo, Bar {
+     *   readonly [Foo.Symbol]: true;
+     *   readonly [Bar.Symbol]: true;
+     * }
+     * 2. Implementable interfaces and strict implicit export
+     * ```typescript
+     * declare interface Foo { readonly [Foo.Symbol]: true }
+     * declare namespace Foo { const Symbol: unique symbol; }
+     *
+     * declare interface Bar extends Foo { readonly [Bar.Symbol]: true }
+     * declare namespace Bar { const Symbol: unique symbol; }
+     *
+     * declare interface NotExportedParent extends Foo, Bar {
+     *    readonly __doNotUseOrImplementIt: {
+     *      readonly "NotExportedParent": unique symbol;
+     *    };
+     * }
+     *
+     * declare class ExportedChild implements NotExportedParent {
+     *   readonly [Foo.Symbol]: true;
+     *   readonly [Bar.Symbol]: true;
+     *   readonly __doNotUseOrImplementIt: {
+     *      readonly "NotExportedParent": unique symbol;
+     *   };
+     * }
+     * ```
+     *
+     * 3. Not-implementable interfaces and no strict implicit export
+     * ```typescript
+     * declare interface Foo {
+     *    readonly __doNotUseOrImplementIt: {
+     *      readonly "Foo": unique symbol;
+     *    };
+     * }
+     *
+     * declare interface Bar {
+     *    readonly __doNotUseOrImplementIt: {
+     *      readonly "Bar": unique symbol;
+     *    };
+     * }
+     *
+     * declare class ExportedChild implements Foo, Bar {
+     *   readonly __doNotUseOrImplementIt: Foo["__doNotUseOrImplementIt"] & Bar["__doNotUseOrImplementIt"]
+     * }
+     * ```
+     *
+     * 3. Not-implementable interfaces and strict implicit export
+     * ```typescript
+     * declare interface Foo {
+     *    readonly __doNotUseOrImplementIt: {
+     *      readonly "Foo": unique symbol;
+     *    };
+     * }
+     *
+     * declare interface Bar {
+     *    readonly __doNotUseOrImplementIt: {
+     *      readonly "Bar": unique symbol;
+     *    };
+     * }
+     *
+     * declare interface NotExportedParent extends Foo, Bar {
+     *    readonly __doNotUseOrImplementIt: Foo["__doNotUseOrImplementIt"] & Bar["__doNotUseOrImplementIt"] & {
+     *      readonly "NotExportedParent": unique symbol;
+     *    };
+     * }
+     *
+     * declare class ExportedChild implements NotExportedParent {
+     *   readonly __doNotUseOrImplementIt: NotExportedParent["__doNotUseOrImplementIt"]
+     * }
+     * ```
+     *
+     * Because of such complications, I believe we should remove the strict-implicit export in future (since it's unstable and we don't have a plan to support it in future)
+     */
     // TODO: think about per class memoization
     private fun IrClass.collectAllImplementableAndNotImplementableInterfaces(superTypes: Iterable<IrType>): Collection<InterfaceSuperType> {
         fun MutableCollection<IrClass>.enqueueSuperTypes(superTypes: Iterable<IrType>) =
@@ -980,45 +1084,41 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                 superType.type.classOrNull?.owner?.takeIf { !it.isExternal }
             }
 
-        val lookingForOnlyNotImplementableInterfaces = allowImplementingInterfaces && isInterface
+        val shouldCopySymbolsOfTransitiveParents = allowImplementingInterfaces && !isInterface
 
+        // If we're processing an interface:
+        // - If it's not implementable, we just need to add its direct not-implementable super types to generate a correct type for __doNotUseOrImplementIt
+        // - If it's implementable, we don't need to generate anything, since it's already receiving all the properties through the inheritance
+        // If we're processing a class, we should collect:
+        // - All the implementable interfaces in the hierarchy to add the correct Symbol
+        // - All the nearest not-implementable interfaces to generate a correct type for __doNotUseOrImplementIt
         val result = linkedMapOf<IrClass, InterfaceSuperType>()
         val queue = linkedSetOf<IrClass>()
             .apply { enqueueSuperTypes(superTypes) }
             .toMutableList()
 
-        queueProcessing@ while (queue.isNotEmpty()) {
-            val processedClass = queue.removeFirst().takeIf { it !in result } ?: continue
+        while (queue.isNotEmpty()) {
+            val processedClass = queue.removeLast().takeIf { it !in result } ?: continue
 
-            if (isJsExportIgnore()) {
+            if (processedClass.isJsImplicitExport()) {
                 result[processedClass] = InterfaceSuperType.NotImplementableInterface(processedClass)
                 continue
             }
 
+            if (!processedClass.isExported(context) || processedClass.isExternal) continue
+
             if (processedClass.isInterface) {
-                when {
-                    lookingForOnlyNotImplementableInterfaces -> continue
-                    allowImplementingInterfaces -> {
-                        result[processedClass] = InterfaceSuperType.ImplementableInterface(processedClass)
-                        queue.enqueueSuperTypes(processedClass.superTypes)
-                    }
-                    else -> result[processedClass] = InterfaceSuperType.NotImplementableInterface(processedClass)
-                }
-            } else {
                 if (allowImplementingInterfaces) {
-                    continue@queueProcessing
+                    if (!shouldCopySymbolsOfTransitiveParents) continue
+                    result[processedClass] = InterfaceSuperType.ImplementableInterface(processedClass)
                 } else {
-                    for (superType in processedClass.superTypes) {
-                        val klass = superType.classOrNull?.owner ?: continue
-
-                        if (klass.isJsExportIgnore() || !klass.isExternal && klass.isInterface && klass.isExported(context)) {
-                            result[processedClass] = InterfaceSuperType.NotImplementableInterface(processedClass)
-                            continue@queueProcessing
-                        }
-                    }
-
-                    queue.enqueueSuperTypes(processedClass.superTypes)
+                    result[processedClass] = InterfaceSuperType.NotImplementableInterface(processedClass)
+                    continue
                 }
+            }
+
+            if (result.isNotEmpty()) {
+                queue.enqueueSuperTypes(processedClass.superTypes)
             }
         }
 

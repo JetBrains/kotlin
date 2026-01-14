@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.jsexport
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.irError
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
@@ -30,6 +33,9 @@ class ExportModelToJsStatements(
     private val declareNewNamespace: (String) -> String,
 ) {
     private val namespaceToRefMap = hashMapOf<String, JsNameRef>()
+    private val allowImplementingInterfaces = staticContext.backendContext.configuration.languageVersionSettings.supportsFeature(
+        LanguageFeature.JsExportInterfacesInImplementableWay
+    )
 
     fun generateModuleExport(
         module: ExportedModule,
@@ -171,6 +177,10 @@ class ExportModelToJsStatements(
                     .filter { it is ExportedFunction && it.isStatic && !it.ir.isEs6ConstructorReplacement }
                     .takeIf { !declaration.ir.isInner }.orEmpty()
 
+                if (!allowImplementingInterfaces && declaration.isInterface && staticFunctions.isEmpty() && declaration.nestedClasses.isEmpty()) {
+                    return emptyList()
+                }
+
                 val (name, classInitialization) = declaration.getNameAndInitialization()
                 val newNameSpace = when {
                     namespace != null -> jsElementAccess(declaration.name, namespace)
@@ -275,7 +285,11 @@ class ExportModelToJsStatements(
     }
 
     private fun ExportedClass.getNameAndInitialization(): Pair<JsName, JsStatement?> {
-        return when (val classRef = ir.getClassRef(staticContext)) {
+        val classRef = when {
+            !allowImplementingInterfaces && this is ExportedRegularClass && isInterface -> JsObjectLiteral()
+            else -> ir.getClassRef(staticContext)
+        }
+        return when (classRef) {
             is JsNameRef -> classRef.name!! to null
             else -> {
                 val stableName = JsName(makeValidES5Identifier(name), true)

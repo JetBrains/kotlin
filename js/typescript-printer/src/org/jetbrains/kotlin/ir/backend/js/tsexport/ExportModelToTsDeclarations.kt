@@ -166,11 +166,11 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 memberName != name.value -> ""
                 isEsModules && !isQualified -> {
                     if (isObjectGetter) {
-                        "${prefix}const $name: {\n${extraIndent}getInstance(): $typeToTypeScript;\n};"
+                        "${prefix}const $memberName: {\n${extraIndent}getInstance(): $typeToTypeScript;\n};"
                     } else {
                         val getter = "get(): $typeToTypeScript;"
                         val setter = runIf(mutable) { " set(value: $typeToTypeScript): void;" }
-                        "${prefix}const $name: { $getter${setter.orEmpty()} };${generateDefaultExportIfNeed(name.value, indent)}"
+                        "${prefix}const $memberName: { $getter${setter.orEmpty()} };${generateDefaultExportIfNeed(name.value, indent)}"
                     }
                 }
 
