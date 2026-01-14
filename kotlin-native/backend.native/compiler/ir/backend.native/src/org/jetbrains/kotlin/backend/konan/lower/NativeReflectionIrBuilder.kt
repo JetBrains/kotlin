@@ -229,7 +229,7 @@ internal abstract class NativeReflectionIrBuilderBase<E : IrExpression>(
             kClassifier: E?,
             irTypeArguments: List<Pair<Variance, E>?>,
             isMarkedNullable: Boolean,
-    ): E = irCreateInstance(symbols.kTypeImpl!!.owner, mapOf(
+    ): E = irCreateInstance(symbols.kTypeImpl.owner, mapOf(
             "classifier" to (kClassifier ?: irConstantNull()),
             "arguments" to irKTypeProjectionsList(irTypeArguments),
             "isMarkedNullable" to irConstantBoolean(isMarkedNullable),
