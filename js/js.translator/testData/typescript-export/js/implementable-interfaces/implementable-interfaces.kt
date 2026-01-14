@@ -13,8 +13,7 @@ package foo
 interface ExportedParent {
     var parentPropertyToImplement: String
     fun anotherParentMethod(): List<String>
-    // TODO: uncomment after https://jetbrains.team/p/kt/reviews/25080/timeline merge
-    // suspend fun parentAsyncMethod(): String
+    suspend fun parentAsyncMethod(): String
 
     @get:JsName("getGetterAndSetterWithJsName")
     @set:JsName("setGetterAndSetterWithJsName")
@@ -25,8 +24,7 @@ interface ExportedParent {
 interface IFoo<T : Comparable<T>> : ExportedParent {
     val fooProperty: String
     fun foo(): String
-    // TODO: uncomment after https://jetbrains.team/p/kt/reviews/25080/timeline merge
-    // suspend fun asyncFoo(): String
+    suspend fun asyncFoo(): String
     fun withDefaults(value: String = "OK"): String
     fun withBridge(x: T): T
 }
@@ -40,15 +38,13 @@ fun callingExportedParentMethod(foo: IFoo<*>): String =
 fun justCallFoo(foo: IFoo<*>): String =
     foo.foo()
 
-// TODO: uncomment after https://jetbrains.team/p/kt/reviews/25080/timeline merge
-//@JsExport
-//suspend fun justCallAsyncFoo(foo: IFoo<*>): String =
-//    foo.asyncFoo()
+@JsExport
+suspend fun justCallAsyncFoo(foo: IFoo<*>): String =
+    foo.asyncFoo()
 
-// TODO: uncomment after https://jetbrains.team/p/kt/reviews/25080/timeline merge
-//@JsExport
-//suspend fun justCallParentAsyncMethod(foo: IFoo<*>): String =
-//    foo.parentAsyncMethod()
+@JsExport
+suspend fun justCallParentAsyncMethod(foo: IFoo<*>): String =
+    foo.parentAsyncMethod()
 
 @JsExport
 fun callingWithDefaultsWithoutParameter(foo: IFoo<*>): String =
@@ -85,7 +81,6 @@ class KotlinFooImpl : IFoo<String> {
     override fun withBridge(x: String) = "KOTLIN: $x"
     override fun withDefaults(value: String) = "KOTLIN SIDE $value"
 
-    // TODO: uncomment after https://jetbrains.team/p/kt/reviews/25080/timeline merge
-    // override suspend fun asyncFoo(): String = "OK"
-    // override suspend fun parentAsyncMethod(): String = "Parent OK"
+     override suspend fun asyncFoo(): String = "OK"
+     override suspend fun parentAsyncMethod(): String = "Parent OK"
 }

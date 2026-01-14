@@ -9,6 +9,8 @@ import checkIsExportedParentInterface = JS_TESTS.foo.checkIsExportedParentInterf
 import KtList = JS_TESTS.kotlin.collections.KtList;
 import callingExportedParentMethod = JS_TESTS.foo.callingExportedParentMethod;
 import KotlinFooImpl = JS_TESTS.foo.KotlinFooImpl;
+import justCallParentAsyncMethod = JS_TESTS.foo.justCallParentAsyncMethod;
+import justCallAsyncFoo = JS_TESTS.foo.justCallAsyncFoo;
 
 class TsFooImpl implements IFoo<string> {
     readonly [IFoo.Symbol] = true
@@ -24,6 +26,8 @@ class TsFooImpl implements IFoo<string> {
 
     foo(): string { return "OK" }
 
+    async asyncFoo(): Promise<string> { return "OK" }
+
     withDefaults(value: string = "HEH"): string {
         return `TYPESCRIPT SIDE ${value}`
     }
@@ -34,6 +38,10 @@ class TsFooImpl implements IFoo<string> {
 
     anotherParentMethod(): KtList<string> {
         return KtList.fromJsArray(["OK"])
+    }
+
+    async parentAsyncMethod(): Promise<string> {
+        return "Parent OK"
     }
 }
 
@@ -46,13 +54,11 @@ async function testFoo(foo: IFoo<string>, languageImplemented: string): Promise<
     result = justCallFoo(foo)
     if (result !== "OK") return "Fail: providing FooImpl to justCallFoo returns unexpected result: " + result
 
-    // TODO: uncomment after https://jetbrains.team/p/kt/reviews/25080/timeline merge
-    // result = await foo.asyncFoo()
-    // if (result !== "OK") return "Fail: just calling asyncFoo method returns unexpected result: " + result
+    result = await foo.asyncFoo()
+    if (result !== "OK") return "Fail: just calling asyncFoo method returns unexpected result: " + result
 
-    // TODO: uncomment after https://jetbrains.team/p/kt/reviews/25080/timeline merge
-    // result = await justCallAsyncFoo(foo)
-    // if (result !== "OK") return "Fail: providing FooImpl to justCallAsyncFoo returns unexpected result: " + result
+    result = await justCallAsyncFoo(foo)
+    if (result !== "OK") return "Fail: providing FooImpl to justCallAsyncFoo returns unexpected result: " + result
 
     result = foo.withDefaults("CALL SIDE OK")
     if (result !== `${languageImplemented} SIDE CALL SIDE OK`) return "Fail: just calling withDefaults method with parameters returns unexpected result: " + result
@@ -82,13 +88,11 @@ async function testFoo(foo: IFoo<string>, languageImplemented: string): Promise<
     result = callingExportedParentMethod(foo)
     if (result !== "OK") return "Fail: just calling callingExportedParentMethod returns unexpected result: " + result
 
-    // TODO: uncomment after https://jetbrains.team/p/kt/reviews/25080/timeline merge
-    // result = await foo.parentAsyncMethod()
-    // if (result !== "Parent OK") return "Fail: just calling parentAsyncMethod returns unexpected result: " + result
+    result = await foo.parentAsyncMethod()
+    if (result !== "Parent OK") return "Fail: just calling parentAsyncMethod returns unexpected result: " + result
 
-    // TODO: uncomment after https://jetbrains.team/p/kt/reviews/25080/timeline merge
-    // result = await justCallParentAsyncMethod(foo)
-    // if (result !== "Parent OK") return "Fail: just calling justCallParentAsyncMethod returns unexpected result: " + result
+    result = await justCallParentAsyncMethod(foo)
+    if (result !== "Parent OK") return "Fail: just calling justCallParentAsyncMethod returns unexpected result: " + result
 
     result = foo.parentPropertyToImplement
     if (result !== `IMPLEMENTED BY ${languageImplemented} PARENT PROPERTY`) return "Fail: just calling parentPropertyToImplement returns unexpected result: " + result
@@ -100,7 +104,6 @@ async function testFoo(foo: IFoo<string>, languageImplemented: string): Promise<
 
     result = foo.fooProperty
     if (result !== `IMPLEMENTED BY ${languageImplemented} FOO PROPERTY`) return "Fail: just calling propertyWithDefaultGetter returns unexpected result: " + result
-
 
     result = foo.getGetterAndSetterWithJsName()
     if (result !== `${languageImplemented} IMPLEMENTATION OK`) return "Fail: just calling getGetterAndSetterWithJsName returns unexpected result: " + result

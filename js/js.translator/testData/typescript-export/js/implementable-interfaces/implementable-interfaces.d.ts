@@ -16,6 +16,7 @@ declare namespace JS_TESTS {
         interface ExportedParent {
             parentPropertyToImplement: string;
             anotherParentMethod(): kotlin.collections.KtList<string>;
+            parentAsyncMethod(): Promise<string>;
             setGetterAndSetterWithJsName(_set___: string): void;
             getGetterAndSetterWithJsName(): string;
             readonly [foo.ExportedParent.Symbol]: true;
@@ -26,6 +27,7 @@ declare namespace JS_TESTS {
         interface IFoo<T extends unknown/* kotlin.Comparable<T> */> extends foo.ExportedParent {
             readonly fooProperty: string;
             foo(): string;
+            asyncFoo(): Promise<string>;
             withDefaults(value?: string): string;
             withBridge(x: T): T;
             readonly [foo.IFoo.Symbol]: true;
@@ -35,6 +37,8 @@ declare namespace JS_TESTS {
         }
         function callingExportedParentMethod(foo: foo.IFoo<any /*UnknownType **/>): string;
         function justCallFoo(foo: foo.IFoo<any /*UnknownType **/>): string;
+        function justCallAsyncFoo(foo: foo.IFoo<any /*UnknownType **/>): Promise<string>;
+        function justCallParentAsyncMethod(foo: foo.IFoo<any /*UnknownType **/>): Promise<string>;
         function callingWithDefaultsWithoutParameter(foo: foo.IFoo<any /*UnknownType **/>): string;
         function callingWithDefaultsWithParameter(foo: foo.IFoo<any /*UnknownType **/>): string;
         function callingWithBridge(foo: foo.IFoo<string>): string;
@@ -51,6 +55,8 @@ declare namespace JS_TESTS {
             anotherParentMethod(): kotlin.collections.KtList<string>;
             withBridge(x: string): string;
             withDefaults(value?: string): string;
+            asyncFoo(): Promise<string>;
+            parentAsyncMethod(): Promise<string>;
             readonly [foo.IFoo.Symbol]: true;
             readonly [foo.ExportedParent.Symbol]: true;
         }
