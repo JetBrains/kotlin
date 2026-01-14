@@ -66598,6 +66598,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("kt83607.kt")
+    public void testKt83607() {
+      runTest("compiler/testData/codegen/box/when/kt83607.kt");
+    }
+
+    @Test
     @TestMetadata("longCondition.kt")
     public void testLongCondition() {
       runTest("compiler/testData/codegen/box/when/longCondition.kt");
