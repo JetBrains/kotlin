@@ -47,6 +47,11 @@
 
 /.space/ "Kotlin Build Infrastructure"
 
+# AI
+/.ai/ "Kotlin" "Kotlin Analysis API" "Kotlin Build Infrastructure"
+/.claude/ "Kotlin" "Kotlin Analysis API" "Kotlin Build Infrastructure"
+/.junie/ "Kotlin" "Kotlin Analysis API" "Kotlin Build Infrastructure"
+
 /analysis/ "Kotlin Analysis API"
 /analysis/analysis-api-fir/gen/ "Kotlin Frontend"
 
@@ -56,6 +61,8 @@
 
 /build-common/ "Kotlin Build Tools"
 
+/compiler/AGENTS.md "Kotlin Compiler"
+/compiler/CLAUDE.md "Kotlin Compiler"
 /compiler/arguments.common/ "Kotlin Frontend" "Kotlin Build Tools"
 /compiler/arguments/ "Kotlin Frontend" "Kotlin Build Tools"
 /compiler/arguments/src/org/jetbrains/kotlin/arguments/description/WasmCompilerArguments.kt "Kotlin Wasm"
@@ -471,6 +478,8 @@
 /intellij.yaml "Kotlin Build Infrastructure"
 /ReadMe.md "Kotlin Build Infrastructure"
 /SECURITY.md "Kotlin Build Infrastructure"
+/CLAUDE.md "Kotlin Build Infrastructure"
+/AGENTS.md "Kotlin Build Infrastructure"
 
 # Build files
 **.gradle.kts "Kotlin Build Infrastructure"

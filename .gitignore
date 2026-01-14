@@ -63,3 +63,5 @@ kotlin-ide/
 .npmrc
 /.idea/AndroidProjectSystem.xml
 **/.junie/memory/
+.claude/local.md
+.claude/CLAUDE.md

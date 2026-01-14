@@ -16,6 +16,10 @@
 
 /.space/ @JetBrains/kotlin-build-infrastructure
 
+/.ai/ @JetBrains/kotlin @JetBrains/kotlin-analysis-api @JetBrains/kotlin-build-infrastructure
+/.claude/ @JetBrains/kotlin @JetBrains/kotlin-analysis-api @JetBrains/kotlin-build-infrastructure
+/.junie/ @JetBrains/kotlin @JetBrains/kotlin-analysis-api @JetBrains/kotlin-build-infrastructure
+
 /analysis/ @JetBrains/kotlin-analysis-api
 /analysis/analysis-api-fir/gen/ @JetBrains/kotlin-frontend
 
@@ -24,6 +28,8 @@
 
 /build-common/ @JetBrains/kotlin-build-tools
 
+/compiler/AGENTS.md @JetBrains/kotlin-compiler
+/compiler/CLAUDE.md @JetBrains/kotlin-compiler
 /compiler/arguments.common/ @JetBrains/kotlin-frontend @JetBrains/kotlin-build-tools
 /compiler/arguments/ @JetBrains/kotlin-frontend @JetBrains/kotlin-build-tools
 /compiler/arguments/src/org/jetbrains/kotlin/arguments/description/WasmCompilerArguments.kt @JetBrains/kotlin-wasm
@@ -429,6 +435,8 @@
 /intellij.yaml @JetBrains/kotlin-build-infrastructure
 /ReadMe.md @JetBrains/kotlin-build-infrastructure
 /SECURITY.md @JetBrains/kotlin-build-infrastructure
+/CLAUDE.md @JetBrains/kotlin-build-infrastructure
+/AGENTS.md @JetBrains/kotlin-build-infrastructure
 
 **.gradle.kts @JetBrains/kotlin-build-infrastructure
 **.gradle @JetBrains/kotlin-build-infrastructure
