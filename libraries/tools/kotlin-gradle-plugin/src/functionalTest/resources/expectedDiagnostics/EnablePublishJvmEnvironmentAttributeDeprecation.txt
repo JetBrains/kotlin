@@ -1,0 +1,4 @@
+[DeprecatedWarningGradleProperties | WARNING] Deprecated Gradle Property 'kotlin.publishJvmEnvironmentAttribute' Used
+The `kotlin.publishJvmEnvironmentAttribute` deprecated property is used in your build.
+It is unsupported, please stop using it.
+The flag is deprecated and scheduled to be removed in 2.4.0: https://kotl.in/KT-83678
