@@ -7413,6 +7413,37 @@
                                                 }
                                             },
                                             {
+                                                "name": "Xenable-implementable-interfaces-exporting",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Enable exporting of Kotlin interfaces to implement them from JavaScript/TypeScript.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.3.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
                                                 "name": "Xenable-suspend-function-exporting",
                                                 "shortName": null,
                                                 "deprecatedName": null,
