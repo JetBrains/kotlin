@@ -991,6 +991,13 @@ public fun <T> List<T>.slice(indices: IntRange): List<T> {
 }
 
 /**
+ * KCImm-14
+ *
+ * ```
+ * public fun <T> PersistentList<T>.slice(indices: Iterable<Int>): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list containing elements at specified [indices].
  */
 public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
