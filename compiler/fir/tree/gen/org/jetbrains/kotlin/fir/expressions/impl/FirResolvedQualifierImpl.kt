@@ -11,11 +11,13 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirIdeOnly
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
@@ -28,9 +30,11 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-@OptIn(UnresolvedExpressionTypeAccess::class)
+@OptIn(FirIdeOnly::class, UnresolvedExpressionTypeAccess::class)
 internal class FirResolvedQualifierImpl(
     override val source: KtSourceElement?,
+    @property:FirIdeOnly
+    override var contextSensitiveAlternative: FirPropertyAccessExpression?,
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
@@ -53,12 +57,14 @@ internal class FirResolvedQualifierImpl(
 }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        contextSensitiveAlternative?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         explicitParent?.accept(visitor, data)
         typeArguments.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedQualifierImpl {
+        contextSensitiveAlternative = contextSensitiveAlternative?.transform(transformer, data)
         transformAnnotations(transformer, data)
         explicitParent = explicitParent?.transform(transformer, data)
         transformTypeArguments(transformer, data)
@@ -73,6 +79,10 @@ internal class FirResolvedQualifierImpl(
     override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirResolvedQualifierImpl {
         typeArguments.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceContextSensitiveAlternative(newContextSensitiveAlternative: FirPropertyAccessExpression?) {
+        contextSensitiveAlternative = newContextSensitiveAlternative
     }
 
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
@@ -97,6 +107,10 @@ internal class FirResolvedQualifierImpl(
 
     override fun replaceCanBeValue(newCanBeValue: Boolean) {
         canBeValue = newCanBeValue
+    }
+
+    override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
+        nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
     }
 
     override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?) {

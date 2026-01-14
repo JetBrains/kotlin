@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirIdeOnly
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -37,6 +38,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, 
     override var extensionReceiver: FirExpression? = null
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    var contextSensitiveAlternative: FirPropertyAccessExpression? = null
     lateinit var calleeReference: FirNamedReference
 
     @OptIn(FirImplementationDetail::class)
@@ -51,6 +53,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, 
             extensionReceiver,
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
+            contextSensitiveAlternative,
             calleeReference,
         )
     }
@@ -65,7 +68,7 @@ inline fun buildPropertyAccessExpression(init: FirPropertyAccessExpressionBuilde
     return FirPropertyAccessExpressionBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
+@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class, FirIdeOnly::class)
 inline fun buildPropertyAccessExpressionCopy(original: FirPropertyAccessExpression, init: FirPropertyAccessExpressionBuilder.() -> Unit): FirPropertyAccessExpression {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
@@ -80,6 +83,7 @@ inline fun buildPropertyAccessExpressionCopy(original: FirPropertyAccessExpressi
     copyBuilder.extensionReceiver = original.extensionReceiver
     copyBuilder.source = original.source
     copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)
+    copyBuilder.contextSensitiveAlternative = original.contextSensitiveAlternative
     copyBuilder.calleeReference = original.calleeReference
     return copyBuilder.apply(init).build()
 }
