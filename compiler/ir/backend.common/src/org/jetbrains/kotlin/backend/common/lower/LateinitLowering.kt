@@ -214,7 +214,7 @@ private inline fun IrExpression.replaceTailExpression(crossinline transform: (Ir
 
 open class UninitializedPropertyAccessExceptionThrower(private val symbols: PreSerializationSymbols) {
     open fun build(builder: IrBuilderWithScope, name: String): IrExpression {
-        val throwExceptionFunction = symbols.throwUninitializedPropertyAccessException!!.owner
+        val throwExceptionFunction = symbols.throwUninitializedPropertyAccessException.owner
         return builder.irCall(throwExceptionFunction).apply {
             arguments[0] = builder.irString(name)
         }
