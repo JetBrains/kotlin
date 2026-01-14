@@ -867,6 +867,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformCallableReferenceAccess(callableReferenceAccess, data)
     }
 
+    open fun transformQualifierWithContextSensitiveAlternative(qualifierWithContextSensitiveAlternative: FirQualifierWithContextSensitiveAlternative, data: D): FirQualifierWithContextSensitiveAlternative {
+        return transformElement(qualifierWithContextSensitiveAlternative, data)
+    }
+
+    final override fun visitQualifierWithContextSensitiveAlternative(qualifierWithContextSensitiveAlternative: FirQualifierWithContextSensitiveAlternative, data: D): FirQualifierWithContextSensitiveAlternative {
+        return transformQualifierWithContextSensitiveAlternative(qualifierWithContextSensitiveAlternative, data)
+    }
+
     open fun transformPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: D): FirStatement {
         return transformElement(propertyAccessExpression, data)
     }
