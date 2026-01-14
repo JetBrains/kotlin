@@ -24,7 +24,7 @@ public class TestJavaUsage {
 // FILE: UsageFromKotlin.kt
 
 fun box(): String {
-    TestJavaClass.<!UNRESOLVED_REFERENCE!>getName<!>()
-    TestJavaClass.<!UNRESOLVED_REFERENCE!>setName<!>("")
+    TestJavaClass.getName()
+    TestJavaClass.setName("")
     return "OK"
 }

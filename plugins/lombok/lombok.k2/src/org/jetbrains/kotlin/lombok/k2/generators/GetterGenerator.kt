@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.lombok.utils.capitalize
 import org.jetbrains.kotlin.lombok.utils.collectWithNotNull
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @OptIn(DirectDeclarationsAccess::class)
 class GetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
@@ -68,6 +71,8 @@ class GetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 returnTypeRef = field.returnTypeRef,
                 visibility = getterInfo.visibility.toVisibility(),
                 modality = Modality.OPEN,
+                dispatchReceiverType = runIf(!field.isStatic) { classSymbol.defaultType() },
+                isStatic = field.isStatic,
             )
 
             getterName to function
