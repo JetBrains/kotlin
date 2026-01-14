@@ -1257,24 +1257,7 @@ internal abstract class FunctionGenerationContext(
         return switch
     }
 
-    fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef {
-        val typeInfoOrMetaPtr = structGep(runtime.objHeaderType, objPtr, 0  /* typeInfoOrMeta_ */)
-
-        /**
-         * Formally, this ordering is too weak, and doesn't prevent data race with installing extra object.
-         * Check comment in ObjHeader::type_info for details.
-         */
-        val memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic
-
-        // TODO: Get rid of the bitcast here by supplying the type in the GEP above.
-        val typeInfoOrMetaPtrRaw = bitcast(pointerType(codegen.intPtrType), typeInfoOrMetaPtr)
-        val typeInfoOrMetaWithFlags = load(codegen.intPtrType, typeInfoOrMetaPtrRaw, memoryOrder = memoryOrder)
-        // Clear two lower bits.
-        val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlags, codegen.immTypeInfoMask)
-        val typeInfoOrMeta = intToPtr(typeInfoOrMetaRaw, kTypeInfoPtr)
-        val typeInfoPtrPtr = structGep(runtime.typeInfoType, typeInfoOrMeta, 0 /* typeInfo */)
-        return load(codegen.kTypeInfoPtr, typeInfoPtrPtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic)
-    }
+    fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef = call(llvm.getTypeInfo, listOf(objPtr))
 
     /**
      * Note: the same code is generated as IR in [org.jetbrains.kotlin.backend.konan.lower.EnumUsageLowering].

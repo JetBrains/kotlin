@@ -108,7 +108,7 @@ void Kotlin_system_exitProcess(KInt status) {
   std::exit(status);
 }
 
-const void* Kotlin_Any_getTypeInfo(KConstRef obj) {
+RUNTIME_NOTHROW const void* Kotlin_Any_getTypeInfo(KConstRef obj) {
   return obj->type_info();
 }
 
