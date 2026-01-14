@@ -117,6 +117,8 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
     )
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
+        KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
+
         val propertiesBuildService = PropertiesBuildService.registerIfAbsent(project).get()
 
         warningDeprecatedProperties.filter {

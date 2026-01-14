@@ -18,7 +18,9 @@ class GradleDeprecatedPropertyChecker {
     fun `KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT reports deprecation warning`() {
         val project = buildProjectWithMPP(
             preApplyCode = { enableKmpProjectIsolationSupport(enabled = true) },
-        )
+        ) {
+            kotlin { jvm() }
+        }.evaluate()
         project.checkDiagnostics("KmpIsolatedProjectsSupportDeprecated")
     }
 
@@ -31,10 +33,14 @@ class GradleDeprecatedPropertyChecker {
         propertiesWithDeprecatedFalseValue.forEach {
             buildProjectWithMPP(
                 preApplyCode = { project.propertiesExtension.set(it.first, false.toString()) },
-            ).checkDiagnostics(it.second)
+            ) {
+                kotlin { jvm() }
+            }.evaluate().checkDiagnostics(it.second)
             buildProjectWithMPP(
                 preApplyCode = { project.propertiesExtension.set(it.first, true.toString()) },
-            ).assertNoDiagnostics()
+            ) {
+                kotlin { jvm() }
+            }.evaluate().assertNoDiagnostics()
         }
     }
 
@@ -54,8 +60,8 @@ class GradleDeprecatedPropertyChecker {
 
         // check that the checker executes after build script evaluation and doesn't null out used properties if they are set during build script evaluation
         project.propertiesExtension.set(KOTLIN_DEPRECATED_TEST_PROPERTY, "foo")
-        assertEquals(null, propertiesService.get(KOTLIN_DEPRECATED_TEST_PROPERTY, project))
+        assertEquals("foo", propertiesService.get(KOTLIN_DEPRECATED_TEST_PROPERTY, project))
         project.evaluate()
-        assertEquals(null, propertiesService.get(KOTLIN_DEPRECATED_TEST_PROPERTY, project))
+        assertEquals("foo", propertiesService.get(KOTLIN_DEPRECATED_TEST_PROPERTY, project))
     }
 }
