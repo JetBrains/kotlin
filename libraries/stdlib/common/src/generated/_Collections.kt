@@ -908,6 +908,11 @@ public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsI
 }
 
 /**
+ * KCImm-10
+ *
+ * Same as `Iterable<T>.filter`
+ */
+/**
  * Returns a list containing all elements not matching the given [predicate].
  * 
  * @sample samples.collections.Collections.Filtering.filter
