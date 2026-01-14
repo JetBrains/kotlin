@@ -938,6 +938,11 @@ public fun <T : Any> Iterable<T?>.filterNotNull(): List<T> {
 }
 
 /**
+ * KCImm-12
+ *
+ * There is no need for a specialization for `PersistentCollection` since it only uses iteration and does not allocate any additional memory.
+ */
+/**
  * Appends all elements that are not `null` to the given [destination].
  * 
  * @sample samples.collections.Collections.Filtering.filterNotNullTo
