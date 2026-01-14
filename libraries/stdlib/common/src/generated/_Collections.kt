@@ -1044,6 +1044,13 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
 }
 
 /**
+ * KCImm-16
+ *
+ * ```
+ * public fun <T> PersistentList<T>.takeLast(n: Int): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list containing last [n] elements.
  * 
  * @throws IllegalArgumentException if [n] is negative.
