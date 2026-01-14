@@ -6283,6 +6283,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CONTEXT_PARAMETER_MUST_BE_NOINLINE) { firDiagnostic ->
+        ContextParameterMustBeNoinlineImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM) { firDiagnostic ->
         InlineFromHigherPlatformImpl(
             firDiagnostic.a,

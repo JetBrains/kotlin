@@ -6,7 +6,7 @@
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-context(block: () -> R) inline val <R> myRunOnce: R
+context(noinline block: () -> R) inline val <R> myRunOnce: R
     get() {
         contract {
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)            //should be forbidden KT-79025

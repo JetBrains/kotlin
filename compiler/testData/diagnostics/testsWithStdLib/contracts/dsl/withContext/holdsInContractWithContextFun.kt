@@ -11,7 +11,7 @@ inline fun conditionInContext(block: () -> Int) {
     block()
 }
 
-context(a: () -> Int)
+context(noinline a: () -> Int)
 <!NOTHING_TO_INLINE!>inline<!> fun lambdaInContext(condition: Boolean): Unit {
     contract { condition holdsIn a }            //KT-79324 should be ERROR_IN_CONTRACT_DESCRIPTION
     a()

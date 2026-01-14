@@ -2318,6 +2318,7 @@ org.jetbrains.kotlin.resolve.StatementFilter.Companion.NONE
 org.jetbrains.kotlin.resolve.StatementFilter.filter
 org.jetbrains.kotlin.resolve.TargetAllowedPredicate
 org.jetbrains.kotlin.resolve.TargetAllowedPredicate.isAllowed(KotlinTarget, LanguageVersionSettings)
+org.jetbrains.kotlin.resolve.allowedInContextParameters
 org.jetbrains.kotlin.resolve.always(KotlinTarget, KotlinTarget)
 org.jetbrains.kotlin.resolve.compatibility(KtKeywordToken, KtKeywordToken)
 org.jetbrains.kotlin.resolve.compatibilityTypeMap

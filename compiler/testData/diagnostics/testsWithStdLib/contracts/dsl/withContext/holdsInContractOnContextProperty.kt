@@ -12,7 +12,7 @@ inline val <R> (() -> R).conditionInContext: R?
         return null
     }
 
-context(condition: Boolean, block: () -> R)
+context(condition: Boolean, noinline block: () -> R)
 inline val <R> conditionAndBlockInContext: R?
     get() {
         contract { condition holdsIn block }            //KT-79324 should be ERROR_IN_CONTRACT_DESCRIPTION

@@ -5,7 +5,7 @@
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-context(block: () -> R)
+context(noinline block: () -> R)
 <!NOTHING_TO_INLINE!>inline<!> fun <R> myRunOnce(): R {
     <!ERROR_IN_CONTRACT_DESCRIPTION!>contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)

@@ -4406,6 +4406,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val inlineVisibility: EffectiveVisibility
     }
 
+    interface ContextParameterMustBeNoinline : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = ContextParameterMustBeNoinline::class
+        val parameter: KaSymbol
+        val function: KaSymbol
+    }
+
     interface InlineFromHigherPlatform : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InlineFromHigherPlatform::class
         val inlinedBytecodeVersion: String

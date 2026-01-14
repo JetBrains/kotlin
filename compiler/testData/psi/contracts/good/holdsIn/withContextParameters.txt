@@ -127,6 +127,9 @@ KtFile: withContextParameters.kt
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
+          MODIFIER_LIST
+            PsiElement(noinline)('noinline')
+          PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('a')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')

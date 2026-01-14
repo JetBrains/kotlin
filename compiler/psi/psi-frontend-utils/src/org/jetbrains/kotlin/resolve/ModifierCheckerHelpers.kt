@@ -269,6 +269,8 @@ val redundantTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>(
     OPEN_KEYWORD to EnumSet.of(KotlinTarget.INTERFACE)
 )
 
+val allowedInContextParameters: Set<KtKeywordToken> = setOf<KtKeywordToken>(NOINLINE_KEYWORD, CROSSINLINE_KEYWORD)
+
 interface TargetAllowedPredicate {
     fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings): Boolean
 }

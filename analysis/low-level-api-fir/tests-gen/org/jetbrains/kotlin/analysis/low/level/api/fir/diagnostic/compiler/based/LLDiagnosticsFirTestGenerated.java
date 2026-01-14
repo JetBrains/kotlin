@@ -2926,6 +2926,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("inline.kt")
+      public void testInline() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/inline.kt");
+      }
+
+      @Test
       @TestMetadata("localContextReceiver.kt")
       public void testLocalContextReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/localContextReceiver.kt");

@@ -359,6 +359,31 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkContextParameters(declaration: FirCallableDeclaration) {
+        for (param in declaration.contextParameters) {
+            val coneType = param.returnTypeRef.coneType.fullyExpandedType()
+            val functionKind = coneType.functionTypeKind(context.session)
+            val isFunctionalType = functionKind != null
+
+            if (!isFunctionalType) {
+                if (param.isNoinline || param.isCrossinline) {
+                    reporter.reportOn(param.source, FirErrors.ILLEGAL_INLINE_PARAMETER_MODIFIER)
+                }
+                continue
+            }
+
+            if (!param.isNoinline) {
+                reporter.reportOn(
+                    param.source,
+                    FirErrors.CONTEXT_PARAMETER_MUST_BE_NOINLINE,
+                    param.symbol,
+                    declaration.symbol,
+                )
+            }
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkParametersInNotInline(function: FirFunction) {
         for (param in function.valueParameters) {
             if (param.isNoinline || param.isCrossinline) {
@@ -372,7 +397,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         if (function.isExpect || function.isSuspend) return
         if (function.typeParameters.any { it.symbol.isReified }) return
         val session = context.session
-        val hasInlinableParameters = function.valueParameters.any { it.isInlinable(context.session) }
+        val hasInlinableParameters =
+            function.valueParameters.any { it.isInlinable(context.session) } || function.contextParameters.any { it.isInlinable(context.session) }
         if (hasInlinableParameters) return
         if (function.isInlineOnly(session)) return
         if (function.returnTypeRef.needsMultiFieldValueClassFlattening(session)) return
@@ -412,6 +438,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             checkParameters(declaration, directOverriddenSymbols)
             checkNothingToInline(declaration)
         }
+        checkContextParameters(declaration)
         val canBeInlined = checkCanBeInlined(declaration, declaration.effectiveVisibility)
 
         if (canBeInlined && directOverriddenSymbols.isNotEmpty()) {

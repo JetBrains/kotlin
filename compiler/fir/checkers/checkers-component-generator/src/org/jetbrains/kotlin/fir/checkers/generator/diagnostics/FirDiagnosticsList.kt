@@ -2217,6 +2217,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<EffectiveVisibility>("visibility")
             parameter<EffectiveVisibility>("inlineVisibility")
         }
+
+        val CONTEXT_PARAMETER_MUST_BE_NOINLINE by error<KtDeclaration> {
+            parameter<FirValueParameterSymbol>("parameter")
+            parameter<Symbol>("function")
+        }
     }
 
     val IMPORTS by object : DiagnosticGroup("Imports") {
