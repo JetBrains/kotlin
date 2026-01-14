@@ -815,6 +815,8 @@ public inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T> 
  * but in this case the same iteration order is not guaranteed after removal.
  *
  * ```
+ * public inline fun <T> PersistentCollection<T>.filter(predicate: (T) -> Boolean): PersistentList<T>
+ *
  * public inline fun <T> PersistentList<T>.filter(predicate: (T) -> Boolean): PersistentList<T>
  *
  * public inline fun <T> PersistentSet<T>.filter(predicate: (T) -> Boolean): PersistentSet<T> | PersistentList<T>
@@ -829,6 +831,17 @@ public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
     return filterTo(ArrayList<T>(), predicate)
 }
 
+/**
+ * KCImm-06
+ *
+ * ```
+ * public inline fun <T> PersistentCollection<T>.filterIndexed(predicate: (T) -> Boolean): PersistentList<T>
+ *
+ * public inline fun <T> PersistentList<T>.filterIndexed(predicate: (T) -> Boolean): PersistentList<T>
+ *
+ * public inline fun <T> PersistentSet<T>.filterIndexed(predicate: (T) -> Boolean): PersistentSet<T> | PersistentList<T>
+ * ```
+ */
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
