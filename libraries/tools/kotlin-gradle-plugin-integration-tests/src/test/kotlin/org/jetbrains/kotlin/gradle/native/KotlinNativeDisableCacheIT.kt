@@ -126,6 +126,7 @@ private fun KGPBaseTest.setupNativeCacheTest(
                 val target = targetProvider()
 
                 target.binaries.staticLib {
+                    @Suppress("DEPRECATION")
                     disableNativeCache(
                         DisableCacheInKotlinVersion.`2_3_20`,
                         "Disabled for integration testing",
