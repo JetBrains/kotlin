@@ -32,6 +32,7 @@ projectTests {
     ) {
         // nativeTest sets workingDir to rootDir so here we need to override it
         workingDir = projectDir
+        outputs.doNotCacheIf("trying to reproduce a flaky test over here") { true }
     }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeStressTestsKt", generateTestsInBuildDirectory = true) {
