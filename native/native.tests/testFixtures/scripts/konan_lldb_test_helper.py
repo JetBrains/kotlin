@@ -6,6 +6,7 @@
 # Unlike konan_lldb.py, this file contains only scripts useful for internal testing of the compiler.
 
 import lldb
+import os
 
 @lldb.command()
 def step_through_current_frame(debugger, command, ctx, result, internal_dict):
@@ -34,7 +35,7 @@ def step_through_current_frame(debugger, command, ctx, result, internal_dict):
             break
 
         frame = thread.frame[0]
-        file_name = frame.line_entry.file.basename
+        file_path = os.path.normpath(frame.line_entry.file.fullpath)
         line_number = frame.line_entry.line
         function_name = frame.function.name
-        result.AppendMessage("//step " + "\u001f".join((file_name, str(line_number), function_name)))
+        result.AppendMessage("//step " + "\u001f".join((file_path, str(line_number), function_name)))

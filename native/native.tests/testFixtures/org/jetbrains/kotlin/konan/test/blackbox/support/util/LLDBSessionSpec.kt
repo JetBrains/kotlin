@@ -177,7 +177,10 @@ internal class ReplLLDBSessionSpec private constructor(private val expectedSteps
 internal class SteppingLLDBSessionSpec(
     private val registeredDirectives: RegisteredDirectives,
     private val originalFile: File,
+    testSourceFiles: Collection<File>,
 ) : LLDBSessionSpec() {
+    private val testSourceFilePaths = testSourceFiles.map { it.absoluteFile.invariantSeparatorsPath }
+
     override fun generateCLIArguments(prettyPrinters: File): List<String> = buildList {
         addAll(super.generateCLIArguments(prettyPrinters))
         this += "-o"
@@ -197,21 +200,19 @@ internal class SteppingLLDBSessionSpec(
                 return@mapNotNull null
             }
 
-            val (sourceName, lineStr, funRawName) = stepLine.split('\u001f', limit = 3)
-
-            // Function names in K/N are mangled in a quite obscure way, so here we try to extract
-            // the original, simple function name from it, plus its container (a class or package
-            // where the function is defined).
-            val funNameMatch = KFunNameStaticSuspendRe.matchAt(funRawName, 0)
-                ?: KFunNameInternalRe.matchAt(funRawName, 0)
-                ?: KFunNameRegularRe.matchAt(funRawName, 0)
-            val container = funNameMatch?.groupValues?.get(1) ?: ""
-            val simpleFunName = funNameMatch?.groupValues?.get(2) ?: funRawName
-
-            if (container == "kotlin" || container.startsWith("kotlin.")) {
+            val (filePath, lineStr, funRawName) = stepLine.split('\u001f', limit = 3)
+            if (filePath !in testSourceFilePaths) {
                 return@mapNotNull null
             }
 
+            // Function names in K/N are mangled in a quite convoluted way, so here we try to extract
+            // the original, simple function name from it.
+            val funNameMatch = KFunNameStaticSuspendRe.matchAt(funRawName, 0)
+                ?: KFunNameInternalRe.matchAt(funRawName, 0)
+                ?: KFunNameRegularRe.matchAt(funRawName, 0)
+            val simpleFunName = funNameMatch?.groupValues?.get(1) ?: funRawName
+
+            val sourceName = filePath.substringAfterLast('/')
             val line = lineStr.toInt()
             val expectation = formatAsSteppingTestExpectation(
                 sourceName, line.takeUnless { it == 0 }, simpleFunName, false, null
@@ -233,8 +234,8 @@ internal class SteppingLLDBSessionSpec(
     }
 
     companion object {
-        private val KFunNameStaticSuspendRe = Regex("kfun:(.*?)#(.+)#(?:static|suspend)\\(")
-        private val KFunNameInternalRe = Regex("kfun:(?:(.*)\\.)?(.+)#internal")
-        private val KFunNameRegularRe = Regex("kfun:(.*)#(.*?)(?:__at__.+)?\\(")
+        private val KFunNameStaticSuspendRe = Regex("kfun:.*?#(.+)#(?:static|suspend)\\(")
+        private val KFunNameInternalRe = Regex("kfun:(?:.*\\.)?(.+)#internal")
+        private val KFunNameRegularRe = Regex("kfun:.*#(.+?)(?:__at__.+)?\\(")
     }
 }

@@ -219,6 +219,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
 
         val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location, settings)
         val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives, location)
+        val originalTestSourceFiles = testModules.values.flatMap { it.files }.map { it.location }
 
         val testKind = parseTestKind(registeredDirectives, location) ?: settings.get<TestKind>()
 
@@ -234,7 +235,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
 
         val lldbSpec = when (testKind) {
             TestKind.STANDALONE_LLDB -> parseReplLLDBSpec(testDataFile)
-            TestKind.STANDALONE_STEPPING -> SteppingLLDBSessionSpec(registeredDirectives, testDataFile)
+            TestKind.STANDALONE_STEPPING -> SteppingLLDBSessionSpec(registeredDirectives, testDataFile, originalTestSourceFiles)
             else -> null
         }
         val outputMatcher = lldbSpec?.let {
