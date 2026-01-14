@@ -1075,6 +1075,13 @@ public fun <T> List<T>.takeLast(n: Int): List<T> {
 }
 
 /**
+ * KCImm-17
+ *
+ * ```
+ * public inline fun <T> PersistentList<T>.takeLastWhile(predicate: (T) -> Boolean): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list containing last elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
@@ -1098,6 +1105,15 @@ public inline fun <T> List<T>.takeLastWhile(predicate: (T) -> Boolean): List<T> 
 }
 
 /**
+ * KCImm-18
+ *
+ * Opposite to `dropWhile`.
+ *
+ * ```
+ * public inline fun <T> PersistentCollection<T>.takeWhile(predicate: (T) -> Boolean): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list containing first elements satisfying the given [predicate].
  * 
  * @sample samples.collections.Collections.Transformations.take
@@ -1117,6 +1133,15 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
  */
 public expect fun <T> MutableList<T>.reverse(): Unit
 
+/**
+ * KCImm-19
+ *
+ * ```
+ * public fun <T> PersistentCollection<T>.reversed(): PersistentList<T>
+ *
+ * public fun <T> PersistentList<T>.reversed(): PersistentList<T>
+ * ```
+ */
 /**
  * Returns a list with elements in reversed order.
  */
@@ -1174,6 +1199,16 @@ public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
 }
 
 /**
+ * KCImm-20
+ *
+ * Sorting always requires building a new structure, so the main benefit is specializing
+ * the return type to PersistentList. The underlying implementation would be similar.
+ *
+ * ```
+ * public fun <T : Comparable<T>> PersistentCollection<T>.sorted(): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
@@ -1188,6 +1223,15 @@ public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
 }
 
 /**
+ * KCImm-21
+ *
+ * Same as `sorted` - the main benefit is specializing the return type.
+ *
+ * ```
+ * public inline fun <T, R : Comparable<R>> PersistentCollection<T>.sortedBy(crossinline selector: (T) -> R?): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
  * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
@@ -1199,6 +1243,15 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.sortedBy(crossinline select
     return sortedWith(compareBy(selector))
 }
 
+/**
+ * KCImm-22
+ *
+ * Same as `sorted` - the main benefit is specializing the return type.
+ *
+ * ```
+ * public inline fun <T, R : Comparable<R>> PersistentCollection<T>.sortedByDescending(crossinline selector: (T) -> R?): PersistentList<T>
+ * ```
+ */
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  * 
@@ -1212,6 +1265,15 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(crossinl
 }
 
 /**
+ * KCImm-23
+ *
+ * Same as `sorted` - the main benefit is specializing the return type.
+ *
+ * ```
+ * public fun <T : Comparable<T>> PersistentCollection<T>.sortedDescending(): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
@@ -1220,6 +1282,15 @@ public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
     return sortedWith(reverseOrder())
 }
 
+/**
+ * KCImm-24
+ *
+ * Same as `sorted` - the main benefit is specializing the return type.
+ *
+ * ```
+ * public fun <T> PersistentCollection<T>.sortedWith(comparator: Comparator<in T>): PersistentList<T>
+ * ```
+ */
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  * 
@@ -1322,6 +1393,15 @@ public fun Collection<Short>.toShortArray(): ShortArray {
     return result
 }
 
+/**
+ * KCImm-41
+ *
+ * Could benefit from returning PersistentMap.
+ *
+ * ```
+ * public inline fun <T, K, V> PersistentCollection<T>.associate(transform: (T) -> Pair<K, V>): PersistentMap<K, V>
+ * ```
+ */
 /**
  * Returns a [Map] containing key-value pairs provided by [transform] function
  * applied to elements of the given collection.
@@ -1514,6 +1594,15 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
 }
 
 /**
+ * KCImm-38
+ *
+ * Same as `map` - could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <T, R> PersistentCollection<T>.flatMap(transform: (T) -> Iterable<R>): PersistentList<R>
+ * ```
+ */
+/**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original collection.
  * 
  * @sample samples.collections.Collections.Transformations.flatMap
@@ -1632,6 +1721,16 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(dest
 }
 
 /**
+ * KCImm-40
+ *
+ * Could benefit from returning a map with PersistentList values.
+ * The map itself could potentially be a PersistentMap.
+ *
+ * ```
+ * public inline fun <T, K> PersistentCollection<T>.groupBy(keySelector: (T) -> K): PersistentMap<K, PersistentList<T>>
+ * ```
+ */
+/**
  * Groups elements of the original collection by the key returned by the given [keySelector] function
  * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  * 
@@ -1708,6 +1807,16 @@ public inline fun <T, K> Iterable<T>.groupingBy(crossinline keySelector: (T) -> 
 }
 
 /**
+ * KCImm-35
+ *
+ * Could benefit from PersistentList.Builder that builds PersistentList directly.
+ * The transformation always creates a new structure.
+ *
+ * ```
+ * public inline fun <T, R> PersistentCollection<T>.map(transform: (T) -> R): PersistentList<R>
+ * ```
+ */
+/**
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original collection.
  * 
@@ -1717,6 +1826,15 @@ public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
     return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
 
+/**
+ * KCImm-36
+ *
+ * Same as `map` - could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <T, R> PersistentCollection<T>.mapIndexed(transform: (index: Int, T) -> R): PersistentList<R>
+ * ```
+ */
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element and its index in the original collection.
@@ -1764,6 +1882,15 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(d
 }
 
 /**
+ * KCImm-37
+ *
+ * Same as `map` - could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <T, R : Any> PersistentCollection<T>.mapNotNull(transform: (T) -> R?): PersistentList<R>
+ * ```
+ */
+/**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each element in the original collection.
  * 
@@ -1803,6 +1930,21 @@ public fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>> {
 }
 
 /**
+ * KCImm-25
+ *
+ * For PersistentSet, this could have an optimized implementation.
+ *
+ * ```
+ * public fun <T> PersistentList<T>.distinct(): PersistentList<T> {
+ *     return this.toMutableSet().toPersistentList()
+ * }
+ * 
+ * public fun <T> PersistentSet<T>.distinct(): PersistentSet<T> {
+ *     return this
+ * }
+ * ```
+ */
+/**
  * Returns a list containing only distinct elements from the given collection.
  * 
  * Among equal elements of the given collection, only the first one will be present in the resulting list.
@@ -1814,6 +1956,15 @@ public fun <T> Iterable<T>.distinct(): List<T> {
     return this.toMutableSet().toList()
 }
 
+/**
+ * KCImm-26
+ *
+ * Similar to `distinct`.
+ * 
+ * ```
+ * public inline fun <T, K> PersistentCollection<T>.distinctBy(selector: (T) -> K): PersistentList<T>
+ * ```
+ */
 /**
  * Returns a list containing only elements from the given collection
  * having distinct keys returned by the given [selector] function.
@@ -3390,6 +3541,15 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
 }
 
 /**
+ * KCImm-44
+ *
+ * Could benefit from building nested PersistentLists directly.
+ *
+ * ```
+ * public fun <T> PersistentCollection<T>.chunked(size: Int): PersistentList<PersistentList<T>>
+ * ```
+ */
+/**
  * Splits this collection into a list of lists each not exceeding the given [size].
  * 
  * The last list in the resulting list may have fewer elements than the given [size].
@@ -3423,6 +3583,20 @@ public fun <T, R> Iterable<T>.chunked(size: Int, transform: (List<T>) -> R): Lis
 }
 
 /**
+ * KCImm-27
+ *
+ * Could benefit from using `removing` operation on persistent collections,
+ * which preserves the persistent structure efficiently.
+ * The order of iteration over the new set obtained using the plus operation
+ * will depend on the implementation of PersistentSet.
+ *
+ * ```
+ * public operator fun <T> PersistentCollection<T>.minus(element: T): PersistentList<T>
+ * public operator fun <T> PersistentList<T>.minus(element: T): PersistentList<T>
+ * public operator fun <T> PersistentSet<T>.minus(element: T): PersistentSet<T>
+ * ```
+ */
+/**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
 public operator fun <T> Iterable<T>.minus(element: T): List<T> {
@@ -3432,6 +3606,19 @@ public operator fun <T> Iterable<T>.minus(element: T): List<T> {
 }
 
 /**
+ * KCImm-28
+ *
+ * Could benefit from using `removingAll` operation on persistent collections.
+ * The order of iteration over the new set obtained using the plus operation
+ * will depend on the implementation of PersistentSet.
+ *
+ * ```
+ * public operator fun <T> PersistentCollection<T>.minus(elements: Array<out T>): PersistentList<T>
+ * public operator fun <T> PersistentList<T>.minus(elements: Array<out T>): PersistentList<T>
+ * public operator fun <T> PersistentSet<T>.minus(elements: Array<out T>): PersistentSet<T>
+ * ```
+ */
+/**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] array.
  */
 public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
@@ -3439,6 +3626,19 @@ public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
     return this.filterNot { it in elements }
 }
 
+/**
+ * KCImm-29
+ *
+ * Could benefit from using `removingAll` operation on persistent collections.
+ * The order of iteration over the new set obtained using the plus operation
+ * will depend on the implementation of PersistentSet.
+ *
+ * ```
+ * public operator fun <T> PersistentCollection<T>.minus(elements: Iterable<T>): PersistentList<T>
+ * public operator fun <T> PersistentList<T>.minus(elements: Iterable<T>): PersistentList<T>
+ * public operator fun <T> PersistentSet<T>.minus(elements: Iterable<T>): PersistentSet<T>
+ * ```
+ */
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection.
  */
@@ -3449,6 +3649,19 @@ public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
     return this.filterNot { it in other }
 }
 
+/**
+ * KCImm-30
+ *
+ * Could benefit from using `removingAll` operation on persistent collections.
+ * The order of iteration over the new set obtained using the plus operation
+ * will depend on the implementation of PersistentSet.
+ *
+ * ```
+ * public operator fun <T> PersistentCollection<T>.minus(elements: Sequence<T>): PersistentList<T>
+ * public operator fun <T> PersistentList<T>.minus(elements: Sequence<T>): PersistentList<T>
+ * public operator fun <T> PersistentSet<T>.minus(elements: Sequence<T>): PersistentSet<T>
+ * ```
+ */
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence.
  */
@@ -3467,6 +3680,15 @@ public inline fun <T> Iterable<T>.minusElement(element: T): List<T> {
     return minus(element)
 }
 
+/**
+ * KCImm-39
+ *
+ * Could benefit from building both PersistentLists directly.
+ *
+ * ```
+ * public inline fun <T> PersistentCollection<T>.partition(predicate: (T) -> Boolean): Pair<PersistentList<T>, PersistentList<T>>
+ * ```
+ */
 /**
  * Splits the original collection into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
@@ -3487,6 +3709,20 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
     return Pair(first, second)
 }
 
+/**
+ * KCImm-31
+ *
+ * Could benefit from using `adding` operation on persistent collections,
+ * which preserves the persistent structure efficiently.
+ * The order of iteration over the new set obtained using the plus operation
+ * will depend on the implementation of PersistentSet.
+ *
+ * ```
+ * public operator fun <T> PersistentCollection<T>.plus(element: T): PersistentList<T>
+ * public operator fun <T> PersistentList<T>.plus(element: T): PersistentList<T>
+ * public operator fun <T> PersistentSet<T>.plus(element: T): PersistentSet<T>
+ * ```
+ */
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
@@ -3509,6 +3745,17 @@ public operator fun <T> Collection<T>.plus(element: T): List<T> {
 }
 
 /**
+ * KCImm-32
+ *
+ * Could benefit from using `addAll` operation on persistent collections.
+ *
+ * ```
+ * public operator fun <T> PersistentCollection<T>.plus(elements: Array<out T>): PersistentList<T>
+ * public operator fun <T> PersistentList<T>.plus(elements: Array<out T>): PersistentList<T>
+ * public operator fun <T> PersistentSet<T>.plus(elements: Array<out T>): PersistentSet<T>
+ * ```
+ */
+/**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] array.
  */
 public operator fun <T> Iterable<T>.plus(elements: Array<out T>): List<T> {
@@ -3529,6 +3776,17 @@ public operator fun <T> Collection<T>.plus(elements: Array<out T>): List<T> {
     return result
 }
 
+/**
+ * KCImm-33
+ *
+ * Could benefit from using `addAll` operation on persistent collections.
+ *
+ * ```
+ * public operator fun <T> PersistentCollection<T>.plus(elements: Iterable<T>): PersistentList<T>
+ * public operator fun <T> PersistentList<T>.plus(elements: Iterable<T>): PersistentList<T>
+ * public operator fun <T> PersistentSet<T>.plus(elements: Iterable<T>): PersistentSet<T>
+ * ```
+ */
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
  */
@@ -3556,6 +3814,17 @@ public operator fun <T> Collection<T>.plus(elements: Iterable<T>): List<T> {
     }
 }
 
+/**
+ * KCImm-34
+ *
+ * Could benefit from using `addingAll` operation on persistent collections.
+ *
+ * ```
+ * public operator fun <T> PersistentCollection<T>.plus(elements: Sequence<T>): PersistentList<T>
+ * public operator fun <T> PersistentList<T>.plus(elements: Sequence<T>): PersistentList<T>
+ * public operator fun <T> PersistentSet<T>.plus(elements: Sequence<T>): PersistentSet<T>
+ * ```
+ */
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
  */
@@ -3592,6 +3861,15 @@ public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
     return plus(element)
 }
 
+/**
+ * KCImm-45
+ *
+ * Similar to `chunked` - could benefit from building nested PersistentLists directly.
+ *
+ * ```
+ * public fun <T> PersistentCollection<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): PersistentList<PersistentList<T>>
+ * ```
+ */
 /**
  * Returns a list of snapshots of the window of the given [size]
  * sliding along this collection with the given [step], where each
@@ -3701,6 +3979,15 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (a: 
 }
 
 /**
+ * KCImm-42
+ *
+ * Could benefit from building PersistentList directly.
+ *
+ * ```
+ * public infix fun <T, R> PersistentCollection<T>.zip(other: Iterable<R>): PersistentList<Pair<T, R>>
+ * ```
+ */
+/**
  * Returns a list of pairs built from the elements of `this` collection and [other] collection with the same index.
  * The returned list has length of the shortest collection.
  * 
@@ -3727,6 +4014,15 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T
     return list
 }
 
+/**
+ * KCImm-43
+ *
+ * Could benefit from building PersistentList directly.
+ *
+ * ```
+ * public fun <T> PersistentCollection<T>.zipWithNext(): PersistentList<Pair<T, T>>
+ * ```
+ */
 /**
  * Returns a list of pairs of each two adjacent elements in this collection.
  * 
