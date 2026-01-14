@@ -275,6 +275,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("externalDeclarations.kt")
+  public void testExternalDeclarations() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/externalDeclarations.kt");
+  }
+
+  @Test
   @TestMetadata("externalProperty.kt")
   public void testExternalProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/externalProperty.kt");
