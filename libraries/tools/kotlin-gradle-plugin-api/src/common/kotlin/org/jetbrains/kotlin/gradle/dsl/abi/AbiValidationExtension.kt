@@ -88,7 +88,7 @@ interface AbiValidationExtension {
     /**
      * The directory containing reference dumps that the dump generated from the current code is compared with by the [checkTaskProvider] task.
      *
-     * @since 2.3.20
+     * @since 2.4.0
      */
     val referenceDumpDir: DirectoryProperty
 
@@ -97,14 +97,14 @@ interface AbiValidationExtension {
      *
      * This task fails if any differences are found between the files.
      *
-     * @since 2.3.20
+     * @since 2.4.0
      */
     val checkTaskProvider: TaskProvider<Task>
 
     /**
      * Overwrite dumps in the [referenceDumpDir] directory with the actual dumps for the current code.
      *
-     * @since 2.3.20
+     * @since 2.4.0
      */
     val updateTaskProvider: TaskProvider<Task>
 
@@ -113,7 +113,7 @@ interface AbiValidationExtension {
      *
      * These dumps are used when comparing with dumps from the [referenceDumpDir] by the [checkTaskProvider] task.
      *
-     * @since 2.3.20
+     * @since 2.4.0
      */
     val internalDumpTaskProvider: TaskProvider<Task>
 
@@ -129,9 +129,9 @@ interface AbiValidationExtension {
      *
      * Default value: `true`
      *
-     * @since 2.3.20
+     * @since 2.4.0
      */
-    val keepUnsupportedTargets: Property<Boolean>
+    val keepLocallyUnsupportedTargets: Property<Boolean>
 
     /**
      * Provides configuration for dumps stored in the old format that are used separately in the [Binary Compatibility validator plugin](https://github.com/Kotlin/binary-compatibility-validator).

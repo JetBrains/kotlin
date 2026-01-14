@@ -32,7 +32,7 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
 
     override val referenceDumpDir: DirectoryProperty = objects.directoryProperty()
 
-    override val keepUnsupportedTargets: Property<Boolean> = objects.property<Boolean>()
+    override val keepLocallyUnsupportedTargets: Property<Boolean> = objects.property<Boolean>()
 
     @Suppress("DEPRECATION")
     @Deprecated(

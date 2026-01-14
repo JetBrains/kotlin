@@ -726,7 +726,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidatio
 	public abstract fun getEnabled ()Lorg/gradle/api/provider/Property;
 	public abstract fun getFilters ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;
 	public abstract fun getInternalDumpTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
-	public abstract fun getKeepUnsupportedTargets ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeepLocallyUnsupportedTargets ()Lorg/gradle/api/provider/Property;
 	public abstract fun getKlib ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationKlibKindExtension;
 	public abstract fun getLegacyCheckTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun getLegacyDump ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpExtension;

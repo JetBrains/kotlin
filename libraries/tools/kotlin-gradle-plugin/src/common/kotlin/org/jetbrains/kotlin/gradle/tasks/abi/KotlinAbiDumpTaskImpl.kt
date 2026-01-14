@@ -38,7 +38,7 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
     abstract val klibIsEnabled: Property<Boolean>
 
     @get:Input
-    abstract val keepUnsupportedTargets: Property<Boolean>
+    abstract val keepLocallyUnsupportedTargets: Property<Boolean>
 
     @get:Nested
     abstract val jvm: ListProperty<JvmTargetInfo>
@@ -81,7 +81,7 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
         val jvmTargets = jvm.get()
         val klibTargets = klib.get()
         val unsupported = unsupportedTargets.get()
-        val keepUnsupported = keepUnsupportedTargets.get()
+        val keepUnsupported = keepLocallyUnsupportedTargets.get()
 
         val jvmDumpName = projectName + LEGACY_JVM_DUMP_EXTENSION
         val klibDumpName = projectName + LEGACY_KLIB_DUMP_EXTENSION

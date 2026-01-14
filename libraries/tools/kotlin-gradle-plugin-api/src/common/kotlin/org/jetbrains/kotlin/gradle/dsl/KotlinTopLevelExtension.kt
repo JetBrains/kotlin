@@ -96,9 +96,9 @@ interface KotlinTopLevelExtension : KotlinTopLevelExtensionConfig, KotlinSourceS
      *
      * ```kotlin
      * kotlin {
-     *     abiValidation {
-     *         // Your ABI validation configuration
-     *     }
+     *     // Your ABI validation configuration
+     *     abiValidation.filters { }
+     *     abiValidation.referenceDumpDir
      * }
      * ```
      *

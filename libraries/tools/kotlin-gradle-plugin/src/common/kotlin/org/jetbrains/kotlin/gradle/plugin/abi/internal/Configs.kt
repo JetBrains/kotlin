@@ -24,7 +24,7 @@ internal fun AbiValidationExtension.configure(project: Project) {
     this as AbiValidationExtensionImpl
 
     referenceDumpDir.convention(project.layout.projectDirectory.dir(AbiValidationPaths.LEGACY_DEFAULT_REFERENCE_DUMP_DIR))
-    keepUnsupportedTargets.convention(true)
+    keepLocallyUnsupportedTargets.convention(true)
 
     configureTasks(project.name, project.tasks, project.layout, enabled)
 }
@@ -50,7 +50,7 @@ private fun AbiValidationExtension.configureTasks(
         tasks.register(KotlinAbiDumpTaskImpl.NAME, KotlinAbiDumpTaskImpl::class.java) {
             it.dumpDir.convention(dumpDir)
             it.referenceKlibDump.convention(referenceDir.map { dir -> dir.file(klibFileName) })
-            it.keepUnsupportedTargets.convention(true)
+            it.keepLocallyUnsupportedTargets.convention(true)
             it.klibIsEnabled.convention(true)
 
             it.klib.convention(it.klibInput.map { targets -> if (it.klibIsEnabled.get()) targets else emptyList() })

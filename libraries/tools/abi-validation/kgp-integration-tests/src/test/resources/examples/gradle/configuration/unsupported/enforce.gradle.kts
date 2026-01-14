@@ -5,5 +5,5 @@
 
 kotlin {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
-    abiValidation.klib.keepUnsupportedTargets = false
+    abiValidation.klib.keepLocallyUnsupportedTargets = false
 }
