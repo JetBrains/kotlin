@@ -30,14 +30,6 @@ repositories {
         content { includeModule("org.mozilla", "jsshell") }
     }
     ivy {
-        url = URI("https://github.com/WasmEdge/WasmEdge/releases/download/")
-        patternLayout {
-            artifact("[revision]/WasmEdge-[revision]-[classifier].[ext]")
-        }
-        metadataSources { artifact() }
-        content { includeModule("org.wasmedge", "wasmedge") }
-    }
-    ivy {
         url = URI("https://packages.jetbrains.team/files/p/kt/kotlin-file-dependencies/javascriptcore/")
         patternLayout {
             artifact("[classifier]_[revision].zip")
@@ -45,14 +37,8 @@ repositories {
         metadataSources { artifact() }
         content { includeModule("org.jsc", "jsc") }
     }
-    ivy {
-        url = URI("https://github.com/bytecodealliance/wasmtime/releases/download/")
-        patternLayout {
-            artifact("v[revision]/wasmtime-v[revision]-[classifier].[ext]")
-        }
-        metadataSources { artifact() }
-        content { includeModule("dev.wasmtime", "wasmtime") }
-    }
+    githubRelease("WasmEdge", "WasmEdge", groupAlias = "org.wasmedge", revisionPrefix = "")
+    githubRelease("bytecodealliance", "wasmtime", groupAlias = "dev.wasmtime")
 }
 
 enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
@@ -229,11 +215,11 @@ dependencies {
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:linux-x86_64@zip")
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:mac@zip")
 
-    wasmEdge("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:$wasmEdgeSuffix")
+    wasmEdge("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:$wasmEdgeSuffix")
 
-    implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:windows@zip")
-    implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:manylinux_2_28_x86_64@tar.gz")
-    implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:darwin_arm64@tar.gz")
+    implicitDependencies("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:windows@zip")
+    implicitDependencies("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:manylinux_2_28_x86_64@tar.gz")
+    implicitDependencies("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:darwin_arm64@tar.gz")
 
     jsc("org.jsc:jsc:$jscOsDependentRevision:$jscOsDependentClassifier")
 
