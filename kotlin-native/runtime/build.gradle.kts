@@ -22,15 +22,9 @@ plugins {
 }
 
 repositories {
-    ivy {
-        name = "Google Breakpad"
-        url = uri("https://github.com/google/breakpad")
-        patternLayout {
-            artifact("archive/refs/tags/v[revision].[ext]")
-        }
-        metadataSources { artifact() }
-    }
+    githubTag("google", "breakpad")
 }
+
 val breakpad = configurations.dependencyScope("breakpad")
 val breakpadClasspath = configurations.resolvable("breakpadClasspath") {
     extendsFrom(breakpad.get())
