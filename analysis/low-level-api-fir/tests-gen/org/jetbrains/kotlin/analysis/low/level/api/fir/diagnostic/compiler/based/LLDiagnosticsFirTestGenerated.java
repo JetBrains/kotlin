@@ -11805,6 +11805,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldTypeVarianceProblem.kt")
+        public void testExplicitBackingFieldTypeVarianceProblem() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldTypeVarianceProblem.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldWithJvmField.kt")
         public void testExplicitBackingFieldWithJvmField() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldWithJvmField.kt");
