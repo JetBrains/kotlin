@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
@@ -79,7 +80,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
                 // KT-83254: true was the default since long ago and AGP pre 9.1 sets this property to true and emits the diagnostic otherwise
                 it.toString().toBooleanLenient() == false
             }
-        ),
+        ), // since 2.3.0
         DeprecatedProperty(
             propertyName = KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT,
             details = "Since Kotlin 2.2, the KMP Isolated Projects support is enabled by default. This property will be removed in 2.4 release." +
@@ -89,6 +90,14 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty(
             propertyName = "kotlin.mpp.enableKotlinToolingMetadataArtifact",
             details = "The flag is deprecated and scheduled to be removed in 2.4.0: https://kotl.in/KT-79924",
+        ), // since 2.3.20
+        DeprecatedProperty(
+            propertyName = KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE,
+            details = "The flag is deprecated and scheduled to be removed in 2.4.0: https://kotl.in/KT-83678",
+            filter = {
+                // true was the default since 2.0.20 (KT-49919). Multiplatform AGP sets this property to true, so we only deprecate the false value
+                it.toString().toBooleanLenient() == false
+            }
         ), // since 2.3.20
     )
 

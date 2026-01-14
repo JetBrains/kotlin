@@ -24,12 +24,17 @@ class GradleDeprecatedPropertyChecker {
 
     @Test
     fun `KT-83254 - diagnostic with filtering - emits only when filter passes the property`() {
-        val legacyProperty = "kotlin.mpp.import.enableKgpDependencyResolution"
-        buildProjectWithMPP(
-            preApplyCode = { project.propertiesExtension.set(legacyProperty, false.toString()) },
-        ).checkDiagnostics("EnableKgpDependencyResolutionDeprecation")
-        buildProjectWithMPP(
-            preApplyCode = { project.propertiesExtension.set(legacyProperty, true.toString()) },
-        ).assertNoDiagnostics()
+        val propertiesWithDeprecatedFalseValue = listOf(
+            "kotlin.mpp.import.enableKgpDependencyResolution" to "EnableKgpDependencyResolutionDeprecation",
+            "kotlin.publishJvmEnvironmentAttribute" to "EnablePublishJvmEnvironmentAttributeDeprecation",
+        )
+        propertiesWithDeprecatedFalseValue.forEach {
+            buildProjectWithMPP(
+                preApplyCode = { project.propertiesExtension.set(it.first, false.toString()) },
+            ).checkDiagnostics(it.second)
+            buildProjectWithMPP(
+                preApplyCode = { project.propertiesExtension.set(it.first, true.toString()) },
+            ).assertNoDiagnostics()
+        }
     }
 }
