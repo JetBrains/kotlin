@@ -46,6 +46,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
 
     override fun getBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? {
         // There is also a build impl class, but it's private, and it's used only for internal purposes. Not relevant for API.
+        if (lombokService.getBuilder(symbol) != null) return null
         return lombokService.getSuperBuilder(symbol)
     }
 
