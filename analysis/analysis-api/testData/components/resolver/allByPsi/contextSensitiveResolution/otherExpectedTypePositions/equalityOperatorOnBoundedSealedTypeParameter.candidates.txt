@@ -26,7 +26,7 @@ KtSuperTypeList(122,132): 'MySealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(122,132): 'MySealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -92,7 +92,7 @@ KtSuperTypeList(178,188): 'MySealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(178,188): 'MySealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -173,7 +173,7 @@ KtNameReferenceExpression(210,211): 'X'
   NO_CANDIDATES
 
 KtCallExpression(214,220): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -189,7 +189,7 @@ KtCallExpression(214,220): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1223,7 +1223,7 @@ KtIsExpression(485,501): 'id(a) is Derived'
   NO_CANDIDATES
 
 KtCallExpression(485,490): 'id(a)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         a -> (KaVariableSignature:
@@ -1656,7 +1656,7 @@ KtOperationReferenceExpression(915,917): '=='
     isInBestCandidates = true
 
 KtCallExpression(918,923): 'id(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -1837,7 +1837,7 @@ KtOperationReferenceExpression(938,940): '=='
     isInBestCandidates = true
 
 KtCallExpression(941,946): 'id(L)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         L -> (KaVariableSignature:
@@ -2696,7 +2696,7 @@ KtWhenConditionWithExpression(1316,1321): 'id(X)'
   NO_CANDIDATES
 
 KtCallExpression(1316,1321): 'id(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -2784,7 +2784,7 @@ KtWhenConditionWithExpression(1336,1341): 'id(Y)'
   NO_CANDIDATES
 
 KtCallExpression(1336,1341): 'id(Y)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Y -> (KaVariableSignature:
@@ -2866,7 +2866,7 @@ KtWhenConditionWithExpression(1343,1348): 'id(L)'
   NO_CANDIDATES
 
 KtCallExpression(1343,1348): 'id(L)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         L -> (KaVariableSignature:
@@ -2999,7 +2999,7 @@ KtWhenConditionWithExpression(1412,1417): 'id(X)'
   NO_CANDIDATES
 
 KtCallExpression(1412,1417): 'id(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -3087,7 +3087,7 @@ KtWhenConditionWithExpression(1432,1437): 'id(Y)'
   NO_CANDIDATES
 
 KtCallExpression(1432,1437): 'id(Y)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Y -> (KaVariableSignature:
@@ -3169,7 +3169,7 @@ KtWhenConditionWithExpression(1439,1444): 'id(L)'
   NO_CANDIDATES
 
 KtCallExpression(1439,1444): 'id(L)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         L -> (KaVariableSignature:

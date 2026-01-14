@@ -140,7 +140,7 @@ KtDeclarationModifierList(159,178): '@Anno(0 + constant)'
   NO_CANDIDATES
 
 KtAnnotationEntry(159,178): '@Anno(0 + constant)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         0 + constant -> (KaVariableSignature:
@@ -694,7 +694,7 @@ KtDeclarationModifierList(184,203): '@Anno(1 + constant)'
   NO_CANDIDATES
 
 KtAnnotationEntry(184,203): '@Anno(1 + constant)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         1 + constant -> (KaVariableSignature:
@@ -1248,7 +1248,7 @@ KtDeclarationModifierList(209,228): '@Anno(2 + constant)'
   NO_CANDIDATES
 
 KtAnnotationEntry(209,228): '@Anno(2 + constant)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         2 + constant -> (KaVariableSignature:

@@ -1,5 +1,5 @@
 KtCallableReferenceExpression(87,95): 'obj::foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

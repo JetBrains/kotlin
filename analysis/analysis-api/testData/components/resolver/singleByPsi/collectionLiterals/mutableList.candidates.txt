@@ -1,5 +1,5 @@
 KtCollectionLiteralExpression(46,48): '[]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -17,7 +17,7 @@ KtCollectionLiteralExpression(46,48): '[]'
       }
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

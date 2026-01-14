@@ -14,7 +14,7 @@ KtDeclarationModifierList(15,56): '@Target(AnnotationTarget.TYPE)'
   NO_CANDIDATES
 
 KtAnnotationEntry(15,45): '@Target(AnnotationTarget.TYPE)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         AnnotationTarget.TYPE -> (KaVariableSignature:
@@ -206,7 +206,7 @@ KtDeclarationModifierList(148,177): '@Anno("parameter type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(148,177): '@Anno("parameter type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "parameter type $prop" -> (KaVariableSignature:
@@ -332,7 +332,7 @@ KtDeclarationModifierList(183,219): '@Anno("nested parameter type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(183,219): '@Anno("nested parameter type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested parameter type $prop" -> (KaVariableSignature:
@@ -458,7 +458,7 @@ KtDeclarationModifierList(231,274): '@Anno("nested nested parameter type $prop")
   NO_CANDIDATES
 
 KtAnnotationEntry(231,274): '@Anno("nested nested parameter type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested nested parameter type $prop" -> (KaVariableSignature:
@@ -578,7 +578,7 @@ KtDeclarationModifierList(286,313): '@Anno("defaultValue $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(286,313): '@Anno("defaultValue $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "defaultValue $prop" -> (KaVariableSignature:
@@ -698,7 +698,7 @@ KtDeclarationModifierList(321,368): '@Anno("anonymousFunction parameter type $pr
   NO_CANDIDATES
 
 KtAnnotationEntry(321,368): '@Anno("anonymousFunction parameter type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "anonymousFunction parameter type $prop" -> (KaVariableSignature:
@@ -818,7 +818,7 @@ KtDeclarationModifierList(375,419): '@Anno("anonymousFunction return type $prop"
   NO_CANDIDATES
 
 KtAnnotationEntry(375,419): '@Anno("anonymousFunction return type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "anonymousFunction return type $prop" -> (KaVariableSignature:
@@ -935,7 +935,7 @@ KtBlockExpression(424,426): '{}'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(427,427): ''
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -953,7 +953,7 @@ KtConstructorDelegationCall(427,427): ''
     isInBestCandidates = true
 
 KtConstructorDelegationReferenceExpression(427,427): ''
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -989,7 +989,7 @@ KtSuperTypeList(480,618): '@Anno("super type call $prop") AbstractClass<@Anno("n
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(480,618): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -1035,7 +1035,7 @@ KtDeclarationModifierList(480,510): '@Anno("super type call $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(480,510): '@Anno("super type call $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "super type call $prop" -> (KaVariableSignature:
@@ -1161,7 +1161,7 @@ KtDeclarationModifierList(525,561): '@Anno("nested super type ref $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(525,561): '@Anno("nested super type ref $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested super type ref $prop" -> (KaVariableSignature:
@@ -1287,7 +1287,7 @@ KtDeclarationModifierList(567,610): '@Anno("nested nested super type ref $prop")
   NO_CANDIDATES
 
 KtAnnotationEntry(567,610): '@Anno("nested nested super type ref $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested nested super type ref $prop" -> (KaVariableSignature:
@@ -1416,7 +1416,7 @@ KtSuperTypeList(653,791): '@Anno("super type call $prop") AbstractClass<@Anno("n
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(653,791): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -1462,7 +1462,7 @@ KtDeclarationModifierList(653,683): '@Anno("super type call $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(653,683): '@Anno("super type call $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "super type call $prop" -> (KaVariableSignature:
@@ -1588,7 +1588,7 @@ KtDeclarationModifierList(698,734): '@Anno("nested super type ref $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(698,734): '@Anno("nested super type ref $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested super type ref $prop" -> (KaVariableSignature:
@@ -1714,7 +1714,7 @@ KtDeclarationModifierList(740,783): '@Anno("nested nested super type ref $prop")
   NO_CANDIDATES
 
 KtAnnotationEntry(740,783): '@Anno("nested nested super type ref $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested nested super type ref $prop" -> (KaVariableSignature:
@@ -1849,7 +1849,7 @@ KtDeclarationModifierList(840,869): '@Anno("super type ref $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(840,869): '@Anno("super type ref $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "super type ref $prop" -> (KaVariableSignature:
@@ -1975,7 +1975,7 @@ KtDeclarationModifierList(875,911): '@Anno("nested super type ref $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(875,911): '@Anno("nested super type ref $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested super type ref $prop" -> (KaVariableSignature:
@@ -2101,7 +2101,7 @@ KtDeclarationModifierList(917,960): '@Anno("nested nested super type ref $prop")
   NO_CANDIDATES
 
 KtAnnotationEntry(917,960): '@Anno("nested nested super type ref $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested nested super type ref $prop" -> (KaVariableSignature:

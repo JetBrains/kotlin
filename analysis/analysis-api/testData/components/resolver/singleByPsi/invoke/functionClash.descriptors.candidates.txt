@@ -1,5 +1,5 @@
 KtCallExpression(202,207): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -18,7 +18,7 @@ KtCallExpression(202,207): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -46,7 +46,7 @@ KtCallExpression(202,207): 'foo()'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -62,7 +62,7 @@ KtCallExpression(202,207): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

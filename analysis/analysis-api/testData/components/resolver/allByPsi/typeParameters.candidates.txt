@@ -122,7 +122,7 @@ KtSuperTypeList(186,195): 'Base<C>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(186,195): 'Base<C>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -339,7 +339,7 @@ KtNameReferenceExpression(378,389): 'NestedClass'
   NO_CANDIDATES
 
 KtCallExpression(392,405): 'NestedClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -417,7 +417,7 @@ KtNameReferenceExpression(422,424): 'c1'
     isInBestCandidates = true
 
 KtCallExpression(425,432): 'Inner()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

@@ -1,5 +1,5 @@
 KtCallExpression(96,130): 'install(CoroutineModule.builder())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         CoroutineModule.builder() -> (KaVariableSignature:

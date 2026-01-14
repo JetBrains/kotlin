@@ -1,5 +1,5 @@
 KtAnnotationEntry(90,110): '@Annotation(Color.R)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         Color.R -> (KaVariableSignature:

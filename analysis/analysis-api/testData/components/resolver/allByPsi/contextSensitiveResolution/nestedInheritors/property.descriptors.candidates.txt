@@ -44,7 +44,7 @@ KtSuperTypeList(165,174): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(165,174): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -179,7 +179,7 @@ KtBlockExpression(366,534): '{'
   NO_CANDIDATES
 
 KtCallExpression(372,532): 'receiveMyClass('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         if (i == 0) NestedInheritor

@@ -56,7 +56,7 @@ KtSuperTypeList(217,226): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(217,226): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -128,7 +128,7 @@ KtSuperTypeList(292,301): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(292,301): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -206,7 +206,7 @@ KtSuperTypeList(388,395): 'Super()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(388,395): 'Super()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -269,7 +269,7 @@ KtNameReferenceExpression(423,430): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(433,439): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -285,7 +285,7 @@ KtCallExpression(433,439): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -368,7 +368,7 @@ KtNameReferenceExpression(472,486): 'InheritorClass'
   NO_CANDIDATES
 
 KtCallExpression(489,505): 'InheritorClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -483,7 +483,7 @@ KtPropertyDelegate(673,685): 'by lazy {""}'
   NO_CANDIDATES
 
 KtCallExpression(676,685): 'lazy {""}'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {""} -> (KaVariableSignature:
@@ -517,7 +517,7 @@ KtCallExpression(676,685): 'lazy {""}'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {""} -> (KaVariableSignature:
@@ -559,7 +559,7 @@ KtCallExpression(676,685): 'lazy {""}'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {""} -> (KaVariableSignature:
@@ -781,7 +781,7 @@ KtNameReferenceExpression(749,756): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(759,765): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -797,7 +797,7 @@ KtCallExpression(759,765): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -910,7 +910,7 @@ KtBlockExpression(824,1172): '{'
   NO_CANDIDATES
 
 KtCallExpression(830,855): 'lMyClass(InheritorObject)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         InheritorObject -> (KaVariableSignature:
@@ -988,7 +988,7 @@ KtNameReferenceExpression(839,854): 'InheritorObject'
     isInBestCandidates = false
 
 KtCallExpression(860,881): 'lMyClass(propMyClass)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         propMyClass -> (KaVariableSignature:
@@ -1069,7 +1069,7 @@ KtNameReferenceExpression(869,880): 'propMyClass'
     isInBestCandidates = true
 
 KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         propInheritorClass -> (KaVariableSignature:
@@ -1150,7 +1150,7 @@ KtNameReferenceExpression(895,913): 'propInheritorClass'
     isInBestCandidates = true
 
 KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         propInheritorObject -> (KaVariableSignature:
@@ -1231,7 +1231,7 @@ KtNameReferenceExpression(928,947): 'propInheritorObject'
     isInBestCandidates = true
 
 KtCallExpression(954,976): 'lMyClass(NestedObject)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         NestedObject -> (KaVariableSignature:
@@ -1309,7 +1309,7 @@ KtNameReferenceExpression(963,975): 'NestedObject'
     isInBestCandidates = false
 
 KtCallExpression(981,995): 'lMyClass(prop)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         prop -> (KaVariableSignature:
@@ -1390,7 +1390,7 @@ KtNameReferenceExpression(990,994): 'prop'
     isInBestCandidates = true
 
 KtCallExpression(1000,1019): 'lMyClass(superProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         superProp -> (KaVariableSignature:
@@ -1471,7 +1471,7 @@ KtNameReferenceExpression(1009,1018): 'superProp'
     isInBestCandidates = true
 
 KtCallExpression(1024,1043): 'lMyClass(constProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         constProp -> (KaVariableSignature:
@@ -1552,7 +1552,7 @@ KtNameReferenceExpression(1033,1042): 'constProp'
     isInBestCandidates = true
 
 KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         lazyProp -> (KaVariableSignature:
@@ -1633,7 +1633,7 @@ KtNameReferenceExpression(1057,1065): 'lazyProp'
     isInBestCandidates = true
 
 KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         lambdaProp -> (KaVariableSignature:
@@ -1714,7 +1714,7 @@ KtNameReferenceExpression(1080,1090): 'lambdaProp'
     isInBestCandidates = true
 
 KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         InheritorClass() -> (KaVariableSignature:
@@ -1783,7 +1783,7 @@ KtValueArgumentList(1120,1122): '()'
   NO_CANDIDATES
 
 KtCallExpression(1128,1144): 'lMyClass(func())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         func() -> (KaVariableSignature:
@@ -1852,7 +1852,7 @@ KtValueArgumentList(1141,1143): '()'
   NO_CANDIDATES
 
 KtCallExpression(1149,1170): 'lMyClass(superFunc())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         superFunc() -> (KaVariableSignature:

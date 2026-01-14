@@ -35,7 +35,7 @@ KtSuperTypeList(189,199): 'MySealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(189,199): 'MySealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -149,7 +149,7 @@ KtBlockExpression(293,416): '{'
   NO_CANDIDATES
 
 KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:
@@ -319,7 +319,7 @@ KtBlockExpression(339,344): 'foo()'
   NO_CANDIDATES
 
 KtCallExpression(339,344): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = [
@@ -367,7 +367,7 @@ KtCallExpression(339,344): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -470,7 +470,7 @@ KtValueArgumentList(342,344): '()'
   NO_CANDIDATES
 
 KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         InheritorObject -> (KaVariableSignature:
@@ -637,7 +637,7 @@ KtBlockExpression(403,408): 'foo()'
   NO_CANDIDATES
 
 KtCallExpression(403,408): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = [
@@ -685,7 +685,7 @@ KtCallExpression(403,408): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -845,7 +845,7 @@ KtBlockExpression(501,560): '{'
   NO_CANDIDATES
 
 KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:

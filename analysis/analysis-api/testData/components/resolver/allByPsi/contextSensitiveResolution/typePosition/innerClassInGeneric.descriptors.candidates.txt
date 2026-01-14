@@ -32,7 +32,7 @@ KtSuperTypeList(119,130): 'A<String>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(119,130): 'A<String>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -128,7 +128,7 @@ KtNameReferenceExpression(152,153): 'T'
   NO_CANDIDATES
 
 KtCallExpression(156,162): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -144,7 +144,7 @@ KtCallExpression(156,162): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -224,7 +224,7 @@ KtSuperTypeList(191,202): 'A<String>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(191,202): 'A<String>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -320,7 +320,7 @@ KtNameReferenceExpression(224,225): 'T'
   NO_CANDIDATES
 
 KtCallExpression(228,234): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -336,7 +336,7 @@ KtCallExpression(228,234): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -413,7 +413,7 @@ KtSuperTypeList(255,263): 'A<Int>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(255,263): 'A<Int>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []

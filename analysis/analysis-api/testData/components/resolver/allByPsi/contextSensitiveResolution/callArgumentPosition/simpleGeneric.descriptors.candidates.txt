@@ -77,7 +77,7 @@ KtNameReferenceExpression(151,152): 'X'
   NO_CANDIDATES
 
 KtCallExpression(155,161): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -93,7 +93,7 @@ KtCallExpression(155,161): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -185,7 +185,7 @@ KtNameReferenceExpression(196,197): 'X'
   NO_CANDIDATES
 
 KtCallExpression(203,213): 'foo(id(X))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(X) -> (KaVariableSignature:
@@ -257,7 +257,7 @@ KtValueArgument(207,212): 'id(X)'
   NO_CANDIDATES
 
 KtCallExpression(207,212): 'id(X)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -338,7 +338,7 @@ KtNameReferenceExpression(210,211): 'X'
   NO_CANDIDATES
 
 KtCallExpression(218,228): 'foo(id(L))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(L) -> (KaVariableSignature:
@@ -410,7 +410,7 @@ KtValueArgument(222,227): 'id(L)'
   NO_CANDIDATES
 
 KtCallExpression(222,227): 'id(L)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         L -> (KaVariableSignature:
@@ -504,7 +504,7 @@ KtNameReferenceExpression(225,226): 'L'
     isInBestCandidates = true
 
 KtCallExpression(233,252): 'foo(id(UNRESOLVED))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(UNRESOLVED) -> (KaVariableSignature:
@@ -576,7 +576,7 @@ KtValueArgument(237,251): 'id(UNRESOLVED)'
   NO_CANDIDATES
 
 KtCallExpression(237,251): 'id(UNRESOLVED)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         UNRESOLVED -> (KaVariableSignature:

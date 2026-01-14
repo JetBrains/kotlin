@@ -146,7 +146,7 @@ KtReturnExpression(239,258): 'return MyDelegate()'
   NO_CANDIDATES
 
 KtCallExpression(246,258): 'MyDelegate()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -321,7 +321,7 @@ KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
   NO_CANDIDATES
 
 KtCallExpression(446,463): 'ResourceID<Int>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

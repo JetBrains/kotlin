@@ -1,5 +1,5 @@
 KtAnnotationEntry(51,65): '@Suppress("s")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "s" -> (KaVariableSignature:

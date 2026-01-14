@@ -107,7 +107,7 @@ KtDeclarationModifierList(167,183): '@MyAnno((("A")))'
   NO_CANDIDATES
 
 KtAnnotationEntry(167,183): '@MyAnno((("A")))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         (("A")) -> (KaVariableSignature:
@@ -212,7 +212,7 @@ KtDeclarationModifierList(199,223): '@MyAnno(value = (("A")))'
   NO_CANDIDATES
 
 KtAnnotationEntry(199,223): '@MyAnno(value = (("A")))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         (("A")) -> (KaVariableSignature:
@@ -323,7 +323,7 @@ KtDeclarationModifierList(239,269): '@MyAnno((((("A")) as String)))'
   NO_CANDIDATES
 
 KtAnnotationEntry(239,269): '@MyAnno((((("A")) as String)))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         (((("A")) as String)) -> (KaVariableSignature:
@@ -449,7 +449,7 @@ KtDeclarationModifierList(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A",
   NO_CANDIDATES
 
 KtAnnotationEntry(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A", "B", "C"))))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         (("A")) -> (KaVariableSignature:
@@ -588,7 +588,7 @@ KtParenthesizedExpression(315,339): '(arrayOf("A", "B", "C"))'
   NO_CANDIDATES
 
 KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "A" -> (KaVariableSignature:
@@ -728,7 +728,7 @@ KtDeclarationModifierList(357,403): '@MyAnnoVararg(value = ((arrayOf(("A"), "B")
   NO_CANDIDATES
 
 KtAnnotationEntry(357,403): '@MyAnnoVararg(value = ((arrayOf(("A"), "B"))))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         ((arrayOf(("A"), "B"))) -> (KaVariableSignature:
@@ -821,7 +821,7 @@ KtParenthesizedExpression(380,401): '(arrayOf(("A"), "B"))'
   NO_CANDIDATES
 
 KtCallExpression(381,400): 'arrayOf(("A"), "B")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         ("A") -> (KaVariableSignature:
@@ -941,7 +941,7 @@ KtDeclarationModifierList(419,453): '@MyAnnoKClass((((String::class))))'
   NO_CANDIDATES
 
 KtAnnotationEntry(419,453): '@MyAnnoKClass((((String::class))))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         (((String::class))) -> (KaVariableSignature:

@@ -1,5 +1,5 @@
 KtEnumEntrySuperclassReferenceExpression(127,127): ''
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

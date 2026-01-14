@@ -95,7 +95,7 @@ KtNameReferenceExpression(79,84): 'super'
   NO_CANDIDATES
 
 KtCallExpression(85,98): 'equals(other)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         other -> (KaVariableSignature:
@@ -203,7 +203,7 @@ KtSuperTypeList(142,151): 'Another()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(142,151): 'Another()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -350,7 +350,7 @@ KtNameReferenceExpression(217,222): 'super'
   NO_CANDIDATES
 
 KtCallExpression(223,236): 'equals(other)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         other -> (KaVariableSignature:
@@ -833,7 +833,7 @@ KtNameReferenceExpression(344,346): 'm1'
     isInBestCandidates = true
 
 KtCallExpression(347,357): 'equals(m2)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         m2 -> (KaVariableSignature:
@@ -1283,7 +1283,7 @@ KtNameReferenceExpression(417,419): 'm2'
     isInBestCandidates = true
 
 KtCallExpression(420,430): 'equals(m1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         m1 -> (KaVariableSignature:
@@ -1391,7 +1391,7 @@ KtProperty(454,477): 'val another = Another()'
   NO_CANDIDATES
 
 KtCallExpression(468,477): 'Another()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1682,7 +1682,7 @@ KtOperationReferenceExpression(538,540): '=='
     isInBestCandidates = true
 
 KtCallExpression(541,550): 'Another()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1825,7 +1825,7 @@ KtOperationReferenceExpression(563,565): '!='
     isInBestCandidates = true
 
 KtCallExpression(566,575): 'Another()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1932,7 +1932,7 @@ KtNameReferenceExpression(580,587): 'another'
     isInBestCandidates = true
 
 KtCallExpression(588,605): 'equals(Another())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Another() -> (KaVariableSignature:
@@ -2010,7 +2010,7 @@ KtValueArgument(595,604): 'Another()'
   NO_CANDIDATES
 
 KtCallExpression(595,604): 'Another()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2050,7 +2050,7 @@ KtProperty(611,630): 'val child = Child()'
   NO_CANDIDATES
 
 KtCallExpression(623,630): 'Child()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2090,7 +2090,7 @@ KtProperty(635,658): 'val myClass = MyClass()'
   NO_CANDIDATES
 
 KtCallExpression(649,658): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2437,7 +2437,7 @@ KtNameReferenceExpression(729,734): 'child'
     isInBestCandidates = true
 
 KtCallExpression(735,750): 'equals(myClass)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         myClass -> (KaVariableSignature:
@@ -2831,7 +2831,7 @@ KtNameReferenceExpression(777,784): 'myClass'
     isInBestCandidates = true
 
 KtCallExpression(785,798): 'equals(child)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         child -> (KaVariableSignature:
@@ -3121,7 +3121,7 @@ KtNameReferenceExpression(825,832): 'another'
     isInBestCandidates = true
 
 KtCallExpression(833,846): 'equals(child)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         child -> (KaVariableSignature:
@@ -3395,7 +3395,7 @@ KtNameReferenceExpression(872,877): 'child'
     isInBestCandidates = true
 
 KtCallExpression(878,893): 'equals(another)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         another -> (KaVariableSignature:
@@ -3733,7 +3733,7 @@ KtNameReferenceExpression(922,929): 'another'
     isInBestCandidates = true
 
 KtCallExpression(930,945): 'equals(myClass)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         myClass -> (KaVariableSignature:
@@ -4143,7 +4143,7 @@ KtNameReferenceExpression(974,981): 'myClass'
     isInBestCandidates = true
 
 KtCallExpression(982,997): 'equals(another)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         another -> (KaVariableSignature:

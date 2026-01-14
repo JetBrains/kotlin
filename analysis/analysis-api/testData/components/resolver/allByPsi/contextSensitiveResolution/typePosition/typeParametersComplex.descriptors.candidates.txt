@@ -53,7 +53,7 @@ KtSuperTypeList(150,168): 'SealedGeneric<T>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -161,7 +161,7 @@ KtSuperTypeList(209,227): 'SealedGeneric<T>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []

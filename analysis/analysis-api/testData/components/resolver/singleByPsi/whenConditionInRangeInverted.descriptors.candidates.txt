@@ -1,5 +1,5 @@
 KtWhenConditionInRange(177,190): '!in MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         f -> (KaVariableSignature:

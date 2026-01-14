@@ -1,5 +1,5 @@
 KtCallExpression(135,140): 'i()()'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -20,7 +20,7 @@ KtCallExpression(135,140): 'i()()'
     fun Double.invoke(): Unit>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -41,7 +41,7 @@ KtCallExpression(135,140): 'i()()'
     fun Int.invoke(): Long>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []

@@ -1,5 +1,5 @@
 KtConstructorDelegationReferenceExpression(90,94): 'this'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -32,7 +32,7 @@ KtConstructorDelegationReferenceExpression(90,94): 'this'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

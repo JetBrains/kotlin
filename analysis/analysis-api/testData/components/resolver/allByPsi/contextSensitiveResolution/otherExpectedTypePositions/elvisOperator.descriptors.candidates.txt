@@ -23,7 +23,7 @@ KtSuperTypeList(128,137): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(128,137): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -107,7 +107,7 @@ KtNameReferenceExpression(187,194): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(197,206): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -294,7 +294,7 @@ KtValueArgumentList(563,565): '()'
   NO_CANDIDATES
 
 KtCallExpression(571,619): 'receive<MyClass>(NestedInheritor ?: myClassProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         NestedInheritor ?: myClassProp -> (KaVariableSignature:
@@ -397,7 +397,7 @@ KtNameReferenceExpression(607,618): 'myClassProp'
   NO_CANDIDATES
 
 KtCallExpression(624,671): 'receive<MyClass>(NestedInheritor ?: stringProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         NestedInheritor ?: stringProp -> (KaVariableSignature:
@@ -500,7 +500,7 @@ KtNameReferenceExpression(660,670): 'stringProp'
   NO_CANDIDATES
 
 KtCallExpression(676,733): 'receive<MyClass>(NestedInheritor ?: getNestedInheritor())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         NestedInheritor ?: getNestedInheritor() -> (KaVariableSignature:

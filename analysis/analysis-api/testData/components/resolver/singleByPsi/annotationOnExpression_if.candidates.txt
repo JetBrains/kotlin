@@ -1,5 +1,5 @@
 KtAnnotationEntry(40,49): '@Suppress'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {}
       contextArguments = []

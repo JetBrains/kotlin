@@ -17,7 +17,7 @@ KtDeclarationModifierList(33,187): '@Target('
   NO_CANDIDATES
 
 KtAnnotationEntry(33,176): '@Target('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         AnnotationTarget.TYPE_PARAMETER -> (KaVariableSignature:
@@ -428,7 +428,7 @@ KtDeclarationModifierList(259,282): '@Anno("function $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(259,282): '@Anno("function $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "function $prop" -> (KaVariableSignature:
@@ -545,7 +545,7 @@ KtDeclarationModifierList(288,317): '@Anno("type parameter $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(288,317): '@Anno("type parameter $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "type parameter $prop" -> (KaVariableSignature:
@@ -659,7 +659,7 @@ KtDeclarationModifierList(322,347): '@Anno("bound type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(322,347): '@Anno("bound type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "bound type $prop" -> (KaVariableSignature:
@@ -785,7 +785,7 @@ KtDeclarationModifierList(353,385): '@Anno("nested bound type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(353,385): '@Anno("nested bound type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested bound type $prop" -> (KaVariableSignature:
@@ -905,7 +905,7 @@ KtDeclarationModifierList(395,456): '@receiver:Anno("receiver $prop") @Anno("rec
   NO_CANDIDATES
 
 KtAnnotationEntry(395,427): '@receiver:Anno("receiver $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "receiver $prop" -> (KaVariableSignature:
@@ -1016,7 +1016,7 @@ KtNameReferenceExpression(421,425): 'prop'
     isInBestCandidates = true
 
 KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "receiver type $prop" -> (KaVariableSignature:
@@ -1142,7 +1142,7 @@ KtDeclarationModifierList(462,497): '@Anno("nested receiver type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(462,497): '@Anno("nested receiver type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested receiver type $prop" -> (KaVariableSignature:
@@ -1268,7 +1268,7 @@ KtDeclarationModifierList(503,545): '@Anno("nested nested receiver type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(503,545): '@Anno("nested nested receiver type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested nested receiver type $prop" -> (KaVariableSignature:
@@ -1391,7 +1391,7 @@ KtDeclarationModifierList(561,585): '@Anno("parameter $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(561,585): '@Anno("parameter $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "parameter $prop" -> (KaVariableSignature:
@@ -1505,7 +1505,7 @@ KtDeclarationModifierList(593,622): '@Anno("parameter type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(593,622): '@Anno("parameter type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "parameter type $prop" -> (KaVariableSignature:
@@ -1631,7 +1631,7 @@ KtDeclarationModifierList(634,670): '@Anno("nested parameter type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(634,670): '@Anno("nested parameter type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested parameter type $prop" -> (KaVariableSignature:
@@ -1757,7 +1757,7 @@ KtDeclarationModifierList(676,719): '@Anno("nested nested parameter type $prop")
   NO_CANDIDATES
 
 KtAnnotationEntry(676,719): '@Anno("nested nested parameter type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested nested parameter type $prop" -> (KaVariableSignature:
@@ -1880,7 +1880,7 @@ KtDeclarationModifierList(735,761): '@Anno("return type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(735,761): '@Anno("return type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "return type $prop" -> (KaVariableSignature:
@@ -2006,7 +2006,7 @@ KtDeclarationModifierList(767,800): '@Anno("nested return type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(767,800): '@Anno("nested return type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested return type $prop" -> (KaVariableSignature:
@@ -2132,7 +2132,7 @@ KtDeclarationModifierList(806,846): '@Anno("nested nested return type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(806,846): '@Anno("nested nested return type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested nested return type $prop" -> (KaVariableSignature:
@@ -2261,7 +2261,7 @@ KtDeclarationModifierList(871,901): '@Anno("constraint type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(871,901): '@Anno("constraint type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "constraint type $prop" -> (KaVariableSignature:
@@ -2390,7 +2390,7 @@ KtDeclarationModifierList(913,950): '@Anno("nested constraint type $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(913,950): '@Anno("nested constraint type $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         "nested constraint type $prop" -> (KaVariableSignature:

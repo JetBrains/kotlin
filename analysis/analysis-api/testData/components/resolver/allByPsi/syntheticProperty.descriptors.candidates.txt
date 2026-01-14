@@ -38,7 +38,7 @@ KtBlockExpression(72,300): '{'
   NO_CANDIDATES
 
 KtCallExpression(78,104): 'print(javaClass.something)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         javaClass.something -> (KaVariableSignature:
@@ -70,7 +70,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         javaClass.something -> (KaVariableSignature:
@@ -103,7 +103,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Boolean was expected>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         javaClass.something -> (KaVariableSignature:
@@ -136,7 +136,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         javaClass.something -> (KaVariableSignature:
@@ -169,7 +169,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Char was expected>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         javaClass.something -> (KaVariableSignature:
@@ -202,7 +202,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but CharArray was expected>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         javaClass.something -> (KaVariableSignature:
@@ -235,7 +235,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         javaClass.something -> (KaVariableSignature:
@@ -268,7 +268,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         javaClass.something -> (KaVariableSignature:
@@ -300,7 +300,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         javaClass.something -> (KaVariableSignature:
@@ -333,7 +333,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         javaClass.something -> (KaVariableSignature:

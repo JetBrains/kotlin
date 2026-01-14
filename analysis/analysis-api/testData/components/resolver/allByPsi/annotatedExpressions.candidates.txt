@@ -23,7 +23,7 @@ KtDeclarationModifierList(38,124): '@Target(AnnotationTarget.EXPRESSION)'
   NO_CANDIDATES
 
 KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         AnnotationTarget.EXPRESSION -> (KaVariableSignature:
@@ -164,7 +164,7 @@ KtNameReferenceExpression(63,73): 'EXPRESSION'
     isInBestCandidates = true
 
 KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         AnnotationRetention.SOURCE -> (KaVariableSignature:
@@ -335,7 +335,7 @@ KtAnnotatedExpression(172,226): '@Anno(0 + integer) (@Anno(integer) usage()).toS
   NO_CANDIDATES
 
 KtAnnotationEntry(172,190): '@Anno(0 + integer)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         0 + integer -> (KaVariableSignature:
@@ -914,7 +914,7 @@ KtAnnotatedExpression(192,214): '@Anno(integer) usage()'
   NO_CANDIDATES
 
 KtAnnotationEntry(192,206): '@Anno(integer)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       argumentMapping = {
         integer -> (KaVariableSignature:
@@ -1013,7 +1013,7 @@ KtNameReferenceExpression(198,205): 'integer'
     isInBestCandidates = true
 
 KtCallExpression(207,214): 'usage()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1050,7 +1050,7 @@ KtValueArgumentList(212,214): '()'
   NO_CANDIDATES
 
 KtCallExpression(216,226): 'toString()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1069,7 +1069,7 @@ KtCallExpression(216,226): 'toString()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

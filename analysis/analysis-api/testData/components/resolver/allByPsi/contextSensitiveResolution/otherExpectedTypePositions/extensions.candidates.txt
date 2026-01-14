@@ -56,7 +56,7 @@ KtParameterList(163,165): '()'
   NO_CANDIDATES
 
 KtCallExpression(168,177): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -123,7 +123,7 @@ KtBlockExpression(222,259): '{'
   NO_CANDIDATES
 
 KtCallExpression(228,244): 'foo(MyClass.bar)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         MyClass.bar -> (KaVariableSignature:
@@ -261,7 +261,7 @@ KtNameReferenceExpression(240,243): 'bar'
     isInBestCandidates = true
 
 KtCallExpression(249,257): 'foo(bar)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         bar -> (KaVariableSignature:
@@ -381,7 +381,7 @@ KtParameterList(342,344): '()'
   NO_CANDIDATES
 
 KtCallExpression(347,357): 'MyClass2()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -448,7 +448,7 @@ KtBlockExpression(397,437): '{'
   NO_CANDIDATES
 
 KtCallExpression(403,421): 'foo2(MyClass2.bar)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         MyClass2.bar -> (KaVariableSignature:
@@ -580,7 +580,7 @@ KtNameReferenceExpression(417,420): 'bar'
     isInBestCandidates = true
 
 KtCallExpression(426,435): 'foo2(bar)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         bar -> (KaVariableSignature:

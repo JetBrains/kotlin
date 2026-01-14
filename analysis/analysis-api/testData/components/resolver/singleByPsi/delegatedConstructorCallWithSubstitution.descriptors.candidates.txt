@@ -1,5 +1,5 @@
 KtSuperTypeCallEntry(93,111): 'Foo<String>("str")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         "str" -> (KaVariableSignature:

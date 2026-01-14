@@ -110,7 +110,7 @@ KtBlockExpression(270,317): '{'
   NO_CANDIDATES
 
 KtCallExpression(276,293): 'lEnum(EnumValue1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:
@@ -191,7 +191,7 @@ KtNameReferenceExpression(282,292): 'EnumValue1'
     isInBestCandidates = true
 
 KtCallExpression(298,315): 'lEnum(EnumValue2)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         EnumValue2 -> (KaVariableSignature:
@@ -317,7 +317,7 @@ KtBlockExpression(381,501): '{'
   NO_CANDIDATES
 
 KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { EnumValue1 } -> (KaVariableSignature:
@@ -435,7 +435,7 @@ KtNameReferenceExpression(411,421): 'EnumValue1'
     isInBestCandidates = true
 
 KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { EnumValue3 } -> (KaVariableSignature:
@@ -553,7 +553,7 @@ KtNameReferenceExpression(452,462): 'EnumValue3'
     isInBestCandidates = true
 
 KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { prop } -> (KaVariableSignature:

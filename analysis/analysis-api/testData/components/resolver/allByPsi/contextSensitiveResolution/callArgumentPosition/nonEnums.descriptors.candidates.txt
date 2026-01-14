@@ -38,7 +38,7 @@ KtNameReferenceExpression(91,98): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(101,107): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -54,7 +54,7 @@ KtCallExpression(101,107): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -137,7 +137,7 @@ KtSuperTypeList(167,176): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(167,176): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -278,7 +278,7 @@ KtNameReferenceExpression(285,286): 'X'
   NO_CANDIDATES
 
 KtCallExpression(289,295): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -294,7 +294,7 @@ KtCallExpression(289,295): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -383,7 +383,7 @@ KtBlockExpression(315,640): '{'
   NO_CANDIDATES
 
 KtCallExpression(321,341): 'expectInt(MAX_VALUE)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         MAX_VALUE -> (KaVariableSignature:
@@ -458,7 +458,7 @@ KtNameReferenceExpression(331,340): 'MAX_VALUE'
   NO_CANDIDATES
 
 KtCallExpression(347,365): 'expectMyClass(FOO)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         FOO -> (KaVariableSignature:
@@ -533,7 +533,7 @@ KtNameReferenceExpression(361,364): 'FOO'
   NO_CANDIDATES
 
 KtCallExpression(370,392): 'expectMyClass(id(FOO))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(FOO) -> (KaVariableSignature:
@@ -605,7 +605,7 @@ KtValueArgument(384,391): 'id(FOO)'
   NO_CANDIDATES
 
 KtCallExpression(384,391): 'id(FOO)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         FOO -> (KaVariableSignature:
@@ -686,7 +686,7 @@ KtNameReferenceExpression(387,390): 'FOO'
   NO_CANDIDATES
 
 KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         FOR_TYPE_MISMATCH -> (KaVariableSignature:
@@ -761,7 +761,7 @@ KtNameReferenceExpression(412,429): 'FOR_TYPE_MISMATCH'
   NO_CANDIDATES
 
 KtCallExpression(435,471): 'expectMyClass(id(FOR_TYPE_MISMATCH))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(FOR_TYPE_MISMATCH) -> (KaVariableSignature:
@@ -833,7 +833,7 @@ KtValueArgument(449,470): 'id(FOR_TYPE_MISMATCH)'
   NO_CANDIDATES
 
 KtCallExpression(449,470): 'id(FOR_TYPE_MISMATCH)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         FOR_TYPE_MISMATCH -> (KaVariableSignature:
@@ -914,7 +914,7 @@ KtNameReferenceExpression(452,469): 'FOR_TYPE_MISMATCH'
   NO_CANDIDATES
 
 KtCallExpression(477,495): 'expectMyClass(Bar)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Bar -> (KaVariableSignature:
@@ -989,7 +989,7 @@ KtNameReferenceExpression(491,494): 'Bar'
   NO_CANDIDATES
 
 KtCallExpression(500,522): 'expectMyClass(id(Bar))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(Bar) -> (KaVariableSignature:
@@ -1061,7 +1061,7 @@ KtValueArgument(514,521): 'id(Bar)'
   NO_CANDIDATES
 
 KtCallExpression(514,521): 'id(Bar)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Bar -> (KaVariableSignature:
@@ -1142,7 +1142,7 @@ KtNameReferenceExpression(517,520): 'Bar'
   NO_CANDIDATES
 
 KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         ForTypeMismatch -> (KaVariableSignature:
@@ -1217,7 +1217,7 @@ KtNameReferenceExpression(542,557): 'ForTypeMismatch'
   NO_CANDIDATES
 
 KtCallExpression(563,597): 'expectMyClass(id(ForTypeMismatch))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(ForTypeMismatch) -> (KaVariableSignature:
@@ -1289,7 +1289,7 @@ KtValueArgument(577,596): 'id(ForTypeMismatch)'
   NO_CANDIDATES
 
 KtCallExpression(577,596): 'id(ForTypeMismatch)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         ForTypeMismatch -> (KaVariableSignature:
@@ -1406,7 +1406,7 @@ KtNameReferenceExpression(603,612): 'JavaClass'
   NO_CANDIDATES
 
 KtCallExpression(613,638): 'expectJavaClass(INSTANCE)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         INSTANCE -> (KaVariableSignature:

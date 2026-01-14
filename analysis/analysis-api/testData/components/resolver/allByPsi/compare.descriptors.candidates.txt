@@ -350,7 +350,7 @@ KtConstantExpression(28,29): '1'
   NO_CANDIDATES
 
 KtCallExpression(30,42): 'compareTo(2)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
@@ -386,7 +386,7 @@ KtCallExpression(30,42): 'compareTo(2)'
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Byte>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
@@ -422,7 +422,7 @@ KtCallExpression(30,42): 'compareTo(2)'
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Double>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
@@ -458,7 +458,7 @@ KtCallExpression(30,42): 'compareTo(2)'
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Float>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
@@ -493,7 +493,7 @@ KtCallExpression(30,42): 'compareTo(2)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
@@ -529,7 +529,7 @@ KtCallExpression(30,42): 'compareTo(2)'
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Long>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
@@ -923,7 +923,7 @@ KtProperty(85,108): 'val myClass = MyClass()'
   NO_CANDIDATES
 
 KtCallExpression(99,108): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1122,7 +1122,7 @@ KtNameReferenceExpression(135,142): 'myClass'
     isInBestCandidates = true
 
 KtCallExpression(143,160): 'compareTo(number)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         number -> (KaVariableSignature:

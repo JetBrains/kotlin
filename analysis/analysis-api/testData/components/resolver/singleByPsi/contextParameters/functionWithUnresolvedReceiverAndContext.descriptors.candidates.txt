@@ -1,5 +1,5 @@
 KtCallExpression(96,101): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -18,7 +18,7 @@ KtCallExpression(96,101): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -55,7 +55,7 @@ KtCallExpression(96,101): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

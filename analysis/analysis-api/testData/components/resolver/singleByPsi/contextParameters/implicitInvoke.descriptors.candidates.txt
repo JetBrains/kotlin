@@ -1,5 +1,5 @@
 KtCallExpression(117,127): 'thisProp()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []

@@ -704,7 +704,7 @@ KtNameReferenceExpression(195,207): 'newParameter'
     isInBestCandidates = true
 
 KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
@@ -740,7 +740,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
@@ -776,7 +776,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
@@ -812,7 +812,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
@@ -847,7 +847,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
@@ -883,7 +883,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
@@ -919,7 +919,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
@@ -1268,7 +1268,7 @@ KtNameReferenceExpression(213,222): 'parameter'
     isInBestCandidates = true
 
 KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         oneMoreParameter -> (KaVariableSignature:

@@ -71,7 +71,7 @@ KtNameReferenceExpression(51,57): 'String'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(61,74): 'this((((i))))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -106,7 +106,7 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -149,7 +149,7 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -193,7 +193,7 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(61,65): 'this'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -228,7 +228,7 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -271,7 +271,7 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -378,7 +378,7 @@ KtNameReferenceExpression(104,107): 'Int'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -413,7 +413,7 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -456,7 +456,7 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -500,7 +500,7 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(111,115): 'this'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -535,7 +535,7 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -578,7 +578,7 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         (((i))) -> (KaVariableSignature:
@@ -703,7 +703,7 @@ KtParameterList(172,174): '()'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(177,189): 'super(((1)))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((1)) -> (KaVariableSignature:
@@ -738,7 +738,7 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((1)) -> (KaVariableSignature:
@@ -781,7 +781,7 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((1)) -> (KaVariableSignature:
@@ -825,7 +825,7 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(177,182): 'super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((1)) -> (KaVariableSignature:
@@ -860,7 +860,7 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((1)) -> (KaVariableSignature:
@@ -903,7 +903,7 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((1)) -> (KaVariableSignature:
@@ -980,7 +980,7 @@ KtNameReferenceExpression(214,217): 'Int'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((value)) -> (KaVariableSignature:
@@ -1015,7 +1015,7 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((value)) -> (KaVariableSignature:
@@ -1058,7 +1058,7 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((value)) -> (KaVariableSignature:
@@ -1102,7 +1102,7 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(221,226): 'super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((value)) -> (KaVariableSignature:
@@ -1137,7 +1137,7 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((value)) -> (KaVariableSignature:
@@ -1180,7 +1180,7 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((value)) -> (KaVariableSignature:
@@ -1278,7 +1278,7 @@ KtNameReferenceExpression(266,272): 'String'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
@@ -1313,7 +1313,7 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
@@ -1356,7 +1356,7 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
@@ -1400,7 +1400,7 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(276,281): 'super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
@@ -1435,7 +1435,7 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
@@ -1478,7 +1478,7 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         ((5)) as Int -> (KaVariableSignature:

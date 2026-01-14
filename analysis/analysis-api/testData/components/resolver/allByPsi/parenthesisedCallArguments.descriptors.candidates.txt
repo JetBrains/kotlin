@@ -155,7 +155,7 @@ KtConstantExpression(195,196): '1'
   NO_CANDIDATES
 
 KtCallExpression(202,208): 'foo(3)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         3 -> (KaVariableSignature:
@@ -230,7 +230,7 @@ KtConstantExpression(206,207): '3'
   NO_CANDIDATES
 
 KtCallExpression(213,223): 'foo(((5)))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         ((5)) -> (KaVariableSignature:
@@ -311,7 +311,7 @@ KtConstantExpression(219,220): '5'
   NO_CANDIDATES
 
 KtCallExpression(228,242): 'foo(x = ((5)))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         ((5)) -> (KaVariableSignature:
@@ -398,7 +398,7 @@ KtConstantExpression(238,239): '5'
   NO_CANDIDATES
 
 KtCallExpression(247,266): 'foo((((5 as Int))))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         (((5 as Int))) -> (KaVariableSignature:
@@ -497,7 +497,7 @@ KtNameReferenceExpression(259,262): 'Int'
   NO_CANDIDATES
 
 KtCallExpression(271,294): 'foo(x = (((5 as Int))))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         (((5 as Int))) -> (KaVariableSignature:
@@ -602,7 +602,7 @@ KtNameReferenceExpression(287,290): 'Int'
   NO_CANDIDATES
 
 KtCallExpression(300,368): 'foo((((when (((value))) {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         (((when (((value))) {
@@ -734,7 +734,7 @@ KtConstantExpression(357,358): '2'
   NO_CANDIDATES
 
 KtCallExpression(374,394): 'foo(((((++value)))))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         ((((++value)))) -> (KaVariableSignature:
@@ -912,7 +912,7 @@ KtNameReferenceExpression(384,389): 'value'
     isInBestCandidates = true
 
 KtCallExpression(400,426): 'fooVararg((5), (5 as Int))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         (5) -> (KaVariableSignature:
@@ -1028,7 +1028,7 @@ KtNameReferenceExpression(421,424): 'Int'
   NO_CANDIDATES
 
 KtCallExpression(431,458): 'fooVararg(*(intArrayOf(5)))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         (intArrayOf(5)) -> (KaVariableSignature:
@@ -1103,7 +1103,7 @@ KtParenthesizedExpression(442,457): '(intArrayOf(5))'
   NO_CANDIDATES
 
 KtCallExpression(443,456): 'intArrayOf(5)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         5 -> (KaVariableSignature:
@@ -1178,7 +1178,7 @@ KtConstantExpression(454,455): '5'
   NO_CANDIDATES
 
 KtCallExpression(463,493): 'fooVararg(x = (intArrayOf(5)))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         (intArrayOf(5)) -> (KaVariableSignature:
@@ -1259,7 +1259,7 @@ KtParenthesizedExpression(477,492): '(intArrayOf(5))'
   NO_CANDIDATES
 
 KtCallExpression(478,491): 'intArrayOf(5)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         5 -> (KaVariableSignature:
@@ -1334,7 +1334,7 @@ KtConstantExpression(489,490): '5'
   NO_CANDIDATES
 
 KtCallExpression(499,523): 'fooLambda((({ _ -> 5})))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         (({ _ -> 5})) -> (KaVariableSignature:
@@ -1430,7 +1430,7 @@ KtConstantExpression(518,519): '5'
   NO_CANDIDATES
 
 KtCallExpression(529,554): 'fooSam((((MySam { 5 }))))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         (((MySam { 5 }))) -> (KaVariableSignature:
@@ -1511,7 +1511,7 @@ KtParenthesizedExpression(538,551): '(MySam { 5 })'
   NO_CANDIDATES
 
 KtCallExpression(539,550): 'MySam { 5 }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { 5 } -> (KaVariableSignature:

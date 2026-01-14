@@ -74,7 +74,7 @@ KtNameReferenceExpression(114,121): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(124,133): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -120,7 +120,7 @@ KtParameterList(151,153): '()'
   NO_CANDIDATES
 
 KtCallExpression(156,165): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -166,7 +166,7 @@ KtBlockExpression(180,260): '{'
   NO_CANDIDATES
 
 KtCallExpression(186,191): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -185,7 +185,7 @@ KtCallExpression(186,191): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -282,7 +282,7 @@ KtParenthesizedExpression(204,217): '(((foo)())())'
   NO_CANDIDATES
 
 KtCallExpression(205,216): '((foo)())()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -305,7 +305,7 @@ KtParenthesizedExpression(205,214): '((foo)())'
   NO_CANDIDATES
 
 KtCallExpression(206,213): '(foo)()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -324,7 +324,7 @@ KtCallExpression(206,213): '(foo)()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -368,7 +368,7 @@ KtValueArgumentList(214,216): '()'
   NO_CANDIDATES
 
 KtCallExpression(218,226): 'invoke()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -449,7 +449,7 @@ KtNameReferenceExpression(231,234): 'foo'
     isInBestCandidates = true
 
 KtCallExpression(235,243): 'invoke()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -492,7 +492,7 @@ KtValueArgumentList(241,243): '()'
   NO_CANDIDATES
 
 KtCallExpression(248,258): 'property()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []

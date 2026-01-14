@@ -23,7 +23,7 @@ KtSuperTypeList(128,137): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(128,137): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -92,7 +92,7 @@ KtNameReferenceExpression(187,194): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(197,206): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -294,7 +294,7 @@ KtNameReferenceExpression(400,401): 'T'
   NO_CANDIDATES
 
 KtCallExpression(404,407): 'b()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -809,7 +809,7 @@ KtNameReferenceExpression(772,788): 'ClassMemberAlias'
     isInBestCandidates = true
 
 KtCallExpression(794,1278): 'receive<MyClass>('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         if (i == 0) {
@@ -1424,7 +1424,7 @@ KtNameReferenceExpression(1256,1272): 'ClassMemberAlias'
     isInBestCandidates = true
 
 KtCallExpression(1284,1555): 'run<MyClass> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -1470,7 +1470,7 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
       }
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {

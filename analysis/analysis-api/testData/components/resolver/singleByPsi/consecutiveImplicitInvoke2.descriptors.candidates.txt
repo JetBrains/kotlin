@@ -1,5 +1,5 @@
 KtCallExpression(135,140): 'i()()'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -19,7 +19,7 @@ KtCallExpression(135,140): 'i()()'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Long but Double was expected>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -39,7 +39,7 @@ KtCallExpression(135,140): 'i()()'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Long but Int was expected>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []

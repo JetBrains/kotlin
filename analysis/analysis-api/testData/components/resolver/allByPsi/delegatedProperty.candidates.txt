@@ -35,7 +35,7 @@ KtPropertyDelegate(74,87): 'by Delegate()'
   NO_CANDIDATES
 
 KtCallExpression(77,87): 'Delegate()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

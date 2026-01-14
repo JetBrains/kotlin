@@ -395,7 +395,7 @@ KtOperationReferenceExpression(491,493): '!!'
     isInBestCandidates = true
 
 KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         Option1!! -> (KaVariableSignature:
@@ -561,7 +561,7 @@ KtOperationReferenceExpression(522,524): '!!'
     isInBestCandidates = true
 
 KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         enumProp!! -> (KaVariableSignature:
@@ -727,7 +727,7 @@ KtOperationReferenceExpression(554,556): '!!'
     isInBestCandidates = true
 
 KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         stringProp!! -> (KaVariableSignature:

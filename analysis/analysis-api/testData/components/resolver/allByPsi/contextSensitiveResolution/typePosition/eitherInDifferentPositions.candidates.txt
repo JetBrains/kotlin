@@ -999,7 +999,7 @@ KtNameReferenceExpression(397,398): 's'
     isInBestCandidates = true
 
 KtCallExpression(399,409): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1146,7 +1146,7 @@ KtStringTemplateExpression(430,432): '""'
   NO_CANDIDATES
 
 KtCallExpression(433,443): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1628,7 +1628,7 @@ KtNameReferenceExpression(514,519): 'value'
     isInBestCandidates = true
 
 KtCallExpression(521,527): 'div(1)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -1664,7 +1664,7 @@ KtCallExpression(521,527): 'div(1)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -1700,7 +1700,7 @@ KtCallExpression(521,527): 'div(1)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -1736,7 +1736,7 @@ KtCallExpression(521,527): 'div(1)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -1771,7 +1771,7 @@ KtCallExpression(521,527): 'div(1)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -1807,7 +1807,7 @@ KtCallExpression(521,527): 'div(1)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

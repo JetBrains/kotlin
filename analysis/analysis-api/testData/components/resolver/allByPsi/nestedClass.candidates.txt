@@ -65,7 +65,7 @@ KtSuperTypeList(74,81): 'Base(x)'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(74,81): 'Base(x)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         x -> (KaVariableSignature:

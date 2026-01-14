@@ -149,7 +149,7 @@ KtNameReferenceExpression(266,267): 'X'
   NO_CANDIDATES
 
 KtCallExpression(270,276): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -165,7 +165,7 @@ KtCallExpression(270,276): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -245,7 +245,7 @@ KtBlockExpression(289,387): '{'
   NO_CANDIDATES
 
 KtCallExpression(295,301): 'foo(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -277,7 +277,7 @@ KtCallExpression(295,301): 'foo(X)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -384,7 +384,7 @@ KtNameReferenceExpression(299,300): 'X'
   NO_CANDIDATES
 
 KtCallExpression(306,316): 'foo(id(X))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(X) -> (KaVariableSignature:
@@ -416,7 +416,7 @@ KtCallExpression(306,316): 'foo(id(X))'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(X) -> (KaVariableSignature:
@@ -520,7 +520,7 @@ KtValueArgument(310,315): 'id(X)'
   NO_CANDIDATES
 
 KtCallExpression(310,315): 'id(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -599,7 +599,7 @@ KtNameReferenceExpression(313,314): 'X'
   NO_CANDIDATES
 
 KtCallExpression(321,335): 'foo(MyEnum1.X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         MyEnum1.X -> (KaVariableSignature:
@@ -631,7 +631,7 @@ KtCallExpression(321,335): 'foo(MyEnum1.X)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         MyEnum1.X -> (KaVariableSignature:
@@ -797,7 +797,7 @@ KtNameReferenceExpression(333,334): 'X'
     isInBestCandidates = true
 
 KtCallExpression(340,358): 'foo(id(MyEnum1.X))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(MyEnum1.X) -> (KaVariableSignature:
@@ -829,7 +829,7 @@ KtCallExpression(340,358): 'foo(id(MyEnum1.X))'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(MyEnum1.X) -> (KaVariableSignature:
@@ -935,7 +935,7 @@ KtValueArgument(344,357): 'id(MyEnum1.X)'
   NO_CANDIDATES
 
 KtCallExpression(344,357): 'id(MyEnum1.X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         MyEnum1.X -> (KaVariableSignature:
@@ -1071,7 +1071,7 @@ KtNameReferenceExpression(355,356): 'X'
     isInBestCandidates = true
 
 KtCallExpression(364,370): 'bar(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -1164,7 +1164,7 @@ KtNameReferenceExpression(368,369): 'X'
     isInBestCandidates = true
 
 KtCallExpression(375,385): 'bar(id(X))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(X) -> (KaVariableSignature:
@@ -1236,7 +1236,7 @@ KtValueArgument(379,384): 'id(X)'
   NO_CANDIDATES
 
 KtCallExpression(379,384): 'id(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -1384,7 +1384,7 @@ KtBlockExpression(454,456): '{}'
   NO_CANDIDATES
 
 KtCallExpression(462,468): 'bar(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -1416,7 +1416,7 @@ KtCallExpression(462,468): 'bar(X)'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -1448,7 +1448,7 @@ KtCallExpression(462,468): 'bar(X)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -1587,7 +1587,7 @@ KtNameReferenceExpression(466,467): 'X'
   NO_CANDIDATES
 
 KtCallExpression(473,483): 'bar(id(X))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(X) -> (KaVariableSignature:
@@ -1619,7 +1619,7 @@ KtCallExpression(473,483): 'bar(id(X))'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(X) -> (KaVariableSignature:
@@ -1651,7 +1651,7 @@ KtCallExpression(473,483): 'bar(id(X))'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         id(X) -> (KaVariableSignature:
@@ -1787,7 +1787,7 @@ KtValueArgument(477,482): 'id(X)'
   NO_CANDIDATES
 
 KtCallExpression(477,482): 'id(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
@@ -1866,7 +1866,7 @@ KtNameReferenceExpression(480,481): 'X'
   NO_CANDIDATES
 
 KtCallExpression(489,503): 'bar(MyEnum3.X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         MyEnum3.X -> (KaVariableSignature:
@@ -1898,7 +1898,7 @@ KtCallExpression(489,503): 'bar(MyEnum3.X)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         MyEnum3.X -> (KaVariableSignature:
@@ -1931,7 +1931,7 @@ KtCallExpression(489,503): 'bar(MyEnum3.X)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyEnum3', but 'MyEnum1' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         MyEnum3.X -> (KaVariableSignature:

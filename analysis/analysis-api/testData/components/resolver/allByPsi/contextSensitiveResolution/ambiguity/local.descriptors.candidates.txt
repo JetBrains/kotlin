@@ -29,7 +29,7 @@ KtSuperTypeList(114,122): 'Sealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(114,122): 'Sealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -119,7 +119,7 @@ KtSuperTypeList(154,162): 'Sealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(154,162): 'Sealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -191,7 +191,7 @@ KtSuperTypeList(183,191): 'Sealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(183,191): 'Sealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -281,7 +281,7 @@ KtSuperTypeList(223,231): 'Sealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(223,231): 'Sealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -377,7 +377,7 @@ KtSuperTypeList(278,286): 'Sealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(278,286): 'Sealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []

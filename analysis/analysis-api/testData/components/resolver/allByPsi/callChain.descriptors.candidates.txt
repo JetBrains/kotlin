@@ -377,7 +377,7 @@ KtConstantExpression(101,102): '1'
   NO_CANDIDATES
 
 KtCallExpression(103,109): 'foo(2)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
@@ -458,7 +458,7 @@ KtConstantExpression(107,108): '2'
   NO_CANDIDATES
 
 KtCallExpression(110,116): 'bar(3)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         3 -> (KaVariableSignature:
@@ -551,7 +551,7 @@ KtNameReferenceExpression(121,124): 'Int'
   NO_CANDIDATES
 
 KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         4.bar(5).bar(6) -> (KaVariableSignature:
@@ -704,7 +704,7 @@ KtConstantExpression(131,132): '4'
   NO_CANDIDATES
 
 KtCallExpression(133,139): 'bar(5)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         5 -> (KaVariableSignature:
@@ -785,7 +785,7 @@ KtConstantExpression(137,138): '5'
   NO_CANDIDATES
 
 KtCallExpression(140,146): 'bar(6)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         6 -> (KaVariableSignature:
@@ -866,7 +866,7 @@ KtConstantExpression(144,145): '6'
   NO_CANDIDATES
 
 KtCallExpression(148,154): 'bar(0)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         0 -> (KaVariableSignature:

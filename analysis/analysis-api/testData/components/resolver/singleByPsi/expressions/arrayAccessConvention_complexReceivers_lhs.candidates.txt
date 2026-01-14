@@ -1,5 +1,5 @@
 KtArrayAccessExpression(182,188): 'm["a"]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "a" -> (KaVariableSignature:

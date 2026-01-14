@@ -632,7 +632,7 @@ KtProperty(797,808): 'var a = A()'
   NO_CANDIDATES
 
 KtCallExpression(805,808): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -672,7 +672,7 @@ KtProperty(813,838): 'var b = SimpleOperators()'
   NO_CANDIDATES
 
 KtCallExpression(821,838): 'SimpleOperators()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -709,7 +709,7 @@ KtValueArgumentList(836,838): '()'
   NO_CANDIDATES
 
 KtCallExpression(843,1229): 'with(A()){'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         A() -> (KaVariableSignature:
@@ -735,7 +735,7 @@ KtCallExpression(843,1229): 'with(A()){'
                 a += 1
                 thisProp++
                 a = a++
-        
+
                 b + 1
                 +b
                 b[1]
@@ -809,7 +809,7 @@ KtNameReferenceExpression(843,847): 'with'
                 a += 1
                 thisProp++
                 a = a++
-        
+
                 b + 1
                 +b
                 b[1]
@@ -863,7 +863,7 @@ KtValueArgument(848,851): 'A()'
   NO_CANDIDATES
 
 KtCallExpression(848,851): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1479,7 +1479,7 @@ KtConstantExpression(944,945): '1'
   NO_CANDIDATES
 
 KtArrayAccessExpression(954,965): 'thisProp[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -1571,7 +1571,7 @@ KtConstantExpression(963,964): '1'
   NO_CANDIDATES
 
 KtArrayAccessExpression(974,978): 'a[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -1745,7 +1745,7 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
     isInBestCandidates = true
 
 KtArrayAccessExpression(987,998): 'thisProp[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -1933,7 +1933,7 @@ KtOperationReferenceExpression(999,1000): '='
     isInBestCandidates = true
 
 KtCallExpression(1001,1004): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2052,7 +2052,7 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
     isInBestCandidates = true
 
 KtArrayAccessExpression(1013,1017): 'a[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -2240,7 +2240,7 @@ KtOperationReferenceExpression(1018,1019): '='
     isInBestCandidates = true
 
 KtCallExpression(1020,1023): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2277,7 +2277,7 @@ KtValueArgumentList(1021,1023): '()'
   NO_CANDIDATES
 
 KtCallExpression(1032,1042): 'thisProp()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = [
@@ -2350,7 +2350,7 @@ KtValueArgumentList(1040,1042): '()'
   NO_CANDIDATES
 
 KtCallExpression(1051,1054): 'a()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = [
@@ -3537,7 +3537,7 @@ KtNameReferenceExpression(1151,1152): 'b'
     isInBestCandidates = true
 
 KtArrayAccessExpression(1161,1165): 'b[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -3604,7 +3604,7 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -3815,7 +3815,7 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
     isInBestCandidates = false
 
 KtArrayAccessExpression(1174,1178): 'b[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -3896,7 +3896,7 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -4121,7 +4121,7 @@ KtOperationReferenceExpression(1179,1180): '='
     isInBestCandidates = false
 
 KtCallExpression(1181,1184): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -4158,7 +4158,7 @@ KtValueArgumentList(1182,1184): '()'
   NO_CANDIDATES
 
 KtCallExpression(1193,1196): 'b()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = [
@@ -4209,7 +4209,7 @@ KtCallExpression(1193,1196): 'b()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -4677,7 +4677,7 @@ KtProperty(1260,1271): 'var a = A()'
   NO_CANDIDATES
 
 KtCallExpression(1268,1271): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -4717,7 +4717,7 @@ KtProperty(1276,1301): 'var b = SimpleOperators()'
   NO_CANDIDATES
 
 KtCallExpression(1284,1301): 'SimpleOperators()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -4941,7 +4941,7 @@ KtConstantExpression(1318,1319): '1'
   NO_CANDIDATES
 
 KtArrayAccessExpression(1324,1328): 'a[1]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -5069,7 +5069,7 @@ KtBinaryExpression(1333,1343): 'a[1] = A()'
     isInBestCandidates = true
 
 KtArrayAccessExpression(1333,1337): 'a[1]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -5211,7 +5211,7 @@ KtOperationReferenceExpression(1338,1339): '='
     isInBestCandidates = true
 
 KtCallExpression(1340,1343): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -5248,7 +5248,7 @@ KtValueArgumentList(1341,1343): '()'
   NO_CANDIDATES
 
 KtCallExpression(1348,1351): 'a()'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -5854,7 +5854,7 @@ KtNameReferenceExpression(1387,1388): 'b'
     isInBestCandidates = true
 
 KtArrayAccessExpression(1393,1397): 'b[1]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -5898,7 +5898,7 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -6086,7 +6086,7 @@ KtBinaryExpression(1402,1412): 'b[1] = A()'
     isInBestCandidates = false
 
 KtArrayAccessExpression(1402,1406): 'b[1]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -6144,7 +6144,7 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -6346,7 +6346,7 @@ KtOperationReferenceExpression(1407,1408): '='
     isInBestCandidates = false
 
 KtCallExpression(1409,1412): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -6383,7 +6383,7 @@ KtValueArgumentList(1410,1412): '()'
   NO_CANDIDATES
 
 KtCallExpression(1417,1420): 'b()'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -6411,7 +6411,7 @@ KtCallExpression(1417,1420): 'b()'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []

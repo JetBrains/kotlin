@@ -1,5 +1,5 @@
 KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         "a" -> (KaVariableSignature:

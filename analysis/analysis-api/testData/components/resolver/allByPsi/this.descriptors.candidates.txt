@@ -32,7 +32,7 @@ KtBlockExpression(56,123): '{'
   NO_CANDIDATES
 
 KtCallExpression(66,71): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -99,7 +99,7 @@ KtNameReferenceExpression(80,84): 'this'
   NO_CANDIDATES
 
 KtCallExpression(85,90): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -174,7 +174,7 @@ KtLabelReferenceExpression(103,111): '@MyClass'
   NO_CANDIDATES
 
 KtCallExpression(112,117): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -241,7 +241,7 @@ KtBlockExpression(189,306): '{'
   NO_CANDIDATES
 
 KtCallExpression(203,208): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -259,7 +259,7 @@ KtCallExpression(203,208): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -344,7 +344,7 @@ KtNameReferenceExpression(221,225): 'this'
   NO_CANDIDATES
 
 KtCallExpression(226,231): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -419,7 +419,7 @@ KtLabelReferenceExpression(248,259): '@InnerOuter'
   NO_CANDIDATES
 
 KtCallExpression(260,265): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -494,7 +494,7 @@ KtLabelReferenceExpression(282,290): '@MyClass'
   NO_CANDIDATES
 
 KtCallExpression(291,296): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -561,7 +561,7 @@ KtBlockExpression(385,1208): '{'
   NO_CANDIDATES
 
 KtCallExpression(403,408): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -579,7 +579,7 @@ KtCallExpression(403,408): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -597,7 +597,7 @@ KtCallExpression(403,408): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -700,7 +700,7 @@ KtNameReferenceExpression(425,429): 'this'
   NO_CANDIDATES
 
 KtCallExpression(430,435): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -775,7 +775,7 @@ KtLabelReferenceExpression(456,468): '@InnerNested'
   NO_CANDIDATES
 
 KtCallExpression(469,474): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -850,7 +850,7 @@ KtLabelReferenceExpression(495,506): '@InnerOuter'
   NO_CANDIDATES
 
 KtCallExpression(507,512): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -925,7 +925,7 @@ KtLabelReferenceExpression(533,541): '@MyClass'
   NO_CANDIDATES
 
 KtCallExpression(542,547): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1010,7 +1010,7 @@ KtBlockExpression(603,839): '{'
   NO_CANDIDATES
 
 KtCallExpression(625,630): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1048,7 +1048,7 @@ KtCallExpression(625,630): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1066,7 +1066,7 @@ KtCallExpression(625,630): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1189,7 +1189,7 @@ KtNameReferenceExpression(651,655): 'this'
   NO_CANDIDATES
 
 KtCallExpression(656,661): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1264,7 +1264,7 @@ KtLabelReferenceExpression(686,691): '@anon'
   NO_CANDIDATES
 
 KtCallExpression(692,697): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1339,7 +1339,7 @@ KtLabelReferenceExpression(722,734): '@InnerNested'
   NO_CANDIDATES
 
 KtCallExpression(735,740): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1414,7 +1414,7 @@ KtLabelReferenceExpression(765,776): '@InnerOuter'
   NO_CANDIDATES
 
 KtCallExpression(777,782): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1489,7 +1489,7 @@ KtLabelReferenceExpression(807,815): '@MyClass'
   NO_CANDIDATES
 
 KtCallExpression(816,821): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1532,7 +1532,7 @@ KtValueArgumentList(819,821): '()'
   NO_CANDIDATES
 
 KtCallExpression(857,1107): 'myWith { t ->'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { t ->
@@ -1638,7 +1638,7 @@ KtBlockExpression(891,1089): 'foo()'
   NO_CANDIDATES
 
 KtCallExpression(891,896): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1676,7 +1676,7 @@ KtCallExpression(891,896): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1694,7 +1694,7 @@ KtCallExpression(891,896): 'foo()'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1817,7 +1817,7 @@ KtNameReferenceExpression(917,921): 'this'
   NO_CANDIDATES
 
 KtCallExpression(922,927): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1892,7 +1892,7 @@ KtLabelReferenceExpression(952,959): '@myWith'
   NO_CANDIDATES
 
 KtCallExpression(960,965): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -1967,7 +1967,7 @@ KtLabelReferenceExpression(990,1002): '@InnerNested'
   NO_CANDIDATES
 
 KtCallExpression(1003,1008): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2042,7 +2042,7 @@ KtLabelReferenceExpression(1033,1044): '@InnerOuter'
   NO_CANDIDATES
 
 KtCallExpression(1045,1050): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2117,7 +2117,7 @@ KtLabelReferenceExpression(1075,1083): '@MyClass'
   NO_CANDIDATES
 
 KtCallExpression(1084,1089): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2160,7 +2160,7 @@ KtValueArgumentList(1087,1089): '()'
   NO_CANDIDATES
 
 KtCallExpression(1125,1194): 'myWith label@{'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         label@{
@@ -2291,7 +2291,7 @@ KtLabelReferenceExpression(1164,1170): '@label'
   NO_CANDIDATES
 
 KtCallExpression(1171,1176): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -2403,7 +2403,7 @@ KtBlockExpression(1266,1284): '{'
   NO_CANDIDATES
 
 KtCallExpression(1272,1282): 'body(this)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         this -> (KaVariableSignature:
@@ -2459,7 +2459,7 @@ KtCallExpression(1272,1282): 'body(this)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         this -> (KaVariableSignature:

@@ -130,7 +130,7 @@ KtNameReferenceExpression(80,84): 'prop'
     isInBestCandidates = true
 
 KtCallExpression(85,94): 'action1()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -174,7 +174,7 @@ KtValueArgumentList(92,94): '()'
   NO_CANDIDATES
 
 KtCallExpression(99,112): 'action1(prop)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         prop -> (KaVariableSignature:
@@ -282,7 +282,7 @@ KtValueArgumentList(130,132): '()'
   NO_CANDIDATES
 
 KtCallExpression(151,164): 'action2(prop)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {
         prop -> (KaVariableSignature:

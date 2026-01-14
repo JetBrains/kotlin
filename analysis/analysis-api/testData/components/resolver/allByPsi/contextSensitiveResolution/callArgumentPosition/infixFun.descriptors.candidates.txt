@@ -35,7 +35,7 @@ KtSuperTypeList(166,175): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(166,175): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []

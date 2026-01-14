@@ -119,7 +119,7 @@ KtNameReferenceExpression(238,248): 'InnerAlias'
   NO_CANDIDATES
 
 KtCallExpression(251,263): 'InnerClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

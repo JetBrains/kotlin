@@ -1130,7 +1130,7 @@ KtBlockExpression(1095,1097): '{}'
   NO_CANDIDATES
 
 KtCallExpression(1103,1130): 'foo { (first, second,) -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { (first, second,) -> } -> (KaVariableSignature:
@@ -1223,7 +1223,7 @@ KtBlockExpression(1129,1129): ''
   NO_CANDIDATES
 
 KtCallExpression(1135,1153): 'foo { (first) -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { (first) -> } -> (KaVariableSignature:
@@ -1313,7 +1313,7 @@ KtBlockExpression(1152,1152): ''
   NO_CANDIDATES
 
 KtCallExpression(1158,1184): 'foo { (first: String) -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { (first: String) -> } -> (KaVariableSignature:
@@ -1412,7 +1412,7 @@ KtBlockExpression(1183,1183): ''
   NO_CANDIDATES
 
 KtCallExpression(1189,1219): 'foo { (a: Int, b: String) -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { (a: Int, b: String) -> } -> (KaVariableSignature:
@@ -1523,7 +1523,7 @@ KtBlockExpression(1218,1218): ''
   NO_CANDIDATES
 
 KtCallExpression(1224,1238): 'foo { (_) -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { (_) -> } -> (KaVariableSignature:
@@ -1613,7 +1613,7 @@ KtBlockExpression(1237,1237): ''
   NO_CANDIDATES
 
 KtCallExpression(1243,1265): 'foo { (_: String) -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { (_: String) -> } -> (KaVariableSignature:
@@ -1712,7 +1712,7 @@ KtBlockExpression(1264,1264): ''
   NO_CANDIDATES
 
 KtCallExpression(1287,1310): 'foo { (aa = first) -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { (aa = first) -> } -> (KaVariableSignature:
@@ -1805,7 +1805,7 @@ KtBlockExpression(1309,1309): ''
   NO_CANDIDATES
 
 KtCallExpression(1315,1346): 'foo { (aa: String = first) -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { (aa: String = first) -> } -> (KaVariableSignature:
@@ -1907,7 +1907,7 @@ KtBlockExpression(1345,1345): ''
   NO_CANDIDATES
 
 KtCallExpression(1351,1398): 'foo { (first: Int = a, second: String = b) -> }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         { (first: Int = a, second: String = b) -> } -> (KaVariableSignature:

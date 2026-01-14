@@ -1,5 +1,5 @@
 KtCallExpression(108,119): 'processB(a)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         a -> (KaVariableSignature:

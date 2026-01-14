@@ -35,7 +35,7 @@ KtSuperTypeList(166,175): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(166,175): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -122,7 +122,7 @@ KtNameReferenceExpression(220,227): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(230,236): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -138,7 +138,7 @@ KtCallExpression(230,236): 'TODO()'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

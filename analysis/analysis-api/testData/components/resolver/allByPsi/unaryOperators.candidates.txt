@@ -311,7 +311,7 @@ KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
     isInBestCandidates = true
 
 KtCallExpression(88,97): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -348,7 +348,7 @@ KtValueArgumentList(95,97): '()'
   NO_CANDIDATES
 
 KtCallExpression(98,110): 'unaryMinus()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -391,7 +391,7 @@ KtValueArgumentList(108,110): '()'
   NO_CANDIDATES
 
 KtCallExpression(111,116): 'not()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []

@@ -282,24 +282,24 @@ internal fun compareCalls(call1: KaCall, call2: KaCall): Int {
 context(_: KaSession)
 internal fun assertStableSymbolResult(
     testServices: TestServices,
-    firstCandidates: List<KaCallCandidateInfo>,
-    secondCandidates: List<KaCallCandidateInfo>,
+    firstCandidates: List<KaCallCandidate>,
+    secondCandidates: List<KaCallCandidate>,
 ) {
     val assertions = testServices.assertions
     assertions.assertEquals(firstCandidates.size, secondCandidates.size)
 
     for ((firstCandidate, secondCandidate) in firstCandidates.zip(secondCandidates)) {
         assertions.assertEquals(firstCandidate::class, secondCandidate::class)
-        assertStableResult(testServices, firstCandidate.candidate, secondCandidate.candidate)
+        assertStableResult(testServices, firstCandidate.candidate as KaCall, secondCandidate.candidate as KaCall)
         assertions.assertEquals(firstCandidate.isInBestCandidates, secondCandidate.isInBestCandidates)
 
         when (firstCandidate) {
-            is KaApplicableCallCandidateInfo -> {}
-            is KaInapplicableCallCandidateInfo -> {
+            is KaApplicableCallCandidate -> {}
+            is KaInapplicableCallCandidate -> {
                 assertStableResult(
                     testServices = testServices,
                     firstDiagnostic = firstCandidate.diagnostic,
-                    secondDiagnostic = (secondCandidate as KaInapplicableCallCandidateInfo).diagnostic,
+                    secondDiagnostic = (secondCandidate as KaInapplicableCallCandidate).diagnostic,
                 )
             }
         }

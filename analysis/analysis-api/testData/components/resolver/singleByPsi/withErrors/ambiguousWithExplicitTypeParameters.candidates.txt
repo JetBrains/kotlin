@@ -1,5 +1,5 @@
 KtCallExpression(128,144): 'function<Int>(1)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -41,7 +41,7 @@ KtCallExpression(128,144): 'function<Int>(1)'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'a'.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -83,7 +83,7 @@ KtCallExpression(128,144): 'function<Int>(1)'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:

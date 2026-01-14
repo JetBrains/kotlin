@@ -23,7 +23,7 @@ KtSuperTypeList(128,137): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(128,137): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -107,7 +107,7 @@ KtNameReferenceExpression(187,194): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(197,206): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       contextArguments = []
@@ -204,7 +204,7 @@ KtSuperTypeList(372,384): 'Exception(m)'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(372,384): 'Exception(m)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -222,7 +222,7 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final fun `<init>`(): kotlin.Exception /* = java.lang.Exception */ defined in kotlin.Exception>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -256,7 +256,7 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Throwable! was expected>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -289,7 +289,7 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -330,7 +330,7 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -804,7 +804,7 @@ KtSuperTypeList(406,418): 'Exception(m)'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(406,418): 'Exception(m)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -822,7 +822,7 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final fun `<init>`(): kotlin.Exception /* = java.lang.Exception */ defined in kotlin.Exception>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -856,7 +856,7 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Throwable! was expected>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -889,7 +889,7 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -930,7 +930,7 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -1404,7 +1404,7 @@ KtSuperTypeList(440,452): 'Exception(m)'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(440,452): 'Exception(m)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       contextArguments = []
@@ -1422,7 +1422,7 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final fun `<init>`(): kotlin.Exception /* = java.lang.Exception */ defined in kotlin.Exception>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -1456,7 +1456,7 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Throwable! was expected>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -1489,7 +1489,7 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -1530,7 +1530,7 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
         m -> (KaVariableSignature:
@@ -2049,7 +2049,7 @@ KtNameReferenceExpression(503,504): 'T'
   NO_CANDIDATES
 
 KtCallExpression(507,510): 'b()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
@@ -2201,7 +2201,7 @@ KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
     isInBestCandidates = true
 
 KtCallExpression(1108,1497): 'receive<MyClass>('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         try {
@@ -2449,7 +2449,7 @@ KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
     isInBestCandidates = true
 
 KtCallExpression(1503,1887): 'run<MyClass> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
@@ -2499,7 +2499,7 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
       }
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {

@@ -56,7 +56,7 @@ KtBlockExpression(151,168): '{'
   NO_CANDIDATES
 
 KtCallExpression(157,166): 'foo(X, Y)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         X -> (KaVariableSignature:
