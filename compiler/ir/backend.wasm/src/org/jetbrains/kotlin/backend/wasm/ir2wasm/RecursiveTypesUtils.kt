@@ -132,10 +132,12 @@ private class WasmTypeDeclaratorByFingerprint(
         private val k0 = 0xc3a5c85c97cb3127U
         private val k1 = 0xb492b66fbe98f273U
         private val k2 = 0x9ae16a3b2f90404fU
+        private val k3 = 0xc949d7c7509e6557U
 
         private val structHash = Hash128Bits(k0, k1)
-        private val functionHash = Hash128Bits(k1, k2)
-        private val arrayHash = Hash128Bits(k2, k0)
+        private val function1Hash = Hash128Bits(k1, k2)
+        private val function2Hash = Hash128Bits(k2, k3)
+        private val arrayHash = Hash128Bits(k3, k0)
     }
 
     private fun combine(hash: Hash128Bits, type: WasmType): Hash128Bits {
@@ -155,9 +157,10 @@ private class WasmTypeDeclaratorByFingerprint(
         is WasmStructDeclaration ->
             hash.combineWith(structHash).combineWith(getStableId(declaration))
         is WasmFunctionType -> {
-            val functionHash = hash.combineWith(functionHash)
+            val functionHash = hash.combineWith(function1Hash)
             val parametersHash = declaration.parameterTypes.fold(functionHash, ::combine)
-            declaration.resultTypes.fold(parametersHash, ::combine)
+            val returnValuesHash = parametersHash.combineWith(function2Hash)
+            declaration.resultTypes.fold(returnValuesHash, ::combine)
         }
         is WasmArrayDeclaration -> {
             val arrayHash = hash.combineWith(arrayHash)
