@@ -9,10 +9,13 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_DEPRECATED_TEST_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
@@ -34,6 +37,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
     )
 
     private val warningDeprecatedProperties: List<DeprecatedProperty> = listOf(
+        DeprecatedProperty(KOTLIN_DEPRECATED_TEST_PROPERTY), // this property is used for a behavior check
         DeprecatedProperty("kotlin.useK2"),
         DeprecatedProperty("kotlin.experimental.tryK2"),
         DeprecatedProperty("kotlin.incremental.classpath.snapshot.enabled"),

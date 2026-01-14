@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.checkers
 
-import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.checkDiagnostics
-import org.jetbrains.kotlin.gradle.util.enableKmpProjectIsolationSupport
-import org.jetbrains.kotlin.gradle.util.propertiesExtension
+import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_DEPRECATED_TEST_PROPERTY
+import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class GradleDeprecatedPropertyChecker {
 
@@ -36,5 +36,26 @@ class GradleDeprecatedPropertyChecker {
                 preApplyCode = { project.propertiesExtension.set(it.first, true.toString()) },
             ).assertNoDiagnostics()
         }
+    }
+
+    @Test
+    fun `KT-83678 - checker doesn't null out properties set during build script evaluation`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                jvm()
+            }
+        }
+        val nonExistentProperty = "nonExistentProperty"
+        val propertiesService = PropertiesBuildService.registerIfAbsent(project).get()
+        assertNull(propertiesService.get(nonExistentProperty, project))
+        // the value of the property is memoized by PropertiesBuildService and setting it has no effect
+        project.propertiesExtension.set(nonExistentProperty, true)
+        assertNull(propertiesService.get(nonExistentProperty, project))
+
+        // check that the checker executes after build script evaluation and doesn't null out used properties if they are set during build script evaluation
+        project.propertiesExtension.set(KOTLIN_DEPRECATED_TEST_PROPERTY, "foo")
+        assertEquals(null, propertiesService.get(KOTLIN_DEPRECATED_TEST_PROPERTY, project))
+        project.evaluate()
+        assertEquals(null, propertiesService.get(KOTLIN_DEPRECATED_TEST_PROPERTY, project))
     }
 }
