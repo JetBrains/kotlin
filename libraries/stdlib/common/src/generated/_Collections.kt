@@ -892,6 +892,11 @@ public inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.inter
 }
 
 /**
+ * KCImm-09
+ *
+ * There is no need for a specialization for PersistentCollection since it only uses iteration and does not allocate any additional memory.
+ */
+/**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
  * 
  * @sample samples.collections.Collections.Filtering.filterIsInstanceTo
