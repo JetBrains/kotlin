@@ -3695,6 +3695,15 @@ public fun <T> Iterable<T>.chunked(size: Int): List<List<T>> {
 }
 
 /**
+ * KCImm-61
+ *
+ * Transform variant of `chunked`. Could benefit from building PersistentList directly.
+ *
+ * ```
+ * public fun <T, R> PersistentCollection<T>.chunked(size: Int, transform: (List<T>) -> R): PersistentList<R>
+ * ```
+ */
+/**
  * Splits this collection into several lists each not exceeding the given [size]
  * and applies the given [transform] function to an each.
  * 
@@ -4040,6 +4049,15 @@ public fun <T> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Bo
 }
 
 /**
+ * KCImm-62
+ *
+ * Transform variant of `windowed`. Could benefit from building PersistentList directly.
+ *
+ * ```
+ * public fun <T, R> PersistentCollection<T>.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R): PersistentList<R>
+ * ```
+ */
+/**
  * Returns a list of results of applying the given [transform] function to
  * an each list representing a view over the window of the given [size]
  * sliding along this collection with the given [step].
@@ -4082,6 +4100,15 @@ public fun <T, R> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows:
 }
 
 /**
+ * KCImm-63
+ *
+ * Could benefit from building PersistentList directly.
+ *
+ * ```
+ * public infix fun <T, R> PersistentCollection<T>.zip(other: Array<out R>): PersistentList<Pair<T, R>>
+ * ```
+ */
+/**
  * Returns a list of pairs built from the elements of `this` collection and the [other] array with the same index.
  * The returned list has length of the shortest collection.
  * 
@@ -4091,6 +4118,15 @@ public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 
+/**
+ * KCImm-64
+ *
+ * Transform variant of `zip` with Array. Could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <T, R, V> PersistentCollection<T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): PersistentList<V>
+ * ```
+ */
 /**
  * Returns a list of values built from the elements of `this` collection and the [other] array with the same index
  * using the provided [transform] function applied to each pair of elements.
@@ -4129,6 +4165,15 @@ public infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
 }
 
 /**
+ * KCImm-65
+ *
+ * Transform variant of `zip`. Could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <T, R, V> PersistentCollection<T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): PersistentList<V>
+ * ```
+ */
+/**
  * Returns a list of values built from the elements of `this` collection and the [other] collection with the same index
  * using the provided [transform] function applied to each pair of elements.
  * The returned list has length of the shortest collection.
@@ -4166,6 +4211,15 @@ public fun <T> Iterable<T>.zipWithNext(): List<Pair<T, T>> {
     return zipWithNext { a, b -> a to b }
 }
 
+/**
+ * KCImm-66
+ *
+ * Transform variant of `zipWithNext`. Could benefit from building PersistentList directly.
+ *
+ * ```
+ * public inline fun <T, R> PersistentCollection<T>.zipWithNext(transform: (a: T, b: T) -> R): PersistentList<R>
+ * ```
+ */
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to an each pair of two adjacent elements in this collection.
