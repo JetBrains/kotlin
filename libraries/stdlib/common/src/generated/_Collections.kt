@@ -876,6 +876,13 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(d
 }
 
 /**
+ * KCImm-08
+ *
+ * ```
+ * public inline fun <reified R> PersistentCollection<T>.filterIsInstance(): PersistentList<@kotlin.internal.NoInfer R>
+ * ```
+ */
+/**
  * Returns a list containing all elements that are instances of specified type parameter R.
  * 
  * @sample samples.collections.Collections.Filtering.filterIsInstance
