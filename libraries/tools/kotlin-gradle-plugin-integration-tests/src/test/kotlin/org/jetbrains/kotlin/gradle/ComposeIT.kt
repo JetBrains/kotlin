@@ -797,7 +797,6 @@ class ComposeIT : KGPBaseTest() {
                 ),
                 isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
             ),
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://maven.pkg.jetbrains.space/public/p/compose/dev")),
             enableGradleDaemonMemoryLimitInMb = 2048,
             enableKotlinDaemonMemoryLimitInMb = 2048,
         ) {
