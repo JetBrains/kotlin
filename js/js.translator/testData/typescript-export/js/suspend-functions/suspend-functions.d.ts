@@ -110,7 +110,7 @@ declare namespace JS_TESTS {
             constructor();
             childSuspendFun(): Promise<string>;
             parentSuspendFun1(someValue?: string): Promise<string>;
-            readonly __doNotUseOrImplementIt: foo.HolderOfParentSuspendFun1<string>["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.HolderOfParentSuspendFun1<any>["__doNotUseOrImplementIt"];
         }
         namespace ExportedChild {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
