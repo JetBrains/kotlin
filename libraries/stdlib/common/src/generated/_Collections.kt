@@ -976,6 +976,13 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destinat
 }
 
 /**
+ * KCImm-13
+ *
+ * ```
+ * public fun <T> PersistentList<T>.slice(indices: IntRange): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 public fun <T> List<T>.slice(indices: IntRange): List<T> {
