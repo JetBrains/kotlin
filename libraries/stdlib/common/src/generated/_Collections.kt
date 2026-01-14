@@ -854,6 +854,11 @@ public inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Bo
 }
 
 /**
+ * KCImm-07
+ *
+ * There is no need for a specialization for PersistentCollection since it only uses iteration and does not allocate any additional memory.
+ */
+/**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
