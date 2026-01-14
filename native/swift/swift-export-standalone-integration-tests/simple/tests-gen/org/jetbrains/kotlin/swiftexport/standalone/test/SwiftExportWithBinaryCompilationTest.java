@@ -242,6 +242,12 @@ public class SwiftExportWithBinaryCompilationTest extends AbstractSwiftExportWit
   }
 
   @Test
+  @TestMetadata("vararg_with_package_flattening")
+  public void testVararg_with_package_flattening() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/vararg_with_package_flattening/");
+  }
+
+  @Test
   @TestMetadata("variables")
   public void testVariables() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/variables/");
