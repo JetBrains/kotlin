@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 @FirBuilderDsl
 class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
+    override var contextSensitiveAlternative: FirPropertyAccessExpression? = null
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var packageFqName: FqName
@@ -47,6 +49,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
     override fun build(): FirResolvedQualifier {
         return FirResolvedQualifierImpl(
             source,
+            contextSensitiveAlternative,
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             packageFqName,

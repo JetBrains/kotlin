@@ -338,6 +338,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: D): R =
         visitElement(callableReferenceAccess, data)
 
+    open fun visitQualifierWithContextSensitiveAlternative(qualifierWithContextSensitiveAlternative: FirQualifierWithContextSensitiveAlternative, data: D): R =
+        visitElement(qualifierWithContextSensitiveAlternative, data)
+
     open fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: D): R =
         visitElement(propertyAccessExpression, data)
 

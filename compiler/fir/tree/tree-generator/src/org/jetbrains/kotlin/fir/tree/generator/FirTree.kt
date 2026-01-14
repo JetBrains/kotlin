@@ -1152,8 +1152,29 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("hasQuestionMarkAtLHS", boolean, withReplace = true)
     }
 
+    val qualifierWithContextSensitiveAlternative: Element by element(Expression) {
+        +field("contextSensitiveAlternative", propertyAccessExpression, nullable = true, withReplace = true) {
+            optInAnnotation = firIdeOnlyAnnotation
+            kDoc = """
+                |For resolved qualifier, it contains either null or a simple name property access which would be used for checking
+                |if context-sensitive resolution might be used instead of the owner qualifier. 
+                |For example, if the owner is `MyEnum.X`, then contextSensitiveAlternative would be just `X`.
+                |
+                |Only used in ideMode to find out if the property access can be replaced with a simple name expression
+                |via context-sensitive resolution, so the reference shortener/inspections might use this information.
+                |
+                |Even in ideMode, it's only initialized if there is a reason to assume that it might be the case of CSR, e.g., 
+                |it should be left `null` for ContextIndependent resolution mode.
+            """.trimMargin()
+        }
+    }
+
     val propertyAccessExpression: Element by element(Expression) {
         parent(qualifiedAccessExpression)
+        parent(qualifierWithContextSensitiveAlternative)
+
+        customParentInVisitor = qualifiedAccessExpression
+
         +field("calleeReference", namedReference, withReplace = true, withTransform = true)
     }
 
@@ -1249,7 +1270,10 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val resolvedQualifier: Element by element(Expression) {
+        parent(qualifierWithContextSensitiveAlternative)
         parent(expression)
+
+        customParentInVisitor = expression
 
         +field("packageFqName", fqNameType)
         +field("relativeClassFqName", fqNameType, nullable = true)
@@ -1263,7 +1287,7 @@ object FirTree : AbstractFirTreeBuilder() {
             kDoc = "If true, the qualifier is resolved to an object or companion object and can be used as an expression."
         }
         +field("isFullyQualified", boolean)
-        +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true)
+        +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
         +field("resolvedSymbolOrigin", resolvedSymbolOrigin, nullable = true, withReplace = true)
         +typeArguments {
             withTransform = true

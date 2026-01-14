@@ -156,6 +156,7 @@ val directDeclarationsAccessAnnotation = type("fir.declarations", "DirectDeclara
 val unresolvedExpressionTypeAccessAnnotation = type("fir.expressions", "UnresolvedExpressionTypeAccess", kind = TypeKind.Class)
 val rawFirApi = type("fir.expressions", "RawFirApi", kind = TypeKind.Class)
 val firBuilderDslAnnotation = type("fir.builder", "FirBuilderDsl", kind = TypeKind.Class)
+val firIdeOnlyAnnotation = type("fir", "FirIdeOnly", kind = TypeKind.Class)
 val firResolvedArgumentListType = type("fir.expressions.impl", "FirResolvedArgumentList", kind = TypeKind.Class)
 
 val toSymbolUtilityFunction = type("fir.types", "toLookupTag")

@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirIdeOnly
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
@@ -26,6 +27,19 @@ import org.jetbrains.kotlin.name.FqName
  */
 abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnosticHolder {
     abstract override val source: KtSourceElement?
+    /**
+     * For resolved qualifier, it contains either null or a simple name property access which would be used for checking
+     * if context-sensitive resolution might be used instead of the owner qualifier. 
+     * For example, if the owner is `MyEnum.X`, then contextSensitiveAlternative would be just `X`.
+     *
+     * Only used in ideMode to find out if the property access can be replaced with a simple name expression
+     * via context-sensitive resolution, so the reference shortener/inspections might use this information.
+     *
+     * Even in ideMode, it's only initialized if there is a reason to assume that it might be the case of CSR, e.g., 
+     * it should be left `null` for ContextIndependent resolution mode.
+     */
+    @FirIdeOnly
+    abstract override val contextSensitiveAlternative: FirPropertyAccessExpression?
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
@@ -54,6 +68,8 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformErrorResolvedQualifier(this, data) as E
 
+    abstract override fun replaceContextSensitiveAlternative(newContextSensitiveAlternative: FirPropertyAccessExpression?)
+
     abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
@@ -65,6 +81,8 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean)
 
     abstract override fun replaceCanBeValue(newCanBeValue: Boolean)
+
+    abstract override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
 
     abstract override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?)
 

@@ -867,6 +867,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(callableReferenceAccess)
     }
 
+    final override fun visitQualifierWithContextSensitiveAlternative(qualifierWithContextSensitiveAlternative: FirQualifierWithContextSensitiveAlternative, data: Nothing?) {
+        visitQualifierWithContextSensitiveAlternative(qualifierWithContextSensitiveAlternative)
+    }
+
+    open fun visitQualifierWithContextSensitiveAlternative(qualifierWithContextSensitiveAlternative: FirQualifierWithContextSensitiveAlternative) {
+        visitElement(qualifierWithContextSensitiveAlternative)
+    }
+
     final override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?) {
         visitPropertyAccessExpression(propertyAccessExpression)
     }
