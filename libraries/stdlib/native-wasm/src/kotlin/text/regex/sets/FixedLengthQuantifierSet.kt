@@ -59,4 +59,10 @@ open internal class FixedLengthQuantifierSet(
     override fun toString(): String {
         return "${this::class}(innerSet = $innerSet, next = $next)"
     }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        innerSet.collectProperties(properties)
+        // if the repetition number is varying or is infinite, we have to backtrack
+        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || min != max || max == Quantifier.INF
+    }
 }

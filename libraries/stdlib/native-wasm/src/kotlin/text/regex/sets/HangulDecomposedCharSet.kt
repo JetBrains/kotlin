@@ -180,5 +180,9 @@ internal class HangulDecomposedCharSet(
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean {
         return true
     }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        // does nothing interesting
+    }
 }
 

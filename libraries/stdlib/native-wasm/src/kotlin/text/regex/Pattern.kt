@@ -384,8 +384,12 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                         LeafQuantifierSet(quantifier, term, last, quant)
                     term.consumesFixedLength ->
                         FixedLengthQuantifierSet(quantifier, term, last, quant)
-                    else ->
-                        GroupQuantifierSet(quantifier, term, last, quant, groupQuantifierCount++)
+                    else -> {
+                        // Try to use an optimized group matcher if the group qualifies
+                        val optimizedSet = TrivialGroupQuantifierSet.constructIfInnerSetQualifiesOrNull(quantifier, term, last, quant)
+                        // Otherwise, fallback to a recursive implementation
+                        optimizedSet ?: GroupQuantifierSet(quantifier, term, last, quant, groupQuantifierCount++)
+                    }
                 }
             }
 
@@ -396,8 +400,12 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                         ReluctantLeafQuantifierSet(quantifier, term, last, quant)
                     term.consumesFixedLength ->
                         ReluctantFixedLengthQuantifierSet(quantifier, term, last, quant)
-                    else ->
-                        ReluctantGroupQuantifierSet(quantifier, term, last, quant, groupQuantifierCount++)
+                    else -> {
+                        // Try to use an optimized group matcher if the group qualifies
+                        val optimizedSet = ReluctantTrivialGroupQuantifierSet.constructIfInnerSetQualifiesOrNull(quantifier, term, last, quant)
+                        // Otherwise, fallback to a recursive implementation
+                        optimizedSet ?: ReluctantGroupQuantifierSet(quantifier, term, last, quant, groupQuantifierCount++)
+                    }
                 }
             }
 
