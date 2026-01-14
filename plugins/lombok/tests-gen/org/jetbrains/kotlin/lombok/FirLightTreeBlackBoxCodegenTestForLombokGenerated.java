@@ -60,6 +60,12 @@ public class FirLightTreeBlackBoxCodegenTestForLombokGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("builderCtorWithParams.kt")
+  public void testBuilderCtorWithParams() {
+    runTest("plugins/lombok/testData/box/builderCtorWithParams.kt");
+  }
+
+  @Test
   @TestMetadata("builderGuava.kt")
   public void testBuilderGuava() {
     runTest("plugins/lombok/testData/box/builderGuava.kt");
