@@ -683,6 +683,18 @@ public inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
+ * KCImm-01
+ *
+ * ```
+ * public fun <T> PersistentCollection<T>.drop(n: Int): PersistentList<T>
+ *
+ * // It might help to preserve a persistent structure by `removingAt` call.
+ * public fun <T> PersistentList<T>.drop(n: Int): PersistentList<T>
+ *
+ * public fun <T> PersistentSet<T>.drop(n: Int): PersistentSet<T>
+ * ```
+ */
+/**
  * Returns a list containing all elements except first [n] elements.
  * 
  * @throws IllegalArgumentException if [n] is negative.
