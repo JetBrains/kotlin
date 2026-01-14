@@ -271,7 +271,7 @@ abstract class LoggedData {
 
         private fun StringBuilder.appendPotentiallyLargeOutput(output: String, subject: String, truncateLargeOutput: Boolean) {
             appendLine("========== BEGIN: $subject ==========")
-            if (output.length > MAX_PRINTED_OUTPUT_LENGTH && truncateLargeOutput) {
+            if (false && output.length > MAX_PRINTED_OUTPUT_LENGTH && truncateLargeOutput) {
                 append(output.substring(0, MAX_PRINTED_OUTPUT_LENGTH).trimEnd()).appendLine("...")
                 appendLine()
                 appendLine("********** The output is too large (${output.length} characters in total), it has been truncated to avoid excessive logs **********")
