@@ -42,6 +42,13 @@ internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
 
     override val name: String
         get() = "PositiveBehindJointSet"
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        children.forEach { it.collectProperties(properties, fSet) }
+        properties.nonTrivialBacktracking = true // just in case
+        properties.requiresCheckpointing = true
+        properties.tracksConsumption = true
+    }
 }
 
 /**
@@ -65,4 +72,11 @@ internal class NegativeLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
 
     override val name: String
         get() = "NegativeBehindJointSet"
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        children.forEach { it.collectProperties(properties, fSet) }
+        properties.nonTrivialBacktracking = true // just in case
+        properties.requiresCheckpointing = true
+        properties.tracksConsumption = true
+    }
 }

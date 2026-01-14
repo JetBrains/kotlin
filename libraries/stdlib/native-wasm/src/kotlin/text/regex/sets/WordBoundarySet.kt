@@ -61,6 +61,10 @@ internal class WordBoundarySet(var positive: Boolean) : SimpleSet() {
         }
         return true
     }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        // does nothing specific
+    }
 }
 
 

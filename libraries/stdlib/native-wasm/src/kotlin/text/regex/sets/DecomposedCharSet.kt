@@ -159,5 +159,9 @@ open internal class DecomposedCharSet(
     }
 
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        // does nothing interesting
+    }
 }
 

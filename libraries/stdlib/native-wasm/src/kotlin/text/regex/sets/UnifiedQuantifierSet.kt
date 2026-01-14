@@ -54,4 +54,10 @@ internal class UnifiedQuantifierSet(quant: LeafQuantifierSet) : LeafQuantifierSe
     init {
         innerSet.next = this
     }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        innerSet.reportOwnProperties(properties) // report only own properties, next is this instance
+        // we don't need additional backtracking if the repetition is fixed and bound
+        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || min != max || max == Quantifier.INF
+    }
 }
