@@ -19,6 +19,6 @@ public class TestJavaUsage {
 
 // FILE: test.kt
 fun box(): String {
-    TestJava(<!TOO_MANY_ARGUMENTS!>1<!>, <!TOO_MANY_ARGUMENTS!>"str"<!>)
+    TestJava(1, "str")
     return "OK"
 }
