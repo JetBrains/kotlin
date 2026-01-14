@@ -13,6 +13,10 @@ object Js {
     val sumRest = js("function (...args) { return args.reduce((a, b) => a + b); }")
     val namedSumRest = js("function sum(...args) { return args.reduce((a, b) => a + b); }")
     val greetingRest = js("function (greeting, ...args) { return greeting + ', ' + args.join(', '); }")
+    val sumDefaultB = js("function (a, b = 2) { return a + b; }")
+    val sumDefaultAB = js("function (a = 1, b = a + 1) { return a + b; }")
+    val sumDefaultComma = js("function (a = 1, b = (a, a + 1)) { return a + b; }")
+    val sumDefaultComplex = js("function (a = 1, b = (() => a + 1)()) { return a + b; }")
 }
 
 // FILE: b.kt
@@ -26,6 +30,10 @@ fun box(): String {
         Kt.greetingRest("Hello", "K/JS", "Kotlin Multiplatform", "Compose Multiplatform"),
         Js.greetingRest("Hello", "K/JS", "Kotlin Multiplatform", "Compose Multiplatform")
     )
+    assertEquals(Kt.sum(1, 2), Js.sumDefaultB(1))
+    assertEquals(Kt.sum(1, 2), Js.sumDefaultAB())
+    assertEquals(Kt.sum(1, 2), Js.sumDefaultComma())
+    assertEquals(Kt.sum(1, 2), Js.sumDefaultComplex())
 
     return "OK"
 }

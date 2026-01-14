@@ -1160,10 +1160,25 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitParameter(@NotNull JsParameter x) {
         pushSourceInfo(x.getSource());
+
         if (x.isRest()) {
             ellipsis();
         }
+
         nameOf(x);
+
+        JsExpression defaultValue = x.getDefaultValue();
+        if (defaultValue != null) {
+            space();
+            assignment();
+            space();
+            boolean wasEnclosed = parenPushIfCommaExpression(defaultValue);
+            accept(defaultValue);
+            if (wasEnclosed) {
+                rightParen();
+            }
+        }
+
         popSourceInfo();
     }
 
