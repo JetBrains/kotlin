@@ -811,8 +811,10 @@ public inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T> 
 /**
  * KCImm-05
  *
- * If we remove elements using `removing`, we can reuse the persistent structure,
+ * If we remove elements using `removing`, `removingAll`, we can reuse the persistent structure,
  * but in this case the same iteration order is not guaranteed after removal.
+ * It seems that additional memory allocation would be required in any case,
+ * so we could override just `PersistentCollection` to specialize the return type - `PersistentList<T>`
  *
  * ```
  * public inline fun <T> PersistentCollection<T>.filter(predicate: (T) -> Boolean): PersistentList<T>
