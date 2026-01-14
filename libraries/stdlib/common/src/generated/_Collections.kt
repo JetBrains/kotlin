@@ -1011,6 +1011,15 @@ public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
 }
 
 /**
+ * KCImm-15
+ *
+ * Opposite to `drop`.
+ *
+ * ```
+ * public fun <T> PersistentCollection<T>.take(n: Int): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list containing first [n] elements.
  * 
  * @throws IllegalArgumentException if [n] is negative.
