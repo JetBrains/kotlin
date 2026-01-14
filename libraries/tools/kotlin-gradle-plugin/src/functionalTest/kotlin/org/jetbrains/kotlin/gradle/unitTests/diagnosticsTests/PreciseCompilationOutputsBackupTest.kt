@@ -34,11 +34,10 @@ class PreciseCompilationOutputsBackupTest {
     }
 
     private fun testPropertyUsage(propertyKey: String, propertyValue: String) {
-        buildProjectWithJvm(preApplyCode = {
+        val project = buildProjectWithJvm(preApplyCode = {
             extraProperties.set(propertyKey, propertyValue)
-        }) {
-            assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
-        }
+        }).evaluate()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
     }
 
     @Test
