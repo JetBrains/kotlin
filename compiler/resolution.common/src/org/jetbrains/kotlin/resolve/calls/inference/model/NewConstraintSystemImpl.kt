@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
 import kotlin.math.max
+import kotlin.reflect.KFunction
 
 class NewConstraintSystemImpl(
     private val constraintInjector: ConstraintInjector,
@@ -73,7 +74,8 @@ class NewConstraintSystemImpl(
         val previousAllowSemiFixationToOtherTypeVariables = this.allowSemiFixationToOtherTypeVariables
 
         require(typeVariablesThatAreCountedAsProperTypes == null) {
-            "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
+            val functionRef: KFunction<R> = ::withTypeVariablesThatAreCountedAsProperTypes
+            "Currently there should be no nested ${functionRef.name} calls"
         }
 
         typeVariablesThatAreCountedAsProperTypes = typeVariables
