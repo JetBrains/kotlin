@@ -3957,6 +3957,7 @@ public final class org/jetbrains/kotlin/psi/psiUtil/PsiUtilsKt {
 	public static final fun hasActualModifier (Lorg/jetbrains/kotlin/psi/KtModifierListOwner;)Z
 	public static final fun hasExpectModifier (Lorg/jetbrains/kotlin/psi/KtModifierList;)Z
 	public static final fun hasExpectModifier (Lorg/jetbrains/kotlin/psi/KtModifierListOwner;)Z
+	public static final fun hasExternalModifier (Lorg/jetbrains/kotlin/psi/KtModifierListOwner;)Z
 	public static final fun hasFunModifier (Lorg/jetbrains/kotlin/psi/KtModifierList;)Z
 	public static final fun hasInnerModifier (Lorg/jetbrains/kotlin/psi/KtModifierListOwner;)Z
 	public static final fun hasSuspendModifier (Lorg/jetbrains/kotlin/psi/KtModifierList;)Z

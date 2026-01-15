@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.isExternalDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirEnumEntrySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 
 internal class KaFirEnumEntrySymbol private constructor(
@@ -53,7 +55,10 @@ internal class KaFirEnumEntrySymbol private constructor(
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { firSymbol.isEffectivelyExternal(analysisSession.firSession) }
+        get() = withValidityAssertion {
+            // an enum entry is external if its containing enum class is external (it can't be external by itself)
+            backingPsi?.containingClassOrObject?.isExternalDeclaration ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)
+        }
 
     override val name: Name
         get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
