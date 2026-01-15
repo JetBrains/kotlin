@@ -38,7 +38,10 @@ internal object AgpWithBuiltInKotlinAppliedCheck {
         // it's important to have strict ordering between those 2 checks.
         // IncompatibleWithTheNewAgpDsl must not hide AgpWithBuiltInKotlinIsAlreadyApplied
         checkIfNewDslIsUsed(isKmpProject = false)
-        reportKotlinAndroidDeprecation(agpVersionProvider)
+        reportKotlinAndroidDeprecation(
+            KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin(path),
+            agpVersionProvider,
+        )
     }
 
     /**
@@ -68,7 +71,8 @@ internal object AgpWithBuiltInKotlinAppliedCheck {
         }
     }
 
-    private fun Project.reportKotlinAndroidDeprecation(
+    internal fun Project.reportKotlinAndroidDeprecation(
+        diagnostic: ToolingDiagnostic,
         agpVersionProvider: AndroidGradlePluginVersionProvider = AndroidGradlePluginVersionProvider.Default,
     ) {
         val wasChecked = AtomicBoolean(false)
@@ -82,9 +86,7 @@ internal object AgpWithBuiltInKotlinAppliedCheck {
                         // by other diagnostics like 'KotlinToolingDiagnostics.IncompatibleWithTheNewAgpDsl' or
                         // 'KotlinToolingDiagnostics.AgpWithBuiltInKotlinIsAlreadyApplied'.
                         // This diagnostic should be fired at the end of related diagnostics checks and only if the checks are passed.
-                        project.reportDiagnosticOncePerProject(
-                            KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin(path)
-                        )
+                        project.reportDiagnosticOncePerProject(diagnostic)
                     }
                 }
             }
