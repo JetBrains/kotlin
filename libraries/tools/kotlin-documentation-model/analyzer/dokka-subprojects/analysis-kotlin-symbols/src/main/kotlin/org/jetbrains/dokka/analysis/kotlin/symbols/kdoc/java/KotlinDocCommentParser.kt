@@ -8,10 +8,8 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.java.doccomment.DocComment
 import org.jetbrains.dokka.analysis.java.parsers.DocCommentParser
-import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.*
-import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.logUnresolvedLink
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.parseFromKDocTag
-import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.resolveKDocLinkToDRI
+import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.resolveKDocLink
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.plugability.DokkaContext
@@ -42,7 +40,7 @@ internal class KotlinDocCommentParser(
         return analyze(kotlinAnalysis.getModule(sourceSet)) {
             parseFromKDocTag(
                 kDocTag = element.comment,
-                externalDri = { link -> resolveKDocLinkToDRI(link).ifUnresolved { context.logger.logUnresolvedLink(link.getLinkText(), elementName) } },
+                externalDri = { resolveKDocLink(it, elementName, context.logger, sourceSet) },
                 kdocLocation = null,
                 parseWithChildren = parseWithChildren
             )

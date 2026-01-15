@@ -33,6 +33,7 @@ class LinkTest : BaseAbstractTest() {
             }
         }
     }
+
     @Test
     fun linkToClassLoader() {
         val configuration = dokkaConfiguration {
@@ -921,6 +922,7 @@ class LinkTest : BaseAbstractTest() {
             }
         }
     }
+
     @Test
     fun `link should be stable for overloads in different files`() {
         testInline(
@@ -1471,7 +1473,7 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    fun `should resolve KDoc links in package documentation`() {
+    fun `should resolve KDoc links in module and package documentation`() {
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -1515,6 +1517,54 @@ class LinkTest : BaseAbstractTest() {
                     ),
                     module.getAllLinkDRIFrom("example")
                 )
+            }
+        }
+    }
+
+    @Test
+    fun `should resolve KDoc links in module and package documentation in source set without sources`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                val a = sourceSet {
+                    name = "moduleA"
+                    classpath = listOfNotNull(jvmStdlibPath)
+                    sourceRoots = listOf("src/")
+                    includes = listOf("module.md")
+                }
+                sourceSet {
+                    name = "moduleB"
+                    classpath = listOfNotNull(jvmStdlibPath)
+                    includes = listOf("module.md")
+                    dependentSourceSets = setOf(a.value.sourceSetID)
+                }
+            }
+        }
+        testInline(
+            """
+            |/module.md
+            |# Module root
+            |
+            |Link to [example.Foo]
+            |
+            |# Package example
+            |
+            |Link to [example.Foo] and [Bar]
+            |
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |class Foo
+            |class Bar
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = {
+                // as `moduleB` has no sources, and so has no declarations it will be filtered out
+                // still, as we resolve links earlier in the pipeline,
+                // unresolved links will cause unnecessary warning messages in logs,
+                // while not affecting the output.
+                // so the only way to check that all links were resolved is to check, that there were no `logger.warn` calls
+                assertEquals(emptyList(), logger.warnMessages)
             }
         }
     }
