@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.buildtools.api.tests
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
@@ -63,22 +62,30 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
             val module1 = module("jvm-module-1") {
                 it.compilerArguments[JvmCompilerArguments.X_USE_K2_KAPT] = true
             }
-            if (kotlinToolchain.getCompilerVersion().startsWith("2.3")) {
+            val compilerVersion = kotlinToolchain.getCompilerVersion()
+            fun assertFailsWith(message: String, transformActualMessage: (String?) -> String? = { it }) {
                 val exception = assertThrows<IllegalStateException> { module1.compile {} }
                 assertEquals(
-                    "Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: ${kotlinToolchain.getCompilerVersion()}, but the argument was introduced in 2.1.0 and removed in 2.3.0",
-                    exception.message
-                        ?.replace("}", "") // there was an extra "}" in 2.3.0 by mistake
+                    message,
+                    transformActualMessage(exception.message)
                 )
-            } else if (kotlinToolchain.getCompilerVersion().startsWith("2.0")) {
-                val exception = assertThrows<IllegalStateException> { module1.compile {} }
-                assertEquals(
-                    "X_USE_K2_KAPT is available only since 2.1.0",
-                    exception.message
-                )
-            } else {
+            }
+
+            fun assertSucceeds() {
                 module1.compile {
                     assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
+                }
+            }
+            when {
+                compilerVersion.startsWith("2.0") -> assertFailsWith("X_USE_K2_KAPT is available only since 2.1.0")
+                compilerVersion.startsWith("2.1") -> assertSucceeds()
+                compilerVersion.startsWith("2.2") -> assertSucceeds()
+                compilerVersion.startsWith("2.3") -> assertFailsWith("Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: ${kotlinToolchain.getCompilerVersion()}, but the argument was introduced in 2.1.0 and removed in 2.3.0") {
+                    it?.replace("}", "") // there was an extra "}" in 2.3.0 by mistake
+                }
+                else -> assertFailsWith("Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: ${kotlinToolchain.getCompilerVersion()}, but the argument was removed in 2.3.0") {
+                    // the part about introduction may be omitted if it was introduced long enough time ago
+                    it?.replace("introduced in 2.1.0 and ", "")
                 }
             }
         }
