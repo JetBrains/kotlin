@@ -1,6 +1,4 @@
 // WITH_STDLIB
-// Ignored because of KT-83025
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
 
 fun <T> List<T>.foo(): T {
     return this[0]
