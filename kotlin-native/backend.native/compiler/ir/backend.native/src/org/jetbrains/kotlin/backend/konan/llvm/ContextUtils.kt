@@ -579,6 +579,8 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val kNullIntptrPtr by lazy { LLVMConstNull(pointerType(intptrType))!! }
     val kImmInt32Zero by lazy { int32(0) }
     val kImmInt32One by lazy { int32(1) }
+    val kTrue by lazy { int1(true) }
+    val kFalse by lazy { int1(false) }
 
     val memsetFunction = importMemset()
 

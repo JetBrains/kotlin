@@ -165,6 +165,8 @@ private object CallableIds {
     val createEmptyString = "createEmptyString".internalCallableId
     val initInstance = "initInstance".internalCallableId
     val isSubtype = "isSubtype".internalCallableId
+    val downcast = "downcast".internalCallableId
+    val checkNotNull = "checkNotNull".internalCallableId
     val getContinuation = "getContinuation".internalCallableId
     val returnIfSuspended = "returnIfSuspended".internalCallableId
     val saveCoroutineState = "saveCoroutineState".internalCallableId
@@ -572,6 +574,10 @@ class KonanSymbols(
     val initInstance = CallableIds.initInstance.functionSymbol()
 
     val isSubtype = CallableIds.isSubtype.functionSymbol()
+
+    val downcast = CallableIds.downcast.functionSymbol()
+
+    val checkNotNull = CallableIds.checkNotNull.functionSymbol()
 
     val println by CallableIds.println.functionSymbol {
         it.hasShape(regularParameters = 1, parameterTypes = listOf(irBuiltIns.stringType))
