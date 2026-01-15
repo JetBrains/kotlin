@@ -64,9 +64,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script scriptResult.kts"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: get$$result
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: $$result

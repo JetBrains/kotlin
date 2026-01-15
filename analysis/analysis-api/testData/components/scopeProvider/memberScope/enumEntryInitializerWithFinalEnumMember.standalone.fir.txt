@@ -101,10 +101,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getX
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -211,10 +209,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.E
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getFoo
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -638,10 +634,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: kotlin.Enum
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getName
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -760,10 +754,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: kotlin.Enum
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getOrdinal
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

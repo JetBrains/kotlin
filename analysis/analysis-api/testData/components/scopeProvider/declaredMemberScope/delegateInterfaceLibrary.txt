@@ -101,10 +101,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getP
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -307,10 +305,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getBar
   javaSetterName: setBar
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -467,10 +463,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getDoo
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -621,10 +615,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getFoo
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -902,10 +894,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getZoo
   javaSetterName: setZoo
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

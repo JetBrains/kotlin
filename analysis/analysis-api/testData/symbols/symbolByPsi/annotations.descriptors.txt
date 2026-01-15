@@ -124,10 +124,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: Anno
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getParam1
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false
@@ -260,10 +258,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: Anno
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getParam2
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false

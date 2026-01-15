@@ -156,9 +156,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclarationMutable.kts"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getA
   javaSetterName: setA
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: a

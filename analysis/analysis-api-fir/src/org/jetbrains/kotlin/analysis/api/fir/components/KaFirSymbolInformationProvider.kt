@@ -121,11 +121,13 @@ internal class KaFirSymbolInformationProvider(
         }?.toDeprecationInfo()
     }
 
+    @Deprecated("Use 'deprecationStatus' directly instead", replaceWith = ReplaceWith("this.getter?.deprecationStatus"))
     override val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {
             this.getter?.deprecationStatus
         }
 
+    @Deprecated("Use 'deprecationStatus' directly instead", replaceWith = ReplaceWith("this.setter?.deprecationStatus"))
     override val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {
             this.setter?.deprecationStatus

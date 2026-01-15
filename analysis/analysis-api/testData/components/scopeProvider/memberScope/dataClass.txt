@@ -101,10 +101,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Abc
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getFirstProperty
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -211,10 +209,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Abc
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getSecondProperty
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -321,10 +317,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Abc
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getThirdProperty
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -521,10 +515,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Abc
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getBodyProperty
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -1096,10 +1088,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: Abc
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getFirstProperty
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false
@@ -1236,10 +1226,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: Abc
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getSecondProperty
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false
@@ -1376,10 +1364,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: Abc
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getThirdProperty
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false

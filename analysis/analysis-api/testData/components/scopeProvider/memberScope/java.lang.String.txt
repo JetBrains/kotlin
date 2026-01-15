@@ -207,10 +207,8 @@ KaSyntheticJavaPropertySymbol:
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: length
   javaSetterName: null
-  setterDeprecationStatus: null
   importableFqName: null
 
 KaNamedFunctionSymbol:

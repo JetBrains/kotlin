@@ -167,8 +167,6 @@ KaSyntheticJavaPropertySymbol:
   getContainingJvmClassName: Derived
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getSomething
   javaSetterName: setSomething
-  setterDeprecationStatus: null
   importableFqName: null

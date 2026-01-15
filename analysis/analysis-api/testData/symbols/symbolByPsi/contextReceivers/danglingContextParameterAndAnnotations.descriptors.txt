@@ -124,10 +124,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: Anno
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getPosition
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false

@@ -181,9 +181,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: DelegatedPropKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getDelegatedProp
   javaSetterName: setDelegatedProp
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: delegatedProp

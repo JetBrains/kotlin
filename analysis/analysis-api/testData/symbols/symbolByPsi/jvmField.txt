@@ -184,10 +184,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: JvmFieldKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: jvmField
   javaSetterName: jvmField
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: jvmField
 
@@ -377,9 +375,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: JvmFieldKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: jvmFieldOnField
   javaSetterName: jvmFieldOnField
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: jvmFieldOnField

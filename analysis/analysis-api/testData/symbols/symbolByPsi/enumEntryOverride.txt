@@ -256,10 +256,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getI
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -662,10 +660,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyEnumClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getI
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

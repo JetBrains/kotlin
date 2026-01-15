@@ -89,9 +89,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: one.LibKt
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getTopLevelProperty
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: one.topLevelProperty

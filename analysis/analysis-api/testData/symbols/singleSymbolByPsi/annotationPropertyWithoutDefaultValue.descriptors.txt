@@ -102,10 +102,8 @@ KaValueParameterSymbol:
     getContainingJvmClassName: pack.Anno
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    getterDeprecationStatus: null
     javaGetterName: getAn
     javaSetterName: null
-    setterDeprecationStatus: null
     isInline: false
     importableFqName: null
   hasDeclaredDefaultValue: false

@@ -97,9 +97,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Test
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getCtx
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null

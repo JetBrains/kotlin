@@ -193,9 +193,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: pack.Impl
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getBar
   javaSetterName: setBar
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null

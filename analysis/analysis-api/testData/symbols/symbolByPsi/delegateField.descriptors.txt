@@ -124,10 +124,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: MyColor
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getX
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false
@@ -260,10 +258,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: MyColor
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getY
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false
@@ -396,10 +392,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: MyColor
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getZ
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false
@@ -594,10 +588,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Some
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getDelegate
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -742,10 +734,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Some
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getLambda
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -848,10 +838,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Some
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getNonLazy
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

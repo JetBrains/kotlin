@@ -142,9 +142,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: get$$result
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: $$result

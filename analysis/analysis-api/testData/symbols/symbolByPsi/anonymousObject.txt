@@ -145,10 +145,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getData
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -483,10 +481,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getVariable
   javaSetterName: setVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -689,10 +685,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getPrivateVariable
   javaSetterName: setPrivateVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -895,10 +889,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getInternalVariable
   javaSetterName: setInternalVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -1241,10 +1233,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: AnonymousContainer
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getAnonymousObject
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

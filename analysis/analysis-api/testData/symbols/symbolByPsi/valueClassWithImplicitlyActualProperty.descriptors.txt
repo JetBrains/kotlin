@@ -124,10 +124,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: A
         getContainingModule: KaSourceModule "Sources of jvm"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getName
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false
@@ -322,10 +320,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: B
         getContainingModule: KaSourceModule "Sources of jvm"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getS
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false

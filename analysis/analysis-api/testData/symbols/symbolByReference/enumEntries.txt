@@ -74,9 +74,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyKotlinEnum
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getEntries
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: MyKotlinEnum.entries

@@ -197,9 +197,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Base
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getFoo
   javaSetterName: setFoo
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null

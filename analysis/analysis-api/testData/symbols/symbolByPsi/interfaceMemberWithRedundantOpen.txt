@@ -101,10 +101,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getDefault
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -211,10 +209,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getDefaultWithOpen
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -317,10 +313,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getDefaultWithOpenAndBody
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

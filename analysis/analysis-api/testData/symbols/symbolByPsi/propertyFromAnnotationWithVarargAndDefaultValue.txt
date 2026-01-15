@@ -128,10 +128,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: one.Anno
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getValue
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: true

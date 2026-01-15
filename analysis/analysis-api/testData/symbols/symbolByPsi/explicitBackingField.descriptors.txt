@@ -181,9 +181,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: ExplicitBackingFieldKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getP
   javaSetterName: setP
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: p

@@ -209,9 +209,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: one.SimpleClass
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getConstructorVariableWithAnnotations
   javaSetterName: setConstructorVariableWithAnnotations
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null

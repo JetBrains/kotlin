@@ -113,10 +113,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.MyInterface
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getProperty
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

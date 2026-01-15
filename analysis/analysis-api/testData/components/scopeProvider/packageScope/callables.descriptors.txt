@@ -89,10 +89,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.FooKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getFoo
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: test.foo
 
@@ -227,10 +225,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.FooKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getInternalFoo
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: test.internalFoo
 
@@ -365,10 +361,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.FooKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getPrivateFoo
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: test.privateFoo
 
@@ -503,10 +497,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.BarKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getBar
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: test.bar
 
@@ -641,10 +633,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.BarKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getInternalBar
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: test.internalBar
 
@@ -779,10 +769,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.BarKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getPrivateBar
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: test.privateBar
 

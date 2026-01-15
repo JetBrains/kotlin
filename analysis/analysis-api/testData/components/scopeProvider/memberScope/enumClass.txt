@@ -418,10 +418,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: kotlin.Enum
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getName
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -540,10 +538,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: kotlin.Enum
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getOrdinal
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

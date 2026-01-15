@@ -205,10 +205,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getTestVal
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: testVal
 
@@ -395,10 +393,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getInitializedVariable
   javaSetterName: setInitializedVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: initializedVariable
 
@@ -585,10 +581,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getUnitializedVariable
   javaSetterName: setUnitializedVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: unitializedVariable
 
@@ -775,10 +769,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getLateinitVariable
   javaSetterName: setLateinitVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: lateinitVariable
 
@@ -965,10 +957,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getVariableWithBackingField
   javaSetterName: setVariableWithBackingField
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: variableWithBackingField
 
@@ -1158,10 +1148,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getPrivateSetter
   javaSetterName: customPrivateSetter
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: privateSetter
 
@@ -1351,10 +1339,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getJvmNameOnSetter
   javaSetterName: customPrivateSetter
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: jvmNameOnSetter
 
@@ -1452,10 +1438,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: myCustomGetter
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: customGetter
 
@@ -1553,10 +1537,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: myCustomGetter
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: jvmNameOnGetter
 
@@ -1701,10 +1683,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getPropertyWithReceiver
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: propertyWithReceiver
 
@@ -1866,10 +1846,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getPropertyWithGenericReceiver
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: propertyWithGenericReceiver
 
@@ -1964,10 +1942,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getConstant
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: constant
 
@@ -2157,10 +2133,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: jvmField
   javaSetterName: jvmField
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: jvmField
 

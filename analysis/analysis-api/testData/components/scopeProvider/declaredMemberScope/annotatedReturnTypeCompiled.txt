@@ -202,9 +202,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.MyInterface
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getProperty
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
