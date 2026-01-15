@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSignatureSerializer
@@ -25,14 +24,15 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.localClassJvmType
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.serialization.*
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -98,9 +98,8 @@ open class FirJvmSerializerExtension(
     override val localClassIdOracle: LocalClassIdOracle
         get() = object : LocalClassIdOracle() {
             override fun getLocalClassId(klass: KClassValue.Value.LocalClass): ClassId? {
-                val irClass = klass.irClass as? IrClass ?: return null
-                val type = irClass.localClassType ?: return null
-                val fqName = FqName(type.internalName.replace('/', '.'))
+                val classSymbol = klass.firClassSymbol as? FirClassSymbol<*> ?: return null
+                val fqName = classSymbol.localClassJvmType ?: return null
                 // Note that this ClassId cannot be used for anything other than mapping it back to the JVM type, which is exactly the only
                 // way it's being used -- kotlin-reflect uses it to find the java.lang.Class object if requested.
                 // For this reason, the relative class name in this ClassId does not make sense, and for example, in case of an inner class
