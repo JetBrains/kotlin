@@ -28,9 +28,8 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
-// TODO KT-77388 rename to `BackendWebSymbolsImpl`
 @OptIn(InternalSymbolFinderAPI::class)
-abstract class JsCommonSymbols(
+abstract class BackendWebSymbols(
     irBuiltIns: IrBuiltIns,
 ) : PreSerializationWebSymbols, BackendKlibSymbols(irBuiltIns) {
     abstract val throwISE: IrSimpleFunctionSymbol
@@ -61,7 +60,7 @@ class JsSymbols(
     irBuiltIns: IrBuiltIns,
     private val stageController: StageController,
     private val compileLongAsBigint: Boolean
-) : PreSerializationJsSymbols by PreSerializationJsSymbols.Impl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
+) : PreSerializationJsSymbols by PreSerializationJsSymbols.Impl(irBuiltIns), BackendWebSymbols(irBuiltIns) {
     val noWhenBranchMatchedException = CallableIds.noWhenBranchMatchedException.functionSymbol()
 
     override val throwNullPointerException = CallableIds.throwNpe.functionSymbol()
