@@ -7666,6 +7666,28 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       public void testTypesFromSuperClasses() {
         runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/typesFromSuperClasses.kt");
       }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/localClasses/inCallableReferenceLHS")
+      @TestDataPath("$PROJECT_ROOT")
+      public class InCallableReferenceLHS {
+        @Test
+        public void testAllFilesPresentInInCallableReferenceLHS() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/localClasses/inCallableReferenceLHS"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("insideGenericClass.kt")
+        public void testInsideGenericClass() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/inCallableReferenceLHS/insideGenericClass.kt");
+        }
+
+        @Test
+        @TestMetadata("outerNestedFuncLocalInner.kt")
+        public void testOuterNestedFuncLocalInner() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/inCallableReferenceLHS/outerNestedFuncLocalInner.kt");
+        }
+      }
     }
 
     @Nested
