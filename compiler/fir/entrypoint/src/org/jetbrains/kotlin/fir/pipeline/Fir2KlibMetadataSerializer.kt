@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.packageFqName
