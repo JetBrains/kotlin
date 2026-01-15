@@ -26,7 +26,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.From
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Group0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AggregateDslInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByToDataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Into
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Into0
@@ -398,7 +397,6 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "Explode0" -> Explode0()
         "Implode" -> Implode()
         "ImplodeDefault" -> ImplodeDefault()
-        "Insert0" -> Insert0()
         "Insert1" -> Insert1()
         "Under0" -> Under0()
         "Under1" -> Under1()

@@ -1,24 +1,10 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.InsertClauseApproximation
-
-/**
- * @see DataFrame.insert
- */
-internal class Insert0 : AbstractInterpreter<InsertClauseApproximation>() {
-    val Arguments.receiver by dataFrame()
-    val Arguments.name: String by arg()
-    val Arguments.typeArg1 by type()
-
-    override fun Arguments.interpret(): InsertClauseApproximation {
-        return InsertClauseApproximation(receiver, simpleColumnOf(name, typeArg1.coneType))
-    }
-}
 
 internal class Insert1 : AbstractInterpreter<InsertClauseApproximation>() {
     val Arguments.name: String by arg()
