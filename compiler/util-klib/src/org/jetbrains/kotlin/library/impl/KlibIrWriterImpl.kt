@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
  * On the contrary to [KlibIrComponent], which provides read access to IR,
  * [KlibIrWriterImpl] provides allows writing the IR to the file system.
  *
- * TODO (KT-81411): This class is an implementation detail. It should be made internal after dropping `KonanLibraryImpl`.
+ * TODO (KT-81411): This class is a legacy implementation detail. It should be removed after dropping `KonanLibraryImpl`.
  */
-sealed class KlibIrWriterImpl() {
+sealed class KlibIrWriterImpl {
     class ForMainIr(override val layout: KlibIrComponentLayout) : KlibIrWriterImpl() {
         fun writeMainIr(irFiles: Collection<SerializedIrFile>) = writeIrFiles(irFiles)
     }

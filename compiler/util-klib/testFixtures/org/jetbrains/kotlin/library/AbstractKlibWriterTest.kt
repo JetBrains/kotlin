@@ -125,8 +125,7 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
         val mockKlib = KlibMockDSL.mockKlib(createNewKlibDir()) {
             metadata(parameters.metadata)
             parameters.ir?.let { serializedIrModule ->
-                ir(serializedIrModule.files)
-                serializedIrModule.fileWithPreparedInlinableFunctions?.let { irInlinableFunctions(it) }
+                irModule(serializedIrModule)
             }
             resources()
             manifest(
