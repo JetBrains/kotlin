@@ -125,7 +125,9 @@ public class DokkaBase : DokkaPlugin() {
     }
 
     public val modulesAndPackagesDocumentation: Extension<PreMergeDocumentableTransformer, *, *> by extending {
-        preMergeDocumentableTransformer providing ::ModuleAndPackageDocumentationTransformer
+        preMergeDocumentableTransformer providing ::ModuleAndPackageDocumentationTransformer order {
+            after(emptyModulesFilter)
+        }
     }
 
     public val actualTypealiasAdder: Extension<DocumentableTransformer, *, *> by extending {
