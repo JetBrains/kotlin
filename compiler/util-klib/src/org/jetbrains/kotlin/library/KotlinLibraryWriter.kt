@@ -13,5 +13,3 @@ interface BaseWriter {
     fun addManifestAddend(properties: Properties)
     fun commit()
 }
-
-interface KotlinLibraryWriter : BaseWriter
