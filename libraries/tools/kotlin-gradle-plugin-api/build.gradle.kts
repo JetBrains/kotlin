@@ -69,6 +69,17 @@ generatedSourcesTask(
     }
 )
 
+// 1. Trigger apiDump after generation
+tasks.named("generateKotlinVersionConstant").configure {
+    finalizedBy("apiDump")
+}
+
+// 2. Resolve implicit dependency conflict
+// apiDump writes the file, apiCheck reads it. If both run, Dump must run first.
+tasks.named("apiCheck").configure {
+    mustRunAfter("apiDump")
+}
+
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.apache.commons" && requested.name == "commons-lang3") {
