@@ -61,6 +61,8 @@ unsigned clang_Cursor_isObjCConsumingSelfMethod(CXCursor cursor);
 
 CString clang_Cursor_getSwiftName(CXCursor cursor);
 
+CString clang_Cursor_getSwiftBridge(CXCursor cursor);
+
 void clang_disposeCString(CString str);
 
 CString clang_Cursor_getObjCProtocolRuntimeName(CXCursor cursor);

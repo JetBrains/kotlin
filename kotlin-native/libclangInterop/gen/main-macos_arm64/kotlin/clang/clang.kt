@@ -4756,9 +4756,20 @@ fun clang_Cursor_getSwiftName(cursor: CValue<CXCursor>): CValue<CString> {
 }
 
 @ExperimentalForeignApi
+fun clang_Cursor_getSwiftBridge(cursor: CValue<CXCursor>): CValue<CString> {
+    memScoped {
+        val kniRetVal = nativeHeap.alloc<CString>()
+        try {
+            kniBridge355(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            return kniRetVal.readValue()
+        } finally { nativeHeap.free(kniRetVal) }
+    }
+}
+
+@ExperimentalForeignApi
 fun clang_disposeCString(str: CValue<CString>): Unit {
     memScoped {
-        return kniBridge355(str.getPointer(memScope).rawValue)
+        return kniBridge356(str.getPointer(memScope).rawValue)
     }
 }
 
@@ -4767,7 +4778,7 @@ fun clang_Cursor_getObjCProtocolRuntimeName(cursor: CValue<CXCursor>): CValue<CS
     memScoped {
         val kniRetVal = nativeHeap.alloc<CString>()
         try {
-            kniBridge356(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge357(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -6076,6 +6087,7 @@ private external fun kniBridge351(p0: NativePtr): Int
 private external fun kniBridge352(p0: NativePtr): Int
 private external fun kniBridge353(p0: NativePtr): Int
 private external fun kniBridge354(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge355(p0: NativePtr): Unit
-private external fun kniBridge356(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge355(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge356(p0: NativePtr): Unit
+private external fun kniBridge357(p0: NativePtr, p1: NativePtr): Unit
 private val loadLibrary = loadKonanLibrary("clangstubs")

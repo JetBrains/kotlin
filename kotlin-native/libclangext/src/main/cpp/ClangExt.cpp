@@ -229,4 +229,18 @@ extern "C" {
     return nullCString();
   }
 
+  CString clang_Cursor_getSwiftBridge(CXCursor cursor) {
+#if LIBCLANGEXT_ENABLE
+    if (clang_isDeclaration(cursor.kind)) {
+      const Decl *decl = getCursorDecl(cursor);
+      if (decl) {
+        if (const auto *attr = decl->getAttr<SwiftBridgeAttr>()) {
+          return createCString(attr->getSwiftType());
+        }
+      }
+    }
+#endif
+    return nullCString();
+  }
+
 }
