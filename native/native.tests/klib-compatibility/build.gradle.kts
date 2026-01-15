@@ -58,8 +58,7 @@ fun Project.customCompilerTest(
     // So, a subfolder within `~/.konan/` is needed for output of `unarchiveCustomCompiler_` task
     val customCompilersCollectionDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-prebuilt-releases")
     val unarchiveCustomCompiler = tasks.register("unarchiveCustomCompiler_${taskName}", Copy::class) {
-        val archiveTree = { archive: File -> if (HostManager.hostIsMingw) zipTree(archive) else tarTree(archive) }
-        from(archiveTree(customCompiler.singleFile))
+        from(tarTree(customCompiler.singleFile))
         into(customCompilersCollectionDir)
     }
     return projectTests.nativeTestTask(
