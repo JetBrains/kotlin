@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.serialization
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
-import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStage
+import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.test.Constructor
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_IR_DESERIALIZATION_TEST
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -46,15 +45,20 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(::NativeEnvironmentConfigurator)
-        commonConfigurationForNativeFirstStage(
+        useAfterAnalysisCheckers(::FirMetaInfoDiffSuppressor)
+        commonConfigurationForNativeFirstStageUpToSerialization(
             targetFrontend,
             frontendFacade,
             frontendToIrConverter,
             irPreSerializationLoweringFacade,
-            serializerFacade,
             IGNORE_IR_DESERIALIZATION_TEST,
         )
-        useAfterAnalysisCheckers(::FirMetaInfoDiffSuppressor)
+        irHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) }) }
+
+        facadeStep(serializerFacade)
+        klibArtifactsHandlersStep {
+            useHandlers(::KlibAbiDumpHandler)
+        }
 
         facadeStep(deserializerFacade)
         klibArtifactsHandlersStep {
