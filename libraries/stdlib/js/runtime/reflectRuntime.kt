@@ -6,19 +6,8 @@
 package kotlin.js
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
-import kotlin.internal.throwIrLinkageError
 import kotlin.internal.throwUnsupportedOperationException
 import kotlin.reflect.KProperty
-
-internal fun throwLinkageErrorInCallableName(function: dynamic, linkageError: String) {
-    defineProp(
-        function,
-        name = "callableName",
-        getter = { throwIrLinkageError(linkageError) },
-        setter = VOID,
-        enumerable = true,
-    )
-}
 
 @UsedFromCompilerGeneratedCode
 internal fun getPropertyCallableRef(
@@ -31,11 +20,8 @@ internal fun getPropertyCallableRef(
 ): KProperty<*> {
     getter.get = getter
     getter.set = setter
-    if (linkageError != null) {
-        throwLinkageErrorInCallableName(getter, linkageError)
-    } else {
-        getter.callableName = name
-    }
+    getter.callableName = name
+
     return getPropertyRefClass(
         getter,
         getKPropMetadata(paramCount, setter),
