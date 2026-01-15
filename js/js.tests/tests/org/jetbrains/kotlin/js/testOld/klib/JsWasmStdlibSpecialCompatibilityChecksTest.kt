@@ -5,8 +5,36 @@
 
 package org.jetbrains.kotlin.js.testOld.klib
 
+abstract class WebStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
+    fun testExportToOlderAbiVersionWithOlderLibrary() {
+        for (compilerVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
+            for (libraryVersion in SORTED_TEST_OLD_LIBRARY_VERSION_GROUPS) {
+                compileDummyLibrary(
+                    libraryVersion = libraryVersion,
+                    compilerVersion = compilerVersion,
+                    expectedWarningStatus = WarningStatus.NO_WARNINGS,
+                    exportKlibToOlderAbiVersion = true,
+                )
+            }
+        }
+    }
+
+    fun testExportToOlderAbiVersionWithCurrentLibrary() {
+        for (compilerVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
+            for (libraryVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
+                compileDummyLibrary(
+                    libraryVersion = libraryVersion,
+                    compilerVersion = compilerVersion,
+                    expectedWarningStatus = WarningStatus.TOO_NEW_LIBRARY_WARNING,
+                    exportKlibToOlderAbiVersion = true,
+                )
+            }
+        }
+    }
+}
+
 @Suppress("JUnitTestCaseWithNoTests")
-class JsStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
+class JsStdlibSpecialCompatibilityChecksTest : WebStdlibSpecialCompatibilityChecksTest() {
     override val isWasm: Boolean = false
 
     override val originalLibraryPath: String
@@ -17,7 +45,7 @@ class JsStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecks
 }
 
 @Suppress("JUnitTestCaseWithNoTests")
-class WasmStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
+class WasmStdlibSpecialCompatibilityChecksTest : WebStdlibSpecialCompatibilityChecksTest() {
     override val isWasm: Boolean = true
 
     override val originalLibraryPath: String

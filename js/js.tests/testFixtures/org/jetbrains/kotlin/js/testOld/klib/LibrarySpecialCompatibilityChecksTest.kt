@@ -70,32 +70,6 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         }
     }
 
-    fun testExportToOlderAbiVersionWithOlderLibrary() {
-        for (compilerVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
-            for (libraryVersion in SORTED_TEST_OLD_LIBRARY_VERSION_GROUPS) {
-                compileDummyLibrary(
-                    libraryVersion = libraryVersion,
-                    compilerVersion = compilerVersion,
-                    expectedWarningStatus = WarningStatus.NO_WARNINGS,
-                    exportKlibToOlderAbiVersion = true,
-                )
-            }
-        }
-    }
-
-    fun testExportToOlderAbiVersionWithCurrentLibrary() {
-        for (compilerVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
-            for (libraryVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
-                compileDummyLibrary(
-                    libraryVersion = libraryVersion,
-                    compilerVersion = compilerVersion,
-                    expectedWarningStatus = WarningStatus.TOO_NEW_LIBRARY_WARNING,
-                    exportKlibToOlderAbiVersion = true,
-                )
-            }
-        }
-    }
-
     private inline fun testCurrentAndNextBasicVersions(block: (currentVersion: TestVersion, nextVersion: TestVersion) -> Unit) {
         for (i in 0..SORTED_TEST_COMPILER_VERSION_GROUPS.size - 2) {
             val versionsWithSameBasicVersion = SORTED_TEST_COMPILER_VERSION_GROUPS[i]
@@ -132,7 +106,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     override fun shouldRunTest(): Boolean =
         LanguageVersion.LATEST_STABLE.major == KotlinAbiVersion.CURRENT.major && LanguageVersion.LATEST_STABLE.minor == KotlinAbiVersion.CURRENT.minor
 
-    private fun compileDummyLibrary(
+    internal fun compileDummyLibrary(
         libraryVersion: TestVersion?,
         compilerVersion: TestVersion?,
         expectedWarningStatus: WarningStatus,
@@ -313,9 +287,9 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     protected fun createDir(name: String): File = tmpdir.resolve(name).apply { mkdirs() }
     protected fun createFile(name: String): File = tmpdir.resolve(name).apply { parentFile.mkdirs() }
 
-    protected enum class WarningStatus { NO_WARNINGS, OLD_LIBRARY_WARNING, TOO_NEW_LIBRARY_WARNING }
+    internal enum class WarningStatus { NO_WARNINGS, OLD_LIBRARY_WARNING, TOO_NEW_LIBRARY_WARNING }
 
-    protected class TestVersion(val basicVersion: KotlinVersion, val postfix: String) : Comparable<TestVersion> {
+    internal class TestVersion(val basicVersion: KotlinVersion, val postfix: String) : Comparable<TestVersion> {
         constructor(major: Int, minor: Int, patch: Int, postfix: String = "") : this(KotlinVersion(major, minor, patch), postfix)
 
         override fun compareTo(other: TestVersion) = basicVersion.compareTo(other.basicVersion)
@@ -339,11 +313,11 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
             255 to "-SNAPSHOT",
         )
 
-        private val SORTED_TEST_COMPILER_VERSION_GROUPS: List<Collection<TestVersion>> =
+        internal val SORTED_TEST_COMPILER_VERSION_GROUPS: List<Collection<TestVersion>> =
             VERSIONS.map { (patch, postfix) -> TestVersion(currentKotlinVersion.major, currentKotlinVersion.minor, patch, postfix) }
                 .groupByTo(TreeMap()) { it.basicVersion }.values.toList()
 
-        private val SORTED_TEST_OLD_LIBRARY_VERSION_GROUPS: List<TestVersion> =
+        internal val SORTED_TEST_OLD_LIBRARY_VERSION_GROUPS: List<TestVersion> =
             VERSIONS.map { (patch, postfix) -> TestVersion(currentKotlinVersion.major, currentKotlinVersion.minor - 1, patch, postfix) }
 
         val patchedJsStdlibWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
