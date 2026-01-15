@@ -87,15 +87,6 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirDeclarationsResolveTransformer::transformReplSnippet,
     )
 
-    override fun transformReplDeclarationReference(
-        replDeclarationReference: FirReplDeclarationReference,
-        data: ResolutionMode,
-    ): FirStatement = expressionTransformation(
-        replDeclarationReference,
-        data,
-        FirExpressionsResolveTransformer::transformReplDeclarationReference,
-    )
-
     override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): E {
         @Suppress("UNCHECKED_CAST")
         return (element.transformChildren(this, data) as E)
@@ -767,6 +758,42 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         elvisExpression,
         data,
         FirControlFlowStatementsResolveTransformer::transformElvisExpression,
+    )
+
+    override fun transformReplDeclarationReference(
+        replDeclarationReference: FirReplDeclarationReference,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        replDeclarationReference,
+        data,
+        FirExpressionsResolveTransformer::transformReplDeclarationReference,
+    )
+
+    override fun transformReplExpressionReference(
+        replExpressionReference: FirReplExpressionReference,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        replExpressionReference,
+        data,
+        FirExpressionsResolveTransformer::transformReplExpressionReference,
+    )
+
+    override fun transformReplPropertyInitializer(
+        replPropertyInitializer: FirReplPropertyInitializer,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        replPropertyInitializer,
+        data,
+        FirExpressionsResolveTransformer::transformReplPropertyInitializer,
+    )
+
+    override fun transformReplPropertyDelegate(
+        replPropertyDelegate: FirReplPropertyDelegate,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        replPropertyDelegate,
+        data,
+        FirExpressionsResolveTransformer::transformReplPropertyDelegate,
     )
 
     // --------------------------------------------------------------------------

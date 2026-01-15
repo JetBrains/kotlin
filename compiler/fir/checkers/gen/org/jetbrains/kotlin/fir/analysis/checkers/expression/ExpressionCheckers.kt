@@ -34,6 +34,9 @@ abstract class ExpressionCheckers {
     open val returnExpressionCheckers: Set<FirReturnExpressionChecker> = emptySet()
     open val blockCheckers: Set<FirBlockChecker> = emptySet()
     open val replDeclarationReferenceCheckers: Set<FirReplDeclarationReferenceChecker> = emptySet()
+    open val replPropertyInitializerCheckers: Set<FirReplPropertyInitializerChecker> = emptySet()
+    open val replPropertyDelegateCheckers: Set<FirReplPropertyDelegateChecker> = emptySet()
+    open val replExpressionReferenceCheckers: Set<FirReplExpressionReferenceChecker> = emptySet()
     open val annotationCheckers: Set<FirAnnotationChecker> = emptySet()
     open val annotationCallCheckers: Set<FirAnnotationCallChecker> = emptySet()
     open val checkNotNullCallCheckers: Set<FirCheckNotNullCallChecker> = emptySet()
@@ -71,6 +74,9 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allReturnExpressionCheckers: Array<FirReturnExpressionChecker> by lazy { (returnExpressionCheckers + basicExpressionCheckers).toTypedArray() as Array<FirReturnExpressionChecker> }
     @CheckersComponentInternal internal val allBlockCheckers: Array<FirBlockChecker> by lazy { (blockCheckers + basicExpressionCheckers).toTypedArray() as Array<FirBlockChecker> }
     @CheckersComponentInternal internal val allReplDeclarationReferenceCheckers: Array<FirReplDeclarationReferenceChecker> by lazy { (replDeclarationReferenceCheckers + basicExpressionCheckers).toTypedArray() as Array<FirReplDeclarationReferenceChecker> }
+    @CheckersComponentInternal internal val allReplPropertyInitializerCheckers: Array<FirReplPropertyInitializerChecker> by lazy { (replPropertyInitializerCheckers + basicExpressionCheckers).toTypedArray() as Array<FirReplPropertyInitializerChecker> }
+    @CheckersComponentInternal internal val allReplPropertyDelegateCheckers: Array<FirReplPropertyDelegateChecker> by lazy { (replPropertyDelegateCheckers + basicExpressionCheckers).toTypedArray() as Array<FirReplPropertyDelegateChecker> }
+    @CheckersComponentInternal internal val allReplExpressionReferenceCheckers: Array<FirReplExpressionReferenceChecker> by lazy { (replExpressionReferenceCheckers + basicExpressionCheckers).toTypedArray() as Array<FirReplExpressionReferenceChecker> }
     @CheckersComponentInternal internal val allAnnotationCheckers: Array<FirAnnotationChecker> by lazy { (annotationCheckers + basicExpressionCheckers).toTypedArray() as Array<FirAnnotationChecker> }
     @CheckersComponentInternal internal val allAnnotationCallCheckers: Array<FirAnnotationCallChecker> by lazy { (annotationCallCheckers + annotationCheckers + basicExpressionCheckers + callCheckers).toTypedArray() as Array<FirAnnotationCallChecker> }
     @CheckersComponentInternal internal val allCheckNotNullCallCheckers: Array<FirCheckNotNullCallChecker> by lazy { (checkNotNullCallCheckers + basicExpressionCheckers + callCheckers).toTypedArray() as Array<FirCheckNotNullCallChecker> }
