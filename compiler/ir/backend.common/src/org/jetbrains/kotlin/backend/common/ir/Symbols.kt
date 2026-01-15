@@ -104,12 +104,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
 
     abstract val throwKotlinNothingValueException: IrSimpleFunctionSymbol
 
-    open val throwISE: IrSimpleFunctionSymbol
-        get() = error("throwISE is not implemented")
-
-    open val throwIAE: IrSimpleFunctionSymbol
-        get() = error("throwIAE is not implemented")
-
     abstract val stringBuilder: IrClassSymbol
 
     abstract val coroutineImpl: IrClassSymbol
