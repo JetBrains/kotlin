@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.AbstractPropertyReferenceLowering
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.WasmSymbols
+import org.jetbrains.kotlin.backend.wasm.BackendWasmSymbols
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
@@ -29,13 +29,13 @@ internal class PropertyReferencesConstructorsSet(
     )
 }
 
-internal val WasmSymbols.immutablePropertiesConstructors
+internal val BackendWasmSymbols.immutablePropertiesConstructors
     get() = PropertyReferencesConstructorsSet(
         kLocalDelegatedPropertyImpl,
         listOf(kProperty0Impl, kProperty1Impl, kProperty2Impl)
     )
 
-internal val WasmSymbols.mutablePropertiesConstructors
+internal val BackendWasmSymbols.mutablePropertiesConstructors
     get() = PropertyReferencesConstructorsSet(
         kLocalDelegatedMutablePropertyImpl,
         listOf(kMutableProperty0Impl, kMutableProperty1Impl, kMutableProperty2Impl)

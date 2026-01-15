@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.common.lower.SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.WasmSymbols
+import org.jetbrains.kotlin.backend.wasm.BackendWasmSymbols
 import org.jetbrains.kotlin.backend.wasm.toCatchThrowableOrJsException
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -44,7 +44,7 @@ class BodyGenerator(
 
 
     // Shortcuts
-    private val wasmSymbols: WasmSymbols = backendContext.wasmSymbols
+    private val wasmSymbols: BackendWasmSymbols = backendContext.wasmSymbols
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
     private val unitGetInstance by lazy { backendContext.findUnitGetInstanceFunction() }

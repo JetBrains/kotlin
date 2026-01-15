@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.IrWhenUtils
-import org.jetbrains.kotlin.backend.wasm.WasmSymbols
+import org.jetbrains.kotlin.backend.wasm.BackendWasmSymbols
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -24,7 +24,7 @@ private class ExtractedWhenBranchWithIntConditions(val intConditions: List<Int>,
 internal fun BodyGenerator.tryGenerateOptimisedWhen(
     expression: IrWhen,
     irBuiltIns: IrBuiltIns,
-    symbols: WasmSymbols,
+    symbols: BackendWasmSymbols,
     functionContext: WasmFunctionCodegenContext,
     wasmModuleTypeTransformer: WasmModuleTypeTransformer
 ): Boolean {
@@ -187,7 +187,7 @@ private fun BodyGenerator.createBinaryTable(selectorLocal: WasmLocal, intBranche
     createBinaryTable(selectorLocal, WasmI32, sortedCaseToBranchIndex, 0, sortedCaseToBranchIndex.size, thenBody, elseBody)
 }
 
-private fun tryExtractEqEqNumberConditions(symbols: WasmSymbols, conditions: List<IrCall>): List<ExtractedWhenCondition>? {
+private fun tryExtractEqEqNumberConditions(symbols: BackendWasmSymbols, conditions: List<IrCall>): List<ExtractedWhenCondition>? {
     if (conditions.isEmpty()) return null
 
     val firstCondition = conditions[0]
