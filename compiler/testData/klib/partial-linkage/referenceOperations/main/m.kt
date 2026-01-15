@@ -21,7 +21,7 @@ fun box() = abiTest {
 
     // val
     expectSuccess(true) { createRemovedValReference() is kotlin.reflect.KProperty0<*> }
-    expectFailure(linkage("Reference to property 'removedVal' can not be evaluated: No property found for symbol '/removedVal'")) { removedValReferenceName() }
+    expectSuccess("removedVal") { removedValReferenceName() }
     expectFailure(linkage("Reference to property 'removedVal' can not be evaluated: No property found for symbol '/removedVal'")) { removedValReferenceHashCode() }
     expectFailure(linkage("Reference to property 'removedVal' can not be evaluated: No property found for symbol '/removedVal'")) { removedValReferenceEquals() }
     expectFailure(linkage("Reference to property 'removedVal' can not be evaluated: No property found for symbol '/removedVal'")) { removedValReferenceToString() }
@@ -30,7 +30,7 @@ fun box() = abiTest {
 
     // var
     expectSuccess(true) { createRemovedVarReference() is kotlin.reflect.KMutableProperty0<*> }
-    expectFailure(linkage("Reference to property 'removedVar' can not be evaluated: No property found for symbol '/removedVar'")) { removedVarReferenceName() }
+    expectSuccess("removedVar") { removedVarReferenceName() }
     expectFailure(linkage("Reference to property 'removedVar' can not be evaluated: No property found for symbol '/removedVar'")) { removedVarReferenceHashCode() }
     expectFailure(linkage("Reference to property 'removedVar' can not be evaluated: No property found for symbol '/removedVar'")) { removedVarReferenceEquals() }
     expectFailure(linkage("Reference to property 'removedVar' can not be evaluated: No property found for symbol '/removedVar'")) { removedVarReferenceToString() }
