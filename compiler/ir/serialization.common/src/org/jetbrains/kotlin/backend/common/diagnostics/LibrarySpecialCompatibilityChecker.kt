@@ -75,8 +75,9 @@ abstract class LibrarySpecialCompatibilityChecker {
         for (library in libraries) {
             val checkedLibrary = library.toCheckedLibrary() ?: continue
 
-            val jarManifest = library.getComponent(JarManifestComponent.Kind)?.jarManifest ?: continue
-            val libraryVersion = Version.parseVersion(jarManifest.mainAttributes.getValue(KLIB_JAR_LIBRARY_VERSION)) ?: continue
+            val libraryVersion = library.getComponent(JarManifestComponent.Kind)?.jarManifest?.let { jarManifest ->
+                Version.parseVersion(jarManifest.mainAttributes.getValue(KLIB_JAR_LIBRARY_VERSION))
+            }
 
             val libraryAbiVersion = library.versions.abiVersion ?: continue
 
@@ -92,7 +93,7 @@ abstract class LibrarySpecialCompatibilityChecker {
                         minAcceptedVersion = "$klibAbiCompatibilityLevel.0",
                         maxAcceptedVersion = "$klibAbiCompatibilityLevel.${KotlinVersion.MAX_COMPONENT_VALUE}"
                     )
-                isLatestKlibAbiCompatibilityLevel && libraryVersion < compilerVersion ->
+                isLatestKlibAbiCompatibilityLevel && libraryVersion != null && libraryVersion < compilerVersion ->
                     message(
                         rootCause = "The ${checkedLibrary.platformDisplayName} ${checkedLibrary.libraryDisplayName} library has an older version ($libraryVersion) than the compiler ($compilerVersion). Such a configuration is not supported.",
                         libraryName = checkedLibrary.libraryDisplayName,
