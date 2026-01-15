@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.ir.backend.js.jsexport
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
 import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
 import org.jetbrains.kotlin.ir.backend.js.ir.*
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.lower.isExportedDefaultImplementation
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.tsexport.Exportability
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedNamespace
 import org.jetbrains.kotlin.ir.backend.js.utils.couldBeConvertedToExplicitExport
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExportDefault
 import org.jetbrains.kotlin.ir.declarations.*
@@ -31,7 +34,10 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         return when {
             exports.isEmpty() -> emptyList()
             !generateNamespacesForPackages || namespaceFqName.isRoot -> exports
-            else -> listOf(ExportedNamespace(namespaceFqName.toString(), exports))
+            else -> namespaceFqName.pathSegments().asReversed()
+                .fold(exports) { members, segment ->
+                    listOf(ExportedNamespace(segment.identifier, members))
+                }
         }
     }
 
@@ -100,6 +106,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         irGetter = property.getter,
         irSetter = property.setter,
         isStatic = (property.getter ?: property.setter)?.isStaticMethodOfClass == true,
+        isDefaultImplementation = property.isExportedDefaultImplementation
     )
 
     private fun exportEnumEntry(field: IrField): ExportedProperty {
@@ -186,6 +193,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         val members = mutableListOf<ExportedDeclaration>()
         val specialMembers = mutableListOf<ExportedDeclaration>()
         val nestedClasses = mutableListOf<ExportedClass>()
+        val defaultImplementations = mutableListOf<ExportedDeclaration>()
 
         klass.forEachExportedMember(context) { candidate, declaration ->
             val processingResult = specialProcessing(candidate)
@@ -196,12 +204,24 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
             when (candidate) {
                 is IrSimpleFunction ->
-                    members.addIfNotNull(exportFunction(candidate))
+                    exportFunction(candidate)?.let {
+                        if (candidate.isExportedDefaultImplementation) {
+                            defaultImplementations.add(it)
+                        } else {
+                            members.add(it)
+                        }
+                    }
 
                 is IrConstructor -> return@forEachExportedMember
 
                 is IrProperty ->
-                    members.addIfNotNull(exportProperty(candidate))
+                    exportProperty(candidate)?.let {
+                        if (candidate.isExportedDefaultImplementation) {
+                            defaultImplementations.add(it)
+                        } else {
+                            members.add(it)
+                        }
+                    }
 
                 is IrClass -> {
                     val ec = exportClass(candidate)
@@ -227,6 +247,15 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             }
         }
 
+        if (defaultImplementations.isNotEmpty()) {
+            members.add(
+                ExportedNamespace(
+                    StandardNames.DEFAULT_IMPLS_CLASS_NAME.identifier,
+                    defaultImplementations,
+                )
+            )
+        }
+
         return ExportedClassDeclarationsInfo(
             specialMembers + members,
             nestedClasses
@@ -241,7 +270,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         val name = klass.getExportedIdentifier()
 
         return if (klass.kind == ClassKind.OBJECT) {
-            return ExportedObject(
+            ExportedObject(
                 ir = klass,
                 name = name,
                 members = members,

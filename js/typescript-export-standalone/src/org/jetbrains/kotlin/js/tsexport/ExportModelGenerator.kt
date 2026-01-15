@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.common.safeModuleName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
@@ -111,15 +112,16 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             }
         }
 
+    private fun sanitizeName(parameterName: Name): String {
+        // Parameter names do not matter in d.ts files. They can be renamed as we like
+        var sanitizedName = makeValidES5Identifier(parameterName.asString(), withHash = false)
+        if (sanitizedName in allReservedWords)
+            sanitizedName = "_$sanitizedName"
+        return sanitizedName
+    }
+
     context(_: KaSession)
     private fun exportFunctionParameters(function: KaFunctionSymbol): List<ExportedParameter> {
-        fun sanitizeName(parameterName: Name): String {
-            // Parameter names do not matter in d.ts files. They can be renamed as we like
-            var sanitizedName = makeValidES5Identifier(parameterName.asString(), withHash = false)
-            if (sanitizedName in allReservedWords)
-                sanitizedName = "_$sanitizedName"
-            return sanitizedName
-        }
         return buildList {
             for (parameter in function.contextParameters) {
                 add(ExportedParameter(sanitizeName(parameter.name), exportType(parameter.returnType)))
@@ -146,17 +148,62 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             return null
         }
         val parentClass = parent as? KaClassSymbol
-        val isOptional = property.isExternal && parentClass != null && property.returnType.isNullable
+        val isMember = parentClass != null
+        val isStatic = property.isStatic
+        val isObjectGetter = false  // TODO: Should be true for getInstance functions of objects
+        val isOptional = property.isExternal && isMember && property.returnType.isNullable
+        val shouldBeExportedAsObjectWithAccessorsInside = !config.generateNamespacesForPackages && !isMember && !isStatic
+
+        val propertyType = when {
+            !shouldBeExportedAsObjectWithAccessorsInside -> exportType(property.returnType)
+            isObjectGetter -> ExportedType.InlineInterfaceType(
+                listOf(
+                    ExportedFunction(
+                        name = ExportedMemberName.Identifier("getInstance"),
+                        returnType = exportType(property.returnType),
+                        parameters = emptyList(),
+                        isMember = true,
+                        isProtected = false
+                    )
+                )
+            )
+            else -> // TODO: add correct default implementations processing
+                ExportedType.InlineInterfaceType(
+                    listOfNotNull(
+                        ExportedFunction(
+                            name = ExportedMemberName.Identifier("get"),
+                            returnType = exportType(property.getter?.returnType ?: property.returnType),
+                            parameters = emptyList(),
+                            isMember = true,
+                            isProtected = false
+                        ),
+                        runIf(!property.isVal) {
+                            ExportedFunction(
+                                name = ExportedMemberName.Identifier("set"),
+                                returnType = Primitive.Unit,
+                                parameters = listOf(
+                                    property.setter?.parameter?.let {
+                                        ExportedParameter(sanitizeName(it.name), exportType(it.returnType))
+                                    } ?: ExportedParameter("value", exportType(property.returnType))
+                                ),
+                                isMember = true,
+                                isProtected = false
+                            )
+                        }
+                    )
+                )
+        }
+
         return ExportedProperty(
             name = ExportedMemberName.Identifier(property.getExportedIdentifier()),
-            type = exportType(property.returnType),
+            type = propertyType,
             mutable = !property.isVal,
             isMember = parentClass != null,
             isStatic = property.isStatic,
             isAbstract = parentClass?.classKind != KaClassKind.INTERFACE && property.modality == KaSymbolModality.ABSTRACT,
             isProtected = property.visibility == KaSymbolVisibility.PROTECTED,
             isField = parentClass?.classKind == KaClassKind.INTERFACE,
-            isObjectGetter = false, // TODO: Should be true for getInstance functions of objects
+            isObjectGetter = isObjectGetter,
             isOptional = isOptional,
         )
     }

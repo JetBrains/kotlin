@@ -101,7 +101,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
             return null
         }
 
-        if (declaration.hasDefaultArgs() && (declaration is IrConstructor || declaration.isTopLevel)) {
+        if (declaration.hasDefaultArgs() && (declaration is IrConstructor || declaration.isTopLevel || declaration.isStatic)) {
             return listOf(declaration.introduceDefaultResolution())
         }
 

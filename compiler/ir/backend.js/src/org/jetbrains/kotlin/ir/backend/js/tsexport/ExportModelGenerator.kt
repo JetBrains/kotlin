@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
 import org.jetbrains.kotlin.ir.backend.js.ir.*
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
+import org.jetbrains.kotlin.ir.backend.js.lower.isExportedDefaultImplementation
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -99,15 +100,17 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         function: IrSimpleFunction,
         classTypeParameterScope: TypeParameterScope,
         specializedType: ExportedType? = null,
+        specializedName: String? = null,
         isFactoryPropertyForInnerClass: Boolean = false,
     ): ExportedDeclaration? {
-        return when (val exportability = function.exportability(context)) {
+        return when (val exportability = function.exportability(context, specializedName)) {
             is Exportability.NotNeeded, is Exportability.Implicit -> null
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
             is Exportability.Allowed -> {
                 val parent = function.parent
                 val realOverrideTarget = function.realOverrideTargetOrNull
                 val isStatic = function.isStaticMethod
+                val isExportedDefaultImplementation = function.isExportedDefaultImplementation
                 val isInnerClassMember = parent is IrClass && parent.isInner
                 if (isStatic && isInnerClassMember && !isFactoryPropertyForInnerClass) {
                     // Static members of inner classes should only be generated in the corresponding factory property of the outer class
@@ -116,14 +119,15 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                 val outerScope = if (!isStatic || isFactoryPropertyForInnerClass) classTypeParameterScope else emptyMap()
                 val functionTypeParameterScope = newTypeParameterScope(function, outerScope)
                 ExportedFunction(
-                    realOverrideTarget
-                        ?.getJsSymbolForOverriddenDeclaration()
-                        ?.let(ExportedMemberName::WellKnownSymbol)
+                    specializedName?.let(ExportedMemberName::Identifier)
+                        ?: realOverrideTarget
+                            ?.getJsSymbolForOverriddenDeclaration()
+                            ?.let(ExportedMemberName::WellKnownSymbol)
                         ?: ExportedMemberName.Identifier(function.getExportedIdentifier()),
                     returnType = specializedType ?: exportType(function.returnType, functionTypeParameterScope, function),
                     typeParameters = function.typeParameters.map { functionTypeParameterScope[it.symbol]!! },
-                    isMember = parent is IrClass,
-                    isStatic = isStatic && !isFactoryPropertyForInnerClass,
+                    isMember = parent is IrClass && !isExportedDefaultImplementation,
+                    isStatic = isStatic && !isFactoryPropertyForInnerClass && !isExportedDefaultImplementation,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
                     isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
                     parameters = function.nonDispatchParameters
@@ -229,22 +233,45 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                 property.getter?.returnType?.isNullable() == true
 
         val isStatic = property.isStaticProperty
+        val isExportedDefaultImplementation = property.isExportedDefaultImplementation
         if (isStatic && property.parentClassOrNull?.isInner == true && !isFactoryPropertyForInnerClass) {
             // Static members of inner classes should only be generated in the corresponding factory property of the outer class
             return null
         }
 
+        val isPropertyAMember = parentClass != null && !isExportedDefaultImplementation
+        val shouldPropertyBeStatic = isStatic && !isFactoryPropertyForInnerClass && !isExportedDefaultImplementation
+        val isObjectGetter = property.getter?.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
+        val shouldBeExportedAsObjectWithAccessorsInside =
+            (isExportedDefaultImplementation || isEsModules) && !isPropertyAMember && !shouldPropertyBeStatic
+
+        val propertyType = specializeType
+            ?: runIf(shouldBeExportedAsObjectWithAccessorsInside) {
+                when {
+                    isObjectGetter -> (exportFunction(
+                        property.getter!!, emptyMap(), specializedName = "getInstance"
+                    ) as ExportedFunction).copy(isMember = true).let { ExportedType.InlineInterfaceType(listOf(it)) }
+                    else -> ExportedType.InlineInterfaceType(
+                        listOfNotNull(
+                            property.getter?.let { exportFunction(it, emptyMap(), specializedName = "get") as ExportedFunction }
+                                ?.copy(isMember = true),
+                            property.setter?.let { exportFunction(it, emptyMap(), specializedName = "set") as ExportedFunction }
+                                ?.copy(isMember = true),
+                        ))
+                }
+            } ?: exportType(property.getter!!.returnType, classTypeParameterScope, property)
+
         return ExportedProperty(
             name = ExportedMemberName.Identifier(property.getExportedIdentifier()),
-            type = specializeType ?: exportType(property.getter!!.returnType, classTypeParameterScope, property),
-            mutable = property.isVar,
-            isMember = parentClass != null,
+            type = propertyType,
+            mutable = property.isVar && !shouldBeExportedAsObjectWithAccessorsInside,
+            isMember = parentClass != null && !isExportedDefaultImplementation,
+            isStatic = shouldPropertyBeStatic,
             isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
             isProtected = property.visibility == DescriptorVisibilities.PROTECTED,
             isField = parentClass?.isInterface == true,
-            isObjectGetter = property.getter?.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION,
+            isObjectGetter = isObjectGetter,
             isOptional = isOptional,
-            isStatic = isStatic && !isFactoryPropertyForInnerClass,
         )
     }
 
@@ -383,6 +410,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         val members = mutableListOf<ExportedDeclaration>()
         val specialMembers = mutableListOf<ExportedDeclaration>()
         val nestedClasses = mutableListOf<ExportedClass>()
+        val defaultImplementations = mutableListOf<ExportedDeclaration>()
 
         klass.forEachExportedMember(context) { candidate, declaration ->
             val processingResult = specialProcessing(candidate)
@@ -393,7 +421,15 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
 
             when (candidate) {
                 is IrSimpleFunction ->
-                    members.addIfNotNull(exportFunction(candidate, typeParameterScope)?.withAttributesFor(candidate))
+                    exportFunction(candidate, typeParameterScope)
+                        ?.withAttributesFor(candidate)
+                        ?.let {
+                            if (candidate.isExportedDefaultImplementation) {
+                                defaultImplementations.add(it)
+                            } else {
+                                members.add(it)
+                            }
+                        }
 
                 is IrConstructor ->
                     members.addIfNotNull(
@@ -405,7 +441,15 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                     )
 
                 is IrProperty ->
-                    members.addIfNotNull(exportProperty(candidate, typeParameterScope)?.withAttributesFor(candidate))
+                    exportProperty(candidate, typeParameterScope)
+                        ?.withAttributesFor(candidate)
+                        ?.let {
+                            if (candidate.isExportedDefaultImplementation) {
+                                defaultImplementations.add(it)
+                            } else {
+                                members.add(it)
+                            }
+                        }
 
                 is IrClass -> {
                     if (candidate.isInner && (candidate.modality == Modality.OPEN || candidate.modality == Modality.FINAL)) {
@@ -441,6 +485,15 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
 
         if (!klass.isExternal) {
             members.addSuperTypesSpecialProperties(klass, superTypes, typeParameterScope)
+        }
+
+        if (defaultImplementations.isNotEmpty()) {
+            members.add(
+                ExportedNamespace(
+                    StandardNames.DEFAULT_IMPLS_CLASS_NAME.identifier,
+                    defaultImplementations,
+                )
+            )
         }
 
         return ExportedClassDeclarationsInfo(
@@ -595,18 +648,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                 isField = true
             )
         )
-    }
-
-    private fun IrType.shouldAddMagicPropertyOfSuper(): Boolean {
-        return classOrNull?.owner?.isOwnMagicPropertyAdded() ?: false
-    }
-
-    private fun IrClass.isOwnMagicPropertyAdded(): Boolean {
-        if (isJsImplicitExport()) return true
-        if (!isExported(context)) return false
-        return isInterface && !isExternal || superTypes.any {
-            it.classOrNull?.owner?.isOwnMagicPropertyAdded() == true
-        }
     }
 
     private fun IrClass.generateNotImplementableBrandType(): ExportedType {

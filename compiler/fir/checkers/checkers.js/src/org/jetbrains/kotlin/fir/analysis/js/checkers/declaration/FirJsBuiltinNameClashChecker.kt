@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object FirJsBuiltinNameClashChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    private val PROHIBITED_STATIC_NAMES_FOR_INTERFACES = setOf("Symbol")
+    private val PROHIBITED_STATIC_NAMES_FOR_INTERFACES = setOf("Symbol", StandardNames.DEFAULT_IMPLS_CLASS_NAME.identifier)
     private val PROHIBITED_MEMBER_NAMES = setOf("constructor")
     private val PROHIBITED_STATIC_NAMES = setOf("prototype", "length", "\$metadata\$")
 
