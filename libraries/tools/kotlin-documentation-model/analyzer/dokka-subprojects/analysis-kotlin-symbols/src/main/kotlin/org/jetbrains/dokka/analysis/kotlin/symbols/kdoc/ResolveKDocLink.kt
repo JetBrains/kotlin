@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 
+import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromSymbol
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.utilities.DokkaLogger
@@ -11,24 +12,61 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
+
+/**
+ * Resolves a KDoc link, logging a warning in case of unresolved links.
+ *
+ * For the resolution logic, see [resolveKDocLinkToDRI]
+ */
+internal fun resolveKDocLink(
+    link: KDocLink,
+    location: String?,
+    logger: DokkaLogger,
+    sourceSet: DokkaConfiguration.DokkaSourceSet
+): DRI? {
+    val dri = resolveKDocLinkToDRI(link)
+    if (dri == null) {
+        logUnresolvedLink(link.getLinkText(), location, logger, sourceSet)
+    }
+    return dri
+}
+
+/**
+ * Resolves a KDoc link from text representation, logging a warning in case of unresolved links.
+ *
+ * For the resolution logic, see [resolveKDocTextLinkToDRI]
+ */
+internal fun KaSession.resolveKDocTextLink(
+    link: String,
+    contextPackageFQN: String?,
+    location: String?,
+    logger: DokkaLogger,
+    sourceSet: DokkaConfiguration.DokkaSourceSet
+): DRI? {
+    val dri = resolveKDocTextLinkToDRI(link, contextPackageFQN)
+    if (dri == null) {
+        logUnresolvedLink(link, location, logger, sourceSet)
+    }
+    return dri
+}
 
 /**
  * Util to print a message about unresolved [link]
  */
-internal fun DokkaLogger.logUnresolvedLink(link: String, location: String?) {
-    warn("Couldn't resolve link for $link" + if (location != null) " in $location" else "")
-}
-
-internal inline fun DRI?.ifUnresolved(action: () -> Unit): DRI? = this ?: run {
-    action()
-    null
+private fun logUnresolvedLink(
+    link: String,
+    location: String?,
+    logger: DokkaLogger,
+    sourceSet: DokkaConfiguration.DokkaSourceSet
+) {
+    logger.warn("Couldn't resolve link: [$link]" + (if (location != null) " in $location" else "") + " (${sourceSet.sourceSetID})")
 }
 
 /**
@@ -64,27 +102,11 @@ internal fun KaSession.resolveKDocTextLinkToSymbol(link: String): KaSymbol? {
 }
 
 private fun KaSession.createKDocLink(link: String, contextPackageFQN: String?): KDocLink? {
-    /**
-     * Creates a dangling file stored in-memory
-     * A such file belongs to [a separate module][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
-     *
-     * Additional information: https://kotlin.github.io/analysis-api/in-memory-file-analysis.html#stand-alone-file-analysis
-     * @see [org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
-     */
-
     val currentModule: KaSourceModule = useSiteModule as? KaSourceModule
         ?: throw IllegalStateException("Resolving KDoc links can be done only in a source module, not $useSiteModule")
 
-    // To pass context (dependencies) from the current source module to a dangling module,
-    // a random source file is selected as the context file
-    val randomKtSourceFile: KtFile =
-        @OptIn(KaExperimentalApi::class) currentModule.psiRoots.filterIsInstance<KtFile>().firstOrNull()
-            ?: return null
-
-    val psiFactory = KtPsiFactory.contextual(randomKtSourceFile)
-
     // creates dummy.kt file
-    val dummyFileText = if (contextPackageFQN != null && contextPackageFQN.isNotBlank()) """
+    val dummyFileText = if (!contextPackageFQN.isNullOrBlank()) """
     package $contextPackageFQN
     
     /**
@@ -97,7 +119,20 @@ private fun KaSession.createKDocLink(link: String, contextPackageFQN: String?): 
     */
     """
 
-    val dummyFile = psiFactory.createFile(dummyFileText)
+    /**
+     * Creates a dangling file stored in-memory
+     * Such file belongs to [a separate module][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
+     *
+     * Additional information: https://kotlin.github.io/analysis-api/in-memory-file-analysis.html#stand-alone-file-analysis
+     */
+    val dummyFile = KtPsiFactory(currentModule.project).createFile(dummyFileText)
+
+    // pass context (dependencies) from the current source module to a dangling module,
+    // by default, the file will have no context,
+    // and so will it will not be possible to resolve declarations from outside the file itself.
+    @OptIn(KaExperimentalApi::class)
+    dummyFile.contextModule = currentModule
+
     val comments = dummyFile.children.filterIsInstance<KDoc>()
     val kDoc = comments.single()
 
@@ -110,7 +145,7 @@ private fun KaSession.createKDocLink(link: String, contextPackageFQN: String?): 
  *
  * @return [DRI] or null if the [kDocLink] is unresolved
  */
-internal fun resolveKDocLinkToDRI(kDocLink: KDocLink): DRI? {
+private fun resolveKDocLinkToDRI(kDocLink: KDocLink): DRI? {
     /**
      * [kDocLink] can belong to [a dangling module][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
      * or [a source module][org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule]
