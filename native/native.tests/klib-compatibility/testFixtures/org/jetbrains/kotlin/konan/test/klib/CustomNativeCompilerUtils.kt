@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.konan.test.klib
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriends
 import org.jetbrains.kotlin.test.klib.CustomKlibCompiler
-import org.jetbrains.kotlin.test.klib.CustomCompilerArtifacts
-import org.jetbrains.kotlin.test.klib.CustomCompilerArtifacts.Companion.propertyNotFound
-import org.jetbrains.kotlin.test.klib.CustomCompilerArtifacts.Companion.readProperty
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerArtifacts
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerArtifacts.Companion.propertyNotFound
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerArtifacts.Companion.readProperty
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
@@ -32,8 +32,8 @@ val CustomNativeCompilerSettings.defaultLanguageVersion: LanguageVersion
     get() = LanguageVersion.fromFullVersionString(version)
         ?: fail("Cannot deduce the default LV from the compiler version: $version")
 
-class CustomNativeCompilerSettingsImpl(lazyArtifacts: () -> CustomCompilerArtifacts): CustomNativeCompilerSettings {
-    private val artifacts: CustomCompilerArtifacts by lazy(lazyArtifacts)
+class CustomNativeCompilerSettingsImpl(lazyArtifacts: () -> CustomKlibCompilerArtifacts): CustomNativeCompilerSettings {
+    private val artifacts: CustomKlibCompilerArtifacts by lazy(lazyArtifacts)
     override val version: String
         get() = artifacts.version
     override val compiler: CustomKlibCompiler by lazy {
@@ -50,7 +50,7 @@ class CustomNativeCompilerSettingsImpl(lazyArtifacts: () -> CustomCompilerArtifa
  */
 val customNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
     CustomNativeCompilerSettingsImpl {
-        CustomCompilerArtifacts.create(
+        CustomKlibCompilerArtifacts.create(
             compilerClassPathPropertyName = "kotlin.internal.native.test.compat.customCompilerClasspath",
             runtimeDependenciesPropertyName = null, // After OSIP-740, make it non-nullable to always provide stdlib
             versionPropertyName = "kotlin.internal.native.test.compat.customCompilerVersion",
@@ -64,7 +64,7 @@ val currentCustomNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
         val propertyName = "kotlin.internal.native.test.compat.currentCompilerDist"
         readProperty(propertyName)?.let {
             val compilerDist = File(it)
-            CustomCompilerArtifacts.create(
+            CustomKlibCompilerArtifacts.create(
                 version = LanguageVersion.LATEST_STABLE,
                 compilerDist = compilerDist,
                 compilerClassPath = listOf(

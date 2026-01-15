@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.klib.CustomKlibCompiler
-import org.jetbrains.kotlin.test.klib.CustomCompilerArtifacts
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerArtifacts
 import java.io.File
 import kotlin.getValue
 import kotlin.test.fail
@@ -62,8 +62,8 @@ private fun createCustomWebCompilerSettings(
     stdlibArtifactName: String,
     kotlinTestArtifactName: String,
 ): CustomWebCompilerSettings = object : CustomWebCompilerSettings {
-    private val artifacts: CustomCompilerArtifacts by lazy {
-        CustomCompilerArtifacts.create(compilerClasspathPropertyName, runtimeDependenciesPropertyName, versionPropertyName)
+    private val artifacts: CustomKlibCompilerArtifacts by lazy {
+        CustomKlibCompilerArtifacts.create(compilerClasspathPropertyName, runtimeDependenciesPropertyName, versionPropertyName)
     }
     override val version: String get() = artifacts.version
     override val stdlib: File by lazy { artifacts.runtimeDependency(stdlibArtifactName, "klib") }
