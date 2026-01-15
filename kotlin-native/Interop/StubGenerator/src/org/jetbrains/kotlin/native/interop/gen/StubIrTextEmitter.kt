@@ -483,6 +483,17 @@ class StubIrTextEmitter(
                 else -> "($protocolGetter, $binaryName)"
             }
         }
+        is AnnotationStub.ObjC.ObjCName -> {
+            val args = listOfNotNull(
+                    annotationStub.name.takeIf { it.isNotEmpty() }?.let { "name = ${it.quoteAsKotlinLiteral()}" },
+                    annotationStub.swiftName.takeIf { it.isNotEmpty() }?.let { "swiftName = ${it.quoteAsKotlinLiteral()}" },
+                    annotationStub.exact.takeIf { it }?.let { "exact = true" }
+            )
+            "@kotlin.native.ObjCName(${args.joinToString(", ")})"
+        }
+        is AnnotationStub.ObjC.SwiftBridge -> {
+            "@kotlin.native.SwiftBridge(${annotationStub.bridgedType.quoteAsKotlinLiteral()})"
+        }
         AnnotationStub.CCall.CString ->
             "@CCall.CString"
         AnnotationStub.CCall.WCString ->

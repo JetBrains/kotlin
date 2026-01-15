@@ -195,6 +195,12 @@ sealed class AnnotationStub(val classifier: Classifier) {
 
         class ExternalClass(val protocolGetter: String = "", val binaryName: String = "") :
                 ObjC(Classifier.topLevel(cinteropPackage, "ExternalObjCClass"))
+
+        class ObjCName(val name: String = "", val swiftName: String = "", val exact: Boolean = false) :
+                ObjC(Classifier.topLevel("kotlin.native", "ObjCName"))
+
+        class SwiftBridge(val bridgedType: String) :
+                ObjC(Classifier.topLevel("kotlin.native", "SwiftBridge"))
     }
 
     sealed class CCall(classifier: Classifier) : AnnotationStub(classifier) {
