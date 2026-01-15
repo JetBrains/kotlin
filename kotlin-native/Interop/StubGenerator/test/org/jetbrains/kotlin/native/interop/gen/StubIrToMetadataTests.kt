@@ -114,4 +114,37 @@ class StubIrToMetadataTests {
             assertEquals(42, compileTimeValue.value)
         }
     }
+
+    @OptIn(kotlin.metadata.ExperimentalAnnotationsInMetadata::class)
+    @Test
+    fun `function with ObjCName annotation`() {
+        val cDeclaration = FunctionDecl("doSomething", emptyList(), intType, false, DirectAccess.Symbol("doSomething"))
+        val origin = StubOrigin.Function(cDeclaration)
+        val function = FunctionStub(
+                name = cDeclaration.name,
+                returnType = intStubType,
+                parameters = listOf(),
+                origin = origin,
+                annotations = mutableListOf(AnnotationStub.ObjC.ObjCName(swiftName = "performAction()")),
+                external = true,
+                receiver = null,
+                modality = MemberStubModality.FINAL
+        )
+        val metadata = createMetadata("objcname_test", functions = listOf(function))
+        with(metadata) {
+            assertNotNull(pkg)
+            assertEquals(1, pkg!!.functions.size)
+
+            val kmFunction = pkg!!.functions[0]
+            assertEquals("doSomething", kmFunction.name)
+
+            val objcNameAnnotation = kmFunction.annotations.find { it.className == "kotlin/native/ObjCName" }
+            assertNotNull(objcNameAnnotation, "Expected @ObjCName annotation on function")
+
+            val swiftNameArg = objcNameAnnotation.arguments["swiftName"]
+            assertNotNull(swiftNameArg, "Expected swiftName argument in @ObjCName annotation")
+            assertTrue(swiftNameArg is KmAnnotationArgument.StringValue)
+            assertEquals("performAction()", swiftNameArg.value)
+        }
+    }
 }

@@ -154,5 +154,24 @@ class SwiftNameIndexingTest : IndexerTestsBase() {
 
     private fun indexObjCHeader(headerContents: String): IndexerResult =
             index(headerContents, language = Language.OBJECTIVE_C)
+
+    // Tests for AnnotationStub.ObjC.ObjCName creation from swiftName
+
+    @Test
+    fun `ObjCName annotation stub created with swiftName only`() {
+        val annotation = AnnotationStub.ObjC.ObjCName(swiftName = "SwiftClassName")
+        assertEquals("", annotation.name)
+        assertEquals("SwiftClassName", annotation.swiftName)
+        assertEquals(false, annotation.exact)
+        assertEquals("kotlin.native.ObjCName", annotation.classifier.fqName)
+    }
+
+    @Test
+    fun `ObjCName annotation stub created with all parameters`() {
+        val annotation = AnnotationStub.ObjC.ObjCName(name = "ObjCName", swiftName = "SwiftName", exact = true)
+        assertEquals("ObjCName", annotation.name)
+        assertEquals("SwiftName", annotation.swiftName)
+        assertEquals(true, annotation.exact)
+    }
 }
 
