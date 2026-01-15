@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributesSchema
+import org.gradle.api.internal.artifacts.transform.UnzipTransform
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
@@ -50,7 +51,7 @@ internal object KotlinNativeBundleArtifactFormat {
         }
 
         project.dependencies.registerTransformForArtifactType(
-            UnzipTransformationAction::class.java,
+            UnzipTransform::class.java,
             fromArtifactType = tarGz.name,
             toArtifactType = ArtifactTypeDefinition.DIRECTORY_TYPE,
         ) { transform ->
@@ -63,7 +64,7 @@ internal object KotlinNativeBundleArtifactFormat {
         }
 
         project.dependencies.registerTransformForArtifactType(
-            UnzipTransformationAction::class.java,
+            UnzipTransform::class.java,
             fromArtifactType = zip.name,
             toArtifactType = ArtifactTypeDefinition.DIRECTORY_TYPE,
         ) { transform ->

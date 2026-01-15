@@ -22,6 +22,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.fail
 
 @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX]) // disabled for Windows because of tmp dir problem: KT-62761
@@ -276,10 +277,12 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
                         sourceSets.commonMain.get().compileSource("class Main")
                     }
                     sourceSets.commonTest.dependencies {
-                        sourceSets.commonTest.get().compileSource("""
+                        sourceSets.commonTest.get().compileSource(
+                            """
                             @kotlin.test.Test
                             fun test() {}
-                        """)
+                        """
+                        )
                     }
                 }
             }
@@ -336,6 +339,51 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
             )
         }
 
+    }
+
+    @OsCondition(
+        supportedOn = [OS.MAC],
+        enabledOnCI = [OS.MAC],
+    )
+    @DisplayName(
+        "KT-80821 : native libraries should not be redownloaded when buildSrc module is changed"
+    )
+    @GradleTest
+    fun checkNativeDownloadForProjectWithBuildSrc(gradleVersion: GradleVersion, @TempDir gradleUserHome: Path, @TempDir konanTemp: Path) {
+        nativeProject(
+            "native-with-build-src",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                konanDataDir = konanTemp,
+            ),
+            configureSubProjects = true,
+        ) {
+            build("assemble", "-Dgradle.user.home=${gradleUserHome.absolutePathString()}") {
+                assertOutputContainsExactlyTimes(UNPUCK_KONAN_FINISHED_LOG)
+            }
+
+            assertEquals(1, gradleUserHome.countNativePrebuildTransforms(gradleVersion))
+
+            projectPath.resolve("buildSrc/src/main/kotlin").resolve("Foo.kt").writeText("class Foo {\n}")
+
+            build("assemble", "-Dgradle.user.home=${gradleUserHome.absolutePathString()}") {
+                assertOutputDoesNotContain(UNPUCK_KONAN_FINISHED_LOG)
+            }
+
+            assertEquals(1, gradleUserHome.countNativePrebuildTransforms(gradleVersion))
+        }
+    }
+
+    private fun Path.countNativePrebuildTransforms(gradleVersion: GradleVersion): Int {
+        val transformationDir = when {
+            gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_0) -> resolve("caches/${gradleVersion.version}/transforms")
+            else -> resolve("caches/transforms-3")
+        }
+        return transformationDir.toFile().listFiles().filter { it.isDirectory }
+            .map { it.resolve("transformed/extracted") }.filter { it.isDirectory }
+            .count {
+                it.listFiles().find { it.name.startsWith("kotlin-native-prebuilt") } != null
+            }
     }
 
     private fun Path.appendKonanToGradleProperties(konanAbsolutePathString: String) {

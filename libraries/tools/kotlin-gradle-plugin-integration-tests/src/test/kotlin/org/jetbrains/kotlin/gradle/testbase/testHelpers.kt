@@ -73,9 +73,10 @@ fun TestProject.makeSnapshotTo(
                         }
                     }
                 gradlePropertiesFile.writeLines(content)
+                gradlePropertiesFile.appendText("# Gradle Properties from project's buildOptions\n$gradlePropertiesContent\n")
+            } else {
+                gradlePropertiesFile.writeText("# Gradle Properties from project's buildOptions\n$gradlePropertiesContent\n")
             }
-
-            gradlePropertiesFile.appendText("# Gradle Properties from project's buildOptions\n$gradlePropertiesContent\n")
         }
 
     dest.resolve("run.sh").run {
