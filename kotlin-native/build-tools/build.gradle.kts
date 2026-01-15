@@ -77,10 +77,6 @@ gradlePlugin {
             id = "compile-to-bitcode"
             implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
         }
-        create("runtimeTesting") {
-            id = "runtime-testing"
-            implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
-        }
         create("compilationDatabase") {
             id = "compilation-database"
             implementationClass = "org.jetbrains.kotlin.cpp.CompilationDatabasePlugin"

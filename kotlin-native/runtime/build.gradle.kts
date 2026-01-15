@@ -18,19 +18,27 @@ val kotlinVersion: String by rootProject.extra
 plugins {
     id("base")
     id("compile-to-bitcode")
-    id("runtime-testing")
 }
 
 repositories {
     githubTag("google", "breakpad")
+    githubCommit("google", "googletest")
 }
 
 val breakpad = configurations.dependencyScope("breakpad")
 val breakpadClasspath = configurations.resolvable("breakpadClasspath") {
     extendsFrom(breakpad.get())
 }
+val googletest = configurations.dependencyScope("googletest")
+val googletestClasspath = configurations.resolvable("googletestClasspath") {
+    extendsFrom(googletest.get())
+}
 dependencies {
     breakpad("google:breakpad:2024.02.16@zip")
+    // GTest 1.10.0 doesn't properly register skipped tests in an XML-report.
+    // Therefore we use a fixed commit form the master branch where this problem is already fixed.
+    // https://github.com/google/googletest/commit/07f4869221012b16b7f9ee685d94856e1fc9f361
+    googletest("google:googletest:07f4869221012b16b7f9ee685d94856e1fc9f361@zip")
 }
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
@@ -60,15 +68,28 @@ artifacts {
     add(breakpadSources.name, unpackBreakpad)
 }
 
-googletest {
-    revision = project.property("gtestRevision") as String
-    refresh = project.hasProperty("refresh-gtest")
+val unpackGoogletest = tasks.register<Sync>("unpackGoogletest") {
+    from(googletestClasspath.map { zipTree(it.singleFile) })
+    eachFile {
+        relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
+    }
+    includeEmptyDirs = false
+    into(layout.buildDirectory.dir("googletest"))
+}
+
+val googleTestRoot = objects.directoryProperty().apply {
+    set(layout.dir(unpackGoogletest.map { (it.destinationDir) }))
 }
 
 val targetList = enabledTargets(extensions.getByType<PlatformManager>())
 
 // NOTE: the list of modules is duplicated in `RuntimeModule.kt`
 bitcode {
+    googleTestHeaders.from(
+            googleTestRoot.map { it.dir("googletest/include") },
+            googleTestRoot.map { it.dir("googlemock/include") }
+    )
+
     allTargets {
         val fixBrokenMacroExpansionInXcode15_3: List<String> = when (target) {
             KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
@@ -376,6 +397,49 @@ bitcode {
             sourceSets {
                 main {}
             }
+        }
+
+        module("googletest") {
+            sourceSets {
+                testFixtures {
+                    inputFiles.from(googleTestRoot.dir("googletest/src"))
+                    // That's how googletest/CMakeLists.txt builds gtest library.
+                    inputFiles.include("gtest-all.cc")
+                    headersDirs.setFrom(
+                            googleTestRoot.dir("googletest/include"),
+                            googleTestRoot.dir("googletest")
+                    )
+                    // Fix Gradle Configuration Cache: support this task being configured before googletest sources are actually downloaded.
+                    compileTask.configure {
+                        inputFiles.setFrom(googleTestRoot.dir("googletest/src/gtest-all.cc"))
+                        dependsOn(unpackGoogletest)
+                    }
+                }
+            }
+            compilerArgs.set(listOf("-std=c++17", "-O2"))
+            this.dependencies.add(unpackGoogletest)
+        }
+
+        module("googlemock") {
+            sourceSets {
+                testFixtures {
+                    inputFiles.from(googleTestRoot.dir("googlemock/src"))
+                    // That's how googlemock/CMakeLists.txt builds gmock library.
+                    inputFiles.include("gmock-all.cc")
+                    headersDirs.setFrom(
+                            googleTestRoot.dir("googlemock"),
+                            googleTestRoot.dir("googlemock/include"),
+                            googleTestRoot.dir("googletest/include"),
+                    )
+                    // Fix Gradle Configuration Cache: support this task being configured before googletest sources are actually downloaded.
+                    compileTask.configure {
+                        inputFiles.setFrom(googleTestRoot.dir("googlemock/src/gmock-all.cc"))
+                        dependsOn(unpackGoogletest)
+                    }
+                }
+            }
+            compilerArgs.set(listOf("-std=c++17", "-O2"))
+            this.dependencies.add(unpackGoogletest)
         }
 
         module("test_support") {
