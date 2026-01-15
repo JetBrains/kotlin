@@ -20,13 +20,9 @@ fun box(): String {
 
 // EXPECTATIONS NATIVE
 // test.kt:5 box
-// Standard.kt:45 box
 // test.kt:5 box
-// Standard.kt:45 box
 // test.kt:6 box
-// Standard.kt:45 box
 // test.kt:7 box
-// Standard.kt:45 box
 // test.kt:9 box
 // test.kt:10 box
 

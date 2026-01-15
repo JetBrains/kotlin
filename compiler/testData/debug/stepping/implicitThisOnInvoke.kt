@@ -41,13 +41,11 @@ fun test(b: B) {
 // test.kt:5 box
 // test.kt:14 test
 // test.kt:15 test
-// Standard.kt:73 test
 // test.kt:16 test
 // test.kt:10 <get-a>
 // test.kt:16 test
 // test.kt:11 invoke
 // test.kt:17 test
-// Standard.kt:73 test
 // test.kt:18 test
 // test.kt:6 box
 
