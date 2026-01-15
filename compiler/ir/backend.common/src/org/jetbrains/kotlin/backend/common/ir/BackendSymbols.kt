@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.getValue
 
 @OptIn(InternalSymbolFinderAPI::class)
-abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(irBuiltIns) {
+abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(irBuiltIns) {
     val primitiveIteratorsByType = mapOf(
         PrimitiveType.BOOLEAN to irBuiltIns.booleanIterator,
         PrimitiveType.CHAR to irBuiltIns.charIterator,
@@ -140,7 +140,7 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
 
 // TODO KT-77388 rename to `BackendKlibSymbolsImpl`
 @OptIn(InternalSymbolFinderAPI::class)
-abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, Symbols(irBuiltIns) {
+abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, BackendSymbols(irBuiltIns) {
     final override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("getProgressionLastElement")).functionSymbolAssociatedBy {
         it.returnType.classifierOrFail
     }
