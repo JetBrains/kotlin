@@ -21,6 +21,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.*
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
+import androidx.compose.compiler.plugins.kotlin.analysis.hasTransformedLambda
 import androidx.compose.compiler.plugins.kotlin.inference.*
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.Modality
@@ -384,7 +385,7 @@ class ComposableTargetAnnotationsTransformer(
     private val IrElement?.isComposableLambda: Boolean
         get() = when (this) {
             is IrFunctionExpression -> function.isComposable
-            is IrCall -> isComposableSingletonGetter() || hasTransformedLambda()
+            is IrCall -> isComposableSingletonGetter() || hasTransformedLambda
             is IrGetField -> symbol.owner.initializer?.findTransformedLambda() != null
             else -> false
         }
@@ -394,9 +395,6 @@ class ComposableTargetAnnotationsTransformer(
             is IrGetValue -> parameterOwners[symbol] != null && type.isComposable
             else -> false
         }
-
-    internal fun IrCall.hasTransformedLambda() =
-        context.irTrace[ComposeWritableSlices.HAS_TRANSFORMED_LAMBDA, this] == true
 
     private fun IrElement.findTransformedLambda(): IrFunctionExpression? =
         when (this) {
@@ -837,7 +835,7 @@ class InferenceCallTargetNode(
                     element.isComposableSingletonGetter() ->
                         // If this was a lambda transformed into a singleton, find the singleton function
                         element.singletonFunctionExpression().function
-                    element.hasTransformedLambda() ->
+                    element.hasTransformedLambda ->
                         // If this is a normal lambda, find the lambda's IrFunction
                         element.transformedLambda().function
                     else -> element.symbol.owner
@@ -916,7 +914,7 @@ class InferenceCallExpression(
     override val element: IrCall,
 ) : InferenceNode() {
     private val isSingletonLambda = with(transformer) { element.isComposableSingletonGetter() }
-    private val isTransformedLambda = with(transformer) { element.hasTransformedLambda() }
+    private val isTransformedLambda = with(transformer) { element.hasTransformedLambda }
     override val kind: NodeKind
         get() =
             if (isSingletonLambda || isTransformedLambda) NodeKind.Lambda else NodeKind.Expression
