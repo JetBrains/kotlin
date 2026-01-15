@@ -56,7 +56,7 @@ abstract class BackendWebSymbols(
 }
 
 @OptIn(InternalSymbolFinderAPI::class)
-class JsSymbols(
+class BackendJsSymbols(
     irBuiltIns: IrBuiltIns,
     private val stageController: StageController,
     private val compileLongAsBigint: Boolean
