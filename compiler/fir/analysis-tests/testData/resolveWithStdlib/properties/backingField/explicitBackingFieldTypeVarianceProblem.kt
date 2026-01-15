@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83590
 
 class In<in T>(x: T) {
@@ -9,7 +9,7 @@ class In<in T>(x: T) {
 
 fun main() {
     val v: In<String> = In(Any())
-    val x: String = In(1).other(v)
+    val x: String <!INITIALIZER_TYPE_MISMATCH!>=<!> In(1).other(v)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, functionDeclaration, in, integerLiteral, localProperty,

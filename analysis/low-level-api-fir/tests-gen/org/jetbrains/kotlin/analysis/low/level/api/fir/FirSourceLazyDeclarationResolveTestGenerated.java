@@ -151,6 +151,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
   }
 
   @Test
+  @TestMetadata("backingFieldWithCaret.kt")
+  public void testBackingFieldWithCaret() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/backingFieldWithCaret.kt");
+  }
+
+  @Test
   @TestMetadata("classMembers.kt")
   public void testClassMembers() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/classMembers.kt");
@@ -442,6 +448,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
   @TestMetadata("functionWithWhere.kt")
   public void testFunctionWithWhere() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithWhere.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitSubstitutedBackingField.kt")
+  public void testImplicitSubstitutedBackingField() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitSubstitutedBackingField.kt");
   }
 
   @Test

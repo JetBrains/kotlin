@@ -388,6 +388,7 @@ object FirFakeOverrideGenerator {
             explicitBackingFieldCopySubstitutionForTypeUpdater = explicitBackingFieldCopySubstitutionForTypeUpdater,
         ).apply {
             originalForSubstitutionOverrideAttr = baseProperty
+            backingField?.originalForSubstitutionOverrideAttr = baseProperty.backingField
         }
         return symbolForSubstitutionOverride
     }

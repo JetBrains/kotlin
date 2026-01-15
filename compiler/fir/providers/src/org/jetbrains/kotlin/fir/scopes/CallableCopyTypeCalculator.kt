@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -69,16 +68,6 @@ abstract class CallableCopyTypeCalculator {
                 if (declaration is FirProperty) {
                     declaration.getter?.replaceReturnTypeRef(returnTypeRef)
                     declaration.setter?.valueParameters?.firstOrNull()?.replaceReturnTypeRef(returnTypeRef)
-
-                    declaration.getExplicitBackingField()?.let { backingField ->
-                        val backingFieldReturnType = computeReturnTypeOrNull(backingField)
-                            ?: error("Couldn't compute the return type of the backing field: $backingField")
-                        val backingFieldReturnTypeRef = backingField.returnTypeRef.resolvedTypeFromPrototype(
-                            type = backingFieldReturnType,
-                            fallbackSource =  backingField.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
-                        )
-                        backingField.replaceReturnTypeRef(backingFieldReturnTypeRef)
-                    }
                 }
 
                 declaration.attributes.deferredCallableCopyReturnType = null
