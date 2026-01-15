@@ -126,10 +126,12 @@ customFirstStageTest("2.0.0")
 customFirstStageTest("2.1.0")
 customFirstStageTest("2.2.0")
 customFirstStageTest("2.3.0")
-// add `customFirstStageTest("2.4.0"-Beta1)`, when it is released
+// TODO: Add a new task for the "custom-first-stage" test here.
 
+/* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
+// TODO: Keep updating two following compiler versions to be the previous and latest ones.
 customSecondStageTest("2.3.0")
-// add `customSecondStageTest("2.4.0-Beta1")`, when it is released
+// add `customSecondStageTest("2.4.0-Beta1")`, as soon it is released
 
 projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true) {
