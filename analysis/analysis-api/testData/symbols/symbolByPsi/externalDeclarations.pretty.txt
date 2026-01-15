@@ -1,5 +1,9 @@
 external val prop: kotlin.Int
 
+external val propWithExternalGetter: kotlin.Int
+
+external var propWithExternalAccessors: kotlin.Int
+
 external class ClassC(paramProp: kotlin.String) {
   external val paramProp: kotlin.String
 
@@ -7,7 +11,7 @@ external class ClassC(paramProp: kotlin.String) {
 
   external var baz: kotlin.Int
 
-  external class Nested {
+  external class Nested<T> {
     external fun bar()
   }
 
@@ -19,6 +23,20 @@ external enum class EnumE {
   EnumB
 }
 
+enum class EnumNotExternal {
+  EnumA2
+}
+
+class NotExternalC(paramProp2: kotlin.String) {
+  external val paramProp2: kotlin.String
+
+  constructor()
+}
+
 external interface InterfaceI {
   external fun fooI()
+}
+
+sealed external class SealedC {
+  external data object SealedO : SealedC()
 }
