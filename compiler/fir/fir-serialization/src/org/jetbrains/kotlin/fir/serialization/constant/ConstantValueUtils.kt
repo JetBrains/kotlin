@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.fir.serialization.constant
 
 import org.jetbrains.kotlin.constant.KClassValue
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-internal fun create(argumentType: ConeKotlinType): KClassValue? {
+internal fun create(argumentType: ConeKotlinType, session: FirSession): KClassValue? {
     if (argumentType is ConeErrorType) return null
     if (argumentType !is ConeClassLikeType) return null
     var type = argumentType
@@ -18,6 +21,9 @@ internal fun create(argumentType: ConeKotlinType): KClassValue? {
         type = type.arrayElementType() ?: break
         arrayDimensions++
     }
-    val classId = type.classId ?: return null
-    return KClassValue(classId, arrayDimensions)
+    val classSymbol = type.toClassLikeSymbol(session) ?: return null
+    return when {
+        classSymbol.isLocal -> KClassValue(KClassValue.Value.LocalClass(firClassSymbol = classSymbol))
+        else -> KClassValue(classSymbol.classId, arrayDimensions)
+    }
 }
