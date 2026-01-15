@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.hasExternalModifier
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -229,3 +230,24 @@ internal fun KtPsiDiagnostic.asKaDiagnostic(): KaDiagnosticWithPsi<*> = asKaDiag
 internal fun KtPsiDiagnostic.asKaDiagnostic(analysisSession: KaFirSession): KaDiagnosticWithPsi<*> {
     return KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as KtDiagnostic)
 }
+
+/**
+ * Helper property that determines whether this PSI declaration is effectively `external`.
+ *
+ * **Important:** This property is intended **only** to assist implementations of
+ * [KaDeclarationSymbol.isExternal][org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol.isExternal].
+ * It is not fully semantically correct on its own (for example, not all declarations marked with the `external` modifier
+ * are actually considered external).
+ */
+internal val KtDeclaration.isExternalDeclaration: Boolean
+    get() {
+        if (hasExternalModifier()) return true
+
+        if (this is KtProperty) {
+            if (getter?.hasExternalModifier() == true && (!isVar || setter?.hasExternalModifier() == true)) {
+                return true
+            }
+        }
+
+        return containingClassOrObject?.isExternalDeclaration == true
+    }

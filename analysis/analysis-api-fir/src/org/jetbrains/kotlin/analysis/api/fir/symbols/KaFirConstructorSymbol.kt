@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.isExternalDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPrimaryConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirSecondaryConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTypeAliasedConstructorMemberPointer
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.ENUM_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.SEALED_KEYWORD
 import org.jetbrains.kotlin.name.ClassId
@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isActualDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 
@@ -121,7 +122,10 @@ internal class KaFirConstructorSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { firSymbol.isEffectivelyExternal(analysisSession.firSession) }
+        get() = withValidityAssertion {
+            // a constructor is external if its containing class is external (it can't be external by itself)
+            backingPsi?.containingClassOrObject?.isExternalDeclaration ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)
+        }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {
