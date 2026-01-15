@@ -247,7 +247,6 @@ class CustomK2ReplTest {
     }
 
     @Test
-    @Disabled("Dataframe compiler-plugin is not currently supported: KT-82554")
     fun testDataFrame() {
         if (!isK2) return
         val dataFramePluginClasspath = System.getProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath")!!

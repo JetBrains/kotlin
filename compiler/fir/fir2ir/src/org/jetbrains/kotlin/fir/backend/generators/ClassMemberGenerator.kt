@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirReplExpressionReference
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
@@ -208,8 +209,7 @@ internal class ClassMemberGenerator(
         val delegate = property.delegate
         val propertyType = property.returnTypeRef.toIrType()
         // REPL snippet properties are initialized within the `$$eval` function.
-        // TODO(KT-82578): split property delcaration and initializer to hopefully simplify FIR2IR
-        val initializerExpression = (initializer ?: delegate)?.takeIf { property.isReplSnippetDeclaration != true }
+        val initializerExpression = (initializer ?: delegate)?.takeIf { it !is FirReplExpressionReference }
         irProperty.initializeBackingField(property, initializerExpression = initializerExpression)
         val needGenerateDefaultGetter = property.getter is FirDefaultPropertyGetter ||
                 (property.getter == null && irProperty.parent is IrScript && property.destructuringDeclarationContainerVariable != null)

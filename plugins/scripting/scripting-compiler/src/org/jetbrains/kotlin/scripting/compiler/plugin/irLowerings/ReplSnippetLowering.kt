@@ -144,40 +144,6 @@ private class ReplSnippetAccessCallsGenerator(
     private val mapGet = mapClass.functions.single { it.name.asString() == "get" }
     private val mapPut = mapClass.functions.single { it.name.asString() == "put" }
 
-    fun createIrGetValFromState(
-        startOffset: Int,
-        endOffset: Int,
-        irSnippetClassFromState: IrClassSymbol,
-        irTargetField: IrFieldSymbol
-    ): IrExpression =
-        IrGetFieldImpl(
-            startOffset,
-            endOffset,
-            irTargetField,
-            irTargetField.owner.type,
-            IrStatementOrigin.GET_PROPERTY
-        ).also {
-            it.receiver =
-                createAccessToSnippet(irSnippetClassFromState, startOffset, endOffset)
-        }
-
-    fun createIrSetValInState(
-        startOffset: Int,
-        endOffset: Int,
-        irSnippetClassFromState: IrClassSymbol,
-        irTargetField: IrFieldSymbol,
-        expression: IrExpression
-    ): IrExpression =
-        IrSetFieldImpl(
-            startOffset,
-            endOffset,
-            irTargetField,
-            context.irBuiltIns.unitType,
-        ).also {
-            it.receiver = createAccessToSnippet(irSnippetClassFromState, startOffset, endOffset)
-            it.value = expression
-        }
-
     fun createPutSelfToState(data: ScriptLikeToClassTransformerContext): IrCall =
         IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, mapPut.returnType, mapPut.symbol).apply {
             arguments[0] =

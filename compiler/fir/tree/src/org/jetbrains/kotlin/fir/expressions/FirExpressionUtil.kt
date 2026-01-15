@@ -169,6 +169,12 @@ fun FirExpression.unwrapExpression(): FirExpression =
         else -> this
     }
 
+fun FirExpression.unwrapReplExpressionRef(): FirExpression =
+    when (this) {
+        is FirReplExpressionReference -> expressionRef.value.unwrapReplExpressionRef()
+        else -> this
+    }
+
 val FirVariable.isImplicitWhenSubjectVariable: Boolean
     get() = origin == FirDeclarationOrigin.Synthetic.ImplicitWhenSubject
 

@@ -178,6 +178,25 @@ open class FirDeclarationsResolveTransformer(
             }
         }
 
+        return forProperty(
+            property = property,
+            data = data,
+            transformInitializer = {
+                val resolutionMode = withExpectedType(property.returnTypeRef)
+                property.transformInitializer(transformer, resolutionMode)
+            },
+            transformDelegate = { delegate, shouldResolveEverything ->
+                transformPropertyAccessorsWithDelegate(property, delegate, shouldResolveEverything)
+            }
+        )
+    }
+
+    fun forProperty(
+        property: FirProperty,
+        data: ResolutionMode,
+        transformInitializer: () -> Unit,
+        transformDelegate: (delegateContainer: FirExpression, shouldResolveEverything: Boolean) -> Unit,
+    ): FirProperty {
         val cannotHaveDeepImplicitTypeRefs = property.backingField?.returnTypeRef !is FirImplicitTypeRef
         if (!property.isConst && implicitTypeOnly && property.returnTypeRef !is FirImplicitTypeRef && cannotHaveDeepImplicitTypeRefs) {
             return property
@@ -205,14 +224,13 @@ open class FirDeclarationsResolveTransformer(
                 }
 
                 // TODO: the [skipCleanup] hack should be reverted on fixing KT-79107
-                val skipCleanup = property.isScriptTopLevelDeclaration == true &&
+                val skipCleanup = property.isReplSnippetDeclaration == true ||
+                        property.isScriptTopLevelDeclaration == true &&
                         session.scriptResolutionHacksComponent?.skipTowerDataCleanupForTopLevelInitializers == true
                 context.forPropertyInitializer(skipCleanup) {
                     if (!initializerIsAlreadyResolved) {
-                        val resolutionMode = withExpectedType(property.returnTypeRef)
-                        property
-                            .transformInitializer(transformer, resolutionMode)
-                            .replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
+                        transformInitializer()
+                        property.replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
                     }
 
                     if (property.initializer != null) {
@@ -246,7 +264,7 @@ open class FirDeclarationsResolveTransformer(
 
                         property.resolveAccessors(mayResolveSetterBody = true, shouldResolveEverything = true)
                     } else {
-                        transformPropertyAccessorsWithDelegate(property, delegate, shouldResolveEverything)
+                        transformDelegate(delegate, shouldResolveEverything)
                         if (property.delegateFieldSymbol != null) {
                             replacePropertyReferenceTypeInDelegateAccessors(property)
                         }
@@ -368,7 +386,7 @@ open class FirDeclarationsResolveTransformer(
         (property.setter?.body?.statements?.singleOrNull() as? FirReturnExpression)?.let { returnExpression ->
             (returnExpression.result as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
         }
-        val delegate = property.delegate
+        val delegate = property.delegate?.unwrapReplExpressionRef()
         if (delegate is FirFunctionCall &&
             delegate.calleeReference.name == OperatorNameConventions.PROVIDE_DELEGATE &&
             delegate.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
@@ -377,10 +395,11 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-    private fun transformPropertyAccessorsWithDelegate(
+    fun transformPropertyAccessorsWithDelegate(
         property: FirProperty,
         delegateContainer: FirExpression,
         shouldResolveEverything: Boolean,
+        replaceDelegate: (FirExpression) -> Unit = property::replaceDelegate,
     ) {
         require(delegateContainer is FirWrappedDelegateExpression)
         dataFlowAnalyzer.enterDelegateExpression()
@@ -407,7 +426,7 @@ open class FirDeclarationsResolveTransformer(
                 delegateExpression,
             )
         ) {
-            property.replaceDelegate(
+            replaceDelegate(
                 getResolvedProvideDelegateIfSuccessful(delegateContainer.provideDelegateCall, delegateExpression)
                     ?: delegateExpression
             )
@@ -1602,7 +1621,7 @@ open class FirDeclarationsResolveTransformer(
         if (variable.returnTypeRef is FirImplicitTypeRef) {
             val resultType = when {
                 initializer != null -> {
-                    val unwrappedInitializer = initializer.unwrapSmartcastExpression()
+                    val unwrappedInitializer = initializer.unwrapReplExpressionRef().unwrapSmartcastExpression()
                     unwrappedInitializer.resolvedType.toFirResolvedTypeRef(
                         unwrappedInitializer.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
                     )
