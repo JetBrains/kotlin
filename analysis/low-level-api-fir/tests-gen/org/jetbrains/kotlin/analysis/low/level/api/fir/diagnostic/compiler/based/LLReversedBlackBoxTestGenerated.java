@@ -38244,6 +38244,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("usingNullableValueAsLowerBoundLeadsToNullableResult2.kt")
+    public void testUsingNullableValueAsLowerBoundLeadsToNullableResult2() {
+      runTest("compiler/testData/codegen/box/javaInterop/usingNullableValueAsLowerBoundLeadsToNullableResult2.kt");
+    }
+
+    @Test
     @TestMetadata("varargCall1.kt")
     public void testVarargCall1() {
       runTest("compiler/testData/codegen/box/javaInterop/varargCall1.kt");
