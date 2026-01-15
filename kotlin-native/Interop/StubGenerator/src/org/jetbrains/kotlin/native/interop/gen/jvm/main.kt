@@ -630,6 +630,7 @@ internal fun buildNativeLibrary(
 
     val modules = def.config.modules
 
+    val finalCompilerArgs: List<String>
     if (modules.isEmpty()) {
         require(headerFiles.isEmpty() || !compilation.compilerArgs.contains("-fmodules")) { "cinterop doesn't support having headers in -fmodules mode" }
         val excludeDependentModules = def.config.excludeDependentModules
@@ -640,6 +641,7 @@ internal fun buildNativeLibrary(
 
         headerFilter = NativeLibraryHeaderFilter.NameBased(headerInclusionPolicy, excludeDependentModules)
         includes = headerFiles.map { IncludeInfo(it, null) }
+        finalCompilerArgs = compilation.compilerArgs
     } else {
         require(language == Language.OBJECTIVE_C) { "cinterop supports 'modules' only when 'language = Objective-C'" }
         require(headerFiles.isEmpty()) { "cinterop doesn't support having headers and modules specified at the same time" }
@@ -649,6 +651,16 @@ internal fun buildNativeLibrary(
 
         headerFilter = NativeLibraryHeaderFilter.Predefined(modulesInfo.ownHeaders, modulesInfo.modules)
         includes = modulesInfo.topLevelHeaders
+        // Add -fmodules and -fapinotes-modules flags to enable API Notes support.
+        // These flags are required for clang to read SwiftBridge and other annotations from .apinotes files.
+        // Only add these flags when building platform libraries, indicated by the presence of -fmodules-cache-path=
+        // (which is set by GeneratePlatformLibraries). This avoids breaking tests that use modules without -fmodules.
+        val isBuildingPlatformLibs = compilation.compilerArgs.any { it.startsWith("-fmodules-cache-path=") }
+        finalCompilerArgs = if (isBuildingPlatformLibs) {
+            compilation.compilerArgs + listOf("-fmodules", "-fapinotes-modules")
+        } else {
+            compilation.compilerArgs
+        }
     }
 
     val excludeSystemLibs = def.config.excludeSystemLibs
@@ -659,7 +671,7 @@ internal fun buildNativeLibrary(
     return NativeLibrary(
             includes = includes,
             additionalPreambleLines = compilation.additionalPreambleLines,
-            compilerArgs = compilation.compilerArgs,
+            compilerArgs = finalCompilerArgs,
             headerToIdMapper = HeaderToIdMapper(sysRoot = tool.sysRoot),
             language = compilation.language,
             excludeSystemLibs = excludeSystemLibs,
