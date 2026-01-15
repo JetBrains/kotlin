@@ -3679,6 +3679,17 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> ULong): ULong {
 }
 
 /**
+ * KCImm-76
+ *
+ * Returns the same type of collection.
+ *
+ * ```
+ * public fun <T : Any> PersistentCollection<T?>.requireNoNulls(): PersistentCollection<T>
+ * public fun <T : Any> PersistentList<T?>.requireNoNulls(): PersistentList<T>
+ * public fun <T : Any> PersistentSet<T?>.requireNoNulls(): PersistentSet<T>
+ * ```
+ */
+/**
  * Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements.
  */
 public fun <T : Any> Iterable<T?>.requireNoNulls(): Iterable<T> {
@@ -3691,6 +3702,11 @@ public fun <T : Any> Iterable<T?>.requireNoNulls(): Iterable<T> {
     return this as Iterable<T>
 }
 
+/**
+ * KCImm-77
+ *
+ * Same as KCImm-76. Returns the same type of collection.
+ */
 /**
  * Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements.
  */
