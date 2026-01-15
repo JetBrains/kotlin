@@ -1041,6 +1041,37 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun `KT-81973_npe_when_strange_dependency_is-added`(gradleVersions: GradleVersion) {
+        project("empty", gradleVersions) {
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.sourceSets.getByName("commonMain").dependencies {
+                    api("androidx.room:room-sqlite-wrapper:2.8.3")
+                    api("androidx.room:room-runtime:2.8.3")
+                }
+            }
+        }.resolveIdeDependencies { dependencies ->
+            dependencies["commonTest"].assertMatches(
+                kotlinStdlibDependencies,
+                jetbrainsAnnotationDependencies,
+                anySourceFriendDependency(),
+                binaryCoordinates("androidx.annotation:annotation-jvm:1.9.1"),
+                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1"),
+                binaryCoordinates("androidx.collection:collection-jvm:1.5.0"),
+                binaryCoordinates("androidx.room:room-common-jvm:2.8.3"),
+                binaryCoordinates("androidx.sqlite:sqlite-jvm:2.6.1"),
+                binaryCoordinates("androidx.room:room-runtime-jvm:2.8.3"),
+                IdeaKotlinDependencyMatcher("Unresolved androidx.room:room-sqlite-wrapper:2.8.3") { dependency ->
+                    dependency is IdeaKotlinUnresolvedBinaryDependency
+                            && dependency.coordinates.toString() == "androidx.room:room-sqlite-wrapper:2.8.3"
+                            && dependency.cause == null // will become not null when this is fixed https://github.com/gradle/gradle/issues/36284
+                },
+            )
+        }
+    }
+
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
         this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
             it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution

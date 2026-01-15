@@ -149,7 +149,8 @@ class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
                 if (selector is ModuleComponentSelector)
                     return@mapNotNull IdeaKotlinUnresolvedBinaryDependency(
                         coordinates = IdeaKotlinBinaryCoordinates(selector.group, selector.module, selector.version, null),
-                        cause = reason.message?.takeIf { it.isNotBlank() },
+                        // Gradle sometimes throws NPE when building error message: https://github.com/gradle/gradle/issues/36284
+                        cause = runCatching { reason.message }.getOrNull()?.takeIf { it.isNotBlank() },
                         extras = mutableExtrasOf()
                     )
 
