@@ -72,4 +72,10 @@ class CustomNativeCompilerSecondStageSanity : AbstractCustomNativeCompilerSecond
         }
         assertEquals(null, exception.message)
     }
+
+    @Test
+    fun checkRecompilePassed() {
+        // `// RECOMPILE` test directive is unknown to Native testinfra, so it must not affect test runs
+        runTest(testDataRoot + "recompile.kt")
+    }
 }
