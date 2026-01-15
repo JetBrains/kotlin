@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
-import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 
 const val KLIB_DEFAULT_COMPONENT_NAME = "default"
 
@@ -92,67 +90,6 @@ class BaseWriterImpl(
             libraryLayout.unzippedDir.deleteRecursively()
         }
     }
-}
-
-/**
- * Requires non-null [target].
- */
-private class KotlinLibraryWriterImpl(
-    moduleName: String,
-    versions: KotlinLibraryVersioning,
-    builtInsPlatform: BuiltInsPlatform,
-    nativeTargets: List<String>,
-    nopack: Boolean = false,
-    shortName: String? = null,
-    val layout: KotlinLibraryLayoutForWriter,
-    val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
-) : BaseWriter by base, KotlinLibraryWriter
-
-fun buildKotlinLibrary(
-    metadata: SerializedMetadata,
-    ir: SerializedIrModule?,
-    versions: KotlinLibraryVersioning,
-    output: String,
-    moduleName: String,
-    nopack: Boolean,
-    manifestProperties: Properties?,
-    builtInsPlatform: BuiltInsPlatform,
-    nativeTargets: List<String> = emptyList()
-): KotlinLibraryLayout {
-
-    val klibFile = File(output)
-    val unzippedKlibDir = if (nopack) klibFile.also { it.isDirectory } else org.jetbrains.kotlin.konan.file.createTempDir(moduleName)
-
-    val layout = KotlinLibraryLayoutForWriter(klibFile, unzippedKlibDir)
-    val library = KotlinLibraryWriterImpl(
-        moduleName,
-        versions,
-        builtInsPlatform,
-        nativeTargets,
-        nopack,
-        layout = layout,
-    )
-
-    manifestProperties?.let { library.addManifestAddend(it) }
-
-    val metadataWriter = KlibMetadataWriterImpl(KlibMetadataComponentLayout(unzippedKlibDir))
-    metadataWriter.writeMetadata(metadata)
-
-    if (ir != null) {
-        val mainIrWriter = KlibIrWriterImpl.ForMainIr(KlibIrComponentLayout.createForMainIr(unzippedKlibDir))
-        mainIrWriter.writeMainIr(ir.files)
-    }
-
-    ir?.fileWithPreparedInlinableFunctions?.let { inlinableFunctionsFile ->
-        val inlinableFunctionsWriter = KlibIrWriterImpl.ForInlinableFunctionsIr(
-            layout = KlibIrComponentLayout.createForInlinableFunctionsIr(unzippedKlibDir)
-        )
-        inlinableFunctionsWriter.writeInlinableFunctionsIr(inlinableFunctionsFile)
-    }
-
-    library.commit()
-
-    return library.layout
 }
 
 enum class BuiltInsPlatform {
