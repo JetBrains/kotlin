@@ -260,6 +260,83 @@ class MathSamples {
             assertPrints(sqrt(Double.NaN), "NaN")
             assertPrints(sqrt(Double.POSITIVE_INFINITY), "Infinity")
         }
+
+        @Sample
+        fun sinh() {
+            // The hyperbolic sine is defined as (e^x - e^-x) / 2
+            assertPrints(sinh(0.0), "0.0")
+            val sinh2 = (exp(2.0) - exp(-2.0)) / 2
+            // Check that a value is close to our expectation
+            assertTrue((sinh(2.0) - sinh2).absoluteValue < 1e10)
+
+            // special cases
+            assertPrints(sinh(Double.NaN), "NaN")
+            assertPrints(sinh(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(sinh(Double.NEGATIVE_INFINITY), "-Infinity")
+        }
+
+        @Sample
+        fun cosh() {
+            // The hyperbolic cosine is defined as (e^x + e^-x) / 2
+            assertPrints(cosh(0.0), "1.0")
+            val cosh2 = (exp(2.0) + exp(-2.0)) / 2
+            // Check that a value is close to our expectation
+            assertTrue((cosh(2.0) - cosh2).absoluteValue < 1e10)
+
+            // special cases
+            assertPrints(cosh(Double.NaN), "NaN")
+            assertPrints(cosh(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(cosh(Double.NEGATIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun tanh() {
+            // The hyperbolic cosine is defined as sinh(x) / cosh(x),
+            // or (e^x - e^-x) / (e^x + e^-x)
+            assertPrints(tanh(0.0), "0.0")
+            val tanh2 = (exp(2.0) - exp(-2.0)) / (exp(2.0) + exp(-2.0))
+            // Check that a value is close to our expectation
+            assertTrue((tanh(2.0) - tanh2).absoluteValue < 1e10)
+
+            // special cases
+            assertPrints(tanh(Double.NaN), "NaN")
+            assertPrints(tanh(Double.POSITIVE_INFINITY), "1.0")
+            assertPrints(tanh(Double.NEGATIVE_INFINITY), "-1.0")
+        }
+
+        @Sample
+        fun asinh() {
+            // Hyperbolic arc sine is an inverse hyperbolic sine, thus asinh(sinh(x)) == x
+            assertPrints(asinh(sinh(1.5)), "1.5")
+
+            // special cases
+            assertPrints(asinh(Double.NaN), "NaN")
+            assertPrints(asinh(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(asinh(Double.NEGATIVE_INFINITY), "-Infinity")
+        }
+
+        @Sample
+        fun acosh() {
+            // Hyperbolic arc cosine is an inverse hyperbolic cosine, thus acosh(cosh(x)) == x
+            assertPrints(acosh(cosh(1.5)), "1.5")
+
+            // special cases
+            assertPrints(acosh(Double.NaN), "NaN")
+            assertPrints(acosh(0.99), "NaN")
+            assertPrints(acosh(Double.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun atanh() {
+            // Hyperbolic arc tangent is an inverse hyperbolic tangent, thus atanh(tanh(x)) == x
+            assertPrints(atanh(tanh(0.3)), "0.3")
+
+            // special cases
+            assertPrints(atanh(Double.NaN), "NaN")
+            assertPrints(atanh(1.2), "NaN")
+            assertPrints(atanh(1.0), "Infinity")
+            assertPrints(atanh(-1.0), "-Infinity")
+        }
     }
 
     class Floats {
@@ -511,6 +588,83 @@ class MathSamples {
             assertPrints(sqrt(-4.0f), "NaN")
             assertPrints(sqrt(Float.NaN), "NaN")
             assertPrints(sqrt(Float.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun sinh() {
+            // The hyperbolic sine is defined as (e^x - e^-x) / 2
+            assertPrints(sinh(0.0f), "0.0")
+            val sinh2 = (exp(2.0f) - exp(-2.0f)) / 2
+            // Check that a value is close to our expectation
+            assertTrue((sinh(2.0f) - sinh2).absoluteValue < 1e6f)
+
+            // special cases
+            assertPrints(sinh(Float.NaN), "NaN")
+            assertPrints(sinh(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(sinh(Float.NEGATIVE_INFINITY), "-Infinity")
+        }
+
+        @Sample
+        fun cosh() {
+            // The hyperbolic cosine is defined as (e^x + e^-x) / 2
+            assertPrints(cosh(0.0f), "1.0")
+            val cosh2 = (exp(2.0f) + exp(-2.0f)) / 2
+            // Check that a value is close to our expectation
+            assertTrue((cosh(2.0f) - cosh2).absoluteValue < 1e6f)
+
+            // special cases
+            assertPrints(cosh(Float.NaN), "NaN")
+            assertPrints(cosh(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(cosh(Float.NEGATIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun tanh() {
+            // The hyperbolic cosine is defined as sinh(x) / cosh(x),
+            // or (e^x - e^-x) / (e^x + e^-x)
+            assertPrints(tanh(0.0f), "0.0")
+            val tanh2 = (exp(2.0f) - exp(-2.0f)) / (exp(2.0f) + exp(-2.0f))
+            // Check that a value is close to our expectation
+            assertTrue((tanh(2.0f) - tanh2).absoluteValue < 1e6f)
+
+            // special cases
+            assertPrints(tanh(Float.NaN), "NaN")
+            assertPrints(tanh(Float.POSITIVE_INFINITY), "1.0")
+            assertPrints(tanh(Float.NEGATIVE_INFINITY), "-1.0")
+        }
+
+        @Sample
+        fun asinh() {
+            // Hyperbolic arc sine is an inverse hyperbolic sine, thus asinh(sinh(x)) == x
+            assertPrints(asinh(sinh(1.5f)), "1.5")
+
+            // special cases
+            assertPrints(asinh(Float.NaN), "NaN")
+            assertPrints(asinh(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(asinh(Float.NEGATIVE_INFINITY), "-Infinity")
+        }
+
+        @Sample
+        fun acosh() {
+            // Hyperbolic arc cosine is an inverse hyperbolic cosine, thus acosh(cosh(x)) == x
+            assertPrints(acosh(cosh(1.5f)), "1.5")
+
+            // special cases
+            assertPrints(acosh(Float.NaN), "NaN")
+            assertPrints(acosh(0.99f), "NaN")
+            assertPrints(acosh(Float.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun atanh() {
+            // Hyperbolic arc tangent is an inverse hyperbolic tangent, thus atanh(tanh(x)) == x
+            assertPrints(atanh(tanh(0.3f)), "0.3")
+
+            // special cases
+            assertPrints(atanh(Float.NaN), "NaN")
+            assertPrints(atanh(1.2f), "NaN")
+            assertPrints(atanh(1.0f), "Infinity")
+            assertPrints(atanh(-1.0f), "-Infinity")
         }
     }
 

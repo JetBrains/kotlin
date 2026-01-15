@@ -125,6 +125,8 @@ public actual inline fun atan2(y: Double, x: Double): Double = nativeMath.atan2(
  *   - `sinh(NaN)` is `NaN`
  *   - `sinh(+Inf)` is `+Inf`
  *   - `sinh(-Inf)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Doubles.sinh
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -136,6 +138,8 @@ public actual inline fun sinh(x: Double): Double = nativeMath.sinh(x)
  * Special cases:
  *   - `cosh(NaN)` is `NaN`
  *   - `cosh(+Inf|-Inf)` is `+Inf`
+ *
+ * @sample samples.math.MathSamples.Doubles.cosh
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -148,6 +152,8 @@ public actual inline fun cosh(x: Double): Double = nativeMath.cosh(x)
  *   - `tanh(NaN)` is `NaN`
  *   - `tanh(+Inf)` is `1.0`
  *   - `tanh(-Inf)` is `-1.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.tanh
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -166,6 +172,9 @@ public actual inline fun tanh(x: Double): Double = nativeMath.tanh(x)
  *   - `asinh(NaN)` is `NaN`
  *   - `asinh(+Inf)` is `+Inf`
  *   - `asinh(-Inf)` is `-Inf`
+ *
+ * @see sinh function.
+ * @sample samples.math.MathSamples.Doubles.asinh
  */
 @SinceKotlin("1.2")
 public actual fun asinh(x: Double): Double =
@@ -204,6 +213,9 @@ public actual fun asinh(x: Double): Double =
  *   - `acosh(NaN)` is `NaN`
  *   - `acosh(x)` is `NaN` when `x < 1`
  *   - `acosh(+Inf)` is `+Inf`
+ *
+ * @see cosh function.
+ * @sample samples.math.MathSamples.Doubles.acosh
  */
 @SinceKotlin("1.2")
 public actual fun acosh(x: Double): Double =
@@ -236,10 +248,13 @@ public actual fun acosh(x: Double): Double =
  * The returned value is `y` such that `tanh(y) == x`.
  *
  * Special cases:
- *   - `tanh(NaN)` is `NaN`
- *   - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
- *   - `tanh(1.0)` is `+Inf`
- *   - `tanh(-1.0)` is `-Inf`
+ *   - `atanh(NaN)` is `NaN`
+ *   - `atanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *   - `atanh(1.0)` is `+Inf`
+ *   - `atanh(-1.0)` is `-Inf`
+ *
+ * @see tanh function.
+ * @sample samples.math.MathSamples.Doubles.atanh
  */
 @SinceKotlin("1.2")
 public actual fun atanh(x: Double): Double {
@@ -768,6 +783,8 @@ public actual inline fun atan2(y: Float, x: Float): Float = nativeMath.atan2(y.t
  *   - `sinh(NaN)` is `NaN`
  *   - `sinh(+Inf)` is `+Inf`
  *   - `sinh(-Inf)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Floats.sinh
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -779,6 +796,8 @@ public actual inline fun sinh(x: Float): Float = nativeMath.sinh(x.toDouble()).t
  * Special cases:
  *   - `cosh(NaN)` is `NaN`
  *   - `cosh(+Inf|-Inf)` is `+Inf`
+ *
+ * @sample samples.math.MathSamples.Floats.cosh
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -791,6 +810,8 @@ public actual inline fun cosh(x: Float): Float = nativeMath.cosh(x.toDouble()).t
  *   - `tanh(NaN)` is `NaN`
  *   - `tanh(+Inf)` is `1.0`
  *   - `tanh(-Inf)` is `-1.0`
+ *
+ * @sample samples.math.MathSamples.Floats.tanh
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -805,6 +826,9 @@ public actual inline fun tanh(x: Float): Float = nativeMath.tanh(x.toDouble()).t
  *   - `asinh(NaN)` is `NaN`
  *   - `asinh(+Inf)` is `+Inf`
  *   - `asinh(-Inf)` is `-Inf`
+ *
+ * @see sinh function.
+ * @sample samples.math.MathSamples.Floats.asinh
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -819,6 +843,9 @@ public actual inline fun asinh(x: Float): Float = asinh(x.toDouble()).toFloat()
  *   - `acosh(NaN)` is `NaN`
  *   - `acosh(x)` is `NaN` when `x < 1`
  *   - `acosh(+Inf)` is `+Inf`
+ *
+ * @see cosh function.
+ * @sample samples.math.MathSamples.Floats.acosh
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -830,10 +857,13 @@ public actual inline fun acosh(x: Float): Float = acosh(x.toDouble()).toFloat()
  * The returned value is `y` such that `tanh(y) == x`.
  *
  * Special cases:
- *   - `tanh(NaN)` is `NaN`
- *   - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
- *   - `tanh(1.0)` is `+Inf`
- *   - `tanh(-1.0)` is `-Inf`
+ *   - `atanh(NaN)` is `NaN`
+ *   - `atanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *   - `atanh(1.0)` is `+Inf`
+ *   - `atanh(-1.0)` is `-Inf`
+ *
+ * @see tanh function.
+ * @sample samples.math.MathSamples.Floats.atanh
  */
 @SinceKotlin("1.2")
 @InlineOnly

@@ -102,6 +102,8 @@ public expect fun atan2(y: Double, x: Double): Double
  *   - `sinh(NaN)` is `NaN`
  *   - `sinh(+Inf)` is `+Inf`
  *   - `sinh(-Inf)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Doubles.sinh
  */
 @SinceKotlin("1.2")
 public expect fun sinh(x: Double): Double
@@ -112,6 +114,8 @@ public expect fun sinh(x: Double): Double
  * Special cases:
  *   - `cosh(NaN)` is `NaN`
  *   - `cosh(+Inf|-Inf)` is `+Inf`
+ *
+ * @sample samples.math.MathSamples.Doubles.cosh
  */
 @SinceKotlin("1.2")
 public expect fun cosh(x: Double): Double
@@ -123,6 +127,8 @@ public expect fun cosh(x: Double): Double
  *   - `tanh(NaN)` is `NaN`
  *   - `tanh(+Inf)` is `1.0`
  *   - `tanh(-Inf)` is `-1.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.tanh
  */
 @SinceKotlin("1.2")
 public expect fun tanh(x: Double): Double
@@ -136,6 +142,9 @@ public expect fun tanh(x: Double): Double
  *   - `asinh(NaN)` is `NaN`
  *   - `asinh(+Inf)` is `+Inf`
  *   - `asinh(-Inf)` is `-Inf`
+ *
+ * @see sinh function.
+ * @sample samples.math.MathSamples.Doubles.asinh
  */
 @SinceKotlin("1.2")
 public expect fun asinh(x: Double): Double
@@ -149,6 +158,9 @@ public expect fun asinh(x: Double): Double
  *   - `acosh(NaN)` is `NaN`
  *   - `acosh(x)` is `NaN` when `x < 1`
  *   - `acosh(+Inf)` is `+Inf`
+ *
+ * @see cosh function.
+ * @sample samples.math.MathSamples.Doubles.acosh
  */
 @SinceKotlin("1.2")
 public expect fun acosh(x: Double): Double
@@ -159,10 +171,13 @@ public expect fun acosh(x: Double): Double
  * The returned value is `y` such that `tanh(y) == x`.
  *
  * Special cases:
- *   - `tanh(NaN)` is `NaN`
- *   - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
- *   - `tanh(1.0)` is `+Inf`
- *   - `tanh(-1.0)` is `-Inf`
+ *   - `atanh(NaN)` is `NaN`
+ *   - `atanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *   - `atanh(1.0)` is `+Inf`
+ *   - `atanh(-1.0)` is `-Inf`
+ *
+ * @see tanh function.
+ * @sample samples.math.MathSamples.Doubles.atanh
  */
 @SinceKotlin("1.2")
 public expect fun atanh(x: Double): Double
@@ -620,6 +635,8 @@ public expect fun atan2(y: Float, x: Float): Float
  *   - `sinh(NaN)` is `NaN`
  *   - `sinh(+Inf)` is `+Inf`
  *   - `sinh(-Inf)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Floats.sinh
  */
 @SinceKotlin("1.2")
 public expect fun sinh(x: Float): Float
@@ -630,6 +647,8 @@ public expect fun sinh(x: Float): Float
  * Special cases:
  *   - `cosh(NaN)` is `NaN`
  *   - `cosh(+Inf|-Inf)` is `+Inf`
+ *
+ * @sample samples.math.MathSamples.Floats.cosh
  */
 @SinceKotlin("1.2")
 public expect fun cosh(x: Float): Float
@@ -641,6 +660,8 @@ public expect fun cosh(x: Float): Float
  *   - `tanh(NaN)` is `NaN`
  *   - `tanh(+Inf)` is `1.0`
  *   - `tanh(-Inf)` is `-1.0`
+ *
+ * @sample samples.math.MathSamples.Floats.tanh
  */
 @SinceKotlin("1.2")
 public expect fun tanh(x: Float): Float
@@ -654,6 +675,9 @@ public expect fun tanh(x: Float): Float
  *   - `asinh(NaN)` is `NaN`
  *   - `asinh(+Inf)` is `+Inf`
  *   - `asinh(-Inf)` is `-Inf`
+ *
+ * @see sinh function.
+ * @sample samples.math.MathSamples.Floats.asinh
  */
 @SinceKotlin("1.2")
 public expect fun asinh(x: Float): Float
@@ -667,6 +691,9 @@ public expect fun asinh(x: Float): Float
  *   - `acosh(NaN)` is `NaN`
  *   - `acosh(x)` is `NaN` when `x < 1`
  *   - `acosh(+Inf)` is `+Inf`
+ *
+ * @see cosh function.
+ * @sample samples.math.MathSamples.Floats.acosh
  */
 @SinceKotlin("1.2")
 public expect fun acosh(x: Float): Float
@@ -677,10 +704,13 @@ public expect fun acosh(x: Float): Float
  * The returned value is `y` such that `tanh(y) == x`.
  *
  * Special cases:
- *   - `tanh(NaN)` is `NaN`
- *   - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
- *   - `tanh(1.0)` is `+Inf`
- *   - `tanh(-1.0)` is `-Inf`
+ *   - `atanh(NaN)` is `NaN`
+ *   - `atanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *   - `atanh(1.0)` is `+Inf`
+ *   - `atanh(-1.0)` is `-Inf`
+ *
+ * @see tanh function.
+ * @sample samples.math.MathSamples.Floats.atanh
  */
 @SinceKotlin("1.2")
 public expect fun atanh(x: Float): Float

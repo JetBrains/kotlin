@@ -87,6 +87,8 @@ public actual fun atan2(y: Double, x: Double): Double = kotlin.math.fdlibm.__iee
  *   - `sinh(NaN)` is `NaN`
  *   - `sinh(+Inf)` is `+Inf`
  *   - `sinh(-Inf)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Doubles.sinh
  */
 @SinceKotlin("1.2")
 public actual fun sinh(x: Double): Double = kotlin.math.fdlibm.__ieee754_sinh(x)
@@ -97,6 +99,8 @@ public actual fun sinh(x: Double): Double = kotlin.math.fdlibm.__ieee754_sinh(x)
  * Special cases:
  *   - `cosh(NaN)` is `NaN`
  *   - `cosh(+Inf|-Inf)` is `+Inf`
+ *
+ * @sample samples.math.MathSamples.Doubles.cosh
  */
 @SinceKotlin("1.2")
 public actual fun cosh(x: Double): Double = kotlin.math.fdlibm.__ieee754_cosh(x)
@@ -108,6 +112,8 @@ public actual fun cosh(x: Double): Double = kotlin.math.fdlibm.__ieee754_cosh(x)
  *   - `tanh(NaN)` is `NaN`
  *   - `tanh(+Inf)` is `1.0`
  *   - `tanh(-Inf)` is `-1.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.tanh
  */
 @SinceKotlin("1.2")
 public actual fun tanh(x: Double): Double = kotlin.math.fdlibm.tanh(x)
@@ -121,6 +127,9 @@ public actual fun tanh(x: Double): Double = kotlin.math.fdlibm.tanh(x)
  *   - `asinh(NaN)` is `NaN`
  *   - `asinh(+Inf)` is `+Inf`
  *   - `asinh(-Inf)` is `-Inf`
+ *
+ * @see sinh function.
+ * @sample samples.math.MathSamples.Doubles.asinh
  */
 @SinceKotlin("1.2")
 public actual fun asinh(x: Double): Double = kotlin.math.fdlibm.asinh(x)
@@ -134,6 +143,9 @@ public actual fun asinh(x: Double): Double = kotlin.math.fdlibm.asinh(x)
  *   - `acosh(NaN)` is `NaN`
  *   - `acosh(x)` is `NaN` when `x < 1`
  *   - `acosh(+Inf)` is `+Inf`
+ *
+ * @see cosh function.
+ * @sample samples.math.MathSamples.Doubles.acosh
  */
 @SinceKotlin("1.2")
 public actual fun acosh(x: Double): Double = kotlin.math.fdlibm.__ieee754_acosh(x)
@@ -144,10 +156,13 @@ public actual fun acosh(x: Double): Double = kotlin.math.fdlibm.__ieee754_acosh(
  * The returned value is `y` such that `tanh(y) == x `.
  *
  * Special cases:
- *   - `tanh(NaN)` is `NaN`
- *   - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
- *   - `tanh(1.0)` is `+Inf`
- *   - `tanh(-1.0)` is `-Inf`
+ *   - `atanh(NaN)` is `NaN`
+ *   - `atanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *   - `atanh(1.0)` is `+Inf`
+ *   - `atanh(-1.0)` is `-Inf`
+ *
+ * @see tanh function.
+ * @sample samples.math.MathSamples.Doubles.atanh
  */
 @SinceKotlin("1.2")
 public actual fun atanh(x: Double): Double = kotlin.math.fdlibm.__ieee754_atanh(x)
@@ -635,6 +650,8 @@ public actual fun atan2(y: Float, x: Float): Float = kotlin.math.fdlibm.__ieee75
  *   - `sinh(NaN)` is `NaN`
  *   - `sinh(+Inf)` is `+Inf`
  *   - `sinh(-Inf)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Floats.sinh
  */
 @SinceKotlin("1.2")
 public actual fun sinh(x: Float): Float = kotlin.math.fdlibm.__ieee754_sinh(x.toDouble()).toFloat()
@@ -645,6 +662,8 @@ public actual fun sinh(x: Float): Float = kotlin.math.fdlibm.__ieee754_sinh(x.to
  * Special cases:
  *   - `cosh(NaN)` is `NaN`
  *   - `cosh(+Inf|-Inf)` is `+Inf`
+ *
+ * @sample samples.math.MathSamples.Floats.cosh
  */
 @SinceKotlin("1.2")
 public actual fun cosh(x: Float): Float = kotlin.math.fdlibm.__ieee754_cosh(x.toDouble()).toFloat()
@@ -656,6 +675,8 @@ public actual fun cosh(x: Float): Float = kotlin.math.fdlibm.__ieee754_cosh(x.to
  *   - `tanh(NaN)` is `NaN`
  *   - `tanh(+Inf)` is `1.0`
  *   - `tanh(-Inf)` is `-1.0`
+ *
+ * @sample samples.math.MathSamples.Floats.tanh
  */
 @SinceKotlin("1.2")
 public actual fun tanh(x: Float): Float = kotlin.math.fdlibm.tanh(x.toDouble()).toFloat()
@@ -669,6 +690,9 @@ public actual fun tanh(x: Float): Float = kotlin.math.fdlibm.tanh(x.toDouble()).
  *   - `asinh(NaN)` is `NaN`
  *   - `asinh(+Inf)` is `+Inf`
  *   - `asinh(-Inf)` is `-Inf`
+ *
+ * @see sinh function.
+ * @sample samples.math.MathSamples.Floats.asinh
  */
 @SinceKotlin("1.2")
 public actual fun asinh(x: Float): Float = kotlin.math.fdlibm.asinh(x.toDouble()).toFloat()
@@ -682,6 +706,9 @@ public actual fun asinh(x: Float): Float = kotlin.math.fdlibm.asinh(x.toDouble()
  *   - `acosh(NaN)` is `NaN`
  *   - `acosh(x)` is `NaN` when `x < 1`
  *   - `acosh(+Inf)` is `+Inf`
+ *
+ * @see cosh function.
+ * @sample samples.math.MathSamples.Floats.acosh
  */
 @SinceKotlin("1.2")
 public actual fun acosh(x: Float): Float = kotlin.math.fdlibm.__ieee754_acosh(x.toDouble()).toFloat()
@@ -692,10 +719,13 @@ public actual fun acosh(x: Float): Float = kotlin.math.fdlibm.__ieee754_acosh(x.
  * The returned value is `y` such that `tanh(y) == x`.
  *
  * Special cases:
- *   - `tanh(NaN)` is `NaN`
- *   - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
- *   - `tanh(1.0)` is `+Inf`
- *   - `tanh(-1.0)` is `-Inf`
+ *   - `atanh(NaN)` is `NaN`
+ *   - `atanh(x)` is `NaN` when `x > 1` or `x < -1`
+ *   - `atanh(1.0)` is `+Inf`
+ *   - `atanh(-1.0)` is `-Inf`
+ *
+ * @see tanh function.
+ * @sample samples.math.MathSamples.Floats.atanh
  */
 @SinceKotlin("1.2")
 public actual fun atanh(x: Float): Float = kotlin.math.fdlibm.__ieee754_atanh(x.toDouble()).toFloat()
