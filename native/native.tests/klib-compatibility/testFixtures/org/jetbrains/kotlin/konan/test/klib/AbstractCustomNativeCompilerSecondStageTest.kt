@@ -11,13 +11,15 @@ import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestC
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
-import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStage
+import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.konan.test.handlers.NativeRunner
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.nativeArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -61,13 +63,16 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractKotlinCompilerW
         useAdditionalSourceProviders(
             ::NativeLauncherAdditionalSourceProvider,
         )
-        commonConfigurationForNativeFirstStage(
+        commonConfigurationForNativeFirstStageUpToSerialization(
             FrontendKinds.FIR,
             ::FirFrontendFacade,
             ::Fir2IrNativeResultsConverter,
             ::NativePreSerializationLoweringFacade,
-            ::NativeKlibSerializerFacade,
         )
+        facadeStep(::NativeKlibSerializerFacade)
+        klibArtifactsHandlersStep {
+            useHandlers(::KlibAbiDumpHandler)
+        }
         configureFirHandlersStep {
             commonFirHandlersForCodegenTest()
         }
