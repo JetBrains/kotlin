@@ -1575,6 +1575,18 @@ public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
 }
 
 /**
+ * KCImm-69
+ *
+ * For PersistentCollection, this could return the collection itself (or as PersistentList),
+ * since persistent collections are already immutable. For PersistentSet, it would need
+ * to convert to a PersistentList.
+ *
+ * ```
+ * public fun <T> PersistentList<T>.toList(): PersistentList<T> = this
+ * public fun <T> PersistentSet<T>.toList(): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a [List] containing all elements.
  */
 public fun <T> Iterable<T>.toList(): List<T> {
@@ -1604,6 +1616,17 @@ public fun <T> Collection<T>.toMutableList(): MutableList<T> {
     return ArrayList(this)
 }
 
+/**
+ * KCImm-70
+ *
+ * For PersistentSet, this could return the set itself since it's already immutable.
+ * For PersistentList, it would need to convert to a PersistentSet.
+ *
+ * ```
+ * public fun <T> PersistentSet<T>.toSet(): PersistentSet<T> = this
+ * public fun <T> PersistentList<T>.toSet(): PersistentSet<T>
+ * ```
+ */
 /**
  * Returns a [Set] of all elements.
  * 
@@ -1638,6 +1661,11 @@ public inline fun <T, R> Iterable<T>.flatMap(transform: (T) -> Iterable<R>): Lis
     return flatMapTo(ArrayList<R>(), transform)
 }
 
+/**
+ * KCImm-67
+ *
+ * Same as KCImm-38 (Iterable variant) - could benefit from building PersistentList directly.
+ */
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original collection.
  * 
@@ -1675,6 +1703,11 @@ public inline fun <T, R> Iterable<T>.flatMapIndexed(transform: (index: Int, T) -
     return flatMapIndexedTo(ArrayList<R>(), transform)
 }
 
+/**
+ * KCImm-68
+ *
+ * Same as KCImm-58 (Iterable variant) - could benefit from building PersistentList directly.
+ */
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element
  * and its index in the original collection.
@@ -3813,6 +3846,11 @@ public operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
 }
 
 /**
+ * KCImm-71
+ *
+ * Alias for `minus(element)`. The same specialization as KCImm-27 applies.
+ */
+/**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
 @kotlin.internal.InlineOnly
@@ -3939,6 +3977,17 @@ public operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T> {
 }
 
 /**
+ * KCImm-74
+ *
+ * Could benefit from using `addingAll` operation on persistent collections.
+ * 
+ * ```
+ * public operator fun <T> PersistentCollection<T>.plus(elements: Iterable<T>): PersistentList<T>
+ *     
+ * public operator fun <T> PersistentList<T>.plus(elements: Iterable<T>): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
  */
 public operator fun <T> Collection<T>.plus(elements: Iterable<T>): List<T> {
@@ -3976,6 +4025,17 @@ public operator fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T> {
 }
 
 /**
+ * KCImm-75
+ *
+ * Could benefit from using `addingAll` operation on persistent collections.
+ * 
+ * ```
+ * public operator fun <T> PersistentCollection<T>.plus(elements: Sequence<T>): PersistentList<T>
+ *     
+ * public operator fun <T> PersistentList<T>.plus(elements: Sequence<T>): PersistentList<T>
+ * ```
+ */
+/**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
  */
 public operator fun <T> Collection<T>.plus(elements: Sequence<T>): List<T> {
@@ -3986,6 +4046,11 @@ public operator fun <T> Collection<T>.plus(elements: Sequence<T>): List<T> {
 }
 
 /**
+ * KCImm-72
+ *
+ * Alias for `plus(element)`. The same specialization as KCImm-31 applies.
+ */
+/**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
 @kotlin.internal.InlineOnly
@@ -3993,6 +4058,11 @@ public inline fun <T> Iterable<T>.plusElement(element: T): List<T> {
     return plus(element)
 }
 
+/**
+ * KCImm-73
+ *
+ * Alias for `plus(element)`. The same specialization as KCImm-31 applies.
+ */
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
