@@ -59,7 +59,7 @@
 
 /benchmarks/ "Kotlin Frontend"
 
-/build-common/ "Kotlin Build Tools"
+/build-common/ "Kotlin Build Tools" "Build Tools API"
 
 /compiler/AGENTS.md "Kotlin Compiler"
 /compiler/CLAUDE.md "Kotlin Compiler"
