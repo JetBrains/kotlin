@@ -264,10 +264,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getVariable2
   javaSetterName: setVariable2
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -554,10 +552,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getPrivateVariable2
   javaSetterName: setPrivateVariable2
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -756,10 +752,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getInternalVariable2
   javaSetterName: setInternalVariable2
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -1149,10 +1143,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Regular
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getVariable
   javaSetterName: setVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -1351,10 +1343,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Regular
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getPrivateVariable
   javaSetterName: setPrivateVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -1553,10 +1543,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Regular
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getInternalVariable
   javaSetterName: setInternalVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -1905,10 +1893,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: WithConstructor
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getProperty
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false

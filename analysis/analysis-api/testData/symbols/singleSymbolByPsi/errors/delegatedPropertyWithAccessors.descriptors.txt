@@ -176,9 +176,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getLazyProp
   javaSetterName: setLazyProp
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: lazyProp

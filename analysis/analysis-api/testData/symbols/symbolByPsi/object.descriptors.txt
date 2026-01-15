@@ -474,10 +474,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Object
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getVariable
   javaSetterName: setVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: Object.variable
 
@@ -676,10 +674,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Object
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getPrivateVariable
   javaSetterName: setPrivateVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: Object.privateVariable
 
@@ -878,10 +874,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Object
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getInternalVariable
   javaSetterName: setInternalVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: Object.internalVariable
 

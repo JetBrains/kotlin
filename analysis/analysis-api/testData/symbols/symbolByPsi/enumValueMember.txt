@@ -128,10 +128,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: Style
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getValue
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false
@@ -267,10 +265,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getExitAnimation
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -404,10 +400,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Style
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getExitAnimation
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

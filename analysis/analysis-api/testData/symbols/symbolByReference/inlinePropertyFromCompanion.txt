@@ -97,9 +97,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyClass.Companion
   getContainingModule: KaSourceModule "Sources of library"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getProperty
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: true
   importableFqName: MyClass.Companion.property

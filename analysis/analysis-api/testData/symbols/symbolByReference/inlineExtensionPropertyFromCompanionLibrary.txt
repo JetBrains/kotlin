@@ -151,9 +151,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyClass.Companion
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getExtension
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: true
   importableFqName: MyClass.Companion.extension

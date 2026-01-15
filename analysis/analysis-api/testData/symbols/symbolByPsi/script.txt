@@ -129,10 +129,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script script.kts"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getB
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: b
 
@@ -283,10 +281,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: C
   getContainingModule: KaScriptModule "Script script.kts"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getProp
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

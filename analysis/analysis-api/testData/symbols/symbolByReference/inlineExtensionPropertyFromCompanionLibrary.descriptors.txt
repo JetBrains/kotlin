@@ -157,9 +157,7 @@ KaKotlinPropertySymbol:
   getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getExtension
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: true
   importableFqName: MyClass.Companion.extension

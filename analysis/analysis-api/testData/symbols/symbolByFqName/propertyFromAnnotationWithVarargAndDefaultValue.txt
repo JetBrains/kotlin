@@ -101,9 +101,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: one.Anno
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getValue
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null

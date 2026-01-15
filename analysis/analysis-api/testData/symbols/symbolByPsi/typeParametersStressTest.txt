@@ -260,10 +260,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: TypeParametersStressTestKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getTopLevelProperty
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: topLevelProperty
 

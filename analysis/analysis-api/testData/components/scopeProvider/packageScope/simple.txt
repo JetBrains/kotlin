@@ -129,10 +129,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.SimpleKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getTestValue
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: test.testValue
 

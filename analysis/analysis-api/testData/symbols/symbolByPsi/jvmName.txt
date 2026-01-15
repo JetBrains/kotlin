@@ -203,10 +203,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getMyI
   javaSetterName: setMyI
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -407,10 +405,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getMyJ
   javaSetterName: setMyJ
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

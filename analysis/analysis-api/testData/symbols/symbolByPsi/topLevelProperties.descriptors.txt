@@ -89,10 +89,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: TopLevelPropertiesKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getX
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: x
 
@@ -237,10 +235,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: TopLevelPropertiesKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getY
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: y
 
@@ -502,9 +498,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: TopLevelPropertiesKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getGet
   javaSetterName: setGet
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: get

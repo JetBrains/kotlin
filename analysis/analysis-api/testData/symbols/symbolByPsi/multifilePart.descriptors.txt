@@ -194,10 +194,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getX
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: x
 
@@ -342,9 +340,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getY
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: y

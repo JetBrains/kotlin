@@ -59,12 +59,20 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      * The deprecation status of the given property getter, or `null` if the getter is not deprecated.
      */
     @KaExperimentalApi
+    @Deprecated(
+        message = "Use 'deprecationStatus' directly instead",
+        replaceWith = ReplaceWith("this.getter?.deprecationStatus"),
+    )
     public val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
 
     /**
      * The deprecation status of the given property setter, or `null` if the setter is not deprecated or doesn't exist.
      */
     @KaExperimentalApi
+    @Deprecated(
+        message = "Use 'deprecationStatus' directly instead",
+        replaceWith = ReplaceWith("this.setter?.deprecationStatus"),
+    )
     public val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
 
     /**
@@ -192,9 +200,14 @@ public fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSite
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use 'deprecationStatus' directly instead",
+    replaceWith = ReplaceWith("this.getter?.deprecationStatus"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
+    @Suppress("DEPRECATION")
     get() = with(session) { getterDeprecationStatus }
 
 /**
@@ -202,9 +215,14 @@ public val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use 'deprecationStatus' directly instead",
+    replaceWith = ReplaceWith("this.setter?.deprecationStatus"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
+    @Suppress("DEPRECATION")
     get() = with(session) { setterDeprecationStatus }
 
 /**

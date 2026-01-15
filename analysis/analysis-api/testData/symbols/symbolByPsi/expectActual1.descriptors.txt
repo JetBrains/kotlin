@@ -329,10 +329,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: sample.B
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getN
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -677,9 +675,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: sample.MainKt
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getM
   javaSetterName: setM
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: sample.m

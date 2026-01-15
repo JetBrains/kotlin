@@ -97,9 +97,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: one.two.TopLevelObject
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getBar
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: one.two.TopLevelObject.bar

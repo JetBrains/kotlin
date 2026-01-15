@@ -181,9 +181,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MainKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getVariable
   javaSetterName: setVariable
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: variable

@@ -250,10 +250,8 @@ KaValueParameterSymbol:
     getContainingJvmClassName: MyClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
-    getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
     javaGetterName: getProp
     javaSetterName: setProp
-    setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
     isInline: false
     importableFqName: null
   hasDeclaredDefaultValue: false

@@ -129,10 +129,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script simpleScript.kts"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getTestValue
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: test.testValue
 

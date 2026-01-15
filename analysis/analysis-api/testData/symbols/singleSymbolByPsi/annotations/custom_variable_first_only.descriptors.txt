@@ -190,9 +190,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Custom_variable_first_onlyKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getProp
   javaSetterName: setProp
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: prop
