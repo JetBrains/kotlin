@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CollectionLiterals
+// DUMP_INFERENCE_LOGS: FIXATION, MARKDOWN
 
 interface A {
     companion object {
