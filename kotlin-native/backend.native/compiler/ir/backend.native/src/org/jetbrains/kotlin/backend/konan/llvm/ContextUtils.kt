@@ -569,6 +569,8 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val kNull = LLVMConstNull(pointerType)!!
     val kImmInt32Zero by lazy { int32(0) }
     val kImmInt32One by lazy { int32(1) }
+    val kTrue by lazy { int1(true) }
+    val kFalse by lazy { int1(false) }
 
     val nullPointer = object : ConstPointer {
         override val llvm = kNull
