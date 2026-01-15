@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.checkers.EscapeAnalysisChecker
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
@@ -47,7 +47,7 @@ import java.io.File
  */
 class SpecialBackendChecksTraversal(
     private val context: PhaseContext,
-    private val symbols: KonanSymbols,
+    private val symbols: BackendNativeSymbols,
     private val irBuiltIns: IrBuiltIns,
 ) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -59,7 +59,7 @@ class SpecialBackendChecksTraversal(
 
 private class BackendChecker(
         private val context: PhaseContext,
-        val symbols: KonanSymbols,
+        val symbols: BackendNativeSymbols,
         val irBuiltIns: IrBuiltIns,
         private val irFile: IrFile,
 ) : IrVisitorVoid() {

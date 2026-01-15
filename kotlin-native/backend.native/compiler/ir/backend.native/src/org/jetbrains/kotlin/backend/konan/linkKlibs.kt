@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializerFactory
@@ -67,7 +67,7 @@ internal class LinkKlibsOutput(
         val irModules: Map<String, IrModuleFragment>,
         val irModule: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
-        val symbols: KonanSymbols,
+        val symbols: BackendNativeSymbols,
         val symbolTable: ReferenceSymbolTable,
         val irLinker: KonanIrLinker,
 ) : KotlinBackendIrHolder {
@@ -114,7 +114,7 @@ internal fun LinkKlibsContext.linkKlibs(
     val irBuiltInsOverDescriptors = generatorContext.irBuiltIns as IrBuiltInsOverDescriptors
     val functionIrClassFactory = BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
-    val symbols = KonanSymbols(
+    val symbols = BackendNativeSymbols(
             this,
             generatorContext.irBuiltIns,
             this.config.configuration

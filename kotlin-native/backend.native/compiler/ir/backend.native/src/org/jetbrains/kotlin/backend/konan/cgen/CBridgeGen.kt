@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal interface KotlinStubs {
     val irBuiltIns: IrBuiltIns
     val typeSystem: IrTypeSystemContext
-    val symbols: KonanSymbols
+    val symbols: BackendNativeSymbols
     val target: KonanTarget
     val language: String
 
@@ -81,7 +81,7 @@ private class KotlinToCCallBuilder(
 
     val cBridgeName = stubs.getUniqueCName("knbridge")
 
-    val symbols: KonanSymbols get() = stubs.symbols
+    val symbols: BackendNativeSymbols get() = stubs.symbols
     val irBuiltIns: IrBuiltIns get() = stubs.irBuiltIns
 
     val bridgeCallBuilder = KotlinCallBuilder(irBuilder, symbols)
@@ -614,12 +614,12 @@ internal fun KotlinStubs.generateObjCCall(
     +result
 }
 
-internal fun IrBuilderWithScope.getObjCClass(symbols: KonanSymbols, symbol: IrClassSymbol): IrExpression {
+internal fun IrBuilderWithScope.getObjCClass(symbols: BackendNativeSymbols, symbol: IrClassSymbol): IrExpression {
     require(!symbol.owner.isObjCMetaClass())
     return irCall(symbols.interopGetObjCClass, symbols.nativePtrType, listOf(symbol.starProjectedType))
 }
 
-private fun IrBuilderWithScope.irNullNativePtr(symbols: KonanSymbols) = irCall(symbols.getNativeNullPtr.owner)
+private fun IrBuilderWithScope.irNullNativePtr(symbols: BackendNativeSymbols) = irCall(symbols.getNativeNullPtr.owner)
 
 private class CCallbackBuilder(
         val state: CBridgeGenState,
@@ -629,7 +629,7 @@ private class CCallbackBuilder(
 
     val stubs: KotlinStubs get() = state.stubs
     val irBuiltIns: IrBuiltIns get() = stubs.irBuiltIns
-    val symbols: KonanSymbols get() = stubs.symbols
+    val symbols: BackendNativeSymbols get() = stubs.symbols
 
     private val cBridgeName = stubs.getUniqueCName("knbridge")
 
@@ -999,7 +999,7 @@ private abstract class SimpleValuePassing : ValuePassing {
     open fun IrBuilderWithScope.kotlinCallbackResultToBridged(expression: IrExpression): IrExpression =
             kotlinToBridged(expression)
 
-    abstract fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression
+    abstract fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression
     abstract fun bridgedToC(expression: String): String
     abstract fun cToBridged(expression: String): String
 
@@ -1045,7 +1045,7 @@ private class TrivialValuePassing(val kotlinType: IrType, override val cType: CT
         get() = cType
 
     override fun IrBuilderWithScope.kotlinToBridged(expression: IrExpression): IrExpression = expression
-    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression = expression
+    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression = expression
     override fun bridgedToC(expression: String): String = expression
     override fun cToBridged(expression: String): String = expression
 }
@@ -1063,7 +1063,7 @@ private class BooleanValuePassing(override val cType: CType, private val irBuilt
 
     override fun IrBuilderWithScope.bridgedToKotlin(
             expression: IrExpression,
-            symbols: KonanSymbols
+            symbols: BackendNativeSymbols
     ): IrExpression = irNot(irCall(symbols.areEqualByValue[PrimitiveBinaryType.BYTE]!!.owner).apply {
         arguments[0] = expression
         arguments[1] = IrConstImpl.byte(startOffset, endOffset, irBuiltIns.byteType, 0)
@@ -1116,7 +1116,7 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
         readCValue(irGet(kotlinPointed), symbols)
     }
 
-    private fun IrBuilderWithScope.readCValue(kotlinPointed: IrExpression, symbols: KonanSymbols): IrExpression =
+    private fun IrBuilderWithScope.readCValue(kotlinPointed: IrExpression, symbols: BackendNativeSymbols): IrExpression =
         irCallWithSubstitutedType(symbols.interopCValueRead.owner, listOf(kotlinPointedType)).apply {
             arguments[0] = kotlinPointed
             arguments[1] = getTypeObject()
@@ -1172,7 +1172,7 @@ private class CEnumValuePassing(
         return with(baseValuePassing) { kotlinToBridged(value) }
     }
 
-    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression {
+    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression {
         val companionClass = enumClass.declarations.filterIsInstance<IrClass>().single { it.isCompanion }
         val byValue = companionClass.simpleFunctions().single { it.name.asString() == "byValue" }
 
@@ -1187,7 +1187,7 @@ private class CEnumValuePassing(
 }
 
 private class ObjCReferenceValuePassing(
-        private val symbols: KonanSymbols,
+        private val symbols: BackendNativeSymbols,
         private val type: IrType,
         private val retained: Boolean
 ) : SimpleValuePassing() {
@@ -1221,7 +1221,7 @@ private class ObjCReferenceValuePassing(
         // TODO: optimize by using specialized Kotlin-to-ObjC converter.
     }
 
-    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression =
+    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression =
             convertPossiblyRetainedObjCPointer(symbols, retained, expression) {
                 irCallWithSubstitutedType(symbols.interopInterpretObjCPointerOrNull, listOf(type)).apply {
                     arguments[0] = it
@@ -1234,7 +1234,7 @@ private class ObjCReferenceValuePassing(
 }
 
 private fun IrBuilderWithScope.convertPossiblyRetainedObjCPointer(
-        symbols: KonanSymbols,
+        symbols: BackendNativeSymbols,
         retained: Boolean,
         pointer: IrExpression,
         convert: (IrExpression) -> IrExpression
@@ -1330,7 +1330,7 @@ private class ObjCBlockPointerValuePassing(
                 arguments[0] = expression
             }
 
-    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression =
+    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression =
             irLetS(expression) { blockPointerVarSymbol ->
                 val blockPointerVar = blockPointerVarSymbol.owner
                 irIfThenElse(
