@@ -23,7 +23,7 @@ import javax.inject.Inject
  *
  * KGP will translate [enabled] rules into Webpack configuration.
  *
- * **Note:** This class is not intended for implementation by build script or plugin authors.
+ * This class can be extended to define custom Webpack rules for advanced use-cases.
  */
 @Suppress("LeakingThis")
 abstract class KotlinWebpackRule
