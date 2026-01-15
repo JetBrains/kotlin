@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
  * On the contrary to [KlibMetadataComponent], which provides read access to metadata,
  * [KlibMetadataWriterImpl] provides allows writing the metadata to the file system.
  *
- * TODO (KT-81411): This class is an implementation detail. It should be made internal after dropping `KonanLibraryImpl`.
+ * TODO (KT-81411): This class is a legacy implementation detail. It should be removed after dropping `KonanLibraryImpl`.
  */
 class KlibMetadataWriterImpl(private val layout: KlibMetadataComponentLayout) {
     fun writeMetadata(serializedMetadata: SerializedMetadata) {

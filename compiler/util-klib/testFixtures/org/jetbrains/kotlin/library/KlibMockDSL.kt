@@ -9,15 +9,13 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.KlibMockDSL.Companion.mockKlib
-import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME
-import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
-import org.jetbrains.kotlin.library.impl.KlibIrWriterImpl
-import org.jetbrains.kotlin.library.impl.KlibMetadataWriterImpl
+import org.jetbrains.kotlin.library.writer.asComponentWriter
+import org.jetbrains.kotlin.library.writer.asComponentWriters
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
 import kotlin.random.Random
@@ -161,23 +159,13 @@ fun KlibMockDSL.resources(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_RE
 fun KlibMockDSL.metadata(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_METADATA_FOLDER_NAME, init)
 
 fun KlibMockDSL.metadata(metadata: SerializedMetadata) {
-    val layout = KlibMetadataComponentLayout(rootDir.path)
-    val writer = KlibMetadataWriterImpl(layout)
-    writer.writeMetadata(metadata)
+    metadata.asComponentWriter().writeTo(KlibFile(rootDir.path))
 }
 
 fun KlibMockDSL.ir(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_FOLDER_NAME, init)
 
-fun KlibMockDSL.ir(irFiles: Collection<SerializedIrFile>) = ir {
-    val layout = KlibIrComponentLayout.createForMainIr(KlibFile(rootDir.path))
-    val writer = KlibIrWriterImpl.ForMainIr(layout)
-    writer.writeMainIr(irFiles)
-}
-
 fun KlibMockDSL.irInlinableFunctions(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME, init)
 
-fun KlibMockDSL.irInlinableFunctions(inlinableFunctionsFile: SerializedIrFile) = irInlinableFunctions {
-    val layout = KlibIrComponentLayout.createForInlinableFunctionsIr(KlibFile(rootDir.path))
-    val writer = KlibIrWriterImpl.ForInlinableFunctionsIr(layout)
-    writer.writeInlinableFunctionsIr(inlinableFunctionsFile)
+fun KlibMockDSL.irModule(serializedIrModule: SerializedIrModule) {
+    serializedIrModule.asComponentWriters().forEach { it.writeTo(KlibFile(rootDir.path)) }
 }
