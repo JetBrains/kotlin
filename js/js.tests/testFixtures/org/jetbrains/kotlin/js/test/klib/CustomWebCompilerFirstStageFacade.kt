@@ -44,7 +44,7 @@ class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlib
         val compilerXmlOutput = ByteArrayOutputStream()
 
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
-            module.customWebCompilerSettings(testServices).customCompiler.callCompiler(
+            module.customWebCompilerSettings(testServices).customKlibCompiler.callCompiler(
                 output = printStream,
                 listOfNotNull(
                     K2JSCompilerArguments::wasm.cliArgument.takeIf { module.isWasmModule(testServices) },
