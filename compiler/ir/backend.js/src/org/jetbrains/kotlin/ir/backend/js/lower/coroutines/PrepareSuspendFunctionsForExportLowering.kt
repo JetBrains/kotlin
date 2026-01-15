@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -19,8 +18,9 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.lower.PrepareExportedDefaultImplementationsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.EXPORTED_SUSPEND_FUNCTION_BRIDGE
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.PROMISIFIED_WRAPPER
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.PROMISIFIED_MEMBER_WRAPPER
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.bridgeFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.virtualBridgeFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
@@ -153,13 +153,14 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * ```
  *
  */
+@PhasePrerequisites(PrepareExportedDefaultImplementationsLowering::class)
 internal class PrepareSuspendFunctionsForExportLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     companion object {
         private const val PROMISIFIED_WRAPPER_SUFFIX = "\$promisified"
         private const val EXPORTED_SUSPEND_FUNCTION_BRIDGE_SUFFIX = "\$suspendBridge"
         private const val EXPORTED_VIRTUAL_SUSPEND_FUNCTION_BRIDGE_SUFFIX = "\$virtualSuspendBridge"
 
-        val PROMISIFIED_WRAPPER by IrDeclarationOriginImpl.Regular
+        val PROMISIFIED_MEMBER_WRAPPER by IrDeclarationOriginImpl.Regular
         val EXPORTED_SUSPEND_FUNCTION_BRIDGE by IrDeclarationOriginImpl.Regular
         val EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER by IrDeclarationOriginImpl.Regular
 
@@ -197,7 +198,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
         when {
             declaration !is IrSimpleFunction || !declaration.isSuspend -> null
-            declaration.isTopLevel -> runIf(declaration.isExported(context)) {
+            declaration.isTopLevel || declaration.isStatic -> runIf(declaration.isExported(context)) {
                 listOf(generatePromisifiedWrapper(declaration), declaration)
             }
             else -> {
@@ -408,7 +409,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
         context.irFactory.buildFun {
             updateFrom(originalFunc)
             name = Name.identifier("${originalFunc.name.asString()}${PROMISIFIED_WRAPPER_SUFFIX}")
-            origin = PROMISIFIED_WRAPPER
+            origin = if (!originalFunc.isTopLevel && !originalFunc.isStatic) PROMISIFIED_MEMBER_WRAPPER else originalFunc.origin
             isSuspend = false
             modality = Modality.OPEN
             startOffset = UNDEFINED_OFFSET
@@ -502,7 +503,7 @@ class ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall(private val contex
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (
             container is IrSimpleFunction &&
-            (container.origin == EXPORTED_SUSPEND_FUNCTION_BRIDGE || container.origin == PROMISIFIED_WRAPPER)
+            (container.origin == EXPORTED_SUSPEND_FUNCTION_BRIDGE || container.origin == PROMISIFIED_MEMBER_WRAPPER)
         ) return
 
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -548,5 +549,5 @@ private fun IrSimpleFunction.isExportedSuspendFunction(context: JsIrBackendConte
 val IrValueParameter.isProxyParameterForExportedSuspendFunction: Boolean
     get() = origin == PrepareSuspendFunctionsForExportLowering.EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER
 
-val IrOverridableDeclaration<*>.isPromisifiedWrapper: Boolean
-    get() = origin == PrepareSuspendFunctionsForExportLowering.PROMISIFIED_WRAPPER
+val IrOverridableDeclaration<*>.isPromisifiedMemberWrapper: Boolean
+    get() = origin == PrepareSuspendFunctionsForExportLowering.PROMISIFIED_MEMBER_WRAPPER

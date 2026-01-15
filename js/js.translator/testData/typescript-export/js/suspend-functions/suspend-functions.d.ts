@@ -58,6 +58,7 @@ declare namespace JS_TESTS {
         interface HolderOfSum {
             sum(x: number, y: number): Promise<number>;
             sumNullable(x: Nullable<number>, y: Nullable<number>): Promise<number>;
+            defaultSum(x: number, y: number): Promise<number>;
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.HolderOfSum": unique symbol;
             };
@@ -77,6 +78,7 @@ declare namespace JS_TESTS {
             genericWithConstraint<T extends string>(x: T): Promise<T>;
             genericWithMultipleConstraints<T extends unknown/* kotlin.Comparable<T> */ & foo.SomeExternalInterface & Error>(x: T): Promise<T>;
             generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Promise<Nullable<E>>;
+            defaultSum(x: number, y: number): Promise<number>;
             readonly __doNotUseOrImplementIt: foo.HolderOfSum["__doNotUseOrImplementIt"];
         }
         namespace Test {

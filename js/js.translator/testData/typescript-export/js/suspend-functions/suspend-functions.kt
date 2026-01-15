@@ -97,6 +97,8 @@ external interface SomeExternalInterface
 interface HolderOfSum {
     suspend fun sum(x: Int, y: Int): Int
     suspend fun sumNullable(x: Int?, y: Int?): Int
+
+    suspend fun defaultSum(x: Int, y: Int) = 0xffff
 }
 
 @JsExport
@@ -112,6 +114,8 @@ suspend fun acceptHolderOfSum(test: HolderOfSum) {
         is NotExportedTestChild -> 44
         else -> 5
     })
+
+    assert(test.defaultSum(1, 2) == 0xffff)
 }
 
 @JsExport

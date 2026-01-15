@@ -18,6 +18,19 @@ interface ExportedParent {
     @get:JsName("getGetterAndSetterWithJsName")
     @set:JsName("setGetterAndSetterWithJsName")
     var getterAndSetterWithJsName: String
+
+    fun withDefaultImplementation() = "KOTLIN IMPLEMENTATION: ${anotherParentMethod[0]}"
+    fun anotherDefaultImplementation() = "FROM ExportedParent"
+
+    var propertyWithDefaultSetter: String
+        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod[0]}"
+        set(value) {}
+
+    @get:JsName("getDefaultGetterAndSetterWithJsName")
+    @set:JsName("setDefaultGetterAndSetterWithJsName")
+    var defaultGetterAndSetterWithJsName: String
+        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod[0]}"
+        set(value) {}
 }
 
 @JsExport
@@ -27,6 +40,14 @@ interface IFoo<T : Comparable<T>> : ExportedParent {
     suspend fun asyncFoo(): String
     fun withDefaults(value: String = "OK"): String
     fun withBridge(x: T): T
+
+    fun withDefaultsAndDefaultImplementation(value: String = "OK"): String = value
+    suspend fun suspendWithDefaultImplementation() = "KOTLIN IMPLEMENTATION ${foo()}"
+
+    override fun anotherDefaultImplementation() = "FROM IFoo"
+
+    val propertyWithDefaultGetter: String
+        get() = "KOTLIN IMPLEMENTATION ${propertyWithDefaultSetter}"
 }
 
 
@@ -47,8 +68,20 @@ suspend fun justCallParentAsyncMethod(foo: IFoo<*>): String =
     foo.parentAsyncMethod()
 
 @JsExport
+suspend fun justCallSuspendWithDefaultImplementation(foo: IFoo<*>): String =
+    foo.suspendWithDefaultImplementation()
+
+@JsExport
 fun callingWithDefaultsWithoutParameter(foo: IFoo<*>): String =
     foo.withDefaults()
+
+@JsExport
+fun callingWithDefaultsAndDefaultImplementationWithParameter(foo: IFoo<*>): String =
+    foo.withDefaultsAndDefaultImplementation("KOTLIN SIDE PARAMETER")
+
+@JsExport
+fun callingWithDefaultsAndDefaultImplementationWithoutParameter(foo: IFoo<*>): String =
+    foo.withDefaultsAndDefaultImplementation()
 
 @JsExport
 fun callingWithDefaultsWithParameter(foo: IFoo<*>): String =
@@ -65,6 +98,14 @@ fun checkIsFooInterface(foo: Any): Boolean =
 @JsExport
 fun checkIsExportedParentInterface(foo: Any): Boolean =
     foo is ExportedParent
+
+@JsExport
+fun callingWithDefaultImplementation(foo: IFoo<*>): String =
+    foo.withDefaultImplementation()
+
+@JsExport
+fun callingAnotherWithDefaultImplementation(foo: IFoo<*>): String =
+    foo.anotherDefaultImplementation()
 
 @JsExport
 class KotlinFooImpl : IFoo<String> {

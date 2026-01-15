@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.isOverriddenEnumProperty
 import org.jetbrains.kotlin.ir.backend.js.ir.isOverriddenExported
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.suspendArityStore
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.lower.transformers.correspondingStatic
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
