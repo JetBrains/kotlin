@@ -73,6 +73,23 @@ public expect annotation class FreezingIsDeprecated
 public expect annotation class ObjCName(val name: String = "", val swiftName: String = "", val exact: Boolean = false)
 
 /**
+ * Associates this Objective-C class with a Swift value type that it bridges to.
+ *
+ * This annotation is used by cinterop when processing API Notes files that specify
+ * SwiftBridge attributes for Objective-C classes. The [bridgedType] parameter specifies
+ * the fully qualified Swift type name (e.g., "Swift.String" for NSString).
+ *
+ * @param bridgedType The fully qualified name of the Swift value type this class bridges to.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@OptionalExpectation
+@ExperimentalObjCName
+@SinceKotlin("2.3")
+public expect annotation class SwiftBridge(val bridgedType: String)
+
+/**
  * Instructs the Kotlin compiler to generate a NS_ENUM typedef for the annotated enum class. The name of the generated type will
  * be the name of the enum type with "NSEnum" appended. This name can be overridden with the "name" parameter, which is treated
  * as an exact name. Additionally, a separate name for Swift can be specified using the swiftName parameter.
