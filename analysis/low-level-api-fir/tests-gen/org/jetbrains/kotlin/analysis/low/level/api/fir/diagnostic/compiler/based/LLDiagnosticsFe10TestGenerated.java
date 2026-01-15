@@ -19028,6 +19028,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("flexibleConstraints.kt")
+      public void testFlexibleConstraints() {
+        runTest("compiler/testData/diagnostics/tests/inference/flexibleConstraints.kt");
+      }
+
+      @Test
+      @TestMetadata("flexibleConstraints2.kt")
+      public void testFlexibleConstraints2() {
+        runTest("compiler/testData/diagnostics/tests/inference/flexibleConstraints2.kt");
+      }
+
+      @Test
       @TestMetadata("flexibleTypesAsUpperBound.kt")
       public void testFlexibleTypesAsUpperBound() {
         runTest("compiler/testData/diagnostics/tests/inference/flexibleTypesAsUpperBound.kt");
