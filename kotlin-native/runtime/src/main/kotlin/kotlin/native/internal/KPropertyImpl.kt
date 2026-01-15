@@ -39,7 +39,7 @@ internal final class KProperty0Impl<out R>(
         reflectionTargetLinkageError: String?,
         override val getter: KFunction0<R>,
 ) : KProperty0ImplBase<R>(reflectionTargetLinkageError) {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun equals(other: Any?): Boolean {
         maybeThrowPLError()
@@ -80,7 +80,7 @@ internal class KProperty1Impl<T, out R>(
         reflectionTargetLinkageError: String?,
         override val getter: KFunction1<T, R>,
 ) : KProperty1ImplBase<T, R>(reflectionTargetLinkageError) {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun equals(other: Any?): Boolean {
         maybeThrowPLError()
@@ -122,7 +122,7 @@ internal class KProperty2Impl<T1, T2, out R>(
         reflectionTargetLinkageError: String?,
         override val getter: KFunction2<T1, T2, R>,
 ) : KProperty2ImplBase<T1, T2, R>(reflectionTargetLinkageError) {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun equals(other: Any?): Boolean {
         maybeThrowPLError()
@@ -151,7 +151,7 @@ internal class KMutableProperty0Impl<R>(
         override val getter: KFunction0<R>,
         val setter: (R) -> Unit
 ) : KProperty0ImplBase<R>(reflectionTargetLinkageError), KMutableProperty0<R> {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun set(value: R): Unit {
         setter(value)
@@ -183,7 +183,7 @@ internal class KMutableProperty1Impl<T, R>(
         override val getter: KFunction1<T, R>,
         val setter: (T, R) -> Unit,
 ) : KProperty1ImplBase<T, R>(reflectionTargetLinkageError), KMutableProperty1<T, R> {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun set(receiver: T, value: R): Unit {
         setter(receiver, value)
@@ -215,7 +215,7 @@ internal class KMutableProperty2Impl<T1, T2, R>(
         override val getter: KFunction2<T1, T2, R>,
         val setter: (T1, T2, R) -> Unit,
 ) : KProperty2ImplBase<T1, T2, R>(reflectionTargetLinkageError), KMutableProperty2<T1, T2, R> {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun set(receiver1: T1, receiver2: T2, value: R): Unit {
         setter(receiver1, receiver2, value)
