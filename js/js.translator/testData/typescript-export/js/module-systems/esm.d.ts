@@ -9,8 +9,13 @@ export declare interface KtList<E> /* extends Collection<E> */ {
 export declare namespace KtList {
     function fromJsArray<E>(array: ReadonlyArray<E>): KtList<E>;
 }
-export declare const value: { get(): number; };
-export declare const variable: { get(): number; set(value: number): void; };
+export declare const value: {
+    get(): number;
+};
+export declare const variable: {
+    get(): number;
+    set(_set___: number): void;
+};
 export declare class C {
     constructor(x: number);
     get x(): number;

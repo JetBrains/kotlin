@@ -104,6 +104,7 @@ class ExportedStaticByJsStatic {
 
 external interface SymbolHolder {
     fun Symbol()
+    fun DefaultImpls()
 }
 
 // Interface-specific forbidden static name: Symbol
@@ -112,10 +113,17 @@ interface InterfaceWithForbiddenStaticSymbol {
     @JsName("Symbol")
     class <!JS_BUILTIN_NAME_CLASH!>SomeSymbol<!>
 
+    @JsName("DefaultImpls")
+    class <!JS_BUILTIN_NAME_CLASH!>SomeDefaultImpls<!>
+
     companion object : SymbolHolder {
         // Static via @JsStatic companion member
         <!JS_BUILTIN_NAME_CLASH!>@JsStatic
         override fun Symbol()<!> {}
+
+        // Static via @JsStatic companion member
+        <!JS_BUILTIN_NAME_CLASH!>@JsStatic
+        override fun DefaultImpls()<!> {}
     }
 }
 
@@ -151,22 +159,33 @@ class ClassWithSymbolStatics {
     // class-like member inside class: allowed
     class Symbol
 
+    class DefaultImpls
+
     companion object {
         // @JsStatic member in class companion: allowed
         @JsStatic
         fun Symbol() {}
+
+        // @JsStatic member in class companion: allowed
+        @JsStatic
+        fun DefaultImpls() {}
     }
 }
 
 // Top-level declarations named Symbol: allowed
 class Symbol
 
+class DefaultImpls
+
 fun Symbol(foo: Int) {}
+
+fun DefaultImpls(foo: Int) {}
 
 interface InterfaceWithCompanionSymbolStatics {
     companion object {
         // companion member in : allowed
         fun Symbol() {}
+        fun DefaultImpls() {}
     }
 }
 

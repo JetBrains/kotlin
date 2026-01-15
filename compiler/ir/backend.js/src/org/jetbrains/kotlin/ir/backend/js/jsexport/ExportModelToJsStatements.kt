@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 class ExportModelToJsStatements(
     private val staticContext: JsStaticContext,
     private val es6mode: Boolean,
-    private val declareNewNamespace: (String) -> String,
 ) {
-    private val namespaceToRefMap = hashMapOf<String, JsNameRef>()
     private val allowImplementingInterfaces = staticContext.backendContext.configuration.languageVersionSettings.supportsFeature(
         LanguageFeature.JsExportInterfacesInImplementableWay
     )
@@ -56,34 +54,30 @@ class ExportModelToJsStatements(
         return when (declaration) {
             is ExportedNamespace -> {
                 require(namespace != null) { "Only namespaced namespaces are allowed" }
-                val statements = mutableListOf<JsStatement>()
-                val elements = declaration.name.split(".")
-                var currentNamespace = ""
-                var currentRef: JsExpression = namespace
-                for (element in elements) {
-                    val newNamespace = "$currentNamespace$$element"
-                    val newNameSpaceRef = namespaceToRefMap.getOrPut(newNamespace) {
-                        val varName = JsName(declareNewNamespace(newNamespace), false)
-                        val namespaceRef = jsElementAccess(element, currentRef)
-                        statements += JsVars(
-                            JsVars.Variant.Var,
-                            JsVars.JsVar(
-                                varName,
-                                JsAstUtils.or(
-                                    namespaceRef,
-                                    jsAssignment(
-                                        namespaceRef,
-                                        JsObjectLiteral()
-                                    )
-                                )
+
+                val namespaceVariableName = JsName(declaration.name, true)
+                val namespaceRef = jsElementAccess(declaration.name, namespace)
+                val namespaceDeclaration = JsVars(
+                    JsVars.Variant.Var,
+                    JsVars.JsVar(
+                        namespaceVariableName,
+                        JsAstUtils.or(
+                            namespaceRef,
+                            jsAssignment(
+                                namespaceRef,
+                                JsObjectLiteral()
                             )
                         )
-                        JsNameRef(varName)
-                    }
-                    currentRef = newNameSpaceRef
-                    currentNamespace = newNamespace
+                    )
+                )
+
+                listOf(namespaceDeclaration) + declaration.declarations.flatMap {
+                    generateDeclarationExport(
+                        it,
+                        namespaceVariableName.makeRef(),
+                        esModules
+                    )
                 }
-                statements + declaration.declarations.flatMap { generateDeclarationExport(it, currentRef, esModules) }
             }
 
             is ExportedFunction -> {
@@ -105,8 +99,8 @@ class ExportModelToJsStatements(
 
             is ExportedProperty -> {
                 require(namespace != null || esModules) { "Only namespaced properties are allowed" }
-                when (namespace) {
-                    null -> {
+                when {
+                    namespace == null -> {
                         val property = declaration.generateTopLevelGetters()
                         val exportStatement = if (declaration.attributes.contains(ExportedAttribute.DefaultExport)) {
                             JsExport(JsExport.Subject.Default(property.name.makeRef()))
@@ -115,6 +109,13 @@ class ExportModelToJsStatements(
                         }
 
                         listOf(JsVars(JsVars.Variant.Var, property), exportStatement)
+                    }
+                    declaration.isDefaultImplementation -> {
+                        val property = declaration.generateTopLevelGetters()
+                        listOf(
+                            JsVars(JsVars.Variant.Var, property),
+                            jsAssignment(jsElementAccess(declaration.name, namespace), property.name.makeRef()).makeStmt()
+                        )
                     }
                     else -> {
                         val getter = declaration.irGetter?.let { staticContext.getNameForStaticDeclaration(it) }
@@ -173,11 +174,11 @@ class ExportModelToJsStatements(
 
             is ExportedRegularClass -> {
                 // These are used when @JsStatic is used or exporting secondary constructors annotated with @JsName
-                val staticFunctions = declaration.members
-                    .filter { it is ExportedFunction && it.isStatic && !it.ir.isEs6ConstructorReplacement }
+                val staticMembers = declaration.members
+                    .filter { it is ExportedNamespace || it is ExportedFunction && it.isStatic && !it.ir.isEs6ConstructorReplacement }
                     .takeIf { !declaration.ir.isInner }.orEmpty()
 
-                if (!allowImplementingInterfaces && declaration.isInterface && staticFunctions.isEmpty() && declaration.nestedClasses.isEmpty()) {
+                if (!allowImplementingInterfaces && declaration.isInterface && staticMembers.isEmpty() && declaration.nestedClasses.isEmpty()) {
                     return emptyList()
                 }
 
@@ -205,7 +206,7 @@ class ExportModelToJsStatements(
                     .filter { it.ir.isInner }
                     .map { it.generateInnerClassAssignment(name) }
 
-                val staticsExport = (staticFunctions + enumEntries + declaration.nestedClasses)
+                val staticsExport = (staticMembers + enumEntries + declaration.nestedClasses)
                     .flatMap { generateDeclarationExport(it, newNameSpace, esModules, declaration.ir) }
 
                 listOfNotNull(classInitialization, klassExport) + staticsExport + innerClassesAssignments
@@ -219,7 +220,7 @@ class ExportModelToJsStatements(
         val setter = irSetter?.let { staticContext.getNameForStaticDeclaration(it) }
 
         return JsVars.JsVar(
-            JsName(sanitizedName, false),
+            JsName(sanitizedName, true),
             JsObjectLiteral(false).apply {
                 getter?.let {
                     val fieldName = when (irGetter.origin) {

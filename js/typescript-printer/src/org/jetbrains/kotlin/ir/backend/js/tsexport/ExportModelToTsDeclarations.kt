@@ -148,36 +148,25 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
 
         val typeToTypeScript = type.toTypeScript(if (!isMember && isEsModules && isObjectGetter) extraIndent else indent)
 
-        return if (isMember) {
-            val static = if (isStatic) "static " else ""
-            val abstract = if (isAbstract) "abstract " else ""
-            val visibility = if (isProtected) "protected " else ""
+        return when {
+            isMember -> {
+                val static = if (isStatic) "static " else ""
+                val abstract = if (isAbstract) "abstract " else ""
+                val visibility = if (isProtected) "protected " else ""
 
-            if (isField) {
-                val readonly = if (!mutable) "readonly " else ""
-                "$prefix$visibility$static$abstract$readonly$memberName$optional: $typeToTypeScript;"
-            } else {
-                val getter = "$prefix$visibility$static${abstract}get $memberName(): $typeToTypeScript;"
-                val setter = runIf(mutable) { "\n$indent$prefix$visibility$static${abstract}set $memberName(value: $typeToTypeScript);" }
-                getter + setter.orEmpty()
+                if (isField) {
+                    val readonly = if (!mutable) "readonly " else ""
+                    "$prefix$visibility$static$abstract$readonly$memberName$optional: $typeToTypeScript;"
+                } else {
+                    val getter = "$prefix$visibility$static${abstract}get $memberName(): $typeToTypeScript;"
+                    val setter = runIf(mutable) { "\n$indent$prefix$visibility$static${abstract}set $memberName(value: $typeToTypeScript);" }
+                    getter + setter.orEmpty()
+                }
             }
-        } else {
-            when {
-                memberName != name.value -> ""
-                isEsModules && !isQualified -> {
-                    if (isObjectGetter) {
-                        "${prefix}const $memberName: {\n${extraIndent}getInstance(): $typeToTypeScript;\n};"
-                    } else {
-                        val getter = "get(): $typeToTypeScript;"
-                        val setter = runIf(mutable) { " set(value: $typeToTypeScript): void;" }
-                        "${prefix}const $memberName: { $getter${setter.orEmpty()} };${generateDefaultExportIfNeed(name.value, indent)}"
-                    }
-                }
-
-                else -> {
-                    val keyword = if (mutable) "let " else "const "
-                    "$prefix$keyword$memberName$optional: $typeToTypeScript;"
-                }
+            memberName != name.value -> ""
+            else -> {
+                val keyword = if (mutable) "let " else "const "
+                "$prefix$keyword$memberName$optional: $typeToTypeScript;"
             }
         }
     }
@@ -323,7 +312,10 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         val superClassClause = superClasses.toExtendsClause(indent)
         val superInterfacesClause = superInterfaces.toImplementsClause(superInterfacesKeyword, indent)
 
-        val (membersForNamespace, classMembers) = members.partition { isInterface && it is ExportedMember && it.isStatic }
+        val (membersForNamespace, classMembers) = members.partition {
+            it is ExportedNamespace || isInterface && it is ExportedMember && it.isStatic
+        }
+
         val namespaceMembers = membersForNamespace.map {
             when (it) {
                 is ExportedFunction -> it.copy(isMember = false)
@@ -331,6 +323,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 else -> it
             }
         }
+
         val membersString = classMembers
             .joinToString("") { it.toTypeScript("$indent    ") + "\n" }
 

@@ -10,6 +10,11 @@
 package foo
 
 @JsExport
+fun interface FunIFace {
+    fun apply(x: String): String
+}
+
+@JsExport
 interface ExportedParent {
     var parentPropertyToImplement: String
     fun anotherParentMethod(): List<String>
@@ -18,6 +23,19 @@ interface ExportedParent {
     @get:JsName("getGetterAndSetterWithJsName")
     @set:JsName("setGetterAndSetterWithJsName")
     var getterAndSetterWithJsName: String
+
+    fun withDefaultImplementation() = "KOTLIN IMPLEMENTATION: ${anotherParentMethod[0]}"
+    fun anotherDefaultImplementation() = "FROM ExportedParent"
+
+    var propertyWithDefaultSetter: String
+        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod[0]}"
+        set(value) {}
+
+    @get:JsName("getDefaultGetterAndSetterWithJsName")
+    @set:JsName("setDefaultGetterAndSetterWithJsName")
+    var defaultGetterAndSetterWithJsName: String
+        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod[0]}"
+        set(value) {}
 }
 
 @JsExport
@@ -27,8 +45,26 @@ interface IFoo<T : Comparable<T>> : ExportedParent {
     suspend fun asyncFoo(): String
     fun withDefaults(value: String = "OK"): String
     fun withBridge(x: T): T
+
+    fun withDefaultsAndDefaultImplementation(value: String = "OK"): String = value
+    suspend fun suspendWithDefaultImplementation() = "KOTLIN IMPLEMENTATION ${foo()}"
+
+    fun <T> genericWithDefaultImplementation(x: T): String = "GENERIC ${x}"
+
+    fun delegatingToSuperDefaultImplementation(): String = super.withDefaultImplementation()
+
+    override fun anotherDefaultImplementation() = "FROM IFoo"
+
+    val propertyWithDefaultGetter: String
+        get() = "KOTLIN IMPLEMENTATION ${propertyWithDefaultSetter}"
 }
 
+
+@JsExport
+fun makeFunInterfaceWithSam(): FunIFace = FunIFace { x -> "SAM ${x}" }
+
+@JsExport
+fun callFunInterface(f: FunIFace, x: String): String = f.apply(x)
 
 @JsExport
 fun callingExportedParentMethod(foo: IFoo<*>): String =
@@ -47,8 +83,20 @@ suspend fun justCallParentAsyncMethod(foo: IFoo<*>): String =
     foo.parentAsyncMethod()
 
 @JsExport
+suspend fun justCallSuspendWithDefaultImplementation(foo: IFoo<*>): String =
+    foo.suspendWithDefaultImplementation()
+
+@JsExport
 fun callingWithDefaultsWithoutParameter(foo: IFoo<*>): String =
     foo.withDefaults()
+
+@JsExport
+fun callingWithDefaultsAndDefaultImplementationWithParameter(foo: IFoo<*>): String =
+    foo.withDefaultsAndDefaultImplementation("KOTLIN SIDE PARAMETER")
+
+@JsExport
+fun callingWithDefaultsAndDefaultImplementationWithoutParameter(foo: IFoo<*>): String =
+    foo.withDefaultsAndDefaultImplementation()
 
 @JsExport
 fun callingWithDefaultsWithParameter(foo: IFoo<*>): String =
@@ -67,6 +115,22 @@ fun checkIsExportedParentInterface(foo: Any): Boolean =
     foo is ExportedParent
 
 @JsExport
+fun callingWithDefaultImplementation(foo: IFoo<*>): String =
+    foo.withDefaultImplementation()
+
+@JsExport
+fun callingAnotherWithDefaultImplementation(foo: IFoo<*>): String =
+    foo.anotherDefaultImplementation()
+
+@JsExport
+fun callGenericWithDefaultImplementation(foo: IFoo<*>, x: Any?): String =
+    foo.genericWithDefaultImplementation(x)
+
+@JsExport
+fun callingDelegatingToSuperDefaultImplementation(foo: IFoo<*>): String =
+    foo.delegatingToSuperDefaultImplementation()
+
+@JsExport
 class KotlinFooImpl : IFoo<String> {
     override val fooProperty = "IMPLEMENTED BY KOTLIN FOO PROPERTY"
     override var parentPropertyToImplement = "IMPLEMENTED BY KOTLIN PARENT PROPERTY"
@@ -83,4 +147,7 @@ class KotlinFooImpl : IFoo<String> {
 
      override suspend fun asyncFoo(): String = "OK"
      override suspend fun parentAsyncMethod(): String = "Parent OK"
+
+     override fun delegatingToSuperDefaultImplementation(): String =
+         super.delegatingToSuperDefaultImplementation()
 }
