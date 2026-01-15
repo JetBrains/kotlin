@@ -2,7 +2,7 @@
 dexMemberList = "4.1.1"
 dokka = "2.0.0"
 gradle-custom-user-data = "2.4.0"
-develocity = "4.1.1"
+develocity = "4.2.2"
 gradle-plugin-publish = "1.2.1"
 # The version for foojay should be synced with the version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "0.9.0"
