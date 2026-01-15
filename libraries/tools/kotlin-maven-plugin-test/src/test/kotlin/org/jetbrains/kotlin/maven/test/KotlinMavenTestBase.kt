@@ -36,22 +36,6 @@ abstract class KotlinMavenTestBase {
         context = createMavenTestExecutionContextFromEnvironment(tmpDir)
     }
 
-    @AfterEach
-    @EnabledOnOs(OS.WINDOWS)
-    fun cleanup() {
-        try {
-            @OptIn(ExperimentalPathApi::class)
-            tmpDir.deleteRecursively()
-            return
-        } catch (_: Throwable) {
-            System.gc();
-        }
-
-        // try again, and fail otherwise
-        @OptIn(ExperimentalPathApi::class)
-        tmpDir.deleteRecursively()
-    }
-
     fun testProject(
         projectDir: String,
         mavenVersion: TestVersions.Maven,
