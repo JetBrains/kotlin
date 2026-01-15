@@ -167,7 +167,7 @@ fun createCompilerConfiguration(
         configuration.generateDts = true
     }
 
-    if (JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives) {
+    if (JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives || JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION in module.directives) {
         configuration.useEs6Classes = true
         configuration.compileSuspendAsJsGenerator = true
         configuration.compileLambdasAsEs6ArrowFunctions = JsEnvironmentConfigurationDirectives.DISABLE_ES6_ARROWS !in module.directives

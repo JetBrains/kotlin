@@ -14,6 +14,7 @@ import java.io.Serializable
 class NpmVersions : Serializable {
     val webpack = NpmPackageVersion("webpack", "5.101.3")
     val karma = NpmPackageVersion("karma", "github:Kotlin/karma#6.4.5")
+    val swcHelpers = NpmPackageVersion("@swc/helpers", "0.5.17")
     val webpackCli = NpmPackageVersion("webpack-cli", "6.0.1")
     val webpackDevServer = NpmPackageVersion("webpack-dev-server", "5.2.2")
     val sourceMapLoader = NpmPackageVersion("source-map-loader", "5.0.0")
@@ -45,8 +46,9 @@ class NpmVersions : Serializable {
     val kotlinWebHelpers = NpmPackageVersion("kotlin-web-helpers", "3.0.0")
 
     val allDependencies = listOf(
-        webpack,
         karma,
+        swcHelpers,
+        webpack,
         webpackCli,
         webpackDevServer,
         sourceMapLoader,

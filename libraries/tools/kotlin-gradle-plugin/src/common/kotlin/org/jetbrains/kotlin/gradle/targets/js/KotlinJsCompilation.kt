@@ -138,9 +138,14 @@ val KotlinJsCompilation.fileExtension: Provider<String>
             )
             .map { moduleKind ->
                 if (isWasm || moduleKind == JsModuleKind.MODULE_ES) {
-                    "mjs"
+                    JsFileExtensions.MODULE
                 } else {
-                    "js"
+                    JsFileExtensions.REGULAR
                 }
             }
     }
+
+internal object JsFileExtensions {
+    const val REGULAR = "js"
+    const val MODULE = "mjs"
+}

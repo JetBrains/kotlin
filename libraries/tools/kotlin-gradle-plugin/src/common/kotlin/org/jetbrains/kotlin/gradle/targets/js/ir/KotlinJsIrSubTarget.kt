@@ -114,6 +114,8 @@ abstract class KotlinJsIrSubTarget(
             )
         )
 
+        setupTest(compilation)
+
         val testJs = project.registerTask<KotlinJsTest>(
             testRun.subtargetTestTaskName(),
             listOf(compilation)
@@ -194,6 +196,12 @@ abstract class KotlinJsIrSubTarget(
     private fun setupBuild(compilation: KotlinJsIrCompilation) {
         subTargetConfigurators.configureEach {
             it.setupBuild(compilation)
+        }
+    }
+
+    private fun setupTest(compilation: KotlinJsIrCompilation) {
+        subTargetConfigurators.configureEach {
+            it.setupTest(compilation)
         }
     }
 
