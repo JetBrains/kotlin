@@ -26,7 +26,7 @@
 
 /benchmarks/ @JetBrains/kotlin-frontend
 
-/build-common/ @JetBrains/kotlin-build-tools
+/build-common/ @JetBrains/kotlin-build-tools @JetBrains/build-tools-api
 
 /compiler/AGENTS.md @JetBrains/kotlin-compiler
 /compiler/CLAUDE.md @JetBrains/kotlin-compiler
