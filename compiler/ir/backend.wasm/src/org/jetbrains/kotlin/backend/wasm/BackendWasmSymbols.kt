@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 @OptIn(InternalSymbolFinderAPI::class)
-class WasmSymbols(
+class BackendWasmSymbols(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
 ) : PreSerializationWasmSymbols by PreSerializationWasmSymbols.Impl(irBuiltIns), BackendWebSymbols(irBuiltIns) {
