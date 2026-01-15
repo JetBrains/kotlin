@@ -120,6 +120,12 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
   }
 
   @Test
+  @TestMetadata("function_suspend.kts")
+  public void testFunction_suspend() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_suspend.kts");
+  }
+
+  @Test
   @TestMetadata("function_uses_local_mutating_property.repl.kts")
   public void testFunction_uses_local_mutating_property_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_uses_local_mutating_property.repl.kts");
@@ -177,6 +183,18 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
   @TestMetadata("property_smartcast.kts")
   public void testProperty_smartcast() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_smartcast.kts");
+  }
+
+  @Test
+  @TestMetadata("property_suspend_delegate.kts")
+  public void testProperty_suspend_delegate() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_suspend_delegate.kts");
+  }
+
+  @Test
+  @TestMetadata("property_suspend_initializer.kts")
+  public void testProperty_suspend_initializer() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_suspend_initializer.kts");
   }
 
   @Test

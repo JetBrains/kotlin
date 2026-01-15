@@ -1528,7 +1528,7 @@ open class PsiRawFirBuilder(
                     name = evalName
                     symbol = evalSymbol
                     dispatchReceiverType = currentDispatchReceiverType()
-                    status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                    status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply { isSuspend = true }
                     returnTypeRef = implicitUnitType
                     isLocal = false
 

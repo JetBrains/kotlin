@@ -46,6 +46,10 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import java.lang.invoke.MethodHandleProxies
+import java.lang.invoke.MethodHandles
+import java.lang.invoke.MethodType
+import java.util.function.Consumer
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
@@ -225,7 +229,9 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
 
         val snippet = snippetClass.getField("INSTANCE").get(null)
         val (out, err) = captureOutErrRet {
-            eval.invoke(snippet)
+            runSuspend(classLoader) { cont ->
+                eval.invoke(snippet, cont)
+            }
         }
 
         for ((fieldName, expectedValue) in expected) {
@@ -259,6 +265,24 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
         if (!scriptProcessed) {
             assertions.fail { "Can't find script to test" }
         }
+    }
+
+    private fun runSuspend(classLoader: ClassLoader, block: (continuation: Any) -> Unit) {
+        val runSuspend = classLoader
+            .loadClass("kotlin.coroutines.jvm.internal.RunSuspendKt")
+            .methods
+            .find { it.name == "runSuspend" }!!
+
+        val argument = MethodHandleProxies.asInterfaceInstance(
+            runSuspend.parameterTypes[0],
+            MethodHandles.lookup().findVirtual(
+                Consumer::class.java,
+                "accept",
+                MethodType.methodType(Void.TYPE, Any::class.java)
+            ).bindTo(Consumer<Any> { cont -> block(cont) })
+        )
+
+        runSuspend.invoke(null, argument)
     }
 }
 

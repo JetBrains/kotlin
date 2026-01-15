@@ -6,7 +6,11 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.REPL_SNIPPET_EVAL_FUN_NAME
+import java.lang.invoke.MethodHandleProxies
+import java.lang.invoke.MethodHandles
+import java.lang.invoke.MethodType
 import java.lang.reflect.InvocationTargetException
+import java.util.function.Consumer
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
@@ -49,7 +53,11 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
         }
     }
 
-    private fun evalSnippet(compiledSnippet: KJvmCompiledScript, snippetClass: KClass<*>, configuration: ScriptEvaluationConfiguration): ResultValue {
+    private fun evalSnippet(
+        compiledSnippet: KJvmCompiledScript,
+        snippetClass: KClass<*>,
+        configuration: ScriptEvaluationConfiguration,
+    ): ResultValue {
         val evalFunName = REPL_SNIPPET_EVAL_FUN_NAME.asString()
         val eval = snippetClass.java.methods.find { it.name == evalFunName }!!
 
@@ -62,7 +70,9 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
         }
 
         return try {
-            eval.invoke(snippet, *args.toTypedArray())
+            runSuspend(snippetClass.java.classLoader) { cont ->
+                eval.invoke(snippet, *args.toTypedArray<Any?>(), cont)
+            }
 
             compiledSnippet.resultField?.let { (resultFieldName, resultType) ->
                 val resultField = snippetClass.java.getDeclaredField(resultFieldName)
@@ -74,6 +84,24 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
         } catch (e: Throwable) {
             ResultValue.Error((e as? InvocationTargetException)?.targetException ?: e, e, snippetClass)
         }
+    }
+
+    private fun runSuspend(classLoader: ClassLoader, block: (continuation: Any) -> Unit) {
+        val runSuspend = classLoader
+            .loadClass("kotlin.coroutines.jvm.internal.RunSuspendKt")
+            .methods
+            .find { it.name == "runSuspend" }!!
+
+        val argument = MethodHandleProxies.asInterfaceInstance(
+            runSuspend.parameterTypes[0],
+            MethodHandles.lookup().findVirtual(
+                Consumer::class.java,
+                "accept",
+                MethodType.methodType(Void.TYPE, Any::class.java)
+            ).bindTo(Consumer<Any> { cont -> block(cont) })
+        )
+
+        runSuspend.invoke(null, argument)
     }
 }
 
