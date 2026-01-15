@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.js.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.test.klib.CustomCompiler
+import org.jetbrains.kotlin.test.klib.CustomKlibCompiler
 import org.jetbrains.kotlin.test.klib.CustomCompilerArtifacts
 import java.io.File
 import kotlin.getValue
@@ -48,7 +48,7 @@ interface CustomWebCompilerSettings {
     val version: String
     val stdlib: File
     val kotlinTest: File
-    val customCompiler: CustomCompiler
+    val customKlibCompiler: CustomKlibCompiler
 }
 
 val CustomWebCompilerSettings.defaultLanguageVersion: LanguageVersion
@@ -73,7 +73,7 @@ private fun createCustomWebCompilerSettings(
         artifacts.runtimeDependency(kotlinTestArtifactName, "klib", "jar")
     }
 
-    override val customCompiler: CustomCompiler by lazy {
-        CustomCompiler(artifacts.compilerClassPath, "org.jetbrains.kotlin.cli.js.K2JSCompiler", "execFullPathsInMessages")
+    override val customKlibCompiler: CustomKlibCompiler by lazy {
+        CustomKlibCompiler(artifacts.compilerClassPath, "org.jetbrains.kotlin.cli.js.K2JSCompiler", "execFullPathsInMessages")
     }
 }
