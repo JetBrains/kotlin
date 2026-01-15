@@ -71,7 +71,8 @@ private class ObjCClassImpl(
         override val isForwardDeclaration: Boolean,
         override val binaryName: String?,
         override val typeParameters: List<String> = emptyList<String>(),
-        override val swiftName: String? = null
+        override val swiftName: String? = null,
+        override val swiftBridge: String? = null
 ) : ObjCClass(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
@@ -438,7 +439,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     isForwardDeclaration = false,
                     binaryName = getObjCBinaryName(cursor).takeIf { it != name },
                     typeParameters = parameters,
-                    swiftName = readSwiftName(cursor)
+                    swiftName = readSwiftName(cursor),
+                    swiftBridge = readSwiftBridge(cursor)
             )
         }) { objcClass ->
             addChildrenToObjCContainer(cursor, objcClass)

@@ -54,7 +54,7 @@ internal open class ModularCompilation(compilation: Compilation) : Compilation b
     }
 
     override val compilerArgs: List<String> = compilation.compilerArgs +
-            listOfNotNull("-fmodules", moduleCacheDirectory?.let { "$moduleCacheFlag${it}" })
+            listOfNotNull("-fmodules", "-fapinotes-modules", moduleCacheDirectory?.let { "$moduleCacheFlag${it}" })
 
     override fun dispose() {
         moduleCacheDirectory?.deleteRecursively()
