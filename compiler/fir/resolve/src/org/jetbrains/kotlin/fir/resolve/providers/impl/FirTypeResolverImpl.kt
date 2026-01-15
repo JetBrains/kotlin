@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector.TypeResolutionResult
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 @ThreadSafeMutableState
@@ -102,26 +104,19 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             return collector.getResult()
         }
 
-        for (scope in configuration.scopes) {
-            if (collector.applicability == CandidateApplicability.RESOLVED) break
-            val name = qualifier.first().name
-            val processor = { symbol: FirClassifierSymbol<*>, substitutorFromScope: ConeSubstitutor ->
-                val resolvedSymbol = resolveSymbol(symbol, qualifier.subList(1, qualifier.size), qualifierResolver)
+        val name = qualifier.first().name
+        val processor = { symbol: FirClassifierSymbol<*>, substitutorFromScope: ConeSubstitutor, scope: FirScope ->
+            val resolvedSymbol = resolveSymbol(symbol, qualifier.subList(1, qualifier.size), qualifierResolver)
 
-                if (resolvedSymbol != null) {
-                    collector.processCandidate(resolvedSymbol, substitutorFromScope, scope.toResolvedSymbolOrigin())
-                }
-            }
-
-            if (scope is FirDefaultStarImportingScope) {
-                scope.processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(name) { symbol, substitutor ->
-                    processor(symbol, substitutor)
-                    collector.applicability == CandidateApplicability.RESOLVED
-                }
-            } else {
-                scope.processClassifiersByNameWithSubstitution(name, processor)
+            if (resolvedSymbol != null) {
+                collector.processCandidate(resolvedSymbol, substitutorFromScope, scope.toResolvedSymbolOrigin())
             }
         }
+
+        configuration.iterateScopesWithSubstitution(
+            name, processor,
+            stopIf = { collector.applicability == CandidateApplicability.RESOLVED },
+        )
 
         if (collector.applicability != CandidateApplicability.RESOLVED) {
             qualifierResolver.resolveFullyQualifiedSymbol(qualifier)?.let { (symbol, resolvedSymbolOrigin) ->
@@ -473,23 +468,14 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
         var result: ConeSubstitutor? = null
 
-        val processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit = { symbolFromScope, substitutor ->
+        val processor: (FirClassifierSymbol<*>, ConeSubstitutor, FirScope) -> Unit = { symbolFromScope, substitutor, _ ->
             if (symbolFromScope == firstQualifierSymbol) {
                 result = substitutor
             }
         }
 
-        for (scope in configuration.scopes) {
-            if (scope is FirDefaultStarImportingScope) {
-                scope.processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(name) { symbol, substitutor ->
-                    processor(symbol, substitutor)
-                    result != null
-                }
-            } else {
-                scope.processClassifiersByNameWithSubstitution(name, processor)
-            }
-            if (result != null) break
-        }
+        configuration.iterateScopesWithSubstitution(name, processor, stopIf = { result != null })
+
         return result
     }
 
@@ -598,6 +584,26 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             else -> error(typeRef.render())
         }.also {
             session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, configuration.useSiteFile?.source)
+        }
+    }
+
+    private fun TypeResolutionConfiguration.iterateScopesWithSubstitution(
+        name: Name,
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor, FirScope) -> Unit,
+        stopIf: () -> Boolean,
+    ) {
+        for (scope in scopes) {
+            if (stopIf()) break
+            if (scope is FirDefaultStarImportingScope) {
+                scope.processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(name) { symbol, substitutor ->
+                    processor(symbol, substitutor, scope)
+                    stopIf()
+                }
+            } else {
+                scope.processClassifiersByNameWithSubstitution(name) { symbol, substitutor ->
+                    processor(symbol, substitutor, scope)
+                }
+            }
         }
     }
 }
