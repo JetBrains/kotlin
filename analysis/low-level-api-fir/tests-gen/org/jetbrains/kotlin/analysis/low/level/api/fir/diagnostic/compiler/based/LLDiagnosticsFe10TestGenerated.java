@@ -8088,6 +8088,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("contextAndExtensionTypesTogether.kt")
+      public void testContextAndExtensionTypesTogether() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/contextAndExtensionTypesTogether.kt");
+      }
+
+      @Test
       @TestMetadata("contextParameterOnPackageScript.kts")
       public void testContextParameterOnPackageScript() {
         runTest("compiler/testData/diagnostics/tests/contextParameters/contextParameterOnPackageScript.kts");
