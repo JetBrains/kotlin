@@ -104,7 +104,7 @@ private fun FirElement.toConstantValue(): ConstantValue<*>? {
             val mappingToConstantValues = mappingToFirExpression.mapValues { it.value.toConstantValue() ?: return null }
             this.toAnnotationValue(mappingToConstantValues)
         }
-        is FirGetClassCall -> create(this.argument.resolvedType)
+        is FirGetClassCall -> create(this.argument.resolvedType, c.session)
         is FirEnumEntryDeserializedAccessExpression -> EnumValue(this.enumClassId, this.enumEntryName)
         is FirCollectionLiteral -> ArrayValue(this.argumentList.arguments.mapNotNull { it.toConstantValue() })
         is FirVarargArgumentsExpression -> {
@@ -205,7 +205,7 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirSession): Boolean = true
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: FirSession): Boolean {
-        return create(getClassCall.argument.resolvedType) != null
+        return create(getClassCall.argument.resolvedType, data) != null
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: FirSession): Boolean {

@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 interface MetadataSource {
@@ -20,9 +21,14 @@ interface MetadataSource {
 
         fun asEvaluatedConstTrackerKey(): EvaluatedConstTracker.Key?
     }
+
     interface Class : MetadataSource {
         var serializedIr: ByteArray?
+
+        fun recordLocalClassType(type: FqName)
+        fun asFirSymbol(): Any?
     }
+
     interface Script : MetadataSource
     interface CodeFragment : MetadataSource
     interface ReplSnippet : MetadataSource
@@ -48,6 +54,10 @@ sealed class DescriptorMetadataSource : MetadataSource {
 
     class Class(override val descriptor: ClassDescriptor) : DescriptorMetadataSource(), MetadataSource.Class {
         override var serializedIr: ByteArray? = null
+
+        override fun recordLocalClassType(type: FqName) {}
+
+        override fun asFirSymbol(): Any? = null
     }
 
     class Script(override val descriptor: ScriptDescriptor) : DescriptorMetadataSource(), MetadataSource.Script
