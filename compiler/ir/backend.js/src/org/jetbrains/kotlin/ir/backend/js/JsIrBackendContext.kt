@@ -130,7 +130,7 @@ class JsIrBackendContext(
     override val jsPromiseSymbol: IrClassSymbol
         get() = symbols.promiseClassSymbol
 
-    override val symbols = JsSymbols(irBuiltIns, irFactory.stageController, configuration.compileLongAsBigint)
+    override val symbols = BackendJsSymbols(irBuiltIns, irFactory.stageController, configuration.compileLongAsBigint)
 
     override val propertyLazyInitialization: PropertyLazyInitialization = PropertyLazyInitialization(
         enabled = configuration.get(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true),
