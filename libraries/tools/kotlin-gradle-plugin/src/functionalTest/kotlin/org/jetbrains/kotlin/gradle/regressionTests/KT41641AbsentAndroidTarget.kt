@@ -44,7 +44,7 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
 
         // Present android target -> expect no warning message anymore
         project.evaluate()
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.NonKmpAgpIsDeprecated)
+        project.assertNoDiagnostics()
     }
 
     @Test

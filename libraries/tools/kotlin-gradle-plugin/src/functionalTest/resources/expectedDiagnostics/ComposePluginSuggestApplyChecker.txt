@@ -1,12 +1,3 @@
-[NonKmpAgpIsDeprecated | WARNING] The 'org.jetbrains.kotlin.multiplatform' plugin deprecated compatibility with Android Gradle plugin: 'com.android.application'
-The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with 'com.android.application' starting with Android Gradle Plugin 9.0.0.
-
-Please change the structure of the your project and move the usage of 'com.android.application' into a separate subproject. The new subproject should add a dependency on this KMP subproject.
-
-Read more: https://kotl.in/kmp-project-structure-migration
-Please change the structure of your project and move the usage of 'com.android.application' into a separate subproject.
-See https://kotl.in/gradle/agp-new-kmp for more details.
-----
 [NoComposeCompilerPluginAppliedWarning | WARNING] Compose Compiler Plugin Not Applied
 The Compose compiler plugin is now a part of Kotlin.
 Please apply the 'org.jetbrains.kotlin.plugin.compose' Gradle plugin to enable the Compose compiler plugin.

@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.androidApplication
 import org.jetbrains.kotlin.gradle.util.androidLibrary
+import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import kotlin.test.Test
@@ -52,6 +53,6 @@ class JvmWithJavaIsIncompatibleWithAndroidDiagnosticTest {
         project.multiplatformExtension.androidTarget()
         project.evaluate()
 
-        project.checkDiagnostics("JvmWithJavaIsIncompatibleWithAndroid-withJava-withoutAndroidPlugin")
+        project.assertNoDiagnostics()
     }
 }

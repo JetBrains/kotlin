@@ -2003,7 +2003,7 @@ internal object KotlinToolingDiagnostics {
                 titleStep
                     .description(
                         """
-                        |The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with 'com.android.library' starting with Android Gradle Plugin 9.0.0.
+                        |The 'org.jetbrains.kotlin.multiplatform' plugin is not compatible with 'com.android.library' starting with Android Gradle Plugin 9.0.0.
                         """.trimMargin()
                     )
                     .solution("Please use the 'com.android.kotlin.multiplatform.library' plugin instead of 'com.android.library'.")
@@ -2011,7 +2011,7 @@ internal object KotlinToolingDiagnostics {
                 titleStep
                     .description(
                         """
-                        |The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with '$androidPluginId' starting with Android Gradle Plugin 9.0.0.
+                        |The 'org.jetbrains.kotlin.multiplatform' plugin is not compatible with '$androidPluginId' starting with Android Gradle Plugin 9.0.0.
                         |
                         |Please change the structure of the your project and move the usage of '$androidPluginId' into a separate subproject. The new subproject should add a dependency on this KMP subproject.
                         |
