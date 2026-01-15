@@ -138,9 +138,8 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
     }
 }
 
-// TODO KT-77388 rename to `BackendKlibSymbolsImpl`
 @OptIn(InternalSymbolFinderAPI::class)
-abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, BackendSymbols(irBuiltIns) {
+abstract class BackendKlibSymbols(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, BackendSymbols(irBuiltIns) {
     final override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("getProgressionLastElement")).functionSymbolAssociatedBy {
         it.returnType.classifierOrFail
     }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
+import org.jetbrains.kotlin.backend.common.ir.BackendKlibSymbols
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationJsSymbols
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationWebSymbols
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -32,7 +32,7 @@ import java.util.*
 @OptIn(InternalSymbolFinderAPI::class)
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
-) : PreSerializationWebSymbols, KlibSymbols(irBuiltIns) {
+) : PreSerializationWebSymbols, BackendKlibSymbols(irBuiltIns) {
     abstract val throwISE: IrSimpleFunctionSymbol
     abstract val throwIAE: IrSimpleFunctionSymbol
 
