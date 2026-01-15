@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriends
-import org.jetbrains.kotlin.test.klib.CustomCompiler
+import org.jetbrains.kotlin.test.klib.CustomKlibCompiler
 import org.jetbrains.kotlin.test.klib.CustomCompilerArtifacts
 import org.jetbrains.kotlin.test.klib.CustomCompilerArtifacts.Companion.propertyNotFound
 import org.jetbrains.kotlin.test.klib.CustomCompilerArtifacts.Companion.readProperty
@@ -24,7 +24,7 @@ import kotlin.test.fail
  */
 interface CustomNativeCompilerSettings {
     val version: String
-    val compiler: CustomCompiler
+    val compiler: CustomKlibCompiler
     val nativeHome: File
 }
 
@@ -36,8 +36,8 @@ class CustomNativeCompilerSettingsImpl(lazyArtifacts: () -> CustomCompilerArtifa
     private val artifacts: CustomCompilerArtifacts by lazy(lazyArtifacts)
     override val version: String
         get() = artifacts.version
-    override val compiler: CustomCompiler by lazy {
-        CustomCompiler(artifacts.compilerClassPath, "org.jetbrains.kotlin.cli.bc.K2Native", "execFullPathsInMessages")
+    override val compiler: CustomKlibCompiler by lazy {
+        CustomKlibCompiler(artifacts.compilerClassPath, "org.jetbrains.kotlin.cli.bc.K2Native", "execFullPathsInMessages")
     }
     override val nativeHome: File by lazy {
         artifacts.compilerDist ?: throw IllegalStateException("Custom compiler distribution is not specified")
