@@ -91,7 +91,7 @@ fun IrSimpleFunction.createExtensionReceiver(type: IrType, origin: IrDeclaration
 fun IrExpression?.isPure(
     anyVariable: Boolean,
     checkFields: Boolean = true,
-    symbols: Symbols? = null
+    symbols: BackendSymbols? = null
 ): Boolean {
     if (this == null) return true
 
