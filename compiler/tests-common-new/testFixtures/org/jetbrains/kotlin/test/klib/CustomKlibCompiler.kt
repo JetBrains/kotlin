@@ -19,7 +19,7 @@ import java.net.URLClassLoader
  * Note: The class loader is cached to be easily reused in all later calls without reloading the class path.
  * Yet it is cached as a [SoftReference] to allow GC in the case of a need.
  */
-class CustomCompiler(
+class CustomKlibCompiler(
     private val compilerClassPath: List<URL>,
     private val className: String,
     private val methodName: String,
