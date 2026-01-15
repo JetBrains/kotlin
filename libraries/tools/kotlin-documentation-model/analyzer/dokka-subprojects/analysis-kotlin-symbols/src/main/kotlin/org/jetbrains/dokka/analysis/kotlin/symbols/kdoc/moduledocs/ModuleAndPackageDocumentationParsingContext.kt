@@ -5,12 +5,10 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.moduledocs
 
 import org.jetbrains.dokka.DokkaConfiguration
-import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.ifUnresolved
-import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.logUnresolvedLink
-import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.KotlinAnalysis
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.moduledocs.ModuleAndPackageDocumentation.Classifier.Module
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.moduledocs.ModuleAndPackageDocumentation.Classifier.Package
-import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.resolveKDocTextLinkToDRI
+import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.resolveKDocTextLink
+import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.KotlinAnalysis
 import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.utilities.DokkaLogger
@@ -40,21 +38,17 @@ internal fun ModuleAndPackageDocumentationParsingContext(
             Module -> null
             Package -> fragment.name
         }
-
+        val locationInformation = when (fragment.classifier) {
+            Module -> "module documentation"
+            Package -> "'${fragment.name}' package documentation"
+        }
         MarkdownParser(
             externalDri = { link ->
                 analyze(sourceModule) {
-                    resolveKDocTextLinkToDRI(
-                        link,
-                        contextPackageFQN
-                    ).ifUnresolved {
-                        logger.logUnresolvedLink(link, fragment.name.ifBlank { "module documentation" })
-                    }
-
+                    resolveKDocTextLink(link, contextPackageFQN, locationInformation, logger, sourceSet)
                 }
             },
             sourceLocation
         )
-
     }
 }
