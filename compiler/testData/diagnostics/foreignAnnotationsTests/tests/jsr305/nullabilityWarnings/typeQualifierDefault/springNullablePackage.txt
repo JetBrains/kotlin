@@ -29,6 +29,8 @@ package test {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open fun foo(/*0*/ x: kotlin.String!, /*1*/ @spr.Nullable y: kotlin.CharSequence!): kotlin.String!
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @spr.Nullable public open fun nBar(): kotlin.String!
+        public open fun </*0*/ T : kotlin.Any!> takeSupplier(/*0*/ supplier: java.util.function.Supplier<T!>!): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
