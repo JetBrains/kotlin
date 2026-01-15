@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionW
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
@@ -987,7 +987,7 @@ private fun ObjCExportCodeGenerator.generateTypeInfoArray(types: Set<IrClass>): 
             codegen.staticData.placeGlobalConstArray("", codegen.kTypeInfoPtr, typeInfos)
         }
 
-private fun ObjCExportCodeGenerator.effectiveThrowsClasses(method: IrFunction, symbols: KonanSymbols): List<IrClass> {
+private fun ObjCExportCodeGenerator.effectiveThrowsClasses(method: IrFunction, symbols: BackendNativeSymbols): List<IrClass> {
     if (method is IrSimpleFunction && method.overriddenSymbols.isNotEmpty()) {
         return effectiveThrowsClasses(method.overriddenSymbols.first().owner, symbols)
     }

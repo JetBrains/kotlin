@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.backend.konan.ir.interop
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumByValueFunctionGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumClassGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumCompanionGenerator
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class IrProviderForCEnumAndCStructStubs(
         context: GeneratorContext,
-        symbols: KonanSymbols
+        symbols: BackendNativeSymbols
 ) {
 
     /**

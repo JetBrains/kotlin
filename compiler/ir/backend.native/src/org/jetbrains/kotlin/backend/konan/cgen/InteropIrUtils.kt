@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.cgen
 
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
@@ -81,11 +81,11 @@ fun IrType.isObjCReferenceType(target: KonanTarget, irBuiltIns: IrBuiltIns): Boo
     }
 }
 
-fun IrType.isCPointer(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCPointer
-fun IrType.isCValue(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValue
-fun IrType.isCValuesRef(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValuesRef
+fun IrType.isCPointer(symbols: BackendNativeSymbols): Boolean = this.classOrNull == symbols.interopCPointer
+fun IrType.isCValue(symbols: BackendNativeSymbols): Boolean = this.classOrNull == symbols.interopCValue
+fun IrType.isCValuesRef(symbols: BackendNativeSymbols): Boolean = this.classOrNull == symbols.interopCValuesRef
 
-fun IrType.isNativePointed(symbols: KonanSymbols): Boolean = isSubtypeOfClass(symbols.nativePointed)
+fun IrType.isNativePointed(symbols: BackendNativeSymbols): Boolean = isSubtypeOfClass(symbols.nativePointed)
 
 fun IrType.isCStructFieldTypeStoredInMemoryDirectly(): Boolean = isPrimitiveType() || isUnsigned() || isVector()
 
@@ -102,7 +102,7 @@ fun IrType.isCStructFieldSupportedReferenceType(irBuiltIns: IrBuiltIns): Boolean
  * Check given function is a getter or setter
  * for `value` property of CEnumVar subclass.
  */
-fun IrFunction.isCEnumVarValueAccessor(symbols: KonanSymbols): Boolean {
+fun IrFunction.isCEnumVarValueAccessor(symbols: BackendNativeSymbols): Boolean {
     val parent = parent as? IrClass ?: return false
     return if (symbols.interopCEnumVar in parent.superClasses && isPropertyAccessor) {
         (propertyIfAccessor as IrProperty).name.asString() == "value"

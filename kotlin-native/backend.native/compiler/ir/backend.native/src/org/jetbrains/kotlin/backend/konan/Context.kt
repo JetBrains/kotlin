@@ -43,7 +43,7 @@ internal class Context(
         override val irBuiltIns: IrBuiltIns,
         val irModules: Map<String, IrModuleFragment>,
         val irLinker: KonanIrLinker,
-        override val symbols: KonanSymbols,
+        override val symbols: BackendNativeSymbols,
         val symbolTable: ReferenceSymbolTable,
 ) : KonanBackendContext(config) {
     override val configuration get() = config.configuration

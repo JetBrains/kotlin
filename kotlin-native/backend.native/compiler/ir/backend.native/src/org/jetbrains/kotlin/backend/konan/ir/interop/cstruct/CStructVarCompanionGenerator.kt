@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.backend.konan.ir.interop.cstruct
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.resolve.annotations.getArgumentValueOrNull
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -32,7 +32,7 @@ private val varTypeAnnotationFqName = FqName("kotlinx.cinterop.internal.CStruct.
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CStructVarCompanionGenerator(
         context: GeneratorContext,
-        private val symbols: KonanSymbols
+        private val symbols: BackendNativeSymbols
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns

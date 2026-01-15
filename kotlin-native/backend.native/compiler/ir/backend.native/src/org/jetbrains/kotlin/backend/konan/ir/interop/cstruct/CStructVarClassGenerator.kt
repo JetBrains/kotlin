@@ -5,7 +5,7 @@
 package org.jetbrains.kotlin.backend.konan.ir.interop.cstruct
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.*
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 internal class CStructVarClassGenerator(
         context: GeneratorContext,
         private val companionGenerator: CStructVarCompanionGenerator,
-        private val symbols: KonanSymbols
+        private val symbols: BackendNativeSymbols
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns

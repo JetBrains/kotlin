@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
@@ -117,6 +117,6 @@ fun PhaseContext.fir2Ir(
 
 private fun PhaseContext.createKonanSymbols(
         irBuiltIns: IrBuiltIns,
-): KonanSymbols {
-    return KonanSymbols(this, irBuiltIns, this.config.configuration)
+): BackendNativeSymbols {
+    return BackendNativeSymbols(this, irBuiltIns, this.config.configuration)
 }
