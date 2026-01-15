@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.extensions
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 
 /**
- * Interface for adaptation of [org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension] to be used
+ * Interface for adaptation of [org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension] for using it
  * in `:compiler:backend` module without dependency on `:compiler:ir:backend.jvm`
  */
 interface ClassGeneratorExtensionAdapter {
