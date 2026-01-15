@@ -22,6 +22,7 @@ import androidx.compose.compiler.plugins.kotlin.*
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.isStaticFunctionExpression
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
+import androidx.compose.compiler.plugins.kotlin.analysis.hasTransformedLambda
 import androidx.compose.compiler.plugins.kotlin.analysis.isComposableSingleton
 import androidx.compose.compiler.plugins.kotlin.analysis.isComposableSingletonClass
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
@@ -1199,11 +1200,7 @@ class ComposerLambdaMemoization(
 
     private fun <T : IrElement> T.markHasTransformedLambda(): T {
         // Mark so that the target annotation transformer can find the original lambda
-        context.irTrace.record(
-            ComposeWritableSlices.HAS_TRANSFORMED_LAMBDA,
-            this,
-            true
-        )
+        this.hasTransformedLambda = true
         return this
     }
 

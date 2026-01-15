@@ -14,10 +14,9 @@ var IrExpression.isStaticExpression: Boolean by irFlag(copyByDefault = true)
 var IrElement.isComposableSingleton: Boolean by irFlag(copyByDefault = true)
 var IrElement.isComposableSingletonClass: Boolean by irFlag(copyByDefault = true)
 var IrElement.durableFunctionKey: KeyInfo? by irAttribute(copyByDefault = true)
+var IrElement.hasTransformedLambda: Boolean by irFlag(copyByDefault = true)
 
 object ComposeWritableSlices {
-    val HAS_TRANSFORMED_LAMBDA: WritableSlice<IrElement, Boolean> =
-        BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_TRANSFORMED_LAMBDA: WritableSlice<IrElement, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }
