@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.ClassKind
 
-class FirReachabilityAnalyzer(
-    private val session: FirSession
-) : FirVisitorVoid() {
+class FirReachabilityAnalyzer(private val session: FirSession) : FirVisitorVoid() {
 
     companion object {
         /**
@@ -263,5 +261,4 @@ class FirReachabilityAnalyzer(
             worklist.add(declaration)
         }
     }
-
 }

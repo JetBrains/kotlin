@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
 
 /**
- *
  * Optimizes HeaderMode processing by stripping unnecessary private members. It performs a
  * reachability analysis to identify the minimal subset of internal structures required by
  * the public interface and inline definitions, then pruning any private members that are
@@ -32,7 +31,7 @@ class FirAggressivePruningProcessor(
         val reachable = marker.collectReachableSymbols(file)
 
         val transformer = FirPruningTransformer(reachable)
-        file.transform<FirFile, Nothing?>(transformer, null)
+        file.transform<FirFile, Nothing?>(transformer, data = null)
     }
 
     override fun beforePhase() {

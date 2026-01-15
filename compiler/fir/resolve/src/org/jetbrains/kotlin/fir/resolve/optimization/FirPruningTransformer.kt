@@ -6,9 +6,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 
-class FirPruningTransformer(
-    private val reachable: Set<FirBasedSymbol<*>>
-) : FirTransformer<Nothing?>() {
+class FirPruningTransformer(private val reachable: Set<FirBasedSymbol<*>>) : FirTransformer<Nothing?>() {
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
         return element
@@ -29,7 +27,7 @@ class FirPruningTransformer(
         regularClass.transformDeclarations(this, data)
         return regularClass
     }
-    
+
     private fun shouldKeep(declaration: FirDeclaration): Boolean {
         return reachable.contains(declaration.symbol)
     }
