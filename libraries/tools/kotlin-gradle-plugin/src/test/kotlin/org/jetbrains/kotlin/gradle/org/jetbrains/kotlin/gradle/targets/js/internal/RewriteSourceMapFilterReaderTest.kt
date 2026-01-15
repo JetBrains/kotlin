@@ -27,7 +27,7 @@ class RewriteSourceMapFilterReaderTest {
     fun testPrologSplitByReads() {
         // Test the case when prolog contents is splitted between reads.
         // Like, one buffer ends with `],"sourc`, and the other starts with `esContent"`
-        val prolog = sample("", "").substringBefore(RewriteSourceMapFilterReader.PROLOG_END)
+        val prolog = sample("", "").substringBefore(RewriteSourceMapFilterReader.SOURCES_CONTENT_PROLOG_END)
         doTest(1, addToProlog = "-".repeat(1024 - prolog.length - "],\"sourc".length))
     }
 
@@ -53,7 +53,7 @@ class RewriteSourceMapFilterReaderTest {
     }
 
     @Test
-    fun testUnsupportedUnderfindProlog() {
+    fun testPrologWithoutSourcesContent() {
         val filter =
             RewriteSourceMapFilterReaderMock(
                 StringReader(
@@ -66,12 +66,8 @@ class RewriteSourceMapFilterReaderTest {
 
         assertEquals(
             //language=JSON
-            """{"version":3,"file":"single-platform.js","sources":["../../../../src/main/kotlin/main.kt"],"names":[],"mappings":""}""",
+            """{"version":3,"file":"single-platform.js","sources":["TRANSFORMED(../../../../src/main/kotlin/main.kt)"],"names":[],"mappings":""}""",
             filter.readText()
-        )
-        assertEquals(
-            "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`. \"sourcesContent\" or \"sources\" not found",
-            filter.warning
         )
     }
 

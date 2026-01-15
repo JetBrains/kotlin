@@ -2269,6 +2269,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/NpmVersions : java/io/
 	public final fun getSourceMapLoader ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getSourceMapSupport ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getStyleLoader ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
+	public final fun getSwcHelpers ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getToStringLoader ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getTypescript ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
 	public final fun getWebpack ()Lorg/jetbrains/kotlin/gradle/targets/js/NpmPackageVersion;
@@ -2759,6 +2760,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/JsEnvironmentCon
 	protected final fun getSubTarget ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrSubTarget;
 	public fun setupBuild (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 	public fun setupRun (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
+	public fun setupTest (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary : org/jetbrains/kotlin/gradle/targets/js/ir/JsBinary {
@@ -3037,6 +3039,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/LibraryConfigurator
 	public fun configureRun (Lorg/gradle/api/Action;)V
 	public fun setupBuild (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 	public fun setupRun (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
+	public fun setupTest (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/LibraryWasm : org/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary, org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary {
@@ -3067,6 +3070,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/WebpackConfigurator
 	public fun configureRun (Lorg/gradle/api/Action;)V
 	public fun setupBuild (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 	public fun setupRun (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
+	public fun setupTest (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {

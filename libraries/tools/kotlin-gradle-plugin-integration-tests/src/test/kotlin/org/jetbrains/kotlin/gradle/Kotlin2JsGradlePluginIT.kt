@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle
 import com.google.gson.Gson
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
+import org.gradle.kotlin.dsl.withType
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgumentsDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
@@ -99,6 +101,253 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             )
             build("jsNodeDevelopmentRun") {
                 assertOutputContains("ACCEPTED: test;'Hello, World'")
+            }
+        }
+    }
+
+    @DisplayName("delegated transpilation works for app project if it's turned on")
+    @GradleTest
+    fun testAppProjectWorkWithTheDelegatedTranspilation(gradleVersion: GradleVersion) {
+        project("kotlin-js-multiplatform-app-project", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.js.delegated.transpilation=true
+                """.trimMargin()
+            )
+
+            build("jsNodeTest") {
+                assertTasksExecuted(":kotlinSwcSetup", ":jsNodeTestDevelopmentGenerateSwcConfig", ":jsNodeTestDevelopmentTranspileWithSwc")
+                assertFileContains(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project-test/.swcrc"),
+                    "\"target\": \"es5\"",
+                    "\"type\": \"umd\"",
+                    "\"sourceMaps\": true",
+                    "\"outFileExtension\": \".js\"",
+                )
+            }
+
+            build("jsNodeDevelopmentRun") {
+                assertOutputContains("Hello, World!")
+                assertTasksUpToDate(":kotlinSwcSetup")
+                assertTasksExecuted(":jsNodeDevelopmentGenerateSwcConfig", ":jsNodeDevelopmentTranspileWithSwc")
+
+                assertFileContains(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
+                    "\"target\": \"es5\"",
+                    "\"type\": \"umd\"",
+                    "\"sourceMaps\": true",
+                    "\"outFileExtension\": \".js\"",
+                )
+            }
+
+            build("jsNodeProductionRun") {
+                assertOutputContains("Hello, World!")
+                assertTasksUpToDate(":kotlinSwcSetup")
+                assertTasksExecuted(":jsNodeProductionGenerateSwcConfig", ":jsNodeProductionTranspileWithSwc")
+
+                assertFileContains(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
+                    "\"target\": \"es5\"",
+                    "\"type\": \"umd\"",
+                    "\"sourceMaps\": true",
+                    "\"outFileExtension\": \".js\"",
+                )
+            }
+        }
+    }
+
+    @DisplayName("delegated transpilation works for library project if it's turned on")
+    @GradleTest
+    fun testLibraryProjectWorkWithTheDelegatedTranspilation(gradleVersion: GradleVersion) {
+        project("kotlin-js-multiplatform-library-project", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.js.delegated.transpilation=true
+                """.trimMargin()
+            )
+
+            build("jsBrowserDevelopmentDistribution") {
+                assertTasksExecuted(
+                    ":kotlinSwcSetup",
+                    ":jsBrowserDevelopmentLibraryGenerateSwcConfig",
+                    ":jsBrowserDevelopmentLibraryTranspileWithSwc"
+                )
+
+                assertFileContains(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
+                    "\"target\": \"es5\"",
+                    "\"type\": \"umd\"",
+                    "\"outFileExtension\": \".js\"",
+                )
+            }
+
+            build("jsBrowserProductionDistribution") {
+                assertTasksUpToDate(":kotlinSwcSetup")
+                assertTasksExecuted(":jsBrowserProductionLibraryGenerateSwcConfig", ":jsBrowserProductionLibraryTranspileWithSwc")
+
+                assertFileContains(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
+                    "\"target\": \"es5\"",
+                    "\"type\": \"umd\"",
+                    "\"outFileExtension\": \".js\"",
+                )
+            }
+        }
+    }
+
+    @DisplayName("delegated transpilation configured differently for library project if compiler options are changed")
+    @GradleTest
+    fun testLibraryProjectWorkWithTheDelegatedTranspilationAndDifferentCompilerConfiguration(gradleVersion: GradleVersion) {
+        project("kotlin-js-multiplatform-library-project", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.js.delegated.transpilation=true
+                """.trimMargin()
+            )
+
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    useEsModules()
+                }
+            }
+
+            build("jsBrowserDevelopmentDistribution") {
+                assertTasksExecuted(
+                    ":kotlinSwcSetup",
+                    ":jsBrowserDevelopmentLibraryGenerateSwcConfig",
+                    ":jsBrowserDevelopmentLibraryTranspileWithSwc"
+                )
+
+                assertFileContains(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
+                    "\"target\": \"es5\"",
+                    "\"type\": \"nodenext\"",
+                    "\"outFileExtension\": \".mjs\"",
+                )
+            }
+
+            build("jsBrowserProductionDistribution") {
+                assertTasksUpToDate(":kotlinSwcSetup")
+                assertTasksExecuted(":jsBrowserProductionLibraryGenerateSwcConfig", ":jsBrowserProductionLibraryTranspileWithSwc")
+
+                assertFileContains(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
+                    "\"target\": \"es5\"",
+                    "\"type\": \"nodenext\"",
+                    "\"outFileExtension\": \".mjs\"",
+                )
+            }
+        }
+    }
+
+    @DisplayName("delegated transpilation configured differently for app project if compiler options are changed")
+    @GradleTest
+    fun testAppProjectWorkWithTheDelegatedTranspilationAndDifferentCompilerConfiguration(gradleVersion: GradleVersion) {
+        project("kotlin-js-multiplatform-app-project", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.js.delegated.transpilation=true
+                """.trimMargin()
+            )
+
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    useEsModules()
+                }
+            }
+
+            build("jsNodeTest") {
+                assertTasksExecuted(":kotlinSwcSetup", ":jsNodeTestDevelopmentGenerateSwcConfig", ":jsNodeTestDevelopmentTranspileWithSwc")
+                assertFileContains(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project-test/.swcrc"),
+                    "\"target\": \"es5\"",
+                    "\"type\": \"nodenext\"",
+                    "\"outFileExtension\": \".mjs\"",
+                )
+            }
+
+            build("jsNodeDevelopmentRun") {
+                assertOutputContains("Hello, World!")
+                assertTasksUpToDate(":kotlinSwcSetup")
+                assertTasksExecuted(":jsNodeDevelopmentGenerateSwcConfig", ":jsNodeDevelopmentTranspileWithSwc")
+
+                assertFileContains(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
+                    "\"target\": \"es5\"",
+                    "\"type\": \"nodenext\"",
+                    "\"outFileExtension\": \".mjs\"",
+                )
+            }
+
+            build("jsNodeProductionRun") {
+                assertOutputContains("Hello, World!")
+                assertTasksUpToDate(":kotlinSwcSetup")
+                assertTasksExecuted(":jsNodeProductionGenerateSwcConfig", ":jsNodeProductionTranspileWithSwc")
+
+                assertFileContains(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
+                    "\"target\": \"es5\"",
+                    "\"type\": \"nodenext\"",
+                    "\"outFileExtension\": \".mjs\"",
+                )
+            }
+        }
+    }
+
+    @DisplayName("delegated transpilation is turned off by default for library")
+    @GradleTest
+    fun testLibraryProjectWorkWithoutTheDelegatedTranspilation(gradleVersion: GradleVersion) {
+        project("kotlin-js-multiplatform-library-project", gradleVersion) {
+            build("jsBrowserDevelopmentDistribution") {
+                assertTasksAreNotInTaskGraph(
+                    ":kotlinSwcSetup",
+                    ":jsBrowserDevelopmentLibraryGenerateSwcConfig",
+                    ":jsBrowserDevelopmentLibraryTranspileWithSwc"
+                )
+            }
+
+            build("jsBrowserProductionDistribution") {
+                assertTasksAreNotInTaskGraph(
+                    ":kotlinSwcSetup",
+                    ":jsBrowserProductionLibraryGenerateSwcConfig",
+                    ":jsBrowserProductionLibraryTranspileWithSwc"
+                )
+            }
+        }
+    }
+
+    @DisplayName("delegated transpilation is turned off by default for app")
+    @GradleTest
+    fun testAppProjectWorkWithoutTheDelegatedTranspilation(gradleVersion: GradleVersion) {
+        project("kotlin-js-multiplatform-app-project", gradleVersion) {
+            build("jsNodeTest") {
+                assertTasksAreNotInTaskGraph(
+                    ":kotlinSwcSetup",
+                    ":jsNodeTestDevelopmentGenerateSwcConfig",
+                    ":jsNodeTestDevelopmentTranspileWithSwc"
+                )
+            }
+
+            build("jsNodeDevelopmentRun") {
+                assertOutputContains("Hello, World!")
+                assertTasksAreNotInTaskGraph(
+                    ":kotlinSwcSetup",
+                    ":jsNodeTestDevelopmentGenerateSwcConfig",
+                    ":jsNodeTestDevelopmentTranspileWithSwc"
+                )
+            }
+
+            build("jsNodeProductionRun") {
+                assertOutputContains("Hello, World!")
+                assertTasksAreNotInTaskGraph(
+                    ":kotlinSwcSetup",
+                    ":jsNodeTestDevelopmentGenerateSwcConfig",
+                    ":jsNodeTestDevelopmentTranspileWithSwc"
+                )
             }
         }
     }

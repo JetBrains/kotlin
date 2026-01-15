@@ -4,13 +4,28 @@
  */
 package org.jetbrains.kotlin.js.config
 
-enum class ModuleKind(val jsExtension: String, val tsExtension: String) {
-    PLAIN(".js", ".ts"),
-    AMD(".js", ".ts"),
-    COMMON_JS(".js", ".ts"),
-    UMD(".js", ".ts"),
-    ES(".mjs", ".mts");
+enum class ModuleKind(
+    val jsExtension: String,
+    val tsExtension: String,
+    val type: String
+) {
+    PLAIN(".js", ".ts", "plain"),
+    AMD(".js", ".ts", "amd"),
+    COMMON_JS(".js", ".ts", "commonjs"),
+    UMD(".js", ".ts", "umd"),
+    ES(".mjs", ".mts", "es");
 
     val dtsExtension: String
         get() = ".d$tsExtension"
+
+    companion object {
+        private val moduleMap = entries.associateBy(ModuleKind::type)
+
+        val allowedJsExtensions: Set<String> = entries.mapTo(mutableSetOf()) {
+            it.jsExtension.removePrefix(".")
+        }
+
+        @JvmStatic
+        fun fromType(type: String) = moduleMap[type] ?: error("Unknown module type: $type")
+    }
 }

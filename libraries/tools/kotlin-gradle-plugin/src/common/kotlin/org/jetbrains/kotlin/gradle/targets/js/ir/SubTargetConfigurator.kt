@@ -12,6 +12,8 @@ internal interface SubTargetConfigurator<BuildTask : Task, RunTask : Task> {
 
     fun setupBuild(compilation: KotlinJsIrCompilation)
 
+    fun setupTest(compilation: KotlinJsIrCompilation) {}
+
     fun configureBuild(body: Action<BuildTask>)
 
     fun setupRun(compilation: KotlinJsIrCompilation)
