@@ -5,6 +5,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import java.io.Serializable
 import kotlin.Comparable
+import kotlin.Deprecated
 import kotlin.Int
 import kotlin.String
 
@@ -56,5 +57,11 @@ public sealed class DisableCacheInKotlinVersion private constructor(
   /**
    * Represents the Kotlin version constant for 2.3.20.
    */
+  @Deprecated(message = "Disabling native cache for this Kotlin version is deprecated. Please re-evaluate if this is still needed. If so, update to the latest version constant. If not, remove this DSL entry.")
   public object `2_3_20` : DisableCacheInKotlinVersion(2, 3, 20)
+
+  /**
+   * Represents the Kotlin version constant for 2.4.0.
+   */
+  public object `2_4_0` : DisableCacheInKotlinVersion(2, 4, 0)
 }
