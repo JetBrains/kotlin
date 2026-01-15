@@ -575,7 +575,7 @@ class PostponedArgumentInputTypesResolver(
         }
 
         val argumentsForFunctionTypeOrSubtype = expectedType.extractArgumentsForFunctionTypeOrSubtype()
-        if (!c.isK2 || argumentsForFunctionTypeOrSubtype.size != argument.inputTypes.size) {
+        if (!c.isK2/* || argumentsForFunctionTypeOrSubtype.size != argument.inputTypes.size*/) {
             fixNextReadyVariableForParameterType(
                 argumentsForFunctionTypeOrSubtype,
                 postponedArguments,
