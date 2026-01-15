@@ -48,7 +48,7 @@ internal object NativeCacheKotlinVersionsFile {
                 .sortedWith(compareBy({ it.first }, { it.second }, { it.third }))
                 .joinToString(separator = "\n") { "v${it.first}_${it.second}_${it.third}" }
 
-            GeneratorsFileUtil.writeFileIfContentChanged(versionsFilePath.toFile(), sortedVersionNames)
+            GeneratorsFileUtil.writeFileIfContentChanged(versionsFilePath.toFile(), sortedVersionNames, forbidGenerationOnTeamcity = false)
 
             logger.info("Updated $versionsFilePath with new version.")
         } else {

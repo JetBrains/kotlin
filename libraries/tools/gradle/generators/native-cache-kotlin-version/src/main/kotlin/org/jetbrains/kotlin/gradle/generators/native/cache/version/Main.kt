@@ -39,5 +39,5 @@ fun main(args: Array<String>) {
     // 2. Generate the .kt source files from the full list
     val (path, content) = NativeCacheKotlinVersionsGenerator.generate(allKotlinVersions, includeSnapshots)
     val genFile = genDirectoryPath.resolve(path)
-    GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false)
+    GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false, forbidGenerationOnTeamcity = false)
 }
