@@ -20,7 +20,9 @@ fun loadMavenInvokerPropertiesOrNull(file: File): MavenInvokerProperties? {
     if (!file.exists()) return null
 
     val props = Properties()
-    props.load(file.inputStream())
+    file.inputStream().use {
+        props.load(it)
+    }
 
     return MavenInvokerProperties(
         goals = props.getProperty("invoker.goals")?.split(" "),
