@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -78,6 +79,10 @@ class UnitToVoidLowering(val context: WasmBackendContext) : FileLoweringPass, Ab
         return this
     }
 
+    private fun isUnitCast(expr: IrTypeOperatorCall) =
+        (expr.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT ||
+             (expr.operator == IrTypeOperator.IMPLICIT_CAST && expr.typeOperand.isUnit()))
+
     // Checks if this expression is an interesting target for the voidification.
     private fun shouldVoidify(expr: IrStatement): Boolean {
         if (expr !is IrExpression)
@@ -94,7 +99,7 @@ class UnitToVoidLowering(val context: WasmBackendContext) : FileLoweringPass, Ab
                 true
 
             is IrTypeOperatorCall ->
-                expr.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+                isUnitCast(expr)
 
             else -> false
         }
@@ -135,7 +140,7 @@ class UnitToVoidLowering(val context: WasmBackendContext) : FileLoweringPass, Ab
                 return expr
             }
             is IrTypeOperatorCall -> {
-                if (expr.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT)
+                if (isUnitCast(expr))
                     return voidify(expr.argument)
             }
         }
