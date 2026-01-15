@@ -93,8 +93,14 @@ private fun KotlinPresetEntry.deprecated(replaceWithArguments: List<String>? = n
         "@Deprecated(${deprecation.renderDeprecationMessage()}, level = DeprecationLevel.${deprecation.level.name})"
     }
 
-    // magic indent is needed to make the result look pretty
-    return "$deprecationAnnotation\n    "
+    return "$deprecationAnnotation\n"
+}
+
+private fun KotlinPresetEntry.kdoc(): String {
+    val kdoc = kdoc ?: return ""
+
+    val kdocLines = kdoc.split("\n")
+    return kdocLines.joinToString(separator = "\n", prefix = "/**\n", postfix = "\n| */\n") { "| * $it" }
 }
 
 private fun KotlinPresetEntry.Deprecation.renderDeprecationMessage(): String = if (messageIsTheCode) {
@@ -113,7 +119,7 @@ private fun generatePresetFunctions(
             DeprecationLevel.ERROR -> "DEPRECATION_ERROR"
             DeprecationLevel.HIDDEN -> "DEPRECATION_HIDDEN"
         }
-        "@Suppress(\"$suppressDeprecationId\")\n    "
+        "@Suppress(\"$suppressDeprecationId\")\n"
     } else {
         ""
     }
@@ -122,22 +128,22 @@ private fun generatePresetFunctions(
     val entityName = presetEntry.entityName
 
     return """
-    ${presetEntry.deprecated()}fun $presetName(
-        name: String = "$entityName",
-        configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
-    ): ${presetEntry.targetType.renderShort()}
-    
-    ${presetEntry.deprecated(emptyList())}${suppress}fun $presetName() = $presetName("$entityName") { }
-    
-    ${presetEntry.deprecated(listOf("name"))}${suppress}fun $presetName(name: String) = $presetName(name) { }
-    
-    ${presetEntry.deprecated()}${suppress}fun $presetName(
-        name: String,
-        configure: Action<${presetEntry.targetType.renderShort()}>
-    ) = $presetName(name) { configure.execute(this) }
-    
-    ${presetEntry.deprecated()}${suppress}fun $presetName(configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName { configure.execute(this) }
-""".trimIndent()
+    |${presetEntry.kdoc()}${presetEntry.deprecated()}fun $presetName(
+    |    name: String = "$entityName",
+    |    configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
+    |): ${presetEntry.targetType.renderShort()}
+    |
+    |${presetEntry.kdoc()}${presetEntry.deprecated(emptyList())}${suppress}fun $presetName() = $presetName("$entityName") { }
+    |
+    |${presetEntry.kdoc()}${presetEntry.deprecated(listOf("name"))}${suppress}fun $presetName(name: String) = $presetName(name) { }
+    |
+    |${presetEntry.kdoc()}${presetEntry.deprecated()}${suppress}fun $presetName(
+    |    name: String,
+    |    configure: Action<${presetEntry.targetType.renderShort()}>
+    |) = $presetName(name) { configure.execute(this) }
+    |
+    |${presetEntry.kdoc()}${presetEntry.deprecated()}${suppress}fun $presetName(configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName { configure.execute(this) }
+    """.trimMargin()
 }
 
 private fun generateDefaultPresetFunctionImplementation(
@@ -158,17 +164,17 @@ private fun generateDefaultPresetFunctionImplementation(
     val entityName = presetEntry.entityName
 
     return """
-    ${presetEntry.deprecated()}override fun $presetName(
-        name: String,
-        configure: ${presetEntry.targetType.renderShort()}.() -> Unit
-    ): ${presetEntry.targetType.renderShort()} =
-        $configureOrCreateFunctionName(
-            name,
-            presets.getByName("$entityName") as ${presetEntry.presetType.renderShort()},
-            configure
-        )$alsoBlockAfterConfiguration
-    
-    """.trimIndent()
+    |${presetEntry.kdoc()}${presetEntry.deprecated()}override fun $presetName(
+    |    name: String,
+    |    configure: ${presetEntry.targetType.renderShort()}.() -> Unit
+    |): ${presetEntry.targetType.renderShort()} =
+    |    $configureOrCreateFunctionName(
+    |        name,
+    |        presets.getByName("$entityName") as ${presetEntry.presetType.renderShort()},
+    |        configure
+    |    )$alsoBlockAfterConfiguration
+    |
+    """.trimMargin()
 }
 
 //language=kotlin
