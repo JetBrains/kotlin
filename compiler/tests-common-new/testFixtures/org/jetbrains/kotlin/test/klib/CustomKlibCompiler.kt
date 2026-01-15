@@ -56,7 +56,7 @@ class CustomKlibCompiler(
         return ExitCode.valueOf(result.toString())
     }
 }
-sealed interface CustomCompilerArtifacts {
+sealed interface CustomKlibCompilerArtifacts {
     val version: String
 
     /**
@@ -79,7 +79,7 @@ sealed interface CustomCompilerArtifacts {
         override val compilerClassPath: List<URL>,
         private val runtimeDependencies: List<File>,
         override val compilerDist: File?,
-    ) : CustomCompilerArtifacts {
+    ) : CustomKlibCompilerArtifacts {
         override fun runtimeDependency(baseName: String, vararg extensions: String): File {
             val candidates = runtimeDependencies.filter { file ->
                 file.isFile && file.extension in extensions && file.nameWithoutExtension == "$baseName-$version"
@@ -93,7 +93,7 @@ sealed interface CustomCompilerArtifacts {
         }
     }
 
-    private class Unresolvable(val reason: String) : CustomCompilerArtifacts {
+    private class Unresolvable(val reason: String) : CustomKlibCompilerArtifacts {
         override val version get() = fail(reason)
         override val compilerClassPath get() = fail(reason)
         override val compilerDist get() = fail(reason)
@@ -106,7 +106,7 @@ sealed interface CustomCompilerArtifacts {
             runtimeDependenciesPropertyName: String?, // After OSIP-740, make it non-nullable to always provide stdlib
             versionPropertyName: String,
             compilerDistPropertyName: String? = null,
-        ): CustomCompilerArtifacts {
+        ): CustomKlibCompilerArtifacts {
             val version: String = readProperty(versionPropertyName)
                 ?: return propertyNotFound(versionPropertyName)
 
@@ -133,13 +133,13 @@ sealed interface CustomCompilerArtifacts {
             version: LanguageVersion,
             compilerDist: File,
             compilerClassPath: List<File>,
-        ): CustomCompilerArtifacts =
+        ): CustomKlibCompilerArtifacts =
             Resolvable(version.versionString, compilerClassPath.map { it.toURI().toURL() }, runtimeDependencies = emptyList(), compilerDist)
 
         fun readProperty(propertyName: String): String? =
             System.getProperty(propertyName)?.trim(Char::isWhitespace)?.takeIf(String::isNotEmpty)
 
-        fun propertyNotFound(propertyName: String): CustomCompilerArtifacts = Unresolvable(
+        fun propertyNotFound(propertyName: String): CustomKlibCompilerArtifacts = Unresolvable(
             "The Gradle property \"$propertyName\" is not specified. " +
                     "Please check the README.md in the root of the `klib-compatibility` project."
         )
