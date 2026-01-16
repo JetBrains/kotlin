@@ -50,9 +50,8 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
     val implementationConfiguration = configurations.getByName(compilation.legacyImplementationConfigurationName)
 
     return configurations.createResolvable(compilation.cInteropDependencyConfigurationName).apply {
+        setInvisibleIfSupported()
         extendsFrom(compileOnlyConfiguration, implementationConfiguration)
-        @Suppress("DEPRECATION")
-        isVisible = false
 
         /* Deferring attributes to wait for compilation.attributes to be configured by user */
         launchInStage(AfterFinaliseDsl) {

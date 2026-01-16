@@ -139,3 +139,12 @@ internal fun Configuration.addSecondaryOutgoingJvmClassesVariant(
 }
 
 internal val Configuration.lenientArtifactsView get() = incoming.artifactView { view -> view.isLenient = true }.artifacts
+
+private val gradle9 = GradleVersion.version("9.0.0")
+
+internal fun Configuration.setInvisibleIfSupported() {
+    if (GradleVersion.current() < gradle9) {
+        @Suppress("DEPRECATION")
+        isVisible = false
+    }
+}

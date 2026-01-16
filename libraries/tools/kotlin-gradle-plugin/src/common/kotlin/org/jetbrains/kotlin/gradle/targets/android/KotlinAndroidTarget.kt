@@ -21,10 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureSourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.setProperty
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 import javax.inject.Inject
@@ -313,9 +309,8 @@ abstract class KotlinAndroidTarget @Inject constructor(
         val apiElementsConfiguration = project.configurations.findConsumable(apiElementsConfigurationName)
             ?: error("Configuration $apiElementsConfigurationName was not found")
         return project.configurations.createConsumable(sourcesElementsConfigurationName).apply {
+            setInvisibleIfSupported()
             description = "Source files of Android ${variantName}."
-            @Suppress("DEPRECATION")
-            isVisible = false
 
             apiElementsConfiguration.copyAttributesTo(project.providers, dest = this)
             configureSourcesPublicationAttributes(this@KotlinAndroidTarget)
