@@ -3,6 +3,11 @@ grant codeBase "file:{{gradle_user_home}}/-" {
 };
 {{all_permissions_for_gradle_ro_dep_cache}}
 grant {
+    permission java.util.PropertyPermission "*", "write";
+    permission java.io.FilePermission "<<ALL FILES>>", "read";
+    permission java.io.FilePermission "<<ALL FILES>>", "write";
+    permission java.io.FilePermission "<<ALL FILES>>", "execute";
+
     // Basic permissions needed for tests to run
     permission java.lang.RuntimePermission "*";
     permission java.net.SocketPermission "*", "connect,resolve";

@@ -17,6 +17,8 @@ dependencies {
     compileOnly(intellijCore())
     implementation(libs.org.jetbrains.syntax.api)
     implementation(libs.org.jetbrains.java.syntax.jvm)
+    implementation(project(":compiler:plugin-api"))
+    implementation(project(":compiler:cli"))
 
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
@@ -37,14 +39,14 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+optInToExperimentalCompilerApi()
+
 kotlin {
     jvmToolchain(17)
 }
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
-        dependsOn(":dist")
-        workingDir = rootDir
         useJUnitPlatform()
     }
     testGenerator("org.jetbrains.kotlin.java.direct.TestGeneratorKt", generateTestsInBuildDirectory = true)
