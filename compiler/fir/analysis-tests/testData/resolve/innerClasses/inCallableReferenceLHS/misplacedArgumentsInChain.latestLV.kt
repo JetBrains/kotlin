@@ -13,10 +13,10 @@ fun Outer<Int>.Middle<String>.Inner<Char>.foo() {
 
 fun test() {
     Outer<Int>.Middle<String>.Inner<Char>::foo
-    Outer<Int>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>Middle<!>.Inner<Char, String>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>Outer<!>.Middle.Inner<Char, String, Int>::foo
-    Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!><Char, String, Int><!>.Middle.Inner::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>Outer<!>.Middle<Int>.Inner<Char, String>::foo
+    Outer<Int>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Middle<!>.Inner<Char, String>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer<!>.Middle.Inner<Char, String, Int>::foo
+    Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Char, String, Int><!>.Middle.Inner::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer<!>.Middle<Int>.Inner<Char, String>::foo
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration, inner,

@@ -913,7 +913,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_LONG_SUFFIX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_MODIFIER_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETURN_TYPE
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -2023,8 +2023,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL,
         )
         map.put(
-            WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS,
-            "$wrongNumberOfTypeArguments for ''{1}''.",
+            WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING,
+            "$wrongNumberOfTypeArguments for ''{1}''."
+                .toDeprecationWarningMessage(LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS),
             null,
             SYMBOL,
         )

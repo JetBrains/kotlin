@@ -13,12 +13,12 @@ fun <T> withGenericArg() {
         }
         val ref = Inner<String>::foo
         val innermostRef = Inner<String>.Innermost<Int>::bar
-        val innermostMisplacedRef = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>Inner<!>.Innermost<Int, String>::bar
+        val innermostMisplacedRef = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>.Innermost<Int, String>::bar
     }
 
     Outer<Int>.Inner<String>::foo
-    Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!><String, Int><!>.Inner::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>Outer<!>.Inner<String, Int>::foo
+    Outer<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, Int><!>.Inner::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer<!>.Inner<String, Int>::foo
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, inner, localClass, nullableType,

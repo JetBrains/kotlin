@@ -16,7 +16,7 @@ class A<X> {
         val ref = C<Int>?::bar
     }
 
-    val ref1 = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>B<!>.C<Int>?::<!UNSAFE_CALLABLE_REFERENCE!>foo<!>
+    val ref1 = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>B<!>.C<Int>?::<!UNSAFE_CALLABLE_REFERENCE!>foo<!>
     val ref2 = B<String>.C<Int>?::<!UNSAFE_CALLABLE_REFERENCE!>foo<!>
 
     val ref3 = B<String>.C<Int>?::bar

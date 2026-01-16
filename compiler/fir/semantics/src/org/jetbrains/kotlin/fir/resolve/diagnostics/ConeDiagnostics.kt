@@ -291,12 +291,12 @@ class ConeWrongNumberOfTypeArgumentsError(
     source: KtSourceElement,
     /**
      * Right now, in LHS of callable reference, both diagnostic with this flag and without it can be encountered.
-     * If this flag is `true`, `WRONG_NUMBER_OF_TYPE_ARGUMENTS_FOR_CALLABLE_REFERENCE_LHS` diagnostic will be emitted
-     * (which is either deprecation warning or error). Otherwise, just old `WRONG_NUMBER_OF_TYPE_ARGUMENTS`.
+     * If it is present, [org.jetbrains.kotlin.config.LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS] is checked
+     * to determine whether it is error or deprecation warning. Additionally, source positionings for errors with this flag and without it
+     * are different.
      *
      * In case [org.jetbrains.kotlin.config.LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS] is on, only
-     * diagnostics *with* this flag are left in LHSs (i.e., only `WRONG_NUMBER_OF_TYPE_ARGUMENTS_FOR_CALLABLE_REFERENCE_LHS_ERROR`s
-     * can be reported there).
+     * diagnostics *with* this flag are left in LHSs.
      */
     val isDeprecationErrorForCallableReferenceLHS: Boolean = false,
 ) : ConeDiagnosticWithSource(source), ConeUnmatchedTypeArgumentsError {

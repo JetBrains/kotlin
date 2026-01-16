@@ -8,15 +8,15 @@ open class X<A> {
         }
     }
 
-    private val ref = Y<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!><Int, Int><!>::foo
+    private val ref = Y<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>::foo
 
     class Z {
-        val ref = Y<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!><Int, Int><!>::foo
+        val ref = Y<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>::foo
     }
 }
 
 class T : X<String>() {
-    val ref = Y<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!><Int, Int><!>::foo
+    val ref = Y<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>::foo
 }
 
 fun <C> foo() {
@@ -26,7 +26,7 @@ fun <C> foo() {
             }
         }
 
-        val ref = Y<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!><Int, Int><!>::foo
+        val ref = Y<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>::foo
     }
 }
 
