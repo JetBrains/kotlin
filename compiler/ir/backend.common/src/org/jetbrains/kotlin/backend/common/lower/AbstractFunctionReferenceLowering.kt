@@ -273,13 +273,11 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
                 )
             }
             this.parameters += nonDispatchParameters
-            val overriddenMethodsOfAny = superFunction.allOverridden().filter { it.parentAsClass == anyClass }
-            overriddenSymbols = if (overriddenMethodsOfAny.isEmpty())
+            val overriddenMethodOfAny = superFunction.findOverriddenMethodOfAny()
+            overriddenSymbols = if (overriddenMethodOfAny == null)
                 listOf(superFunction.symbol)
-            else overriddenMethodsOfAny.flatMap { method ->
-                functionReferenceClass.superTypes.mapNotNull { superType ->
-                    superType.classOrFail.owner.functions.firstOrNull { it.overrides(method) }?.symbol
-                }
+            else functionReferenceClass.superTypes.mapNotNull { superType ->
+                superType.classOrFail.owner.functions.firstOrNull { it.overrides(overriddenMethodOfAny) }?.symbol
             }
 
             val builder = context.createIrBuilder(symbol).applyIf(isLambda) { at(invokeFunction.body!!) }

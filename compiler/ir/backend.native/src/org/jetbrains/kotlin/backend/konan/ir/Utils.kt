@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.constructors
@@ -38,8 +39,6 @@ fun IrClass.isKotlinArray() = this.isClassTypeWithSignature(IdSignatureValues.ar
 val IrClass.superClasses get() = this.superTypes.map { it.classifierOrFail as IrClassSymbol }
 @OptIn(UnsafeDuringIrConstructionAPI::class)
 fun IrClass.getSuperClassNotAny() = this.superClasses.map { it.owner }.atMostOne { !it.isInterface && !it.isAny() }
-
-fun IrClass.isAny() = this.isClassTypeWithSignature(IdSignatureValues.any)
 
 fun IrClass.isNothing() = this.isClassTypeWithSignature(IdSignatureValues.nothing)
 
