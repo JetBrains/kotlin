@@ -9,20 +9,12 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildCollectionLiteral
-import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.isArrayType
+import org.jetbrains.kotlin.fir.resolve.isArrayOfCall
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
@@ -72,37 +64,5 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
         return (element.transformChildren(this, data) as E)
     }
 
-    companion object {
-        fun FirFunctionCall.isArrayOfCall(session: FirSession): Boolean {
-            val function: FirCallableDeclaration = getOriginalFunction() ?: return false
-            val returnTypeRef = function.returnTypeRef
-            return function is FirNamedFunction &&
-                    returnTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.isArrayType == true &&
-                    isArrayOf(function, arguments) &&
-                    function.receiverParameter == null
-        }
-
-        private val arrayOfNames = hashSetOf("kotlin/arrayOf") +
-                hashSetOf(
-                    "boolean", "byte", "char", "double", "float", "int", "long", "short",
-                    "ubyte", "uint", "ulong", "ushort"
-                ).map { "kotlin/" + it + "ArrayOf" }
-
-        private fun isArrayOf(function: FirNamedFunction, arguments: List<FirExpression>): Boolean =
-            when (function.symbol.callableId.toString()) {
-                "kotlin/emptyArray" -> function.valueParameters.isEmpty() && arguments.isEmpty()
-                in arrayOfNames -> function.valueParameters.size == 1 && function.valueParameters[0].isVararg && arguments.size <= 1
-                else -> false
-            }
-    }
 }
 
-private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration? {
-    val symbol: FirBasedSymbol<*>? = when (val reference = calleeReference) {
-        is FirResolvedErrorReference -> reference.resolvedSymbol
-        is FirResolvedNamedReference -> reference.resolvedSymbol
-        is FirNamedReferenceWithCandidate -> reference.candidateSymbol
-        else -> null
-    }
-    return symbol?.fir as? FirCallableDeclaration
-}

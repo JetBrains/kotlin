@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:resolve"))
 
     /*
      * We can't remove this dependency until we use
