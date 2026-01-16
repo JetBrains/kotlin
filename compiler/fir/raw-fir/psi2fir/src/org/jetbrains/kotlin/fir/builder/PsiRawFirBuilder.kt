@@ -789,6 +789,7 @@ open class PsiRawFirBuilder(
                 isOverride = hasModifier(OVERRIDE_KEYWORD)
                 isConst = hasModifier(CONST_KEYWORD)
                 isLateInit = hasModifier(LATEINIT_KEYWORD)
+                isExternal = hasModifier(EXTERNAL_KEYWORD)
             }
 
             val propertyName = nameAsSafeName
