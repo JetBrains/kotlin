@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir.providers.utils
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue.StringValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -13,6 +14,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.Throws
+
+private val ObjCNameClassId = ClassId.topLevel(FqName("kotlin.native.ObjCName"))
 
 public fun KaSymbolModality.isAbstract(): Boolean = when (this) {
     KaSymbolModality.FINAL, KaSymbolModality.OPEN -> false
@@ -51,4 +54,23 @@ public val KaDeclarationSymbol.throwsAnnotation: Throws?
             ?.values?.filterIsInstance<KaAnnotationValue.ClassLiteralValue>()
 
         Throws()
+    }
+
+/**
+ * Resolves the `swiftName` parameter from the `@ObjCName` annotation on this symbol, if present.
+ *
+ * This is used by Swift Export to determine the correct Swift name for Objective-C classes
+ * that have been renamed in Swift via API Notes (e.g., NSURLCredential -> URLCredential).
+ *
+ * @return the Swift name from the `@ObjCName(swiftName = "...")` annotation, or null if not present
+ */
+public val KaDeclarationSymbol.objCNameSwiftName: String?
+    get() = this.annotations[ObjCNameClassId].firstOrNull()?.let { annotation ->
+        annotation.arguments.find { it.name.asString() == "swiftName" }
+            ?.expression
+            ?.let { it as? KaAnnotationValue.ConstantValue }
+            ?.value
+            ?.let { it as? StringValue }
+            ?.value
+            ?.takeIf { it.isNotEmpty() }
     }
