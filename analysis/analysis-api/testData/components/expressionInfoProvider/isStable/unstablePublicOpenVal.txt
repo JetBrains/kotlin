@@ -1,0 +1,3 @@
+expression: SAFE_ACCESS_EXPRESSION
+text: local?.c
+isStable: false

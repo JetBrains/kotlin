@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
@@ -12,12 +13,18 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionCompo
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.cfg.WhenChecker
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
+import org.jetbrains.kotlin.resolve.calls.util.getType
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 
 internal class KaFe10ExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFe10Session
@@ -41,4 +48,20 @@ internal class KaFe10ExpressionInformationProvider(
             val bindingContext = analysisContext.analyze(this)
             return isUsedAsResultOfLambda(bindingContext)
         }
+
+    @KaExperimentalApi
+    override val KtExpression.isStable: Boolean
+        get() = withPsiValidityAssertion {
+            val bindingContext = analysisContext.analyze(this)
+            val dataFlowValue = this.toDataFlowValue(bindingContext) ?: return false
+            return dataFlowValue.isStable && dataFlowValue.kind != DataFlowValue.Kind.STABLE_COMPLEX_EXPRESSION
+        }
+
+    private fun KtExpression.toDataFlowValue(bindingContext: BindingContext): DataFlowValue? {
+        val expressionType = this.getType(bindingContext) ?: return null
+        // TODO use injection
+        val dataFlowValueFactory = DataFlowValueFactoryImpl(analysisContext.languageVersionSettings)
+        val containingDeclarationOrModule = analysisContext.resolveSession.moduleDescriptor
+        return dataFlowValueFactory.createDataFlowValue(this, expressionType, bindingContext, containingDeclarationOrModule)
+    }
 }

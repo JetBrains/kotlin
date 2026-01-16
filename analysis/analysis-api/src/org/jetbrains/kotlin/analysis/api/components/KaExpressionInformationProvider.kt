@@ -106,6 +106,12 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     public val KtExpression.isUsedAsResultOfLambda: Boolean
+
+    /**
+     * TODO
+     */
+    @KaExperimentalApi
+    public val KtExpression.isStable: Boolean
 }
 
 /**

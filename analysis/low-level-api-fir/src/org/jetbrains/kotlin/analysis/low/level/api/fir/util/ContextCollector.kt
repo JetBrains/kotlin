@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
+import org.jetbrains.kotlin.fir.resolve.dfa.Flow
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
@@ -80,6 +81,7 @@ object ContextCollector {
     class Context(
         val towerDataContext: FirTowerDataContext,
         val smartCasts: Map<RealVariable, Set<ConeKotlinType>>,
+        val flow: Flow? = null,
     )
 
     enum class FilterResponse {
@@ -318,11 +320,12 @@ private class ContextCollectorVisitor(
         val implicitReceiverStack = context.towerDataContext.implicitValueStorage
 
         val smartCasts = mutableMapOf<RealVariable, Set<ConeKotlinType>>()
+        var flow: Flow? = null
 
         val cfgNode = getClosestControlFlowNode(fir, kind)
 
         if (cfgNode != null) {
-            val flow = cfgNode.flow
+            flow = cfgNode.flow
 
             val realVariables = flow.knownVariables.filterIsInstance<RealVariable>()
                 .sortedBy { it.symbol.memberDeclarationNameOrNull?.asString() }
@@ -361,7 +364,7 @@ private class ContextCollectorVisitor(
             }
         }
 
-        return Context(towerDataContextSnapshot, smartCasts)
+        return Context(towerDataContextSnapshot, smartCasts, flow)
     }
 
     private fun getClosestControlFlowNode(fir: FirElement, kind: ContextKind): CFGNode<*>? {

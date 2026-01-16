@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -14,13 +15,19 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAss
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
+import org.jetbrains.kotlin.fir.resolve.dfa.VariableStorage
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -47,6 +54,24 @@ internal class KaFirExpressionInformationProvider(
             val additionalInfoCollector = AdditionalInfoCollector()
                 .also { collector -> isUsed(this, collector) }
             additionalInfoCollector.isUsedAsResultOfLambda
+        }
+
+    @KaExperimentalApi
+    override val KtExpression.isStable: Boolean
+        get() = withPsiValidityAssertion {
+            val firFile = containingKtFile.getOrBuildFirFile(resolutionFacade)
+            val context = ContextCollector.process(resolutionFacade, firFile, targetElement = this)
+                ?: errorWithAttachment("Cannot find context for ${this::class}") {
+                    withPsiEntry("position", this@isStable)
+                }
+
+            val flow = context.flow ?: return false
+            val firExpression = getOrBuildFirSafe<FirExpression>(analysisSession.resolutionFacade) ?: return false
+            val storage = VariableStorage(analysisSession.firSession)
+            val realVariable = storage.get(firExpression, createReal = true, unwrapAlias = { it }) as? RealVariable ?: return false
+            val smartcastStability = realVariable.getStability(flow, analysisSession.firSession)
+
+            return smartcastStability == SmartcastStability.STABLE_VALUE
         }
 
     private class AdditionalInfoCollector() {
