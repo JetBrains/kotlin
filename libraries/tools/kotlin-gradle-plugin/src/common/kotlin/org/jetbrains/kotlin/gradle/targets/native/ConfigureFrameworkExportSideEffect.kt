@@ -17,14 +17,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 
 internal val ConfigureFrameworkExportSideEffect = KotlinTargetSideEffect<KotlinNativeTarget> { target ->
     val project = target.project
 
     target.binaries.withType(AbstractNativeLibrary::class.java).all { framework ->
         project.configurations.maybeCreateResolvable(framework.exportConfigurationName).apply {
-            @Suppress("DEPRECATION")
-            isVisible = false
+            setInvisibleIfSupported()
             isTransitive = false
             usesPlatformOf(target)
             attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
