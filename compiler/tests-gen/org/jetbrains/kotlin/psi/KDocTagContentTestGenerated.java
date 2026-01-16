@@ -114,6 +114,11 @@ public class KDocTagContentTestGenerated extends AbstractKDocTagContentTest {
     runTest("compiler/testData/psi/kdoc/Markdown.kt");
   }
 
+  @TestMetadata("MarkdownCodeBlocks.kt")
+  public void testMarkdownCodeBlocks() {
+    runTest("compiler/testData/psi/kdoc/MarkdownCodeBlocks.kt");
+  }
+
   @TestMetadata("MarkdownLinkWithError.kt")
   public void testMarkdownLinkWithError() {
     runTest("compiler/testData/psi/kdoc/MarkdownLinkWithError.kt");

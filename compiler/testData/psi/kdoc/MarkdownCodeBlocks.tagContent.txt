@@ -1,0 +1,25 @@
+ORIGINAL KDOC:
+* `code` -- single line code block
+ *
+ * ``code`` -- single line code block
+ *
+ * ```code``` -- single line code block
+ *
+ * ````code```` -- single line code block
+ *
+ * ````co``de```` -- single line code block
+CONTENT:
+`code` -- single line code block
+
+``code`` -- single line code block
+
+```code``` -- single line code block
+
+````code```` -- single line code block
+
+````co``de```` -- single line code block
+
+ORIGINAL KDOC:
+* ```code``` [String] -- link after single line code block
+CONTENT:
+```code``` [String] -- link after single line code block

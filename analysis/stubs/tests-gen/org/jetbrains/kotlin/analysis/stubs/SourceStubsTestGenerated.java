@@ -3314,6 +3314,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("MarkdownCodeBlocks.kt")
+    public void testMarkdownCodeBlocks() {
+      runTest("compiler/testData/psi/kdoc/MarkdownCodeBlocks.kt");
+    }
+
+    @Test
     @TestMetadata("MarkdownLinkWithError.kt")
     public void testMarkdownLinkWithError() {
       runTest("compiler/testData/psi/kdoc/MarkdownLinkWithError.kt");
