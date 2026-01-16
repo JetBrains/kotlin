@@ -96,10 +96,10 @@ public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
     }
 
     public void writeParameterType(@NotNull JvmMethodParameterKind parameterKind) {
-        writeParameterType(parameterKind, parameterKind.isSkippedInGenericSignature());
+        writeParameterType(parameterKind.isSkippedInGenericSignature());
     }
 
-    public void writeParameterType(@NotNull JvmMethodParameterKind parameterKind, boolean isSkippedInGenericSignature) {
+    public void writeParameterType(boolean isSkippedInGenericSignature) {
     }
 
     public void writeParameterTypeEnd() {

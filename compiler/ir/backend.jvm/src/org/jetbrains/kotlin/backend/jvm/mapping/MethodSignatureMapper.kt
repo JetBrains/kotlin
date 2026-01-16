@@ -339,7 +339,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         function: IrFunction,
         materialized: Boolean = true
     ) {
-        sw.writeParameterType(JvmMethodParameterKind.VALUE, isSkippedInGenericSignature)
+        sw.writeParameterType(isSkippedInGenericSignature)
         writeParameterType(sw, type, function, materialized)
         sw.writeParameterTypeEnd()
     }
