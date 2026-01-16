@@ -12,9 +12,13 @@ it indicates the diagnostic is emitted by `SpecialBackendChecksTraversal`, and r
 
 ```text
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t1.kt
-/tmp/t1.kt:12:5: error: variadic function pointers are not supported
+/tmp/t1.kt:13:21: error: variadic function pointers are not supported: fun foo(x: Int, vararg s: String): Int
+    staticCFunction(::foo)
+                    ^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t1.kt -target linux_x64
-/tmp/t1.kt:12:5: error: variadic function pointers are not supported
+/tmp/t1.kt:13:21: error: variadic function pointers are not supported: fun foo(x: Int, vararg s: String): Int
+    staticCFunction(::foo)
+                    ^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t10.kt
 /tmp/t10.kt:8:5: error: type kotlin.Function1<*, kotlin.Int>  of callback parameter 1 is not supported here: * as 1 parameter type
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t10.kt -target linux_x64
