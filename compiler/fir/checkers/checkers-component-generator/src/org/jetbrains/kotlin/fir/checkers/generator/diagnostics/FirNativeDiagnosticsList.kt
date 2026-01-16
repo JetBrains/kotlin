@@ -124,5 +124,7 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
             parameter<FirBasedSymbol<*>>("function")
         }
         val STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS by error<KtElement> {}
+        val VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF by error<KtElement> {}
+        val VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF by error<KtElement> {}
     }
 }
