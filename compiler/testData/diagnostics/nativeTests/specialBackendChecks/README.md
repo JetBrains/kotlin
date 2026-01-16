@@ -228,6 +228,8 @@ fun foo() = println(NSAssertionHandler()::handleFailureInFunction)
                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t5.kt
 /tmp/t5.kt:6:81: error: passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string
+fun foo() = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, "qzz")
+                                                                                ^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t6.kt
 /tmp/t6.kt:6:95: error: when calling variadic Objective-C methods spread operator is supported only for *arrayOf(...)
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t61.kt
