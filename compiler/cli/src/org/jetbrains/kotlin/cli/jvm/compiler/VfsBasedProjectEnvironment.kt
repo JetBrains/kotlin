@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.jvm.compiler.extensions.JavaClassFinderFactory
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -199,7 +200,10 @@ open class VfsBasedProjectEnvironment(
         fileSearchScope: AbstractProjectFileSearchScope
     ): FirJavaFacadeForSource {
         val javaAnnotationProvider = firSession.javaAnnotationProvider
-        val javaClassFinder = project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), javaAnnotationProvider)
+        val javaClassFinder = JavaClassFinderFactory.getInstances(project).firstOrNull() // TODO: selector?
+            ?.createJavaClassFinder(
+                fileSearchScope, javaAnnotationProvider
+            ) ?: project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), javaAnnotationProvider)
         return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
     }
 }
