@@ -3,18 +3,20 @@ package org.jetbrains.kotlin
 import kotlinBuildProperties
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.nativeDistribution.NativeDistribution
-import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
-import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
@@ -51,12 +53,12 @@ open class CompareDistributionSignatures @Inject constructor(
         private fun register(project: Project, name: String, configure: CompareDistributionSignatures.() -> Unit) {
             project.tasks.register(name, CompareDistributionSignatures::class.java) {
                 val property = project.kotlinBuildProperties.getOrNull("anotherDistro") as String?
-                oldDistribution.set(project.layout.dir(project.provider {
+                oldDistributionRoot.set(project.layout.dir(project.provider {
                     // `property` can only be checked for existence during task execution: during IDE import all tasks are
                     // created eagerly, so checking it during configuration stage will cause errors.
                     project.file(property ?: error("'anotherDistro' property must be set in order to execute '$name' task"))
-                }).map(::NativeDistribution))
-                newDistribution.set(project.nativeDistribution)
+                }))
+                newDistributionRoot.set(project.nativeDistribution.map { it.root })
                 configure(this)
             }
         }
@@ -64,11 +66,17 @@ open class CompareDistributionSignatures @Inject constructor(
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.NONE)
-    protected val oldDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+    protected val oldDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
+
+    @Internal
+    private val oldDistribution: Provider<NativeDistribution> = oldDistributionRoot.asNativeDistribution()
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.NONE)
-    protected val newDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+    protected val newDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
+
+    @Internal
+    private val newDistribution: Provider<NativeDistribution> = newDistributionRoot.asNativeDistribution()
 
     enum class OnMismatchMode {
         FAIL,

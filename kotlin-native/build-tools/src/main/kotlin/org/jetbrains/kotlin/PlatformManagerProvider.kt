@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.nativeDistribution.asProperties
 import org.jetbrains.kotlin.nativeDistribution.llvmDistributionSource
-import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 import javax.inject.Inject
 
@@ -37,7 +36,7 @@ open class PlatformManagerProvider @Inject constructor(
         project: Project,
 ) {
     @get:Internal("only konan.properties and its override matter")
-    val distribution = objectFactory.nativeDistributionProperty().convention(project.nativeProtoDistribution)
+    val distributionRoot = objectFactory.directoryProperty().convention(project.nativeProtoDistribution.root)
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
@@ -62,9 +61,9 @@ open class PlatformManagerProvider @Inject constructor(
     protected val konanDataDir = providerFactory.gradleProperty("konan.data.dir")
 
     @get:Internal("dependencies are: konanProperties and konanDataDir")
-    val platformManager = distribution.map {
+    val platformManager = distributionRoot.map {
         PlatformManager(Distribution(
-                konanHome = it.root.asFile.absolutePath,
+                konanHome = it.asFile.absolutePath,
                 onlyDefaultProfiles = true,
                 propertyOverrides = konanPropertiesOverride,
                 konanDataDir = konanDataDir.orNull,
