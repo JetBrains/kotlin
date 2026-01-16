@@ -61,6 +61,15 @@ internal abstract class NativeDistributionCommonizerTask
         project.collectAllSharedCommonizerTargetsFromBuild()
     }
 
+    /**
+     * Platform libraries that native commonizer implicitly reads when invoked
+     * See [org.jetbrains.kotlin.commonizer.cli.NativeDistributionCommonize]
+     * And [org.jetbrains.kotlin.commonizer.repository.KonanDistributionRepository]
+     */
+    @Suppress("unused")
+    @get:InputFiles
+    internal val platformLibraries: ConfigurableFileCollection = objectFactory.fileCollection()
+
     @get:Classpath
     internal val commonizerClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
 

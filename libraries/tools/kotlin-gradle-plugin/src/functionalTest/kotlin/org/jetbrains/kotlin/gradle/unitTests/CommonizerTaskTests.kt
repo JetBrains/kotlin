@@ -278,4 +278,12 @@ class CommonizerTaskTests {
             assertContainsNoTaskWithName("commonizeCInterop")
         }
     }
+
+    @Test
+    fun `test commonizer task depends on downloadNativeDistribution`() {
+        configureDefaultTestProjects()
+        subproject.tasks.named {  }
+        subproject.tasks.getByName("commonizeNativeDistribution")
+            .assertDependsOn(subproject.tasks.getByName("downloadKotlinNativeDistribution"))
+    }
 }

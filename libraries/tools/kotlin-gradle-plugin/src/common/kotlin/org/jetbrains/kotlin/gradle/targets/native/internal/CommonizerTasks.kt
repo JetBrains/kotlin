@@ -217,6 +217,13 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
 
                 commonizerClasspath.from(addCommonizerTaskToProject.maybeCreateCommonizerClasspathConfiguration())
                 customJvmArgs.set(addCommonizerTaskToProject.kotlinPropertiesProvider.commonizerJvmArgs)
+
+                platformLibraries.from(project.provider {
+                    commonizerTargets.flatMap { target -> target.konanTargets }.toSet().map {
+                        project.getOriginalPlatformLibrariesForTargetWithNativeDownloadTask(it)
+                    }
+                })
+
                 kotlinNativeProvider.set(
                     addCommonizerTaskToProject.provider {
                         KotlinNativeFromToolchainProvider(
