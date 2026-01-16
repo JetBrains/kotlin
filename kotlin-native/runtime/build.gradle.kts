@@ -45,15 +45,13 @@ if (HostManager.host == KonanTarget.MACOS_ARM64) {
     project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
 
-val breakpadLocationNoDependency = layout.buildDirectory.dir("breakpad")
-
 val unpackBreakpad = tasks.register<Sync>("unpackBreakpad") {
     from(breakpadClasspath.map { zipTree(it.singleFile) })
     eachFile {
         relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
     }
     includeEmptyDirs = false
-    into(breakpadLocationNoDependency)
+    into(layout.buildDirectory.dir("breakpad"))
 }
 
 val breakpadSources by configurations.creating {
@@ -69,28 +67,23 @@ artifacts {
     add(breakpadSources.name, unpackBreakpad)
 }
 
-val googletestLocationNoDependency = layout.buildDirectory.dir("googletest")
-
 val unpackGoogletest = tasks.register<Sync>("unpackGoogletest") {
     from(googletestClasspath.map { zipTree(it.singleFile) })
     eachFile {
         relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
     }
     includeEmptyDirs = false
-    into(googletestLocationNoDependency)
+    into(layout.buildDirectory.dir("googletest"))
 }
 
 val targetList = enabledTargets(extensions.getByType<PlatformManager>())
 
 // NOTE: the list of modules is duplicated in `RuntimeModule.kt`
 bitcode {
-    // Cannot use output of `unpackGoogletest` to support Gradle Configuration Cache working before `unpackGoogletest`
-    // actually had a chance to run.
-    googleTestHeadersNoDependency.from(
-            googletestLocationNoDependency.map { it.dir("googletest/include") },
-            googletestLocationNoDependency.map { it.dir("googlemock/include") }
+    googleTestHeaders.from(
+            unpackGoogletest.map { it.destinationDir.resolve("googletest/include") },
+            unpackGoogletest.map { it.destinationDir.resolve("googlemock/include") }
     )
-    googleTestHeadersDependency.set(unpackGoogletest.name)
 
     allTargets {
         val fixBrokenMacroExpansionInXcode15_3: List<String> = when (target) {
@@ -220,8 +213,6 @@ bitcode {
                         headersDirs.setFrom(project.layout.projectDirectory.dir("src/breakpad/cpp"))
                     }
                 }
-                // Make sure breakpad sources are downloaded when building the corresponding compilation database entry
-                dependencies.add(unpackBreakpad)
                 compilerArgs.set(listOf(
                         "-std=c++17",
                         "-DHAVE_MACH_O_NLIST_H",
@@ -408,17 +399,13 @@ bitcode {
                     inputFiles.from(srcRoot.dir("googletest/src"))
                     // That's how googletest/CMakeLists.txt builds gtest library.
                     inputFiles.include("gtest-all.cc")
-                    // Cannot use output of `unpackGoogletest` to support Gradle Configuration Cache working before `unpackGoogletest`
-                    // actually had a chance to run.
                     headersDirs.setFrom(
-                            googletestLocationNoDependency.map { it.dir("googletest") },
-                            googletestLocationNoDependency.map { it.dir("googletest/include") },
+                            unpackGoogletest.map { it.destinationDir.resolve("googletest") },
+                            unpackGoogletest.map { it.destinationDir.resolve("googletest/include") },
                     )
                 }
             }
             compilerArgs.set(listOf("-std=c++17", "-O2"))
-            // Make sure googletest sources are downloaded when building the corresponding compilation database entry
-            dependencies.add(unpackGoogletest)
         }
 
         module("googlemock") {
@@ -428,18 +415,14 @@ bitcode {
                     inputFiles.from(srcRoot.dir("googlemock/src"))
                     // That's how googlemock/CMakeLists.txt builds gtest library.
                     inputFiles.include("gmock-all.cc")
-                    // Cannot use output of `unpackGoogletest` to support Gradle Configuration Cache working before `unpackGoogletest`
-                    // actually had a chance to run.
                     headersDirs.setFrom(
-                            googletestLocationNoDependency.map { it.dir("googlemock") },
-                            googletestLocationNoDependency.map { it.dir("googlemock/include") },
-                            googletestLocationNoDependency.map { it.dir("googletest/include") },
+                            unpackGoogletest.map { it.destinationDir.resolve("googlemock") },
+                            unpackGoogletest.map { it.destinationDir.resolve("googlemock/include") },
+                            unpackGoogletest.map { it.destinationDir.resolve("googletest/include") },
                     )
                 }
             }
             compilerArgs.set(listOf("-std=c++17", "-O2"))
-            // Make sure googletest sources are downloaded when building the corresponding compilation database entry
-            dependencies.add(unpackGoogletest)
         }
 
         module("test_support") {
@@ -613,16 +596,9 @@ bitcode {
         if (!project.hasProperty("disableBreakpad")) {
             module("impl_crashHandler") {
                 srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
-                // Cannot use output of `unpackBreakpad` to support Gradle Configuration Cache working before `unpackBreakpad`
-                // actually had a chance to run.
-                headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocationNoDependency.get().dir("src"))
+                headersDirs.from("src/main/cpp", "src/breakpad/cpp", unpackBreakpad.map { it.destinationDir.resolve("src") })
                 sourceSets {
-                    main {
-                        // This task depends on breakpad headers being present.
-                        compileTask.configure {
-                            dependsOn(unpackBreakpad)
-                        }
-                    }
+                    main {}
                 }
                 onlyIf { it.family == Family.OSX }
             }

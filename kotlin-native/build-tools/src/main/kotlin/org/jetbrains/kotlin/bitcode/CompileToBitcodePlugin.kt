@@ -147,12 +147,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
     /**
      * GTest headers to be used in testFixtures and test source sets.
      */
-    val googleTestHeadersNoDependency: ConfigurableFileCollection = project.objects.fileCollection()
-
-    /**
-     * Task to download GTest.
-     */
-    val googleTestHeadersDependency: Property<String> = project.objects.property(String::class)
+    val googleTestHeaders: ConfigurableFileCollection = project.objects.fileCollection()
 
     private val allTestsTasks by lazy {
         val name = project.name.capitalized
@@ -352,14 +347,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
              */
             fun testFixtures(action: Action<in SourceSet>): SourceSet = create(TEST_FIXTURES_SOURCE_SET_NAME) {
                 this.inputFiles.include("**/*TestSupport.cpp", "**/*TestSupport.mm")
-                this.headersDirs.from(module.owner.googleTestHeadersNoDependency)
-                // TODO: Must generally depend on googletest module headers which must itself depend on sources being present.
-                dependencies.add(project.tasks.named(module.owner.googleTestHeadersDependency.get()))
+                this.headersDirs.from(module.owner.googleTestHeaders)
                 compileTask.configure {
                     this.group = VERIFICATION_BUILD_TASK_GROUP
-
-                    // Without this explicit statement task dependency is not created even though it's set in dependencies just above
-                    dependsOn(project.tasks.named(module.owner.googleTestHeadersDependency.get()))
                 }
                 task.configure {
                     this.group = VERIFICATION_BUILD_TASK_GROUP
@@ -378,14 +368,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
              */
             fun test(action: Action<in SourceSet>): SourceSet = create(TEST_SOURCE_SET_NAME) {
                 this.inputFiles.include("**/*Test.cpp", "**/*Test.mm")
-                this.headersDirs.from(module.owner.googleTestHeadersNoDependency)
-                // TODO: Must generally depend on googletest module headers which must itself depend on sources being present.
-                dependencies.add(project.tasks.named(module.owner.googleTestHeadersDependency.get()))
+                this.headersDirs.from(module.owner.googleTestHeaders)
                 compileTask.configure {
                     this.group = VERIFICATION_BUILD_TASK_GROUP
-
-                    // Without this explicit statement task dependency is not created even though it's set in dependencies just above
-                    dependsOn(project.tasks.named(module.owner.googleTestHeadersDependency.get()))
                 }
                 task.configure {
                     this.group = VERIFICATION_BUILD_TASK_GROUP
