@@ -169,7 +169,8 @@ open class ClangFrontend @Inject constructor(
                 inputPathRelativeToWorkingDir.set(workUnit.inputPathRelativeToWorkingDir)
                 outputFile.set(workUnit.outputFile)
                 compilerExecutable.set(this@ClangFrontend.compiler)
-                arguments.set(defaultCompilerFlags(this@ClangFrontend.headersDirs, this@ClangFrontend.reproducibilityRootsMap.get()))
+                arguments.set(defaultCompilerFlags(this@ClangFrontend.reproducibilityRootsMap.get()))
+                arguments.addAll(headersDirs.asCompilerArguments)
                 arguments.addAll(compilerSpecificArgs)
                 arguments.addAll(this@ClangFrontend.arguments)
                 this.platformManager.set(platformManager)
@@ -179,10 +180,9 @@ open class ClangFrontend @Inject constructor(
     }
 
     companion object {
-        internal fun defaultCompilerFlags(headersDirs: CppHeadersSet, reproducibilityRootsMap: Map<File, String>): List<String> = buildList {
+        internal fun defaultCompilerFlags(reproducibilityRootsMap: Map<File, String>): List<String> = buildList {
             add("-c")
             add("-emit-llvm")
-            addAll(headersDirs.asCompilerArguments.get())
             // Prevent generated binaries from containing absolute paths
             addAll(reproducibilityRootsMap.map {
                 "-ffile-prefix-map=${it.key}=${it.value}"

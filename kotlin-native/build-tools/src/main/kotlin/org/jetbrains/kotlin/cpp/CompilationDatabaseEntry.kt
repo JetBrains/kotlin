@@ -13,6 +13,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.provideDelegate
@@ -75,6 +76,12 @@ open class CompilationDatabaseEntry @Inject constructor(
      */
     @get:Input
     val arguments: ListProperty<String> = objectFactory.listProperty(String::class)
+
+    /**
+     * Headers to add to the [arguments].
+     */
+    @get:Nested
+    val headersDirs: CppHeadersSet = objectFactory.cppHeadersSetIgnoringHeadersContent() // compilation database does not depend on the content of headers
 
     /**
      * **output** from the [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html#format).

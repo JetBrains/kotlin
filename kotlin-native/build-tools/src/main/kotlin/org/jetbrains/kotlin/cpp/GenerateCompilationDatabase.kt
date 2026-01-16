@@ -37,7 +37,7 @@ abstract class GenerateCompilationDatabase : DefaultTask() {
         companion object {
             fun fromEntry(entry: CompilationDatabaseEntry): List<SerializedEntry> {
                 val directory = entry.directory.asFile.get().absolutePath
-                val arguments = entry.arguments.get()
+                val arguments = entry.arguments.get() + entry.headersDirs.asCompilerArguments.get()
                 val output = entry.output.get()
                 return entry.files.map {
                     val file = it.absolutePath

@@ -267,14 +267,11 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     directory.set(module.compilerWorkingDirectory)
                     files.setFrom(this@SourceSet.inputFiles)
                     arguments.set(listOf(platformManager.resolveLlvmUtility(module.compiler.get())))
-                    val headers = project.objects.cppHeadersSet().apply {
-                        workingDir.set(module.compilerWorkingDirectory)
-                        from(this@SourceSet.inputFiles.dir)
-                        from(this@SourceSet.headersDirs)
-                    }
-                    arguments.addAll(ClangFrontend.defaultCompilerFlags(headers, reproducibilityRootsMap))
+                    arguments.addAll(ClangFrontend.defaultCompilerFlags(reproducibilityRootsMap))
                     arguments.addAll(allCompilerArgs)
                     arguments.addAll(platformManager.clangArgs(target, module.compiler.get()))
+                    this.headersDirs.from(this@SourceSet.inputFiles.dir)
+                    this.headersDirs.from(this@SourceSet.headersDirs)
                     output.set(this@SourceSet.outputDirectory.map { it.asFile.absolutePath })
                 }
                 task.configure {
