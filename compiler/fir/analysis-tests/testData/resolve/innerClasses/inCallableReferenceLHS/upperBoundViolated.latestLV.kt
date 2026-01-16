@@ -43,5 +43,16 @@ fun <K: Key> local() {
     Local<Element<K>>::toString
 }
 
+open class A<X> {
+    inner class B<Y : X> {
+        inner class C<Z>
+    }
+}
+
+class D : A<String>() {
+    val refString = B<<!UPPER_BOUND_VIOLATED("X (of class A<X>); String")!>String<!>>.C<Int>::toString
+    val refAny = B<<!UPPER_BOUND_VIOLATED("X (of class A<X>); Any")!>Any<!>>.C<Int>::toString
+}
+
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, inner, interfaceDeclaration, sealed,
 typeConstraint, typeParameter */

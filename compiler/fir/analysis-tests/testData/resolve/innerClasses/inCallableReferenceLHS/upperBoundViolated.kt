@@ -43,5 +43,16 @@ fun <K: Key> local() {
     Local<Element<K>>::toString
 }
 
+open class A<X> {
+    inner class B<Y : X> {
+        inner class C<Z>
+    }
+}
+
+class D : A<String>() {
+    val refString = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("3; inner class C<Z, Outer(Y) : X, Outer(X)> : Any")!>B<String>.C<Int><!>::toString
+    val refAny = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("3; inner class C<Z, Outer(Y) : X, Outer(X)> : Any")!>B<Any>.C<Int><!>::toString
+}
+
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, inner, interfaceDeclaration, sealed,
 typeConstraint, typeParameter */
