@@ -123,5 +123,6 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED by error<KtElement> {
             parameter<FirBasedSymbol<*>>("function")
         }
+        val STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS by error<KtElement> {}
     }
 }
