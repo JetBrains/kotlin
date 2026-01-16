@@ -47,7 +47,6 @@ open class CppHeadersSet @Inject constructor(
         val workingDir: DirectoryProperty = objectFactory.directoryProperty()
 
         @get:Internal("which parts of the FileTree to track is governed by trackHeadersContent")
-        @get:PathSensitive(PathSensitivity.RELATIVE)
         protected val headers = objectFactory.fileTree().apply {
             from(root)
             include("**/*.h", "**/*.hpp")
