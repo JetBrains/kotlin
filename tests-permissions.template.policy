@@ -40,11 +40,6 @@ grant {
     permission java.io.FilePermission "/dev/random", "read";
     permission java.io.FilePermission "/dev/urandom", "read";
 
-
-    // org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
-    permission java.util.PropertyPermission "kotlin.reflect.jvm.useK1Implementation", "write";
-    permission java.util.PropertyPermission "kotlin.reflect.jvm.newFakeOverridesImplementation", "write";
-
     // Used by com.intellij.openapi.util.SystemInfo.isCrostini() to detect ChromeOs
     permission java.io.FilePermission "/dev/.cros_milestone", "read";
 

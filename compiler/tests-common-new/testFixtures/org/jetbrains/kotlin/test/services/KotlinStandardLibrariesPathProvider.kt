@@ -158,21 +158,16 @@ interface KotlinStandardLibrariesPathProvider : TestService {
         k1ReflectJarClassLoader.get()?.let { return it }
         synchronized(this) {
             k1ReflectJarClassLoader.get()?.let { return it }
-            withSystemProperty("kotlin.reflect.jvm.useK1Implementation", "true") {
-                return createClassLoader(
-                    runtimeJarForTests(),
-                    reflectJarForTests(),
-                    scriptRuntimeJarForTests(),
-                    kotlinTestJarForTests()
-                ).also { loader ->
-                    k1ReflectJarClassLoader = SoftReference(loader)
-                    // Calling getUseK1Implementation has the intentional side effect of caching
-                    // 'kotlin.reflect.jvm.useK1Implementation' value
-                    val useK1 = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
-                        .getMethod("getUseK1Implementation")
-                        .invoke(null)
-                    check(useK1 == true)
-                }
+            return createClassLoader(
+                runtimeJarForTests(),
+                reflectJarForTests(),
+                scriptRuntimeJarForTests(),
+                kotlinTestJarForTests()
+            ).also { loader ->
+                k1ReflectJarClassLoader = SoftReference(loader)
+                val clazz = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
+                clazz.getDeclaredField("useK1Implementation").apply { isAccessible = true }.set(null, true)
+                check(clazz.getMethod("getUseK1Implementation").invoke(null) == true)
             }
         }
     }
@@ -181,22 +176,16 @@ interface KotlinStandardLibrariesPathProvider : TestService {
         reflectWithNewFakeOverridesJarClassLoader.get()?.let { return it }
         synchronized(this) {
             reflectWithNewFakeOverridesJarClassLoader.get()?.let { return it }
-            withSystemProperty("kotlin.reflect.jvm.newFakeOverridesImplementation", "true") {
-                return createClassLoader(
-                    runtimeJarForTests(),
-                    reflectJarForTests(),
-                    scriptRuntimeJarForTests(),
-                    kotlinTestJarForTests()
-                ).also { loader ->
-                    reflectWithNewFakeOverridesJarClassLoader = SoftReference(loader)
-                    // Calling getNewFakeOverridesImplementation has the intentional side effect of caching
-                    // 'kotlin.reflect.jvm.newFakeOverridesImplementation' value
-                    val newFakeOverridesImplementation = loader
-                        .loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
-                        .getMethod("getNewFakeOverridesImplementation")
-                        .invoke(null)
-                    check(newFakeOverridesImplementation == true)
-                }
+            return createClassLoader(
+                runtimeJarForTests(),
+                reflectJarForTests(),
+                scriptRuntimeJarForTests(),
+                kotlinTestJarForTests()
+            ).also { loader ->
+                reflectWithNewFakeOverridesJarClassLoader = SoftReference(loader)
+                val clazz = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
+                clazz.getDeclaredField("newFakeOverridesImplementation").apply { isAccessible = true }.set(null, true)
+                check(clazz.getMethod("getNewFakeOverridesImplementation").invoke(null) == true)
             }
         }
     }
@@ -334,20 +323,4 @@ fun CompilerConfiguration.configureStandardLibs(
         KotlinStandardLibrariesPathProvider::reflectJarForTests,
         arguments
     )
-}
-
-@OptIn(ExperimentalContracts::class)
-private inline fun <T> withSystemProperty(key: String, value: String, body: () -> T): T {
-    contract { callsInPlace(body, InvocationKind.EXACTLY_ONCE) }
-    val old = System.getProperty(key)
-    System.setProperty(key, value)
-    try {
-        return body()
-    } finally {
-        if (old == null) {
-            System.clearProperty(key)
-        } else {
-            System.setProperty(key, old)
-        }
-    }
 }
