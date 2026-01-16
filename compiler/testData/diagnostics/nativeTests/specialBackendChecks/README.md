@@ -223,7 +223,9 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t34.k
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t35.kt
 /tmp/t35.kt:7:13: error: unable to call non-designated initializer as super constructor
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t4.kt
-/tmp/t4.kt:6:21: error: callable references to variadic Objective-C methods are not supported
+/tmp/t4.kt:6:21: error: callable references to variadic Objective-C methods are not supported: fun handleFailureInFunction(functionName: String, file: String, lineNumber: Long, description: String?, vararg args: Any?): Unit
+fun foo() = println(NSAssertionHandler()::handleFailureInFunction)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t5.kt
 /tmp/t5.kt:6:81: error: passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t6.kt
@@ -235,9 +237,13 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t62.k
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t7.kt
 /tmp/t7.kt:6:40: error: when calling variadic C functions spread operator is supported only for *arrayOf(...)
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t3.kt
-/tmp/t3.kt:6:13: error: callable references to variadic C functions are not supported
+/tmp/t3.kt:6:13: error: callable references to variadic C functions are not supported: fun printf(arg0: String?, vararg variadicArguments: Any?): Int
+    println(::printf)
+            ^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t3.kt -target linux_x64
-/tmp/t3.kt:6:13: error: callable references to variadic C functions are not supported
+/tmp/t3.kt:6:13: error: callable references to variadic C functions are not supported: fun printf(arg0: String?, vararg variadicArguments: Any?): Int
+    println(::printf)
+            ^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t36.kt
 /tmp/t36.kt:7:13: error: native interop types constructors must not be called directly
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t36.kt -target linux_x64
