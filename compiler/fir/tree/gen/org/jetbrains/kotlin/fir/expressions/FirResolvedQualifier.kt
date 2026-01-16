@@ -34,6 +34,7 @@ abstract class FirResolvedQualifier : FirExpression() {
     abstract val symbol: FirClassLikeSymbol<*>?
     abstract val explicitParent: FirResolvedQualifier?
     abstract val isNullableLHSForCallableReference: Boolean
+    abstract val resolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType?
     abstract val resolvedToCompanionObject: Boolean
     /**
      * If true, the qualifier is resolved to an object or companion object and can be used as an expression.
@@ -56,6 +57,8 @@ abstract class FirResolvedQualifier : FirExpression() {
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean)
+
+    abstract fun replaceResolvedLHSTypeForCallableReferenceOrNull(newResolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType?)
 
     abstract fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean)
 

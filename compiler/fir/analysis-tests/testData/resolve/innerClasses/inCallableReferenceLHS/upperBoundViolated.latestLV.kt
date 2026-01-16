@@ -21,13 +21,13 @@ open class Container<K: Key> {
 
 class ImplAlpha : Container<AlphaKey>() {
     private fun foo() {
-        Inner<<!UPPER_BOUND_VIOLATED("Element<K (of class Container<K : Key>)>; Alpha")!>Alpha<!>>::toString
+        Inner<Alpha>::toString
     }
 }
 
 class ImplBeta : Container<BetaKey>() {
     private fun foo() {
-        Inner<<!UPPER_BOUND_VIOLATED("Element<K (of class Container<K : Key>)>; Alpha")!>Alpha<!>>::toString
+        Inner<<!UPPER_BOUND_VIOLATED("Element<BetaKey>; Alpha")!>Alpha<!>>::toString
     }
 }
 
@@ -50,8 +50,8 @@ open class A<X> {
 }
 
 class D : A<String>() {
-    val refString = B<<!UPPER_BOUND_VIOLATED("X (of class A<X>); String")!>String<!>>.C<Int>::toString
-    val refAny = B<<!UPPER_BOUND_VIOLATED("X (of class A<X>); Any")!>Any<!>>.C<Int>::toString
+    val refString = B<String>.C<Int>::toString
+    val refAny = B<<!UPPER_BOUND_VIOLATED("String; Any")!>Any<!>>.C<Int>::toString
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, inner, interfaceDeclaration, sealed,
