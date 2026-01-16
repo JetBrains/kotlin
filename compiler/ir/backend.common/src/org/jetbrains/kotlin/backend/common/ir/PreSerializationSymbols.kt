@@ -15,11 +15,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -29,6 +25,49 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 
+/**
+ * This class is a container for symbols that the compiler uses on the backend.
+ *
+ * ### Hierarchy
+ * You can think of it as two separate axis: usage scope and backend kind.
+ * 1. By "usage scope" we mean either pre-serialization or backend. We have such separation for several reasons
+ *    - **Performance**: it is expensive to load all symbols, but we need only a small part on pre-serialization stage.
+ *    - **Availability**: not all symbols are present at the pre-serialization stage.
+ *    - **Validation**: symbols that are required for pre-serialization are always present and should be treated with care.
+ *      We can't rename or remove them without proper migration.
+ * 2. By "backend kind" we mean the target platform: JVM, JS, Wasm, or Native. Some symbols are backend-specific and should appear only in
+ *    the corresponding backend.
+ *
+ * The hierarchy can be represented as follows:
+ * ```
+ * PreSerializationSymbols.Impl → BackendSymbols → JvmSymbols
+ * └ PreSerializationKlibSymbols.Impl → BackendKlibSymbols
+ *   ├ PreSerializationWebSymbols.Impl → BackendWebSymbols
+ *   │ ├ PreSerializationJsSymbols.Impl → BackendJsSymbols
+ *   │ └ PreSerializationWasmSymbols.Impl → BackendWasmSymbols
+ *   └ PreSerializationNativeSymbols.Impl → BackendNativeSymbols
+ * ```
+ *
+ *  1. Pre-serialization symbols inheritance is represented from top to bottom. It also follows the general logic around backend
+ *     (for example, js and wasm are inherited from web).
+ *  2. Backend symbols also follow this pattern, but they also inherit corresponding pre-serialization symbols, so we can avoid duplication.
+ *
+ *  `JvmSymbols` are special here. They don't have corresponding pre-serialization class because we are not serializing JVM artifacts into
+ *  klib.
+ *
+ *  ### Symbols loading
+ *  All symbols loading must be done using extensions on the symbol finder. Usually the process looks as follows
+ *  1. During `*Symbols` class construction we call a method on SymbolFinder.
+ *     Depending on the implementation, we either get a symbol with the owner immediately (for pre-serialization), or the symbol is put in
+ *     the deserialization queue (for backend).
+ *  2. During the access of a symbol (later in lowerings), there shouldn't be any unbound symbols.
+ *
+ *  If we expect to have multiple symbols with the same fully qualified name, then it should be accessed using a lazy filter call.
+ *  This guarantees that the symbol will be put in the deserialization queue and properly filtered when first accessed.
+ *
+ *  Avoid using calls like `functionSymbols().single()`. While this works, it is quite hard to understand that is the problem that something
+ *  goes wrong.
+ */
 abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
     private val symbolFinder = irBuiltIns.symbolFinder
 
