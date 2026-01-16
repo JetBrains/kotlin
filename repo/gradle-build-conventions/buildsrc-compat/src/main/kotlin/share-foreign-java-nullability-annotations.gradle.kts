@@ -7,7 +7,6 @@ val thirdPartyAnnotationsClasspath: Configuration by configurations.creating {
     isCanBeDeclared = true
     isCanBeResolved = false
     isCanBeConsumed = false
-    isVisible = false
     isTransitive = false
 }
 
@@ -15,7 +14,6 @@ val thirdPartyAnnotationsClasspathResolver: Configuration by configurations.crea
     isCanBeDeclared = false
     isCanBeResolved = true
     isCanBeConsumed = false
-    isVisible = false
     isTransitive = false
     extendsFrom(thirdPartyAnnotationsClasspath)
 }
