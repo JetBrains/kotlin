@@ -42,7 +42,13 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
     ): KotlinCoreEnvironment
 
     abstract fun createScriptEvaluator(): ScriptEvaluator
+
+    @Deprecated("Use and Implement createScriptCompiler(KotlinCoreEnvironment, ScriptCompilationConfiguration) method")
     abstract fun createScriptCompiler(environment: KotlinCoreEnvironment): ScriptCompilerProxy
+
+    abstract fun createScriptCompiler(
+        environment: KotlinCoreEnvironment, scriptCompilationConfiguration: ScriptCompilationConfiguration
+    ): ScriptCompilerProxy
 
     protected abstract fun ScriptEvaluationConfiguration.Builder.platformEvaluationConfiguration()
 
@@ -124,7 +130,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
                 }
                 if (script == null && defaultScriptExtension != null) {
                     script = ExplicitlyNamedFileScriptSource(
-                        scriptFile.nameWithoutExtension + defaultScriptExtension, scriptFile
+                        scriptFile.name.removeSuffix(".kts") + defaultScriptExtension, scriptFile
                     ).takeIf {
                         scriptDefinitionProvider.isScript(it)
                     }
@@ -168,7 +174,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         environment: KotlinCoreEnvironment,
         messageCollector: MessageCollector
     ): ExitCode {
-        val scriptCompiler = createScriptCompiler(environment)
+        val scriptCompiler = createScriptCompiler(environment, scriptCompilationConfiguration)
 
         @Suppress("DEPRECATION_ERROR")
         return internalScriptingRunSuspend {

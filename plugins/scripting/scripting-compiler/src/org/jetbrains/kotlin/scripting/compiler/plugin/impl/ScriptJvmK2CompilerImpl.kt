@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForLightTree
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertAnalyzedFirToIr
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
@@ -68,6 +68,26 @@ class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfigurat
                     if (messageCollector.hasErrors()) failure(messageCollector)
                     else it.compile(script)
                 }
+            }
+        }
+}
+
+class ScriptJvmK2CompilerFromEnvironment(
+    val environment: KotlinCoreEnvironment,
+    val hostConfiguration: ScriptingHostConfiguration,
+) : ScriptCompilerProxy {
+    override fun compile(
+        script: SourceCode,
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
+    ): ResultWithDiagnostics<CompiledScript> =
+        withMessageCollector(script = script) { messageCollector ->
+            withScriptCompilationCache(script, scriptCompilationConfiguration, messageCollector) {
+                val compiler = ScriptJvmK2CompilerImpl(
+                    createCompilerStateFromEnvironment(environment, messageCollector, scriptCompilationConfiguration, hostConfiguration),
+                    SourceCode::convertToFirViaLightTree
+                )
+                if (messageCollector.hasErrors()) failure(messageCollector)
+                else compiler.compile(script)
             }
         }
 }
@@ -196,7 +216,7 @@ class ScriptJvmK2CompilerImpl(
             FirScriptCompilationComponent::class,
             FirScriptCompilationComponent(
                 state.hostConfiguration,
-                { _, _ -> state.getOrCreateSessionForAnnotationResolution() }
+                getSessionForAnnotationResolution = { _, _ -> state.getOrCreateSessionForAnnotationResolution() }
             )
         )
 
@@ -254,30 +274,23 @@ class ScriptJvmK2CompilerImpl(
 fun <T> withK2ScriptCompilerWithLightTree(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     parentMessageCollector: MessageCollector? = null,
-    moduleName: Name = Name.special("<script-module>"),
-    body: (ScriptJvmK2CompilerImpl) -> T
+    body: (ScriptJvmK2CompilerImpl) -> T,
 ): T {
     val disposable = Disposer.newDisposable("Default disposable for scripting compiler")
     return try {
-        body(createK2ScriptCompilerWithLightTree(scriptCompilationConfiguration, parentMessageCollector, moduleName, disposable))
+        body(
+            ScriptJvmK2CompilerImpl(
+                createIsolatedCompilerState(
+                    ScriptDiagnosticsMessageCollector(parentMessageCollector), disposable,
+                    scriptCompilationConfiguration,
+                    scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
+                ),
+                SourceCode::convertToFirViaLightTree
+            )
+        )
     } finally {
         Disposer.dispose(disposable)
     }
-}
-
-fun createK2ScriptCompilerWithLightTree(
-    scriptCompilationConfiguration: ScriptCompilationConfiguration,
-    parentMessageCollector: MessageCollector? = null,
-    moduleName: Name = Name.special("<script-module>"),
-    disposable: Disposable,
-): ScriptJvmK2CompilerImpl {
-    val state =
-        createCompilerState(
-            moduleName, ScriptDiagnosticsMessageCollector(parentMessageCollector), disposable,
-            scriptCompilationConfiguration,
-            scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
-        )
-    return ScriptJvmK2CompilerImpl(state, SourceCode::convertToFirViaLightTree)
 }
 
 fun SourceCode.convertToFirViaLightTree(session: FirSession, diagnosticsReporter: BaseDiagnosticsCollector): FirFile {
@@ -307,7 +320,7 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
     ).apply {
         register(
             FirScriptCompilationComponent::class,
-            FirScriptCompilationComponent(hostConfiguration, { _, _ -> this })
+            FirScriptCompilationComponent(hostConfiguration, getSessionForAnnotationResolution = { _, _ -> this })
         )
         dummySessionForAnnotationResolution = this
     })

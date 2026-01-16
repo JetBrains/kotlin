@@ -11,11 +11,18 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.scriptingHostConfiguration
+import org.jetbrains.kotlin.config.useFir
+import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerFromEnvironment
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluator
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
 
 class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
@@ -41,8 +48,25 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
         return BasicJvmScriptEvaluator()
     }
 
+    @Deprecated("Use and implement createScriptCompiler(KotlinCoreEnvironment, ScriptCompilationConfiguration) method instead")
     override fun createScriptCompiler(environment: KotlinCoreEnvironment): ScriptCompilerProxy {
         return ScriptJvmCompilerFromEnvironment(environment)
+    }
+
+    override fun createScriptCompiler(
+        environment: KotlinCoreEnvironment,
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
+    ): ScriptCompilerProxy {
+        val configuration = environment.configuration
+        return if (configuration.useFir && configuration.useLightTree) {
+            ScriptJvmK2CompilerFromEnvironment(
+                environment,
+                (configuration.scriptingHostConfiguration as? ScriptingHostConfiguration) ?: defaultJvmScriptingHostConfiguration
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            createScriptCompiler(environment)
+        }
     }
 
     override fun isAccepted(arguments: CommonCompilerArguments): Boolean =

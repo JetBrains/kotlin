@@ -82,19 +82,20 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
     }
 
     fun loadAnnotation(firAnnotation: FirAnnotation): ResultWithDiagnostics<ScriptSourceAnnotation<Annotation>?> =
-        (firAnnotation as? FirAnnotationCall)?.toAnnotationObjectIfMatches(acceptedAnnotations, sessionForAnnotationResolution, firFile)?.onSuccess {
-            val location = script.locationId
-            val startPosition = firAnnotation.source?.startOffset?.toSourceCodePosition(script)
-            val endPosition = firAnnotation.source?.endOffset?.toSourceCodePosition(script)
-            ScriptSourceAnnotation(
-                it,
-                if (location != null && startPosition != null)
-                    SourceCode.LocationWithId(
-                        location, SourceCode.Location(startPosition, endPosition)
-                    )
-                else null
-            ).asSuccess()
-        } ?: ResultWithDiagnostics.Success(null)
+        (firAnnotation as? FirAnnotationCall)?.toAnnotationObjectIfMatches(acceptedAnnotations, sessionForAnnotationResolution, firFile)
+            ?.onSuccess {
+                val location = script.locationId
+                val startPosition = firAnnotation.source?.startOffset?.toSourceCodePosition(script)
+                val endPosition = firAnnotation.source?.endOffset?.toSourceCodePosition(script)
+                ScriptSourceAnnotation(
+                    it,
+                    if (location != null && startPosition != null)
+                        SourceCode.LocationWithId(
+                            location, SourceCode.Location(startPosition, endPosition)
+                        )
+                    else null
+                ).asSuccess()
+            } ?: ResultWithDiagnostics.Success(null)
 
     return firFile.annotations.mapNotNullSuccess(::loadAnnotation).onSuccess { annotations ->
         ScriptCollectedData(mapOf(ScriptCollectedData.collectedAnnotations to annotations)).asSuccess()
@@ -159,6 +160,10 @@ internal fun FirAnnotationCall.toAnnotationObjectIfMatches(
                 null
             }
         }
+    }
+
+    (this.annotationTypeRef as? FirErrorTypeRef)?.let {
+        return makeFailureResult(it.diagnostic.reason) // TODO: precise error with location (KT-83947)
     }
 
     val mapping =
