@@ -15914,6 +15914,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("constructorParameter.kt")
+      public void testConstructorParameter() {
+        runTest("compiler/testData/diagnostics/tests/external/constructorParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("enumEntry.kt")
+      public void testEnumEntry() {
+        runTest("compiler/testData/diagnostics/tests/external/enumEntry.kt");
+      }
+
+      @Test
       @TestMetadata("noExternalModifierInheritance.kt")
       public void testNoExternalModifierInheritance() {
         runTest("compiler/testData/diagnostics/tests/external/noExternalModifierInheritance.kt");
