@@ -398,6 +398,11 @@ private class MappingExtensions(
                     ("protocolGetter" to protocolGetter).asOptionalAnnotationArgument(),
                     ("binaryName" to binaryName).asOptionalAnnotationArgument()
             )
+            is AnnotationStub.ObjC.ObjCName -> mapOfNotNull(
+                    ("name" to name).asOptionalAnnotationArgument(),
+                    ("swiftName" to swiftName).asOptionalAnnotationArgument(),
+                    ("exact" to KmAnnotationArgument.BooleanValue(exact)).takeIf { exact }
+            )
             AnnotationStub.CCall.CString -> emptyMap()
             AnnotationStub.CCall.WCString -> emptyMap()
             is AnnotationStub.CCall.Symbol -> mapOfNotNull(

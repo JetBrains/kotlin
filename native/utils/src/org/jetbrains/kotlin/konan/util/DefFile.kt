@@ -71,6 +71,7 @@ class DefFile(val file: File?, val config: DefFileConfig, val manifestAddendProp
         val objcClassesIncludingCategories: List<String> by ObjcClassesIncludingCategories
         val allowIncludingObjCCategoriesFromDefFile: Boolean by AllowIncludingObjCCategoriesFromDefFile
         val userSetupHint: String? by UserSetupHint
+        val apiNotes: Boolean by ApiNotes
     }
 }
 
