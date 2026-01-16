@@ -105,6 +105,18 @@ internal class WasmUsefulDeclarationProcessor(
             else -> false
         }
 
+        override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: IrDeclaration) {
+            super.visitRawFunctionReference(expression, data)
+            val function: IrFunction = expression.symbol.owner.realOverrideTarget
+            function.enqueue(data, "method functional reference")
+            if (function is IrSimpleFunction && function.isOverridable) {
+                val klass = function.parentAsClass
+                if (klass.isInterface) {
+                    klass.enqueue(data, "receiver class")
+                }
+            }
+        }
+
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
             super.visitCall(expression, data)
 
