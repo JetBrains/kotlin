@@ -12277,6 +12277,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("deepSuspensions1.kt")
+    public void testDeepSuspensions1() {
+      runTest("compiler/testData/codegen/box/coroutines/deepSuspensions1.kt");
+    }
+
+    @Test
     @TestMetadata("defaultParameterLambdaInSuspend.kt")
     public void testDefaultParameterLambdaInSuspend() {
       runTest("compiler/testData/codegen/box/coroutines/defaultParameterLambdaInSuspend.kt");

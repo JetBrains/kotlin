@@ -284,6 +284,10 @@ fun main(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
+            testClass<AbstractFirWasmSpecCodegenBenchmarkTest> {
+                model("codegen/boxWasmBenchmark")
+            }
+
             testClass<AbstractFirWasmJsSteppingTest> {
                 model("debug/stepping")
             }
