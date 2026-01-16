@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil.createTempDirectory
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.writer.KlibWriter
-import org.jetbrains.kotlin.library.writer.asComponentWriters
+import org.jetbrains.kotlin.library.writer.includeIr
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -104,9 +104,7 @@ class ManifestReadingTest {
                     }
                 }
             }
-            include(
-                SerializedIrModule(files = emptyList(), fileWithPreparedInlinableFunctions = null).asComponentWriters(), // empty IR
-            )
+            includeIr(SerializedIrModule(files = emptyList(), fileWithPreparedInlinableFunctions = null)) // empty IR
         }.writeTo(libraryFile.absolutePath)
 
         return libraryFile

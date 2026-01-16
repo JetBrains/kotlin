@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.library
 import org.jetbrains.kotlin.library.NewKlibWriterTest.NewKlibWriterParameters
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.writer.KlibWriter
-import org.jetbrains.kotlin.library.writer.asComponentWriters
+import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -204,7 +204,7 @@ class NewKlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewK
             format(if (parameters.nopack) KlibFormat.Directory else KlibFormat.ZipArchive)
 
             includeMetadata(parameters.metadata)
-            parameters.ir?.let { include(it.asComponentWriters()) }
+            includeIr(parameters.ir)
 
             manifest {
                 moduleName(parameters.uniqueName)
