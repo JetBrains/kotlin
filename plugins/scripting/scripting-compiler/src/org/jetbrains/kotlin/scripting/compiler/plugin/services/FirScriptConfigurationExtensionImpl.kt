@@ -79,6 +79,7 @@ class FirScriptConfiguratorExtensionImpl(
                             diagnostic = ConeSimpleDiagnostic(message)
                         }
                     )
+                    containingDeclarationSymbol = symbol
                 }
             )
         }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
@@ -126,17 +128,13 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
         ).also { moduleDataHistory.add(it) }
 }
 
-fun createCompilerState(
-    moduleName: Name,
+fun createIsolatedCompilerState(
     messageCollector: ScriptDiagnosticsMessageCollector,
     rootDisposable: Disposable,
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     configureCompiler: CompilerConfiguration.() -> Unit = {},
-    createModuleDataProvider: (List<Path>) -> ScriptingModuleDataProvider =
-        { ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), it) },
 ): K2ScriptingCompilerEnvironment {
-
     val compilerContext = createIsolatedCompilationContext(
         baseScriptCompilationConfiguration,
         hostConfiguration,
@@ -144,9 +142,29 @@ fun createCompilerState(
         rootDisposable,
         configureCompiler
     )
+    return createCompilerState(compilerContext, messageCollector, hostConfiguration)
+}
+
+fun createCompilerStateFromEnvironment(
+    environment: KotlinCoreEnvironment,
+    messageCollector: ScriptDiagnosticsMessageCollector,
+    baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
+    hostConfiguration: ScriptingHostConfiguration,
+): K2ScriptingCompilerEnvironment {
+    val compilerContext = createCompilationContextFromEnvironment(baseScriptCompilationConfiguration, environment, messageCollector)
+    return createCompilerState(compilerContext, messageCollector, hostConfiguration)
+}
+
+fun createCompilerState(
+    compilerContext: SharedScriptCompilationContext,
+    messageCollector: ScriptDiagnosticsMessageCollector,
+    hostConfiguration: ScriptingHostConfiguration,
+): K2ScriptingCompilerEnvironment {
     val project = compilerContext.environment.project
     val compilerConfiguration = compilerContext.environment.configuration
     val languageVersionSettings = compilerConfiguration.languageVersionSettings
+    val moduleName = (compilerConfiguration.get(CommonConfigurationKeys.MODULE_NAME)?.let { Name.guessByFirstCharacter(it) }
+        ?: Name.special("<script-module>"))
 
     val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
 
@@ -184,7 +202,7 @@ fun createCompilerState(
     val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
     val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
 
-    val moduleDataProvider = createModuleDataProvider(classpath.map(File::toPath))
+    val moduleDataProvider = ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), classpath.map(File::toPath))
 
     val sessionFactoryContext = FirJvmSessionFactory.Context(
         configuration = compilerConfiguration,

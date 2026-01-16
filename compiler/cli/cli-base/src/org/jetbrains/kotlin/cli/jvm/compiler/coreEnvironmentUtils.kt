@@ -38,6 +38,8 @@ fun List<KotlinSourceRoot>.forAllFiles(
     reportLocation: CompilerMessageLocation? = null,
     body: (VirtualFile, Boolean, moduleName: String?) -> Unit
 ) {
+    if (isEmpty()) return
+
     val localFileSystem = VirtualFileManager.getInstance()
         .getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
