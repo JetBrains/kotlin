@@ -1,0 +1,36 @@
+ORIGINAL KDOC:
+* `[test]` should escape link
+ *
+ * \`test` should escape first backtick `\`
+CONTENT:
+`[test]` should escape link
+
+\`test` should escape first backtick `\`
+
+ORIGINAL KDOC:
+* All escape symbols: \!\"\#\$\%\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~
+CONTENT:
+All escape symbols: \!\"\#\$\%\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~
+
+ORIGINAL KDOC:
+* Escaped markdown commands:
+ * \*not emphasized*
+ * \<br/> not a tag
+ * \[not a link](/foo)
+ * \`not code`
+ * 1\. not a list
+ * \* not a list
+ * \# not a heading
+ * \[foo]: /url "not a reference"
+ * \&ouml; not a character entity
+CONTENT:
+Escaped markdown commands:
+\*not emphasized*
+\<br/> not a tag
+\[not a link](/foo)
+\`not code`
+1\. not a list
+\* not a list
+\# not a heading
+\[foo]: /url "not a reference"
+\&ouml; not a character entity

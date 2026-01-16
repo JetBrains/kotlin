@@ -3088,6 +3088,12 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     }
 
     @Test
+    @TestMetadata("Escapes.kt")
+    public void testEscapes() {
+      runTest("compiler/testData/psi/kdoc/Escapes.kt");
+    }
+
+    @Test
     @TestMetadata("HttpLink.kt")
     public void testHttpLink() {
       runTest("compiler/testData/psi/kdoc/HttpLink.kt");
