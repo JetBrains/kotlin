@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.SpecBoxRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasiBenchmarkRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
@@ -356,5 +357,73 @@ open class AbstractFirWasmTypeScriptExportTest : AbstractFirWasmJsTest(
         builder.defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS
         }
+    }
+}
+
+// Benchmarking test classes
+open class AbstractFirWasmWasiBenchmarkTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+) : AbstractFirWasmTest(TargetBackend.WASM_WASI, WasmPlatforms.wasmWasi, pathToTestDir, testGroupOutputDirPrefix) {
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasiBenchmarkRunner
+
+    override val wasmTarget: WasmTarget
+        get() = WasmTarget.WASI
+
+    override val additionalSourceProvider: Constructor<AdditionalSourceProvider>?
+        get() = ::WasmWasiBenchmarkHelperSourceProvider
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
+        }
+    }
+}
+
+open class AbstractFirWasmSpecBenchmarkTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+) : AbstractFirWasmTest(TargetBackend.WASM_WASI, WasmPlatforms.wasmWasi, pathToTestDir, testGroupOutputDirPrefix) {
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasiBenchmarkRunner
+
+    override val wasmTarget: WasmTarget
+        get() = WasmTarget.WASI
+
+    override val additionalSourceProvider: Constructor<AdditionalSourceProvider>?
+        get() = ::WasmWasiBenchmarkHelperSourceProvider
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
+            +WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
+        }
+    }
+}
+
+open class AbstractFirWasmWasiCodegenBenchmarkTest(
+    testGroupOutputDirPrefix: String = "benchmark/wasi/"
+) : AbstractFirWasmWasiBenchmarkTest(
+    pathToTestDir = "compiler/testData/codegen/",
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureCodegenFirHandlerSteps()
+    }
+}
+
+open class AbstractFirWasmSpecCodegenBenchmarkTest(
+    testGroupOutputDirPrefix: String = "benchmark/spec/"
+) : AbstractFirWasmSpecBenchmarkTest(
+    pathToTestDir = "compiler/testData/codegen/",
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureCodegenFirHandlerSteps()
     }
 }

@@ -284,6 +284,10 @@ fun main(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
+            testClass<AbstractFirWasmSpecCodegenBenchmarkTest> {
+                model("codegen/boxWasmBenchmark", excludedPattern = "startCoroutineUninterceptedOrReturnPerformance\\.kt")
+            }
+
             testClass<AbstractFirWasmJsSteppingTest> {
                 model("debug/stepping")
             }

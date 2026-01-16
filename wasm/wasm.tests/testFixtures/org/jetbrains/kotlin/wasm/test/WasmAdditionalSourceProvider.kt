@@ -49,6 +49,40 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
     }
 }
 
+class WasmWasiBenchmarkHelperSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> {
+        val fileWithBoxFun = module.files.singleOrNull {
+            it.isKtFile && it.originalContent.contains(Regex("\\bfun\\s+box\\(\\)\\s*(?::\\s*String|=)"))
+        }
+
+        // no box function
+        if (fileWithBoxFun == null) return emptyList()
+
+        val matchResult = Regex("^package\\s+([\\w.]+)", RegexOption.MULTILINE).find(fileWithBoxFun.originalContent)
+
+        val benchmarkRunFile = File("wasm/wasm.tests/wasiBenchmarkRun.kt")
+
+        // no package
+        if (matchResult == null) return listOf(benchmarkRunFile.toTestFile())
+
+        val p = matchResult.groupValues[1]
+        return listOf(
+            TestFile(
+                benchmarkRunFile.name,
+                benchmarkRunFile.readText().replace("box()", "$p.box()"),
+                originalFile = benchmarkRunFile,
+                startLineNumberInOriginalFile = 0,
+                isAdditional = true,
+                directives = RegisteredDirectives.Empty
+            )
+        )
+    }
+}
+
 class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(
         globalDirectives: RegisteredDirectives,
