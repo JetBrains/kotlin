@@ -27,13 +27,18 @@ import javax.inject.Inject
  * Use [systemFrom] to add to the search paths as absolute paths, but these will also be
  * omitted from dependency tracking.
  *
+ * @param trackHeadersContent true if headers content and their paths should be tracked; false if only their paths
+ *
  * @see cppHeadersSet
+ * @see cppHeadersSetIgnoringHeadersContent
  */
 open class CppHeadersSet @Inject constructor(
         objectFactory: ObjectFactory,
+        trackHeadersContent: Boolean,
 ) {
     protected open class SingleCppHeadersSet @Inject constructor(
             objectFactory: ObjectFactory,
+            trackHeadersContent: Boolean,
     ) {
         @get:Internal("only header files inside the directory need to be tracked")
         val root: DirectoryProperty = objectFactory.directoryProperty()
@@ -41,12 +46,25 @@ open class CppHeadersSet @Inject constructor(
         @get:Internal("used to compute relative paths to root")
         val workingDir: DirectoryProperty = objectFactory.directoryProperty()
 
-        @get:InputFiles
+        @get:Internal("which parts of the FileTree to track is governed by trackHeadersContent")
         @get:PathSensitive(PathSensitivity.RELATIVE)
-        @Suppress("unused") // used only by Gradle machinery via reflection.
         protected val headers = objectFactory.fileTree().apply {
             from(root)
             include("**/*.h", "**/*.hpp")
+        }
+
+        @get:InputFiles
+        @get:PathSensitive(PathSensitivity.NONE) // paths are computed by headersRelativePaths regardless of trackHeadersContent
+        @get:Optional
+        @Suppress("unused") // used only by Gradle machinery via reflection
+        protected val headersContent = headers.takeIf { trackHeadersContent }
+
+        @get:Input
+        @Suppress("unused") // used only by Gradle machinery via reflection
+        protected val headersRelativePaths = root.zip(headers.elements) { base, files ->
+            files.map {
+                it.asFile.toRelativeString(base.asFile)
+            }.sorted()
         }
 
         @get:Input
@@ -61,11 +79,11 @@ open class CppHeadersSet @Inject constructor(
         val asCompilerArgument: Provider<String> = rootRelativeToWorkingDir.orElse(root.map { it.asFile.absolutePath }).map { "-I$it" }
     }
 
-    private fun ObjectFactory.systemSingleCppHeadersSet(root: FileSystemLocation) = newInstance<SingleCppHeadersSet>().apply {
+    private fun ObjectFactory.systemSingleCppHeadersSet(root: FileSystemLocation, trackHeadersContent: Boolean) = newInstance<SingleCppHeadersSet>(trackHeadersContent).apply {
         this.root.set(root.asFile)
     }
 
-    private fun ObjectFactory.userSingleCppHeadersSet(root: FileSystemLocation) = newInstance<SingleCppHeadersSet>().apply {
+    private fun ObjectFactory.userSingleCppHeadersSet(root: FileSystemLocation, trackHeadersContent: Boolean) = newInstance<SingleCppHeadersSet>(trackHeadersContent).apply {
         this.root.set(root.asFile)
         this.workingDir.set(this@CppHeadersSet.workingDir)
     }
@@ -84,7 +102,7 @@ open class CppHeadersSet @Inject constructor(
 
     @get:Nested
     protected val sets: Provider<List<SingleCppHeadersSet>> = systemHeaderDirs.elements.zip(userHeaderDirs.elements) { system, user ->
-        system.map { objectFactory.systemSingleCppHeadersSet(it) } + user.map { objectFactory.userSingleCppHeadersSet(it) }
+        system.map { objectFactory.systemSingleCppHeadersSet(it, trackHeadersContent) } + user.map { objectFactory.userSingleCppHeadersSet(it, trackHeadersContent) }
     }
 
     /**
@@ -124,4 +142,6 @@ open class CppHeadersSet @Inject constructor(
     }
 }
 
-fun ObjectFactory.cppHeadersSet() = newInstance<CppHeadersSet>()
+fun ObjectFactory.cppHeadersSet() = newInstance<CppHeadersSet>(true)
+
+fun ObjectFactory.cppHeadersSetIgnoringHeadersContent() = newInstance<CppHeadersSet>(false)
