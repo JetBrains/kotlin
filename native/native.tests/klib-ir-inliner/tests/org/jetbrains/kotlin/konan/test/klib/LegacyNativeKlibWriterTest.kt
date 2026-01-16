@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.Properties
 
+// TODO (KT-81411): Drop this test in favor of `NewNativeKlibWriterTest`.
 class LegacyNativeKlibWriterTest : AbstractNativeKlibWriterTest<LegacyNativeKlibWriterParameters>(::LegacyNativeKlibWriterParameters) {
     class LegacyNativeKlibWriterParameters : NativeParameters() {
         var targetsForManifest: List<KonanTarget>? = null
