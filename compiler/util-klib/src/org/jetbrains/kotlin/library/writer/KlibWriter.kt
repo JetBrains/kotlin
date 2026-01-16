@@ -67,13 +67,13 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
                 this@KlibWriter.versions = versions
             }
 
-            override fun platformAndTargets(
-                builtInsPlatform: BuiltInsPlatform,
-                targetNames: Collection<String>,
-            ) {
+            override fun platformAndTargets(builtInsPlatform: BuiltInsPlatform, targetNames: Collection<String>) {
                 this@KlibWriter.builtInsPlatform = builtInsPlatform
                 this@KlibWriter.targetNames = targetNames.toList()
             }
+
+            override fun platformAndTargets(builtInsPlatform: BuiltInsPlatform, vararg targetNames: String) =
+                platformAndTargets(builtInsPlatform, targetNames.asList())
 
             override fun customProperties(init: Properties.() -> Unit) {
                 customProperties.init()
@@ -166,5 +166,6 @@ interface KlibManifestWriterSpec {
     fun moduleName(moduleName: String)
     fun versions(versions: KotlinLibraryVersioning)
     fun platformAndTargets(builtInsPlatform: BuiltInsPlatform, targetNames: Collection<String> = emptyList())
+    fun platformAndTargets(builtInsPlatform: BuiltInsPlatform, vararg targetNames: String)
     fun customProperties(init: Properties.() -> Unit)
 }
