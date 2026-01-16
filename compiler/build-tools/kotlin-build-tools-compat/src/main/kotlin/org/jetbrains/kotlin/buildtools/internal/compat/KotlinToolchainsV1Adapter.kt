@@ -30,7 +30,6 @@ import java.nio.file.Path
 import java.time.Duration
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
-import kotlin.io.path.absolutePathString
 
 public class KotlinToolchainsV1Adapter(
     @Suppress("DEPRECATION") private val compilationService: CompilationService,
@@ -259,10 +258,10 @@ private class JvmCompilationOperationV1Adapter private constructor(
             )
         }
 
-        val javaSources = sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
+        val javaSources = sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathStringOrThrow() }
         val compilerArguments = compilerArguments.toArgumentStrings().fixForFirCheck() + listOf(
             "-d",
-            destinationDirectory.absolutePathString()
+            destinationDirectory.absolutePathStringOrThrow()
         )
         return compilationService.compileJvm(
             projectId,
@@ -386,6 +385,8 @@ private class JvmCompilationOperationV1Adapter private constructor(
         return JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(options.deepCopy())
     }
 }
+
+private fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
 
 // fir check in older BTAs expects "-language-version=X" (with "=") syntax and -Xuse-fir-ic (without "=true")
 internal fun List<String>.fixForFirCheck(): List<String> {
