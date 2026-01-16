@@ -1,3 +1,46 @@
+## 2.3.10-RC
+
+### Compiler
+
+- [`KT-83314`](https://youtrack.jetbrains.com/issue/KT-83314) JSpecify `@NullMarked` changes Java equals(Object) to equals(Any?) causing override conflict in Kotlin 2.3
+- [`KT-83317`](https://youtrack.jetbrains.com/issue/KT-83317) ClassCastException: with cast kotlin.UInt to java.lang.Number when defining constant
+- [`KT-83031`](https://youtrack.jetbrains.com/issue/KT-83031) K2: unstable resolution of EnhancedNullability from type-use NotNull in presence of unused code
+- [`KT-82863`](https://youtrack.jetbrains.com/issue/KT-82863) `@NoInfer` regression since 2.2.20
+- [`KT-82841`](https://youtrack.jetbrains.com/issue/KT-82841) "kotlin.NoWhenBranchMatchedException" in `when` with `!is` check & non-sealed class in the middle of hierarchy
+
+### Compose compiler
+
+- [`b/195200551`](https://issuetracker.google.com/issues/195200551) Fix classId for detecting protobuf enums
+- [`b/463961757`](https://issuetracker.google.com/issues/463961757) Simplify Compose group analysis
+- [`b/463961757`](https://issuetracker.google.com/issues/463961757) Fix analysis of boolean captures in composable lambda
+- [`b/461766771`](https://issuetracker.google.com/issues/461766771) Fix `IrSimpleFunction.isLegacyOpenFunctionWithDefault`
+- 
+### JVM. Reflection
+
+- [`KT-83608`](https://youtrack.jetbrains.com/issue/KT-83608) Kotlin-reflect: "Unknown origin of public abstract operator fun invoke(p1: P1, p2: P2): R"
+- [`KT-42199`](https://youtrack.jetbrains.com/issue/KT-42199) "KotlinReflectionInternalError: Unknown origin of public abstract operator fun invoke" on function reference to FunctionN.invoke
+- [`KT-81024`](https://youtrack.jetbrains.com/issue/KT-81024) Reflection: New KType implementation fails on arguments comparison for a Nothing type parameter
+- [`KT-83361`](https://youtrack.jetbrains.com/issue/KT-83361) "KotlinReflectionInternalError: Type parameter not found: 0" on super types with Kotlin 2.3.0
+
+### Tools. Compiler Plugins
+
+- [`KT-83266`](https://youtrack.jetbrains.com/issue/KT-83266) "Unsupported class file major version 69" for "produceReleaseComposeMapping" task with Kotlin 2.3
+- [`KT-83099`](https://youtrack.jetbrains.com/issue/KT-83099) Compose compiler does not generate stack trace mappings for project files
+
+### Tools. Gradle
+
+- [`KT-83070`](https://youtrack.jetbrains.com/issue/KT-83070) The KGP api reference is missing a description
+- [`KT-82459`](https://youtrack.jetbrains.com/issue/KT-82459) Improve iOS simulator boot implementation
+
+### Tools. Gradle. JS
+
+- [`KT-82946`](https://youtrack.jetbrains.com/issue/KT-82946) Js, Wasm: Upgrade NPM dependencies
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-83687`](https://youtrack.jetbrains.com/issue/KT-83687) Revert deprecation of 'androidTarget' for AGP lower than 9
+
+
 ## 2.3.0-RC3
 
 ### Compiler
