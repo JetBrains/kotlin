@@ -37,13 +37,14 @@ if (HostManager.host == KonanTarget.MACOS_ARM64) {
     project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
 
+val breakpadLocationNoDependency = layout.buildDirectory.dir("breakpad")
+
 val unpackBreakpad = tasks.register<Sync>("unpackBreakpad") {
     from(breakpadClasspath.map { zipTree(it.singleFile) })
     eachFile {
         relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
     }
     includeEmptyDirs = false
-    val breakpadLocationNoDependency = layout.buildDirectory.dir("breakpad")
     into(breakpadLocationNoDependency)
 }
 
@@ -549,9 +550,9 @@ bitcode {
         if (!project.hasProperty("disableBreakpad")) {
             module("impl_crashHandler") {
                 srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
-                // Cannot use output of `downloadBreakpad` to support Gradle Configuration Cache working before `downloadBreakpad`
+                // Cannot use output of `unpackBreakpad` to support Gradle Configuration Cache working before `unpackBreakpad`
                 // actually had a chance to run.
-                headersDirs.from("src/main/cpp", "src/breakpad/cpp", unpackBreakpad.map { it.destinationDir.resolve("src") })
+                headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocationNoDependency.get().dir("src"))
                 sourceSets {
                     main {
                         // This task depends on breakpad headers being present.
