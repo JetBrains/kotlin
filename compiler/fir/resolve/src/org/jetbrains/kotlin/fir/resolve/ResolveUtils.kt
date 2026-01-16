@@ -884,3 +884,35 @@ fun FirScope.toResolvedSymbolOrigin(): FirResolvedSymbolOrigin? = when (this) {
     is FirAbstractSimpleImportingScope -> FirResolvedSymbolOrigin.ExplicitImport
     else -> null
 }
+
+fun FirFunctionCall.isArrayOfCall(session: FirSession): Boolean {
+    val function: FirCallableDeclaration = getOriginalFunction() ?: return false
+    val returnTypeRef = function.returnTypeRef
+    return function is FirNamedFunction &&
+            returnTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.isArrayType == true &&
+            isArrayOf(function, this.argumentList.arguments) &&
+            function.receiverParameter == null
+}
+
+private val arrayOfNames = hashSetOf("kotlin/arrayOf") +
+        hashSetOf(
+            "boolean", "byte", "char", "double", "float", "int", "long", "short",
+            "ubyte", "uint", "ulong", "ushort"
+        ).map { "kotlin/" + it + "ArrayOf" }
+
+private fun isArrayOf(function: FirNamedFunction, arguments: List<FirExpression>): Boolean =
+    when (function.symbol.callableId.toString()) {
+        "kotlin/emptyArray" -> function.valueParameters.isEmpty() && arguments.isEmpty()
+        in arrayOfNames -> function.valueParameters.size == 1 && function.valueParameters[0].isVararg && arguments.size <= 1
+        else -> false
+    }
+
+private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration? {
+    val symbol: FirBasedSymbol<*>? = when (val reference = calleeReference) {
+        is FirResolvedErrorReference -> reference.resolvedSymbol
+        is FirResolvedNamedReference -> reference.resolvedSymbol
+        is FirNamedReferenceWithCandidate -> reference.candidateSymbol
+        else -> null
+    }
+    return symbol?.fir as? FirCallableDeclaration
+}
