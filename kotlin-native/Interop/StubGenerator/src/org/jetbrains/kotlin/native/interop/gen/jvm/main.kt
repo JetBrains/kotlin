@@ -611,6 +611,7 @@ internal fun buildNativeLibrary(
 
     val modules = def.config.modules
 
+    val finalCompilerArgs: List<String>
     if (modules.isEmpty()) {
         require(headerFiles.isEmpty() || !compilation.compilerArgs.contains("-fmodules")) { "cinterop doesn't support having headers in -fmodules mode" }
         val excludeDependentModules = def.config.excludeDependentModules
@@ -621,6 +622,7 @@ internal fun buildNativeLibrary(
 
         headerFilter = NativeLibraryHeaderFilter.NameBased(headerInclusionPolicy, excludeDependentModules)
         includes = headerFiles.map { IncludeInfo(it, null) }
+        finalCompilerArgs = compilation.compilerArgs
     } else {
         require(language == Language.OBJECTIVE_C) { "cinterop supports 'modules' only when 'language = Objective-C'" }
         require(headerFiles.isEmpty()) { "cinterop doesn't support having headers and modules specified at the same time" }
@@ -630,6 +632,13 @@ internal fun buildNativeLibrary(
 
         headerFilter = NativeLibraryHeaderFilter.Predefined(modulesInfo.ownHeaders, modulesInfo.modules)
         includes = modulesInfo.topLevelHeaders
+        // When apiNotes is enabled (from def file), add flags for API Notes support.
+        // This allows clang to read annotations (like SwiftName) from .apinotes files.
+        finalCompilerArgs = if (def.config.apiNotes) {
+            compilation.compilerArgs + "-fmodules" + "-fapinotes-modules"
+        } else {
+            compilation.compilerArgs
+        }
     }
 
     val excludeSystemLibs = def.config.excludeSystemLibs
@@ -640,7 +649,7 @@ internal fun buildNativeLibrary(
     return NativeLibrary(
             includes = includes,
             additionalPreambleLines = compilation.additionalPreambleLines,
-            compilerArgs = compilation.compilerArgs,
+            compilerArgs = finalCompilerArgs,
             headerToIdMapper = HeaderToIdMapper(sysRoot = tool.sysRoot),
             language = compilation.language,
             excludeSystemLibs = excludeSystemLibs,

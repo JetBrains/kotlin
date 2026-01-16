@@ -72,7 +72,7 @@ class DefFile(val file: File?, val config: DefFileConfig, val manifestAddendProp
         val allowIncludingObjCCategoriesFromDefFile: Boolean by AllowIncludingObjCCategoriesFromDefFile
         val userSetupHint: String? by UserSetupHint
         val skipNonImportableModules by SkipNonImportableModules
-
+        val apiNotes: Boolean by ApiNotes
     }
 }
 
