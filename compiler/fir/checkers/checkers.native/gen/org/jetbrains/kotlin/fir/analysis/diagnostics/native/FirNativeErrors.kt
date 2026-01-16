@@ -74,6 +74,7 @@ object FirNativeErrors : KtDiagnosticsContainer() {
     val OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED", ERROR, SourceElementPositioningStrategies.OVERRIDE_MODIFIER, KtElement::class, getRendererFactory())
     val CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS: KtDiagnosticFactory0 = KtDiagnosticFactory0("STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirNativeErrorsDefaultMessages
 }
