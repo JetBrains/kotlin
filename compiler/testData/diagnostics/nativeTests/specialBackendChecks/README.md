@@ -232,12 +232,22 @@ fun foo() = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, 
                                                                                 ^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t6.kt
 /tmp/t6.kt:6:95: error: when calling variadic Objective-C methods spread operator is supported only for *arrayOf(...)
+fun foo(s: Array<Any?>) = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, *s)
+                                                                                              ^^
+/tmp/t6.kt:7:113: error: when calling variadic Objective-C methods spread operator is supported only for *arrayOf(...)
+fun bar(s: Array<Any?>) = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, *arrayOf(*arrayOf(*s)))
+                                                                                                                ^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t61.kt
 /tmp/t61.kt:5:5: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t62.kt
 /tmp/t62.kt:4:1: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t7.kt
 /tmp/t7.kt:6:40: error: when calling variadic C functions spread operator is supported only for *arrayOf(...)
+fun foo(s: Array<Any?>) = NSLog("zzz", *s)
+                                       ^^
+/tmp/t7.kt:7:58: error: when calling variadic C functions spread operator is supported only for *arrayOf(...)
+fun bar(s: Array<Any?>) = NSLog("zzz", *arrayOf(*arrayOf(*s)))
+                                                         ^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t3.kt
 /tmp/t3.kt:6:13: error: callable references to variadic C functions are not supported: fun printf(arg0: String?, vararg variadicArguments: Any?): Int
     println(::printf)
