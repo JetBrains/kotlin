@@ -197,6 +197,9 @@ sealed class AnnotationStub(val classifier: Classifier) {
                 ObjC(Classifier.topLevel(cinteropPackage, "ExternalObjCClass"))
 
         object Unavailable : ObjC(Classifier.topLevel(cinteropPackage, "ObjCUnavailable"))
+
+        class ObjCName(val name: String = "", val swiftName: String = "", val exact: Boolean = false) :
+                ObjC(Classifier.topLevel("kotlin.native", "ObjCName"))
     }
 
     sealed class CCall(classifier: Classifier) : AnnotationStub(classifier) {

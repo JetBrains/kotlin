@@ -499,6 +499,13 @@ internal abstract class ObjCContainerStubBuilder(
 
     private val classifier = context.getKotlinClassFor(container, isMeta)
 
+    private val objcNameAnnotation: AnnotationStub.ObjC.ObjCName? =
+            if (!isMeta) {
+                container.swiftName?.let { AnnotationStub.ObjC.ObjCName(swiftName = it) }
+            } else {
+                null
+            }
+
     private val externalObjCAnnotation = when (container) {
         is ObjCProtocol -> {
             /*
@@ -608,7 +615,7 @@ internal abstract class ObjCContainerStubBuilder(
                 constructors = methods.filterIsInstance<ConstructorStub>(),
                 origin = origin,
                 modality = modality,
-                annotations = listOf(externalObjCAnnotation),
+                annotations = listOfNotNull(externalObjCAnnotation, objcNameAnnotation),
                 interfaces = interfaces,
                 companion = companion
         )
