@@ -3,15 +3,12 @@ To run testsuit locally, make sure the above is executed first:
 - `./gradlew :kotlin-native:platformLibs:macos_arm64Install` and 
 - `./gradlew :kotlin-native:platformLibs:linux_x64Install`
 
-This testsuit is run differently for K1 and K2 frontends:
-- K1/N manual: run `compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtests.sh -language-version 1.9`, 
-- K2/N manual: run `compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtests.sh`,
-- K2/N tests are also run in scope of `FirLightTreeOldFrontendNativeDiagnosticsTestGenerated` and `FirPsiOldFrontendNativeDiagnosticsTestGenerated`.
+This testsuit can be run:
+- manually: run `compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtests.sh`,
+- automatically: `LightTreeNativeKlibDiagnosticsTestGenerated` and `PsiNativeKlibDiagnosticsTestGenerated`.
 
-Reference output for K2/N manual run is provided below.
-
-Reference output for K1/N manual run is slightly different for newly-migrated Fir checks: source lines are not displayed.
-For not yet migrated checks, the output must be the same as below.
+Reference output for the manual run is provided below. Should source lines be not displayed,
+it indicates the diagnostic is emitted by `SpecialBackendChecksTraversal`, and requires migration to FIR checks. 
 
 ```text
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t1.kt
