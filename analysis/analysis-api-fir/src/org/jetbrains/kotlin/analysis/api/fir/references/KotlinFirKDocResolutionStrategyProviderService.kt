@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProvide
 
 internal class KotlinFirKDocResolutionStrategyProviderService : KotlinKDocResolutionStrategyProviderService {
     @Volatile
-    private var shouldUseExperimentalResolution: Boolean = false
+    private var shouldUseExperimentalResolution: Boolean = true
 
     init {
         val enableExperimentalKDocResolutionKey = "kotlin.analysis.experimentalKDocResolution"
-        shouldUseExperimentalResolution = Registry.`is`(enableExperimentalKDocResolutionKey, false)
+        shouldUseExperimentalResolution = Registry.`is`(enableExperimentalKDocResolutionKey, true)
 
         Registry.get(enableExperimentalKDocResolutionKey).addListener(object : RegistryValueListener {
             override fun afterValueChanged(value: RegistryValue) {
-                shouldUseExperimentalResolution = Registry.`is`(enableExperimentalKDocResolutionKey, false)
+                shouldUseExperimentalResolution = Registry.`is`(enableExperimentalKDocResolutionKey, true)
             }
         }, this)
     }

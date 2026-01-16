@@ -21,7 +21,7 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
     override fun canRename(): Boolean = true
 
     override fun resolve(): PsiElement? = multiResolve(incompleteCode = false).let { resolvedResults ->
-        if (KotlinKDocResolutionStrategyProviderService.getService(element.project)?.shouldUseExperimentalStrategy() == true) {
+        if (KotlinKDocResolutionStrategyProviderService.getService(element.project)?.shouldUseExperimentalStrategy() != false) {
             /**
              * It's important to use [singleOrNull] instead of [firstOrNull] here
              * to get a drop-down menu in the IDE for KDoc references with multiple resolved results.

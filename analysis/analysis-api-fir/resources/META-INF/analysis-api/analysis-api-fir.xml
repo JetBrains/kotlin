@@ -51,7 +51,7 @@
     />
 
     <registryKey
-        defaultValue="false"
+        defaultValue="true"
         description="Enable experimental KDoc resolution strategy"
         key="kotlin.analysis.experimentalKDocResolution"
         restartRequired="false"

@@ -105,7 +105,7 @@ internal object KDocReferenceResolver {
         with(analysisSession) {
             if (KotlinKDocResolutionStrategyProviderService
                     .getService(useSiteModule.project)
-                    ?.shouldUseExperimentalStrategy() != true
+                    ?.shouldUseExperimentalStrategy() == false
             ) {
                 return ClassicKDocReferenceResolver.resolveKdocFqName(
                     analysisSession,
