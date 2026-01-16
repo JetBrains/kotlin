@@ -232,6 +232,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             test<AbstractSymbolByReferenceTest> {
                 symbolsModel(it, "symbolByReference")
             }
+
+            test<AbstractPackageSymbolTest>(filter = frontendIs(FrontendKind.Fir)) {
+                symbolsModel(it, "packages")
+            }
         }
 
         group("annotations") {
