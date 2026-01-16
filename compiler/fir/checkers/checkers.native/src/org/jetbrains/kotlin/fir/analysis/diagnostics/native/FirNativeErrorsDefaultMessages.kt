@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.native
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEXT_LINES
@@ -51,6 +50,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.SUBT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.THROWS_LIST_EMPTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.UNCHECKED_CAST_TO_FORWARD_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED
 
 object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("FIR") { map ->
@@ -175,6 +175,11 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             IDENTITY_HASH_CODE_ON_VALUE_TYPE,
             "Call to ''kotlin.native.identityHashCode'' on an instance of value type ''{0}'' can have unexpected behavior.",
             RENDER_TYPE,
+        )
+        map.put(
+            VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED,
+            "Variadic function pointers are not supported: {0}",
+            SYMBOL,
         )
     }
 }
