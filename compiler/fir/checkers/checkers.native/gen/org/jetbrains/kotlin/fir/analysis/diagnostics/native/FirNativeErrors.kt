@@ -71,6 +71,7 @@ object FirNativeErrors : KtDiagnosticsContainer() {
     val NATIVE_SPECIFIC_ATOMIC: KtDiagnosticFactory1<Name> = KtDiagnosticFactory1("NATIVE_SPECIFIC_ATOMIC", WARNING, SourceElementPositioningStrategies.DEFAULT, KtTypeReference::class, getRendererFactory())
     val IDENTITY_HASH_CODE_ON_VALUE_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("IDENTITY_HASH_CODE_ON_VALUE_TYPE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED", ERROR, SourceElementPositioningStrategies.OVERRIDE_MODIFIER, KtElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirNativeErrorsDefaultMessages
 }

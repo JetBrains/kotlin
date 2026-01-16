@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MUST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MUST_NOT_HAVE_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NATIVE_SPECIFIC_ATOMIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NON_LITERAL_OBJC_NAME_ARG
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.PROPERTY_MUST_BE_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.SUBTYPE_OF_HIDDEN_FROM_OBJC
@@ -179,6 +180,11 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED,
             "Variadic function pointers are not supported: {0}",
+            SYMBOL,
+        )
+        map.put(
+            OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED,
+            "Overriding variadic Objective-C methods are not supported: {0}",
             SYMBOL,
         )
     }
