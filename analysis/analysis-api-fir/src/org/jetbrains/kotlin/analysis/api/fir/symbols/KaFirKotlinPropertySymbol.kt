@@ -478,9 +478,7 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
         get() = withValidityAssertion { true }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion {
-            backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) == true || firSymbol.isEffectivelyExternal(analysisSession.firSession)
-        }
+        get() = withValidityAssertion { firSymbol.isEffectivelyExternal(analysisSession.firSession) }
 
     override val hasBackingField: Boolean
         get() = withValidityAssertion { true }
