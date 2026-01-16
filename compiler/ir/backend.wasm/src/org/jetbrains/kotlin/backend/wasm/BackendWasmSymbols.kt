@@ -130,17 +130,15 @@ class BackendWasmSymbols(
         irBuiltIns.doubleType to CallableIds.wasm_f64_eq.functionSymbol()
     )
 
-    private fun wasmPrimitiveTypeName(classifier: IrClassifierSymbol): String = with(irBuiltIns) {
-        when (classifier) {
+    val comparisonBuiltInsToWasmIntrinsics = irBuiltIns.run {
+        fun wasmPrimitiveTypeName(classifier: IrClassifierSymbol): String = when (classifier) {
             booleanClass, byteClass, shortClass, charClass, intClass -> "i32"
             floatClass -> "f32"
             doubleClass -> "f64"
             longClass -> "i64"
             else -> error("Unknown primitive type")
         }
-    }
 
-    val comparisonBuiltInsToWasmIntrinsics = irBuiltIns.run {
         listOf(
             lessFunByOperandType to "lt",
             lessOrEqualFunByOperandType to "le",
