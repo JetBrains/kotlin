@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.types.typeWithArguments
@@ -93,13 +92,13 @@ class TestGenerator(val context: JsCommonBackendContext) {
         function.parent = parentFunction
         function.body = body
 
-        val refClass = context.symbols.functionN(0)
+        val refClass = context.irBuiltIns.functionN(0)
         val testFunReference = IrRichFunctionReferenceImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             type = refClass.typeWith(function.returnType),
             reflectionTargetSymbol = null,
-            overriddenFunctionSymbol = refClass.owner.selectSAMOverriddenFunction().symbol,
+            overriddenFunctionSymbol = refClass.selectSAMOverriddenFunction().symbol,
             invokeFunction = function,
             origin = null,
             isRestrictedSuspension = false,
@@ -238,13 +237,13 @@ class TestGenerator(val context: JsCommonBackendContext) {
                 )
             }
 
-            val refClass = context.symbols.functionN(0)
+            val refClass = context.irBuiltIns.functionN(0)
             val finallyLambda = IrRichFunctionReferenceImpl(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
                 type = refClass.typeWith(afterFunction.returnType),
                 reflectionTargetSymbol = null,
-                overriddenFunctionSymbol = refClass.owner.selectSAMOverriddenFunction().symbol,
+                overriddenFunctionSymbol = refClass.selectSAMOverriddenFunction().symbol,
                 invokeFunction = afterFunction,
                 origin = null,
                 isRestrictedSuspension = false,

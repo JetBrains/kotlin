@@ -89,7 +89,7 @@ internal class AddFunctionSupertypeToSuspendFunctionLowering(val context: Contex
                         }
                     } + context.irBuiltIns.anyNType
 
-                    val functionType = context.symbols.functionN(functionClassTypeArguments.size - 1).typeWith(functionClassTypeArguments)
+                    val functionType = context.irBuiltIns.functionN(functionClassTypeArguments.size - 1).typeWith(functionClassTypeArguments)
 
                     addOverride(clazz, suspendFunctionType, functionType)
                 }
@@ -108,7 +108,7 @@ internal class AddFunctionSupertypeToSuspendFunctionLowering(val context: Contex
                         }
                     }
 
-                    val suspendFunctionType = context.symbols.suspendFunctionN(suspendFunctionClassTypeArguments.size - 1).typeWith(suspendFunctionClassTypeArguments)
+                    val suspendFunctionType = context.irBuiltIns.suspendFunctionN(suspendFunctionClassTypeArguments.size - 1).typeWith(suspendFunctionClassTypeArguments)
                     addOverride(clazz, functionType, suspendFunctionType)
                 }
             }
