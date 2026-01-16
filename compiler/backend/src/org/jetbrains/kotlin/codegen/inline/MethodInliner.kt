@@ -1103,10 +1103,10 @@ class MethodInliner(
                 if (methodInsnNode.isCheckParameterIsNotNull()) {
                     val prev = methodInsnNode.previous
                     assert(Opcodes.LDC == prev?.opcode) { "'${methodInsnNode.name}' should go after LDC but $prev" }
-                    val prevPev = methodInsnNode.previous.previous
-                    assert(Opcodes.ALOAD == prevPev?.opcode) { "'${methodInsnNode.name}' should be invoked on local var, but $prev" }
+                    val prevPrev = methodInsnNode.previous.previous
+                    assert(Opcodes.ALOAD == prevPrev?.opcode) { "'${methodInsnNode.name}' should be invoked on local var, but $prevPrev" }
 
-                    toDelete.add(prevPev)
+                    toDelete.add(prevPrev)
                     toDelete.add(prev)
                     toDelete.add(methodInsnNode)
                 }
