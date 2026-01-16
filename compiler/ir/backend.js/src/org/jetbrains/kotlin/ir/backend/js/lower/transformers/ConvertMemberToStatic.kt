@@ -29,15 +29,5 @@ fun transformMemberToStaticFunction(function: IrSimpleFunction, origin: IrDeclar
         visibility = newVisibility,
         typeParametersFromContext = typeParametersFromContext,
         remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
-    ).also {
-        // TODO: move it inside createStaticFunctionWithReceivers
-        it.parameters = emptyList()
-        it.copyValueParametersToStatic(
-            function,
-            origin,
-            customTypeParameterMapping = (typeParametersFromContext + function.typeParameters)
-                .zip(it.typeParameters).toMap()
-        )
-        it.body = function.moveBodyTo(it)
-    }
+    ).also { it.body = function.moveBodyTo(it) }
 }
