@@ -108,5 +108,61 @@ fun box(): String {
     if (interceptions != 6) return "fail 53: $interceptions"
     if (releases != 6) return "fail 54: $releases"
 
+    builder(5, success) { suspend {}(); suspendHereIntercepted() }
+    if (invocations != 6) return "fail 50: $invocations"
+    if (interceptions != 6) return "fail 51: $interceptions"
+    if (releases != 5) return "fail 52: $interceptions"
+    c?.resumeWith(success)
+    if (interceptions != 6) return "fail 53: $interceptions"
+    if (releases != 6) return "fail 54: $releases"
+
+    builder(5, success) { suspend {}(); suspendHereIntercepted() }
+    if (invocations != 6) return "fail 50: $invocations"
+    if (interceptions != 6) return "fail 51: $interceptions"
+    if (releases != 5) return "fail 52: $interceptions"
+    c?.resumeWith(success)
+    if (interceptions != 6) return "fail 53: $interceptions"
+    if (releases != 6) return "fail 54: $releases"
+
+    builder(5, success) { suspend {}(); suspendHereIntercepted() }
+    if (invocations != 6) return "fail 50: $invocations"
+    if (interceptions != 6) return "fail 51: $interceptions"
+    if (releases != 5) return "fail 52: $interceptions"
+    c?.resumeWith(success)
+    if (interceptions != 6) return "fail 53: $interceptions"
+    if (releases != 6) return "fail 54: $releases"
+
+    builder(5, success) { suspend {}(); suspendHereIntercepted() }
+    if (invocations != 6) return "fail 50: $invocations"
+    if (interceptions != 6) return "fail 51: $interceptions"
+    if (releases != 5) return "fail 52: $interceptions"
+    c?.resumeWith(success)
+    if (interceptions != 6) return "fail 53: $interceptions"
+    if (releases != 6) return "fail 54: $releases"
+
+    builder(5, success) { suspend {}(); suspendHereIntercepted() }
+    if (invocations != 6) return "fail 50: $invocations"
+    if (interceptions != 6) return "fail 51: $interceptions"
+    if (releases != 5) return "fail 52: $interceptions"
+    c?.resumeWith(success)
+    if (interceptions != 6) return "fail 53: $interceptions"
+    if (releases != 6) return "fail 54: $releases"
+
+    builder(5, success) { suspend {}(); suspendHereIntercepted() }
+    if (invocations != 6) return "fail 50: $invocations"
+    if (interceptions != 6) return "fail 51: $interceptions"
+    if (releases != 5) return "fail 52: $interceptions"
+    c?.resumeWith(success)
+    if (interceptions != 6) return "fail 53: $interceptions"
+    if (releases != 6) return "fail 54: $releases"
+
+    builder(5, success) { suspend {}(); suspendHereIntercepted() }
+    if (invocations != 6) return "fail 50: $invocations"
+    if (interceptions != 6) return "fail 51: $interceptions"
+    if (releases != 5) return "fail 52: $interceptions"
+    c?.resumeWith(success)
+    if (interceptions != 6) return "fail 53: $interceptions"
+    if (releases != 6) return "fail 54: $releases"
+
     return "OK"
 }
