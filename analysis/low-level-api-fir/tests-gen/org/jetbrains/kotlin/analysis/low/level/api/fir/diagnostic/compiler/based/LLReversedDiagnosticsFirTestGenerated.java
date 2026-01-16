@@ -573,6 +573,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Test
+    @TestMetadata("nestedObjectWithTypeArgumentsInCallableReferenceLHS.kt")
+    public void testNestedObjectWithTypeArgumentsInCallableReferenceLHS() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/nestedObjectWithTypeArgumentsInCallableReferenceLHS.kt");
+    }
+
+    @Test
     @TestMetadata("NestedOfAliasedType.kt")
     public void testNestedOfAliasedType() {
       runTest("compiler/fir/analysis-tests/testData/resolve/NestedOfAliasedType.kt");
@@ -7536,6 +7542,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         @TestMetadata("innerLocalClasses.kt")
         public void testInnerLocalClasses() {
           runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/innerLocalClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("javaInner.kt")
+        public void testJavaInner() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/javaInner.kt");
         }
 
         @Test
