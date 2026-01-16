@@ -16,7 +16,7 @@ fun box(): String {
 
     val i = f<Any, Any>()::class.supertypes.single { it.classifier == I::class }
     val arg = i.arguments.first().type!!
-    if (System.getProperty("kotlin.reflect.jvm.useK1Implementation")?.toBoolean() == true) {
+    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
         // In the descriptor-based implementation, classifier for error type is null.
         assertEquals(null, arg.classifier)
     } else {

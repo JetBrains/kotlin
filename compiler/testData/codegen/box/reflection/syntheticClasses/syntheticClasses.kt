@@ -71,7 +71,7 @@ fun checkKotlinLambda() {
 
     assertEquals(null, klass.qualifiedName)
 
-    if (System.getProperty("kotlin.reflect.jvm.useK1Implementation")?.toBoolean() == true) {
+    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
         // Legacy implementation uses a predefined class with the single supertype `Any`, see `KClassImpl.createSyntheticClass`.
         check(klass, expectedSupertypes = "[kotlin.Any]")
     } else {
@@ -88,7 +88,7 @@ fun checkKotlinLambda() {
 fun checkJavaLambda() {
     val lambda = JavaClass.lambda()
     val klass = lambda::class
-    if (System.getProperty("kotlin.reflect.jvm.useK1Implementation")?.toBoolean() == true) {
+    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
         // Legacy implementation uses a predefined class with the single supertype `Any`, see `KClassImpl.createSyntheticClass`.
         check(klass, expectedSupertypes = "[kotlin.Any]")
     } else {
