@@ -24,8 +24,6 @@ public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
 
     private Type jvmReturnType;
 
-    private JvmMethodParameterKind currentParameterKind;
-
     private int currentSignatureSize = 0;
 
     public JvmSignatureWriter() {
@@ -102,7 +100,6 @@ public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
     }
 
     public void writeParameterType(@NotNull JvmMethodParameterKind parameterKind, boolean isSkippedInGenericSignature) {
-        currentParameterKind = parameterKind;
     }
 
     public void writeParameterTypeEnd() {
@@ -110,7 +107,6 @@ public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
         kotlinParameterTypes.add(getJvmCurrentType());
         currentSignatureSize += getJvmCurrentType().getSize();
 
-        currentParameterKind = null;
         clearCurrentType();
     }
 
