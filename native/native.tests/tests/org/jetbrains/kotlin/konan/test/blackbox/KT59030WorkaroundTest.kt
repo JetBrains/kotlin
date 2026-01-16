@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.writer.KlibWriter
-import org.jetbrains.kotlin.library.writer.asComponentWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
@@ -94,7 +94,7 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
                 versions(oldLibrary.versions)
                 platformAndTargets(BuiltInsPlatform.NATIVE, HostManager.host.name)
             }
-            include(patchedMetadata.asComponentWriter())
+            includeMetadata(patchedMetadata)
             // Note: The IR will be copied from the original library anyway.
         }.writeTo(patchedLibraryTmpDir.path)
 

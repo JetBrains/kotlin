@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.library.impl.KlibIrComponentWriterImpl
 import org.jetbrains.kotlin.library.impl.KlibMetadataComponentWriterImpl
 
 /**
- * An adapter to convert [SerializedMetadata] to [KlibComponentWriter].
+ * A [KlibWriter] DSL extension to include [SerializedMetadata] to the created library.
  */
-fun SerializedMetadata.asComponentWriter(): KlibComponentWriter = KlibMetadataComponentWriterImpl(this)
+fun KlibWriterSpec.includeMetadata(metadata: SerializedMetadata) {
+    include(KlibMetadataComponentWriterImpl(metadata))
+}
 
 /**
  * An adapter to convert [SerializedIrModule] to [KlibComponentWriter]s.
