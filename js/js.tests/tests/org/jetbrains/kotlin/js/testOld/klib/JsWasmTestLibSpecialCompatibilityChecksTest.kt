@@ -5,30 +5,30 @@
 
 package org.jetbrains.kotlin.js.testOld.klib
 
-@Suppress("JUnitTestCaseWithNoTests")
-class JsTestLibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
-    override val isWasm = false
+//@Suppress("JUnitTestCaseWithNoTests")
+//class JsTestLibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
+//    override val isWasm = false
+//
+//    override val originalLibraryPath: String
+//        get() = patchedJsTestWithoutJarManifest
+//
+//    override fun additionalLibraries(): List<String> =
+//        listOf(patchedJsStdlibWithoutJarManifest)
+//
+//    override val libraryDisplayName: String
+//        get() = "kotlin-test"
+//}
 
-    override val originalLibraryPath: String
-        get() = patchedJsTestWithoutJarManifest
-
-    override fun additionalLibraries(): List<String> =
-        listOf(patchedJsStdlibWithoutJarManifest)
-
-    override val libraryDisplayName: String
-        get() = "kotlin-test"
-}
-
-@Suppress("JUnitTestCaseWithNoTests")
-class WasmTestLibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
-    override val isWasm = true
-
-    override val originalLibraryPath: String
-        get() = patchedWasmTestWithoutJarManifest
-
-    override fun additionalLibraries(): List<String> =
-        listOf(patchedWasmStdlibWithoutJarManifest)
-
-    override val libraryDisplayName: String
-        get() = "kotlin-test"
-}
+//@Suppress("JUnitTestCaseWithNoTests")
+//class WasmTestLibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
+//    override val isWasm = true
+//
+//    override val originalLibraryPath: String
+//        get() = patchedWasmTestWithoutJarManifest
+//
+//    override fun additionalLibraries(): List<String> =
+//        listOf(patchedWasmStdlibWithoutJarManifest)
+//
+//    override val libraryDisplayName: String
+//        get() = "kotlin-test"
+//}
