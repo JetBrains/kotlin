@@ -10846,12 +10846,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
-      @TestMetadata("dataObjectDisabled.kt")
-      public void testDataObjectDisabled() {
-        runTest("compiler/testData/diagnostics/tests/dataClasses/dataObjectDisabled.kt");
-      }
-
-      @Test
       @TestMetadata("dataObjectEnabled.kt")
       public void testDataObjectEnabled() {
         runTest("compiler/testData/diagnostics/tests/dataClasses/dataObjectEnabled.kt");

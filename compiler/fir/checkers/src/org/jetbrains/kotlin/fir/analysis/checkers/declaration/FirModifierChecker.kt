@@ -120,11 +120,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             }
             val set = map[modifierToken] ?: emptySet()
             val checkResult = if (factory == FirErrors.WRONG_MODIFIER_TARGET) {
-                actualTargets.none { it in set }
-                        || (modifierToken == DATA_KEYWORD
-                        && actualTargets.contains(KotlinTarget.STANDALONE_OBJECT)
-                        && !LanguageFeature.DataObjects.isEnabled())
-                        || (modifierToken == INLINE_KEYWORD
+                actualTargets.none { it in set } || (modifierToken == INLINE_KEYWORD
                         && actualTargets.contains(KotlinTarget.ENUM_ENTRY)
                         && LanguageFeature.ForbidInlineEnumEntries.isEnabled())
             } else {
