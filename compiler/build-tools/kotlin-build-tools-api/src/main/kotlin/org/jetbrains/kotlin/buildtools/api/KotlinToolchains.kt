@@ -35,6 +35,11 @@ import kotlin.contracts.contract
  *   toolchain.createBuildSession().use { it.executeOperation(operation) }
  *  ```
  *
+ * Please note that currently all `Path`s
+ * passed in as arguments or options in all Build Tools API classes must point to the default [java.nio.file.FileSystem],
+ * as they will be converted to absolute path strings for the compiler.
+ * Using `Path`s on other `FileSystem`s will result in an [UnsupportedOperationException].
+ *
  * @since 2.3.0
  */
 @ExperimentalBuildToolsApi

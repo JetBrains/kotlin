@@ -194,6 +194,29 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
+    fun testNoDirectPathToStringConversion() {
+        val absolutePathStringPattern = Pattern.compile("\\.absolutePathString\\(\\)", Pattern.MULTILINE)
+
+        val targetDirs = listOf(
+            "compiler/build-tools/kotlin-build-tools-api/src",
+            "compiler/build-tools/kotlin-build-tools-api/gen",
+            "compiler/build-tools/kotlin-build-tools-impl/src",
+            "compiler/build-tools/kotlin-build-tools-impl/gen",
+            "compiler/build-tools/kotlin-build-tools-compat/src",
+            "compiler/build-tools/kotlin-build-tools-compat/gen",
+            "compiler/build-tools/kotlin-build-tools-cri-impl/src",
+        )
+
+        targetDirs.map {
+            FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))
+        }.flatten().forEach { sourceFile ->
+            val matcher = absolutePathStringPattern.matcher(sourceFile.readText())
+            if (matcher.find()) {
+                fail("KT-83715 absolutePathString should not be used as it loses information about FileSystem: ${matcher.group()}\nin file: $sourceFile")
+            }
+        }
+    }
+
     fun testParserCode() {
         val pattern = Pattern.compile("assert.*?\\b[^_]at.*?$", Pattern.MULTILINE)
 

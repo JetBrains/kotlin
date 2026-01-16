@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.buildtools.internal.arguments
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
+import org.jetbrains.kotlin.buildtools.internal.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import kotlin.io.path.absolutePathString
 
 internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<CompilerPlugin>) {
     val filteredPlugins = plugins.filter { it.pluginId != RAW_PLUGIN_ID }
     validatePluginsConfiguration(filteredPlugins)
     pluginClasspaths =
-        (pluginClasspaths ?: emptyArray()) + filteredPlugins.flatMap { it.classpath }.map { it.absolutePathString() }.toTypedArray()
+        (pluginClasspaths ?: emptyArray()) + filteredPlugins.flatMap { it.classpath }.map { it.absolutePathStringOrThrow() }.toTypedArray()
     pluginOptions = (pluginOptions
         ?: emptyArray()) + filteredPlugins.flatMap { plugin -> plugin.rawArguments.map { option -> "plugin:${plugin.pluginId}:${option.key}=${option.value}" } }
         .toTypedArray()

@@ -64,7 +64,6 @@ import java.io.Serializable
 import java.net.URLClassLoader
 import java.nio.file.Path
 import java.rmi.RemoteException
-import kotlin.io.path.absolutePathString
 
 internal class JvmCompilationOperationImpl private constructor(
     override val options: Options = Options(JvmCompilationOperation::class),
@@ -244,7 +243,7 @@ internal class JvmCompilationOperationImpl private constructor(
                     shutdownDelayMilliseconds = shutdownDelay
                 }
 
-                runFilesPath = executionPolicy[DAEMON_RUN_DIR_PATH].absolutePathString()
+                runFilesPath = executionPolicy[DAEMON_RUN_DIR_PATH].absolutePathStringOrThrow()
                 additionalJvmArguments += "D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=$runFilesPath"
             })
 
@@ -284,8 +283,8 @@ internal class JvmCompilationOperationImpl private constructor(
             checkJvmFirRequirements(compilerArguments)
         }
         val arguments = compilerArguments.toCompilerArguments()
-        arguments.freeArgs += sources.map { it.absolutePathString() } // TODO: pass the sources explicitly KT-62759
-        arguments.destination = destinationDirectory.absolutePathString()
+        arguments.freeArgs += sources.map { it.absolutePathStringOrThrow() } // TODO: pass the sources explicitly KT-62759
+        arguments.destination = destinationDirectory.absolutePathStringOrThrow()
         val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION) as? JvmSnapshotBasedIncrementalCompilationConfiguration
         val aggregatedIcConfigurationOptions = aggregatedIcConfiguration?.toOptions()
         val rootProjectDir = aggregatedIcConfigurationOptions?.get(ROOT_PROJECT_DIR)
@@ -329,7 +328,7 @@ internal class JvmCompilationOperationImpl private constructor(
         loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
         setupIdeaStandaloneExecution()
         val arguments = compilerArguments.toCompilerArguments().also { compilerArguments ->
-            compilerArguments.destination = destinationDirectory.absolutePathString()
+            compilerArguments.destination = destinationDirectory.absolutePathStringOrThrow()
         }
         val kotlinFilenameExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
         return when (val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION)) {
@@ -350,7 +349,7 @@ internal class JvmCompilationOperationImpl private constructor(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
     ): CompilationResult {
         val compiler = K2JVMCompiler()
-        arguments.freeArgs += sources.map { it.absolutePathString() }
+        arguments.freeArgs += sources.map { it.absolutePathStringOrThrow() }
         val services = Services.Builder().apply {
             register(CompilationCanceledStatus::class.java, cancellationHandle)
             get(LOOKUP_TRACKER)?.let { tracker: CompilerLookupTracker ->
@@ -379,7 +378,7 @@ internal class JvmCompilationOperationImpl private constructor(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
         kotlinFilenameExtensions: Set<String>,
     ): CompilationResult {
-        arguments.freeArgs += sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
+        arguments.freeArgs += sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathStringOrThrow() }
 
         val aggregatedIcConfigurationOptions = toOptions()
         val projectDir = aggregatedIcConfigurationOptions[ROOT_PROJECT_DIR]?.toFile()
