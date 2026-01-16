@@ -54,7 +54,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.SUBT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.THROWS_LIST_EMPTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.UNCHECKED_CAST_TO_FORWARD_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF
 
 object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("FIR") { map ->
@@ -203,6 +205,14 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS,
             "Passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string.",
+        )
+        map.put(
+            VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF,
+            "When calling variadic Objective-C methods spread operator is supported only for *arrayOf(...).",
+        )
+        map.put(
+            VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF,
+            "When calling variadic C functions spread operator is supported only for *arrayOf(...).",
         )
     }
 }
