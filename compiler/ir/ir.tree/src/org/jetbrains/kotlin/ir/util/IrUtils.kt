@@ -1270,31 +1270,19 @@ fun IrFactory.createStaticFunctionWithReceivers(
 
         annotations = oldFunction.annotations
 
-        parameters = oldFunction.parameters.map { oldParam ->
-            val name = when (oldParam.kind) {
-                IrParameterKind.DispatchReceiver -> Name.identifier("\$this")
-                IrParameterKind.ExtensionReceiver -> Name.identifier("\$receiver")
-                IrParameterKind.Context, IrParameterKind.Regular -> oldParam.name
-            }
-            val origin = when (oldParam.kind) {
+        returnType = remap(returnType)
+
+        copyValueParametersToStatic(oldFunction, origin, dispatchReceiverType, typeParameterMap)
+
+        // TODO: think on moving this logic inside [copyValueParametersToStatic]
+        parameters.forEachIndexed { index, parameter ->
+            val oldParam = oldFunction.parameters[index]
+            parameter.origin = when (oldParam.kind) {
                 IrParameterKind.DispatchReceiver -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
                 IrParameterKind.ExtensionReceiver -> IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
                 IrParameterKind.Context -> IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
                 IrParameterKind.Regular -> oldParam.origin
             }
-            val type = if (oldParam.kind == IrParameterKind.DispatchReceiver) {
-                remap(dispatchReceiverType!!)
-            } else {
-                oldParam.type.remapTypeParameters(oldFunction.classIfConstructor, this.classIfConstructor, typeParameterMap)
-            }
-
-            oldParam.copyTo(
-                this@apply,
-                name = name,
-                type = type,
-                origin = origin,
-                kind = IrParameterKind.Regular,
-            )
         }
 
         remapMultiFieldValueClassStructure(oldFunction, this, null)
