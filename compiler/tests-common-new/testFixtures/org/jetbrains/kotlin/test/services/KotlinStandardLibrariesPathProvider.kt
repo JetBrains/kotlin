@@ -180,9 +180,7 @@ interface KotlinStandardLibrariesPathProvider : TestService {
                 kotlinTestJarForTests()
             ).also { loader ->
                 reflectWithNewFakeOverridesJarClassLoader = SoftReference(loader)
-                val clazz = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
-                clazz.getDeclaredField("newFakeOverridesImplementation").apply { isAccessible = true }.set(null, true)
-                check(clazz.getMethod("getNewFakeOverridesImplementation").invoke(null) == true)
+                loader.enableNewFakeOverridesImplementation()
             }
         }
     }
@@ -317,4 +315,10 @@ fun CompilerConfiguration.configureStandardLibs(
         KotlinStandardLibrariesPathProvider::reflectJarForTests,
         arguments
     )
+}
+
+fun ClassLoader.enableNewFakeOverridesImplementation() {
+    val clazz = loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
+    clazz.getDeclaredField("newFakeOverridesImplementation").apply { isAccessible = true }.set(null, true)
+    check(clazz.getMethod("getNewFakeOverridesImplementation").invoke(null) == true)
 }
