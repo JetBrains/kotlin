@@ -1048,7 +1048,7 @@ KaConstructorSymbol:
         isDelegatedProperty: false
         isExpect: false
         isExtension: false
-        isExternal: true
+        isExternal: false
         isFromPrimaryConstructor: true
         isLateInit: false
         isOverride: false

@@ -28,7 +28,7 @@ enum class EnumNotExternal {
 }
 
 class NotExternalC(paramProp2: kotlin.String) {
-  external val paramProp2: kotlin.String
+  val paramProp2: kotlin.String
 
   constructor()
 }
