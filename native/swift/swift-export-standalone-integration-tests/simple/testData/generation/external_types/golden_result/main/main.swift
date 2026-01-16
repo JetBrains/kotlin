@@ -24,8 +24,16 @@ public func consume_nsdate(
 ) -> Swift.Void {
     return __root___consume_nsdate__TypesOfArguments__Foundation_NSDate__(date)
 }
+public func consume_nsurlcredential(
+    credential: Foundation.URLCredential
+) -> Swift.Void {
+    return __root___consume_nsurlcredential__TypesOfArguments__Foundation_URLCredential__(credential)
+}
 public func produce_nsdate() -> Foundation.NSDate {
     return __root___produce_nsdate() as! Foundation.NSDate
+}
+public func produce_nsurlcredential() -> Foundation.URLCredential {
+    return __root___produce_nsurlcredential() as! Foundation.URLCredential
 }
 public func produce_typealias() -> Swift.Never {
     fatalError()

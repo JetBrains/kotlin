@@ -18,3 +18,8 @@ fun produce_typealias(): platform.Foundation.NSTimeInterval = TODO()
 var store_cgReck: platform.CoreGraphics.CGRect
     get() = TODO()
     set(newValue) = TODO()
+
+// NSURLCredential has SwiftName: URLCredential in API Notes
+fun produce_nsurlcredential(): platform.Foundation.NSURLCredential = TODO()
+
+fun consume_nsurlcredential(credential: platform.Foundation.NSURLCredential): Unit = TODO()

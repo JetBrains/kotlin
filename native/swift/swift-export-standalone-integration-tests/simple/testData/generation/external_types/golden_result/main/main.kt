@@ -10,9 +10,21 @@ public fun __root___consume_nsdate__TypesOfArguments__Foundation_NSDate__(date: 
     consume_nsdate(__date)
 }
 
+@ExportedBridge("__root___consume_nsurlcredential__TypesOfArguments__Foundation_URLCredential__")
+public fun __root___consume_nsurlcredential__TypesOfArguments__Foundation_URLCredential__(credential: kotlin.native.internal.NativePtr): Unit {
+    val __credential = interpretObjCPointer<platform.Foundation.NSURLCredential>(credential)
+    consume_nsurlcredential(__credential)
+}
+
 @ExportedBridge("__root___produce_nsdate")
 public fun __root___produce_nsdate(): kotlin.native.internal.NativePtr {
     val _result = produce_nsdate()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("__root___produce_nsurlcredential")
+public fun __root___produce_nsurlcredential(): kotlin.native.internal.NativePtr {
+    val _result = produce_nsurlcredential()
     return _result.objcPtr()
 }
 
