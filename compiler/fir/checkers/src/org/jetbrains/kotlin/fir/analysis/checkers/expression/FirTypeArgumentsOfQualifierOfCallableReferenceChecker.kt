@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.FE10LikeConeSubstitutor
@@ -38,19 +39,11 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
     private val innerClassesProperlySupported: Boolean
         get() = LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS.isEnabled()
 
+    /**
+     * @return true if **error** was reported
+     */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirCallableReferenceAccess) {
-        val lhs = expression.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
-        val correspondingDeclaration = lhs.symbol ?: return
-
-        for (argument in lhs.typeArguments) {
-            val errorTypeRef = (argument as? FirTypeProjectionWithVariance)?.typeRef as? FirErrorTypeRef ?: continue
-
-            if (errorTypeRef.diagnostic is ConePlaceholderProjectionInQualifierResolution) {
-                reporter.reportOn(argument.source, FirErrors.PLACEHOLDER_PROJECTION_IN_QUALIFIER)
-            }
-        }
-
+    private fun checkNonFatalDiagnostics(expression: FirCallableReferenceAccess, lhs: FirResolvedQualifier): Boolean {
         for (diagnostic in expression.nonFatalDiagnostics) {
             when (diagnostic) {
                 is ConeWrongNumberOfTypeArgumentsError -> {
@@ -71,6 +64,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                         diagnostic.source, factory, diagnostic.desiredCount, diagnostic.symbol,
                         positioningStrategy = positioning,
                     )
+                    if (factory.severity == Severity.ERROR) return true
                 }
                 is ConeOuterClassArgumentsRequired -> {
                     reporter.reportOn(
@@ -78,9 +72,27 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                         FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED,
                         diagnostic.symbol,
                     )
+                    return true
                 }
             }
         }
+        return false
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirCallableReferenceAccess) {
+        val lhs = expression.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
+        val correspondingDeclaration = lhs.symbol ?: return
+
+        for (argument in lhs.typeArguments) {
+            val errorTypeRef = (argument as? FirTypeProjectionWithVariance)?.typeRef as? FirErrorTypeRef ?: continue
+
+            if (errorTypeRef.diagnostic is ConePlaceholderProjectionInQualifierResolution) {
+                reporter.reportOn(argument.source, FirErrors.PLACEHOLDER_PROJECTION_IN_QUALIFIER)
+            }
+        }
+
+        if (checkNonFatalDiagnostics(expression, lhs)) return
 
         var typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
         var typeParameterSymbols = when {
@@ -102,8 +114,6 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                 correspondingDeclaration.classTypeParameterSymbols
             }
         }
-
-        if (typeArgumentsWithSourceInfo.size != typeParameterSymbols.size) return
 
         if (correspondingDeclaration is FirTypeAliasSymbol) {
             val qualifierType = correspondingDeclaration.constructType(typeArgumentsWithSourceInfo.toTypedArray())
