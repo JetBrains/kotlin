@@ -106,6 +106,53 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     public val KtExpression.isUsedAsResultOfLambda: Boolean
+
+    /**
+     * Indicates whether this expression (property reference) is [stable](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability) for smart casting purposes.
+     *
+     * An expression is considered stable if its value cannot be changed via means external to the control flow graph
+     * at the current program point. Stability is a prerequisite for smart casts: only stable expressions can be
+     * smart-cast after a type check.
+     *
+     * #### Stable expressions
+     *
+     * The following expressions are considered stable (`isStable == true`):
+     *
+     *   - Immutable local variables (`val`) without delegation or custom getters
+     *   - Mutable local variables (`var`) that are *effectively immutable* at the usage site (i.e., not modified
+     *     between the type check and usage, and not captured by a modifying closure)
+     *   - Immutable properties (`val`) without delegation, custom getters, or `open` modifier, when accessed
+     *     on a stable receiver within the same module
+     *
+     * #### Unstable expressions
+     *
+     * The following expressions are considered unstable (`isStable == false`):
+     *
+     *   - Mutable properties (`var`)
+     *   - Properties with custom getters
+     *   - Delegated properties
+     *   - `open` properties (may be overridden with a custom getter)
+     *   - Properties from other modules (may have different implementation at runtime)
+     *   - Mutable local variables captured and modified by a closure
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * class Container(val value: Any)
+     *
+     * open class OpenContainer(open val value: Any)
+     *
+     * fun test(c: Container, oc: OpenContainer) {
+     *     val local: Any = ""
+     *
+     *     // local.isStable == true (immutable local val)
+     *     // c.value.isStable == true (final val in same module)
+     *     // oc.value.isStable == false (open property)
+     * }
+     * ```
+     */
+    @KaExperimentalApi
+    public val KtExpression.isStable: Boolean
 }
 
 /**
@@ -216,3 +263,54 @@ public val KtExpression.isUsedAsExpression: Boolean
 context(session: KaSession)
 public val KtExpression.isUsedAsResultOfLambda: Boolean
     get() = with(session) { isUsedAsResultOfLambda }
+
+/**
+ * Indicates whether this expression (property reference) is [stable](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability) for smart casting purposes.
+ *
+ * An expression is considered stable if its value cannot be changed via means external to the control flow graph
+ * at the current program point. Stability is a prerequisite for smart casts: only stable expressions can be
+ * smart-cast after a type check.
+ *
+ * #### Stable expressions
+ *
+ * The following expressions are considered stable (`isStable == true`):
+ *
+ *   - Immutable local variables (`val`) without delegation or custom getters
+ *   - Mutable local variables (`var`) that are *effectively immutable* at the usage site (i.e., not modified
+ *     between the type check and usage, and not captured by a modifying closure)
+ *   - Immutable properties (`val`) without delegation, custom getters, or `open` modifier, when accessed
+ *     on a stable receiver within the same module
+ *
+ * #### Unstable expressions
+ *
+ * The following expressions are considered unstable (`isStable == false`):
+ *
+ *   - Mutable properties (`var`)
+ *   - Properties with custom getters
+ *   - Delegated properties
+ *   - `open` properties (may be overridden with a custom getter)
+ *   - Properties from other modules (may have different implementation at runtime)
+ *   - Mutable local variables captured and modified by a closure
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * class Container(val value: Any)
+ *
+ * open class OpenContainer(open val value: Any)
+ *
+ * fun test(c: Container, oc: OpenContainer) {
+ *     val local: Any = ""
+ *
+ *     // local.isStable == true (immutable local val)
+ *     // c.value.isStable == true (final val in same module)
+ *     // oc.value.isStable == false (open property)
+ * }
+ * ```
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public val KtExpression.isStable: Boolean
+    get() = with(session) { isStable }
