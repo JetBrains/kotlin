@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.utils.getAttributeSafely
 import org.jetbrains.kotlin.gradle.utils.isAllGradleProjectsEvaluated
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.projectPathCompat
+import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import kotlin.collections.forEach
 
@@ -49,8 +50,7 @@ internal fun KotlinTargetSoftwareComponent(
             val project: Project = target.project
             val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
             val configuration = project.configurations.maybeCreateDependencyScope(publishedConfigurationName) {
-                @Suppress("DEPRECATION")
-                isVisible = false
+                setInvisibleIfSupported()
                 if (project.kotlinPropertiesProvider.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs) {
                     filterOutNonResolvableDependenciesForStandardKmpResolution(project, kotlinUsageContext)
                 } else {

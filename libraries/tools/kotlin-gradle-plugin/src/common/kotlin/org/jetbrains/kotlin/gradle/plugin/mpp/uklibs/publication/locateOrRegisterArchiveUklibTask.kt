@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
+import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 
 internal const val UKLIB_API_ELEMENTS_NAME = "uklibApiElements"
 internal const val UKLIB_RUNTIME_ELEMENTS_NAME = "uklibRuntimeElements"
@@ -67,8 +68,12 @@ internal fun Project.locateOrRegisterUklibManifestSerializationWithoutCompilatio
     }
 }
 
-internal fun Project.maybeCreateUklibApiElements() = configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME)
-internal fun Project.maybeCreateUklibRuntimeElements() = configurations.maybeCreateConsumable(UKLIB_RUNTIME_ELEMENTS_NAME)
+internal fun Project.maybeCreateUklibApiElements() = configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME).apply {
+    setInvisibleIfSupported()
+}
+internal fun Project.maybeCreateUklibRuntimeElements() = configurations.maybeCreateConsumable(UKLIB_RUNTIME_ELEMENTS_NAME).apply {
+    setInvisibleIfSupported()
+}
 
 private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
     archiveTask: TaskProvider<ArchiveUklibTask>,
@@ -84,8 +89,6 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
             attribute(isUklib, isUklibTrue)
         }
         inheritCompilationDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
-        @Suppress("DEPRECATION")
-        isVisible = false
     }
 
     val metadataCompilations = publishedCompilations.filter { it.compilation.platformType == KotlinPlatformType.common }
@@ -124,8 +127,6 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
             attribute(isUklib, isUklibTrue)
         }
         inheritRuntimeDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
-        @Suppress("DEPRECATION")
-        isVisible = false
     }
 
     /**
