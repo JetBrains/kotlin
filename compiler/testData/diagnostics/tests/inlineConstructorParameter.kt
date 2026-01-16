@@ -3,7 +3,7 @@
 // LANGUAGE: -ProhibitInlineModifierOnPrimaryConstructorParameters
 // WITH_STDLIB
 
-enum class Foo(open inline /* no effect */ val bar: String) {
+enum class Foo(open <!WRONG_MODIFIER_TARGET!>inline<!> /* no effect */ val bar: String) {
     A("super") {
         override val bar: String
             get() = super.bar + " overridden"

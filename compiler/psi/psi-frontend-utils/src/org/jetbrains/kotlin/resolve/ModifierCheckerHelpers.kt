@@ -137,29 +137,29 @@ val featureDependenciesTargets = mapOf(
     LanguageFeature.JvmInlineValueClasses to setOf(KotlinTarget.CLASS_ONLY),
 )
 
-val defaultVisibilityTargets: EnumSet<KotlinTarget> = EnumSet.of(
+val defaultVisibilityTargetPredicate = always(
     KotlinTarget.CLASS_ONLY, KotlinTarget.OBJECT, KotlinTarget.INTERFACE, KotlinTarget.ENUM_CLASS, KotlinTarget.ANNOTATION_CLASS,
     KotlinTarget.MEMBER_FUNCTION, KotlinTarget.TOP_LEVEL_FUNCTION, KotlinTarget.PROPERTY_GETTER, KotlinTarget.PROPERTY_SETTER,
     KotlinTarget.MEMBER_PROPERTY, KotlinTarget.TOP_LEVEL_PROPERTY, KotlinTarget.CONSTRUCTOR, KotlinTarget.TYPEALIAS,
 )
 
-val possibleTargetMap = mapOf(
-    ENUM_KEYWORD to EnumSet.of(KotlinTarget.ENUM_CLASS),
-    ABSTRACT_KEYWORD to EnumSet.of(
+val possibleTargetPredicateMap = mapOf(
+    ENUM_KEYWORD to always(KotlinTarget.ENUM_CLASS),
+    ABSTRACT_KEYWORD to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.LOCAL_CLASS,
         KotlinTarget.INTERFACE,
         KotlinTarget.MEMBER_PROPERTY,
         KotlinTarget.MEMBER_FUNCTION
     ),
-    OPEN_KEYWORD to EnumSet.of(
+    OPEN_KEYWORD to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.LOCAL_CLASS,
         KotlinTarget.INTERFACE,
         KotlinTarget.MEMBER_PROPERTY,
         KotlinTarget.MEMBER_FUNCTION
     ),
-    FINAL_KEYWORD to EnumSet.of(
+    FINAL_KEYWORD to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.LOCAL_CLASS,
         KotlinTarget.ENUM_CLASS,
@@ -167,13 +167,13 @@ val possibleTargetMap = mapOf(
         KotlinTarget.MEMBER_PROPERTY,
         KotlinTarget.MEMBER_FUNCTION
     ),
-    SEALED_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.INTERFACE),
-    INNER_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY),
-    OVERRIDE_KEYWORD to EnumSet.of(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.MEMBER_FUNCTION),
-    PRIVATE_KEYWORD to defaultVisibilityTargets,
-    PUBLIC_KEYWORD to defaultVisibilityTargets,
-    INTERNAL_KEYWORD to defaultVisibilityTargets,
-    PROTECTED_KEYWORD to EnumSet.of(
+    SEALED_KEYWORD to always(KotlinTarget.CLASS_ONLY, KotlinTarget.INTERFACE),
+    INNER_KEYWORD to always(KotlinTarget.CLASS_ONLY),
+    OVERRIDE_KEYWORD to always(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.MEMBER_FUNCTION),
+    PRIVATE_KEYWORD to defaultVisibilityTargetPredicate,
+    PUBLIC_KEYWORD to defaultVisibilityTargetPredicate,
+    INTERNAL_KEYWORD to defaultVisibilityTargetPredicate,
+    PROTECTED_KEYWORD to always(
         KotlinTarget.CLASS_ONLY,
         KotlinTarget.OBJECT,
         KotlinTarget.INTERFACE,
@@ -186,45 +186,57 @@ val possibleTargetMap = mapOf(
         KotlinTarget.CONSTRUCTOR,
         KotlinTarget.TYPEALIAS
     ),
-    IN_KEYWORD to EnumSet.of(KotlinTarget.TYPE_PARAMETER, KotlinTarget.TYPE_PROJECTION),
-    OUT_KEYWORD to EnumSet.of(KotlinTarget.TYPE_PARAMETER, KotlinTarget.TYPE_PROJECTION),
-    REIFIED_KEYWORD to EnumSet.of(KotlinTarget.TYPE_PARAMETER),
-    VARARG_KEYWORD to EnumSet.of(KotlinTarget.VALUE_PARAMETER, KotlinTarget.PROPERTY_PARAMETER),
-    COMPANION_KEYWORD to EnumSet.of(KotlinTarget.OBJECT),
-    LATEINIT_KEYWORD to EnumSet.of(
+    IN_KEYWORD to always(KotlinTarget.TYPE_PARAMETER, KotlinTarget.TYPE_PROJECTION),
+    OUT_KEYWORD to always(KotlinTarget.TYPE_PARAMETER, KotlinTarget.TYPE_PROJECTION),
+    REIFIED_KEYWORD to always(KotlinTarget.TYPE_PARAMETER),
+    VARARG_KEYWORD to always(KotlinTarget.VALUE_PARAMETER, KotlinTarget.PROPERTY_PARAMETER),
+    COMPANION_KEYWORD to always(KotlinTarget.OBJECT),
+    LATEINIT_KEYWORD to always(
         KotlinTarget.MEMBER_PROPERTY,
         KotlinTarget.TOP_LEVEL_PROPERTY,
         KotlinTarget.LOCAL_VARIABLE,
     ),
-    DATA_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.STANDALONE_OBJECT),
-    INLINE_KEYWORD to EnumSet.of(
-        KotlinTarget.FUNCTION,
-        KotlinTarget.PROPERTY,
-        KotlinTarget.PROPERTY_GETTER,
-        KotlinTarget.PROPERTY_SETTER,
-        KotlinTarget.CLASS_ONLY
+    DATA_KEYWORD to always(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.STANDALONE_OBJECT),
+    INLINE_KEYWORD to or(
+        always(
+            KotlinTarget.FUNCTION,
+            KotlinTarget.MEMBER_PROPERTY_WITH_DELEGATE,
+            KotlinTarget.MEMBER_PROPERTY_WITHOUT_FIELD_OR_DELEGATE,
+            KotlinTarget.TOP_LEVEL_PROPERTY,
+            KotlinTarget.PROPERTY_GETTER,
+            KotlinTarget.PROPERTY_SETTER,
+            KotlinTarget.CLASS_ONLY
+        ),
+        ifUnsupported(
+            LanguageFeature.ForbidInlineEnumEntries,
+            KotlinTarget.ENUM_ENTRY
+        ),
+        ifUnsupported(
+            LanguageFeature.ProhibitInlineModifierOnPrimaryConstructorParameters,
+            KotlinTarget.PROPERTY_PARAMETER
+        )
     ),
-    NOINLINE_KEYWORD to EnumSet.of(KotlinTarget.VALUE_PARAMETER),
-    TAILREC_KEYWORD to EnumSet.of(KotlinTarget.FUNCTION),
-    SUSPEND_KEYWORD to EnumSet.of(
+    NOINLINE_KEYWORD to always(KotlinTarget.VALUE_PARAMETER),
+    TAILREC_KEYWORD to always(KotlinTarget.FUNCTION),
+    SUSPEND_KEYWORD to always(
         KotlinTarget.MEMBER_FUNCTION,
         KotlinTarget.TOP_LEVEL_FUNCTION,
         KotlinTarget.LOCAL_FUNCTION,
         KotlinTarget.ANONYMOUS_FUNCTION
     ),
-    EXTERNAL_KEYWORD to EnumSet.of(
+    EXTERNAL_KEYWORD to always(
         KotlinTarget.FUNCTION,
         KotlinTarget.PROPERTY,
         KotlinTarget.PROPERTY_GETTER,
         KotlinTarget.PROPERTY_SETTER,
         KotlinTarget.CLASS
     ),
-    ANNOTATION_KEYWORD to EnumSet.of(KotlinTarget.ANNOTATION_CLASS),
-    CROSSINLINE_KEYWORD to EnumSet.of(KotlinTarget.VALUE_PARAMETER),
-    CONST_KEYWORD to EnumSet.of(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.TOP_LEVEL_PROPERTY),
-    OPERATOR_KEYWORD to EnumSet.of(KotlinTarget.FUNCTION),
-    INFIX_KEYWORD to EnumSet.of(KotlinTarget.FUNCTION),
-    EXPECT_KEYWORD to EnumSet.of(
+    ANNOTATION_KEYWORD to always(KotlinTarget.ANNOTATION_CLASS),
+    CROSSINLINE_KEYWORD to always(KotlinTarget.VALUE_PARAMETER),
+    CONST_KEYWORD to always(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.TOP_LEVEL_PROPERTY),
+    OPERATOR_KEYWORD to always(KotlinTarget.FUNCTION),
+    INFIX_KEYWORD to always(KotlinTarget.FUNCTION),
+    EXPECT_KEYWORD to always(
         KotlinTarget.TOP_LEVEL_FUNCTION,
         KotlinTarget.TOP_LEVEL_PROPERTY,
         KotlinTarget.CLASS_ONLY,
@@ -233,7 +245,7 @@ val possibleTargetMap = mapOf(
         KotlinTarget.ENUM_CLASS,
         KotlinTarget.ANNOTATION_CLASS
     ),
-    ACTUAL_KEYWORD to EnumSet.of(
+    ACTUAL_KEYWORD to always(
         KotlinTarget.TOP_LEVEL_FUNCTION,
         KotlinTarget.MEMBER_FUNCTION,
         KotlinTarget.TOP_LEVEL_PROPERTY,
@@ -246,12 +258,17 @@ val possibleTargetMap = mapOf(
         KotlinTarget.ANNOTATION_CLASS,
         KotlinTarget.TYPEALIAS
     ),
-    FUN_KEYWORD to EnumSet.of(KotlinTarget.INTERFACE),
-    VALUE_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY)
+    FUN_KEYWORD to always(KotlinTarget.INTERFACE),
+    VALUE_KEYWORD to always(KotlinTarget.CLASS_ONLY)
 )
 
 // NOTE: deprecated targets must be possible!
-val deprecatedTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>()
+val deprecatedTargetPredicateMap = mapOf(
+    INLINE_KEYWORD to ifUnsupported(
+        LanguageFeature.ForbidInlineEnumEntries,
+        KotlinTarget.ENUM_ENTRY
+    ),
+)
 
 val deprecatedParentTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>()
 
@@ -266,14 +283,14 @@ interface TargetAllowedPredicate {
     fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings): Boolean
 }
 
-fun always(target: KotlinTarget, vararg targets: KotlinTarget) = object : TargetAllowedPredicate {
+fun always(target: KotlinTarget, vararg targets: KotlinTarget): TargetAllowedPredicate = object : TargetAllowedPredicate {
     private val targetSet = EnumSet.of(target, *targets)
 
     override fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings) =
         target in targetSet
 }
 
-fun ifSupported(languageFeature: LanguageFeature, target: KotlinTarget, vararg targets: KotlinTarget) =
+fun ifSupported(languageFeature: LanguageFeature, target: KotlinTarget, vararg targets: KotlinTarget): TargetAllowedPredicate =
     object : TargetAllowedPredicate {
         private val targetSet = EnumSet.of(target, *targets)
 
@@ -281,10 +298,17 @@ fun ifSupported(languageFeature: LanguageFeature, target: KotlinTarget, vararg t
             languageVersionSettings.supportsFeature(languageFeature) && target in targetSet
     }
 
-fun or(p1: TargetAllowedPredicate, p2: TargetAllowedPredicate) = object : TargetAllowedPredicate {
+fun ifUnsupported(languageFeature: LanguageFeature, target: KotlinTarget, vararg targets: KotlinTarget): TargetAllowedPredicate =
+    object : TargetAllowedPredicate {
+        private val targetSet = EnumSet.of(target, *targets)
+
+        override fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings) =
+            !languageVersionSettings.supportsFeature(languageFeature) && target in targetSet
+    }
+
+fun or(vararg p: TargetAllowedPredicate): TargetAllowedPredicate = object : TargetAllowedPredicate {
     override fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings) =
-        p1.isAllowed(target, languageVersionSettings) ||
-                p2.isAllowed(target, languageVersionSettings)
+        p.any { it.isAllowed(target, languageVersionSettings) }
 }
 
 val possibleParentTargetPredicateMap = mapOf(
