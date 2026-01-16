@@ -2322,17 +2322,18 @@ org.jetbrains.kotlin.resolve.allowedInContextParameters
 org.jetbrains.kotlin.resolve.always(KotlinTarget, KotlinTarget)
 org.jetbrains.kotlin.resolve.compatibility(KtKeywordToken, KtKeywordToken)
 org.jetbrains.kotlin.resolve.compatibilityTypeMap
-org.jetbrains.kotlin.resolve.defaultVisibilityTargets
+org.jetbrains.kotlin.resolve.defaultVisibilityTargetPredicate
 org.jetbrains.kotlin.resolve.deprecatedParentTargetMap
-org.jetbrains.kotlin.resolve.deprecatedTargetMap
+org.jetbrains.kotlin.resolve.deprecatedTargetPredicateMap
 org.jetbrains.kotlin.resolve.featureDependencies
 org.jetbrains.kotlin.resolve.featureDependenciesTargets
 org.jetbrains.kotlin.resolve.filterStatements(KtBlockExpression)
 org.jetbrains.kotlin.resolve.getLastStatementInABlock(KtBlockExpression)
 org.jetbrains.kotlin.resolve.ifSupported(LanguageFeature, KotlinTarget, KotlinTarget)
-org.jetbrains.kotlin.resolve.or(TargetAllowedPredicate, TargetAllowedPredicate)
+org.jetbrains.kotlin.resolve.ifUnsupported(LanguageFeature, KotlinTarget, KotlinTarget)
+org.jetbrains.kotlin.resolve.or(TargetAllowedPredicate)
 org.jetbrains.kotlin.resolve.possibleParentTargetPredicateMap
-org.jetbrains.kotlin.resolve.possibleTargetMap
+org.jetbrains.kotlin.resolve.possibleTargetPredicateMap
 org.jetbrains.kotlin.resolve.redundantTargetMap
 org.jetbrains.kotlin.resolve.source.PsiSourceElement
 org.jetbrains.kotlin.resolve.source.PsiSourceElement.psi
