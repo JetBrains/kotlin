@@ -34958,6 +34958,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("inCallableReferenceLHS.kt")
+    public void testInCallableReferenceLHS() {
+      runTest("compiler/testData/codegen/box/innerClass/inCallableReferenceLHS.kt");
+    }
+
+    @Test
     @TestMetadata("inheritanceMultipleModules1.kt")
     public void testInheritanceMultipleModules1() {
       runTest("compiler/testData/codegen/box/innerClass/inheritanceMultipleModules1.kt");
@@ -41789,6 +41795,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @TestMetadata("defaultParameterInConstructor.kt")
     public void testDefaultParameterInConstructor() {
       runTest("compiler/testData/codegen/box/localClasses/defaultParameterInConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("inCallableReferenceLHS.kt")
+    public void testInCallableReferenceLHS() {
+      runTest("compiler/testData/codegen/box/localClasses/inCallableReferenceLHS.kt");
     }
 
     @Test
