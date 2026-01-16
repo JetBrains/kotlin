@@ -117,5 +117,11 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED by error<KtElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirBasedSymbol<*>>("method")
         }
+        val CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED by error<KtElement> {
+            parameter<FirBasedSymbol<*>>("function")
+        }
+        val CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED by error<KtElement> {
+            parameter<FirBasedSymbol<*>>("function")
+        }
     }
 }
