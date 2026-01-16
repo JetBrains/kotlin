@@ -79,10 +79,10 @@ enabledTargets(platformManager).forEach { target ->
             updateDefFileTasksPerFamily[target.family]?.let { dependsOn(it) }
 
             if (kotlinBuildProperties.buildPlatformLibsByBootstrapCompiler) {
-                this.compilerDistribution.set(nativeBootstrapDistribution)
+                this.compilerDistributionRoot.set(nativeBootstrapDistribution.map { it.root })
             } else {
                 // Requires Native distribution with compiler JARs and stdlib klib.
-                this.compilerDistribution.set(nativeDistribution)
+                this.compilerDistributionRoot.set(nativeDistribution.map { it.root })
                 dependsOn(":kotlin-native:distCompiler")
                 dependsOn(":kotlin-native:distStdlib")
             }
@@ -140,7 +140,7 @@ enabledTargets(platformManager).forEach { target ->
                 val dist = nativeDistribution
 
                 // Requires Native distribution with stdlib klib and its cache for `targetName`.
-                this.compilerDistribution.set(dist)
+                this.compilerDistributionRoot.set(dist.map { it.root })
                 dependsOn(":kotlin-native:${targetName}CrossDist")
                 // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
                 mustRunAfter(":kotlin-native:distInvalidateStaleCaches")

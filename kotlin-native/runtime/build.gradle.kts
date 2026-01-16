@@ -739,7 +739,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
     group = BasePlugin.BUILD_GROUP
     description = "Build the Kotlin/Native standard library"
 
-    this.compilerDistribution.set(nativeBootstrapDistribution)
+    this.compilerDistributionRoot.set(nativeBootstrapDistribution.map { it.root })
 
     this.outputDirectory.set(
             layout.buildDirectory.dir("stdlib/${HostManager.hostName}/stdlib")
@@ -812,7 +812,7 @@ cacheableTargetNames.forEach { targetName ->
         val dist = nativeDistribution
 
         // Requires Native distribution with stdlib klib and runtime modules for `targetName`.
-        this.compilerDistribution.set(dist)
+        this.compilerDistributionRoot.set(dist.map { it.root })
         dependsOn(":kotlin-native:distCompiler")
         dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
         inputs.dir(dist.map { it.runtime(targetName) }) // manually depend on runtime modules (stdlib cache links these modules in)

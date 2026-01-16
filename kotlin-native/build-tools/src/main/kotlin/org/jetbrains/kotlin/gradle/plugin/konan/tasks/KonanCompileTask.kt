@@ -23,8 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunnerIsolatedClassLoade
 import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
 import org.jetbrains.kotlin.gradle.plugin.konan.runKonanTool
-import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
-import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import java.io.File
 import javax.inject.Inject
 
@@ -94,7 +93,9 @@ open class KonanCompileTask @Inject constructor(
     val extraOpts: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
     @get:Internal("Depends only upon the compiler classpath, because compiles into klib only")
-    val compilerDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+    val compilerDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
+
+    private val compilerDistribution = compilerDistributionRoot.asNativeDistribution()
 
     @get:Classpath
     protected val compilerClasspath = compilerDistribution.map { it.compilerClasspath }

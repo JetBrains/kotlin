@@ -23,8 +23,7 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.konan.target.AbstractToolConfig
-import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
-import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import javax.inject.Inject
 
 private val load0 = Runtime::class.java.getDeclaredMethod("load0", Class::class.java, String::class.java).also {
@@ -34,13 +33,13 @@ private val load0 = Runtime::class.java.getDeclaredMethod("load0", Class::class.
 private abstract class KonanInteropInProcessAction @Inject constructor() : WorkAction<KonanInteropInProcessAction.Parameters> {
     interface Parameters : WorkParameters {
         val isolatedClassLoadersService: Property<KonanCliRunnerIsolatedClassLoadersService>
-        val compilerDistribution: NativeDistributionProperty
+        val compilerDistributionRoot: DirectoryProperty
         val target: Property<String>
         val args: ListProperty<String>
     }
 
     override fun execute() {
-        val dist = parameters.compilerDistribution.get()
+        val dist = parameters.compilerDistributionRoot.asNativeDistribution().get()
         object : AbstractToolConfig(dist.root.asFile.absolutePath, parameters.target.get(), emptyMap()) {
             override fun loadLibclang() {
                 // Load libclang into the system class loader. This is needed to allow developers to make changes
@@ -49,7 +48,7 @@ private abstract class KonanInteropInProcessAction @Inject constructor() : WorkA
                 load0.invoke(Runtime.getRuntime(), String::class.java, libclang)
             }
         }.prepare()
-        parameters.isolatedClassLoadersService.get().getClassLoader(parameters.compilerDistribution.get().compilerClasspath.files).runKonanTool(
+        parameters.isolatedClassLoadersService.get().getClassLoader(parameters.compilerDistributionRoot.asNativeDistribution().get().compilerClasspath.files).runKonanTool(
                 toolName = "cinterop",
                 args = parameters.args.get(),
                 useArgFile = false,
@@ -62,12 +61,12 @@ private abstract class KonanInteropOutOfProcessAction @Inject constructor(
         private val execOperations: ExecOperations,
 ) : WorkAction<KonanInteropOutOfProcessAction.Parameters> {
     interface Parameters : WorkParameters {
-        val compilerDistribution: NativeDistributionProperty
+        val compilerDistributionRoot: DirectoryProperty
         val args: ListProperty<String>
     }
 
     override fun execute() {
-        val cinterop = parameters.compilerDistribution.get().cinterop
+        val cinterop = parameters.compilerDistributionRoot.asNativeDistribution().get().cinterop
         execOperations.exec {
             if (PlatformInfo.isWindows()) {
                 commandLine("cmd.exe", "/d", "/c", cinterop, *parameters.args.get().toTypedArray())
@@ -105,7 +104,9 @@ open class KonanInteropTask @Inject constructor(
     val defFile: RegularFileProperty = objectFactory.fileProperty()
 
     @get:Internal("Depends upon the compiler classpath, native libraries (for StubGenerator) and konan.properties (compilation flags + dependencies)")
-    val compilerDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+    val compilerDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
+
+    private val compilerDistribution = compilerDistributionRoot.asNativeDistribution()
 
     @get:Classpath
     @Suppress("unused")
@@ -160,13 +161,13 @@ open class KonanInteropTask @Inject constructor(
         if (allowRunningCInteropInProcess) {
             workQueue.submit(KonanInteropInProcessAction::class.java) {
                 this.isolatedClassLoadersService.set(this@KonanInteropTask.isolatedClassLoadersService)
-                this.compilerDistribution.set(this@KonanInteropTask.compilerDistribution)
+                this.compilerDistributionRoot.set(this@KonanInteropTask.compilerDistributionRoot)
                 this.target.set(this@KonanInteropTask.target)
                 this.args.addAll(args)
             }
         } else {
             workQueue.submit(KonanInteropOutOfProcessAction::class.java) {
-                this.compilerDistribution.set(this@KonanInteropTask.compilerDistribution)
+                this.compilerDistributionRoot.set(this@KonanInteropTask.compilerDistributionRoot)
                 this.args.addAll(args)
             }
         }

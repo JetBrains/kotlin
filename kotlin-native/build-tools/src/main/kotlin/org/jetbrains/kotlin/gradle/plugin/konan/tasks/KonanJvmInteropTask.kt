@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.cpp.CppHeadersSet
 import org.jetbrains.kotlin.cpp.cppHeadersSet
 import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import org.jetbrains.kotlin.platformManagerProvider
 import java.io.File
 import javax.inject.Inject
@@ -49,7 +49,7 @@ private abstract class KonanJvmInteropAction @Inject constructor(
         val defFile: RegularFileProperty
         val compilerOpts: ListProperty<String>
         val outputDirectory: DirectoryProperty
-        val distribution: NativeDistributionProperty
+        val distributionRoot: DirectoryProperty
         val propertiesOverride: MapProperty<String, String>
         val platformManager: Property<PlatformManager>
     }
@@ -62,7 +62,7 @@ private abstract class KonanJvmInteropAction @Inject constructor(
             mainClass.set("org.jetbrains.kotlin.native.interop.gen.jvm.MainKt")
             jvmArgs("-ea")
             systemProperty("java.library.path", parameters.interopStubGeneratorNativeLibraries.files.joinToString(File.pathSeparator) { it.parentFile.absolutePath })
-            systemProperty("konan.home", parameters.distribution.get().root.asFile.absolutePath)
+            systemProperty("konan.home", parameters.distributionRoot.asNativeDistribution().get().root.asFile.absolutePath)
             environment("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
             environment("PATH", (hostPlatform.clang.clangPaths + environment["PATH"]).joinToString(File.pathSeparator))
             args("-generated", outputDirectory.dir("kotlin").asFile.absolutePath)
@@ -145,7 +145,7 @@ open class KonanJvmInteropTask @Inject constructor(
             this.compilerOpts.set(this@KonanJvmInteropTask.compilerOpts)
             this.compilerOpts.addAll(this@KonanJvmInteropTask.headersDirs.asCompilerArguments)
             this.outputDirectory.set(this@KonanJvmInteropTask.outputDirectory)
-            this.distribution.set(platformManagerProvider.distribution)
+            this.distributionRoot.set(platformManagerProvider.distributionRoot)
             this.propertiesOverride.set(platformManagerProvider.konanPropertiesOverride)
             this.platformManager.set(platformManagerProvider.platformManager)
         }
