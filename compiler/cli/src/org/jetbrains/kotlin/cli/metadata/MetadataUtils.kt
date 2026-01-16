@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.writer.KlibWriter
-import org.jetbrains.kotlin.library.writer.asComponentWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import java.io.File
 
@@ -30,6 +30,6 @@ fun buildKotlinMetadataLibrary(configuration: CompilerConfiguration, serializedM
             versions(versions)
             platformAndTargets(BuiltInsPlatform.COMMON)
         }
-        include(serializedMetadata.asComponentWriter())
+        includeMetadata(serializedMetadata)
     }.writeTo(destDir.absolutePath)
 }

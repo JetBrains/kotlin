@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_INLINABLE
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
-import org.jetbrains.kotlin.library.writer.asComponentWriter
+import org.jetbrains.kotlin.library.impl.KlibMetadataComponentWriterImpl
 import org.jetbrains.kotlin.library.writer.asComponentWriters
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
@@ -159,7 +159,7 @@ fun KlibMockDSL.resources(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_RE
 fun KlibMockDSL.metadata(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_METADATA_FOLDER_NAME, init)
 
 fun KlibMockDSL.metadata(metadata: SerializedMetadata) {
-    metadata.asComponentWriter().writeTo(KlibFile(rootDir.path))
+    KlibMetadataComponentWriterImpl(metadata).writeTo(KlibFile(rootDir.path))
 }
 
 fun KlibMockDSL.ir(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_FOLDER_NAME, init)

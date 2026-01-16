@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.commonizer.ResultsConsumer
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.writer.KlibWriter
-import org.jetbrains.kotlin.library.writer.asComponentWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import java.io.File
 
 internal class ModuleSerializer(
@@ -43,7 +43,7 @@ private fun writeLibrary(
             platformAndTargets(BuiltInsPlatform.NATIVE, manifestData.nativeTargets)
             customProperties { addNativeSensitiveManifestProperties(manifestData) }
         }
-        include(metadata.asComponentWriter())
+        includeMetadata(metadata)
     }.writeTo(libraryDestination.absolutePath)
 }
 

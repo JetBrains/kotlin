@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.writer.KlibWriter
-import org.jetbrains.kotlin.library.writer.asComponentWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.util.toKlibMetadataVersion
 import java.io.File
@@ -147,7 +147,7 @@ object KlibTestUtil {
                 )
                 platformAndTargets(BuiltInsPlatform.COMMON)
             }
-            include(serializedMetadata.asComponentWriter())
+            includeMetadata(serializedMetadata)
         }.writeTo(klibFile.path)
     }
 
