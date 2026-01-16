@@ -16,16 +16,16 @@ object B : A<String>() {
     val refBar: Inner.() -> Int = Inner::bar
     val kRefFoo = Inner::foo
     val kRefBar = Inner::bar
-    val refIncorrect: Inner.() -> Unit = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>A<!>.Inner::foo
-    val kRefIncorrect = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>A<!>.Inner::foo
+    val refIncorrect: Inner.() -> Unit = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A<!>.Inner::foo
+    val kRefIncorrect = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A<!>.Inner::foo
 
     class Nested {
         val refFoo: A<*>.Inner.() -> Unit = <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>::foo
         val refBar: A<*>.Inner.() -> Int = <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>::bar
         val kRefFoo = <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>::foo
         val kRefBar = <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>::bar
-        val refIncorrect: A<*>.Inner.() -> Unit = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>A<!>.Inner::foo
-        val kRefIncorrect = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR!>A<!>.Inner::foo
+        val refIncorrect: A<*>.Inner.() -> Unit = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A<!>.Inner::foo
+        val kRefIncorrect = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A<!>.Inner::foo
     }
 }
 

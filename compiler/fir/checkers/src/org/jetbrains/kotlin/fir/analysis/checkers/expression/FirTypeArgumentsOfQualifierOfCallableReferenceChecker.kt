@@ -33,6 +33,11 @@ import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
+
+    context(context: CheckerContext)
+    private val innerClassesProperlySupported: Boolean
+        get() = LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS.isEnabled()
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCallableReferenceAccess) {
         val lhs = expression.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
@@ -49,24 +54,23 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
         for (diagnostic in expression.nonFatalDiagnostics) {
             when (diagnostic) {
                 is ConeWrongNumberOfTypeArgumentsError -> {
-                    if (diagnostic.isDeprecationErrorForCallableReferenceLHS) {
-                        reporter.reportOn(
-                            diagnostic.source,
-                            FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS,
-                            diagnostic.desiredCount,
-                            diagnostic.symbol,
-                        )
+                    val (factory, positioning) = if (diagnostic.isDeprecationErrorForCallableReferenceLHS) {
+                        val factory = when {
+                            innerClassesProperlySupported -> FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
+                            else -> FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING
+                        }
+
+                        factory to SourceElementPositioningStrategies.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER
                     } else {
-                        reporter.reportOn(
-                            diagnostic.source,
-                            FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
-                            diagnostic.desiredCount,
-                            diagnostic.symbol,
-                            // here, `desiredCount` corresponds to the number of type parameters for all parts of the qualifier altogether,
-                            // hence reporting on the whole qualifier
-                            positioningStrategy = SourceElementPositioningStrategies.DEFAULT,
-                        )
+                        // here, `desiredCount` corresponds to the number of type parameters for all parts of the qualifier altogether,
+                        // hence reporting on the whole qualifier
+                        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS to SourceElementPositioningStrategies.DEFAULT
                     }
+
+                    reporter.reportOn(
+                        diagnostic.source, factory, diagnostic.desiredCount, diagnostic.symbol,
+                        positioningStrategy = positioning,
+                    )
                 }
                 is ConeOuterClassArgumentsRequired -> {
                     reporter.reportOn(
@@ -80,7 +84,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
 
         var typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
         var typeParameterSymbols = when {
-            LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS.isEnabled() -> {
+            innerClassesProperlySupported -> {
                 val firstPart = lhs.firstQualifierPart()
                 when (val firstPartSymbol = firstPart.symbol) {
                     null -> correspondingDeclaration.typeParameterSymbols

@@ -2034,14 +2034,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val owner: KaSymbol
     }
 
-    interface WrongNumberOfTypeArgumentsInCallableReferenceLhsError : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = WrongNumberOfTypeArgumentsInCallableReferenceLhsError::class
-        val expectedCount: Int
-        val owner: KaSymbol
-    }
-
-    interface WrongNumberOfTypeArgumentsInCallableReferenceLhsWarning : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = WrongNumberOfTypeArgumentsInCallableReferenceLhsWarning::class
+    interface WrongNumberOfTypeArgumentsWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = WrongNumberOfTypeArgumentsWarning::class
         val expectedCount: Int
         val owner: KaSymbol
     }

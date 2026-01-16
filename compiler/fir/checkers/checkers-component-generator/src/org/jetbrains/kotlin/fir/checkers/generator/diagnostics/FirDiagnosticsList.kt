@@ -967,10 +967,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Int>("expectedCount")
             parameter<FirBasedSymbol<*>>("owner")
         }
-        val WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS by deprecationError<PsiElement>(
-            LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS,
-            PositioningStrategy.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER,
-        ) {
+        val WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING by warning<PsiElement>(PositioningStrategy.TYPE_ARGUMENT_LIST_OR_SELF) {
             parameter<Int>("expectedCount")
             parameter<FirBasedSymbol<*>>("owner")
         }

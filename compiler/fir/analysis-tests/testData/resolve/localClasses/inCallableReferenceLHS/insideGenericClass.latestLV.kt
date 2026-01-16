@@ -8,8 +8,8 @@ class C<U> {
         class L
 
         val x = L::toString
-        val y = L<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR("0; class L<Outer(T), Outer(U)> : Any")!><Int><!>::toString
-        val z = L<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_CALLABLE_REFERENCE_LHS_ERROR("0; class L<Outer(T), Outer(U)> : Any")!><Int, Long><!>::toString
+        val y = L<!WRONG_NUMBER_OF_TYPE_ARGUMENTS("0; class L<Outer(T), Outer(U)> : Any")!><Int><!>::toString
+        val z = L<!WRONG_NUMBER_OF_TYPE_ARGUMENTS("0; class L<Outer(T), Outer(U)> : Any")!><Int, Long><!>::toString
 
         x(L())
         y(<!ARGUMENT_TYPE_MISMATCH("L<T (of fun <T> foo), U (of class C<U>)>; L<Int, U (of class C<U>)>")!>L()<!>)
