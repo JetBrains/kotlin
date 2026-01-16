@@ -9,11 +9,8 @@ import com.google.gson.JsonSyntaxException
 import com.google.gson.annotations.Expose
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gson
@@ -30,57 +27,6 @@ import java.io.FileWriter
  */
 @DisableCachingByDefault(because = "No point in caching")
 abstract class GenerateCompilationDatabase : DefaultTask() {
-    /**
-     * Entries in the compilation database.
-     *
-     * Single [Entry] generates a number of compilation database entries: one for each file in [files].
-     */
-    abstract class Entry {
-        /**
-         * **directory** from the [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html#format).
-         *
-         * The working directory of the compilation. All paths in the [arguments] must either be absolute or relative to this directory.
-         */
-        @get:Internal
-        abstract val directory: DirectoryProperty
-
-        // Only the path of the directory is an input.
-        @get:Input
-        protected val pathToDirectory: Provider<String>
-            get() = directory.asFile.map { it.absolutePath }
-
-        /**
-         * **file** from the [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html#format).
-         *
-         * Collection of files being compiled with given [arguments]. For each file a separate
-         * entry will be generated in the database with the same [directory], [arguments] and [output].
-         */
-        @get:Internal
-        abstract val files: ConfigurableFileCollection
-
-        // Only the paths of files are an input.
-        @get:Input
-        protected val pathsToFiles: Iterable<String>
-            get() = files.files.map { it.absolutePath }
-
-        /**
-         * **arguments** from the [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html#format).
-         *
-         * List of arguments of the compilation commands. The first argument must be the executable.
-         */
-        @get:Input
-        abstract val arguments: ListProperty<String>
-
-        /**
-         * **output** from the [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html#format).
-         *
-         * The name of the output created by the compilation step. Used as a key to distinguish
-         * between different modes of compilation of the same sources.
-         */
-        @get:Input
-        abstract val output: Property<String>
-    }
-
     // Must follow https://clang.llvm.org/docs/JSONCompilationDatabase.html#format
     private data class SerializedEntry(
             @Expose val directory: String,
@@ -89,7 +35,7 @@ abstract class GenerateCompilationDatabase : DefaultTask() {
             @Expose val output: String,
     ) {
         companion object {
-            fun fromEntry(entry: Entry): List<SerializedEntry> {
+            fun fromEntry(entry: CompilationDatabaseEntry): List<SerializedEntry> {
                 val directory = entry.directory.asFile.get().absolutePath
                 val arguments = entry.arguments.get()
                 val output = entry.output.get()
@@ -107,10 +53,10 @@ abstract class GenerateCompilationDatabase : DefaultTask() {
     }
 
     /**
-     * List of [Entry]s to generate database from.
+     * List of [CompilationDatabaseEntry]s to generate database from.
      */
     @get:Nested
-    abstract val entries: ListProperty<Entry>
+    abstract val entries: ListProperty<CompilationDatabaseEntry>
 
     /**
      * List of databases to merge into this database.

@@ -9,10 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
@@ -82,51 +79,6 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
     }
 
     /**
-     * Entries in the compilation database.
-     *
-     * Single [Entry] generates a number of compilation database entries: one for each file in [files].
-     *
-     * @property target target for which this [Entry] is generated.
-     * @property sanitizer optional sanitizer for [target].
-     */
-    abstract class Entry @Inject constructor(
-            private val _target: TargetWithSanitizer,
-    ) {
-        val target by _target::target
-        val sanitizer by _target::sanitizer
-
-        /**
-         * **directory** from the [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html#format).
-         *
-         * The working directory of the compilation. All paths in the [arguments] must either be absolute or relative to this directory.
-         */
-        abstract val directory: DirectoryProperty
-
-        /**
-         * **file** from the [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html#format).
-         *
-         * Collection of files being compiled with given [arguments]. For each file a separate
-         * entry will be generated in the database with the same [directory], [arguments] and [output].
-         */
-        abstract val files: ConfigurableFileCollection
-
-        /**
-         * **arguments** from the [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html#format).
-         *
-         * List of arguments of the compilation commands. The first argument must be the executable.
-         */
-        abstract val arguments: ListProperty<String>
-
-        /**
-         * **output** from the [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html#format).
-         *
-         * The name of the output created by the compilation step. Used as a key to distinguish
-         * between different modes of compilation of the same sources.
-         */
-        abstract val output: Property<String>
-    }
-
-    /**
      * Configure compilation database generation for [target].
      *
      * [entry] to add new entries.
@@ -144,23 +96,17 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
 
         private val project by owner::project
 
-        protected abstract val entries: ListProperty<GenerateCompilationDatabase.Entry>
+        protected abstract val entries: ListProperty<CompilationDatabaseEntry>
 
         /**
          * Add an entry to the compilation database for [target] with optional [sanitizer].
          *
-         * @param action configure [Entry]
+         * @param action configure [CompilationDatabaseEntry]
          */
-        fun entry(action: Action<in Entry>) {
+        fun entry(action: Action<in CompilationDatabaseEntry>) {
             entries.add(project.provider {
-                val instance = project.objects.newInstance<Entry>(_target).apply {
+                project.objects.newInstance<CompilationDatabaseEntry>(_target).apply {
                     action.execute(this)
-                }
-                project.objects.newInstance<GenerateCompilationDatabase.Entry>().apply {
-                    directory.set(instance.directory)
-                    files.from(instance.files)
-                    arguments.set(instance.arguments)
-                    output.set(instance.output)
                 }
             })
         }
