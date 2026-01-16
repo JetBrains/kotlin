@@ -18,11 +18,16 @@ import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.konan.library.impl.buildLibrary
+import org.jetbrains.kotlin.konan.library.writer.legacyNativeDependenciesInManifest
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.asComponentWriter
+import org.jetbrains.kotlin.library.writer.asComponentWriters
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -90,24 +95,22 @@ class NativeKlibSerializerFacade(
         val dependencies = inputArtifact.usedLibrariesForManifest
         val serializerOutput = serialize(configuration, dependencies, module, inputArtifact, diagnosticReporter)
 
-        buildLibrary(
-            natives = emptyList(),
-            included = emptyList(),
-            linkDependencies = serializerOutput.neededLibraries,
-            serializerOutput.serializedMetadata ?: testServices.assertions.fail { "expected serialized metadata" },
-            serializerOutput.serializedIr,
-            versions = KotlinLibraryVersioning(
-                compilerVersion = KotlinCompilerVersion.getVersion(),
-                abiVersion = configuration.klibAbiVersionForManifest(),
-                metadataVersion = configuration.klibMetadataVersionOrDefault(),
-            ),
-            target = testServices.nativeEnvironmentConfigurator.getNativeTarget(module),
-            output = outputKlibArtifactFile.path,
-            moduleName = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME),
-            nopack = true,
-            shortName = null,
-            manifestProperties = null,
-        )
+        KlibWriter {
+            manifest {
+                moduleName(configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME))
+                versions(
+                    KotlinLibraryVersioning(
+                        compilerVersion = KotlinCompilerVersion.getVersion(),
+                        abiVersion = configuration.klibAbiVersionForManifest(),
+                        metadataVersion = configuration.klibMetadataVersionOrDefault(),
+                    )
+                )
+                platformAndTargets(BuiltInsPlatform.NATIVE, testServices.nativeEnvironmentConfigurator.getNativeTarget(module).name)
+                legacyNativeDependenciesInManifest(serializerOutput.neededLibraries.map { it.uniqueName })
+            }
+            include(serializerOutput.serializedMetadata?.asComponentWriter() ?: testServices.assertions.fail { "expected serialized metadata" })
+            include(serializerOutput.serializedIr?.asComponentWriters().orEmpty())
+        }.writeTo(outputKlibArtifactFile.path)
     }
 
     fun serialize(
