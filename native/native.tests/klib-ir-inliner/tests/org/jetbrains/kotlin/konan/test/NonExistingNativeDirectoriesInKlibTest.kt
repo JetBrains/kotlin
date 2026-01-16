@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.writer.KlibWriter
-import org.jetbrains.kotlin.library.writer.asComponentWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -99,7 +99,7 @@ class NonExistingNativeDirectoriesInKlibTest {
                 )
                 platformAndTargets(BuiltInsPlatform.NATIVE, TEST_TARGET.name)
             }
-            include(SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray()).asComponentWriter())
+            includeMetadata(SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray()))
             includeBitcode(TEST_TARGET, bitcodeFileNames.map(::createEmptyFile))
             includeNativeIncludedBinaries(TEST_TARGET, includedBinaryFileNames.map(::createEmptyFile))
         }.writeTo(klibDir.path)

@@ -48,8 +48,8 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.writer.KlibWriter
-import org.jetbrains.kotlin.library.writer.asComponentWriter
 import org.jetbrains.kotlin.library.writer.asComponentWriters
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -611,7 +611,7 @@ fun serializeModuleIntoKlib(
                 )
                 customProperties { this += properties }
             }
-            include(serializerOutput.serializedMetadata?.asComponentWriter() ?: error("expected serialized metadata"))
+            includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
             include(fullSerializedIr.asComponentWriters())
         }.writeTo(klibPath)
     }

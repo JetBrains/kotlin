@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.writer.KlibWriter
-import org.jetbrains.kotlin.library.writer.asComponentWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.util.DummyLogger
@@ -77,7 +77,7 @@ class SearchPathResolverTest {
                     }
                 }
             }
-            include(DUMMY_METADATA.asComponentWriter())
+            includeMetadata(DUMMY_METADATA)
         }.writeTo(outputDir)
 
         return outputDir
