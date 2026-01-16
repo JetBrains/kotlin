@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.writer.KlibWriter
-import org.jetbrains.kotlin.library.writer.asComponentWriters
+import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
@@ -109,7 +109,7 @@ class NativeKlibSerializerFacade(
                 legacyNativeDependenciesInManifest(serializerOutput.neededLibraries.map { it.uniqueName })
             }
             includeMetadata(serializerOutput.serializedMetadata ?: testServices.assertions.fail { "expected serialized metadata" })
-            include(serializerOutput.serializedIr?.asComponentWriters().orEmpty())
+            includeIr(serializerOutput.serializedIr)
         }.writeTo(outputKlibArtifactFile.path)
     }
 

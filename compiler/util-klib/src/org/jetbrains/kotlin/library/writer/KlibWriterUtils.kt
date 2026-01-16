@@ -18,9 +18,9 @@ fun KlibWriterSpec.includeMetadata(metadata: SerializedMetadata) {
 }
 
 /**
- * An adapter to convert [SerializedIrModule] to [KlibComponentWriter]s.
+ * A [KlibWriter] DSL extension to include [SerializedIrModule] to the created library.
  */
-fun SerializedIrModule.asComponentWriters(): Collection<KlibComponentWriter> = listOfNotNull(
-    KlibIrComponentWriterImpl.ForMainIr(files),
-    fileWithPreparedInlinableFunctions?.let(KlibIrComponentWriterImpl::ForInlinableFunctionsIr),
-)
+fun KlibWriterSpec.includeIr(irModule: SerializedIrModule?) {
+    irModule?.files?.let { include(KlibIrComponentWriterImpl.ForMainIr(it)) }
+    irModule?.fileWithPreparedInlinableFunctions?.let { include(KlibIrComponentWriterImpl.ForInlinableFunctionsIr(it)) }
+}

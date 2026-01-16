@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.writer.KlibWriter
-import org.jetbrains.kotlin.library.writer.asComponentWriters
+import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -74,7 +74,7 @@ class NewNativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriter
                 }
             }
             includeMetadata(parameters.metadata)
-            include(parameters.ir?.asComponentWriters().orEmpty())
+            includeIr(parameters.ir)
             includeBitcode(parameters.target, parameters.bitcodeFiles.map { it.file.path })
             includeNativeIncludedBinaries(parameters.target, parameters.nativeIncludedBinaryFiles.map { it.file.path })
         }.writeTo(klibLocation.path)

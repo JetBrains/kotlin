@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_INLINABLE
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
+import org.jetbrains.kotlin.library.impl.KlibIrComponentWriterImpl
 import org.jetbrains.kotlin.library.impl.KlibMetadataComponentWriterImpl
-import org.jetbrains.kotlin.library.writer.asComponentWriters
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
 import kotlin.random.Random
@@ -167,5 +167,8 @@ fun KlibMockDSL.ir(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_FOLDER
 fun KlibMockDSL.irInlinableFunctions(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME, init)
 
 fun KlibMockDSL.irModule(serializedIrModule: SerializedIrModule) {
-    serializedIrModule.asComponentWriters().forEach { it.writeTo(KlibFile(rootDir.path)) }
+    val output = KlibFile(rootDir.path)
+
+    KlibIrComponentWriterImpl.ForMainIr(serializedIrModule.files).writeTo(output)
+    serializedIrModule.fileWithPreparedInlinableFunctions?.let { KlibIrComponentWriterImpl.ForInlinableFunctionsIr(it).writeTo(output) }
 }
