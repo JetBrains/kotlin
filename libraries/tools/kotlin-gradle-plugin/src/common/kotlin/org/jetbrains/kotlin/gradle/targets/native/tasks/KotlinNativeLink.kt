@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
+import java.io.Serializable
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.collections.map
@@ -131,7 +132,7 @@ constructor(
     @get:Input
     val baseName: String by lazyConvention { binary.baseName }
 
-    @get:Input
+    @get:Internal
     internal val disableCacheSettings: ListProperty<DisableNativeCacheSettings> = objectFactory.listPropertyWithConvention(
         binary.disableCacheSettings
     )
@@ -149,7 +150,7 @@ constructor(
     @get:Internal
     val languageSettings: LanguageSettings = compilation.defaultSourceSet.languageSettings
 
-    @get:Input
+    @get:Internal
     internal val disableCache: Provider<Boolean> = objects.propertyWithConvention(
         simpleKotlinNativeVersion
             .map { KotlinToolingVersion(it) }
@@ -162,13 +163,29 @@ constructor(
             }
     )
 
-    @get:Input
+    @get:Internal
     internal val konanCacheKind: Provider<NativeCacheKind> = konanPropertiesService.zip(disableCache) { service, isCacheDisabled ->
         if (isCacheDisabled) {
             NativeCacheKind.NONE
         } else {
             service.defaultCacheKindForTarget(konanTarget)
         }
+    }
+
+    @get:Input
+    internal val effectiveCacheSettings: Provider<CacheSettingsInput> =
+        konanPropertiesService.zip(disableCache) { service, isCacheDisabled ->
+            if (service.cacheWorksFor(konanTarget)) {
+                val cacheKind = if (isCacheDisabled) NativeCacheKind.NONE else service.defaultCacheKindForTarget(konanTarget)
+                CacheSettingsInput.Configured(cacheKind)
+            } else {
+                CacheSettingsInput.NonCacheableTarget
+            }
+        }
+
+    internal sealed interface CacheSettingsInput : Serializable {
+        object NonCacheableTarget : CacheSettingsInput
+        data class Configured(val kind: NativeCacheKind) : CacheSettingsInput
     }
 
     @Suppress("unused", "UNCHECKED_CAST")
