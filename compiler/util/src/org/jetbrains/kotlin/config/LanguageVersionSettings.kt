@@ -499,6 +499,7 @@ enum class LanguageFeature(
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-11914"), // KT-11914. Deprecation phase 2
     KlibAnnotationsInMetadata(sinceVersion = KOTLIN_2_5, "KT-81466"),
     ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases(sinceVersion = KOTLIN_2_5, "KTLC-288"),
+    ForbidExternalEnumEntriesAndPrimaryConstructorProperties(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-389"),
 
     // End of 2.* language features --------------------------------------------------
 

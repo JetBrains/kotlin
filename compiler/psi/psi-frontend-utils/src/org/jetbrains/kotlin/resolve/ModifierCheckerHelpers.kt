@@ -224,12 +224,22 @@ val possibleTargetPredicateMap = mapOf(
         KotlinTarget.LOCAL_FUNCTION,
         KotlinTarget.ANONYMOUS_FUNCTION
     ),
-    EXTERNAL_KEYWORD to always(
-        KotlinTarget.FUNCTION,
-        KotlinTarget.PROPERTY,
-        KotlinTarget.PROPERTY_GETTER,
-        KotlinTarget.PROPERTY_SETTER,
-        KotlinTarget.CLASS
+    EXTERNAL_KEYWORD to or(
+        always(
+            KotlinTarget.FUNCTION,
+            KotlinTarget.MEMBER_PROPERTY_WITH_BACKING_FIELD,
+            KotlinTarget.MEMBER_PROPERTY_WITH_DELEGATE,
+            KotlinTarget.MEMBER_PROPERTY_WITHOUT_FIELD_OR_DELEGATE,
+            KotlinTarget.TOP_LEVEL_PROPERTY,
+            KotlinTarget.PROPERTY_GETTER,
+            KotlinTarget.PROPERTY_SETTER,
+            KotlinTarget.CLASS
+        ),
+        ifUnsupported(
+            LanguageFeature.ForbidExternalEnumEntriesAndPrimaryConstructorProperties,
+            KotlinTarget.ENUM_ENTRY,
+            KotlinTarget.PROPERTY_PARAMETER
+        )
     ),
     ANNOTATION_KEYWORD to always(KotlinTarget.ANNOTATION_CLASS),
     CROSSINLINE_KEYWORD to always(KotlinTarget.VALUE_PARAMETER),
@@ -267,6 +277,11 @@ val deprecatedTargetPredicateMap = mapOf(
     INLINE_KEYWORD to ifUnsupported(
         LanguageFeature.ForbidInlineEnumEntries,
         KotlinTarget.ENUM_ENTRY
+    ),
+    EXTERNAL_KEYWORD to ifUnsupported(
+        LanguageFeature.ForbidExternalEnumEntriesAndPrimaryConstructorProperties,
+        KotlinTarget.ENUM_ENTRY,
+        KotlinTarget.PROPERTY_PARAMETER
     ),
 )
 

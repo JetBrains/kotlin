@@ -1,4 +1,4 @@
-FILE: constructorParameter.kt
+FILE: constructorParameter.fir.kt
     public final class NotExternal : R|kotlin/Any| {
         public constructor(paramProp: R|kotlin/String|, param: R|kotlin/String|): R|NotExternal| {
             super<R|kotlin/Any|>()
