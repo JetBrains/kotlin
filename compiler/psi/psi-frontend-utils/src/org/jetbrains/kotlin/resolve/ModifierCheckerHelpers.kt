@@ -127,21 +127,14 @@ private fun compatibilityRegister(
 }
 
 val featureDependencies = mapOf(
-    SUSPEND_KEYWORD to listOf(LanguageFeature.Coroutines),
     INLINE_KEYWORD to listOf(LanguageFeature.InlineProperties, LanguageFeature.InlineClasses),
     EXPECT_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
     ACTUAL_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
-    LATEINIT_KEYWORD to listOf(LanguageFeature.LateinitTopLevelProperties, LanguageFeature.LateinitLocalVariables),
-    FUN_KEYWORD to listOf(LanguageFeature.FunctionalInterfaceConversion),
 )
 
 val featureDependenciesTargets = mapOf(
-    LanguageFeature.InlineProperties to setOf(KotlinTarget.PROPERTY, KotlinTarget.PROPERTY_GETTER, KotlinTarget.PROPERTY_SETTER),
-    LanguageFeature.LateinitLocalVariables to setOf(KotlinTarget.LOCAL_VARIABLE),
-    LanguageFeature.LateinitTopLevelProperties to setOf(KotlinTarget.TOP_LEVEL_PROPERTY),
     LanguageFeature.InlineClasses to setOf(KotlinTarget.CLASS_ONLY),
     LanguageFeature.JvmInlineValueClasses to setOf(KotlinTarget.CLASS_ONLY),
-    LanguageFeature.FunctionalInterfaceConversion to setOf(KotlinTarget.INTERFACE),
 )
 
 val defaultVisibilityTargets: EnumSet<KotlinTarget> = EnumSet.of(
@@ -295,9 +288,11 @@ fun or(p1: TargetAllowedPredicate, p2: TargetAllowedPredicate) = object : Target
 }
 
 val possibleParentTargetPredicateMap = mapOf(
-    INNER_KEYWORD to or(
-        always(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.ENUM_CLASS),
-        ifSupported(LanguageFeature.InnerClassInEnumEntryClass, KotlinTarget.ENUM_ENTRY)
+    INNER_KEYWORD to always(
+        KotlinTarget.CLASS_ONLY,
+        KotlinTarget.LOCAL_CLASS,
+        KotlinTarget.ENUM_CLASS,
+        KotlinTarget.ENUM_ENTRY
     ),
     OVERRIDE_KEYWORD to always(
         KotlinTarget.CLASS_ONLY,
@@ -346,5 +341,3 @@ val possibleParentTargetPredicateMap = mapOf(
     ),
     VARARG_KEYWORD to always(KotlinTarget.CONSTRUCTOR, KotlinTarget.FUNCTION, KotlinTarget.CLASS)
 )
-
-
