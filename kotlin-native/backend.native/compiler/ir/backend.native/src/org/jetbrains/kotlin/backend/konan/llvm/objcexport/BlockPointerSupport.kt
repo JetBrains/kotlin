@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         bridge: BlockPointerBridge
 ): LlvmCallable {
-    val irInterface = symbols.functionN(bridge.numberOfParameters).owner
+    val irInterface = irBuiltIns.functionN(bridge.numberOfParameters)
     val invokeMethod = irInterface.declarations.filterIsInstance<IrSimpleFunction>()
             .single { it.name == OperatorNameConventions.INVOKE }
 
@@ -285,7 +285,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
 
             val kotlinArguments = arguments.map { objCReferenceToKotlin(it, Lifetime.ARGUMENT) }
 
-            val invokeMethod = context.symbols.functionN(numberOfParameters).owner.simpleFunctions()
+            val invokeMethod = context.irBuiltIns.functionN(numberOfParameters).simpleFunctions()
                     .single { it.name == OperatorNameConventions.INVOKE }
             val llvmDeclarations = codegen.getVirtualFunctionTrampoline(invokeMethod)
             val result = callFromBridge(llvmDeclarations, listOf(kotlinFunction) + kotlinArguments, Lifetime.ARGUMENT)
