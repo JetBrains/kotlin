@@ -1229,6 +1229,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +referencedSymbol("symbol", classLikeSymbolType, nullable = true)
         +field("explicitParent", resolvedQualifier, nullable = true)
         +field("isNullableLHSForCallableReference", boolean, withReplace = true)
+        +field("resolvedLHSTypeForCallableReferenceOrNull", coneKotlinTypeType, nullable = true, withReplace = true)
         +field("resolvedToCompanionObject", boolean, withReplace = true)
         +field("canBeValue", boolean, withReplace = true) {
             kDoc = "If true, the qualifier is resolved to an object or companion object and can be used as an expression."

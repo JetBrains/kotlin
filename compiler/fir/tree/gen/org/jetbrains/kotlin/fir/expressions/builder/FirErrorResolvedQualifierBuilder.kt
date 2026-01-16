@@ -37,6 +37,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
     override var symbol: FirClassLikeSymbol<*>? = null
     override var explicitParent: FirResolvedQualifier? = null
     override var isNullableLHSForCallableReference: Boolean = false
+    override var resolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType? = null
     override var resolvedToCompanionObject: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override var canBeValue: Boolean = false
     override var isFullyQualified: Boolean = false
@@ -55,6 +56,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             symbol,
             explicitParent,
             isNullableLHSForCallableReference,
+            resolvedLHSTypeForCallableReferenceOrNull,
             resolvedToCompanionObject,
             canBeValue,
             isFullyQualified,

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toTypeArgumentsWithSourceInfo
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.firstQualifierPart
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.classTypeParameterSymbols
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePlaceholderProjectionInQ
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.constructType
@@ -83,6 +81,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
     override fun check(expression: FirCallableReferenceAccess) {
         val lhs = expression.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
         val correspondingDeclaration = lhs.symbol ?: return
+        val lhsType = lhs.resolvedLHSTypeForCallableReferenceOrNull ?: return
 
         for (argument in lhs.typeArguments) {
             val errorTypeRef = (argument as? FirTypeProjectionWithVariance)?.typeRef as? FirErrorTypeRef ?: continue
@@ -94,21 +93,22 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
 
         if (checkNonFatalDiagnostics(expression, lhs)) return
 
-        var typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
+        val typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
+        var typeArguments = when {
+            innerClassesProperlySupported -> {
+                // We prefer explicit type arguments as we have source info for them
+                List(lhsType.typeArguments.size) { index ->
+                    if (index < typeArgumentsWithSourceInfo.size) typeArgumentsWithSourceInfo[index]
+                    else lhsType.typeArguments[index]
+                }
+            }
+            else -> {
+                typeArgumentsWithSourceInfo
+            }
+        }
         var typeParameterSymbols = when {
             innerClassesProperlySupported -> {
-                val firstPart = lhs.firstQualifierPart()
-                when (val firstPartSymbol = firstPart.symbol) {
-                    null -> correspondingDeclaration.typeParameterSymbols
-                    else -> {
-                        val outerForFirstPart: Set<FirTypeParameterSymbol> = firstPartSymbol.typeParameterSymbols.filterTo(mutableSetOf()) {
-                            it.containingDeclarationSymbol != firstPartSymbol
-                        }
-                        correspondingDeclaration.typeParameterSymbols.filter {
-                            it !in outerForFirstPart
-                        }
-                    }
-                }
+                correspondingDeclaration.typeParameterSymbols
             }
             else -> {
                 correspondingDeclaration.classTypeParameterSymbols
@@ -118,16 +118,16 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
         if (correspondingDeclaration is FirTypeAliasSymbol) {
             val qualifierType = correspondingDeclaration.constructType(typeArgumentsWithSourceInfo.toTypedArray())
             val expandedLhsType = qualifierType.fullyExpandedType()
-            typeArgumentsWithSourceInfo = expandedLhsType.typeArguments.toList()
+            typeArguments = expandedLhsType.typeArguments.toList()
 
             val expandedClassSymbol = correspondingDeclaration.resolvedExpandedTypeRef.toRegularClassSymbol(context.session) ?: return
             typeParameterSymbols = expandedClassSymbol.typeParameterSymbols
         }
 
-        val substitutor = FE10LikeConeSubstitutor(typeParameterSymbols, typeArgumentsWithSourceInfo, context.session)
+        val substitutor = FE10LikeConeSubstitutor(typeParameterSymbols, typeArguments, context.session)
         checkUpperBoundViolated(
             typeParameterSymbols,
-            typeArgumentsWithSourceInfo,
+            typeArguments,
             substitutor,
             // Manipulations with `constructType()` and `fullyExpandedType()` above may shove
             // the argument with the true source element arbitrarily deep, so we may end up
