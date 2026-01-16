@@ -1413,11 +1413,12 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: IrDeclaration?) = wrap(expression, data) {
-        // TODO support
         // TODO no test
-        // it's not valid kotlin
-        p.printWithNoIndent("&")
-        super.visitRawFunctionReference(expression, data)
+        val target = expression.symbol.owner as IrDeclarationWithName
+        val name = target.name
+        p.printWithNoIndent("::")
+        p.printWithNoIndent(name)
+        p.printWithNoIndent(" // raw reference")
     }
 
     override fun visitReturn(expression: IrReturn, data: IrDeclaration?) = wrap(expression, data) {
