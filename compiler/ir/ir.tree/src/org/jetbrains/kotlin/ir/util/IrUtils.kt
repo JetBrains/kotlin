@@ -1673,4 +1673,6 @@ val IrSimpleFunction.isTrivialGetter: Boolean
         return (receiver as? IrGetValue)?.symbol?.owner === this.dispatchReceiverParameter
     }
 
+fun IrSimpleFunction.findOverriddenMethodOfAny() =
+    allOverridden().firstOrNull { it.parentClassOrNull?.isAny() == true }
 
