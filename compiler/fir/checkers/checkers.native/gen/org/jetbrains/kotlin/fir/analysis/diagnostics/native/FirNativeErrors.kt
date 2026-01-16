@@ -75,6 +75,8 @@ object FirNativeErrors : KtDiagnosticsContainer() {
     val CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS: KtDiagnosticFactory0 = KtDiagnosticFactory0("STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF: KtDiagnosticFactory0 = KtDiagnosticFactory0("VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF: KtDiagnosticFactory0 = KtDiagnosticFactory0("VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirNativeErrorsDefaultMessages
 }
