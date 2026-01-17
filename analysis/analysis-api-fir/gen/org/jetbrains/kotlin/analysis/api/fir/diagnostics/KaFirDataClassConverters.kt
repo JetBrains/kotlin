@@ -7568,6 +7568,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.JS_ACTUAL_EXTERNAL_INTERFACE_WITHOUT_JS_NO_RUNTIME) { firDiagnostic ->
+        JsActualExternalInterfaceWithoutJsNoRuntimeImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirSyntaxErrors.SYNTAX) { firDiagnostic ->
         SyntaxImpl(
             firDiagnostic.a,

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JS_DIAGNOSTICS_LIST]
@@ -102,6 +103,7 @@ object FirJsErrors : KtDiagnosticsContainer() {
     val JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, PsiElement::class, getRendererFactory())
     val JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val JS_ACTUAL_EXTERNAL_INTERFACE_WITHOUT_JS_NO_RUNTIME: KtDiagnosticFactory2<FirBasedSymbol<*>, FirBasedSymbol<*>> = KtDiagnosticFactory2("JS_ACTUAL_EXTERNAL_INTERFACE_WITHOUT_JS_NO_RUNTIME", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME_ONLY, KtNamedDeclaration::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirJsErrorsDefaultMessages
 }

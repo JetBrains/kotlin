@@ -6371,6 +6371,13 @@ internal class JsNoRuntimeInterfaceAsReifiedTypeArgumentImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsNoRuntimeInterfaceAsReifiedTypeArgument
 
+internal class JsActualExternalInterfaceWithoutJsNoRuntimeImpl(
+    override val expectDeclaration: KaSymbol,
+    override val actualDeclaration: KaSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.JsActualExternalInterfaceWithoutJsNoRuntime
+
 internal class SyntaxImpl(
     override val message: String,
     firDiagnostic: KtPsiDiagnostic,
