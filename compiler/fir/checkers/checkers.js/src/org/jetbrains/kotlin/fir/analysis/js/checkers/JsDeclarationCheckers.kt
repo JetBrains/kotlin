@@ -31,7 +31,8 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsExportedActualMatchExpectChecker,
             FirJsBuiltinNameClashChecker,
             FirJsNameCharsChecker,
-            FirJsStaticChecker
+            FirJsStaticChecker,
+            FirJsNoRuntimeDeclarationChecker
         )
 
     override val classCheckers: Set<FirClassChecker>

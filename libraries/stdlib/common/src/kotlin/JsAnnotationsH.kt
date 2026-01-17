@@ -219,3 +219,34 @@ internal annotation class JsImplicitExport(val couldBeConvertedToExplicitExport:
 @OptionalExpectation
 @SinceKotlin("2.0")
 public expect annotation class JsStatic()
+
+/**
+ * Marks the experimental JsNoRuntime annotation.
+ *
+ * Note that behavior of these annotations will likely be changed in the future.
+ *
+ * Usages of such annotations will be reported as warnings unless an explicit opt-in with
+ * the [OptIn] annotation, e.g. `@OptIn(ExperimentalJsNoRuntime::class)`,
+ * or with the `-opt-in=kotlin.js.ExperimentalJsNoRuntime` compiler option is given.
+ */
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@MustBeDocumented
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("2.3") // TODO: bump to 2.4 alongside @JsNoRuntime version change
+public annotation class ExperimentalJsNoRuntime
+
+/**
+ * Marks an interface that is not going to be used at runtime on the JS platform.
+ *
+ * Interfaces annotated with `@JsNoRuntime` must not be used in `is` checks, `as` casts,
+ * or with class references on the JS platform. Such interfaces can be actualized on JS as `external interface`.
+ *
+ * This annotation is available in common code and is JS-specific via [OptionalExpectation].
+ */
+@ExperimentalJsNoRuntime
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS)
+@MustBeDocumented
+@OptionalExpectation
+@SinceKotlin("2.3") // TODO: replace with 2.4
+public expect annotation class JsNoRuntime()

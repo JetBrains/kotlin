@@ -21,6 +21,10 @@ import callingDelegatingToSuperDefaultImplementation = JS_TESTS.foo.callingDeleg
 import FunIFace = JS_TESTS.foo.FunIFace;
 import makeFunInterfaceWithSam = JS_TESTS.foo.makeFunInterfaceWithSam;
 import callFunInterface = JS_TESTS.foo.callFunInterface;
+import NoRuntimeIface = JS_TESTS.foo.NoRuntimeIface;
+import ChildOfNoRuntime = JS_TESTS.foo.ChildOfNoRuntime;
+import KotlinNoRuntimeImpl = JS_TESTS.foo.KotlinNoRuntimeImpl;
+import KotlinChildNoRuntimeImpl = JS_TESTS.foo.KotlinChildNoRuntimeImpl;
 
 class TsFooImpl implements IFoo<string> {
     readonly [IFoo.Symbol] = true
@@ -105,6 +109,16 @@ class TsFunImpl implements FunIFace {
     apply(x: string): string {
         return `TS ${x}`
     }
+}
+
+// TypeScript-side implementations for @JsNoRuntime interfaces
+class TsNoRuntimeImpl implements NoRuntimeIface {
+    constructor(public readonly a: string) {}
+}
+
+class TsChildNoRuntimeImpl implements ChildOfNoRuntime {
+    constructor(public readonly a: string) {}
+    child(): string { return `child-${this.a}` }
 }
 
 async function testFoo(foo: IFoo<string>, languageImplemented: string): Promise<string> {
@@ -266,6 +280,18 @@ async function box(): Promise<string> {
 
     funResult = testFunInterface(new TsFunImpl(), "TS")
     if (funResult !== "OK") return funResult
+
+    const tsNR: NoRuntimeIface = new TsNoRuntimeImpl("X")
+    if (tsNR.a !== "X") return "Fail: TsNoRuntimeImpl.a is wrong: " + tsNR.a
+
+    const tsChildNR: ChildOfNoRuntime = new TsChildNoRuntimeImpl("Y")
+    if (tsChildNR.child() !== "child-Y") return "Fail: TsChildNoRuntimeImpl.child() is wrong: " + tsChildNR.child()
+
+    const ktNR: NoRuntimeIface = new KotlinNoRuntimeImpl("K")
+    if (ktNR.a !== "K") return "Fail: KotlinNoRuntimeImpl.a is wrong: "+ ktNR.a
+
+    const ktChildNR: ChildOfNoRuntime = new KotlinChildNoRuntimeImpl("Z")
+    if (ktChildNR.child() !== "child-Z") return "Fail: KotlinChildNoRuntimeImpl.child() is wrong: " + ktChildNR.child()
 
     return "OK"
 }

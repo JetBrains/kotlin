@@ -138,4 +138,15 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val JS_STATIC_ON_NON_PUBLIC_MEMBER by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
         val JS_STATIC_ON_CONST by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
     }
+
+    val NO_RUNTIME by object : DiagnosticGroup("NoRuntime") {
+        val JS_NO_RUNTIME_WRONG_TARGET by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NO_RUNTIME_FORBIDDEN_IS_CHECK by error<PsiElement>(PositioningStrategy.OPERATOR)
+        val JS_NO_RUNTIME_FORBIDDEN_AS_CAST by error<PsiElement>(PositioningStrategy.OPERATOR)
+        val JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE by error<PsiElement>()
+        val JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("typeArgument")
+        }
+    }
 }

@@ -52,10 +52,13 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
     private val packagesThatAreNotImplementable: Set<FqName> = hashSetOf(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
 
     private fun IrClass.shouldContainImplementableSymbolProperty(): Boolean =
-        allowImplementingInterfaces && isInterface && !isExternal && !isJsImplicitExport() && fileOrNull?.packageFqName !in packagesThatAreNotImplementable
+        allowImplementingInterfaces && isInterface && !isExternal && !isJsImplicitExport() && !isJsNoRuntime() &&
+                fileOrNull?.packageFqName !in packagesThatAreNotImplementable
 
     private fun IrClass.shouldContainNotImplementableProperty(): Boolean =
-        isJsImplicitExport() || fileOrNull?.packageFqName in packagesThatAreNotImplementable || !allowImplementingInterfaces && isInterface && !isExternal
+        isJsImplicitExport() ||
+                fileOrNull?.packageFqName in packagesThatAreNotImplementable ||
+                (!allowImplementingInterfaces && isInterface && !isExternal && !isJsNoRuntime())
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = file.packageFqName
@@ -1149,7 +1152,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
 
             if (!processedClass.isExported(context) || processedClass.isExternal) continue
 
-            if (processedClass.isInterface) {
+            if (processedClass.isInterface && !processedClass.isJsNoRuntime()) {
                 if (allowImplementingInterfaces) {
                     if (!shouldCopySymbolsOfTransitiveParents) continue
                     result[processedClass] = InterfaceSuperType.ImplementableInterface(processedClass)
