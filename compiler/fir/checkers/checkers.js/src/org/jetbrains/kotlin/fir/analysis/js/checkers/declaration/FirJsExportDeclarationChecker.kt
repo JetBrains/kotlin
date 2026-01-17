@@ -265,6 +265,8 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         session: FirSession,
         currentlyProcessed: MutableSet<ConeKotlinType> = hashSetOf(),
     ): Boolean {
+        // In case of other errors (like syntax error) we should not emit extra diagnostic
+        if (this is ConeErrorType) return true
         if (!currentlyProcessed.add(this)) {
             return true
         }
