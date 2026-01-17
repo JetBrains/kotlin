@@ -67,7 +67,13 @@ interface IFoo<T : Comparable<T>> : ExportedParent {
 fun makeFunInterfaceWithSam(): FunIFace = FunIFace { x -> "SAM ${x}" }
 
 @JsExport
+fun makeNoRuntimeFunInterfaceWithSam(): NoRuntimeFunIface = NoRuntimeFunIface { arrayOf("SAM from Kotlin") }
+
+@JsExport
 fun callFunInterface(f: FunIFace, x: String): String = f.apply(x)
+
+@JsExport
+fun callNoRuntimeFunInterface(f: NoRuntimeFunIface): Array<String> = f.run()
 
 @JsExport
 fun callingExportedParentMethod(foo: IFoo<*>): String =
@@ -159,6 +165,12 @@ class KotlinFooImpl : IFoo<String> {
 @JsNoRuntime
 interface NoRuntimeIface {
     val a: String
+}
+
+@JsExport
+@JsNoRuntime
+fun interface NoRuntimeFunIface {
+    fun run(): Array<String>
 }
 
 @JsExport

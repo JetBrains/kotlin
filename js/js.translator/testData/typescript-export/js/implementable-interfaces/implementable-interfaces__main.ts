@@ -25,6 +25,9 @@ import NoRuntimeIface = JS_TESTS.foo.NoRuntimeIface;
 import ChildOfNoRuntime = JS_TESTS.foo.ChildOfNoRuntime;
 import KotlinNoRuntimeImpl = JS_TESTS.foo.KotlinNoRuntimeImpl;
 import KotlinChildNoRuntimeImpl = JS_TESTS.foo.KotlinChildNoRuntimeImpl;
+import NoRuntimeFunIface = JS_TESTS.foo.NoRuntimeFunIface;
+import callNoRuntimeFunInterface = JS_TESTS.foo.callNoRuntimeFunInterface;
+import makeNoRuntimeFunInterfaceWithSam = JS_TESTS.foo.makeNoRuntimeFunInterfaceWithSam;
 
 class TsFooImpl implements IFoo<string> {
     readonly [IFoo.Symbol] = true
@@ -108,6 +111,12 @@ class TsFunImpl implements FunIFace {
 
     apply(x: string): string {
         return `TS ${x}`
+    }
+}
+
+class TsNoRuntimeFunImpl implements NoRuntimeFunIface {
+    run(): Array<string> {
+        return ["SAM from TypeScript"];
     }
 }
 
@@ -268,6 +277,18 @@ function testFunInterface(f: FunIFace, expectedPrefix: string): string {
     return "OK"
 }
 
+function testNoRuntimeFunInterface(f: NoRuntimeFunIface, expectedSuffix: string): string {
+    let result: any
+
+    result = f.run()[0]
+    if (result !== `SAM from ${expectedSuffix}`) return "Fail: calling f.run returns unexpected result: " + result
+
+    result = callNoRuntimeFunInterface(f)[0]
+    if (result !== `SAM from ${expectedSuffix}`) return "Fail: calling callFunInterface with f returns unexpected result: " + result
+
+    return "OK"
+}
+
 async function box(): Promise<string> {
     let result = await testFoo(new TsFooImpl(), "TYPESCRIPT")
     if (result !== "OK") return result
@@ -280,6 +301,12 @@ async function box(): Promise<string> {
 
     funResult = testFunInterface(new TsFunImpl(), "TS")
     if (funResult !== "OK") return funResult
+
+    let noRuntimeFunResult = testNoRuntimeFunInterface(makeNoRuntimeFunInterfaceWithSam(), "Kotlin")
+    if (noRuntimeFunResult !== "OK") return noRuntimeFunResult
+
+    noRuntimeFunResult = testNoRuntimeFunInterface(new TsNoRuntimeFunImpl(), "TypeScript")
+    if (noRuntimeFunResult !== "OK") return noRuntimeFunResult
 
     const tsNR: NoRuntimeIface = new TsNoRuntimeImpl("X")
     if (tsNR.a !== "X") return "Fail: TsNoRuntimeImpl.a is wrong: " + tsNR.a

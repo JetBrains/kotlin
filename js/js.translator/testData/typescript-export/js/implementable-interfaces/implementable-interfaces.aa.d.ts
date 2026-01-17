@@ -8,7 +8,9 @@ declare namespace JS_TESTS {
 
     namespace foo {
         function makeFunInterfaceWithSam(): foo.FunIFace;
+        function makeNoRuntimeFunInterfaceWithSam(): foo.NoRuntimeFunIface;
         function callFunInterface(f: foo.FunIFace, x: string): string;
+        function callNoRuntimeFunInterface(f: foo.NoRuntimeFunIface): Array<string>;
         function callingExportedParentMethod(foo: foo.IFoo<any /*UnknownType **/>): string;
         function justCallFoo(foo: foo.IFoo<any /*UnknownType **/>): string;
         function justCallAsyncFoo(foo: foo.IFoo<any /*UnknownType **/>): Promise<string>;
@@ -25,6 +27,14 @@ declare namespace JS_TESTS {
         function callingAnotherWithDefaultImplementation(foo: foo.IFoo<any /*UnknownType **/>): string;
         function callGenericWithDefaultImplementation(foo: foo.IFoo<any /*UnknownType **/>, x: Nullable<any>): string;
         function callingDelegatingToSuperDefaultImplementation(foo: foo.IFoo<any /*UnknownType **/>): string;
+        /* ErrorDeclaration: Class declarations are not implemented yet */
+        /* ErrorDeclaration: Class declarations are not implemented yet */
+        /* ErrorDeclaration: Class declarations are not implemented yet */
+        /* ErrorDeclaration: Class declarations are not implemented yet */
+        /* ErrorDeclaration: Class declarations are not implemented yet */
+        /* ErrorDeclaration: Class declarations are not implemented yet */
+        /* ErrorDeclaration: Class declarations are not implemented yet */
+        /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */

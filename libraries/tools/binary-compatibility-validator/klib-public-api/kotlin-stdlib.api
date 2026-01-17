@@ -85,6 +85,10 @@ open annotation class kotlin.js/ExperimentalJsFileName : kotlin/Annotation { // 
     constructor <init>() // kotlin.js/ExperimentalJsFileName.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.js/ExperimentalJsNoRuntime : kotlin/Annotation { // kotlin.js/ExperimentalJsNoRuntime|null[0]
+    constructor <init>() // kotlin.js/ExperimentalJsNoRuntime.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.js/ExperimentalJsReflectionCreateInstance : kotlin/Annotation { // kotlin.js/ExperimentalJsReflectionCreateInstance|null[0]
     constructor <init>() // kotlin.js/ExperimentalJsReflectionCreateInstance.<init>|<init>(){}[0]
 }
@@ -9075,6 +9079,11 @@ open annotation class kotlin.js/JsFileName : kotlin/Annotation { // kotlin.js/Js
 }
 
 // Targets: [native, wasmJs, wasmWasi]
+open annotation class kotlin.js/JsNoRuntime : kotlin/Annotation { // kotlin.js/JsNoRuntime|null[1]
+    constructor <init>() // kotlin.js/JsNoRuntime.<init>|<init>(){}[1]
+}
+
+// Targets: [native, wasmJs, wasmWasi]
 open annotation class kotlin.js/JsStatic : kotlin/Annotation { // kotlin.js/JsStatic|null[1]
     constructor <init>() // kotlin.js/JsStatic.<init>|<init>(){}[1]
 }
@@ -14203,6 +14212,11 @@ open annotation class kotlin.js/JsFileName : kotlin/Annotation { // kotlin.js/Js
 // Targets: [js]
 open annotation class kotlin.js/JsNoDispatchReceiver : kotlin/Annotation { // kotlin.js/JsNoDispatchReceiver|null[0]
     constructor <init>() // kotlin.js/JsNoDispatchReceiver.<init>|<init>(){}[0]
+}
+
+// Targets: [js]
+open annotation class kotlin.js/JsNoRuntime : kotlin/Annotation { // kotlin.js/JsNoRuntime|null[0]
+    constructor <init>() // kotlin.js/JsNoRuntime.<init>|<init>(){}[0]
 }
 
 // Targets: [js]

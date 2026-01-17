@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression
 
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.FirWasmWebCheckerUtils
-import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirAbstractReifiedExternalChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirAbstractReifiedOnDeclarationWithoutRuntimeChecker
 
-object FirWasmReifiedExternalChecker : FirAbstractReifiedExternalChecker(FirWasmWebCheckerUtils)
+object FirWasmReifiedExternalChecker : FirAbstractReifiedOnDeclarationWithoutRuntimeChecker(
+    webCheckerUtils = FirWasmWebCheckerUtils,
+    diagnostic = FirWebCommonErrors.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT
+)

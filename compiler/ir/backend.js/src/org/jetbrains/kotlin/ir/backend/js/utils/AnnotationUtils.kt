@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 
 object JsAnnotations {
@@ -25,7 +26,6 @@ object JsAnnotations {
     val jsExportFqn = FqName("kotlin.js.JsExport")
     val jsExportDefaultFqn = FqName("kotlin.js.JsExport.Default")
     val jsImplicitExportFqn = FqName("kotlin.js.JsImplicitExport")
-    val jsNoRuntime = FqName("kotlin.js.JsNoRuntime")
     val jsExportIgnoreFqn = FqName("kotlin.js.JsExport.Ignore")
     val jsNativeGetter = FqName("kotlin.js.nativeGetter")
     val jsNativeSetter = FqName("kotlin.js.nativeSetter")
@@ -73,7 +73,7 @@ fun IrAnnotationContainer.isJsImplicitExport(): Boolean =
     hasAnnotation(JsAnnotations.jsImplicitExportFqn)
 
 fun IrAnnotationContainer.isJsNoRuntime(): Boolean =
-    hasAnnotation(JsAnnotations.jsNoRuntime)
+    hasAnnotation(JsStandardClassIds.Annotations.JsNoRuntime)
 
 fun IrAnnotationContainer.couldBeConvertedToExplicitExport(): Boolean? =
     getAnnotation(JsAnnotations.jsImplicitExportFqn)?.getSingleConstBooleanArgument()

@@ -127,6 +127,12 @@ public class LLReversedJsDiagnosticsFe10TestGenerated extends AbstractLLReversed
   }
 
   @Test
+  @TestMetadata("jsNoRuntime_actual_external_expect_regular.kt")
+  public void testJsNoRuntime_actual_external_expect_regular() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsNoRuntime_actual_external_expect_regular.kt");
+  }
+
+  @Test
   @TestMetadata("jsStatic.kt")
   public void testJsStatic() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsStatic.kt");

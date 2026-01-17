@@ -74,7 +74,9 @@ declare namespace JS_TESTS {
             }
         }
         function makeFunInterfaceWithSam(): foo.FunIFace;
+        function makeNoRuntimeFunInterfaceWithSam(): foo.NoRuntimeFunIface;
         function callFunInterface(f: foo.FunIFace, x: string): string;
+        function callNoRuntimeFunInterface(f: foo.NoRuntimeFunIface): Array<string>;
         function callingExportedParentMethod(foo: foo.IFoo<any /*UnknownType **/>): string;
         function justCallFoo(foo: foo.IFoo<any /*UnknownType **/>): string;
         function justCallAsyncFoo(foo: foo.IFoo<any /*UnknownType **/>): Promise<string>;
@@ -126,6 +128,9 @@ declare namespace JS_TESTS {
         }
         interface NoRuntimeIface {
             readonly a: string;
+        }
+        interface NoRuntimeFunIface {
+            run(): Array<string>;
         }
         interface ChildOfNoRuntime extends foo.NoRuntimeIface {
             child(): string;

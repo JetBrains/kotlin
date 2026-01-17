@@ -3563,6 +3563,9 @@ public abstract interface annotation class kotlin/js/ExperimentalJsExport : java
 public abstract interface annotation class kotlin/js/ExperimentalJsFileName : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/js/ExperimentalJsNoRuntime : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/js/ExperimentalJsReflectionCreateInstance : java/lang/annotation/Annotation {
 }
 

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.util.PrivateForInline
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
@@ -140,13 +143,15 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
     }
 
     val NO_RUNTIME by object : DiagnosticGroup("NoRuntime") {
-        val JS_NO_RUNTIME_WRONG_TARGET by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
-        val JS_NO_RUNTIME_FORBIDDEN_IS_CHECK by error<PsiElement>(PositioningStrategy.OPERATOR)
-        val JS_NO_RUNTIME_FORBIDDEN_AS_CAST by error<PsiElement>(PositioningStrategy.OPERATOR)
-        val JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE by error<PsiElement>()
-        val JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NO_RUNTIME_WRONG_TARGET by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NO_RUNTIME_FORBIDDEN_IS_CHECK by error<KtElement>()
+        val JS_NO_RUNTIME_FORBIDDEN_AS_CAST by error<KtElement>()
+        val JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE by error<KtElement>()
+        val JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("typeArgument")
         }
+        val JS_ACTUAL_EXTERNAL_INTERFACE_WHILE_EXPECT_WITHOUT_JS_NO_RUNTIME by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY)
+        val JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY)
     }
 }

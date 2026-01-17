@@ -89,7 +89,12 @@ public actual annotation class JsSymbol(actual val name: String)
 public actual annotation class JsFileName(actual val name: String)
 
 /**
- * JS actual for [kotlin.js.JsNoRuntime]. See common declaration for details.
+ * Marks an interface that is not going to be used at runtime on the JS platform.
+ *
+ * Interfaces annotated with `@JsNoRuntime` cannot be used in `is` checks, `as` casts,
+ * or with class references on the JS platform. Such interfaces can be actualized on JS as `external interface`.
+ *
+ * This annotation is available in common code and is JS-specific via [OptionalExpectation].
  */
 @ExperimentalJsNoRuntime
 @Retention(AnnotationRetention.BINARY)

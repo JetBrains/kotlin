@@ -2,6 +2,7 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(ExperimentalJsNoRuntime::class)
 package kotlin.js
 
 /**
@@ -13,6 +14,7 @@ package kotlin.js
 @ExperimentalWasmJsInterop
 @SinceKotlin("2.2")
 @Suppress("EXPECT_ACTUAL_IR_INCOMPATIBILITY")
+@JsNoRuntime
 public expect sealed interface JsReference<out T : Any> : JsAny
 
 @ExperimentalWasmJsInterop
