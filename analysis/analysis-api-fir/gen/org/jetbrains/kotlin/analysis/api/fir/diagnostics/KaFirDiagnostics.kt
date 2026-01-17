@@ -5297,8 +5297,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface JsActualExternalInterfaceWithoutJsNoRuntime : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = JsActualExternalInterfaceWithoutJsNoRuntime::class
-        val expectDeclaration: KaSymbol
-        val actualDeclaration: KaSymbol
     }
 
     interface Syntax : KaFirDiagnostic<PsiElement> {

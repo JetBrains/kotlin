@@ -58,8 +58,6 @@ object FirJsActualExternalInterfaceSuggestJsNoRuntimeChecker : FirBasicDeclarati
         reporter.reportOn(
             member.source,
             FirJsErrors.JS_ACTUAL_EXTERNAL_INTERFACE_WITHOUT_JS_NO_RUNTIME,
-            expectMatch,
-            actualSymbol
         )
     }
 }

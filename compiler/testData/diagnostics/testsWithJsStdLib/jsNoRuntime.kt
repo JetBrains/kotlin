@@ -20,12 +20,12 @@ fun isChecks(a: Any) {
 }
 
 fun asCasts(a: Any) {
-    val x = a <!JS_NO_RUNTIME_FORBIDDEN_AS_CAST!>as<!> I
-    val y = a <!USELESS_CAST!><!JS_NO_RUNTIME_FORBIDDEN_AS_CAST!>as?<!> I<!>
+    val y = <!JS_NO_RUNTIME_FORBIDDEN_AS_CAST!>a as? I<!>
+    val x = <!JS_NO_RUNTIME_FORBIDDEN_AS_CAST!>a as I<!>
 }
 
 fun classRef() {
-    val k = I::class
+    val k = <!JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE!>I::class<!>
 }
 
 fun allowedUnsafeCast(a: Any) {

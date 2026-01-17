@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirClassReferenceExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirTypeOperatorCallChecker
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.expressions.*
@@ -20,8 +19,12 @@ import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.descriptors.isInterface
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirGetClassCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 @OptIn(SymbolInternals::class)
@@ -47,16 +50,12 @@ object FirJsNoRuntimeTypeOperatorChecker : FirTypeOperatorCallChecker(MppChecker
 }
 
 @OptIn(SymbolInternals::class)
-object FirJsNoRuntimeClassReferenceChecker : FirClassReferenceExpressionChecker(MppCheckerKind.Common) {
+object FirJsNoRuntimeClassReferenceChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirClassReferenceExpression) {
-        val klassType = expression.classTypeRef.coneType.lowerBoundIfFlexible() as? ConeClassLikeType ?: return
-        val classId = klassType.fullyExpandedClassId(context.session) ?: return
-        val symbol = context.session.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return
-        val isInterface = (symbol.fir as? FirClass)?.classKind?.isInterface == true
-        if (!isInterface) return
+    override fun check(expression: FirGetClassCall) {
+        val symbol = expression.argument.resolvedType.toRegularClassSymbol() ?: return
 
-        if (symbol.fir.hasAnnotation(JsStandardClassIds.Annotations.JsNoRuntime, context.session)) {
+        if (symbol.fir.isInterface && symbol.fir.hasAnnotation(JsStandardClassIds.Annotations.JsNoRuntime, context.session)) {
             reporter.reportOn(expression.source, FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE)
         }
     }

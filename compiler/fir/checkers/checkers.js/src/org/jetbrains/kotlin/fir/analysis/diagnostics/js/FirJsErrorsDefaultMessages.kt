@@ -230,15 +230,13 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT,
-            "Cannot pass '@JsNoRuntime' interface ''{0}'' for reified type parameter.",
+            "Cannot pass ''@JsNoRuntime'' interface ''{0}'' for reified type parameter.",
             FirDiagnosticRenderers.RENDER_TYPE
         )
 
         map.put(
             JS_ACTUAL_EXTERNAL_INTERFACE_WITHOUT_JS_NO_RUNTIME,
             "This 'actual' external interface corresponds to an 'expect' interface with runtime. Consider adding '@JsNoRuntime' to the expect interface.",
-            SYMBOL_WITH_ALL_MODIFIERS,
-            SYMBOL_WITH_ALL_MODIFIERS
         )
     }
 }
