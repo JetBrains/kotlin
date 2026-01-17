@@ -6,6 +6,8 @@ import WithTheCompanion = JS_TESTS.foo.WithTheCompanion;
 import InterfaceWithNamedCompanion = JS_TESTS.foo.InterfaceWithNamedCompanion;
 import ImplementorOfInterfaceWithDefaultArguments = JS_TESTS.foo.ImplementorOfInterfaceWithDefaultArguments;
 import SomeSealedInterface = JS_TESTS.foo.SomeSealedInterface
+import NoRuntimeSimpleInterface = JS_TESTS.foo.NoRuntimeSimpleInterface
+import NRBase = JS_TESTS.foo.NRBase
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -37,6 +39,12 @@ function box(): string {
 
     const sealedImpl: SomeSealedInterface = new SomeSealedInterface.SomeNestedImpl("OK")
     assert(sealedImpl.x === "OK")
+
+    const nrSimple: NoRuntimeSimpleInterface = { x: "ok" }
+    assert(nrSimple.x === "ok")
+
+    const nrBase: NRBase = { b: "base" }
+    assert(nrBase.b === "base")
 
     return "OK";
 }

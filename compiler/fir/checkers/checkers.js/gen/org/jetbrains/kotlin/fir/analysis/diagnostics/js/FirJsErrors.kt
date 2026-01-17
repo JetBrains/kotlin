@@ -95,5 +95,13 @@ object FirJsErrors : KtDiagnosticsContainer() {
     val JS_STATIC_ON_NON_PUBLIC_MEMBER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_ON_NON_PUBLIC_MEMBER", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class, getRendererFactory())
     val JS_STATIC_ON_CONST: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_ON_CONST", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class, getRendererFactory())
 
+    // NoRuntime
+    val JS_NO_RUNTIME_WRONG_TARGET: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_NO_RUNTIME_WRONG_TARGET", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, PsiElement::class, getRendererFactory())
+    val JS_NO_RUNTIME_FORBIDDEN_IS_CHECK: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_NO_RUNTIME_FORBIDDEN_IS_CHECK", ERROR, SourceElementPositioningStrategies.OPERATOR, PsiElement::class, getRendererFactory())
+    val JS_NO_RUNTIME_FORBIDDEN_AS_CAST: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_NO_RUNTIME_FORBIDDEN_AS_CAST", ERROR, SourceElementPositioningStrategies.OPERATOR, PsiElement::class, getRendererFactory())
+    val JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, PsiElement::class, getRendererFactory())
+    val JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirJsErrorsDefaultMessages
 }

@@ -89,6 +89,16 @@ public actual annotation class JsSymbol(actual val name: String)
 public actual annotation class JsFileName(actual val name: String)
 
 /**
+ * JS actual for [kotlin.js.JsNoRuntime]. See common declaration for details.
+ */
+@ExperimentalJsNoRuntime
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS)
+@SinceKotlin("2.3") // TODO: replace with 2.4
+@MustBeDocumented
+public actual annotation class JsNoRuntime
+
+/**
  * Denotes an `external` declaration that must be imported from native JavaScript library.
  *
  * The compiler produces the code relevant for the target module system, for example, in case of CommonJS,

@@ -34,6 +34,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_ON_P
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROHIBITED_FOR_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_AS_CAST
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_IS_CHECK
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_WRONG_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_STATIC_NOT_IN_CLASS_COMPANION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_STATIC_ON_CONST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_STATIC_ON_NON_PUBLIC_MEMBER
@@ -197,6 +203,33 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             EXPOSED_NOT_EXPORTED_SUPER_INTERFACE,
             "Exported sub-interface exposes its non-exported supertype ''{0}''.",
             DECLARATION_NAME,
+        )
+
+        map.put(
+            JS_NO_RUNTIME_WRONG_TARGET,
+            "'@JsNoRuntime' is only allowed on interfaces."
+        )
+        map.put(
+            JS_NO_RUNTIME_FORBIDDEN_IS_CHECK,
+            "Runtime type checks ('is'/'!is') are forbidden for '@JsNoRuntime' interfaces."
+        )
+        map.put(
+            JS_NO_RUNTIME_FORBIDDEN_AS_CAST,
+            "Runtime type casts ('as'/'as?') are forbidden for '@JsNoRuntime' interfaces. Consider using `unsafeCast` instead."
+        )
+        map.put(
+            JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE,
+            "Class references are forbidden for '@JsNoRuntime' interfaces."
+        )
+        map.put(
+            JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE,
+            "'@JsNoRuntime' on external interface has no effect."
+        )
+
+        map.put(
+            JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT,
+            "Cannot pass '@JsNoRuntime' interface ''{0}'' for reified type parameter.",
+            FirDiagnosticRenderers.RENDER_TYPE
         )
     }
 }

@@ -2,11 +2,14 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
 // LANGUAGE: +JsStaticInInterface
+// OPT_IN: kotlin.js.ExperimentalJsNoRuntime
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
 // FILE: interfaces.kt
 
 package foo
+
+import kotlin.js.JsNoRuntime
 
 // Classes
 
@@ -112,4 +115,29 @@ interface InterfaceWithDefaultArguments {
 @JsExport
 class ImplementorOfInterfaceWithDefaultArguments : InterfaceWithDefaultArguments {
     override fun bar(x: Int) = x + 1
+}
+
+@JsExport
+@JsNoRuntime
+interface NoRuntimeSimpleInterface {
+    val x: String
+}
+
+// "Sandwich" hierarchy in classic interfaces suite (no implementable-interfaces feature):
+// JsNoRuntime -> normal -> JsNoRuntime
+@JsExport
+@JsNoRuntime
+interface NRBase {
+    val b: String
+}
+
+@JsExport
+interface MidClassic : NRBase {
+    fun mid(): Unit
+}
+
+@JsExport
+@JsNoRuntime
+interface NRLeaf : MidClassic {
+    fun leaf(): Unit
 }

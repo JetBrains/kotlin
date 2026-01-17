@@ -121,6 +121,12 @@ public class LLReversedJsDiagnosticsFe10TestGenerated extends AbstractLLReversed
   }
 
   @Test
+  @TestMetadata("jsNoRuntime.kt")
+  public void testJsNoRuntime() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsNoRuntime.kt");
+  }
+
+  @Test
   @TestMetadata("jsStatic.kt")
   public void testJsStatic() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsStatic.kt");

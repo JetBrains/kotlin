@@ -25,6 +25,7 @@ object JsAnnotations {
     val jsExportFqn = FqName("kotlin.js.JsExport")
     val jsExportDefaultFqn = FqName("kotlin.js.JsExport.Default")
     val jsImplicitExportFqn = FqName("kotlin.js.JsImplicitExport")
+    val jsNoRuntime = FqName("kotlin.js.JsNoRuntime")
     val jsExportIgnoreFqn = FqName("kotlin.js.JsExport.Ignore")
     val jsNativeGetter = FqName("kotlin.js.nativeGetter")
     val jsNativeSetter = FqName("kotlin.js.nativeSetter")
@@ -70,6 +71,9 @@ fun IrAnnotationContainer.isExplicitlyExported(): Boolean =
 
 fun IrAnnotationContainer.isJsImplicitExport(): Boolean =
     hasAnnotation(JsAnnotations.jsImplicitExportFqn)
+
+fun IrAnnotationContainer.isJsNoRuntime(): Boolean =
+    hasAnnotation(JsAnnotations.jsNoRuntime)
 
 fun IrAnnotationContainer.couldBeConvertedToExplicitExport(): Boolean? =
     getAnnotation(JsAnnotations.jsImplicitExportFqn)?.getSingleConstBooleanArgument()

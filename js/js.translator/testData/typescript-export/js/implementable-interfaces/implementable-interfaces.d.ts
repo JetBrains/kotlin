@@ -124,5 +124,45 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => KotlinFooImpl;
             }
         }
+        interface NoRuntimeIface {
+            readonly a: string;
+        }
+        interface ChildOfNoRuntime extends foo.NoRuntimeIface {
+            child(): string;
+        }
+        class KotlinNoRuntimeImpl implements foo.NoRuntimeIface {
+            constructor(a: string);
+            get a(): string;
+        }
+        namespace KotlinNoRuntimeImpl {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => KotlinNoRuntimeImpl;
+            }
+        }
+        class KotlinChildNoRuntimeImpl implements foo.ChildOfNoRuntime {
+            constructor(a: string);
+            get a(): string;
+            child(): string;
+        }
+        namespace KotlinChildNoRuntimeImpl {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => KotlinChildNoRuntimeImpl;
+            }
+        }
+        interface NoRuntimeBase {
+            base(): string;
+        }
+        interface MidNormal extends foo.NoRuntimeBase {
+            mid(): string;
+            readonly [foo.MidNormal.Symbol]: true;
+        }
+        namespace MidNormal {
+            const Symbol: unique symbol;
+        }
+        interface NoRuntimeLeaf extends foo.MidNormal {
+            leaf(): string;
+        }
     }
 }

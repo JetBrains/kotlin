@@ -121,6 +121,12 @@ public class LLJsDiagnosticsFe10TestGenerated extends AbstractLLJsDiagnosticsTes
   }
 
   @Test
+  @TestMetadata("jsNoRuntime.kt")
+  public void testJsNoRuntime() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsNoRuntime.kt");
+  }
+
+  @Test
   @TestMetadata("jsStatic.kt")
   public void testJsStatic() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsStatic.kt");
