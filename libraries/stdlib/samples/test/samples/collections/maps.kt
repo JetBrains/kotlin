@@ -99,6 +99,30 @@ class Maps {
         }
 
         @Sample
+        fun getOrElseIfNull() {
+            val map = mutableMapOf<String, Int?>()
+            assertPrints(map.getOrElseIfNull("x") { 1 }, "1")
+
+            map["x"] = 3
+            assertPrints(map.getOrElseIfNull("x") { 1 }, "3")
+
+            map["x"] = null
+            assertPrints(map.getOrElseIfNull("x") { 1 }, "1")
+        }
+
+        @Sample
+        fun getOrElseIfMissing() {
+            val map = mutableMapOf<String, Int?>()
+            assertPrints(map.getOrElseIfMissing("x") { 1 }, "1")
+
+            map["x"] = 3
+            assertPrints(map.getOrElseIfMissing("x") { 1 }, "3")
+
+            map["x"] = null
+            assertPrints(map.getOrElseIfMissing("x") { 1 }, "null")
+        }
+
+        @Sample
         fun getOrPut() {
             val map = mutableMapOf<String, Int?>()
 
@@ -107,10 +131,39 @@ class Maps {
             // since the first getOrPut has already stored value 2 in the map
             assertPrints(map.getOrPut("x") { 3 }, "2")
 
-            // however null value mapped to a key is treated the same as the missing value
+            // however, null value mapped to a key is treated the same as the missing value
             assertPrints(map.getOrPut("y") { null }, "null")
             // so in that case the default value is evaluated
             assertPrints(map.getOrPut("y") { 42 }, "42")
+        }
+
+        @Sample
+        fun getOrPutIfNull() {
+            val map = mutableMapOf<String, Int?>()
+
+            assertPrints(map.getOrPutIfNull("x") { 2 }, "2")
+            // subsequent calls to getOrPutIfNull do not evaluate the default value
+            // since the first getOrPutIfNull has already stored value 2 in the map
+            assertPrints(map.getOrPutIfNull("x") { 3 }, "2")
+
+            // however, null value mapped to a key is treated the same as the missing value
+            assertPrints(map.getOrPutIfNull("y") { null }, "null")
+            // so in that case the default value is evaluated
+            assertPrints(map.getOrPutIfNull("y") { 42 }, "42")
+        }
+
+        @Sample
+        fun getOrPutIfMissing() {
+            val map = mutableMapOf<String, Int?>()
+
+            assertPrints(map.getOrPutIfMissing("x") { 2 }, "2")
+            // subsequent calls to getOrPutIfMissing do not evaluate the default value
+            // since the first getOrPutIfMissing has already stored value 2 in the map
+            assertPrints(map.getOrPutIfMissing("x") { 3 }, "2")
+
+            map["x"] = null
+            // if a key is mapped to null value, getOrPutIfMissing does not overwrite it
+            assertPrints(map.getOrPutIfMissing("x") { 4 }, "null")
         }
 
         @Sample

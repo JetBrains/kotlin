@@ -34,6 +34,46 @@ class MapTest {
         assertEquals("x", d)
     }
 
+    @Test fun getOrElseIfNull() {
+        val data = mapOf<String, Int>()
+        val a = data.getOrElseIfNull("foo") { 2 }
+        assertEquals(2, a)
+        val a1 = data.getOrElseIfNull("foo") { data.get("bar") } ?: 1
+        assertEquals(1, a1)
+
+        val b = data.getOrElseIfNull("foo") { 3 }
+        assertEquals(3, b)
+        assertEquals(0, data.size)
+
+        val empty = mapOf<String, Int?>()
+        val c = empty.getOrElseIfNull("") { null }
+        assertEquals(null, c)
+
+        val nullable = mapOf(1 to null)
+        val d = nullable.getOrElseIfNull(1) { "x" }
+        assertEquals("x", d)
+    }
+
+    @Test fun getOrElseIfMissing() {
+        val data = mapOf<String, Int>()
+        val a = data.getOrElseIfMissing("foo") { 2 }
+        assertEquals(2, a)
+        val a1 = data.getOrElseIfMissing("foo") { data.get("bar") } ?: 1
+        assertEquals(1, a1)
+
+        val b = data.getOrElseIfMissing("foo") { 3 }
+        assertEquals(3, b)
+        assertEquals(0, data.size)
+
+        val empty = mapOf<String, Int?>()
+        val c = empty.getOrElseIfMissing("bar") { null }
+        assertEquals(null, c)
+
+        val nullable = mapOf(1 to null)
+        val d = nullable.getOrElseIfMissing(1) { "x" }
+        assertEquals(null, d)
+    }
+
     @Test fun getValue() {
         val data: MutableMap<String, Int> = hashMapOf("bar" to 1)
         assertFailsWith<NoSuchElementException> { data.getValue("foo") }.let { e ->
@@ -73,6 +113,42 @@ class MapTest {
 
         val d = empty.getOrPut("") { 1 }
         assertEquals(1, d)
+    }
+
+    @Test fun getOrPutIfNull() {
+        val data = hashMapOf<String, Int>()
+        val a = data.getOrPutIfNull("foo") { 2 }
+        assertEquals(2, a)
+
+        val b = data.getOrPutIfNull("foo") { 3 }
+        assertEquals(2, b)
+
+        assertEquals(1, data.size)
+
+        val empty = hashMapOf<String, Int?>()
+        val c = empty.getOrPutIfNull("") { null }
+        assertEquals(null, c)
+
+        val d = empty.getOrPutIfNull("") { 1 }
+        assertEquals(1, d)
+    }
+
+    @Test fun getOrPutIfMissing() {
+        val data = hashMapOf<String, Int>()
+        val a = data.getOrPutIfMissing("foo") { 2 }
+        assertEquals(2, a)
+
+        val b = data.getOrPutIfMissing("foo") { 3 }
+        assertEquals(2, b)
+
+        assertEquals(1, data.size)
+
+        val empty = hashMapOf<String, Int?>()
+        val c = empty.getOrPutIfMissing("bar") { null }
+        assertEquals(null, c)
+
+        val d = empty.getOrPutIfMissing("bar") { 1 }
+        assertEquals(null, d)
     }
 
     @Test fun sizeAndEmpty() {
