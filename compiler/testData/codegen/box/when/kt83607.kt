@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// WASM_CHECK_INSTRUCTION_NOT_IN_SCOPE: instruction=br_table scope_function=box
 
 fun box(): String {
     val parent = "parent"
