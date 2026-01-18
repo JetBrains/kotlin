@@ -235,4 +235,12 @@ class Chars {
         // a negative integer is not a digit in any radix
         assertFails { (-1).digitToChar() }
     }
+
+    @Sample
+    fun isDefined() {
+        assertTrue('\u0021'.isDefined())
+        assertTrue('\u0024'.isDefined())
+        assertFalse('\uffff'.isDefined())
+        assertFalse('\ufffe'.isDefined())
+    }
 }
