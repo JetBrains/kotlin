@@ -2,11 +2,13 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(ExperimentalJsNoRuntime::class)
 package kotlin.js
 
 // TODO: Replace `Any` with `T` as soon as it will be possible
 @SinceKotlin("2.2")
 @ExperimentalWasmJsInterop
+@JsNoRuntime // TODO: remove it after bootstrap
 public actual sealed external interface JsReference<out T : Any> : JsAny
 
 @SinceKotlin("2.2")
