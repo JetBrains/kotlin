@@ -14,6 +14,10 @@ import java.util.SortedMap
 import java.util.TreeMap
 import java.util.concurrent.ConcurrentMap
 import kotlin.collections.builders.MapBuilder
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.internal.IMPLEMENTATIONS
+import kotlin.internal.MISSING_VALUE
 
 /**
  * Returns a new read-only map, mapping only the specified key to the
@@ -57,15 +61,52 @@ internal fun <K, V> build(builder: MutableMap<K, V>): Map<K, V> {
     return (builder as MapBuilder<K, V>).build()
 }
 
+/**
+ * Returns the value for the given [key] if the value is present.
+ * Otherwise, returns the result of the [defaultValue] function.
+ *
+ * In contrast to [getOrElseIfNull], this function returns
+ * the mapped value, even if that value is `null`.
+ *
+ * This function is specialized for maps that can be modified concurrently
+ * to obtain the value for the given key and check its presence in the map atomically.
+ *
+ * @sample samples.collections.Maps.Usage.getOrElseIfMissing
+ */
+@ExperimentalStdlibApi
+@SinceKotlin("2.3")
+@kotlin.internal.InlineOnly
+public inline fun <K, V> ConcurrentMap<K, V>.getOrElseIfMissing(key: K, defaultValue: () -> V): V {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    val value = (this as Map<K, Any?>).getOrDefaultImpl(key, MISSING_VALUE)
+
+    if (value !== MISSING_VALUE) {
+        @Suppress("UNCHECKED_CAST")
+        return value as V
+    } else {
+        return defaultValue()
+    }
+}
 
 /**
- * Concurrent getOrPut, that is safe for concurrent maps.
+ * Returns the value for the given [key] if the value is present and not `null`.
+ * Otherwise, calls the [defaultValue] function,
+ * puts its result into the map under the given key, and returns the call result.
  *
- * Returns the value for the given [key]. If the key is not found in the map, calls the [defaultValue] function,
- * puts its result into the map under the given key and returns it.
+ * Note: it's not recommended to use this function if the map is expected to contain `null` values.
+ * Use either [getOrPutIfNull], or [getOrPutIfMissing] instead to express the intent
+ * what to do when the key is mapped to `null` value more clearly.
+ *
+ * When the given [key] is not in this map or is mapped to a `null`, the result of [defaultValue],
+ * even if `null`, is put into the map under the key.
+ * If [defaultValue] throws an exception, the exception is rethrown.
  *
  * This method guarantees not to put the value into the map if the key is already there,
  * but the [defaultValue] function may be invoked even if the key is already in the map.
+ *
+ * @sample samples.collections.Maps.Usage.getOrPut
  */
 public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     // Do not use computeIfAbsent on JVM8 as it would change locking behavior
@@ -73,6 +114,117 @@ public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -
             ?: defaultValue().let { default -> this.putIfAbsent(key, default) ?: default }
 
 }
+
+/**
+ * Returns the value for the given [key] if the value is present and not `null`.
+ * Otherwise, calls the [defaultValue] function,
+ * puts its result into the map under the given key, and returns the call result.
+ *
+ * In contrast to [getOrPutIfMissing], this function puts and returns
+ * the result of the [defaultValue] function if the [key] is mapped to a `null` value.
+ *
+ * When the given [key] is not in this map or is mapped to a `null`, the result of [defaultValue],
+ * even if `null`, is put into the map under the key.
+ * If [defaultValue] throws an exception, the exception is rethrown.
+ *
+ * This function guarantees not to put the new value into the map if the key is already
+ * associated with a non-null value. However, the [defaultValue] function may still be invoked.
+ *
+ * This function relies on [ConcurrentMap.computeIfAbsent]. Therefore, `ConcurrentMap` implementations
+ * that support `null` values must override the default `computeIfAbsent` implementation, so that
+ * the result of the `mappingFunction` is put into the map both when there is no existing value for the key
+ * and when the key is associated with a `null` value.
+ *
+ * @throws NullPointerException if the specified [key] or the result of [defaultValue] is `null`,
+ *   and this concurrent map does not support `null` keys or values.
+ *
+ * @sample samples.collections.Maps.Usage.getOrPutIfNull
+ */
+@ExperimentalStdlibApi
+@SinceKotlin("2.3")
+@kotlin.internal.InlineOnly
+public inline fun <K, V> ConcurrentMap<K, V>.getOrPutIfNull(key: K, crossinline defaultValue: () -> V): V {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    // Do not call defaultValue() inside computeIfAbsent mappingFunction as it would change locking behavior
+    return this.get(key) ?: this.getOrPutIfNullImpl(key, newValue = defaultValue())
+}
+
+/**
+ * Returns the value for the given [key] if the value is present.
+ * Otherwise, calls the [defaultValue] function,
+ * puts its result into the map under the given key, and returns the call result.
+ *
+ * In contrast to [getOrPutIfNull], this function returns
+ * the mapped value, even if that value is `null`.
+ *
+ * When the given [key] is not in this map, the result of [defaultValue],
+ * even if `null`, is put into the map under the key.
+ * If [defaultValue] throws an exception, the exception is rethrown.
+ *
+ * This function guarantees not to put the new value into the map if the key is already
+ * associated with a value. However, the [defaultValue] function may still be invoked.
+ *
+ * @throws NullPointerException if the specified [key] or the result of [defaultValue] is `null`,
+ *   and this concurrent map does not support `null` keys or values.
+ *
+ * @sample samples.collections.Maps.Usage.getOrPutIfMissing
+ */
+@SinceKotlin("2.3")
+@kotlin.internal.InlineOnly
+@ExperimentalStdlibApi
+public inline fun <K, V> ConcurrentMap<K, V>.getOrPutIfMissing(key: K, crossinline defaultValue: () -> V): V {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    val value = (this as Map<K, Any?>).getOrDefaultImpl(key, MISSING_VALUE)
+    if (value !== MISSING_VALUE) {
+        @Suppress("UNCHECKED_CAST")
+        return value as V
+    }
+
+    val newValue = defaultValue()
+    while(true) {
+        val previousValue = putIfAbsent(key, newValue)
+        if (previousValue != null) {
+            // another value was put concurrently while computing defaultValue()
+            @Suppress("UNCHECKED_CAST")
+            return previousValue as V
+        }
+
+        // previousValue == null means either we have put the new value successfully, or null was put concurrently
+        val writtenValue = getOrDefaultImpl(key, MISSING_VALUE)
+        if (writtenValue !== MISSING_VALUE) {
+            // most likely null or newValue
+            @Suppress("UNCHECKED_CAST")
+            return writtenValue as V
+        }
+        // there's no mapping again at this point, so someone must have deleted either our new value or the existing null value
+        // we'll retry putting the new value again
+    }
+}
+
+@PublishedApi
+@SinceKotlin("2.3")
+@ExperimentalStdlibApi
+internal fun <K, V> Map<K, V>.getOrDefaultImpl(key: K, default: V): V? =
+    IMPLEMENTATIONS.getOrDefault(this, key, default)
+
+@PublishedApi
+@SinceKotlin("2.3")
+@ExperimentalStdlibApi
+internal fun <K, V> ConcurrentMap<K, V>.getOrPutIfNullImpl(key: K, newValue: V): V =
+    if (newValue != null) {
+        // Returns the current (existing or computed) value associated with the specified key
+        IMPLEMENTATIONS.computeIfAbsent(this, key, newValue)
+    } else {
+        // Returns the previous value associated with the specified key.
+        //   If the key is already mapped, returns the mapped value;
+        //   otherwise, puts the newValue (null) and returns null meaning absent value, but it is the same value that was put.
+        @Suppress("UNCHECKED_CAST")
+        this.putIfAbsent(key, newValue) as V
+    }
 
 
 /**
