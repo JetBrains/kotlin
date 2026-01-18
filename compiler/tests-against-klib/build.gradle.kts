@@ -40,3 +40,51 @@ projectTests {
 }
 
 optInToK1Deprecation()
+val stdlibJvmIr by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+val stdlibJs by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+val syncStdlib = tasks.register<Sync>("copyStdlib") {
+    from(stdlibJvmIr)
+    from(stdlibJs)
+    into(layout.buildDirectory.dir("stdlib-for-test"))
+    rename { name ->
+        when {
+            name.contains("js") && name.endsWith(".klib") -> "stdlib-js.klib"
+            name.endsWith(".klib") -> "stdlib.klib"
+            name.endsWith(".jar") -> "stdlib.jar"
+            else -> name
+        }
+    }
+}
+
+dependencies {
+    stdlibJvmIr(project(":kotlin-stdlib-jvm-ir-for-test", configuration = "distJKlib"))
+    stdlibJs(project(":kotlin-stdlib", configuration = "distJsKlib"))
+    testRuntimeOnly(files(syncStdlib))
+}
+
+tasks.named("generateTestsWriteClassPath") {
+    dependsOn(syncStdlib)
+}
+
+tasks.withType<Test>().configureEach {
+    // Register the task's output as an input. 
+    // This tells Gradle (and the security plugin) that we read these files.
+    inputs.files(syncStdlib)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("stdlibArtifacts")
+
+    val stdlibDir = layout.buildDirectory.dir("stdlib-for-test")
+    doFirst {
+        systemProperty("kotlin.stdlib.jvm.ir.klib", stdlibDir.get().file("stdlib-js.klib").asFile.absolutePath)
+        // systemProperty("kotlin.stdlib.jvm.ir.klib", stdlibDir.get().file("stdlib.klib").asFile.absolutePath)
+        systemProperty("kotlin.stdlib.jvm.ir.jar", stdlibDir.get().file("stdlib.jar").asFile.absolutePath)
+    }
+}

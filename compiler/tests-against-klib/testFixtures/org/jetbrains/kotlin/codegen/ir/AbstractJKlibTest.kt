@@ -54,10 +54,23 @@ abstract class AbstractJKlibTest : AbstractBlackBoxCodegenTest() {
         val arguments = K2JKlibCompilerArguments().apply {
             destination = klibName
             freeArgs = sourceFiles
+             
+            val stdlibKlibPath = java.security.AccessController.doPrivileged(java.security.PrivilegedAction {
+                System.getProperty("kotlin.stdlib.jvm.ir.klib")
+            })
+            val stdlibJarPath = java.security.AccessController.doPrivileged(java.security.PrivilegedAction {
+                System.getProperty("kotlin.stdlib.jvm.ir.jar")
+            })
+           
+            checkNotNull(stdlibKlibPath) { "System property 'kotlin.stdlib.jvm.ir.klib' not found" }
+            checkNotNull(stdlibJarPath) { "System property 'kotlin.stdlib.jvm.ir.jar' not found" }
+            println("stdlibKlibPath: $stdlibKlibPath")
+            println("stdlibJarPath: $stdlibJarPath")
+            klibLibraries = stdlibKlibPath
+            //klibLibraries = "/Users/joseefort/Code/kotlin/compiler/tests-against-klib/build/stdlib-for-test/kotlin-stdlib-js-2.3.255-SNAPSHOT.klib"
             noStdlib = true
             noReflect = true
-            // Workaround: Use local copy of 2.3.255 jar to match KLIB and avoid security issues
-            classpath = File("./build/validated-stdlib.jar").absolutePath
+            classpath = stdlibJarPath
         }
 
         val rootDisposable = Disposer.newDisposable("Disposable for ${CLICompiler::class.simpleName}.execImpl")
