@@ -25730,6 +25730,156 @@ public fun DoubleArray.average(): Double {
 }
 
 /**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfByte")
+@SinceKotlin("2.4")
+public fun Array<out Byte>.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfShort")
+@SinceKotlin("2.4")
+public fun Array<out Short>.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@SinceKotlin("2.4")
+public fun Array<out Int>.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfLong")
+@SinceKotlin("2.4")
+public fun Array<out Long>.product(): Long {
+    var product: Long = 1L
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfFloat")
+@SinceKotlin("2.4")
+public fun Array<out Float>.product(): Float {
+    var product: Float = 1.0f
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfDouble")
+@SinceKotlin("2.4")
+public fun Array<out Double>.product(): Double {
+    var product: Double = 1.0
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("2.4")
+public fun ByteArray.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("2.4")
+public fun ShortArray.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("2.4")
+public fun IntArray.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("2.4")
+public fun LongArray.product(): Long {
+    var product: Long = 1L
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("2.4")
+public fun FloatArray.product(): Float {
+    var product: Float = 1.0f
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("2.4")
+public fun DoubleArray.product(): Double {
+    var product: Double = 1.0
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfByte")

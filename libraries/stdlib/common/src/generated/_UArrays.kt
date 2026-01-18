@@ -11177,6 +11177,98 @@ public inline fun <V> UShortArray.zip(other: UShortArray, transform: (a: UShort,
 }
 
 /**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@SinceKotlin("2.4")
+public fun Array<out UInt>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfULong")
+@SinceKotlin("2.4")
+public fun Array<out ULong>.product(): ULong {
+    var product: ULong = 1uL
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfUByte")
+@SinceKotlin("2.4")
+public fun Array<out UByte>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfUShort")
+@SinceKotlin("2.4")
+public fun Array<out UShort>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.product(): UInt {
+    return storage.product().toUInt()
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.product(): ULong {
+    return storage.product().toULong()
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.product(): UInt {
+    return productOf { it.toUInt() }
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.product(): UInt {
+    return productOf { it.toUInt() }
+}
+
+/**
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfUInt")

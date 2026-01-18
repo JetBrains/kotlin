@@ -3769,6 +3769,84 @@ public fun Iterable<Double>.average(): Double {
 }
 
 /**
+ * Returns the product of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("productOfByte")
+@SinceKotlin("2.4")
+public fun Iterable<Byte>.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("productOfShort")
+@SinceKotlin("2.4")
+public fun Iterable<Short>.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@SinceKotlin("2.4")
+public fun Iterable<Int>.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("productOfLong")
+@SinceKotlin("2.4")
+public fun Iterable<Long>.product(): Long {
+    var product: Long = 1L
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("productOfFloat")
+@SinceKotlin("2.4")
+public fun Iterable<Float>.product(): Float {
+    var product: Float = 1.0f
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("productOfDouble")
+@SinceKotlin("2.4")
+public fun Iterable<Double>.product(): Double {
+    var product: Double = 1.0
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
  * Returns the sum of all elements in the collection.
  */
 @kotlin.jvm.JvmName("sumOfByte")
