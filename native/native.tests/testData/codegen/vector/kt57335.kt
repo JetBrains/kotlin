@@ -39,10 +39,10 @@ fun box(): String {
     val sumVecV4 = v4.toString()
 
     if (sumVecV3 != "Vector3(11.0, 22.0, 33.0)") {
-        return "FAIL: sumVecV3 is ${sumVecTwo}"
+        return "FAIL: sumVecV3 is ${sumVecV3}"
     }
     if (sumVecV4 != "Vector4(11.0, 22.0, 33.0, 44.0)") {
-        return "FAIL: sumVecV4 is ${sumVec}"
+        return "FAIL: sumVecV4 is ${sumVecV4}"
     }
 
     return "OK"
