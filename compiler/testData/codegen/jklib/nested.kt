@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+
 // FILE: nested.kt
 package n
 

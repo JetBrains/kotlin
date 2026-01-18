@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+
 // FILE: base.kt
 package base
 

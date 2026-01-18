@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.sure
 
-class ModuleDescriptorImpl @JvmOverloads constructor(
+class   ModuleDescriptorImpl @JvmOverloads constructor(
     moduleName: Name,
     private val storageManager: StorageManager,
     override val builtIns: KotlinBuiltIns,
