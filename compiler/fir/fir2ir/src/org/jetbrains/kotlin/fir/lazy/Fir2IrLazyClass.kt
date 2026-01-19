@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.deserializedIr
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyClass(
@@ -267,6 +269,12 @@ class Fir2IrLazyClass(
             }
             return moduleNameFromModuleData.substring(1, moduleNameFromModuleData.length - 1)
         }
+
+    override val firModuleName: String?
+        get() = fir.moduleName
+
+    override val protobuf: Pair<ProtoBuf.Class, NameResolver>?
+        get() = fir.protobuf
 
     override val isNewPlaceForBodyGeneration: Boolean
         get() = fir.isNewPlaceForBodyGeneration == true

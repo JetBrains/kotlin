@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
 import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
@@ -477,10 +479,16 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                     val moduleName = if (current.isK2) current.moduleName else current.irLazyClassModuleName
                     return moduleName ?: if (context.config.noFallbackToDefaultModuleName) {
                         throw IllegalStateException(
-                            "No module name found in metadata of a class from another module, and fallback to default module name 'main' is disabled.\n" +
-                                    "Remove '-Xno-fallback-to-default-module-name' to allow falling back to 'main'.\n" +
-                                    "Function: ${function.render()} (${function::class.java.simpleName})\n" +
-                                    "Class: ${function.parent.render()} (${function.parent::class.java.simpleName})"
+                            """
+                            No module name found in metadata of a class from another module, and fallback to default module name 'main' is disabled.
+                            Remove '-Xno-fallback-to-default-module-name' to allow falling back to 'main'.
+                            Function: ${function.render()} (${function::class.java.simpleName})
+                            Class: ${function.parent.render()} (${function.parent::class.java.simpleName})
+                            isK2 = ${current.isK2}
+                            IrClass.moduleName = ${current.moduleName}
+                            FirRegularClass.moduleName = ${current.firModuleName}
+                            Protobuf moduleName = ${current.protobuf?.first?.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(current.protobuf!!.second::getString)}
+                            """.trimIndent()
                         )
                     } else {
                         JvmProtoBufUtil.DEFAULT_MODULE_NAME
