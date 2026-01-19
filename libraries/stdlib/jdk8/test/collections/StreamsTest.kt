@@ -67,4 +67,17 @@ class StreamsTest {
         assertEquals(expected, stream.limit(n.toLong()).toList())
     }
 
+    @Test fun plusStream() {
+        val firstStreamBuilder = { Stream.of(1, 2L, 1.23, null) }
+        val secondStreamBuilder = { Stream.of(4, 5L, 4.56, null) }
+
+        val filterInt: Stream<Any?>.() -> IntStream = { filter { it is Int }.mapToInt { it as Int } }
+        val filterLong: Stream<Any?>.() -> LongStream = { filter { it is Long }.mapToLong { it as Long } }
+        val filterDouble: Stream<Any?>.() -> DoubleStream = { filter { it is Double }.mapToDouble { it as Double } }
+
+        assertEquals(listOf(1, 2L, 1.23, null, 4, 5L, 4.56, null), (firstStreamBuilder() + secondStreamBuilder()).toList())
+        assertEquals(listOf(1, 4), (firstStreamBuilder().filterInt() + secondStreamBuilder().filterInt()).toList())
+        assertEquals(listOf(2L, 5L), (firstStreamBuilder().filterLong() + secondStreamBuilder().filterLong()).toList())
+        assertEquals(listOf(1.23, 4.56), (firstStreamBuilder().filterDouble() + secondStreamBuilder().filterDouble()).toList())
+    }
 }
