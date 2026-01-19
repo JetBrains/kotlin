@@ -106,7 +106,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
         mavenPublicationActions.all { action -> action.execute(publication) }
     }
 
-    private val attributeContainer = HierarchyAttributeContainer(parent = null)
+    private val attributeContainer = HierarchyAttributeContainer(parent = null, project.objects)
 
     override fun getAttributes(): AttributeContainer = attributeContainer
 
