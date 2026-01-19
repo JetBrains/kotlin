@@ -1,5 +1,0 @@
-expression: exception
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/Throwable
