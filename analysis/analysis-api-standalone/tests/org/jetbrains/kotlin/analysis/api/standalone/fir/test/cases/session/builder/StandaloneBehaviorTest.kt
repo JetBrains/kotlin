@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 import kotlin.test.assertEquals
@@ -184,7 +183,6 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
         }
     }
 
-    @Disabled
     @Test
     fun testJsPackageProvider() {
         val sharedPlatform = JsPlatforms.defaultJsPlatform

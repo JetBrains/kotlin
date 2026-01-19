@@ -37,7 +37,6 @@ public abstract class KotlinPackageProviderBase(
                 return false
             }
             else -> {
-                // non-JVM platforms are not supported yet
                 return false
             }
         }
@@ -66,7 +65,6 @@ public abstract class KotlinPackageProviderBase(
             }
         }
         else -> {
-            // non-JVM platforms are not supported yet
             emptySet()
         }
     }
