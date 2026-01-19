@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.MPPTools
 import org.jetbrains.kotlin.UtilsKt
-import org.jetbrains.kotlin.konan.target.DistributionKt
-import org.jetbrains.kotlin.konan.target.PlatformManager
 
 buildscript {
     ext.rootBuildDirectory = file('..')
@@ -39,17 +37,6 @@ ext.kotlin_root = project.file("../..").absolutePath
 project.logger.info("kotlin_root: $kotlin_root")
 globalProperties.load(new java.io.FileReader(project.file("$kotlin_root/gradle.properties")))
 
-def konanDataDir = project.hasProperty('konan.data.dir') ? project.property('konan.data.dir').toString() : null
-def platformManager = new PlatformManager(DistributionKt.buildDistribution(UtilsKt.getKotlinNativeDist(project).path, konanDataDir), false)
-def kotlinDist = null
-if (hasProperty("kotlin_dist")) {
-    kotlinDist = file(findProperty("kotlin_dist"))
-    ext["notationMapping"] = [':kotlin-stdlib-common' : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib.jar").absolutePath,
-                              ':kotlin-test'          : project.file("${kotlinDist}/kotlinc/lib/kotlin-test.jar").absolutePath,
-                              ':kotlin-stdlib-jdk8'   : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib-jdk8.jar").absolutePath]
-    ext.targetList = []
-}
-
 subprojects { proj ->
     globalProperties.each { k, v->
         def key = k as String
@@ -58,17 +45,12 @@ subprojects { proj ->
         proj.ext.set(key, value)
     }
     UtilsKt.kotlinInit(proj, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false)
-    proj.ext.platformManager = platformManager
     proj.ext["bootstrapKotlinRepo"] = BootstrapKt.getBootstrapKotlinRepo(proj)
     proj.ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(proj)
     proj.ext["kotlin.native.home"] = UtilsKt.getKotlinNativeDist(project).toString()
     proj.ext["konan.home"] = proj.ext["kotlin.native.home"]
     proj.ext["kotlin.native.enabled"] = true
     proj.logger.info("${proj.name}<<<[kotlin.native.home] = ${proj.ext["kotlin.native.home"]}")
-    if (project.hasProperty("kotlin_dist")) {
-        proj.ext["kotlin_dist"] = kotlinDist.path
-        proj.logger.info("${proj.name}<<<[kotlin_dist] = ${proj.ext["kotlin_dist"]}>>>")
-    }
 
     proj.ext["buildNumber"]  = findProperty("build.number")?.toString() ?: defaultSnapshotVersion
     proj.ext["kotlinVersion"] = findProperty("deployVersion")?.toString()?.identity { deploySnapshotStr ->

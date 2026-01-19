@@ -33,8 +33,3 @@ if (System.getProperty("os.name") == "Mac OS X") {
     include ':objcinterop'
     include ':swiftinterop'
 }
-
-if (hasProperty("kotlin_dist")) {
-    include(":endorsedLibraries:kotlinx.cli")
-    project(":endorsedLibraries:kotlinx.cli").projectDir = file("../endorsedLibraries/kotlinx.cli")
-}

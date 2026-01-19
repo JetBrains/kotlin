@@ -120,14 +120,6 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
     protected open fun Project.configureSourceSets(kotlinVersion: String) {
         with(kotlin.sourceSets) {
-            commonMain.dependencies {
-                implementation(files("${project.findProperty("kotlin_dist")}/kotlinc/lib/kotlin-stdlib.jar"))
-            }
-
-            repositories.flatDir {
-                dir("${project.findProperty("kotlin_dist")}/kotlinc/lib")
-            }
-
             additionalConfigurations(this@configureSourceSets)
 
             // Add sources specified by a user in the benchmark DSL.
@@ -257,12 +249,6 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
         // Use Kotlin compiler version specified by the project property.
         target.logger.info("BenchmarkingPlugin.kt:apply($kotlinVersion)")
-        dependencies.add(
-            "kotlinCompilerClasspath", files(
-                "${project.findProperty("kotlin_dist")}/kotlinc/lib/kotlin-compiler.jar",
-                "${project.findProperty("kotlin_dist")}/kotlinc/lib/kotlin-daemon.jar"
-            )
-        )
         addTimeListener(this)
 
         extensions.create(benchmarkExtensionName, benchmarkExtensionClass.java, this)
