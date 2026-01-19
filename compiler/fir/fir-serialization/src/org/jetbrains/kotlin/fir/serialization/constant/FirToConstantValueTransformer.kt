@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -26,12 +27,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isArrayType
-import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -122,13 +122,13 @@ private fun FirAnnotation.evaluateToAnnotationValue(): AnnotationValue {
         ?: errorWithAttachment("Can't compute constant annotation argument mapping") {
             withFirEntry("annotation", this@evaluateToAnnotationValue)
         }
-    val result = argumentMapping.mapping.mapValuesTo(mutableMapOf()) { (name, _) ->
-        mappingFromFrontend[name]?.let {
-            val evaluatedValue = (it as? FirEvaluatorResult.Evaluated)?.result
-            evaluatedValue?.toConstantValueImpl()
-        } ?: errorWithAttachment("Cannot convert value for parameter \"$name\" to constant") {
-            withFirEntry("argument", argumentMapping.mapping[name]!!)
-            withFirEntry("annotation", this@evaluateToAnnotationValue)
+    val result = buildMap {
+        for (name in argumentMapping.mapping.keys) {
+            val constValue = mappingFromFrontend[name]?.let {
+                val evaluatedValue = (it as? FirEvaluatorResult.Evaluated)?.result
+                evaluatedValue?.toConstantValueImpl()
+            } ?: continue
+            put(name, constValue)
         }
     }
 
