@@ -92,19 +92,6 @@ task konanRun {
         dependsOn "${it.path}:konanRun"
     }
 }
-    
-task jvmRun {
-    doFirst {
-        if (findProperty("kotlin_dist") == null) {
-            throw new StopExecutionException("Please specify location of kotlin's dist in 'kotlin_dist' property")
-        }
-    }
-    subprojects.each {
-        if (it.name != "endorsedLibraries" && it.name != "kotlinx.cli") {
-            dependsOn "${it.path}:jvmRun"
-        }
-    }
-}
 
 task clean {
     subprojects.each {
@@ -277,17 +264,9 @@ task mergeNativeReports {
     }
 }
 
-task mergeJvmReports {
-    doLast {
-        mergeReports(jvmJson)
-        uploadBenchmarkResultToArtifactory(jvmJson)
-    }
-}
-
 subprojects.each {
     if (it.name != "endorsedLibraries" && it.name != "kotlinx.cli") {
         it.afterEvaluate {
-            it.jvmJsonReport.finalizedBy mergeJvmReports
             it.konanJsonReport.finalizedBy mergeNativeReports
         }
     }

@@ -26,21 +26,6 @@ open class SwiftBenchmarkExtension @Inject constructor(project: Project) : Bench
  * A plugin configuring a benchmark Kotlin/Native project.
  */
 open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
-    override fun Project.configureJvmJsonTask(jvmRun: Task): Task {
-        return tasks.create("jvmJsonReport") {
-            logger.info("JVM run is unsupported")
-            jvmRun.finalizedBy(this)
-        }
-    }
-
-    override fun Project.configureJvmTask(): Task {
-        return tasks.create("jvmRun") {
-            doLast {
-                logger.info("JVM run is unsupported")
-            }
-        }
-    }
-
     override val benchmarkExtensionClass: KClass<*>
         get() = SwiftBenchmarkExtension::class
 

@@ -108,21 +108,6 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
 
     private fun getCompilerFlags(benchmarkExtension: CompileBenchmarkExtension) =
             benchmarkExtension.compilerOpts
-
-    private fun Project.configureJvmRun() {
-        val jvmRun = tasks.create("jvmRun") {
-            group = BenchmarkingPlugin.BENCHMARKING_GROUP
-            description = "Runs the compile only benchmark for Kotlin/JVM."
-            doLast { println("JVM run isn't supported") }
-        }
-
-        tasks.create("jvmJsonReport") {
-            group = BenchmarkingPlugin.BENCHMARKING_GROUP
-            description = "Builds the benchmarking report for Kotlin/Native."
-            doLast { println("JVM run isn't supported") }
-            jvmRun.finalizedBy(this)
-        }
-    }
     
     override fun apply(target: Project): Unit = with(target) {
         addTimeListener(this)
@@ -136,7 +121,6 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
         // Create tasks.
         configureUtilityTasks()
         configureKonanRun(benchmarkExtension)
-        configureJvmRun()
     }
 
     companion object {

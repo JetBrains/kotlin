@@ -58,15 +58,6 @@ task konanRun {
     }
 }
 
-/**
- * TODO: it would be better to make help function generating such nop task in buildSrc.
- */
-task jvmRun  {
-    doLast {
-        println("JVM run is unsupported")
-    }
-}
-
 def compilerFlags(def buildType) {
     def result = []
     if (buildType.optimized) {
@@ -106,13 +97,6 @@ task konanJsonReport {
     }
 }
 
-task jvmJsonReport {
-    doLast {
-        println("JVM run is unsupported")
-    }
-}
-
-jvmRun.finalizedBy jvmJsonReport
 konanRun.finalizedBy konanJsonReport
 
 private def getCommonProperties() {
