@@ -126,7 +126,7 @@ object FirExpressionEvaluator {
 
     private fun FirExpression?.canBeEvaluated(session: FirSession): Boolean {
         if (this == null || this is FirLazyExpression || !hasResolvedType) return false
-        return canBeEvaluatedAtCompileTime(this, session, allowErrors = true, calledOnCheckerStage = false)
+        return canBeEvaluatedAtCompileTime(this, session, allowErrors = false, calledOnCheckerStage = false)
     }
 
     private fun FirExpression.evaluate(session: FirSession): FirEvaluatorResult {
