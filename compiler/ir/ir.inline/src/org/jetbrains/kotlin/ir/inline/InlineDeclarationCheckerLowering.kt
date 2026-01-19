@@ -8,23 +8,13 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.checkers.IrInlineDeclarationChecker
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
+// When invoked without prior private inliner, IrInlineDeclarationChecker won't report cascading diagnostics.
 @PhasePrerequisites(FunctionInlining::class) // only private inlining is required
 class InlineDeclarationCheckerLowering<Context : PreSerializationLoweringContext>(val context: Context) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
-        irModule.runIrLevelCheckers(context.diagnosticReporter, ::IrInlineDeclarationChecker)
-    }
-}
-
-fun IrModuleFragment.runIrLevelCheckers(
-    diagnosticReporter: IrDiagnosticReporter,
-    vararg checkers: (IrDiagnosticReporter) -> IrVisitor<*, Nothing?>,
-) {
-    for (checker in checkers) {
-        accept(checker(diagnosticReporter), null)
+        irModule.accept(IrInlineDeclarationChecker(context), null)
     }
 }
