@@ -123,20 +123,9 @@ fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompiler
 
 private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompilerArguments) {
     val languageVersion = languageVersionSettings.languageVersion
-    val argumentsInfo = getArgumentsInfo(arguments::class.java)
 
     propertiesLoop@ for ((explicitArgument, values) in arguments.explicitArguments) {
-        if (!explicitArgument.changesLanguageFeatures) {
-            val defaultValue = argumentsInfo.getDefaultValue(explicitArgument)
-            val actualPropertyValue = values.last()
-            if (actualPropertyValue == defaultValue && values.dropLast(1).all { it == defaultValue }) {
-                reportDiagnostic(
-                    CliDiagnostics.REDUNDANT_CLI_ARG,
-                    "The argument '${explicitArgument.argument.value}=${actualPropertyValue ?: ""}' is redundant.",
-                )
-            }
-            continue@propertiesLoop
-        }
+        if (!explicitArgument.changesLanguageFeatures) continue@propertiesLoop
 
         for (actualPropertyValue in values) {
             fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
