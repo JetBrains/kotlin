@@ -20,18 +20,9 @@ import java.io.File
  */
 
 internal val hostOs by lazy { System.getProperty("os.name") }
-internal val userHome by lazy { System.getProperty("user.home") }
-
-internal val Project.ext: ExtraPropertiesExtension
-    get() = extensions.getByName("ext") as ExtraPropertiesExtension
 
 internal val Project.kotlin: KotlinMultiplatformExtension
     get() = extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
 internal val NamedDomainObjectContainer<out KotlinCompilation<*>>.main: KotlinNativeCompilation
     get() = getByName(::main.name) as KotlinNativeCompilation
-
-internal val FileCollection.isNotEmpty: Boolean
-    get() = !isEmpty
-
-internal fun Provider<File>.resolve(child: String): Provider<File> = map { it.resolve(child) }
