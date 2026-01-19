@@ -42,9 +42,6 @@ internal val Project.konanVersion: String
 internal val Project.nativeJson: String
     get() = project.property("nativeJson") as String
 
-internal val Project.jvmJson: String
-    get() = project.property("jvmJson") as String
-
 internal val Project.buildType: NativeBuildType
     get() = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: NativeBuildType.RELEASE
 
@@ -196,8 +193,6 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
         return konanRun
     }
 
-    protected abstract fun Project.configureJvmTask(): Task
-
     protected fun compilerFlagsFromBinary(project: Project): List<String> {
         val result = mutableListOf<String>()
         if (project.benchmark.buildType.optimized) {
@@ -240,8 +235,6 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
         }
     }
 
-    protected abstract fun Project.configureJvmJsonTask(jvmRun: Task): Task
-
     protected open fun Project.configureExtraTasks() {}
 
     private fun Project.configureTasks() {
@@ -250,14 +243,8 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
         // Native run task.
         configureNativeTask(nativeTarget)
 
-        // JVM run task.
-        val jvmRun = configureJvmTask()
-
         // Native report task.
         configureKonanJsonTask(nativeTarget)
-
-        // JVM report task.
-        configureJvmJsonTask(jvmRun)
 
         project.afterEvaluate {
             // Need to rebuild benchmark to collect compile time.
