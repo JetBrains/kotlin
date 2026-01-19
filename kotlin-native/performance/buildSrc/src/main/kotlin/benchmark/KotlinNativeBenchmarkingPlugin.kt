@@ -39,10 +39,6 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
     override val Project.nativeLinkTask: Task
         get() = nativeBinary.linkTaskProvider.get()
 
-    override fun configureMPPExtension(project: Project) {
-        super.configureMPPExtension(project)
-    }
-
     override fun getCompilerFlags(project: Project, nativeTarget: KotlinNativeTarget) =
             super.getCompilerFlags(project, nativeTarget) + project.nativeBinary.freeCompilerArgs.map { "\"$it\"" }
 
