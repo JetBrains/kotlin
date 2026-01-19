@@ -115,10 +115,6 @@ object FirExpressionEvaluator {
     fun evaluateAnnotationArguments(annotation: FirAnnotation, session: FirSession): Map<Name, FirEvaluatorResult>? {
         val argumentMapping = annotation.argumentMapping.mapping
 
-        if (argumentMapping.values.any { expr -> !expr.canBeEvaluated(session) }) {
-            return null
-        }
-
         return argumentMapping.mapValues { (_, expression) -> expression.evaluate(session) }
     }
 
@@ -130,7 +126,7 @@ object FirExpressionEvaluator {
 
     private fun FirExpression?.canBeEvaluated(session: FirSession): Boolean {
         if (this == null || this is FirLazyExpression || !hasResolvedType) return false
-        return canBeEvaluatedAtCompileTime(this, session, allowErrors = false, calledOnCheckerStage = false)
+        return canBeEvaluatedAtCompileTime(this, session, allowErrors = true, calledOnCheckerStage = false)
     }
 
     private fun FirExpression.evaluate(session: FirSession): FirEvaluatorResult {
