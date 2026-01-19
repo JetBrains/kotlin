@@ -11,12 +11,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.analysisContext
 
+@KaPlatformInterface
 public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructureProvider {
     protected abstract fun getNotUnderContentRootModule(project: Project): KaNotUnderContentRootModule
 
@@ -84,6 +86,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
     }
 }
 
+@KaPlatformInterface
 @OptIn(KaExperimentalApi::class)
 @Deprecated("Use 'explicitModule' instead.")
 public var KtCodeFragment.forcedSpecialModule: KaDanglingFileModule?

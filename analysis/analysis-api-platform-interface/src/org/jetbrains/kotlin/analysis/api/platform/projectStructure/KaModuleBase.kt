@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
+@KaPlatformInterface
 public abstract class KaModuleBase : KaModule {
     override val contentScope: GlobalSearchScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaContentScopeProvider.getInstance(project).getRefinedContentScope(this)

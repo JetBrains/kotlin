@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 
 /**
  * [KaElementModificationType] describes which kind of modification was applied to a changed [PsiElement]. [KaSourceModificationService]
  * uses this information to perform change locality detection.
  */
+@KaPlatformInterface
 public sealed interface KaElementModificationType {
     /**
      * The element has been added as a new element.
      */
+    @KaPlatformInterface
     public object ElementAdded : KaElementModificationType
 
     /**
@@ -22,10 +25,12 @@ public sealed interface KaElementModificationType {
      * cannot be the modification "anchor" because it has already been removed and is not part of the [KtFile][org.jetbrains.kotlin.psi.KtFile]
      * anymore, but it might still be used to determine the modification's change type.
      */
+    @KaPlatformInterface
     public class ElementRemoved(public val removedElement: PsiElement) : KaElementModificationType
 
     /**
      * Which kind of modification was applied to the element is unknown.
      */
+    @KaPlatformInterface
     public object Unknown : KaElementModificationType
 }

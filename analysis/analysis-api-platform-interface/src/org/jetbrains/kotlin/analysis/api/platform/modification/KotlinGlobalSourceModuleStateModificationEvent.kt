@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
@@ -19,4 +20,5 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  *
  * See [KotlinModificationEvent] for important contracts common to all modification events.
  */
+@KaPlatformInterface
 public object KotlinGlobalSourceModuleStateModificationEvent : KotlinModificationEvent

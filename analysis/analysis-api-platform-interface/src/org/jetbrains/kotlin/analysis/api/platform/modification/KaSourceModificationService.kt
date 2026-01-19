@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.modification
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 
 /**
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
  * in-block modification. Hence, platforms will need to use [KaSourceModificationService] for more granular cache invalidation, or as a last
  * resort publish out-of-block modification events for all changes.
  */
+@KaPlatformInterface
 public interface KaSourceModificationService : KaEngineService {
     /**
      * Classifies the modification of [element] and its [modificationType] in terms of [KaSourceModificationLocality], as described in the
@@ -67,6 +69,7 @@ public interface KaSourceModificationService : KaEngineService {
      */
     public fun ancestorAffectedByInBlockModification(element: PsiElement): PsiElement?
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KaSourceModificationService = project.service()
     }

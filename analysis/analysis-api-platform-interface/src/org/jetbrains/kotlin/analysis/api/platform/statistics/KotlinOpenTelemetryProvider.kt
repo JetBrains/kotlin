@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.statistics
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
 import io.opentelemetry.api.OpenTelemetry
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 
 /**
@@ -20,9 +21,11 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponen
  *
  * @see KaStatisticsService
  */
+@KaPlatformInterface
 public interface KotlinOpenTelemetryProvider : KotlinOptionalPlatformComponent {
     public val openTelemetry: OpenTelemetry
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinOpenTelemetryProvider? = project.serviceOrNull()
     }

@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.analysis.api.platform.caches
 
 import com.github.benmanes.caffeine.cache.Cache
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import java.util.concurrent.ConcurrentMap
 
 /**
  * An object used as a representative for `null` in collections which prohibit `null` values.
  */
+@KaImplementationDetail
 public object NullValue
 
 /**
  * Converts [NullValue] to `null`, and all other instances of [this] to [V].
  */
+@KaImplementationDetail
 @Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST")
 public inline fun <V> Any.nullValueToNull(): V = when (this) {
     NullValue -> null
@@ -25,6 +28,7 @@ public inline fun <V> Any.nullValueToNull(): V = when (this) {
 /**
  * Implements [ConcurrentMap.getOrPut] with [NullValue] conversion.
  */
+@KaImplementationDetail
 public inline fun <K : Any, R> ConcurrentMap<K, Any>.getOrPutWithNullableValue(
     key: K,
     crossinline compute: (K) -> Any?,
@@ -36,5 +40,6 @@ public inline fun <K : Any, R> ConcurrentMap<K, Any>.getOrPutWithNullableValue(
 /**
  * Implements [Cache.getOrPut] with [NullValue] conversion.
  */
+@KaImplementationDetail
 public inline fun <K : Any, R> Cache<K, Any>.getOrPutWithNullableValue(key: K, crossinline compute: (K) -> Any?): R =
     asMap().getOrPutWithNullableValue(key) { compute(key) }

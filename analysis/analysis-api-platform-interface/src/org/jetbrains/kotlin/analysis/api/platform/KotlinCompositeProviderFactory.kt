@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.platform
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.utils.mergeOnly
 
 /**
  * [KotlinCompositeProviderFactory] is used by various [KotlinCompositeProvider]s to share code related to provider creation and flattening.
  */
+@KaPlatformInterface
 public class KotlinCompositeProviderFactory<P : KotlinComposableProvider>(
     private val emptyProvider: P,
     private val composeProviders: (List<P>) -> P,
@@ -40,6 +42,7 @@ public class KotlinCompositeProviderFactory<P : KotlinComposableProvider>(
  * Uses the given [factory] to merge all providers of type [T] with the given [mergeTargets] strategy. Other providers (not of type [T]) are
  * added to the resulting composite provider unmerged.
  */
+@KaPlatformInterface
 public inline fun <P : KotlinComposableProvider, reified T : P> List<P>.mergeSpecificProviders(
     factory: KotlinCompositeProviderFactory<P>,
     crossinline mergeTargets: (List<T>) -> P,

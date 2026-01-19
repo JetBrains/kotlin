@@ -1177,7 +1177,12 @@ Use established single-word forms for compound terms commonly used in the progra
 The Analysis API serves various projects with different stability requirements.
 To prevent accidental usage of unstable APIs or usage-tailored functionality, the Analysis API uses a set of opt-in annotations.
 
-Note that the binary compatibility checker doesn't propagate opt-in annotations from outer classes.
+#### Placement
+
+Opt-in requirements are propagated through the lexical scope to nested declarations. Hence, it is generally sufficient to annotate the 
+top-level declaration.
+
+However, note that the binary compatibility checker does not propagate opt-in annotations from outer classes.
 If the outer class is annotated, add the same opt-in annotation to all nested classes as well.
 
 ### Experimental API Markers
@@ -1192,6 +1197,8 @@ If the outer class is annotated, add the same opt-in annotation to all nested cl
     - Marks APIs intended for Analysis API implementations and platforms.
       These APIs define contracts between the core API and platform implementations, are neither stable nor intended for end-user
       consumption.
+    - All public endpoints in the `analysis-api-platform-interface` module should be annotated with this marker according to the placement
+      rules above. This ensures that clients have to opt in when they accidentally or automatically depend on the platform interface. 
 
 ### Internal API Markers
 

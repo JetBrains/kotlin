@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
+
 /**
  * An exception which occurred during [restricted analysis][KotlinRestrictedAnalysisService].
  *
@@ -17,4 +19,5 @@ package org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis
  * Distinguishing between regular exceptions and those that occurred during restricted analysis supports diagnostic efforts and even allows
  * the platform to suppress such exceptions if needed.
  */
+@KaPlatformInterface
 public abstract class KaRestrictedAnalysisException(cause: Throwable) : Exception(cause)

@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.analysis.api.platform.java
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.name.FqName
 
 /**
  * Allows checking whether one Java module has access to another Java module.
  */
+@KaPlatformInterface
 public interface KotlinJavaModuleAccessibilityChecker {
     /**
      * Checks whether the Java module of [referencedFile] is accessible from the Java module of [useSiteFile]. If [referencedPackage] is
@@ -27,6 +29,7 @@ public interface KotlinJavaModuleAccessibilityChecker {
         referencedPackage: FqName?,
     ): KotlinJavaModuleAccessibilityError?
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinJavaModuleAccessibilityChecker = project.service()
     }
@@ -35,19 +38,23 @@ public interface KotlinJavaModuleAccessibilityChecker {
 /**
  * An accessibility error returned by [KotlinJavaModuleAccessibilityChecker.checkAccessibility].
  */
+@KaPlatformInterface
 public sealed class KotlinJavaModuleAccessibilityError {
     /**
      * The use-site module cannot read the referenced module because it is unnamed.
      */
+    @KaPlatformInterface
     public object ModuleDoesNotReadUnnamedModule : KotlinJavaModuleAccessibilityError()
 
     /**
      * The use-site module cannot read the referenced module.
      */
+    @KaPlatformInterface
     public data class ModuleDoesNotReadModule(val dependencyModuleName: String) : KotlinJavaModuleAccessibilityError()
 
     /**
      * The use-site module reads the referenced module, but the referenced package name is not exported by it.
      */
+    @KaPlatformInterface
     public data class ModuleDoesNotExportPackage(val dependencyModuleName: String) : KotlinJavaModuleAccessibilityError()
 }

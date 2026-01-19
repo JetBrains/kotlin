@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import com.intellij.util.messages.Topic
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 
 /**
@@ -57,7 +58,9 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  *
  * @see KaSourceModificationLocality
  */
+@KaPlatformInterface
 public sealed interface KotlinModificationEvent {
+    @KaPlatformInterface
     public companion object {
         /**
          * @see KotlinModificationEvent
@@ -74,6 +77,7 @@ public sealed interface KotlinModificationEvent {
 /**
  * A listener for [KotlinModificationEvent]s. It should be registered on the [analysisMessageBus] with [KotlinModificationEvent.TOPIC].
  */
+@KaPlatformInterface
 public fun interface KotlinModificationEventListener {
     /**
      * [onModification] is invoked before or after the modification and usually in a write action. However, the specific timing depends on
@@ -88,6 +92,7 @@ public fun interface KotlinModificationEventListener {
  * [KotlinModificationEventKind] represents the kinds of [KotlinModificationEvent]s. While it is not required to publish or subscribe to
  * modification events, it can be useful when abstracting over modification events in general, for example in tests.
  */
+@KaPlatformInterface
 public enum class KotlinModificationEventKind {
     MODULE_STATE_MODIFICATION,
     MODULE_OUT_OF_BLOCK_MODIFICATION,
@@ -98,10 +103,12 @@ public enum class KotlinModificationEventKind {
     CODE_FRAGMENT_CONTEXT_MODIFICATION,
 }
 
+@KaPlatformInterface
 public val KotlinModificationEventKind.isModuleLevel: Boolean
     get() = this == KotlinModificationEventKind.MODULE_STATE_MODIFICATION ||
             this == KotlinModificationEventKind.MODULE_OUT_OF_BLOCK_MODIFICATION ||
             this == KotlinModificationEventKind.CODE_FRAGMENT_CONTEXT_MODIFICATION
 
+@KaPlatformInterface
 public val KotlinModificationEventKind.isGlobalLevel: Boolean
     get() = !isModuleLevel

@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.caches
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
 /**
- * A wrapper around a [ConcurrentMap] which stores `null` values returned by the computation in the form of explicit [NullValue]s.
+ * A wrapper around a [ConcurrentMap] which stores `null` values returned by the computation in the form of explicit objects.
  */
+@KaPlatformInterface
 @JvmInline
 public value class NullableConcurrentCache<K : Any, V>(
     public val map: ConcurrentMap<K, Any> = ConcurrentHashMap(),
@@ -19,6 +22,7 @@ public value class NullableConcurrentCache<K : Any, V>(
      * Returns the value for the given [key] if it's contained in the cache, or computes the value with [compute] *outside the cache's
      * computation lock* and adds it to the cache.
      */
+    @OptIn(KaImplementationDetail::class)
     public inline fun getOrPut(
         key: K,
         crossinline compute: (K) -> V?,

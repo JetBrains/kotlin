@@ -9,6 +9,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiAnnotation
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.name.ClassId
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.name.ClassId
  * - [KotlinJavaModulePsiAnnotationsProvider] (recommended)
  * - [KotlinJavaModuleJavaAnnotationsProvider]
  */
+@KaPlatformInterface
 public sealed interface KotlinJavaModuleAnnotationsProvider<T> : KotlinPlatformComponent {
     /**
      * Returns all annotations of the Java module where the class with the given [classId] is defined.
@@ -44,6 +46,7 @@ public sealed interface KotlinJavaModuleAnnotationsProvider<T> : KotlinPlatformC
      */
     public fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<T>?
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinJavaModuleAnnotationsProvider<*> = project.service()
     }
@@ -52,6 +55,7 @@ public sealed interface KotlinJavaModuleAnnotationsProvider<T> : KotlinPlatformC
 /**
  * Provides [PsiAnnotation]s for Java modules.
  */
+@KaPlatformInterface
 public interface KotlinJavaModulePsiAnnotationsProvider : KotlinJavaModuleAnnotationsProvider<PsiAnnotation>
 
 /**
@@ -59,4 +63,5 @@ public interface KotlinJavaModulePsiAnnotationsProvider : KotlinJavaModuleAnnota
  * is a compiler-internal API, so this provider should only be preferred if the implementation directly accesses [JavaAnnotation]s.
  */
 @KaNonPublicApi
+@KaPlatformInterface
 public interface KotlinJavaModuleJavaAnnotationsProvider : KotlinJavaModuleAnnotationsProvider<JavaAnnotation>

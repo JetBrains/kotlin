@@ -9,11 +9,13 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 import kotlin.reflect.KClass
 
+@KaPlatformInterface
 public class KotlinReadActionConfinementLifetimeToken(
     project: Project,
     private val modificationTracker: ModificationTracker,
@@ -65,6 +67,7 @@ public class KotlinReadActionConfinementLifetimeToken(
     }
 }
 
+@KaPlatformInterface
 public class KotlinReadActionConfinementLifetimeTokenFactory : KotlinLifetimeTokenFactory {
     override val identifier: KClass<out KaLifetimeToken> = KotlinReadActionConfinementLifetimeToken::class
 

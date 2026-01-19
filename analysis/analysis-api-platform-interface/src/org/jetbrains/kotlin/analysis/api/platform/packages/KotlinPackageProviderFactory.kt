@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.packages
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 
@@ -20,9 +21,11 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
  *
  * @see KotlinPackageProvider
  */
+@KaPlatformInterface
 public interface KotlinPackageProviderFactory : KotlinPlatformComponent {
     public fun createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinPackageProviderFactory = project.service()
     }
@@ -37,14 +40,18 @@ public interface KotlinPackageProviderFactory : KotlinPlatformComponent {
  * The provider merger should consider merging scopes with [KaGlobalSearchScopeMerger][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger]
  * if there is a useful implementation provided by the platform.
  */
+@KaPlatformInterface
 public interface KotlinPackageProviderMerger : KotlinComposableProviderMerger<KotlinPackageProvider>, KotlinPlatformComponent {
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinPackageProviderMerger = project.service()
     }
 }
 
+@KaPlatformInterface
 public fun Project.createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider =
     KotlinPackageProviderFactory.getInstance(this).createPackageProvider(searchScope)
 
+@KaPlatformInterface
 public fun Project.mergePackageProviders(packageProviders: List<KotlinPackageProvider>): KotlinPackageProvider =
     KotlinPackageProviderMerger.getInstance(this).merge(packageProviders)

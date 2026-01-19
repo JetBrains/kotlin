@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.packages
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 
+@KaPlatformInterface
 public object KotlinEmptyPackageProvider : KotlinPackageProvider {
     override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean = false
 

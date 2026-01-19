@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import java.util.Objects
+import java.util.*
 
 /**
  * This event signals that [module]'s settings or structure are changing. The event is published in a write action *before* the [module] is
@@ -15,6 +16,7 @@ import java.util.Objects
  *
  * See [KotlinModificationEvent] for important contracts common to all modification events.
  */
+@KaPlatformInterface
 public class KotlinModuleStateModificationEvent(
     public val module: KaModule,
     public val modificationKind: KotlinModuleStateModificationKind,
@@ -29,6 +31,7 @@ public class KotlinModuleStateModificationEvent(
 /**
  * Describes the kind of module state modification affecting a [KaModule] in more detail.
  */
+@KaPlatformInterface
 public enum class KotlinModuleStateModificationKind {
     /**
      * The [KaModule]'s properties or references to other modules are being changed.

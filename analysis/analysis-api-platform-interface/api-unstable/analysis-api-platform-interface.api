@@ -74,16 +74,6 @@ public final class org/jetbrains/kotlin/analysis/api/platform/KotlinProjectMessa
 	public fun getMessageBus ()Lcom/intellij/util/messages/MessageBus;
 }
 
-public final class org/jetbrains/kotlin/analysis/api/platform/caches/NullValue {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/caches/NullValue;
-}
-
-public final class org/jetbrains/kotlin/analysis/api/platform/caches/NullValueKt {
-	public static final fun getOrPutWithNullableValue (Lcom/github/benmanes/caffeine/cache/Cache;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun getOrPutWithNullableValue (Ljava/util/concurrent/ConcurrentMap;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public static final fun nullValueToNull (Ljava/lang/Object;)Ljava/lang/Object;
-}
-
 public final class org/jetbrains/kotlin/analysis/api/platform/caches/NullableCaffeineCache {
 	public static final synthetic fun box-impl (Lcom/github/benmanes/caffeine/cache/Cache;)Lorg/jetbrains/kotlin/analysis/api/platform/caches/NullableCaffeineCache;
 	public static fun constructor-impl (Lcom/github/benmanes/caffeine/cache/Cache;)Lcom/github/benmanes/caffeine/cache/Cache;
