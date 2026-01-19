@@ -38,8 +38,8 @@ public abstract @interface A {
  *
  *   // signature: foo()V
  *   @A(x = [])
- *   @B(x = "x", y = [], z = "z")
- *   @C(a = A(x = []), b = B(x = "x", y = [], z = "z"))
+ *   @B(x = "x", z = "z", y = [])
+ *   @C(a = A(x = []), b = B(x = "x", z = "z", y = []))
  *   @D
  *   @E(d = D())
  *   public final fun foo(): kotlin/Unit
