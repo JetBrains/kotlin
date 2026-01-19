@@ -105,7 +105,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     override fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
-    ): FirStatement = whileAnalysing(session, qualifiedAccessExpression) {
+    ): FirExpression = whileAnalysing(session, qualifiedAccessExpression) {
         transformQualifiedAccessExpression(qualifiedAccessExpression, data, isUsedAsReceiver = false, isUsedAsGetClassReceiver = false)
     }
 
