@@ -257,7 +257,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
         )
 
         fun AttributeContainer.filterOutAndroidVariantAttributes(): AttributeContainer =
-            HierarchyAttributeContainer(this) {
+            HierarchyAttributeContainer(this, project.objects) {
                 val valueString = run {
                     val value = getAttribute(it)
                     (value as? Named)?.name ?: value.toString()
