@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.fir.serialization.constant
 import org.jetbrains.kotlin.constant.KClassValue
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 internal fun create(argumentType: ConeKotlinType, session: FirSession): KClassValue? {
     if (argumentType is ConeErrorType) return null
     if (argumentType !is ConeClassLikeType) return null
-    var type = argumentType
+    var type: ConeKotlinType = argumentType.fullyExpandedType(session)
     var arrayDimensions = 0
     while (true) {
         if (type.isPrimitiveArray) break
