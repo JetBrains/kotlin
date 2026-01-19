@@ -7,11 +7,11 @@ Process [..] stopped
 Process [..] stopped
 [..] stop reason = step in
 > source info
-[..]: [..]/kotlin-native/runtime/src/main/kotlin/kotlin/Throwable.kt:[..]
+[..]: kotlin-native/runtime/src/main/kotlin/kotlin/Throwable.kt:[..]
 > b [K][Suspend]Functions:1
 > c
 Process [..] stopped
 [..] stop reason = breakpoint 2[..]
 > source info
-[..]: [..]/[K][Suspend]Functions:1:1
+[..]: [K][Suspend]Functions:1:1
 > q

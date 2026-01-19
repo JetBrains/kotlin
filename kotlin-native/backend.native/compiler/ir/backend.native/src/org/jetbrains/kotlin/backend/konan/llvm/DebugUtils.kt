@@ -300,8 +300,10 @@ internal data class FileAndFolder(val file: String, val folder: String) {
 
 internal fun String?.toFileAndFolder(config: KonanConfig): FileAndFolder {
     this ?: return FileAndFolder.NOFILE
-    val file = File(this).absoluteFile
-    var parent = file.parent
+    val file = File(this)
+    // Note: `parentOrNull` is `null` when the path consists of a single segment, e.g. `foo.kt` and not `bar/foo.kt`.
+    // `.` is a valid DWARF relative path to parent for this case, while an empty string is not.
+    var parent = file.parentOrNull ?: "."
     config.configuration.get(KonanConfigKeys.DEBUG_PREFIX_MAP)?.let { debugPrefixMap ->
         for ((key, value) in debugPrefixMap) {
             if (parent.startsWith(key)) {
