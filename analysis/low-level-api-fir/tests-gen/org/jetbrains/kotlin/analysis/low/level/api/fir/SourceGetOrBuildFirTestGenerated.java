@@ -582,6 +582,42 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("explicitArgument.kt")
+    public void testExplicitArgument() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitArgumentName.kt")
+    public void testExplicitArgumentName() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitArgumentName.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitArgumentNameReference.kt")
+    public void testExplicitArgumentNameReference() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitArgumentNameReference.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitContextArgument.kt")
+    public void testExplicitContextArgument() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitContextArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitContextArgumentName.kt")
+    public void testExplicitContextArgumentName() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitContextArgumentName.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitContextArgumentNameReference.kt")
+    public void testExplicitContextArgumentNameReference() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitContextArgumentNameReference.kt");
+    }
+
+    @Test
     @TestMetadata("functionCallArgumentList.kt")
     public void testFunctionCallArgumentList() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/functionCallArgumentList.kt");

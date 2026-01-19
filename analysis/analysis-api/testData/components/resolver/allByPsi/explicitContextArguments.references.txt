@@ -1,0 +1,392 @@
+KtNameReferenceExpression(42,50): 'Implicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Implicit
+
+KtNameReferenceExpression(62,70): 'Explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Explicit
+
+KtNameReferenceExpression(93,99): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(116,122): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(134,142): 'Explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Explicit
+
+KtNameReferenceExpression(165,171): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(195,203): 'Implicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Implicit
+
+KtNameReferenceExpression(215,223): 'Explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Explicit
+
+KtNameReferenceExpression(244,250): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(267,273): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(285,293): 'Explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Explicit
+
+KtNameReferenceExpression(314,320): 'String'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(337,345): 'Implicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Implicit
+
+KtNameReferenceExpression(357,365): 'Explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Explicit
+
+KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(395,402): 'unnamed'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) context(`<unused var>`@Implicit, explicit@Explicit)
+      fun unnamed(regular: kotlin.String)
+
+KtNameReferenceExpression(423,430): 'regular'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      regular: kotlin.String
+
+KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(445,450): 'named'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) context(implicit@Implicit, explicit@Explicit)
+      fun named(regular: kotlin.String)
+
+KtNameReferenceExpression(471,478): 'regular'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      regular: kotlin.String
+
+KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(494,501): 'unnamed'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) context(`<unused var>`@Implicit, explicit@Explicit)
+      fun unnamed(regular: kotlin.String)
+
+KtNameReferenceExpression(518,526): 'explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      explicit: Explicit
+
+KtCallExpression(529,539): 'Explicit()'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(529,537): 'Explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in Explicit) constructor()
+
+KtNameReferenceExpression(541,548): 'regular'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      regular: kotlin.String
+
+KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(563,568): 'named'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) context(implicit@Implicit, explicit@Explicit)
+      fun named(regular: kotlin.String)
+
+KtNameReferenceExpression(585,593): 'explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      explicit: Explicit
+
+KtCallExpression(596,606): 'Explicit()'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(596,604): 'Explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in Explicit) constructor()
+
+KtNameReferenceExpression(608,615): 'regular'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      regular: kotlin.String
+
+KtNameReferenceExpression(633,641): 'Implicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) class Implicit
+
+KtCallExpression(664,794): 'with(Explicit()) {'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(664,668): 'with'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) inline fun <T, R> with(receiver: T, block: T.() -> R): R
+
+KtCallExpression(669,679): 'Explicit()'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(669,677): 'Explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in Explicit) constructor()
+
+KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(691,698): 'unnamed'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) context(`<unused var>`@Implicit, explicit@Explicit)
+      fun unnamed(regular: kotlin.String)
+
+KtNameReferenceExpression(719,726): 'regular'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      regular: kotlin.String
+
+KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(745,750): 'named'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) context(implicit@Implicit, explicit@Explicit)
+      fun named(regular: kotlin.String)
+
+KtNameReferenceExpression(771,778): 'regular'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      regular: kotlin.String
+
+KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(800,807): 'unnamed'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) context(`<unused var>`@Implicit, explicit@Explicit)
+      fun unnamed(regular: kotlin.String)
+
+KtNameReferenceExpression(824,832): 'explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      explicit: Explicit
+
+KtCallExpression(835,845): 'Explicit()'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(835,843): 'Explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in Explicit) constructor()
+
+KtNameReferenceExpression(847,854): 'regular'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      regular: kotlin.String
+
+KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(869,874): 'named'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) context(implicit@Implicit, explicit@Explicit)
+      fun named(regular: kotlin.String)
+
+KtNameReferenceExpression(891,899): 'explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      explicit: Explicit
+
+KtCallExpression(902,912): 'Explicit()'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtNameReferenceExpression(902,910): 'Explicit'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in Explicit) constructor()
+
+KtNameReferenceExpression(914,921): 'regular'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      regular: kotlin.String
