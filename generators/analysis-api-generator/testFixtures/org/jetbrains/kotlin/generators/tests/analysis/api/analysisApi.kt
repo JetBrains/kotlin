@@ -217,8 +217,26 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
                 symbolsModel(it, "symbolByJavaPsi")
             }
 
-            test<AbstractSingleSymbolByPsiTest> {
+            test<AbstractSingleSymbolByPsiJVMTest> {
                 symbolsModel(it, "singleSymbolByPsi")
+            }
+
+            group(filter = frontendIs(FrontendKind.Fir)) {
+                test<AbstractSingleSymbolByPsiJSTest> {
+                    model(it, "singleSymbolByPsi", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                }
+
+                test<AbstractSingleSymbolByPsiWasmJsTest> {
+                    model(it, "singleSymbolByPsi", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                }
+
+                test<AbstractSingleSymbolByPsiWasmWasiTest> {
+                    model(it, "singleSymbolByPsi", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                }
+
+                test<AbstractSingleSymbolByPsiCommonTest> {
+                    model(it, "singleSymbolByPsi", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                }
             }
 
             test<AbstractSymbolRestoreFromDifferentModuleTest> {

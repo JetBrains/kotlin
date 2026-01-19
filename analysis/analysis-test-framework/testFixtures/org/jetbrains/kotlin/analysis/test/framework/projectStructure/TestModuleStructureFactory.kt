@@ -20,9 +20,11 @@ import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.utils.stripOutSnapshotVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -208,10 +210,21 @@ object TestModuleStructureFactory {
 
         for (libraryRootPath in jsLibraryRootPaths) {
             val libraryRoot = Paths.get(libraryRootPath)
-            check(libraryRoot.extension == KLIB_FILE_EXTENSION)
+            if (compilerConfiguration.targetPlatform.isJs()) {
+                /**
+                 * WASM infrastructure uses the same [JSConfigurationKeys.LIBRARIES] key to provide library roots.
+                 * However, WASM roots are just regular directories, so we should only perform this check for JS targets.
+                 */
+                check(libraryRoot.extension == KLIB_FILE_EXTENSION)
+            }
 
             val libraryModule = libraryCache.getOrCreateLibraryModule(libraryRoot) {
-                createLibraryModule(project, libraryRoot, JsPlatforms.defaultJsPlatform, testServices)
+                createLibraryModule(
+                    project,
+                    libraryRoot,
+                    compilerConfiguration.targetPlatform ?: JsPlatforms.defaultJsPlatform,
+                    testServices
+                )
             }
 
             ktModule.directRegularDependencies.add(libraryModule)

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.testOutputSanitizerOrDefault
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
@@ -249,15 +250,21 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         compareResults(actualPretty, testServices, disablePsiBasedLogic, extension = "pretty.txt")
     }
 
-    private fun compareResults(actual: String, testServices: TestServices, disablePsiBasedLogic: Boolean, extension: String) {
+    private fun compareResults(
+        actual: String,
+        testServices: TestServices,
+        disablePsiBasedLogic: Boolean,
+        extension: String,
+        sanitizer: (String) -> String = testServices.testOutputSanitizerOrDefault
+    ) {
         val assertions = testServices.assertions
         if (!disablePsiBasedLogic) {
-            assertions.assertEqualsToTestOutputFile(actual = actual, extension = extension)
+            assertions.assertEqualsToTestOutputFile(actual = actual, extension = extension, sanitizer = sanitizer)
         } else {
             val expectedFile = getTestOutputFile(extension).toFile()
             val nonPsiExpectedFile = getTestOutputFile("nonPsi.$extension").toFile()
             when {
-                assertions.doesEqualToFile(expectedFile, actual) -> {
+                assertions.doesEqualToFile(expectedFile, actual, sanitizer) -> {
                     if (nonPsiExpectedFile.exists() &&
                         configurator.frontendKind == FrontendKind.Fir &&
                         configurator.analysisApiMode == AnalysisApiMode.Ide
@@ -268,7 +275,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
                 else -> {
                     if (nonPsiExpectedFile.exists() && configurator.frontendKind == FrontendKind.Fir) {
-                        assertions.assertEqualsToFile(nonPsiExpectedFile, actual)
+                        assertions.assertEqualsToFile(nonPsiExpectedFile, actual, sanitizer)
                         return
                     }
 
@@ -325,7 +332,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
             val actual = restored.renderAsDeclarations()
             val expectedFile = getTestOutputFile().toFile()
-            if (!testServices.assertions.doesEqualToFile(expectedFile, actual)) {
+            val sanitizer = testServices.testOutputSanitizerOrDefault
+            if (!testServices.assertions.doesEqualToFile(expectedFile, actual, sanitizer)) {
                 error("Restored content is not the same. Actual:\n$actual")
             }
         } catch (e: Throwable) {

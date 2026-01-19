@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
-import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
-import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
-import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.*
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -80,7 +77,13 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
     abstract val configurator: AnalysisApiTestConfigurator
 
     override val variantChain: TestVariantChain
-        get() = configurator.testPrefixes
+        get() {
+            return when (_testServices) {
+                null -> configurator.testPrefixes
+                else -> testServices.testOutputPrefixProvider?.getPrefixes(configurator.testPrefixes)
+                    ?: configurator.testPrefixes
+            }
+        }
 
     /**
      * Allows easily specifying additional service registrars in tests which rely on a preset configurator, such as tests generated for FIR
@@ -296,7 +299,9 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * If no variants are specified, or if no variant files exist, the function compares [actual] against the non-variant (default)
      * test output file.
      *
-     * If none of the test output files exist, the function creates an output file, writes the content of [actual] to it, and throws
+     * Before comparing [actual] against the content of test files, applies [sanitizer] to [actual] and the text of the files.
+     *
+     * If none of the test output files exist, the function creates an output file, writes the sanitized content of [actual] to it, and throws
      * an exception.
      *
      * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
@@ -315,7 +320,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         actual: String,
         extension: String = ".txt",
         subdirectoryName: String? = null,
-        testPrefixes: List<String> = configurator.testPrefixes,
+        testPrefixes: List<String> = variantChain,
+        sanitizer: (String) -> String = testServices.testOutputSanitizerOrDefault
     ) {
         val resolvedPath = if (subdirectoryName != null) {
             testDataPath.resolveSibling(subdirectoryName).resolve(testDataPath.fileName)
@@ -328,6 +334,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
             actual = actual,
             variantChain = testPrefixes,
             extension = extension,
+            sanitizer = sanitizer,
         )
     }
 

@@ -43,6 +43,7 @@ object ManagedTestAssertions {
      * @param variantChain chain of variant identifiers from [ManagedTest.variantChain]
      * @param extension file extension for expected files (e.g., ".txt")
      * @param mode test data manager mode (defaults to [TestDataManagerMode.currentMode])
+     * @param sanitizer optional sanitizer, applied to both actual and expected content.
      * @throws AssertionFailedError on mismatch, missing file, or redundant file
      * @throws IllegalStateException if no readable file found for secondary test
      */
@@ -52,11 +53,12 @@ object ManagedTestAssertions {
         variantChain: TestVariantChain,
         extension: String,
         mode: TestDataManagerMode = TestDataManagerMode.currentMode,
+        sanitizer: (String) -> String = { it },
     ) {
         val isGoldenTest = variantChain.isEmpty()
         val testDataFiles = TestDataFiles.build(testDataPath, variantChain, extension)
 
-        val normalizedActual = normalizeContent(actual)
+        val normalizedActual = normalizeContent(actual, sanitizer)
 
         // Find first existing file to compare against
         val expectedFile = testDataFiles.readableFiles.firstOrNull { it.exists() }
@@ -75,12 +77,12 @@ object ManagedTestAssertions {
         }
 
         val expectedContent = expectedFile.readText()
-        val normalizedExpected = normalizeContent(expectedContent)
+        val normalizedExpected = normalizeContent(expectedContent, sanitizer)
 
         // Content comparison
         if (normalizedActual == normalizedExpected) {
             // Check and handle redundant write-target file
-            checkAndHandleRedundantFile(testDataFiles, mode)
+            checkAndHandleRedundantFile(testDataFiles, mode, sanitizer)
             return
         }
 
@@ -140,6 +142,7 @@ object ManagedTestAssertions {
     private fun checkAndHandleRedundantFile(
         testDataFiles: TestDataFiles,
         mode: TestDataManagerMode,
+        sanitizer: (String) -> String
     ) {
         val writeTargetFile = testDataFiles.writeTargetFile
         if (!writeTargetFile.exists()) return
@@ -147,8 +150,8 @@ object ManagedTestAssertions {
         // Find the next existing file after writeTargetFile (less specific)
         val nextExistingFile = testDataFiles.firstNonWritableFileIfExists ?: return
 
-        val writeTargetContent = normalizeContent(writeTargetFile.readText())
-        val nextContent = normalizeContent(nextExistingFile.readText())
+        val writeTargetContent = normalizeContent(writeTargetFile.readText(), sanitizer)
+        val nextContent = normalizeContent(nextExistingFile.readText(), sanitizer)
 
         if (writeTargetContent == nextContent) {
             when (mode) {
@@ -200,8 +203,8 @@ object ManagedTestAssertions {
         }
     }
 
-    internal fun normalizeContent(content: String): String =
-        content.trim().convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
+    internal fun normalizeContent(content: String, sanitizer: (String) -> String): String =
+        content.trim().convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF().let(sanitizer)
 }
 
 /**

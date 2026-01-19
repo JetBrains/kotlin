@@ -87,6 +87,7 @@ projectTests {
 
     withJvmStdlibAndReflect()
     withPluginSandboxAnnotations()
+    withWasmRuntime()
 }
 
 testsJar()

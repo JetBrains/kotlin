@@ -314,7 +314,7 @@ class ManagedTestAssertionsTest {
         for ((input, expected) in inputs) {
             assertEquals(
                 expected,
-                ManagedTestAssertions.normalizeContent(input),
+                ManagedTestAssertions.normalizeContent(input) { it },
                 "Input: ${input.replace("\r", "\\r").replace("\n", "\\n")}"
             )
         }
