@@ -9,5 +9,5 @@ package foo
 // NO_PACKAGE: foo.bar
 // HAS_PACKAGE: kotlin
 // HAS_PACKAGE: kotlin.collections
-// NO_PACKAGE: kotlin.reflect.js.internal
+// HAS_PACKAGE: kotlin.reflect.js.internal
 // NO_PACKAGE: java.io
