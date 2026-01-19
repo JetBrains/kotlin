@@ -6,6 +6,7 @@
 
 package kotlin.native.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlinx.cinterop.*
 
 @TypedIntrinsic(IntrinsicType.ARE_EQUAL_BY_VALUE) @PublishedApi external internal fun areEqualByValue(first: Boolean, second: Boolean): Boolean
@@ -25,6 +26,7 @@ import kotlinx.cinterop.*
 @TypedIntrinsic(IntrinsicType.IEEE_754_EQUALS) @PublishedApi external internal fun ieee754Equals(first: Double, second: Double): Boolean
 
 // Reinterprets this value from T to R having the same binary representation (e.g. to unwrap inline class).
+@UsedFromCompilerGeneratedCode
 @TypedIntrinsic(IntrinsicType.IDENTITY) @PublishedApi external internal fun <T, R> T.reinterpret(): R
 
 
