@@ -1,5 +1,4 @@
 // ISSUE: KT-83740
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // FILE: lib.kt
 inline fun bar(lambda: () -> String): String = lambda()
 
