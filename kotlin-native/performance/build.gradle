@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.BuildRegister
 import org.jetbrains.kotlin.MPPTools
 import org.jetbrains.kotlin.UtilsKt
 import org.jetbrains.kotlin.konan.target.DistributionKt
@@ -124,30 +123,6 @@ private String findAnalyzerBinary() {
             "${analyzerTool}ReleaseExecutable/${analyzerTool}${MPPTools.getNativeProgramExtension()}"
 }
 
-private String getUploadedFile(String fileName) {
-    def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
-    if (teamcityConfig) {
-        def buildProperties = new Properties()
-        buildProperties.load(new FileInputStream(teamcityConfig))
-        def buildNumber = buildProperties.getProperty("build.number")
-        def target = System.getProperty("os.name").replaceAll("\\s", "")
-        return "${target}/${buildNumber}/${fileName}"
-    }
-    return null
-}
-
-private def uploadBenchmarkResultToArtifactory(String fileName) {
-    def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
-    if (teamcityConfig) {
-        def uploadedFile = getUploadedFile(fileName)
-        def buildProperties = new Properties()
-        buildProperties.load(new FileInputStream(teamcityConfig))
-        def password = buildProperties.getProperty("artifactory.apikey")
-        MPPTools.uploadFileToArtifactory("${artifactoryUrl}", "${artifactoryRepo}",
-                uploadedFile, layout.buildDirectory.file(fileName).get().asFile.toString(), password)
-    }
-}
-
 // Register external benchmarks reports (e.g. results of libraries benchmarks)
 task registerExternalBenchmarks {
     doLast {
@@ -208,41 +183,9 @@ task registerExternalBenchmarks {
         if (!merged.isEmpty()) {
             mkdir layout.buildDirectory.get().asFile.absolutePath
             layout.buildDirectory.file(externalBenchmarksReport).get().asFile.write(merged)
-            uploadBenchmarkResultToArtifactory(externalBenchmarksReport)
         }
     }
 }
-
-tasks.register("registerBuild", BuildRegister) {
-    onlyBranch = project.findProperty('kotlin.register.branch')
-    def uploadedFile = getUploadedFile(nativeJson)
-    if (uploadedFile != null) {
-        println("Use file from Artifacrory $uploadedFile")
-        fileWithResult = uploadedFile
-    }
-    // Get bundle size.
-    bundleSize = null
-    if (project.findProperty('kotlin.bundleBuild') != null) {
-        def dist = findProperty('kotlin.native.home') ?: 'dist'
-        dist = (new File(dist)).isAbsolute() ? dist : "${project.getProjectDir()}/$dist"
-        bundleSize = (new File(dist)).directorySize()
-    }
-    buildNumberSuffix = project.findProperty('buildNumberSuffix')
-}
-
-tasks.register("registerExternalBuild", BuildRegister) {
-    onlyBranch = project.findProperty('kotlin.register.branch')
-    def uploadedFile = getUploadedFile(externalBenchmarksReport)
-    if (uploadedFile != null) {
-        println("Use file from Artifacrory $uploadedFile")
-        fileWithResult = uploadedFile
-    } else {
-        fileWithResult = externalBenchmarksReport
-    }
-
-}
-
-registerExternalBenchmarks.finalizedBy registerExternalBuild
 
 def mergeReports(String fileName) {
     def reports = []
@@ -260,7 +203,6 @@ def mergeReports(String fileName) {
 task mergeNativeReports {
     doLast {
         mergeReports(nativeJson)
-        uploadBenchmarkResultToArtifactory(nativeJson)
     }
 }
 
