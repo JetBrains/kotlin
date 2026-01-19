@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.analysis.api.platform.lifetime
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideSourceModificationTracker
 import kotlin.reflect.KClass
 
+@KaPlatformInterface
 public class KotlinAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeToken() {
     private val modificationTracker = project.createProjectWideSourceModificationTracker()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
@@ -33,6 +35,7 @@ public class KotlinAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeT
     }
 }
 
+@KaPlatformInterface
 public class KotlinAlwaysAccessibleLifetimeTokenFactory : KotlinLifetimeTokenFactory {
     override val identifier: KClass<out KaLifetimeToken> = KotlinAlwaysAccessibleLifetimeToken::class
 

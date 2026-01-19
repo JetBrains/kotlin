@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.platform
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
+
 /**
  * A **platform component** as defined by the Platform Interface (see the README).
  *
@@ -19,10 +21,12 @@ package org.jetbrains.kotlin.analysis.api.platform
  * [KaEngineService]s which are prefixed with `Ka`. It is recommended to keep this naming convention in platform implementations. For
  * example, the Standalone API uses a `KotlinStandalone` prefix for its own platform component implementations.
  */
+@KaPlatformInterface
 public interface KotlinPlatformComponent
 
 /**
  * An optional [KotlinPlatformComponent]. The Analysis API engine does not require an optional platform component to be implemented and
  * will use sensible fallbacks or disable/avoid certain behaviors instead.
  */
+@KaPlatformInterface
 public interface KotlinOptionalPlatformComponent : KotlinPlatformComponent

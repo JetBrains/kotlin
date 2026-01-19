@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * The information provided by this platform component is secondary in nature, meaning there isn't a compelling reason to pollute the API of
  * [KaModule] with such properties.
  */
+@KaPlatformInterface
 public interface KotlinModuleInformationProvider : KotlinOptionalPlatformComponent {
     /**
      * Whether [module] is empty, meaning it has no content.
@@ -27,6 +29,7 @@ public interface KotlinModuleInformationProvider : KotlinOptionalPlatformCompone
      */
     public fun isEmpty(module: KaModule): Boolean?
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinModuleInformationProvider? = project.serviceOrNull()
     }

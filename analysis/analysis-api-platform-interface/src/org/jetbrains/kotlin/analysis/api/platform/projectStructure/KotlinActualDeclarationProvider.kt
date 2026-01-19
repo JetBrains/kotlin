@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -15,12 +16,14 @@ import org.jetbrains.kotlin.psi.KtDeclaration
  *
  * The implementation should be consistent with the `KaSymbolRelationProvider.getExpectsForActual`.
  */
+@KaPlatformInterface
 public interface KotlinActualDeclarationProvider : KotlinOptionalPlatformComponent {
     /**
      * Returns `actual` declarations for the given `expect` [KtDeclaration] from all available implementing modules.
      */
     public fun getActualDeclarations(declaration: KtDeclaration): Sequence<KtDeclaration>
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinActualDeclarationProvider? = project.serviceOrNull()
     }

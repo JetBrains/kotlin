@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.analysis.api.platform.caches
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.checkerframework.checker.index.qual.NonNegative
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 
 /**
- * A wrapper around a Caffeine [Cache] which stores `null` values returned by the computation in the form of explicit [NullValue]s. On a
+ * A wrapper around a Caffeine [Cache] which stores `null` values returned by the computation in the form of explicit objects. On a
  * conceptual level, this allows the cache to store failures so that future accesses to the same key don't recompute the same failure.
  */
+@KaPlatformInterface
 @JvmInline
 public value class NullableCaffeineCache<K : Any, V : Any>(
     public val cache: Cache<K, Any>,
@@ -25,6 +28,7 @@ public value class NullableCaffeineCache<K : Any, V : Any>(
     /**
      * Returns the value for the given [key] if it's contained in the cache, or computes the value with [compute] and adds it to the cache.
      */
+    @OptIn(KaImplementationDetail::class)
     public inline fun get(key: K, crossinline compute: (K) -> V?): V? =
         cache.get(key) { compute(it) ?: NullValue }?.nullValueToNull()
 
@@ -32,6 +36,7 @@ public value class NullableCaffeineCache<K : Any, V : Any>(
      * Returns the value for the given [key] if it's contained in the cache, or computes the value with [compute] *outside the cache's
      * computation lock* and adds it to the cache.
      */
+    @OptIn(KaImplementationDetail::class)
     public inline fun getOrPut(key: K, crossinline compute: (K) -> V?): V? =
         cache.getOrPutWithNullableValue(key) { compute(key) }
 

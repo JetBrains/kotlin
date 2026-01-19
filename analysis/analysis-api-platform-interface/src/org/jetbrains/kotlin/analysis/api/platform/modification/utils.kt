@@ -6,12 +6,14 @@ package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.ThreadingAssertions
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
  * Publishes a [KotlinModificationEvent] to the project's [analysisMessageBus]. Must be called in a write action.
  */
+@KaPlatformInterface
 public fun Project.publishModificationEvent(event: KotlinModificationEvent) {
     ThreadingAssertions.assertWriteAccess()
 
@@ -21,6 +23,7 @@ public fun Project.publishModificationEvent(event: KotlinModificationEvent) {
 /**
  * Publishes a [KotlinModuleStateModificationEvent] for this [KaModule]. Must be called in a write action.
  */
+@KaPlatformInterface
 public fun KaModule.publishModuleStateModificationEvent(modificationKind: KotlinModuleStateModificationKind) {
     project.publishModificationEvent(KotlinModuleStateModificationEvent(this, modificationKind))
 }
@@ -28,6 +31,7 @@ public fun KaModule.publishModuleStateModificationEvent(modificationKind: Kotlin
 /**
  * Publishes a [KotlinModuleOutOfBlockModificationEvent] for this [KaModule]. Must be called in a write action.
  */
+@KaPlatformInterface
 public fun KaModule.publishModuleOutOfBlockModificationEvent() {
     project.publishModificationEvent(KotlinModuleOutOfBlockModificationEvent(this))
 }
@@ -35,6 +39,7 @@ public fun KaModule.publishModuleOutOfBlockModificationEvent() {
 /**
  * Publishes a [KotlinGlobalModuleStateModificationEvent]. Must be called in a write action.
  */
+@KaPlatformInterface
 public fun Project.publishGlobalModuleStateModificationEvent() {
     publishModificationEvent(KotlinGlobalModuleStateModificationEvent)
 }
@@ -42,6 +47,7 @@ public fun Project.publishGlobalModuleStateModificationEvent() {
 /**
  * Publishes a [KotlinGlobalSourceModuleStateModificationEvent]. Must be called in a write action.
  */
+@KaPlatformInterface
 public fun Project.publishGlobalSourceModuleStateModificationEvent() {
     publishModificationEvent(KotlinGlobalSourceModuleStateModificationEvent)
 }
@@ -49,6 +55,7 @@ public fun Project.publishGlobalSourceModuleStateModificationEvent() {
 /**
  * Publishes a [KotlinGlobalScriptModuleStateModificationEvent]. Must be called in a write action.
  */
+@KaPlatformInterface
 public fun Project.publishGlobalScriptModuleStateModificationEvent() {
     publishModificationEvent(KotlinGlobalScriptModuleStateModificationEvent)
 }
@@ -56,6 +63,7 @@ public fun Project.publishGlobalScriptModuleStateModificationEvent() {
 /**
  * Publishes a [KotlinGlobalSourceOutOfBlockModificationEvent]. Must be called in a write action.
  */
+@KaPlatformInterface
 public fun Project.publishGlobalSourceOutOfBlockModificationEvent() {
     publishModificationEvent(KotlinGlobalSourceOutOfBlockModificationEvent)
 }
@@ -63,6 +71,7 @@ public fun Project.publishGlobalSourceOutOfBlockModificationEvent() {
 /**
  * Publishes a [KotlinCodeFragmentContextModificationEvent] for this [KaModule]. Must be called in a write action.
  */
+@KaPlatformInterface
 public fun KaModule.publishCodeFragmentContextModificationEvent() {
     project.publishModificationEvent(KotlinCodeFragmentContextModificationEvent(this))
 }

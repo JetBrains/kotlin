@@ -69,10 +69,7 @@ public annotation class KaIdeApi
 public annotation class KaExperimentalApi
 
 /**
- * Marks an API intended for Analysis API implementations & platforms. The API is neither stable nor intended for user consumption.
- *
- * Only declarations inside the user-facing part of the Analysis API (`analysis-api` module) require this opt-in annotation. Platform
- * interface services defined in `analysis-api-platform-interface` are not annotated with [KaPlatformInterface].
+ * Marks an API intended for Analysis API implementations and platforms. The API is neither stable nor intended for user consumption.
  */
 @Target(
     AnnotationTarget.CLASS,
@@ -81,7 +78,7 @@ public annotation class KaExperimentalApi
     AnnotationTarget.FUNCTION,
     AnnotationTarget.TYPEALIAS,
 )
-@RequiresOptIn("An API intended for Analysis API implementations & platforms. The API is neither stable nor intended for user consumption.")
+@RequiresOptIn("An API intended for Analysis API implementations and platforms. The API is neither stable nor intended for user consumption.")
 public annotation class KaPlatformInterface
 
 /**

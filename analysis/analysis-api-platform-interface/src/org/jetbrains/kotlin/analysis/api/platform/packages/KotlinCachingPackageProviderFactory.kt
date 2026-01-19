@@ -9,6 +9,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.modification.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -19,6 +20,7 @@ import java.time.Duration
  * that [KotlinPackageProvider] usually caches its own results, which can only be beneficial if it's not recreated with every call to
  * [createPackageProvider].
  */
+@KaPlatformInterface
 public abstract class KotlinCachingPackageProviderFactory(project: Project) : KotlinPackageProviderFactory, Disposable {
     /**
      * While we should generally avoid using scopes as keys, it's valid to use them in a weak/soft key cache. It won't hinder their garbage

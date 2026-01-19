@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
+@KaPlatformInterface
 public object KotlinEmptyDeclarationProvider : KotlinDeclarationProvider {
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? = null
     override fun getAllClassesByClassId(classId: ClassId): List<KtClassOrObject> = emptyList()

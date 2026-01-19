@@ -9,6 +9,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import kotlin.reflect.KClass
 
@@ -19,6 +20,7 @@ import kotlin.reflect.KClass
  *
  * Note that [KotlinGlobalSearchScopeMergeStrategy] are applied in the order they are registered.
  */
+@KaPlatformInterface
 @KaExperimentalApi
 public interface KotlinGlobalSearchScopeMergeStrategy<T : Any> : KotlinPlatformComponent {
     /**
@@ -34,6 +36,7 @@ public interface KotlinGlobalSearchScopeMergeStrategy<T : Any> : KotlinPlatformC
      */
     public fun uniteScopes(scopes: List<T>): List<GlobalSearchScope>
 
+    @KaPlatformInterface
     public companion object {
         public val EP_NAME: ExtensionPointName<KotlinGlobalSearchScopeMergeStrategy<*>> =
             ExtensionPointName<KotlinGlobalSearchScopeMergeStrategy<*>>(
@@ -71,5 +74,6 @@ public interface KotlinGlobalSearchScopeMergeStrategy<T : Any> : KotlinPlatformC
  *
  * Exactly the scope `A` would be marked with [KotlinIntersectionScopeMergeTarget].
  */
+@KaPlatformInterface
 @KaExperimentalApi
 public interface KotlinIntersectionScopeMergeTarget

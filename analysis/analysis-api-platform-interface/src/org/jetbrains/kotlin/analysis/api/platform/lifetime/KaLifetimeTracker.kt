@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.lifetime
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 
@@ -15,12 +16,14 @@ import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
  *
  * It can be used in the implementation of custom lifetime tokens to check that the accessed token is in scope.
  */
+@KaPlatformInterface
 public interface KaLifetimeTracker : KaEngineService {
     /**
      * Returns the [KaLifetimeToken] for the currently active analysis, or `null` if no analysis is in progress.
      */
     public val currentToken: KaLifetimeToken?
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KaLifetimeTracker = project.service()
     }

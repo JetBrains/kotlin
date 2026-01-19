@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
  *
  * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
  */
+@KaPlatformInterface
 public interface KotlinProjectStructureProvider {
     /**
      * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider.getModule
@@ -43,6 +45,7 @@ public interface KotlinProjectStructureProvider {
     public val libraryLanguageVersionSettings: LanguageVersionSettings
         get() = globalLanguageVersionSettings
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinProjectStructureProvider = project.service()
 

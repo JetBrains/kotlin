@@ -8,14 +8,17 @@ package org.jetbrains.kotlin.analysis.api.platform
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.MessageBus
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 
 /**
  * [KotlinMessageBusProvider] allows Analysis API implementations to provide a custom [MessageBus]. When subscribing to or publishing to
  * Analysis API topics, the message bus provided by [getMessageBus] should be used, not the [Project]'s message bus.
  */
+@KaPlatformInterface
 public interface KotlinMessageBusProvider : KotlinPlatformComponent {
     public fun getMessageBus(): MessageBus
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinMessageBusProvider = project.service()
     }
@@ -24,5 +27,6 @@ public interface KotlinMessageBusProvider : KotlinPlatformComponent {
 /**
  * The [MessageBus] used to subscribe to and publish to Analysis API topics.
  */
+@KaPlatformInterface
 public val Project.analysisMessageBus: MessageBus
     get() = KotlinMessageBusProvider.getInstance(this).getMessageBus()

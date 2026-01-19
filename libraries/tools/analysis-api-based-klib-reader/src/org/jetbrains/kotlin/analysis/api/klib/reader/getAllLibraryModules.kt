@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.tooling.core.withClosureSequence
  *  }
  * ```
  */
+@OptIn(KaPlatformInterface::class)
 public fun StandaloneAnalysisAPISession.getAllLibraryModules(): Sequence<KaLibraryModule> {
     val projectStructureProvider = KotlinProjectStructureProvider.getInstance(project)
     if (projectStructureProvider !is KotlinStaticProjectStructureProvider) {

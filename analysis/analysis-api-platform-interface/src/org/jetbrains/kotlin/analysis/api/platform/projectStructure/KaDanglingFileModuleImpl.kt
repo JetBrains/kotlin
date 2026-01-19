@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * Note that if you need custom behavior, you should create a custom implementation of a [KaDanglingFileModule], as the Analysis API
  * treats this implementation specially (by allowing certain performance optimizations).
  */
+@KaPlatformInterface
 public class KaDanglingFileModuleImpl(
     files: List<KtFile>,
     override val contextModule: KaModule,

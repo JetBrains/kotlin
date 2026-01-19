@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  *
  * A resolution scope is mainly built from its use-site module's [KaModule.contentScope] and its dependencies' content scopes.
  */
+@KaPlatformInterface
 public abstract class KaResolutionScope : GlobalSearchScope() {
     /**
      * Checks whether a [PsiElement] is contained in the resolution scope, i.e., the containing file is present in the resolution scope.
@@ -31,6 +33,7 @@ public abstract class KaResolutionScope : GlobalSearchScope() {
     @KaImplementationDetail
     public abstract val underlyingSearchScope: GlobalSearchScope
 
+    @KaPlatformInterface
     public companion object {
         public fun forModule(useSiteModule: KaModule): KaResolutionScope =
             KaResolutionScopeProvider.getInstance(useSiteModule.project).getResolutionScope(useSiteModule)

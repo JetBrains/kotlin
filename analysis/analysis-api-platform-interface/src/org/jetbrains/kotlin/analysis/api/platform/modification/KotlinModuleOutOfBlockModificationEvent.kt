@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  *
  * See [KotlinModificationEvent] for important contracts common to all modification events.
  */
+@KaPlatformInterface
 public class KotlinModuleOutOfBlockModificationEvent(public val module: KaModule) : KotlinModificationEvent {
     override fun equals(other: Any?): Boolean =
         this === other || other is KotlinModuleOutOfBlockModificationEvent && module == other.module

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.permissions
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 
 /**
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponen
  *
  * @see KotlinDefaultAnalysisPermissionOptions
  */
+@KaPlatformInterface
 public interface KotlinAnalysisPermissionOptions : KotlinOptionalPlatformComponent {
     /**
      * The default setting for [org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry.isAnalysisAllowedOnEdt], when not
@@ -28,6 +30,7 @@ public interface KotlinAnalysisPermissionOptions : KotlinOptionalPlatformCompone
      */
     public val defaultIsAnalysisAllowedInWriteAction: Boolean
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(): KotlinAnalysisPermissionOptions = ApplicationManager.getApplication().service()
     }

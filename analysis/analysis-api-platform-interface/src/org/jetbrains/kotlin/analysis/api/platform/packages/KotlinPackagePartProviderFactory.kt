@@ -8,15 +8,18 @@ package org.jetbrains.kotlin.analysis.api.platform.packages
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
+@KaPlatformInterface
 public interface KotlinPackagePartProviderFactory : KotlinPlatformComponent {
     /**
      * Create a [PackagePartProvider] for a given scope. [PackagePartProvider] is responsible for searching sub packages in a library.
      */
     public fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinPackagePartProviderFactory = project.service()
     }
@@ -25,5 +28,6 @@ public interface KotlinPackagePartProviderFactory : KotlinPlatformComponent {
 /**
  * Create a [PackagePartProvider] for a given scope. [PackagePartProvider] is responsible for searching sub packages in a library.
  */
+@KaPlatformInterface
 public fun Project.createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider =
     KotlinPackagePartProviderFactory.getInstance(this).createPackagePartProvider(scope)

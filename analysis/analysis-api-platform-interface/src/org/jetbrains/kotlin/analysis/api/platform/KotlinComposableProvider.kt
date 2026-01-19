@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.platform
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
+
 /**
  * A marker interface for a provider that can be composed, i.e. multiple instances of the same provider can be composed into a single
  * provider.
@@ -16,6 +18,7 @@ package org.jetbrains.kotlin.analysis.api.platform
  * @see org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
  * @see org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
  */
+@KaPlatformInterface
 public interface KotlinComposableProvider
 
 /**
@@ -24,10 +27,12 @@ public interface KotlinComposableProvider
  * A composite provider should only contain providers of the same base type as the composite provider itself, so implementations of
  * [KotlinCompositeProvider] should always be a subtype of their type argument [P]. (This is not enforceable in the Kotlin type system.)
  */
+@KaPlatformInterface
 public interface KotlinCompositeProvider<P : KotlinComposableProvider> : KotlinComposableProvider {
     public val providers: List<P>
 }
 
+@KaPlatformInterface
 public interface KotlinComposableProviderMerger<P : KotlinComposableProvider> {
     /**
      * Merges the given [providers] into a single provider. When possible, mergers will try to create a provider that is more efficient
