@@ -6,8 +6,9 @@ dependencies {
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.backend.native"))
-    compileOnly(project(":compiler:ir.serialization.common"))
-    compileOnly(project(":compiler:ir.serialization.native"))
+
+    implementation(project(":compiler:frontend.common-psi"))
+    compileOnly(intellijCore())
 }
 
 optInToUnsafeDuringIrConstructionAPI()

@@ -1,32 +1,34 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.validation.checkers
+package org.jetbrains.kotlin.ir.inline.checkers
 
-import org.jetbrains.kotlin.backend.common.diagnostics.SerializationErrors
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.expressions.IrRichCallableReference
+import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.overrides.isNonPrivate
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.parents
-import org.jetbrains.kotlin.ir.validation.checkers.IrInlineDeclarationChecker.InlineFunctionInfo
 import org.jetbrains.kotlin.ir.visitors.IrTypeVisitor
 
 /**
  * Reports an IR-level diagnostic whenever a private type is used within an `inline` function with broader visibility.
- * TODO: move class to :compiler:ir:ir.inline when no longer invoked from :compiler:ir.serialization.common
  */
 class IrInlineDeclarationChecker(
     private val diagnosticReporter: IrDiagnosticReporter,
-) : IrTypeVisitor<Unit, InlineFunctionInfo?>() {
+) : IrTypeVisitor<Unit, IrInlineDeclarationChecker.InlineFunctionInfo?>() {
 
     data class InlineFunctionInfo(
         val file: IrFile,
@@ -58,14 +60,14 @@ class IrInlineDeclarationChecker(
         if (klass.isEffectivelyPrivateInNonPrivateDeclaration(data)) {
             if (data.inliningPath.isNotEmpty()) {
                 diagnosticReporter.at(data.inliningPath.first(), data.file).report(
-                    SerializationErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
+                    IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
                     inlineFunction,
                     klass,
                     data.inliningPath
                 )
             } else {
                 diagnosticReporter.at(container, data.file).report(
-                    SerializationErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
+                    IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
                     inlineFunction,
                     klass,
                 )
@@ -89,14 +91,14 @@ class IrInlineDeclarationChecker(
         if (reflectionTarget.isEffectivelyPrivateInNonPrivateDeclaration(data)) {
             if (data.inliningPath.isNotEmpty()) {
                 diagnosticReporter.at(data.inliningPath.first(), data.file).report(
-                    SerializationErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
+                    IrInlinerErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
                     inlineFunction,
                     reflectionTarget,
                     data.inliningPath
                 )
             } else {
                 diagnosticReporter.at(expression, data.file).report(
-                    SerializationErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION,
+                    IrInlinerErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION,
                     inlineFunction,
                     reflectionTarget,
                 )

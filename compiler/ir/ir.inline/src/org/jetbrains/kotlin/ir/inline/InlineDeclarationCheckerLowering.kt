@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.validation.checkers.IrInlineDeclarationChecker
+import org.jetbrains.kotlin.ir.inline.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 @PhasePrerequisites(FunctionInlining::class) // only private inlining is required
