@@ -99,6 +99,8 @@ data class ArgumentParseErrors(
 
     var booleanLangFeatureArgumentsWithValue: MutableList<String> = SmartList(),
 
+    val stringLangFeatureArgumentsWithIncorrectValue: MutableList<Pair<String, Set<String>>> = SmartList(),
+
     val argfileErrors: MutableList<String> = SmartList(),
 
     // Reports from internal arguments parsers
@@ -133,7 +135,13 @@ fun <A : CommonToolArguments> parseCommandLineArgumentsFromEnvironment(arguments
     parseCommandLineArguments(settingsFromEnvironment, arguments, overrideArguments = true)
 }
 
-private data class ArgumentField(val getter: Method, val setter: Method, val argument: Argument, val changesLangFeatures: Boolean)
+private data class ArgumentField(
+    val getter: Method,
+    val setter: Method,
+    val argument: Argument,
+    val enablesAnnotations: List<Enables>,
+    val disablesAnnotations: List<Disables>,
+)
 
 private val argumentsCache = ConcurrentHashMap<Class<*>, Map<String, ArgumentField>>()
 
@@ -142,15 +150,14 @@ private fun getArguments(klass: Class<*>): Map<String, ArgumentField> = argument
     else buildMap {
         putAll(getArguments(klass.superclass))
         for (field in klass.declaredFields) {
-            field.getAnnotation(Argument::class.java)?.let { argument ->
-                val getter = klass.getMethod(JvmAbi.getterName(field.name))
-                val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
-                val changesLangFeatures = field.getAnnotationsByType(Enables::class.java).isNotEmpty() ||
-                        field.getAnnotationsByType(Disables::class.java).isNotEmpty()
-                val argumentField = ArgumentField(getter, setter, argument, changesLangFeatures)
-                for (key in listOf(argument.value, argument.shortName, argument.deprecatedName)) {
-                    if (key.isNotEmpty()) put(key, argumentField)
-                }
+            val argument = field.getAnnotation(Argument::class.java) ?: continue
+            val enablesAnnotations = field.getAnnotationsByType(Enables::class.java).toList()
+            val disablesAnnotations = field.getAnnotationsByType(Disables::class.java).toList()
+            val getter = klass.getMethod(JvmAbi.getterName(field.name))
+            val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
+            val argumentField = ArgumentField(getter, setter, argument, enablesAnnotations, disablesAnnotations)
+            for (key in listOf(argument.value, argument.shortName, argument.deprecatedName)) {
+                if (key.isNotEmpty()) put(key, argumentField)
             }
         }
     }
@@ -199,7 +206,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             continue
         }
 
-        val (getter, setter, argument, changesLangFeatures) = argumentField
+        val (getter, setter, argument, enablesAnnotations, disablesAnnotations) = argumentField
 
         // Tests for -shortName=value, which isn't currently allowed.
         if (key != arg && key == argument.shortName) {
@@ -225,6 +232,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
 
         val value: Any = when {
             getter.returnType.kotlin == Boolean::class -> {
+                val changesLangFeatures = enablesAnnotations.isNotEmpty() || disablesAnnotations.isNotEmpty()
                 if (arg.startsWith(argument.value + delimiter)) {
                     when (arg.substring(argument.value.length + 1)) {
                         "true" -> true
@@ -242,7 +250,15 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
                 } else true
             }
             arg.startsWith(argument.value + delimiter) -> {
-                arg.substring(argument.value.length + 1)
+                val legalValues = buildSet {
+                    enablesAnnotations.forEach { add(it.ifValueIs) }
+                    disablesAnnotations.forEach { add(it.ifValueIs) }
+                }
+                arg.substring(argument.value.length + 1).also {
+                    if (legalValues.isNotEmpty() && !legalValues.contains(it)) {
+                        errors.value.stringLangFeatureArgumentsWithIncorrectValue.add(arg to legalValues)
+                    }
+                }
             }
             arg.startsWith(argument.deprecatedName + delimiter) -> {
                 arg.substring(argument.deprecatedName.length + 1)
@@ -339,6 +355,15 @@ fun validateArgumentsAllErrors(errors: ArgumentParseErrors?): List<String> {
         errors.booleanLangFeatureArgumentsWithValue.forEach { arg ->
             add(
                 "No value is expected for argument '${arg.substringBefore('=')}'."
+            )
+        }
+        errors.stringLangFeatureArgumentsWithIncorrectValue.forEach { argWithAllowedValued ->
+            val (arg, allowedValues) = argWithAllowedValued
+            val (argName, argValue) = arg.split('=')
+            val allowedValuesString = allowedValues.joinToString(", ") { "'$it'" }
+            add(
+                "Incorrect value for argument '$argName'. " +
+                        "Actual value: '$argValue', but allowed values: $allowedValuesString."
             )
         }
         errors.unknownArgs.forEach {
