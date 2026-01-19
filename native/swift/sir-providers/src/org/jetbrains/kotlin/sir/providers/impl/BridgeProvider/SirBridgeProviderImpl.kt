@@ -280,7 +280,8 @@ private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<Bri
             .replace(".", "_")
             .replace(",", "_")
             .replace("<", "_")
-            .replace(">", "_")
+            .replace(">", "_") +
+                if (it.bridge is Bridge.AsNSArrayForVariadic) "_Vararg_" else ""
     }
     val suffixString = if (parameterBridges.isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
     val result = "${bridgeName}${suffixString}".cIdentifier

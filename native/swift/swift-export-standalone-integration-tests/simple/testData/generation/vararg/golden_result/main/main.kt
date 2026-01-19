@@ -12,8 +12,8 @@ public fun Accessor_Inner_init_allocate(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double_Swift_Array_Swift_Bool__main_Accessor__")
-public fun Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double_Swift_Array_Swift_Bool__main_Accessor__(__kt: kotlin.native.internal.NativePtr, y: Double, z: kotlin.native.internal.NativePtr, outer__: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double_Swift_Array_Swift_Bool__Vararg__main_Accessor__")
+public fun Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double_Swift_Array_Swift_Bool__Vararg__main_Accessor__(__kt: kotlin.native.internal.NativePtr, y: Double, z: kotlin.native.internal.NativePtr, outer__: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __y = y
     val __z = interpretObjCPointer<kotlin.collections.List<Boolean>>(z).toBooleanArray()
@@ -63,43 +63,55 @@ public fun __root___Accessor_init_allocate(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Int32___")
-public fun __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Int32___(__kt: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Int32__Vararg___")
+public fun __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Int32__Vararg___(__kt: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __x = interpretObjCPointer<kotlin.collections.List<Int>>(x).toIntArray()
     kotlin.native.internal.initInstance(____kt, Accessor(*__x))
 }
 
-@ExportedBridge("__root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number___")
-public fun __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number___(x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___")
+public fun __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___(x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __x = interpretObjCPointer<kotlin.collections.List<kotlin.Number>>(x).toTypedArray()
     val _result = asNumberList(*__x)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
-@ExportedBridge("__root___extension__TypesOfArguments__main_Accessor_Swift_Array_Swift_Double___")
-public fun __root___extension__TypesOfArguments__main_Accessor_Swift_Array_Swift_Double___(`receiver`: kotlin.native.internal.NativePtr, d: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___extension__TypesOfArguments__main_Accessor_Swift_Array_Swift_Double__Vararg___")
+public fun __root___extension__TypesOfArguments__main_Accessor_Swift_Array_Swift_Double__Vararg___(`receiver`: kotlin.native.internal.NativePtr, d: kotlin.native.internal.NativePtr): Unit {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Accessor
     val __d = interpretObjCPointer<kotlin.collections.List<Double>>(d).toDoubleArray()
     __receiver.extension(*__d)
 }
 
-@ExportedBridge("__root___oneMore__TypesOfArguments__Swift_Array_Swift_String__Swift_Int32__")
-public fun __root___oneMore__TypesOfArguments__Swift_Array_Swift_String__Swift_Int32__(a: kotlin.native.internal.NativePtr, b: Int): Unit {
+@ExportedBridge("__root___oneMore__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__")
+public fun __root___oneMore__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__(a: kotlin.native.internal.NativePtr, b: Int): Unit {
     val __a = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(a).toTypedArray()
     val __b = b
     oneMore(*__a, b = __b)
 }
 
-@ExportedBridge("__root___simple__TypesOfArguments__Swift_Array_Swift_String___")
-public fun __root___simple__TypesOfArguments__Swift_Array_Swift_String___(s: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___setTag__TypesOfArguments__Swift_Array_Swift_String__Vararg___")
+public fun __root___setTag__TypesOfArguments__Swift_Array_Swift_String__Vararg___(tag: kotlin.native.internal.NativePtr): Unit {
+    val __tag = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(tag).toTypedArray()
+    setTag(*__tag)
+}
+
+@ExportedBridge("__root___setTag__TypesOfArguments__Swift_Array_Swift_String___")
+public fun __root___setTag__TypesOfArguments__Swift_Array_Swift_String___(tags: kotlin.native.internal.NativePtr): Unit {
+    val __tags = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(tags)
+    setTag(__tags)
+}
+
+@ExportedBridge("__root___simple__TypesOfArguments__Swift_Array_Swift_String__Vararg___")
+public fun __root___simple__TypesOfArguments__Swift_Array_Swift_String__Vararg___(s: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __s = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(s).toTypedArray()
     val _result = simple(*__s)
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Swift_Int32__")
-public fun __root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Swift_Int32__(a: kotlin.native.internal.NativePtr, b: Int): Unit {
+@ExportedBridge("__root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__")
+public fun __root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__(a: kotlin.native.internal.NativePtr, b: Int): Unit {
     val __a = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(a).toTypedArray()
     val __b = b
     withDefault(*__a, b = __b)
