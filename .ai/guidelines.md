@@ -20,6 +20,10 @@ Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij
 # Generate test sources (run after adding new test data files)
 ./gradlew generateTests
 ```
+ 
+## Common Pitfalls
+
+- Don't modify `*Generated.java` test files directly - regenerate them with `generateTests` Gradle task
 
 ## Running Individual Tests
 
@@ -39,18 +43,6 @@ Use `-q` (quiet) flag to reduce output noise and save tokens:
 ./gradlew :compiler:test --tests "TestClassName" -Pkotlin.test.update.test.data=true --continue
 ```
 
-## Key Directories
-
-- `compiler/fir/` - K2 frontend (FIR)
-- `compiler/ir/` - Backend IR and lowerings
-- `compiler/frontend/` - Legacy K1
-- `compiler/test-infrastructure/` - Test framework core
-- `compiler/tests-common-new/` - Test runners and handlers
-- `analysis/` - Analysis API related code
-- `compiler/psi` - Kotlin PSI
-- `plugins/` - Compiler plugins
-- `libraries/` - stdlib, kotlin-test, kotlin-reflect
-
 ## Commit Guidelines
 
 **BEFORE creating any commit, you MUST read `docs/code_authoring_and_core_review.md`** — it contains essential rules for commit messages, code review process, and MR structure.
@@ -63,28 +55,36 @@ Key points (not exhaustive):
 - Commit tests together with corresponding code changes
 - Non-functional changes (refactorings, reformats) should be in separate commits
 
-## Area-Specific Guidelines
+## Areas
 
-To add new area-specific guidelines, create two files in the module directory:
-1. `AGENTS.md` — the actual documentation content
-2. `CLAUDE.md` — contains only `@AGENTS.md` (for tool compatibility)
+**BEFORE modifying or investigating code, identify the area by class prefix or location, then READ the linked docs.**
 
-WHEN working with compiler internals (FIR, IR, backends):
-→ READ compiler/AGENTS.md
+| Area                 | Prefixes               | Location                                                  | Docs                                   |
+|----------------------|------------------------|-----------------------------------------------------------|----------------------------------------|
+| Analysis API         | `Ka*`, `KaFir*`, `LL*` | analysis/                                                 | [AGENTS.md](../analysis/AGENTS.md)     |
+| Backend: JVM         |                        | compiler/ir/backend.jvm/                                  | [AGENTS.md](../compiler/AGENTS.md)     |
+| Backend: JS          |                        | compiler/ir/backend.js/                                   | [AGENTS.md](../compiler/AGENTS.md)     |
+| Backend: Native      |                        | kotlin-native/                                            | [AGENTS.md](../compiler/AGENTS.md)     |
+| Backend: WASM        |                        | compiler/ir/backend.wasm/                                 | [AGENTS.md](../compiler/AGENTS.md)     |
+| Compiler plugins     |                        | plugins/                                                  | —                                      |
+| FIR (K2 frontend)    | `Fir*`                 | compiler/fir/                                             | [AGENTS.md](../compiler/AGENTS.md)     |
+| IR                   | `Ir*`                  | compiler/ir/                                              | [AGENTS.md](../compiler/AGENTS.md)     |
+| K1 (legacy frontend) |                        | compiler/frontend/                                        | —                                      |
+| PSI                  | `Kt*`                  | compiler/psi/                                             | [AGENTS.md](../compiler/psi/AGENTS.md) |
+| Standard library     |                        | libraries/stdlib/                                         | —                                      |
+| Test infrastructure  |                        | compiler/test-infrastructure/, compiler/tests-common-new/ | [testing.md](testing.md)               |
 
-WHEN writing or modifying tests:
-→ READ .ai/testing.md
+> **Adding new area docs:** Create `AGENTS.md` with content and `CLAUDE.md` containing only `@AGENTS.md`
 
-WHEN working with Analysis API:
-→ READ analysis/AGENTS.md
-
-WHEN working with Kotlin PSI (syntax tree, KtElement, KtExpression):
-→ READ compiler/psi/AGENTS.md
-
-## JetBrains IDE MCP - MANDATORY for file and project operations
+## JetBrains IDE MCP - MANDATORY for the project files and operations
 
 **NEVER use these tools:** `Grep`, `Glob`, `Read`, `Edit`, `Write`, `Task(Explore)`.
 **ALWAYS use JetBrains MCP equivalents instead.**
+
+**Exception:** for paths outside the project (e.g., `~/.claude/`), use standard tools — MCP only works with project-relative paths.
+
+**NEVER use `execute_terminal_command` tool.**
+**ALWAYS use default `Bash` instead.**
 
 Use other similar tools only if it is not possible to use the JetBrains IDE MCP, and you together with the user can't manage to make it work.
 
@@ -121,7 +121,6 @@ If there are many options for the JetBrains IDE MCP server, ask the user what MC
 
 - **Code analysis**: `get_symbol_info`, `get_file_problems` for understanding code
 - **Refactoring**: `rename_refactoring` for symbol renaming (safer than text replacement)
-- **Terminal**: `execute_terminal_command` for running commands
 - **Run configurations**: `get_run_configurations()` to discover, or `execute_run_configuration(name="...")` if name is known
 
 ### MANDATORY - Verify After Writing Code
