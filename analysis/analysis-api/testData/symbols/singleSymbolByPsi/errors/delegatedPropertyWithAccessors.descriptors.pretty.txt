@@ -1,3 +1,0 @@
-var lazyProp: ERROR(Return type for function cannot be resolved)
-  private get()
-  internal set(`<set-?>`: ERROR(Return type for function cannot be resolved))
