@@ -32,7 +32,7 @@ abstract class AbstractKotlinTarget(
 
     final override val extras: MutableExtras = mutableExtrasOf()
 
-    private val attributeContainer = HierarchyAttributeContainer(parent = null)
+    private val attributeContainer = HierarchyAttributeContainer(parent = null, project.objects)
 
     override fun getAttributes(): AttributeContainer = attributeContainer
 
