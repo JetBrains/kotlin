@@ -22,5 +22,5 @@ public class TestJavaUsage {
 
 // FILE: test.kt
 fun main() {
-    test.TestJava("name", 1) // It should be incorrect
+    test.<!INVISIBLE_REFERENCE("constructor(name: String!, age: Int): TestJava; package-private; file")!>TestJava<!>("name", 1)
 }
