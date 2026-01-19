@@ -88,9 +88,7 @@ tasks.register("buildAnalyzer") {
 }
 
 task konanRun {
-    subprojects.findAll {
-        !it.name.contains("videoplayer")
-    }.each {
+    subprojects.each {
         dependsOn "${it.path}:konanRun"
     }
 }
@@ -347,14 +345,4 @@ task startup {
 task swiftinterop {
     dependsOn 'clean'
     dependsOn 'swiftinterop:konanRun'
-}
-
-task videoplayer {
-    dependsOn 'clean'
-    dependsOn 'videoplayer:konanRun'
-}
-
-task KotlinVsSwift {
-    dependsOn 'clean'
-    dependsOn 'KotlinVsSwift:konanRun'
 }
