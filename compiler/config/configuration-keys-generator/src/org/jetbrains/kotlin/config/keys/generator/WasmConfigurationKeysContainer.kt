@@ -26,4 +26,5 @@ object WasmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.wasm
     val WASM_COMMAND_MODULE by key<Boolean>("Use command module initialization (_initialize export).")
     val WASM_DISABLE_CROSS_FILE_OPTIMISATIONS by key<Boolean>("Disables cross-file optimizations. Required to for IC.")
     val WASM_INTERNAL_LOCAL_VARIABLE_PREFIX by key<String>("Prefix for the name of internal/synthetic local variables.")
+    val WASM_GENERATE_CLOSED_WORLD_MULTIMODULE by key<Boolean>("Enables multi-module closed-world mode.")
 }
