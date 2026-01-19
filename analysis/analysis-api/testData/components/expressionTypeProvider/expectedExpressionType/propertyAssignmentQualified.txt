@@ -1,0 +1,2 @@
+expression: bar
+expected type: null
