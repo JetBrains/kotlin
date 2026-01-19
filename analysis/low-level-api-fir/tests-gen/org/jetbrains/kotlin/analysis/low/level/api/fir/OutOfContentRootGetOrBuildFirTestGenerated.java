@@ -226,6 +226,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("localBackingFieldWithAnnotatedType.kt")
+    public void testLocalBackingFieldWithAnnotatedType() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/localBackingFieldWithAnnotatedType.kt");
+    }
+
+    @Test
     @TestMetadata("localCompilerRequiredAnnotation.kt")
     public void testLocalCompilerRequiredAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/localCompilerRequiredAnnotation.kt");

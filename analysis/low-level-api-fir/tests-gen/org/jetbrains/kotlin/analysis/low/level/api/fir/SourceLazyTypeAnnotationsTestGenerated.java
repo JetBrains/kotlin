@@ -620,6 +620,24 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
     }
 
     @Test
+    @TestMetadata("explicitBackingField.kt")
+    public void testExplicitBackingField() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/explicitBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitBackingFieldWithAnnotatedImplicitType.kt")
+    public void testExplicitBackingFieldWithAnnotatedImplicitType() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/explicitBackingFieldWithAnnotatedImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitBackingFieldWithComplexType.kt")
+    public void testExplicitBackingFieldWithComplexType() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/explicitBackingFieldWithComplexType.kt");
+    }
+
+    @Test
     @TestMetadata("explicitType.kt")
     public void testExplicitType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/explicitType.kt");

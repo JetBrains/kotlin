@@ -936,6 +936,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("backingFieldWithAnnotatedType.kt")
+      public void testBackingFieldWithAnnotatedType() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotations/backingFieldWithAnnotatedType.kt");
+      }
+
+      @Test
       @TestMetadata("danglingModifierInsideEnumEntry.kt")
       public void testDanglingModifierInsideEnumEntry() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/danglingModifierInsideEnumEntry.kt");
@@ -981,6 +987,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       @TestMetadata("kt55286.kt")
       public void testKt55286() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/kt55286.kt");
+      }
+
+      @Test
+      @TestMetadata("localBackingFieldWithAnnotatedType.kt")
+      public void testLocalBackingFieldWithAnnotatedType() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotations/localBackingFieldWithAnnotatedType.kt");
       }
 
       @Test
