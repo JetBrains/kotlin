@@ -20,11 +20,9 @@ class WasmPreSerializationLoweringContext(
     configuration: CompilerConfiguration,
     diagnosticReporter: IrDiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
-    override val symbols: PreSerializationWasmSymbols by lazy {
-        PreSerializationWasmSymbols.Impl(irBuiltIns)
-    }
+    override val symbols: PreSerializationWasmSymbols = PreSerializationWasmSymbols.Impl(irBuiltIns)
 
-    override val sharedVariablesManager: SharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }
+    override val sharedVariablesManager: SharedVariablesManager = KlibSharedVariablesManager(symbols)
 
     override val irMangler: KotlinMangler.IrMangler = JsManglerIr
 }
