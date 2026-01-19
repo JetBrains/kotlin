@@ -2649,6 +2649,70 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         public void testSetOperatorOf() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/setOperatorOf.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases")
+        @TestDataPath("$PROJECT_ROOT")
+        public class TrickyCases {
+          @Test
+          public void testAllFilesPresentInTrickyCases() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("directAndIndirectLowerBound.kt")
+          public void testDirectAndIndirectLowerBound() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases/directAndIndirectLowerBound.kt");
+          }
+
+          @Test
+          @TestMetadata("expectedIsOutputOfLambda.kt")
+          public void testExpectedIsOutputOfLambda() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases/expectedIsOutputOfLambda.kt");
+          }
+
+          @Test
+          @TestMetadata("indirectLowerBound.kt")
+          public void testIndirectLowerBound() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases/indirectLowerBound.kt");
+          }
+
+          @Test
+          @TestMetadata("indirectUpperBound.kt")
+          public void testIndirectUpperBound() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases/indirectUpperBound.kt");
+          }
+
+          @Test
+          @TestMetadata("orderOfFixationMatters.kt")
+          public void testOrderOfFixationMatters() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases/orderOfFixationMatters.kt");
+          }
+
+          @Test
+          @TestMetadata("secondUnrelatedLowerBound.kt")
+          public void testSecondUnrelatedLowerBound() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases/secondUnrelatedLowerBound.kt");
+          }
+
+          @Test
+          @TestMetadata("twoLowerBounds.kt")
+          public void testTwoLowerBounds() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases/twoLowerBounds.kt");
+          }
+
+          @Test
+          @TestMetadata("twoUpperBounds.kt")
+          public void testTwoUpperBounds() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases/twoUpperBounds.kt");
+          }
+
+          @Test
+          @TestMetadata("upperAndLower.kt")
+          public void testUpperAndLower() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases/upperAndLower.kt");
+          }
+        }
       }
 
       @Nested
@@ -2679,9 +2743,21 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("declaredUpperBounds.kt")
+        public void testDeclaredUpperBounds() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/declaredUpperBounds.kt");
+        }
+
+        @Test
         @TestMetadata("dnnExpectedTypes.kt")
         public void testDnnExpectedTypes() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/dnnExpectedTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("expectedTypeVariableIsLambdaParameter.kt")
+        public void testExpectedTypeVariableIsLambdaParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/expectedTypeVariableIsLambdaParameter.kt");
         }
 
         @Test
@@ -2781,9 +2857,49 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("selectAndWhen.kt")
+        public void testSelectAndWhen() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/selectAndWhen.kt");
+        }
+
+        @Test
+        @TestMetadata("testsWithId.kt")
+        public void testTestsWithId() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/testsWithId.kt");
+        }
+
+        @Test
         @TestMetadata("typealiasAsOperatorOfReturnType.kt")
         public void testTypealiasAsOperatorOfReturnType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/typealiasAsOperatorOfReturnType.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/withPcla")
+      @TestDataPath("$PROJECT_ROOT")
+      public class WithPcla {
+        @Test
+        @TestMetadata("add.kt")
+        public void testAdd() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/withPcla/add.kt");
+        }
+
+        @Test
+        @TestMetadata("addAll.kt")
+        public void testAddAll() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/withPcla/addAll.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInWithPcla() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/withPcla"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("buildBoxWithSomeCollection.kt")
+        public void testBuildBoxWithSomeCollection() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/withPcla/buildBoxWithSomeCollection.kt");
         }
       }
     }

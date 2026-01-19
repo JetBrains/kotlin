@@ -1,0 +1,136 @@
+FILE: selectAndWhen.kt
+    public open class ListA<A> : R|kotlin/Any| {
+        public constructor<A>(): R|ListA<A>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|ListA.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun <A> of(vararg values: R|kotlin/Array<out A>|): R|ListA<A>| {
+                ^of R|/ListA.ListA|<R|A|>()
+            }
+
+        }
+
+    }
+    public final class ListB<B> : R|ListA<B>| {
+        public constructor<B>(): R|ListB<B>| {
+            super<R|ListA<B>|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|ListB.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun <B> of(vararg values: R|kotlin/Array<out B>|): R|ListB<B>| {
+                ^of R|/ListB.ListB|<R|B|>()
+            }
+
+        }
+
+    }
+    public final fun <X> select(vararg x: R|kotlin/Array<out X>|): R|X| {
+        ^select R|<local>/x|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out X)|>|(Int(0))
+    }
+    public final fun <Y : R|ListA<*>|> selectWithStarDUB(vararg y: R|kotlin/Array<out Y>|): R|Y| {
+        ^selectWithStarDUB R|<local>/y|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out Y)|>|(Int(0))
+    }
+    public final fun <Z : R|ListA<kotlin/Int>|> selectWithDUB(vararg z: R|kotlin/Array<out Z>|): R|Z| {
+        ^selectWithDUB R|<local>/z|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out Z)|>|(Int(0))
+    }
+    public final fun testSelect(): R|kotlin/Unit| {
+        R|/select<CS errors: /select>#|<<ERROR TYPE REF: Cannot infer argument for type parameter X>>(vararg(Q|ListA|.R|/ListA.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>(), <collectionLiteralCall>()))
+        R|/select|<R|ListA<kotlin/Int>|>(vararg(Q|ListA|.R|/ListA.Companion.of|<R|kotlin/Int|>(), Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>()))
+        R|/select<CS errors: /select>#|<<ERROR TYPE REF: Cannot infer argument for type parameter X>>(vararg(Q|ListA|.R|/ListA.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>(), <collectionLiteralCall>(Int(42))))
+        R|/select|<R|ListA<kotlin/Int>|>(vararg(Q|ListA|.R|/ListA.Companion.of|<R|kotlin/Int|>(), Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))))
+        lval p1: R|ListA<*>| = R|/select<CS errors: /select>#|<R|ListA<*>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter B>>(), Q|ListA.Companion|.R|/ListA.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()))
+        lval p2: R|ListA<kotlin/Int>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), Q|ListB.Companion|.R|/ListB.Companion.of|<R|kotlin/Int|>()))
+        lval p3: R|ListA<*>| = R|/select<CS errors: /select>#|<R|ListA<*>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter B>>(), Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))))
+        lval p4: R|ListA<*>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), Q|ListB.Companion|.R|/ListB.Companion.of|<R|kotlin/Int|>()))
+        lval p5: R|ListA<kotlin/Int>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), Q|ListB.Companion|.R|/ListB.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))))
+        lval p6: R|ListA<*>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), Q|ListB.Companion|.R|/ListB.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))))
+        lval p7: R|ListA<kotlin/Int>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), Q|ListB.Companion|.R|/ListB.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))))
+        lval p8: R|ListA<kotlin/Int>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), Q|ListB.Companion|.R|/ListB.Companion.of|<R|kotlin/Int|>()))
+    }
+    public final fun testSelectWithUpperBounds(): R|kotlin/Unit| {
+        R|/selectWithStarDUB|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), Q|ListB.Companion|.R|/ListB.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))))
+        R|/selectWithDUB|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), Q|ListB.Companion|.R|/ListB.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))))
+    }
+    public final fun testWhen(): R|kotlin/Unit| {
+        when () {
+            Boolean(true) ->  {
+                <collectionLiteralCall>()
+            }
+            else ->  {
+                Q|ListA|.R|/ListA.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+            }
+        }
+
+        when () {
+            Boolean(true) ->  {
+                Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>()
+            }
+            else ->  {
+                Q|ListA|.R|/ListA.Companion.of|<R|kotlin/Int|>()
+            }
+        }
+
+        when () {
+            Boolean(true) ->  {
+                <collectionLiteralCall>(Int(42))
+            }
+            else ->  {
+                Q|ListA|.R|/ListA.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+            }
+        }
+
+        when () {
+            Boolean(true) ->  {
+                Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))
+            }
+            else ->  {
+                Q|ListA|.R|/ListA.Companion.of|<R|kotlin/Int|>()
+            }
+        }
+
+        lval p1: R|ListA<*>| = when () {
+            Boolean(true) ->  {
+                ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+            }
+            else ->  {
+                Q|ListB|.R|/ListB.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter B>>()
+            }
+        }
+
+        lval p2: R|ListA<kotlin/Int>| = when () {
+            Boolean(true) ->  {
+                Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>()
+            }
+            else ->  {
+                Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>()
+            }
+        }
+
+        lval p3: R|ListA<*>| = when () {
+            Boolean(true) ->  {
+                ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+            }
+            else ->  {
+                Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))
+            }
+        }
+
+        lval p4: R|ListA<kotlin/Int>| = when () {
+            Boolean(true) ->  {
+                Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))
+            }
+            else ->  {
+                Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>()
+            }
+        }
+
+    }

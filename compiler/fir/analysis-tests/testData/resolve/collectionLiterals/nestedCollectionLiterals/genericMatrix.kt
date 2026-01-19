@@ -45,11 +45,11 @@ fun testMatrixInt() {
     takeMatrixInt([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
     takeMatrixInt([[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]])
 
-    testMatrix<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>(<!TOO_MANY_ARGUMENTS, UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[
-        <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>,
-        <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[4, 5, 6]<!>,
-        <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[7, 8, 9]<!>,
-    ]<!>)
+    takeMatrix<Int>([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+    ])
     takeMatrix<Int>([])
     takeMatrix<Int>([[], [], []])
 

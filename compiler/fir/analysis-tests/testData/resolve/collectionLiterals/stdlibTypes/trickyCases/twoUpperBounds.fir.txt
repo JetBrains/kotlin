@@ -1,0 +1,63 @@
+FILE: twoUpperBounds.kt
+    public final fun cond(): R|kotlin/Boolean| {
+        ^cond Boolean(true)
+    }
+    public final fun <K> throughTwoLambdas(k: R|K|, vararg l: R|kotlin/Array<out (K) -> kotlin/Unit>|): R|kotlin/Unit| {
+    }
+    public final fun <K : R|kotlin/collections/MutableSet<kotlin/Int>|> throughDeclared(k: R|K|, l: R|(K) -> kotlin/Unit|): R|kotlin/Unit|
+    public final fun test(): R|kotlin/Unit| {
+        R|/throughTwoLambdas|<R|it(kotlin/collections/Set<kotlin/Int> & kotlin/collections/List<kotlin/Int>)|>(<collectionLiteralCall>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        ))
+        R|/throughTwoLambdas|<R|kotlin/collections/MutableSet<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        ))
+        R|/throughTwoLambdas|<R|it(kotlin/collections/Set<kotlin/Int> & kotlin/collections/MutableSet<kotlin/String>)|>(<collectionLiteralCall>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        ))
+        R|/throughTwoLambdas|<R|it(kotlin/collections/Set<kotlin/Int> & kotlin/collections/Set<kotlin/String>)|>(<collectionLiteralCall>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        ))
+        R|/throughTwoLambdas|<R|kotlin/collections/Set<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        ))
+        R|/throughTwoLambdas|<R|it(kotlin/collections/MutableSet<kotlin/Int> & kotlin/collections/MutableSet<kotlin/String>)|>(<collectionLiteralCall>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        ))
+        R|/throughDeclared|<R|it(kotlin/collections/MutableSet<kotlin/Int> & kotlin/collections/List<kotlin/Int>)|>(<collectionLiteralCall>(), <L> = throughDeclared@fun <anonymous>(<unused var>: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| <inline=NoInline>  {
+            ^@throughDeclared Unit
+        }
+        )
+        R|/throughDeclared|<R|kotlin/collections/MutableSet<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(), <L> = throughDeclared@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/Int>|): R|kotlin/Unit| <inline=NoInline>  {
+            ^@throughDeclared Unit
+        }
+        )
+        R|/throughDeclared|<R|it(kotlin/collections/MutableSet<kotlin/Int> & kotlin/collections/MutableSet<kotlin/String>)|>(<collectionLiteralCall>(), <L> = throughDeclared@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=NoInline>  {
+            ^@throughDeclared Unit
+        }
+        )
+    }

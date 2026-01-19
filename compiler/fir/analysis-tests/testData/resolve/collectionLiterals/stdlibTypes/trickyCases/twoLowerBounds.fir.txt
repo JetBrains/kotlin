@@ -1,0 +1,11 @@
+FILE: twoLowerBounds.kt
+    public final fun <K> select(vararg k: R|kotlin/Array<out K>|): R|K| {
+        ^select R|<local>/k|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out K)|>|(Int(0))
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/select|<R|kotlin/collections/MutableSet<out it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(R|kotlin/collections/mutableSetOf|<R|kotlin/String|>(), R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(), Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>()))
+        R|/select|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(R|kotlin/collections/setOf|<R|kotlin/String|>(), R|kotlin/collections/setOf|<R|kotlin/Int|>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>()))
+        R|/select|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(R|kotlin/collections/setOf|<R|kotlin/String|>(), R|kotlin/collections/setOf|<R|kotlin/Int|>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))))
+        R|/select|<R|kotlin/collections/Set<kotlin/String>|>(vararg(R|kotlin/collections/setOf|<R|kotlin/String|>(), R|kotlin/collections/mutableSetOf|<R|kotlin/String|>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>()))
+        R|/select<CS errors: /select>#|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(vararg(R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), <collectionLiteralCall>(Int(42))))
+    }

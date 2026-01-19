@@ -1,0 +1,169 @@
+FILE: declaredUpperBounds.kt
+    public abstract interface MyListA<A> : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|MyListA.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun <A> of(vararg t: R|kotlin/Array<out A>|): R|MyListA<A>| {
+                ^of object : R|MyListA<A>| {
+                    private constructor(): R|<anonymous><A>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    public abstract interface MyListB<B> : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|MyListB.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun <B> of(vararg t: R|kotlin/Array<out B>|): R|MyListB<B>| {
+                ^of object : R|MyListB<B>| {
+                    private constructor(): R|<anonymous><B>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    public abstract interface MyListC<C> : R|MyListA<C>|, R|MyListB<C>| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|MyListC.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun <C> of(vararg t: R|kotlin/Array<out C>|): R|MyListC<C>| {
+                ^of object : R|MyListC<C>| {
+                    private constructor(): R|<anonymous><C>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    public final fun <T : R|MyListA<*>|> idA(t: R|T|): R|T| {
+        ^idA R|<local>/t|
+    }
+    public final fun <U : R|MyListC<*>|> idC(u: R|U|): R|U| {
+        ^idC R|<local>/u|
+    }
+    public final fun testIdA(): R|kotlin/Unit| {
+        lval x: <ERROR TYPE REF: Cannot infer argument for type parameter T> = R|/idA<CS errors: /idA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(Int(42)))
+        lval y: R|MyListB<*>| = R|/idA|<R|it(MyListA<*> & MyListB<*>)|>(<collectionLiteralCall>(Int(42)))
+        lval z: R|MyListA<*>| = R|/idA|<R|MyListA<*>|>(Q|MyListA.Companion|.R|/MyListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        lval t: R|MyListC<*>| = R|/idA|<R|MyListC<*>|>(Q|MyListC.Companion|.R|/MyListC.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+    }
+    public final fun testIdC(): R|kotlin/Unit| {
+        lval x: <ERROR TYPE REF: Cannot infer argument for type parameter U> = R|/idC<CS errors: /idC>#|<<ERROR TYPE REF: Cannot infer argument for type parameter U>>(<collectionLiteralCall>(Int(42)))
+        lval y: R|MyListA<*>| = R|/idC|<R|MyListC<*>|>(Q|MyListC.Companion|.R|/MyListC.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+    }
+    public abstract interface MyListOutA<out A> : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|MyListOutA.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun <A> of(vararg a: R|kotlin/Array<out A>|): R|MyListOutA<A>| {
+                ^of object : R|MyListOutA<A>| {
+                    private constructor(): R|<anonymous><A>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    public abstract interface MyListOutB<out B> : R|MyListOutA<B>| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|MyListOutB.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun <B> of(vararg b: R|kotlin/Array<out B>|): R|MyListOutB<B>| {
+                ^of object : R|MyListOutB<B>| {
+                    private constructor(): R|<anonymous><B>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    public abstract interface X : R|kotlin/Any| {
+    }
+    public final fun xx(): R|X| {
+        ^xx object : R|X| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public abstract interface Y : R|kotlin/Any| {
+    }
+    public final fun yy(): R|Y| {
+        ^yy object : R|Y| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public abstract interface Z : R|X|, R|Y| {
+    }
+    public final fun zz(): R|Z| {
+        ^zz object : R|Z| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun <T : R|MyListOutA<X>|> idOutA(t: R|T|): R|T| {
+        ^idOutA R|<local>/t|
+    }
+    public final fun <U : R|MyListOutB<X>|> idOutB(u: R|U|): R|U| {
+        ^idOutB R|<local>/u|
+    }
+    public final fun testIdOutA(): R|kotlin/Unit| {
+        R|/idOutA<CS errors: /idOutA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>())
+        R|/idOutA<CS errors: /idOutA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(Int(42)))
+        R|/idOutA<CS errors: /idOutA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(R|/xx|()))
+        R|/idOutA<CS errors: /idOutA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(R|/zz|()))
+        lval p0: R|MyListOutA<Z>| = R|/idOutA|<R|MyListOutA<Z>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|Z|>())
+        lval p1: R|MyListOutA<Y>| = R|/idOutA|<R|it(MyListOutA<X> & MyListOutA<Y>)|>(<collectionLiteralCall>())
+        lval p2: R|MyListOutA<Y>| = R|/idOutA|<R|it(MyListOutA<X> & MyListOutA<Y>)|>(<collectionLiteralCall>(R|/zz|()))
+        lval p3: R|MyListOutA<Y>| = R|/idOutA|<R|it(MyListOutA<X> & MyListOutA<Y>)|>(<collectionLiteralCall>(R|/yy|()))
+        lval p4: R|MyListOutB<X>| = R|/idOutA|<R|MyListOutB<X>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|X|>())
+        lval p5: R|MyListOutB<Z>| = R|/idOutA|<R|MyListOutB<Z>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|Z|>())
+        lval p6: R|MyListOutB<Y>| = R|/idOutA|<R|it(MyListOutA<X> & MyListOutB<Y>)|>(<collectionLiteralCall>())
+    }
+    public final fun testIdOutB(): R|kotlin/Unit| {
+        lval p1: R|MyListOutA<X>| = R|/idOutB|<R|MyListOutB<X>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|X|>())
+        lval p2: R|MyListOutA<Y>| = R|/idOutB|<R|it(MyListOutB<X> & MyListOutA<Y>)|>(<collectionLiteralCall>())
+        lval p3: R|MyListOutA<Z>| = R|/idOutB|<R|it(MyListOutB<X> & MyListOutA<Z>)|>(<collectionLiteralCall>())
+    }

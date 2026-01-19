@@ -1,0 +1,20 @@
+FILE: orderOfFixationMatters.kt
+    public final fun <K> id(k: R|K|): R|K| {
+        ^id R|<local>/k|
+    }
+    public final fun <T> myIn(b: R|T|, a: R|kotlin/collections/Set<T>|): R|kotlin/Unit| {
+    }
+    public final fun <T> myContains(a: R|kotlin/collections/Set<T>|, b: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|kotlin/collections/Set<*>|> myInWithUB(b: R|T|, a: R|kotlin/collections/Set<T>|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|kotlin/collections/Set<*>|> myContainsWithUB(a: R|kotlin/collections/Set<T>|, b: R|T|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/myIn<CS errors: /myIn>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(), R|/id|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(<collectionLiteralCall>(R|kotlin/intArrayOf|())))
+        R|/myContains<CS errors: /myContains>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(R|/id|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(<collectionLiteralCall>(R|kotlin/intArrayOf|())), <collectionLiteralCall>())
+        R|/myInWithUB<CS errors: /myInWithUB>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(), R|/id|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(<collectionLiteralCall>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>())))
+        R|/myContainsWithUB<CS errors: /myContainsWithUB>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(R|/id|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(<collectionLiteralCall>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>())), <collectionLiteralCall>())
+        R|/myInWithUB<CS errors: /myInWithUB>#|<R|kotlin/collections/Set<*>|>(R|/id|<R|kotlin/collections/Set<*>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()), R|/id|<R|kotlin/collections/Set<kotlin/collections/Set<*>>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>())))
+        R|/myContainsWithUB<CS errors: /myContainsWithUB>#|<R|kotlin/collections/Set<*>|>(R|/id|<R|kotlin/collections/Set<kotlin/collections/Set<*>>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>())), R|/id|<R|kotlin/collections/Set<*>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()))
+    }

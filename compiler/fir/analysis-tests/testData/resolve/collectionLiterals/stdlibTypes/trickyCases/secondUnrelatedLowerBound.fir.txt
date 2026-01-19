@@ -1,0 +1,22 @@
+FILE: secondUnrelatedLowerBound.kt
+    public final fun cond(): R|kotlin/Boolean| {
+        ^cond Boolean(true)
+    }
+    public final fun <K> select(vararg k: R|kotlin/Array<out K>|): R|K| {
+        ^select R|<local>/k|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out K)|>|(Int(0))
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval a: R|java/io/Serializable| = when () {
+            R|/cond|() ->  {
+                Int(42)
+            }
+            R|/cond|() ->  {
+                R|kotlin/intArrayOf|()
+            }
+            else ->  {
+                <collectionLiteralCall>()
+            }
+        }
+
+        R|/select|<R|java/io/Serializable|>(vararg(Int(42), R|kotlin/intArrayOf|(), <collectionLiteralCall>()))
+    }
