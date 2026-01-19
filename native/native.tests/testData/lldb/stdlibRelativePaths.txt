@@ -1,0 +1,17 @@
+> b main.kt:9
+> r
+Process [..] stopped
+[..] stop reason = breakpoint 1[..]
+-> 9   	    Throwable()
+> s
+Process [..] stopped
+[..] stop reason = step in
+> source info
+[..]: [..]/kotlin-native/runtime/src/main/kotlin/kotlin/Throwable.kt:[..]
+> b [K][Suspend]Functions:1
+> c
+Process [..] stopped
+[..] stop reason = breakpoint 2[..]
+> source info
+[..]: [..]/[K][Suspend]Functions:1:1
+> q
