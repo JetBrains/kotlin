@@ -52,15 +52,15 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
             Bad(" "),
             Bad("x"),
             Bad("2"),
-            Good("2.2"),
+            Bad("2.2"),
             Bad("2.2.1"),
             Bad("2.2-Beta1"),
             Good("2.3"),
-            Bad("2.4"),
+            Good("2.4"),
+            Bad("2.5"),
         ).forEach { testData ->
             val cinteropArgs = listOf(
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
-                "-Xccall-mode", "indirect", // Required for -Xklib-abi-compatibility-level 2.2.
             )
 
             val cinteropResult = cinteropToLibrary(
@@ -87,19 +87,19 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun oldAbiCompatibilityLevelCanBeUsedOnlyWithCCallModeIndirect() {
+    fun oldAbiCompatibilityLevelCanBeUsedOnlyWithAnyCCallMode() {
         class TestData(val abiCompatibilityLevel: String, val cCallMode: String, val isSuccessExpected: Boolean)
 
         fun Good(abiCompatibilityLevel: String, cCallMode: String) = TestData(abiCompatibilityLevel, cCallMode, isSuccessExpected = true)
         fun Bad(abiCompatibilityLevel: String, cCallMode: String) = TestData(abiCompatibilityLevel, cCallMode, isSuccessExpected = false)
 
         listOf(
-            Good("2.2", "INDIRECT"),
-            Bad("2.2", "DIRECT"),
-            Bad("2.2", "BOTH"),
             Good("2.3", "INDIRECT"),
             Good("2.3", "DIRECT"),
             Good("2.3", "BOTH"),
+            Good("2.4", "INDIRECT"),
+            Good("2.4", "DIRECT"),
+            Good("2.4", "BOTH"),
         ).forEach { testData ->
             val cinteropArgs = listOf(
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
@@ -134,12 +134,11 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
         class TestData(val abiCompatibilityLevel: String, val expectedAbiVersion: String, val expectedMetadataVersion: String)
 
         listOf(
-            TestData(abiCompatibilityLevel = "2.2", expectedAbiVersion = "2.2.0", expectedMetadataVersion = "1.4.1"),
             TestData(abiCompatibilityLevel = "2.3", expectedAbiVersion = "2.3.0", expectedMetadataVersion = "2.3.0"),
+            TestData(abiCompatibilityLevel = "2.4", expectedAbiVersion = "2.4.0", expectedMetadataVersion = "2.4.0"),
         ).forEach { testData ->
             val cinteropArgs = listOf(
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
-                "-Xccall-mode", "indirect", // Required for -Xklib-abi-compatibility-level 2.2.
             )
 
             val cinteropResult = cinteropToLibrary(
