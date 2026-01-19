@@ -1,5 +1,0 @@
-expression: value
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/Int

@@ -1,5 +1,0 @@
-expression: bar
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/String

@@ -394,13 +394,13 @@ internal class KaFirExpressionTypeProvider(
     }
 
     private fun getExpectedTypeByVariableAssignment(expression: PsiElement): KaType? {
-        // Given: `x = expression`
+        // Given: `x = expression` or `foo.x = expression`
         // Expected type of `expression` is type of `x`
         val assignmentExpression =
             expression.unwrapQualified<KtBinaryExpression> { binaryExpr, expr -> binaryExpr.right == expr && binaryExpr.operationToken == KtTokens.EQ }
                 ?: return null
-        val variableExpression = assignmentExpression.left as? KtNameReferenceExpression ?: return null
-        return getKtExpressionNonErrorType(variableExpression)
+        val leftExpression = assignmentExpression.left ?: return null
+        return getKtExpressionNonErrorType(leftExpression)
     }
 
     private fun getExpectedTypeByPropertyDeclaration(expression: PsiElement): KaType? {
