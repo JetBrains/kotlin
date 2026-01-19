@@ -20,7 +20,6 @@ plugins {
     id("cache-redirector")
 }
 
-includeBuild '../build-tools'
 includeBuild '../tools/benchmarksAnalyzer'
 
 include ':ring'

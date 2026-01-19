@@ -27,7 +27,6 @@ buildscript {
 }
 
 plugins {
-    id("kotlin.native.build-tools-conventions")
     id("org.jetbrains.kotlin.multiplatform") apply false
 }
 
