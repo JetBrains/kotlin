@@ -1,0 +1,21 @@
+@R|Ann|()  kotlin/Int
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /A.prop
+  anchor -> [FirRegularPropertySymbol /A.prop]
+
+FILE: [ResolvedTo(IMPORTS)] explicitBackingField.kt
+    public open [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(TYPES)] val prop: R|kotlin/Any|
+            private final? [ResolvedTo(TYPES)] backing field field: R|@R|Ann|()  kotlin/Int| = LAZY_EXPRESSION
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=A] get(): R|kotlin/Any|
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
