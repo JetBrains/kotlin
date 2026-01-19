@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.DEBUG_KEY
 import org.jetbrains.kotlin.psi.DebugUserData
 import org.jetbrains.kotlin.psi.KtModifierList
-import org.jetbrains.kotlin.psi.KtPropertyAccessore
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
 
 internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
