@@ -20,10 +20,17 @@ internal class GranularAnnotationsBox(
     private val annotationFilter: AnnotationFilter = AlwaysAllowedAnnotationFilter,
 ) : AnnotationsBox {
     @Volatile
-    private var cachedAnnotations: Collection<PsiAnnotation>? = null
+    var cachedAnnotations: Collection<PsiAnnotation>? = null
+
+    val trace = Throwable()
+
+    @Volatile
+    var cachePopulatedTrace: Throwable? = null
 
     private fun getOrComputeCachedAnnotations(owner: PsiElement): Collection<PsiAnnotation> {
         cachedAnnotations?.let { return it }
+
+        cachePopulatedTrace = Throwable()
 
         val annotations = annotationsProvider.annotationInfos().mapNotNullTo(SmartList<PsiAnnotation>()) { applicationInfo ->
             applicationInfo.annotation.classId?.let { _ ->

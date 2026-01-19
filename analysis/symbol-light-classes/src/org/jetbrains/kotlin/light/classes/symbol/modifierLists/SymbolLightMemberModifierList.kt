@@ -9,10 +9,14 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.ComputeAllAtOnceAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
+import org.jetbrains.kotlin.psi.DEBUG_KEY
+import org.jetbrains.kotlin.psi.DebugUserData
 import org.jetbrains.kotlin.psi.KtModifierList
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.KtPropertyAccessore
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
 
 internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
@@ -20,6 +24,24 @@ internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
     modifiersBox: ModifiersBox = EmptyModifiersBox,
     annotationsBox: AnnotationsBox = EmptyAnnotationsBox,
 ) : SymbolLightModifierList<T>(containingDeclaration, modifiersBox, annotationsBox) {
+    init {
+        val (creationTrace, populationTrace, psiAnnotations) = when (annotationsBox) {
+            is EmptyAnnotationsBox -> Triple(null, null, null)
+            is GranularAnnotationsBox -> Triple(annotationsBox.trace, annotationsBox.cachePopulatedTrace, { annotationsBox.cachedAnnotations })
+            is ComputeAllAtOnceAnnotationsBox -> Triple(null, annotationsBox.trace, null)
+        }
+
+        this.putUserData(
+            DEBUG_KEY,
+            DebugUserData(
+                annotationsBox::class.java.simpleName,
+                creationTrace,
+                populationTrace,
+                psiAnnotations,
+            )
+        )
+    }
+
     override fun hasModifierProperty(name: String): Boolean = when {
         name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
         // Pretend this method behaves like a `default` method

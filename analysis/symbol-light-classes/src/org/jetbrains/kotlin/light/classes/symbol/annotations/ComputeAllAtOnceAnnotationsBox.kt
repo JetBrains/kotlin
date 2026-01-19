@@ -16,6 +16,8 @@ internal class ComputeAllAtOnceAnnotationsBox(
     @Volatile
     private var cachedAnnotations: Collection<PsiAnnotation>? = null
 
+    val trace = Throwable()
+
     private fun getOrComputeAnnotations(owner: PsiElement): Collection<PsiAnnotation> {
         cachedAnnotations?.let { return it }
 
