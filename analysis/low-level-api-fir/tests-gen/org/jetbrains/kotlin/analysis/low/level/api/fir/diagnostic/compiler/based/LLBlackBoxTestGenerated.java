@@ -66628,6 +66628,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("noCachingFunctionCallBetweenIfBranches.kt")
+    public void testNoCachingFunctionCallBetweenIfBranches() {
+      runTest("compiler/testData/codegen/box/when/noCachingFunctionCallBetweenIfBranches.kt");
+    }
+
+    @Test
     @TestMetadata("noElseCoerceToUnit.kt")
     public void testNoElseCoerceToUnit() {
       runTest("compiler/testData/codegen/box/when/noElseCoerceToUnit.kt");
