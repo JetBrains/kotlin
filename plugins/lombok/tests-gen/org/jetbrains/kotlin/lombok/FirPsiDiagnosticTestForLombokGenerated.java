@@ -31,6 +31,12 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
   }
 
   @Test
+  @TestMetadata("builderCtorIsPackagePrivate.kt")
+  public void testBuilderCtorIsPackagePrivate() {
+    runTest("plugins/lombok/testData/diagnostics/builderCtorIsPackagePrivate.kt");
+  }
+
+  @Test
   @TestMetadata("builderMethodPreserving.kt")
   public void testBuilderMethodPreserving() {
     runTest("plugins/lombok/testData/diagnostics/builderMethodPreserving.kt");
