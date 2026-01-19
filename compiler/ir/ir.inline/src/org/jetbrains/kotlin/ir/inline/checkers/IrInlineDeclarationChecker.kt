@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.inline.checkers
 
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -27,8 +28,9 @@ import org.jetbrains.kotlin.ir.visitors.IrTypeVisitor
  * Reports an IR-level diagnostic whenever a private type is used within an `inline` function with broader visibility.
  */
 class IrInlineDeclarationChecker(
-    private val diagnosticReporter: IrDiagnosticReporter,
+    context: PreSerializationLoweringContext,
 ) : IrTypeVisitor<Unit, IrInlineDeclarationChecker.InlineFunctionInfo?>() {
+    private val diagnosticReporter: IrDiagnosticReporter = context.diagnosticReporter
 
     data class InlineFunctionInfo(
         val file: IrFile,
