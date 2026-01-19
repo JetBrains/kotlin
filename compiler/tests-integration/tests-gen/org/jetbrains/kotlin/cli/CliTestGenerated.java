@@ -1376,11 +1376,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/annotationTargetAll.args");
     }
 
-    @TestMetadata("annotationTargetAllDisabled.args")
-    public void testAnnotationTargetAllDisabled() {
-      runTest("compiler/testData/cli/jvm/annotationTargetAllDisabled.args");
-    }
-
     @TestMetadata("apiAndLanguageVersionsUnsupported.args")
     public void testApiAndLanguageVersionsUnsupported() {
       runTest("compiler/testData/cli/jvm/apiAndLanguageVersionsUnsupported.args");
