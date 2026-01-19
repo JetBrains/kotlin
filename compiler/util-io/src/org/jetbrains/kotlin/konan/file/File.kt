@@ -43,8 +43,10 @@ data class File(internal val javaPath: Path) {
         get() = name.substringAfterLast('.', "")
     val nameSegments: List<String>
         get() = javaPath.map { it.fileName.toString() }
+    val parentOrNull: String?
+        get() = javaPath.parent?.toString()
     val parent: String
-        get() = javaPath.parent.toString()
+        get() = parentOrNull!!
     val parentFile: File
         get() = File(javaPath.parent)
 
