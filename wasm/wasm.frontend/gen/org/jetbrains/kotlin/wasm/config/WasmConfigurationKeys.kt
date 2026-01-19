@@ -70,6 +70,10 @@ object WasmConfigurationKeys {
     @JvmField
     val WASM_INTERNAL_LOCAL_VARIABLE_PREFIX = CompilerConfigurationKey.create<String>("WASM_INTERNAL_LOCAL_VARIABLE_PREFIX")
 
+    // Enables multi-module closed-world mode.
+    @JvmField
+    val WASM_GENERATE_CLOSED_WORLD_MULTIMODULE = CompilerConfigurationKey.create<Boolean>("WASM_GENERATE_CLOSED_WORLD_MULTIMODULE")
+
 }
 
 var CompilerConfiguration.wasmEnableArrayRangeChecks: Boolean
@@ -135,4 +139,8 @@ var CompilerConfiguration.wasmDisableCrossFileOptimisations: Boolean
 var CompilerConfiguration.wasmInternalLocalVariablePrefix: String?
     get() = get(WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX)
     set(value) { put(WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.wasmGenerateClosedWorldMultimodule: Boolean
+    get() = getBoolean(WasmConfigurationKeys.WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)
+    set(value) { put(WasmConfigurationKeys.WASM_GENERATE_CLOSED_WORLD_MULTIMODULE, value) }
 

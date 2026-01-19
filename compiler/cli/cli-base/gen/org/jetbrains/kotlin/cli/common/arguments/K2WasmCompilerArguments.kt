@@ -92,6 +92,16 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-generate-closed-world-multimodule",
+        description = "Compile a module passed using `-include` option in multi-module closed-world mode.",
+    )
+    var wasmGenerateClosedWorldMultimodule: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwasm-generate-dwarf",
         description = "Generate DWARF debug information.",
     )

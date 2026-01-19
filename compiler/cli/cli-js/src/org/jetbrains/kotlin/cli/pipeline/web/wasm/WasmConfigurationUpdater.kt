@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
@@ -63,5 +64,6 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
         configuration.putIfNotNull(WasmConfigurationKeys.DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE, arguments.irDceDumpDeclarationIrSizesToFile)
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization
         configuration.targetPlatform = WasmPlatforms.wasmPlatformByTargets(listOf(configuration.wasmTarget))
+        configuration.wasmGenerateClosedWorldMultimodule = arguments.wasmGenerateClosedWorldMultimodule
     }
 }
