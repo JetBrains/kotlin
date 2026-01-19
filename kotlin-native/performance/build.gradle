@@ -99,11 +99,6 @@ private static String getAnalyzerTargetName() {
     return 'unknown'
 }
 
-private String findAnalyzerBinary() {
-    String result = "${projectDir}/../${analyzerToolDirectory}/${getAnalyzerTargetName()}/" +
-            "${analyzerTool}ReleaseExecutable/${analyzerTool}${MPPTools.getNativeProgramExtension()}"
-}
-
 def mergeReports(String fileName) {
     def reports = []
     subprojects.each {
@@ -129,20 +124,6 @@ subprojects.each {
             it.konanJsonReport.finalizedBy mergeNativeReports
         }
     }
-}
-
-task teamCityStat(type:Exec) {
-    def analyzer = findAnalyzerBinary()
-    if (getAnalyzerTargetName() == 'windows') {
-        def mingwPath = new File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
-        def pathEnv = getEnvironment()["PATH"]
-        environment("PATH", "${mingwPath.toString()}/bin" + (pathEnv ? ";$pathEnv" : ""))
-    }
-    commandLine analyzer, "-r", "teamcity",
-        "--artifactory-url", "https://repo.labs.intellij.net/kotlin-native-benchmarks",
-        "--teamcity-url", "http://buildserver.labs.intellij.net",
-        "--server-url", findProperty("kotlin.native.performance.server.url")?.toString() ?: "http://localhost:3000",
-        "${layout.buildDirectory.file(nativeJson).get().asFile}"
 }
 
 task cinterop {
