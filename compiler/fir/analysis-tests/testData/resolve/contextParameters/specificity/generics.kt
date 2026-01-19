@@ -60,8 +60,8 @@ val <T> foop3 get() = B()
 
 context(i: Int)
 fun test0() {
-    val a0 = foo0() // should be ambiguous?
-    val a1 = foop0  // should be ambiguous?
+    val a0 = foo0()
+    val a1 = foop0
     val b2 = foo1()
     val b3 = foop1
     val b4 = foo2(42)
@@ -73,10 +73,10 @@ fun test0() {
 
 context(s: String)
 fun test1() {
-    val a0 = foo0() // should be ambiguous?
-    val a1 = foop0  // should be ambiguous?
-    val a2 = foo1() // should be ambiguous?
-    val a3 = foop1  // should be ambiguous?
+    val a0 = foo0()
+    val a1 = foop0
+    val a2 = foo1()
+    val a3 = foop1
     val b4 = foo1<String>()
     expectA(a0, a1, a2, a3)
     expectB(b4)
@@ -84,15 +84,15 @@ fun test1() {
 
 context(s: String, i: Int)
 fun test2() {
-    val a0 = foo0() // should be ambiguous?
-    val a1 = foop0  // should be ambiguous?
-    val a2 = foo1() // should be ambiguous?
-    val a3 = foop1  // should be ambiguous?
+    val a0 = foo0()
+    val a1 = foop0
+    val a2 = foo1()
+    val a3 = foop1
     val b4 = foo1<String>()
     val a5 = foo2("")
-    val b6 = foo2(<!ARGUMENT_TYPE_MISMATCH!>42<!>) // should be ok?
-    val a7 = foo3() // should be ambiguous?
-    val a8 = foop3  // should be ambiguous?
+    val b6 = foo2(<!ARGUMENT_TYPE_MISMATCH!>42<!>)
+    val a7 = foo3()
+    val a8 = foop3
     val b9 = foo3<String>()
     expectA(a0, a1, a2, a3, a5, a7, a8)
     expectB(b4, b9)
@@ -141,8 +141,8 @@ context(_: Box<T>)
 
 context(b: Box<String>)
 fun test3() {
-    val a0 = bar1() // should be ambiguous?
-    val a1 = barp1  // should be ambiguous?
+    val a0 = bar1()
+    val a1 = barp1
 
     val b2 = bar2()
     val a3 = bar2(1)
