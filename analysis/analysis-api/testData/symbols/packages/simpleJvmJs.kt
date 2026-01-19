@@ -9,5 +9,5 @@ package foo
 // NO_PACKAGE: foo.bar
 // HAS_PACKAGE: kotlin
 // HAS_PACKAGE: kotlin.collections
-// NO_PACKAGE: kotlin.coroutines.cancellation
+// HAS_PACKAGE: kotlin.coroutines.cancellation
 // NO_PACKAGE: java.io
