@@ -28308,6 +28308,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("coercionToUnitBoxing.kt")
+    public void testCoercionToUnitBoxing() {
+      runTest("compiler/testData/codegen/box/inline/coercionToUnitBoxing.kt");
+    }
+
+    @Test
     @TestMetadata("correctOrderFunctionReference.kt")
     public void testCorrectOrderFunctionReference() {
       runTest("compiler/testData/codegen/box/inline/correctOrderFunctionReference.kt");
