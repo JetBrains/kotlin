@@ -236,7 +236,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             JS_ACTUAL_EXTERNAL_INTERFACE_WITHOUT_JS_NO_RUNTIME,
-            "This 'actual' external interface corresponds to an 'expect' interface with runtime. Consider adding '@JsNoRuntime' to the expect interface.",
+            "This 'actual' external interface corresponds to an 'expect' interface with runtime. Consider adding '@JsNoRuntime' to the 'expect' interface.",
         )
     }
 }
