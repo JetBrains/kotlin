@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.benchmark
 
 import org.gradle.api.Project
-import org.gradle.api.Task
+import org.jetbrains.kotlin.RunKotlinNativeTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.hostKotlinNativeTarget
 import kotlin.reflect.KClass
@@ -23,17 +23,15 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
         get() = hostKotlinNativeTarget
             .binaries.getExecutable(NATIVE_EXECUTABLE_NAME, benchmark.buildType)
 
-    override val Project.nativeExecutable: String
-        get() = nativeBinary.outputFile.absolutePath
-
-    override val Project.nativeLinkTask: Task
-        get() = nativeBinary.linkTaskProvider.get()
-
     override val Project.nativeLinkBinary: String
-        get() = nativeExecutable
+        get() = nativeBinary.outputFile.absolutePath
 
     override val Project.nativeLinkTaskArguments: List<String>
         get() {
             return nativeBinary.linkTaskProvider.get().toolOptions.freeCompilerArgs.get()
         }
+
+    override fun RunKotlinNativeTask.configureKonanRunTask() {
+        executable.fileProvider(project.nativeBinary.linkTaskProvider.map { it.outputFile.get() })
+    }
 }

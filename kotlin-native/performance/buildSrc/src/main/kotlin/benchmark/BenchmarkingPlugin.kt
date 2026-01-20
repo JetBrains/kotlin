@@ -2,15 +2,12 @@ package org.jetbrains.kotlin.benchmark
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 import kotlin.collections.plus
 import kotlin.reflect.KClass
@@ -40,6 +37,9 @@ internal val Project.nativeJson: String
 internal val Project.buildType: NativeBuildType
     get() = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: NativeBuildType.RELEASE
 
+internal val Project.useCSet: Boolean
+    get() = (findProperty("useCSet") as String?).toBoolean()
+
 internal val Project.commonBenchmarkProperties: Map<String, Any>
     get() = mapOf(
             "cpu" to System.getProperty("os.arch"),
@@ -62,8 +62,6 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
  * A plugin configuring a benchmark Kotlin/Native project.
  */
 abstract class BenchmarkingPlugin: Plugin<Project> {
-    protected abstract val Project.nativeExecutable: String
-    protected abstract val Project.nativeLinkTask: Task
     protected abstract val Project.nativeLinkBinary: String
     protected abstract val Project.nativeLinkTaskArguments: List<String>
     protected abstract val Project.benchmark: BenchmarkExtension
@@ -100,20 +98,28 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
         }
     }
 
+    protected abstract fun RunKotlinNativeTask.configureKonanRunTask()
+
     private fun Project.createKonanRunTask() {
-        tasks.register(
-                "konanRun",
-                RunKotlinNativeTask::class.java,
-                nativeLinkTask,
-                nativeExecutable,
-                layout.buildDirectory.file(nativeBenchResults).get().asFile.absolutePath
-        ).configure {
+        tasks.register<RunKotlinNativeTask>("konanRun") {
             group = BENCHMARKING_GROUP
             description = "Runs the benchmark for Kotlin/Native."
-            args("-p", "${benchmark.applicationName}::")
-            warmupCount = nativeWarmup
-            repeatCount = attempts
-            repeatingType = benchmark.repeatingType
+
+            reportFile.set(layout.buildDirectory.file(nativeBenchResults))
+            verbose.convention(logger.isInfoEnabled)
+            baseOnly.convention(false)
+            warmupCount.convention(nativeWarmup)
+            repeatCount.convention(attempts)
+            repeatingType.set(benchmark.repeatingType)
+            arguments.addAll("-p", "${benchmark.applicationName}::")
+            useCSet.convention(project.useCSet)
+
+            // We do not want to cache benchmarking runs; we want the task to run whenever requested.
+            outputs.upToDateWhen { false }
+
+            finalizedBy("konanJsonReport")
+
+            configureKonanRunTask()
         }
     }
 

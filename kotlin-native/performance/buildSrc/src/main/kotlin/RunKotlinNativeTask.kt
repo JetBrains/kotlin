@@ -5,107 +5,122 @@
 
 package org.jetbrains.kotlin
 
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
-import org.gradle.api.Task
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.benchmark.Logger
 import org.jetbrains.kotlin.benchmark.LogLevel
 import org.jetbrains.report.json.*
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.process.ExecOperations
+import org.gradle.process.ExecSpec
 import java.io.ByteArrayOutputStream
-import java.io.File
 import javax.inject.Inject
 import kotlin.collections.HashMap
 
-open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
-                                                   private val executable: String,
-                                                   private val outputFileName: String
+private fun ExecOperations.execCapturingStdout(action: Action<ExecSpec>): String {
+    val output = ByteArrayOutputStream()
+    exec {
+        action.execute(this)
+        standardOutput = output
+    }.rethrowFailure()
+    return output.toString()
+}
+
+private fun String.splitCommaSeparatedOption(optionName: String) =
+        split("\\s*,\\s*".toRegex()).map {
+            if (it.isNotEmpty()) listOf(optionName, it) else listOf(null)
+        }.flatten().filterNotNull()
+
+open class RunKotlinNativeTask @Inject constructor(
+        private val execOperations: ExecOperations,
+        objectFactory: ObjectFactory,
 ) : DefaultTask() {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE) // only the executable, not its location matters
+    val executable: RegularFileProperty = objectFactory.fileProperty()
 
-    @Input
-    @Option(option = "filter", description = "Benchmarks to run (comma-separated)")
-    var filter: String = ""
-    @Input
-    @Option(option = "filterRegex", description = "Benchmarks to run, described by regular expressions (comma-separated)")
-    var filterRegex: String = ""
-    @Input
-    @Option(option = "verbose", description = "Verbose mode of running benchmarks")
-    var verbose: Boolean = false
-    @Input
-    @Option(option = "baseOnly", description = "Run only set of base benchmarks")
-    var baseOnly: Boolean = false
-    @Input
-    var warmupCount: Int = 0
-    @Input
-    var repeatCount: Int = 0
-    @Input
-    var repeatingType = BenchmarkRepeatingType.INTERNAL
+    @get:OutputFile
+    val reportFile: RegularFileProperty = objectFactory.fileProperty()
 
-    private val argumentsList = mutableListOf<String>()
+    @get:Input
+    @get:Option(option = "filter", description = "Benchmarks to run (comma-separated)")
+    @get:Optional
+    val filter: Property<String> = objectFactory.property(String::class.java)
 
-    init {
-        this.dependsOn += linkTask.name
-        this.finalizedBy("konanJsonReport")
-    }
+    @get:Input
+    @get:Option(option = "filterRegex", description = "Benchmarks to run, described by regular expressions (comma-separated)")
+    @get:Optional
+    val filterRegex: Property<String> = objectFactory.property(String::class.java)
 
-    fun depends(taskName: String) {
-        this.dependsOn += taskName
-    }
+    @get:Input
+    @get:Option(option = "verbose", description = "Verbose mode of running benchmarks")
+    val verbose: Property<Boolean> = objectFactory.property(Boolean::class.java)
 
-    fun args(vararg arguments: String) {
-        argumentsList.addAll(arguments.toList())
-    }
+    @get:Input
+    @get:Option(option = "baseOnly", description = "Run only set of base benchmarks")
+    val baseOnly: Property<Boolean> = objectFactory.property(Boolean::class.java)
 
-    @Internal
-    val remoteHost = project.findProperty("remoteHost")?.toString()
-    @Internal
-    val remoteHostFolder = project.findProperty("remoteHostFolder")?.toString()
+    @get:Input
+    val warmupCount: Property<Int> = objectFactory.property(Int::class.java)
 
-    private fun execBenchmarkOnce(benchmark: String, warmupCount: Int, repeatCount: Int) : String {
-        val output = ByteArrayOutputStream()
-        val useCset = project.findProperty("useCset")?.toString()?.toBoolean() ?: false
+    @get:Input
+    val repeatCount: Property<Int> = objectFactory.property(Int::class.java)
 
-        project.exec {
-            when {
-                useCset -> {
-                    executable = "cset"
-                    args("shield", "--exec", "--", this@RunKotlinNativeTask.executable)
-                }
-                remoteHost != null -> {
-                    executable = "ssh"
-                    val remoteExecutable = this@RunKotlinNativeTask.executable.split("/").last()
-                    args (remoteHost, "$remoteHostFolder/$remoteExecutable")
-                }
-                else -> executable = this@RunKotlinNativeTask.executable
+    @get:Input
+    val repeatingType: Property<BenchmarkRepeatingType> = objectFactory.property(BenchmarkRepeatingType::class.java)
+
+    @get:Input
+    val arguments: ListProperty<String> = objectFactory.listProperty(String::class.java)
+
+    @get:Input
+    val useCSet: Property<Boolean> = objectFactory.property(Boolean::class.java)
+
+    private fun execBenchmarkOnce(
+            benchmark: String,
+            warmupCount: Int,
+            repeatCount: Int,
+            verbose: Boolean,
+    ) : String {
+        val output = execOperations.execCapturingStdout {
+            if (useCSet.get()) {
+                executable = "cset"
+                args("shield", "--exec", "--", this@RunKotlinNativeTask.executable.asFile.get())
+            } else {
+                executable(this@RunKotlinNativeTask.executable.asFile.get())
             }
-
-            args(argumentsList)
+            args(arguments.get())
             args("-f", benchmark)
-            // Logging with application should be done only in case it controls running benchmarks itself.
-            // Although it's a responsibility of gradle task.
-            if (verbose && repeatingType == BenchmarkRepeatingType.INTERNAL) {
+            if (verbose) {
                 args("-v")
             }
             args("-w", warmupCount.toString())
             args("-r", repeatCount.toString())
-            standardOutput = output
         }
-        return output.toString().substringAfter("[").removeSuffix("]")
+        return output.substringAfter("[").removeSuffix("]")
     }
 
     private fun execBenchmarkRepeatedly(benchmark: String, warmupCount: Int, repeatCount: Int) : List<String> {
-        val logger = if (verbose) Logger(LogLevel.DEBUG) else Logger()
+        val logger = if (verbose.get()) Logger(LogLevel.DEBUG) else Logger()
         logger.log("Warm up iterations for benchmark $benchmark\n")
-        for (i in 0.until(warmupCount)) {
-            execBenchmarkOnce(benchmark, 0, 1)
+        repeat(warmupCount) {
+            execBenchmarkOnce(benchmark, 0, 1, false)
         }
         val result = mutableListOf<String>()
         logger.log("Running benchmark $benchmark ")
-        for (i in 0.until(repeatCount)) {
+        repeat(repeatCount) { i ->
             logger.log(".", usePrefix = false)
-            val benchmarkReport = JsonTreeParser.parse(execBenchmarkOnce(benchmark, 0, 1)).jsonObject
+            val benchmarkReport = JsonTreeParser.parse(execBenchmarkOnce(benchmark, 0, 1, false)).jsonObject
             val modifiedBenchmarkReport = JsonObject(HashMap(benchmarkReport.content).apply {
                 put("repeat", JsonLiteral(i))
                 put("warmup", JsonLiteral(warmupCount))
@@ -118,47 +133,34 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
 
     @TaskAction
     fun run() {
-        val output = ByteArrayOutputStream()
-        remoteHost?.let {
-            requireNotNull(remoteHostFolder) {"Please provide folder on remote host with -PremoteHostFolder=<folder>"}
-            project.exec {
-                executable = "scp"
-                args(this@RunKotlinNativeTask.executable, "$it:$remoteHostFolder")
-            }
-        }
-        project.exec {
-            if (remoteHost != null) {
-                executable = "ssh"
-                val remoteExecutable = this@RunKotlinNativeTask.executable.split("/").last()
-                args (remoteHost, "$remoteHostFolder/$remoteExecutable")
-            } else {
-                executable = this@RunKotlinNativeTask.executable
-            }
-            if (baseOnly) {
+        val benchmarks = execOperations.execCapturingStdout {
+            executable(this@RunKotlinNativeTask.executable.asFile.get())
+            if (baseOnly.get()) {
                 args("baseOnlyList")
             } else {
                 args("list")
             }
-            standardOutput = output
+        }.lines()
+
+        val filterArgs = filter.orNull?.splitCommaSeparatedOption("-f")
+        val filterRegexArgs = filterRegex.orNull?.splitCommaSeparatedOption("-fr")?.map { it.toRegex() }
+
+        val benchmarksToRun = benchmarks.filter { benchmark ->
+            if (benchmark.isEmpty())
+                return@filter false
+            if (filterArgs?.let { benchmark in it } == true) {
+                return@filter true
+            }
+            filterRegexArgs?.any { it.matches(benchmark) } != false
         }
-        val benchmarks = output.toString().lines()
-        val filterArgs = filter.splitCommaSeparatedOption("-f")
-        val filterRegexArgs = filterRegex.splitCommaSeparatedOption("-fr")
-        val regexes = filterRegexArgs.map { it.toRegex() }
-        val benchmarksToRun = if (filterArgs.isNotEmpty() || regexes.isNotEmpty()) {
-            benchmarks.filter { benchmark -> benchmark in filterArgs || regexes.any { it.matches(benchmark) } }.filter { it.isNotEmpty() }
-        } else benchmarks.filter { !it.isEmpty() }
 
         val results = benchmarksToRun.flatMap { benchmark ->
-            when (repeatingType) {
-                BenchmarkRepeatingType.INTERNAL -> listOf(execBenchmarkOnce(benchmark, warmupCount, repeatCount))
-                BenchmarkRepeatingType.EXTERNAL -> execBenchmarkRepeatedly(benchmark, warmupCount, repeatCount)
+            when (repeatingType.get()) {
+                BenchmarkRepeatingType.INTERNAL -> listOf(execBenchmarkOnce(benchmark, warmupCount.get(), repeatCount.get(), verbose.get()))
+                BenchmarkRepeatingType.EXTERNAL -> execBenchmarkRepeatedly(benchmark, warmupCount.get(), repeatCount.get())
             }
         }
 
-        File(outputFileName).printWriter().use { out ->
-            out.println("[${results.joinToString(",")}]")
-        }
-
+        reportFile.asFile.get().writeText("[${results.joinToString(",")}]")
     }
 }
