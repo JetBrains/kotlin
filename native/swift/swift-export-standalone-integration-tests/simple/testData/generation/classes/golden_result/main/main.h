@@ -237,6 +237,8 @@ void * namespace_deeper_Foo_init_allocate();
 
 void namespace_deeper_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+int32_t namespace_deeper_Foo_internal_set_get(void * self);
+
 uint32_t namespace_deeper_Foo_my_value_get(void * self);
 
 int64_t namespace_deeper_Foo_my_variable_get(void * self);

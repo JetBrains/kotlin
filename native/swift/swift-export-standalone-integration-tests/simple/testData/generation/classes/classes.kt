@@ -30,6 +30,9 @@ class Foo {
 
     var private_set: Int = 0
         private set
+
+    var internal_set: Int = 0
+        internal set
 }
 
 
