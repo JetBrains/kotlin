@@ -24,7 +24,7 @@ internal object DocTagsFromIElementFactory {
             MarkdownElementTypes.SHORT_REFERENCE_LINK,
             MarkdownElementTypes.FULL_REFERENCE_LINK,
             MarkdownElementTypes.INLINE_LINK            -> if(dri == null) A(children, params) else DocumentationLink(dri, children, params)
-            MarkdownElementTypes.STRONG                 -> B(children, params)
+            MarkdownElementTypes.STRONG                 -> Strong(children, params)
             MarkdownElementTypes.BLOCK_QUOTE            -> BlockQuote(children, params)
             MarkdownElementTypes.CODE_SPAN              -> CodeInline(children, params)
             MarkdownElementTypes.CODE_BLOCK,
@@ -35,7 +35,7 @@ internal object DocTagsFromIElementFactory {
             MarkdownElementTypes.ATX_4                  -> H4(children, params)
             MarkdownElementTypes.ATX_5                  -> H5(children, params)
             MarkdownElementTypes.ATX_6                  -> H6(children, params)
-            MarkdownElementTypes.EMPH                   -> I(children, params)
+            MarkdownElementTypes.EMPH                   -> Em(children, params)
             MarkdownElementTypes.IMAGE                  -> Img(children, params)
             MarkdownElementTypes.LIST_ITEM              -> Li(children, params)
             MarkdownElementTypes.ORDERED_LIST           -> Ol(children, params)
