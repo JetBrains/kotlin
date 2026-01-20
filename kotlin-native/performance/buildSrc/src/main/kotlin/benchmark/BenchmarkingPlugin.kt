@@ -3,6 +3,8 @@ package org.jetbrains.kotlin.benchmark
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -84,6 +86,11 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
     private fun Project.configureKotlinProject() {
         kotlin.apply {
             configureTargets()
+            sourceSets.commonMain.dependencies {
+                // All benchmarks require a benchmarks launcher.
+                // swiftinterop benchmarks also have to export it via ObjCExport => api instead of implementation dependency
+                api(project.dependencies.project(":benchmarksLauncher"))
+            }
             compilerOptions {
                 freeCompilerArgs.addAll(benchmark.compilerOpts + compilerArgs)
             }
