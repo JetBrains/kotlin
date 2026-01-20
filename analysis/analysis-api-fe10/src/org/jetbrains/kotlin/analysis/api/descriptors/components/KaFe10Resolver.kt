@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getCall
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
@@ -257,13 +256,12 @@ internal class KaFe10Resolver(
         } ?: return emptyList()
         val dataFlowInfo = bindingContext.getDataFlowInfoBefore(unwrappedPsi)
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Trace for all candidates", withParentDiagnostics = false)
-        val dataFlowValueFactory = DataFlowValueFactoryImpl(analysisContext.languageVersionSettings)
 
         val callResolutionContext = BasicCallResolutionContext.create(
             bindingTrace, resolutionScope, call, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
             ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
             /* isAnnotationContext = */ false, analysisContext.languageVersionSettings,
-            dataFlowValueFactory
+            analysisContext.dataFlowValueFactory
         ).replaceCollectAllCandidates(true)
 
         val result = analysisContext.callResolver.resolveFunctionCall(callResolutionContext)

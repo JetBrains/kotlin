@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformer
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -60,6 +61,7 @@ class Fe10AnalysisContext(
     val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     val overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>>,
     val kotlinTypeRefiner: KotlinTypeRefiner,
+    val dataFlowValueFactory: DataFlowValueFactory,
     val token: KaLifetimeToken,
 ) : Fe10AnalysisFacade by facade {
     val builtIns: KotlinBuiltIns
