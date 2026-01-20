@@ -660,7 +660,7 @@ tasks {
         archiveAppendix.set("metadata")
     }
     val jvmJar by existing(Jar::class) {
-        duplicatesStrategy = DuplicatesStrategy.FAIL
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         archiveAppendix.set(null as String?)
         manifestAttributes(manifest, "Main", multiRelease = true)
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib"))
