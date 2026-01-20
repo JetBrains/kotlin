@@ -81,6 +81,8 @@ import kotlin.jvm.JvmStatic // Not needed on JVM, but needed when compiling othe
 WHITE_SPACE_CHAR    = [\ \t\f]
 LINE_BREAK_CHAR     = [\r\n]
 
+ESCAPED_CHARS = "\\"[!#$%&'()*+,-./:;<=>?@_`{|}~\"\^\[\\\]]
+
 DIGIT=[0-9]
 LETTER = [:jletter:]
 PLAIN_IDENTIFIER = {LETTER} ({LETTER} | {DIGIT})*
@@ -269,7 +271,7 @@ CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
             return KDocTokens.TEXT  // internal white space
     }
 
-    "\\"[\[\]] {
+    {ESCAPED_CHARS} {
             lastBlockType = BlockType.Paragraph
             yybeginAndUpdate(CONTENTS)
             return KDocTokens.MARKDOWN_ESCAPED_CHAR

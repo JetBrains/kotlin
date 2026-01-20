@@ -86,6 +86,8 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
 WHITE_SPACE_CHAR    = [\ \t\f]
 LINE_BREAK_CHAR     = [\r\n]
 
+ESCAPED_CHARS = "\\"[!#$%&'()*+,-./:;<=>?@_`{|}~\"\^\[\\\]]
+
 DIGIT=[0-9]
 LETTER = [:jletter:]
 PLAIN_IDENTIFIER = {LETTER} ({LETTER} | {DIGIT})*
@@ -98,8 +100,8 @@ TILDA_STRING="~"+
 // characters after the initial fence.
 // `org.jetbrains.kotlin.kdoc.lexer.KDocLexer` relies on these two types of ending fences.
 // If this set is changed, please, update `KDocLexer` accordingly
-BACKTICK_CODE_FENCE_START="``""`"+[^`{LINE_BREAK_CHAR}]*
-TILDA_CODE_FENCE_START="~~""~"+[^{LINE_BREAK_CHAR}]*
+BACKTICK_CODE_FENCE_START = "``" {BACKTICK_STRING} [^`{LINE_BREAK_CHAR}]*
+TILDA_CODE_FENCE_START = "~~" {TILDA_STRING} [^{LINE_BREAK_CHAR}]*
 CODE_FENCE_START={BACKTICK_CODE_FENCE_START} | {TILDA_CODE_FENCE_START}
 CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
 
@@ -273,7 +275,7 @@ CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
               return KDocTokens.TEXT;  // internal white space
     }
 
-    "\\"[\[\]] {
+    {ESCAPED_CHARS} {
               lastBlockType = BlockType.Paragraph;
               yybeginAndUpdate(CONTENTS);
               return KDocTokens.MARKDOWN_ESCAPED_CHAR;
