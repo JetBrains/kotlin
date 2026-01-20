@@ -46,7 +46,6 @@ val copySources by tasks.registering(Sync::class) {
     }
     from(stdlibProjectDir.resolve("jvm/runtime")) {
         include("**/*")
-        exclude("kotlin/jvm/functions/Functions.kt")
         into("jvm/runtime")
     }
     from(stdlibProjectDir.resolve("jvm/builtins")) {
@@ -68,6 +67,120 @@ val copySources by tasks.registering(Sync::class) {
 }
 
 val outputKlib = layout.buildDirectory.file("libs/kotlin-stdlib-jvm-ir.klib")
+
+val copyMinimalSources by tasks.registering(Sync::class) {
+    dependsOn(":prepare:build.version:writeStdlibVersion")
+    into(layout.buildDirectory.dir("src/genesis-minimal"))
+
+    from("src/stubs/jvm/builtins") {
+        include("**")
+        into("jvm/builtins")
+    }
+
+    from("src/stubs") {
+        include("kotlin/**")
+        into("common/src")
+    }
+
+    // Common Sources - mirroring jvm-minimal-for-test
+    from(stdlibProjectDir.resolve("src")) {
+        include(
+            "kotlin/Annotation.kt",
+            "kotlin/Any.kt",
+            "kotlin/Array.kt",
+            "kotlin/ArrayIntrinsics.kt",
+            "kotlin/Arrays.kt",
+            "kotlin/Boolean.kt",
+            //"kotlin/Char.kt", // Used via stub in src/stubs/kotlin/Char.kt
+            "kotlin/CharSequence.kt",
+            //"kotlin/Collections.kt",
+            "kotlin/Comparable.kt",
+            "kotlin/Enum.kt",
+            "kotlin/Enum.kt",
+            //"kotlin/enums/EnumEntries.kt", // Used via stub in src/stubs/kotlin/enums/EnumEntries.kt
+            "kotlin/Function.kt",
+            "kotlin/Function.kt",
+            "kotlin/Iterator.kt",
+            "kotlin/Library.kt",
+            "kotlin/Nothing.kt",
+            "kotlin/Number.kt",
+            //"kotlin/Primitives.kt", // Used via stub in src/stubs/kotlin/Primitives.kt
+            "kotlin/String.kt",
+            "kotlin/Throwable.kt",
+            "kotlin/Unit.kt",
+            "kotlin/util/Standard.kt",
+            "kotlin/annotations/Multiplatform.kt",
+            "kotlin/annotations/WasExperimental.kt",
+            "kotlin/annotations/ReturnValue.kt",
+            "kotlin/internal/Annotations.kt",
+            "kotlin/internal/AnnotationsBuiltin.kt",
+            "kotlin/concurrent/atomics/AtomicArrays.common.kt",
+            "kotlin/concurrent/atomics/Atomics.common.kt",
+            "kotlin/contextParameters/Context.kt",
+            "kotlin/contextParameters/ContextOf.kt",
+            "kotlin/contracts/ContractBuilder.kt",
+            "kotlin/contracts/Effect.kt",
+            "kotlin/Annotations.kt", // Defines SinceKotlin, Deprecated, etc.
+        )
+        into("common/src")
+    }
+    
+
+    from(stdlibProjectDir.resolve("common/src")) {
+        include(
+            "kotlin/ExceptionsH.kt",
+        )
+        into("common/common")
+    }
+
+    // JVM Sources - mirroring jvm-minimal-for-test
+    from(stdlibProjectDir.resolve("jvm/runtime")) {
+        include(
+            "kotlin/NoWhenBranchMatchedException.kt",
+            "kotlin/UninitializedPropertyAccessException.kt",
+            "kotlin/TypeAliases.kt",
+            "kotlin/text/TypeAliases.kt",
+        )
+        into("jvm/runtime")
+    }
+    from(stdlibProjectDir.resolve("jvm/src")) {
+        include(
+            "kotlin/ArrayIntrinsics.kt",
+            "kotlin/Unit.kt",
+            "kotlin/collections/TypeAliases.kt",
+            "kotlin/enums/EnumEntriesJVM.kt",
+            "kotlin/io/Serializable.kt",
+        )
+        into("jvm/src")
+    }
+    
+    from(stdlibProjectDir.resolve("jvm/builtins")) {
+        include("*.kt")
+        exclude("Char.kt")
+        exclude("Primitives.kt")
+        exclude("Collections.kt")
+        into("jvm/builtins")
+    }
+
+
+    
+    // Stub sources - include if they are needed for minimal too, or maybe not?
+    // jvm-minimal-for-test includes 'jvm-src/minimalAtomics.kt' etc. which are LOCAL to that project.
+    // jvm-ir-for-test has 'src/stubs/kotlin/jvm/internal/Functions.kt' etc.
+    // The user said "same srcs", implying the ones from jvm-minimal-for-test?
+    // Or just the stdlib subset?
+    // jvm-minimal-for-test has local sources: "jvm-src" and "common-src".
+    // We probably need to include THOSE local sources from jvm-minimal-for-test if checking "same srcs".
+    // BUT jvm-ir-for-test might not have access to jvm-minimal-for-test sources easily without path hacking or duplication.
+    // User said "We can use the full stdlib in the classpath... jvm-minimal only contains kt classes".
+    // Let's assume for now we just want the subset of STDLIB sources.
+    // If we need the local stubs from jvm-minimal-for-test, we might need to copy them or reference them.
+    // Let's copy the stdlib subset first.
+    
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+val outputMinimalKlib = layout.buildDirectory.file("libs/kotlin-stdlib-jvm-minimal-ir.klib")
 
 // Helper to separate Java compilation
 fun createJavaCompilationTask(sourceTask: TaskProvider<Sync>): TaskProvider<Jar> {
@@ -114,7 +227,8 @@ val jarJava = createJavaCompilationTask(copySources)
 fun JavaExec.configureJklibCompilation(
     sourceTask: TaskProvider<Sync>,
     klibOutput: Provider<RegularFile>,
-    classpathJar: Provider<RegularFile>
+    classpathJar: Provider<RegularFile>,
+    extraClasspath: FileCollection = project.files()
 ) {
     dependsOn(sourceTask)
     
@@ -148,13 +262,14 @@ fun JavaExec.configureJklibCompilation(
 
     doFirst {
         val allFiles = inputs.files.files.filter { it.extension == "kt" }
-        val jvmFiles = allFiles.filter { it.path.contains("/jvm/") }
-        val commonFiles = allFiles.filter { it.path.contains("/common/")}
+        val commonFiles = allFiles.filter { it.path.contains("/common/") }
+        val jvmFiles = allFiles.filter { !it.path.contains("/common/") }
 
         val jvmSourceFiles = jvmFiles.map { it.absolutePath }
         val commonSourceFiles = commonFiles.map { it.absolutePath }
 
         logger.lifecycle("Compiling ${jvmSourceFiles.size} JVM files and ${commonSourceFiles.size} Common files, total ${allFiles.size}")
+        logger.lifecycle("Running K2JKlibCompiler with Java version: ${System.getProperty("java.version")}")
 
         val outputPath = outputs.files.singleFile.absolutePath
 
@@ -178,11 +293,12 @@ fun JavaExec.configureJklibCompilation(
             "-Xoutput-builtins-metadata",
         )
         
-        // Add separate Java compilation output and kotlin-reflect to classpath
+        
         val kotlinReflectJar = kotlinReflectFileCollection.singleOrNull()
         val fullClasspath = listOfNotNull(
             classpathJar.get().asFile.absolutePath,
-            kotlinReflectJar?.absolutePath
+            kotlinReflectJar?.absolutePath,
+            extraClasspath.asPath
         ).joinToString(File.pathSeparator)
 
         args("-classpath", fullClasspath)
@@ -193,11 +309,32 @@ fun JavaExec.configureJklibCompilation(
 }
 
 val compileStdlib by tasks.registering(JavaExec::class) {
+    val javaToolchains = project.extensions.getByType(JavaToolchainService::class.java)
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    })
     configureJklibCompilation(copySources, outputKlib, jarJava.flatMap { it.archiveFile })
+}
+
+val compileMinimalStdlib by tasks.registering(JavaExec::class) {
+    val javaToolchains = project.extensions.getByType(JavaToolchainService::class.java)
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    })
+    // Use the SAME jarJava (full stdlib Java classes) as classpath, as requested.
+    configureJklibCompilation(copyMinimalSources, outputMinimalKlib, jarJava.flatMap { it.archiveFile }, project.files({ project.findProject(":kotlin-stdlib")?.tasks?.getByName("jvmJar")?.outputs?.files ?: project.files() }))
+    
+    // Suppress "Actual without expect" errors typical in minimal stdlib (due to missing common sources)
+    args("-nowarn") 
 }
 
 // Expose the KLIB artifact
 val distJKlib by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+}
+
+val distMinimalJKlib by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
 }
@@ -207,4 +344,9 @@ artifacts {
         builtBy(compileStdlib)
     }
     add(distJKlib.name, jarJava)
+
+    add(distMinimalJKlib.name, outputMinimalKlib) {
+        builtBy(compileMinimalStdlib)
+    }
+    add(distMinimalJKlib.name, jarJava)
 }

@@ -108,7 +108,7 @@ class JKlibIrLinker(
                 }
                 return symbol
             }
-
+    
             val funName = idSig.nameSegments.last()
             for (declaration in mappedClassSymbols.values.flatMap { it.owner.declarations }) {
                 if (declaration.getNameWithAssert().asString() == funName) {

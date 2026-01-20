@@ -57,7 +57,7 @@ val syncStdlib = tasks.register<Sync>("copyStdlib") {
     rename { name ->
         when {
             name.contains("js") && name.endsWith(".klib") -> "stdlib-js.klib"
-            name.endsWith(".klib") -> "stdlib.klib"
+            !name.contains("js") && name.endsWith(".klib") -> "stdlib.klib"
             name.endsWith(".jar") -> "stdlib.jar"
             else -> name
         }
@@ -65,7 +65,9 @@ val syncStdlib = tasks.register<Sync>("copyStdlib") {
 }
 
 dependencies {
-    stdlibJvmIr(project(":kotlin-stdlib-jvm-ir-for-test", configuration = "distJKlib"))
+    //stdlibJvmIr(project(":kotlin-stdlib-jvm-ir-for-test", configuration = "distJKlib"))
+    stdlibJvmIr(project(":kotlin-stdlib-jvm-ir-for-test", configuration = "distMinimalJKlib"))
+    
     stdlibJs(project(":kotlin-stdlib", configuration = "distJsKlib"))
     testRuntimeOnly(files(syncStdlib))
 }
@@ -83,8 +85,8 @@ tasks.withType<Test>().configureEach {
 
     val stdlibDir = layout.buildDirectory.dir("stdlib-for-test")
     doFirst {
-        systemProperty("kotlin.stdlib.jvm.ir.klib", stdlibDir.get().file("stdlib-js.klib").asFile.absolutePath)
-        // systemProperty("kotlin.stdlib.jvm.ir.klib", stdlibDir.get().file("stdlib.klib").asFile.absolutePath)
+        //systemProperty("kotlin.stdlib.jvm.ir.klib", stdlibDir.get().file("stdlib-js.klib").asFile.absolutePath)
+        systemProperty("kotlin.stdlib.jvm.ir.klib", stdlibDir.get().file("stdlib.klib").asFile.absolutePath)
         systemProperty("kotlin.stdlib.jvm.ir.jar", stdlibDir.get().file("stdlib.jar").asFile.absolutePath)
     }
 }
