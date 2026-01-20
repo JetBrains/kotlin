@@ -15,10 +15,6 @@ fun Project.kotlinInit(cacheRedirectorEnabled: Boolean) {
     extensions.extraProperties["kotlinVersion"] = findProperty("kotlinVersion")
 }
 
-fun String.splitCommaSeparatedOption(optionName: String) =
-        split("\\s*,\\s*".toRegex()).map {
-            if (it.isNotEmpty()) listOf(optionName, it) else listOf(null)
-        }.flatten().filterNotNull()
 
 data class Commit(val revision: String, val developer: String, val webUrlWithDescription: String)
 

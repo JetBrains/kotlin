@@ -30,12 +30,6 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
 
     override val benchmarkExtensionName: String = "swiftBenchmark"
 
-    override val Project.nativeExecutable: String
-        get() = Paths.get(layout.buildDirectory.get().asFile.absolutePath, benchmark.applicationName).toString()
-
-    override val Project.nativeLinkTask: Task
-        get() = tasks.getByName("buildSwift")
-
     override val Project.nativeLinkBinary: String
         get() = File("${framework.outputFile.absolutePath}/$nativeFrameworkName").canonicalPath
 
@@ -72,6 +66,11 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
 
     override fun KotlinMultiplatformExtension.configureTargets() {
         macosArm64()
+    }
+
+    override fun RunKotlinNativeTask.configureKonanRunTask() {
+        executable.set(project.layout.buildDirectory.file(project.benchmark.applicationName))
+        dependsOn("buildSwift")
     }
 
     fun Array<String>.runCommand(
