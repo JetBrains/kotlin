@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -7,10 +9,12 @@ import org.opentest4j.TestAbortedException
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@Tag("sanity")
-class CustomNativeCompilerFirstStageSanity : AbstractCustomNativeCompilerFirstStageTest() {
-    private val testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/"
+private const val testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/"
 
+@Tag("sanity")
+@UseStandardTestCaseGroupProvider()
+@TestMetadata(testDataRoot)
+class CustomNativeCompilerFirstStageSanity : AbstractCustomNativeCompilerFirstStageTest() {
     @Test
     fun checkPassed() {
         runTest(testDataRoot + "green.kt")

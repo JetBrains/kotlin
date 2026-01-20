@@ -69,6 +69,8 @@ fun Project.customCompilerTest(
         useJUnitPlatform { includeTags(tag) }
         extensions.configure<TestInputsCheckExtension> {
             isNative.set(true)
+            // add link permission for possible invocation of `JvmUtilsKt.createTempDirWithLibrary()` which invokes `Files.createLink()`
+            extraPermissions.add("""permission java.nio.file.LinkPermission "hard";""")
         }
 
         inputs.files(unarchiveCustomCompiler.map { it.outputs })

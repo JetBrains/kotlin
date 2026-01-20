@@ -50,7 +50,7 @@ internal fun Settings.isDisabledNative(directives: Directives) =
     )
 
 // Note: this method would ignore DISABLED_NATIVE without parameters, since it would be not a StringDirective, but new SimpleDirective
-internal fun Settings.isDisabledNative(registeredDirectives: RegisteredDirectives) =
+fun Settings.isDisabledNative(registeredDirectives: RegisteredDirectives) =
     evaluate(
         getDirectiveValues(
             TestDirectives.DISABLE_NATIVE,
@@ -85,7 +85,7 @@ internal fun Settings.isIgnoredTarget(directives: Directives): Boolean {
 }
 
 // Note: this method would ignore IGNORE_NATIVE without parameters, since it would be not a StringDirective, but new SimpleDirective
-internal fun Settings.isIgnoredTarget(registeredDirectives: RegisteredDirectives): Boolean {
+fun Settings.isIgnoredTarget(registeredDirectives: RegisteredDirectives): Boolean {
     return isIgnoredWithIGNORE_NATIVE(registeredDirectives) || isIgnoredWithIGNORE_BACKEND(registeredDirectives::get)
 }
 
