@@ -119,8 +119,9 @@ class CallableReferenceInfo(
     val hasSyntheticOuterCall: Boolean,
 
     origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
+    callKind: CallKind = CallKind.CallableReference
 ) : CallInfo(
-    callSite, CallKind.CallableReference, name, explicitReceiver, FirEmptyArgumentList,
+    callSite, callKind, name, explicitReceiver, FirEmptyArgumentList,
     isUsedAsGetClassReceiver = false, typeArguments = emptyList(),
     session, containingFile, containingDeclarations,
     candidateForCommonInvokeReceiver = null, resolutionMode = ResolutionMode.ContextIndependent, origin,
@@ -138,6 +139,6 @@ class CallableReferenceInfo(
     ): CallableReferenceInfo = CallableReferenceInfo(
         callSite, name, explicitReceiver,
         session, containingFile, containingDeclarations,
-        expectedType, lhs, hasSyntheticOuterCall, origin
+        expectedType, lhs, hasSyntheticOuterCall, origin, callKind
     )
 }

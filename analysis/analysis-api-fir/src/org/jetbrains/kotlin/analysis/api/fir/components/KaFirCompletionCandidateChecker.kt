@@ -28,8 +28,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -66,16 +70,20 @@ private class KaFirCompletionExtensionCandidateChecker(
     private val implicitReceivers: List<ImplicitReceiverValue<*>>
     private val firCallSiteSession: FirSession
     private val firOriginalFile: FirFile
-    private val firExplicitReceiver: FirExpression?
+    private val explicitReceiverInfo: ExplicitReceiverInfo?
+    private val candidateResolver: SingleCandidateResolver
+    private val containingCallableReference: KtCallableReferenceExpression?
 
     init {
         val fakeFile = nameExpression.containingKtFile
         val firFakeFile = fakeFile.getOrBuildFirFile(resolutionFacade)
 
+        containingCallableReference = explicitReceiver?.parent as? KtCallableReferenceExpression
         implicitReceivers = computeImplicitReceivers(firFakeFile)
         firCallSiteSession = firFakeFile.llFirSession
         firOriginalFile = originalFile.getOrBuildFirFile(resolutionFacade)
-        firExplicitReceiver = explicitReceiver?.let(::findReceiverFirExpression)
+        explicitReceiverInfo = explicitReceiver?.let(::getExplicitReceiverInfo)
+        candidateResolver = SingleCandidateResolver(firCallSiteSession, firOriginalFile)
     }
 
     override val token: KaLifetimeToken
@@ -91,19 +99,24 @@ private class KaFirCompletionExtensionCandidateChecker(
         val firSymbol = candidate.firSymbol as FirCallableSymbol<*>
         firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
 
-        val resolver = SingleCandidateResolver(firCallSiteSession, firOriginalFile)
+        val resolutionMode = if (containingCallableReference != null) {
+            SingleCandidateResolutionMode.CHECK_EXTENSION_CALLABlE_REFERENCE_FOR_COMPLETION
+        } else {
+            SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION
+        }
 
         fun processReceiver(implicitReceiverValue: ImplicitReceiverValue<*>?): KaExtensionApplicabilityResult? {
             val resolutionParameters = ResolutionParameters(
-                singleCandidateResolutionMode = SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION,
+                singleCandidateResolutionMode = resolutionMode,
                 callableSymbol = firSymbol,
                 implicitReceiver = implicitReceiverValue,
-                explicitReceiver = firExplicitReceiver,
+                explicitReceiver = explicitReceiverInfo?.receiverExpression,
                 allowUnsafeCall = true,
                 allowUnstableSmartCast = true,
+                callableReferenceLHS = explicitReceiverInfo?.callableReferenceLHS
             )
 
-            val firResolvedCall = resolver.resolveSingleCandidate(resolutionParameters) ?: return null
+            val firResolvedCall = candidateResolver.resolveSingleCandidate(resolutionParameters) ?: return null
             val substitutor = firResolvedCall.createSubstitutorFromTypeArguments(analysisSession) ?: return null
 
             val receiverCastRequired = firResolvedCall.calleeReference is FirErrorReferenceWithCandidate
@@ -139,7 +152,7 @@ private class KaFirCompletionExtensionCandidateChecker(
     }
 
     /**
-     * Returns a [FirExpression] matching the given PSI [receiverExpression].
+     * Returns a [ExplicitReceiverInfo] matching the given PSI [receiverExpression].
      *
      * @param receiverExpression a qualified expression receiver (e.g., `foo` in `foo?.bar()`, or in `foo.bar`).
      *
@@ -147,20 +160,67 @@ private class KaFirCompletionExtensionCandidateChecker(
      * is (FirCheckedSafeCallSubject)[org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject] which requires additional unwrapping
      * to be used for call resolution.
      */
-    private fun findReceiverFirExpression(receiverExpression: KtExpression): FirExpression? {
+    private fun getExplicitReceiverInfo(receiverExpression: KtExpression): ExplicitReceiverInfo? {
         if (receiverExpression is KtStatementExpression) {
             // FIR for 'KtStatementExpression' is not a 'FirExpression'
             return null
         }
 
         val parentCall = receiverExpression.getQualifiedExpressionForReceiver()
-        if (parentCall !is KtSafeQualifiedExpression) {
-            return receiverExpression.getOrBuildFirOfType<FirExpression>(resolutionFacade)
+        if (parentCall is KtSafeQualifiedExpression) {
+            val firSafeCall = parentCall.getOrBuildFirOfType<FirSafeCallExpression>(resolutionFacade)
+            return ExplicitReceiverInfo(firSafeCall.checkedSubjectRef.value)
         }
 
-        val firSafeCall = parentCall.getOrBuildFirOfType<FirSafeCallExpression>(resolutionFacade)
-        return firSafeCall.checkedSubjectRef.value
+        val receiverExpressionFir = receiverExpression.getOrBuildFirOfType<FirExpression>(resolutionFacade)
+
+        val callableReferenceLHS =
+            if (containingCallableReference != null) {
+                val callableReferenceFir = containingCallableReference.getOrBuildFirOfType<FirCallableReferenceAccess>(resolutionFacade)
+                val resolver = SingleCandidateResolver(firCallSiteSession, firOriginalFile)
+                val components = resolver.bodyResolveComponents
+                val context = components.context
+                context.withFile(firOriginalFile, components) {
+                    components.doubleColonExpressionResolver.resolveDoubleColonLHS(callableReferenceFir)
+                }
+            } else {
+                null
+            }
+
+        val refinedReceiverExpression =
+            if (containingCallableReference != null &&
+                receiverExpressionFir is FirResolvedQualifier &&
+                callableReferenceLHS is DoubleColonLHS.Type
+            ) {
+                /**
+                 * If it's a callable reference completion and the LHS is a regular name reference,
+                 * we need to create a stub expression with the type of the referenced class.
+                 * Otherwise, the type of the receiver would be `Unit`.
+                 * The same mechanism is used when creating callable reference info in the compiler.
+                 *
+                 * ```kotlin
+                 * class A
+                 *
+                 * fun A.foo() {}
+                 *
+                 * val x = A::foo
+                 * ```
+                 */
+                buildExpressionStub {
+                    source = receiverExpressionFir.source
+                    coneTypeOrNull = callableReferenceLHS.type
+                }
+            } else {
+                receiverExpressionFir
+            }
+
+        return ExplicitReceiverInfo(refinedReceiverExpression, callableReferenceLHS)
     }
+
+    private data class ExplicitReceiverInfo(
+        val receiverExpression: FirExpression?,
+        val callableReferenceLHS: DoubleColonLHS? = null
+    )
 }
 
 private class KaLazyCompletionExtensionCandidateChecker(
