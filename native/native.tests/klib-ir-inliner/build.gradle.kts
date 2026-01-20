@@ -51,6 +51,11 @@ projectTests {
         // nativeTest sets workingDir to rootDir so here we need to override it
         workingDir = projectDir
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
+        // Specify K/N compiler to invoke in NativeCompilerSecondStageFacade in AbstractNativeCodegenBoxCoreTest
+        systemProperty(
+            "kotlin.internal.native.test.compat.currentCompilerDist",
+            rootProject.projectDir.resolve("kotlin-native/dist")
+        )
     }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt", generateTestsInBuildDirectory = true) {

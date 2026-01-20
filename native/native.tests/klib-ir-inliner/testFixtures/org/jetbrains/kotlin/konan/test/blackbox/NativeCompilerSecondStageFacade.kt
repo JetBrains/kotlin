@@ -6,11 +6,16 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -33,8 +38,16 @@ class NativeCompilerSecondStageFacade(
     private val customNativeCompilerSettings: CustomNativeCompilerSettings,
 ) : CustomKlibCompilerSecondStageFacade<BinaryArtifacts.Native>(testServices) {
 
-    override val outputKind get() = ArtifactKinds.Native
+    val testRunSettings = testServices.testRunSettings
+    val cacheMode = testRunSettings.get<CacheMode>()
+    val optimizationMode = testRunSettings.get<OptimizationMode>()
+    val optimizationArgument = if (optimizationMode == OptimizationMode.OPT)
+        K2NativeCompilerArguments::optimization
+    else
+        K2NativeCompilerArguments::debug
+    val nativeHome = customNativeCompilerSettings.nativeHome
 
+    override val outputKind get() = ArtifactKinds.Native
     override fun isMainModule(module: TestModule) = NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)
     override fun collectDependencies(module: TestModule) = module.collectDependencies(testServices)
 
@@ -58,16 +71,18 @@ class NativeCompilerSecondStageFacade(
             customNativeCompilerSettings.compiler.callCompiler(
                 output = printStream,
                 listOfNotNull(
-                    K2NativeCompilerArguments::kotlinHome.cliArgument, customNativeCompilerSettings.nativeHome.absolutePath,
-                    K2NativeCompilerArguments::debug.cliArgument,
+                    K2NativeCompilerArguments::kotlinHome.cliArgument, nativeHome.absolutePath,
+                    optimizationArgument.cliArgument,
                     K2NativeCompilerArguments::binaryOptions.cliArgument("runtimeAssertionsMode=panic"),
-                    K2NativeCompilerArguments::verifyIr.cliArgument("none"),
+                    K2NativeCompilerArguments::binaryOptions.cliArgument("gc=parallel_mark_concurrent_sweep"),
+                    K2NativeCompilerArguments::verifyIr.cliArgument("error"),
                     K2NativeCompilerArguments::llvmVariant.cliArgument("dev"),
                     K2NativeCompilerArguments::produce.cliArgument, "program",
                     K2NativeCompilerArguments::outputName.cliArgument, executableFile.path,
                     K2NativeCompilerArguments::generateTestRunner.cliArgument,
                     K2NativeCompilerArguments::includes.cliArgument(mainLibrary),
-                    K2NativeCompilerArguments::autoCacheableFrom.cliArgument(customNativeCompilerSettings.nativeHome.resolve("klib").absolutePath),
+                    K2NativeCompilerArguments::autoCacheableFrom.cliArgument(nativeHome.resolve("klib").absolutePath)
+                        .takeIf { cacheMode.useStaticCacheForDistributionLibraries },
                     K2NativeCompilerArguments::nodefaultlibs.cliArgument,
                     K2NativeCompilerArguments::enableAssertions.cliArgument.takeIf {
                         AssertionsMode.ALWAYS_DISABLE !in module.directives[ASSERTIONS_MODE]
@@ -78,6 +93,9 @@ class NativeCompilerSecondStageFacade(
                 },
                 friendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::friendModules.cliArgument, it)
+                },
+                module.directives[LanguageSettingsDirectives.LANGUAGE].map {
+                    CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it"
                 },
                 module.directives[FREE_COMPILER_ARGS],
                 customArgs,
