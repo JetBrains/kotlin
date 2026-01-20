@@ -71,6 +71,8 @@ fun Project.customCompilerTest(
             // Permissions for older compiler, for unnecessarily performed access to root dir, already fixed in 2.2.20, commit dbd8ac94
             extraPermissions.add("""permission java.io.FilePermission "${rootDir.resolve("stdlib")}", "read";""")
             extraPermissions.add("""permission java.io.FilePermission "${rootDir.resolve("stdlib.klib")}", "read";""")
+            // add link permission to load `libcallbacks.dylib`, via possible invocation of `JvmUtilsKt.createTempDirWithLibrary()` which invokes `Files.createLink()`
+            extraPermissions.add("""permission java.nio.file.LinkPermission "hard";""")
         }
         val rawVersion = version.rawVersion
 
@@ -143,4 +145,8 @@ projectTests {
     testData(project(":compiler").isolated, "testData/codegen/box")
     testData(project(":compiler").isolated, "testData/codegen/boxInline")
     testData(project(":compiler").isolated, "testData/klib/klib-compatibility/sanity")
+
+    // Permissions for older compiler, for unnecessarily performed access to root dir, already fixed in 2.2.20, commit dbd8ac94
+    testData(rootProject.isolated, "stdlib")
+    testData(rootProject.isolated, "stdlib.klib")
 }

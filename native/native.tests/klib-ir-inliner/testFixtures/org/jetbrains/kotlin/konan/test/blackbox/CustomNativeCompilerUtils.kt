@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -76,9 +76,9 @@ val currentCustomNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
 }
 
 /**
- * Note: To be used only internally in [CustomNativeCompilerFirstStageFacade] and [NativeCompilerSecondStageFacade].
+ * Note: To be used only in [CustomNativeCompilerFirstStageFacade] and [NativeCompilerSecondStageFacade].
  */
-internal fun TestModule.collectDependencies(
+fun TestModule.collectDependencies(
     testServices: TestServices,
 ): Pair<Set<String>, Set<String>> {
     val (transitiveLibraries: List<File>, friendLibraries: List<File>) = getTransitivesAndFriends(module = this, testServices)
