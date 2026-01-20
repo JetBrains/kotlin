@@ -1153,4 +1153,23 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             }
         }
     }
+
+    @Test
+    fun composableLambdaAsTheFunctionReferenceOwner() {
+        validateBytecode(
+            """
+                import androidx.compose.runtime.Composable
+
+                inline fun items(crossinline content: @Composable () -> Unit) {}
+
+                val test: (@Composable () -> Unit) -> Unit = ::items
+
+                val test1: (@Composable () -> Unit) -> Unit = { it::invoke }
+            """,
+        ) { bytecodeString ->
+            assertFalse("Expected no reference to ComposableFunction in the bytecode") {
+                bytecodeString.contains("ComposableLambda")
+            }
+        }
+    }
 }
