@@ -20,8 +20,7 @@ plugins {
     id("cache-redirector")
 }
 
-includeBuild '../tools/benchmarksAnalyzer'
-
+include ':benchmarksAnalyzer'
 include ':ring'
 include ':cinterop'
 include ':helloworld'
