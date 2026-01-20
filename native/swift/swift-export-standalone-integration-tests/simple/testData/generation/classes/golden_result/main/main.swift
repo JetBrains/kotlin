@@ -717,6 +717,11 @@ extension ExportedKotlinPackages.namespace.deeper {
                 return namespace_deeper_Foo_INSIDE_CLASS_foo(self.__externalRCRef())
             }
         }
+        public var internal_set: Swift.Int32 {
+            get {
+                return namespace_deeper_Foo_internal_set_get(self.__externalRCRef())
+            }
+        }
         public var my_value: Swift.UInt32 {
             get {
                 return namespace_deeper_Foo_my_value_get(self.__externalRCRef())

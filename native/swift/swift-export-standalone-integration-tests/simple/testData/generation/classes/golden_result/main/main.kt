@@ -826,6 +826,13 @@ public fun namespace_deeper_Foo_init_initialize__TypesOfArguments__Swift_UnsafeM
     kotlin.native.internal.initInstance(____kt, namespace.deeper.Foo())
 }
 
+@ExportedBridge("namespace_deeper_Foo_internal_set_get")
+public fun namespace_deeper_Foo_internal_set_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
+    val _result = __self.internal_set
+    return _result
+}
+
 @ExportedBridge("namespace_deeper_Foo_my_value_get")
 public fun namespace_deeper_Foo_my_value_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
