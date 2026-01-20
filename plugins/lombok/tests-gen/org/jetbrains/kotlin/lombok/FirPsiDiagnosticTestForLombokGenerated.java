@@ -67,6 +67,12 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
   }
 
   @Test
+  @TestMetadata("dataAndNoArgsAllArgsCtors.kt")
+  public void testDataAndNoArgsAllArgsCtors() {
+    runTest("plugins/lombok/testData/diagnostics/dataAndNoArgsAllArgsCtors.kt");
+  }
+
+  @Test
   @TestMetadata("getterSetterIfClassIsAnnotated.kt")
   public void testGetterSetterIfClassIsAnnotated() {
     runTest("plugins/lombok/testData/diagnostics/getterSetterIfClassIsAnnotated.kt");
