@@ -64,20 +64,20 @@ subprojects { proj ->
 }
 
 tasks.register("buildAnalyzer") {
-    dependsOn(gradle.includedBuild("benchmarksAnalyzer").task(":${getAnalyzerTargetName()}Binaries".toString()))
+    dependsOn(":benchmarksAnalyzer:${getAnalyzerTargetName()}Binaries".toString())
 }
 
 task konanRun {
     subprojects.each {
-        dependsOn "${it.path}:konanRun"
+        if (it.name != "benchmarksAnalyzer") {
+            dependsOn "${it.path}:konanRun"
+        }
     }
 }
 
 task clean {
     subprojects.each {
-        if (it.name != "endorsedLibraries") {
-            dependsOn "${it.path}:clean"
-        }
+        dependsOn "${it.path}:clean"
     }
     doLast {
         delete(layout.buildDirectory)
@@ -87,15 +87,10 @@ task clean {
 defaultTasks 'konanRun'
 
 private static String getAnalyzerTargetName() {
-    // Copy-pasted from tools/benchmarksAnalyzer/build.gradle.
     String target = System.getProperty("os.name")
-    if (target == 'Linux') return 'linux'
-    if (target.startsWith('Windows')) return 'windows'
-    if (target.startsWith('Mac'))
-        if (System.getProperty("os.arch") == "aarch64")
-            return 'macosArm64'
-        else
-            return 'macosX64'
+    if (target == 'Linux') return 'linuxX64'
+    if (target.startsWith('Windows')) return 'mingwX64'
+    if (target.startsWith('Mac')) return 'macosArm64'
     return 'unknown'
 }
 
@@ -119,7 +114,7 @@ task mergeNativeReports {
 }
 
 subprojects.each {
-    if (it.name != "endorsedLibraries" && it.name != "kotlinx.cli") {
+    if (it.name != "benchmarksAnalyzer") {
         it.afterEvaluate {
             it.konanJsonReport.finalizedBy mergeNativeReports
         }
