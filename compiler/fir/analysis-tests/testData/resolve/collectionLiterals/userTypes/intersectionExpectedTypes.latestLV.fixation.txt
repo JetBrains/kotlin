@@ -9,6 +9,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: it(A & B)
      = it(A & B) (inferred during fixation)
@@ -25,6 +26,7 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: ILT: 42
      = kotlin/Int (inferred during fixation)
@@ -41,6 +43,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: it(A & B)
      = it(A & B) (inferred during fixation)
@@ -57,6 +60,7 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
     FIXED TO: ERROR CLASS: Cannot infer argument for type parameter K
 ********************************
@@ -71,6 +75,7 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
     FIXED TO: ERROR CLASS: Cannot infer argument for type parameter K
 ********************************
@@ -85,6 +90,7 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: <anonymous>
      >: <anonymous>
@@ -102,6 +108,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: it(A & B)
      = it(A & B) (inferred during fixation)
@@ -118,6 +125,7 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: kotlin/String
      = kotlin/String (inferred during fixation)
@@ -134,6 +142,7 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: kotlin/Nothing
      <: U?
@@ -151,6 +160,7 @@ CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
     FIXED TO: A
 ********************************
@@ -165,6 +175,7 @@ CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
     FIXED TO: A
 ********************************
@@ -179,6 +190,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: it(B & TypeVariable(X) & Any)
 ********************************
@@ -193,6 +205,7 @@ CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: TypeVariable(T)?
      >: A
@@ -209,6 +222,7 @@ TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: A
      >: it(B & A)
@@ -225,6 +239,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: A
      >: it(B & A)
@@ -242,6 +257,7 @@ CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
     FIXED TO: ERROR CLASS: Cannot infer argument for type parameter X
 ********************************
@@ -256,6 +272,7 @@ CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
     FIXED TO: ERROR CLASS: Cannot infer argument for type parameter X
 ********************************
@@ -270,6 +287,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: it(B & TypeVariable(X) & Any)
 ********************************
@@ -284,6 +302,7 @@ CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: TypeVariable(T)?
     FIXED TO: ERROR CLASS: Cannot infer argument for type parameter X
@@ -298,6 +317,7 @@ TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
 ********************************
 CHOSEN for fixation: TypeVariable(X) --- Readiness(
@@ -311,6 +331,7 @@ CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: TypeVariable(T)?
     FIXED TO: ERROR CLASS: Cannot infer argument for type parameter X
@@ -325,6 +346,7 @@ TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
@@ -338,6 +360,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
     FIXED TO: ERROR CLASS: Cannot infer argument for type parameter T
 ********************************
@@ -352,6 +375,7 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: ILT: 42
      = kotlin/Int (inferred during fixation)

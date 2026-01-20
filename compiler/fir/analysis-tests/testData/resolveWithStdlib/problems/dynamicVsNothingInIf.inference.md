@@ -54,6 +54,7 @@ parse#(R|<local>/data|)
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
 
 ### Call 3
@@ -88,7 +89,7 @@ when () {
 
 ##### Call Completion:
 
-1. Choose `TypeVariable(K)` with `Readiness(
+1. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -99,8 +100,9 @@ when () {
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
-    1. `TypeVariable(T)` is `Readiness(
+    1. `TypeVariable(K)` is `Readiness(
        	 true ALLOWED
        	 true HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -111,11 +113,12 @@ when () {
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        )`
-2. `TypeVariable(K) == dynamic` _from Fix variable K_
-3. Combine `TypeVariable(T) <: TypeVariable(K)` with `TypeVariable(K) == dynamic`
-    1. `TypeVariable(T) <: dynamic`
-4. Choose `TypeVariable(T)` with `Readiness(
+2. `TypeVariable(T) == dynamic` _from Fix variable T_
+3. Combine `TypeVariable(T) == dynamic` with `TypeVariable(T) <: TypeVariable(K)`
+    1. `dynamic <: TypeVariable(K)`
+4. Choose `TypeVariable(K)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -126,8 +129,9 @@ when () {
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
-5. `TypeVariable(T) == dynamic` _from Fix variable T_
+5. `TypeVariable(K) == dynamic` _from Fix variable K_
 
 ### Call 4
 

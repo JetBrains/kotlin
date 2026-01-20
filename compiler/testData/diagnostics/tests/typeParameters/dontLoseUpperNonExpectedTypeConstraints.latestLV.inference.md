@@ -25,6 +25,7 @@ super<R|Expression<A>|>()
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
 2. `TypeVariable(K) == A` _from Fix variable K_
 
@@ -64,6 +65,7 @@ wrap#(R|<local>/t|)
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
     1. `TypeVariable(R)` is `Readiness(
        	false ALLOWED
@@ -76,6 +78,7 @@ wrap#(R|<local>/t|)
        	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        )`
 
 ### Call 3
@@ -154,6 +157,7 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
     1. `TypeVariable(S)` is `Readiness(
        	 true ALLOWED
@@ -166,6 +170,7 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        )`
     2. `TypeVariable(K)` is `Readiness(
        	 true ALLOWED
@@ -178,6 +183,7 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        )`
     3. `TypeVariable(R)` is `Readiness(
        	 true ALLOWED
@@ -190,6 +196,7 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        )`
 2. `TypeVariable(T) == M` _from Fix variable T_
 3. Choose `TypeVariable(S)` with `Readiness(
@@ -203,6 +210,7 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
     1. `TypeVariable(K)` is `Readiness(
        	 true ALLOWED
@@ -215,6 +223,7 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        )`
     2. `TypeVariable(R)` is `Readiness(
        	 true ALLOWED
@@ -227,6 +236,7 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        )`
 4. `TypeVariable(S) == Z` _from Fix variable S_
 5. Combine `TypeVariable(S) == TypeVariable(K)` with `TypeVariable(S) == Z`
@@ -246,6 +256,7 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
     1. `TypeVariable(R)` is `Readiness(
        	 true ALLOWED
@@ -258,6 +269,7 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        )`
 9. `TypeVariable(K) == Z` _from Fix variable K_
 10. Choose `TypeVariable(R)` with `Readiness(
@@ -271,5 +283,6 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )`
 11. `TypeVariable(R) == it(M & Z?)` _from Fix variable R_
