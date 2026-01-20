@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test
 
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.lowLevelFir.AbstractStandalonePsiClassResolveToFirSymbolTest
+import org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators.AnalysisApiFirStandaloneModeTestConfiguratorFactory
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.AnalysisApiTestGenerator
+import org.jetbrains.kotlin.generators.tests.analysis.api.generateAnalysisApiTests
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 /**
@@ -17,6 +20,10 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
  */
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
+        AnalysisApiTestGenerator(this, listOf(AnalysisApiFirStandaloneModeTestConfiguratorFactory)).run {
+            generateAnalysisApiTests()
+        }
+
         testGroup("analysis/analysis-api-standalone/tests-gen", "analysis/low-level-api-fir/testData") {
             testClass<AbstractStandalonePsiClassResolveToFirSymbolTest> {
                 model("resolveToFirSymbolPsiClass", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)

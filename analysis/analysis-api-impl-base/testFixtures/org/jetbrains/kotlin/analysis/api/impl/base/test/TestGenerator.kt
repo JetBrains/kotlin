@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
-import org.jetbrains.kotlin.analysis.api.fir.test.cases.imports.AbstractKaDefaultImportsProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.analysisScopeProvider.AbstractCanBeAnalysedTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
@@ -77,7 +76,7 @@ import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
-internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
+fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     component(
         directory = "resolver",
         filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibrarySource) and
@@ -360,17 +359,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             }
         }
     }
-
-    group("imports") {
-        test<AbstractKaDefaultImportsProviderTest>(
-            filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
-                    and testModuleKindIs(TestModuleKind.Source)
-                    and frontendIs(FrontendKind.Fir),
-        ) {
-            model("defaultImportProvider")
-        }
-    }
-
 }
 
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {

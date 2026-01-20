@@ -85,6 +85,8 @@ projectTests {
         useJUnitPlatform()
     }
 
+    testGenerator("org.jetbrains.kotlin.analysis.api.fir.test.TestGeneratorKt")
+
     withJvmStdlibAndReflect()
     withPluginSandboxAnnotations()
 }

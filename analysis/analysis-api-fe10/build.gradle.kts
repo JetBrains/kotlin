@@ -73,6 +73,8 @@ projectTests {
         }
     }
 
+    testGenerator("org.jetbrains.kotlin.analysis.api.fe10.test.TestGeneratorKt")
+
     withJvmStdlibAndReflect()
 }
 

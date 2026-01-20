@@ -240,7 +240,6 @@
 /docs/changelogs/ @JetBrains/kotlin-release
 
 /generators/ReadMe.md @JetBrains/kotlin-build-infrastructure
-/generators/analysis-api-generator/ @JetBrains/kotlin-analysis-api
 /generators/builtins/ @qwwdfsad @ilya-g @fzhinkin @DmitryNekrasov
 /generators/evaluate/ @JetBrains/kotlin-frontend
 /generators/ide-iml-to-gradle-generator/ @JetBrains/kotlin-build-infrastructure

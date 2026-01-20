@@ -71,13 +71,10 @@ dependencies {
     testImplementation(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
     testImplementation(projectTests(":kotlin-atomicfu-compiler-plugin"))
     testImplementation(testFixtures(project(":kotlin-dataframe-compiler-plugin")))
-    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(testFixtures(project(":plugins:plugin-sandbox")))
     testImplementation(testFixtures(project(":plugins:plugin-sandbox:plugin-sandbox-ic-test")))
     testImplementation(testFixtures(project(":plugins:plugins-interactions-testing")))
     testImplementation(testFixtures(project(":generators:test-generator")))
-    testImplementation(testFixtures(project(":generators:analysis-api-generator")))
     testImplementation(testFixtures(project(":plugins:scripting:scripting-tests")))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(project(":compiler:arguments"))
