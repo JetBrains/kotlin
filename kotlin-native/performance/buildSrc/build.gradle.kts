@@ -33,7 +33,7 @@ tasks.validatePlugins.configure {
 
 sourceSets["main"].kotlin {
     srcDir("src/main/kotlin")
-    srcDir("../../tools/benchmarks/shared/src/main/kotlin/report")
+    srcDir("../reports/src/main/kotlin/report")
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

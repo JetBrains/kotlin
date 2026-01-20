@@ -20,7 +20,7 @@ kotlin {
                 implementation(kotlin("stdlib"))
                 implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
             }
-            kotlin.srcDir("../../tools/benchmarks/shared/src/main/kotlin")
+            kotlin.srcDir("../reports/src/main/kotlin")
         }
         commonTest {
             dependencies {

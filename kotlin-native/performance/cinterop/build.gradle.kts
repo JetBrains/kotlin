@@ -12,7 +12,7 @@ plugins {
 
 benchmark {
     applicationName = "Cinterop"
-    commonSrcDirs = listOf("../../tools/benchmarks/shared/src/main/kotlin/report", "src/main/kotlin", "../shared/src/main/kotlin")
+    commonSrcDirs = listOf("../reports/src/main/kotlin/report", "src/main/kotlin", "../shared/src/main/kotlin")
     nativeSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/common")
     mingwSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/mingw")
     posixSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/posix")

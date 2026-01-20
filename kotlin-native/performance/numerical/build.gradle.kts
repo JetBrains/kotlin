@@ -14,7 +14,7 @@ plugins {
 
 benchmark {
     applicationName = "Numerical"
-    commonSrcDirs = listOf("src/main/kotlin", "../../tools/benchmarks/shared/src/main/kotlin/report", "../shared/src/main/kotlin")
+    commonSrcDirs = listOf("src/main/kotlin", "../reports/src/main/kotlin/report", "../shared/src/main/kotlin")
     nativeSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/common")
     mingwSrcDirs = listOf("../shared/src/main/kotlin-native/mingw")
     posixSrcDirs = listOf("../shared/src/main/kotlin-native/posix")

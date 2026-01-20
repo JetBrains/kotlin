@@ -9,14 +9,13 @@ plugins {
     id("swift-benchmarking")
 }
 
-val toolsPath = "../../tools"
 val targetExtension = "Macos"
 
 val konanDataDir = if (project.hasProperty("konan.data.dir")) project.property("konan.data.dir").toString() else null
 project.extra["platformManager"] = PlatformManager(buildDistribution(projectDir.parentFile.parentFile.absolutePath, konanDataDir), false)
 swiftBenchmark {
     applicationName = "swiftInterop"
-    commonSrcDirs = listOf("$toolsPath/benchmarks/shared/src/main/kotlin/report", "src", "../shared/src/main/kotlin")
+    commonSrcDirs = listOf("../reports/src/main/kotlin/report", "src", "../shared/src/main/kotlin")
     nativeSrcDirs = listOf("../shared/src/main/kotlin-native/common", "../shared/src/main/kotlin-native/posix")
     swiftSources = listOf(
         "$projectDir/swiftSrc/benchmarks.swift",
