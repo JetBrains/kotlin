@@ -18,7 +18,6 @@ fun main(args: Array<String>) {
 private fun AnalysisApiTestGroup.generateTests() {
     generateAnalysisApiTests()
     suiteBasedTests {
-        generateFirLowLevelApiTests()
         generateStandaloneFirLowLevelTests()
     }
 }
