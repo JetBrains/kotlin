@@ -8,21 +8,12 @@ package org.jetbrains.renders
 import org.jetbrains.analyzer.*
 import org.jetbrains.report.*
 
-import kotlin.math.abs
-
-enum class RenderType(val createRender: () -> Render) {
-    TEXT(::TextRender),
-    HTML(::HTMLRender),
-    TEAMCITY(::TeamCityStatisticsRender),
-    STATISTICS(::StatisticsRender)
-}
-
-// Base class for printing report in different formats.
-abstract class Render {
-
-    abstract val name: String
-
-    abstract fun render(report: SummaryBenchmarksReport, onlyChanges: Boolean = false): String
+// Report render to text format.
+class TextRender {
+    private val content = StringBuilder()
+    private val headerSeparator = "================="
+    private val wideColumnWidth = 50
+    private val standardColumnWidth = 25
 
     // Print report using render.
     fun print(report: SummaryBenchmarksReport, onlyChanges: Boolean = false, outputFile: String? = null) {
@@ -32,25 +23,14 @@ abstract class Render {
         } ?: println(content)
     }
 
-    protected fun formatValue(number: Double, isPercent: Boolean = false): String =
-            if (isPercent) number.format(2) + "%" else number.format()
-}
-
-// Report render to text format.
-class TextRender: Render() {
-    override val name: String
-        get() = "text"
-
-    private val content = StringBuilder()
-    private val headerSeparator = "================="
-    private val wideColumnWidth = 50
-    private val standardColumnWidth = 25
-
     private fun append(text: String = "") {
         content.append("$text\n")
     }
 
-    override fun render(report: SummaryBenchmarksReport, onlyChanges: Boolean): String {
+    private fun formatValue(number: Double, isPercent: Boolean = false): String =
+            if (isPercent) number.format(2) + "%" else number.format()
+
+    private fun render(report: SummaryBenchmarksReport, onlyChanges: Boolean): String {
         renderEnvChanges(report.envChanges, "Environment")
         renderEnvChanges(report.kotlinChanges, "Compiler")
         renderStatusSummary(report)
@@ -75,13 +55,13 @@ class TextRender: Render() {
         }
     }
 
-    fun renderEnvChanges(envChanges: List<FieldChange<String>>, bucketName: String) {
+    private fun renderEnvChanges(envChanges: List<FieldChange<String>>, bucketName: String) {
         if (!envChanges.isEmpty()) {
             append(ChangeReport(bucketName, envChanges).renderAsTextReport())
         }
     }
 
-    fun renderStatusChangesDetails(benchmarksWithChangedStatus: List<FieldChange<BenchmarkResult.Status>>) {
+    private fun renderStatusChangesDetails(benchmarksWithChangedStatus: List<FieldChange<BenchmarkResult.Status>>) {
         if (!benchmarksWithChangedStatus.isEmpty()) {
             append("Changes in status")
             append(headerSeparator)
@@ -93,7 +73,7 @@ class TextRender: Render() {
         }
     }
 
-    fun renderStatusSummary(report: SummaryBenchmarksReport) {
+    private fun renderStatusSummary(report: SummaryBenchmarksReport) {
         append("Status summary")
         append(headerSeparator)
 
@@ -112,7 +92,7 @@ class TextRender: Render() {
         append()
     }
 
-    fun renderPerformanceSummary(report: SummaryBenchmarksReport) {
+    private fun renderPerformanceSummary(report: SummaryBenchmarksReport) {
         if (report.detailedMetricReports.values.any { it.improvements.isNotEmpty() } ||
                 report.detailedMetricReports.values.any { it.regressions.isNotEmpty() }) {
             append("Performance summary")
@@ -180,7 +160,7 @@ class TextRender: Render() {
         return tableWidth
     }
 
-    fun renderPerformanceDetails(report: SummaryBenchmarksReport, onlyChanges: Boolean = false) {
+    private fun renderPerformanceDetails(report: SummaryBenchmarksReport, onlyChanges: Boolean = false) {
         append("Performance details")
         append(headerSeparator)
 
@@ -219,7 +199,7 @@ class TextRender: Render() {
         }
     }
 
-    fun renderFilteredPerformanceDetails(detailedReport: DetailedBenchmarksReport,
+    private fun renderFilteredPerformanceDetails(detailedReport: DetailedBenchmarksReport,
                                          onlyChanges: Boolean, unstableBenchmarks: List<String>,
                                          filterUnstable: Boolean) {
         fun <T> filterBenchmarks(bucket: Map<String, T>) =

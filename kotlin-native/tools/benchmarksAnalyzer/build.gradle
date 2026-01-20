@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 buildscript {
     ext.rootBuildDirectory = file('../..')
 
@@ -33,18 +30,6 @@ repositories {
     mavenCentral()
 }
 
-def getHostName() {
-    def target = System.getProperty("os.name")
-    if (target == 'Linux') return 'linux'
-    if (target.startsWith('Windows')) return 'windows'
-    if (target.startsWith('Mac'))
-        if (System.getProperty("os.arch") == "aarch64")
-            return 'macosArm64'
-        else
-            return 'macosX64'
-    return 'unknown'
-}
-
 kotlin {
     sourceSets {
         commonMain {
@@ -61,135 +46,31 @@ kotlin {
             }
             kotlin.srcDir 'src/tests'
         }
-        jvmTest {
-        }
-        jsTest {
-        }
         nativeMain {
             dependsOn commonMain
             kotlin.srcDir 'src/main/kotlin-native'
             kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-native'
         }
-        jvmMain {
-            kotlin.srcDir 'src/main/kotlin-jvm'
-            kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-jvm'
-        }
-        jsMain {
-            kotlin.srcDir 'src/main/kotlin-js'
-            kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-js'
-        }
         linuxMain { dependsOn nativeMain }
         windowsMain { dependsOn nativeMain }
-        macosX64Main { dependsOn nativeMain }
         macosArm64Main { dependsOn nativeMain }
     }
 
     targets {
-        jvm('jvm') {
-            compilations.all {
-                compileTaskProvider.configure {
-                    compilerOptions {
-                        jvmTarget = JvmTarget.JVM_1_8
-                        suppressWarnings = true
-                    }
-                }
-            }
-        }
-
         mingwX64('windows') {
-            binaries.all {
-                linkerOpts = ["-L${getMingwPath()}/lib".toString()]
-            }
-            compilations.main.cinterops {
-                libcurl {
-                    includeDirs.headerFilterOnly "${getMingwPath()}/include"
-                }
-            }
         }
 
         linuxX64('linux') {
-            compilations.main.cinterops {
-                libcurl {
-                    includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
-                }
-            }
-        }
-
-        macosX64('macosX64') {
-            compilations.main.cinterops {
-                libcurl {
-                    includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
-                }
-            }
         }
 
         macosArm64('macosArm64') {
-            compilations.main.cinterops {
-                libcurl {
-                    includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
-                }
-            }
         }
 
-        js('js') {
-            compilations.main.compileTaskProvider.configure {
-                compilerOptions.main = JsMainFunctionExecutionMode.NO_CALL
-            }
-        }
-
-        configure([findByName('windows'), findByName('linux'), findByName('macosX64'), findByName('macosArm64')].findAll { it != null }) {
-            def isCurrentHost = (name == getHostName())
-            compilations.all {
-                cinterops.all {
-                    project.tasks[interopProcessingTaskName].enabled = isCurrentHost
-                }
-                compileKotlinTask.enabled = isCurrentHost
-            }
-            binaries.all {
-                linkTask.enabled = isCurrentHost
-            }
-
+        configure([findByName('windows'), findByName('linux'), findByName('macosArm64')].findAll { it != null }) {
             binaries {
                 executable('benchmarksAnalyzer', [RELEASE]) {
-                    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-                        linkerOpts("-L${getMingwPath()}/lib")
-                    }
                 }
             }
         }
     }
-
-    js {
-        browser {
-            distribution {
-                directory = new File("$projectDir/web/")
-            }
-        }
-    }
-}
-
-def getMingwPath() {
-    def directory = System.getenv("MINGW64_DIR")
-    if (directory == null)
-        directory = "c:/msys64/mingw64"
-    return directory
-}
-
-tasks.register("assembleWeb", Sync) {
-    def runtimeDependencies = kotlin.targets.js.compilations.main.runtimeDependencyFiles
-    from(files {
-        runtimeDependencies.collect { File file ->
-            zipTree(file.absolutePath)
-        }
-    }.builtBy(runtimeDependencies)) {
-        includeEmptyDirs = false
-        include { fileTreeElement ->
-            def path = fileTreeElement.path
-            path.endsWith(".js") && (path.startsWith("META-INF/resources/") ||
-                    !path.startsWith("META-INF/"))
-        }
-    }
-
-    from compileKotlinJs.destinationDirectory
-    into "${projectDir}/web"
 }
