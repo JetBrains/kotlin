@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.results.createOverloadingConflictResolver
@@ -55,6 +56,7 @@ internal class CliFe10AnalysisFacade : Fe10AnalysisFacade {
             handler.kotlinToResolvedCallTransformer.orThrowResolutionNotPerformedError(),
             handler.overloadingConflictResolver.orThrowResolutionNotPerformedError(),
             handler.kotlinTypeRefiner.orThrowResolutionNotPerformedError(),
+            handler.dataFlowValueFactory.orThrowResolutionNotPerformedError(),
             token,
         )
     }
@@ -109,6 +111,9 @@ internal class KaFe10AnalysisHandlerExtension(
     var kotlinTypeRefiner: KotlinTypeRefiner? = null
         private set
 
+    var dataFlowValueFactory: DataFlowValueFactory? = null
+        private set
+
     override fun doAnalysis(
         project: Project,
         module: ModuleDescriptor,
@@ -133,6 +138,7 @@ internal class KaFe10AnalysisHandlerExtension(
         callResolver = componentProvider.get()
         kotlinToResolvedCallTransformer = componentProvider.get()
         kotlinTypeRefiner = componentProvider.get()
+        dataFlowValueFactory = componentProvider.get()
 
         val builtIns = resolveSession!!.moduleDescriptor.builtIns
         val typeSpecificityComparator = componentProvider.get<TypeSpecificityComparator>()
