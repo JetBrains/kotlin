@@ -21,6 +21,16 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
    */
   private int consecutiveLineBreakCount;
 
+  /**
+    * Stores the symbol that started the current code block (tilda or backtick).
+    */
+  private char codeFenceChar = '\0';
+
+  /**
+    * Counts the length of the [codeFenceChar] string that started the current code block.
+    */
+  private int codeFenceLength = -1;
+
   private BlockType lastBlockType;
 
   private enum BlockType {
@@ -44,6 +54,14 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
 
   private boolean isLastToken() {
     return zzMarkedPos == zzBuffer.length();
+  }
+
+  private int countRepeating(char c) {
+      int current = zzStartRead;
+      while (zzBuffer.charAt(current) == c && current < zzMarkedPos) {
+          ++current;
+      }
+      return current - zzStartRead;
   }
 %}
 
@@ -72,10 +90,12 @@ PLAIN_IDENTIFIER = {LETTER} ({LETTER} | {DIGIT})*
 IDENTIFIER = {PLAIN_IDENTIFIER} | `[^`\n]+`
 QUALIFIED_NAME = {IDENTIFIER} ([\.] {IDENTIFIER}?)* // Handle incorrect/incomplete qualifiers for correct resolving
 CODE_LINK=\[{QUALIFIED_NAME}\]
-CODE_FENCE_START=("```" | "~~~").*
+BACKTICK_CODE_FENCE="`"{3,10} // arbitrary big high end, because flex does not support unlimited upper bound
+TILDA_CODE_FENCE="~"{3,10}
+CODE_FENCE_START=({BACKTICK_CODE_FENCE} | {TILDA_CODE_FENCE}).*
 // `org.jetbrains.kotlin.kdoc.lexer.KDocLexer` relies on these two types of ending fences.
 // If this set is changed, please, update `KDocLexer` accordingly
-CODE_FENCE_END=("```" | "~~~")
+CODE_FENCE_END={BACKTICK_CODE_FENCE} | {TILDA_CODE_FENCE}
 
 %%
 
@@ -162,6 +182,16 @@ CODE_FENCE_END=("```" | "~~~")
     }
 }
 
+<CONTENTS_BEGINNING> {
+    {CODE_FENCE_START} {
+              lastBlockType = BlockType.Code;
+              codeFenceChar = zzBuffer.charAt(zzStartRead);
+              codeFenceLength = countRepeating(codeFenceChar);
+              yybeginAndUpdate(CODE_BLOCK_LINE_BEGINNING);
+              return KDocTokens.TEXT;
+    }
+}
+
 <LINE_BEGINNING, CONTENTS_BEGINNING, CONTENTS> {
     {LINE_BREAK_CHAR} {
               yybeginAndUpdate(LINE_BEGINNING);
@@ -209,12 +239,6 @@ CODE_FENCE_END=("```" | "~~~")
               return KDocTokens.KDOC_RPAR;
     }
 
-    {CODE_FENCE_START} {
-              lastBlockType = BlockType.Code;
-              yybeginAndUpdate(CODE_BLOCK_LINE_BEGINNING);
-              return KDocTokens.TEXT;
-    }
-
     /* We're only interested in parsing links that can become code references,
        meaning they contain only identifier characters and characters that can be
        used in type declarations. No brackets, backticks, asterisks or anything like that.
@@ -246,9 +270,17 @@ CODE_FENCE_END=("```" | "~~~")
 
 <CODE_BLOCK_LINE_BEGINNING, CODE_BLOCK_CONTENTS_BEGINNING> {
     {CODE_FENCE_END} / [ \t\f]* [\n] {
-              // Code fence end
-              yybeginAndUpdate(CONTENTS);
-              return KDocTokens.TEXT;
+              char ch =  zzBuffer.charAt(zzStartRead);
+              int length = countRepeating(ch);
+              if (length == codeFenceLength && ch == codeFenceChar) {
+                  // Code fence end
+                  codeFenceChar = '\0';
+                  codeFenceLength = -1;
+                  yybeginAndUpdate(CONTENTS);
+                  return KDocTokens.TEXT;
+              } else {
+                  return KDocTokens.CODE_BLOCK_TEXT;
+              }
     }
 }
 
