@@ -17,12 +17,16 @@ import org.jetbrains.kotlin.gradle.testbase.JdkVersions
 import org.jetbrains.kotlin.gradle.testbase.JvmGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
+import org.jetbrains.kotlin.gradle.testbase.addKgpToBuildScriptCompilationClasspath
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
+import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndFail
+import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
+import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.pathString
@@ -140,5 +144,41 @@ class GradleCompatibilityIT : KGPBaseTest() {
             ),
             resolvedJars,
         )
+    }
+
+    @DisplayName("KT-78754: Configuration.isVisible is not set on Gradle 9+")
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_14, TestVersions.Gradle.G_9_0, TestVersions.Gradle.G_9_1, TestVersions.Gradle.G_9_2],
+    )
+    @GradleTest
+    fun testSetInvisibleIfSupported(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+
+            buildScriptInjection {
+                // Apply base plugin for outgoingVariants task
+                project.plugins.apply("base")
+
+                // Create a task that produces an artifact
+                val invisibleDataTask = project.tasks.register("invisibleDataTask") { task ->
+                    val outputFile = task.temporaryDir.resolve("invisibleData.txt")
+                    task.outputs.file(outputFile)
+                    task.doLast {
+                        outputFile.writeText("test content")
+                    }
+                }
+
+                // Create an invisible configuration with that artifact
+                project.configurations.create("invisibleConfiguration").apply {
+                    setInvisibleIfSupported()
+                    outgoing.artifact(invisibleDataTask)
+                }
+            }
+
+            build("outgoingVariants") {
+                // The artifact should not appear in outgoingVariants when configuration is invisible
+                assertOutputDoesNotContain("invisibleData.txt")
+            }
+        }
     }
 }
