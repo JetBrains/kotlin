@@ -93,6 +93,9 @@ internal class HtmlToDocTagConverter(
             "h1" -> ifChildrenPresent { H1(children) }
             "h2" -> ifChildrenPresent { H2(children) }
             "h3" -> ifChildrenPresent { H3(children) }
+            "h4" -> ifChildrenPresent { H4(children) }
+            "h5" -> ifChildrenPresent { H5(children) }
+            "h6" -> ifChildrenPresent { H6(children) }
             "var" -> ifChildrenPresent { Var(children) }
             "u" -> ifChildrenPresent { U(children) }
             else -> listOf(Text(body = element.ownText()))
