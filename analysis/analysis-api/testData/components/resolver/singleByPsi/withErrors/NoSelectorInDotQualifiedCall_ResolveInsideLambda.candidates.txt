@@ -1,7 +1,6 @@
 KtNameReferenceExpression(159,163): 'test'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -13,11 +12,11 @@ KtNameReferenceExpression(159,163): 'test'
         contextParameters = []
         callableId = testing/test
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,4 +28,5 @@ KtNameReferenceExpression(159,163): 'test'
         contextParameters = []
         callableId = testing/test
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

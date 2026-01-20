@@ -2,7 +2,6 @@ KtCallExpression(14,20): 'foo(1)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -14,5 +13,6 @@ KtCallExpression(14,20): 'foo(1)'
           contextParameters = []
           callableId = /foo
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun foo(): Unit'.>

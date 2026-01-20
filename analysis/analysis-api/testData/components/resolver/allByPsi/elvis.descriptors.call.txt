@@ -58,15 +58,6 @@ KtBinaryExpression(79,107): 'other?.equals(this) ?: false'
 KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        this -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = other
@@ -89,6 +80,15 @@ KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        this -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(79,84): 'other'
   KaSuccessCallInfo:
@@ -109,15 +109,6 @@ KtNameReferenceExpression(79,84): 'other'
 
 KtCallExpression(86,98): 'equals(this)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      this -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = other
@@ -140,19 +131,19 @@ KtCallExpression(86,98): 'equals(this)'
       contextParameters = []
       callableId = kotlin/Any.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      this -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(86,92): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        this -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = other
@@ -175,6 +166,15 @@ KtNameReferenceExpression(86,92): 'equals'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        this -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(92,98): '(this)'
   null

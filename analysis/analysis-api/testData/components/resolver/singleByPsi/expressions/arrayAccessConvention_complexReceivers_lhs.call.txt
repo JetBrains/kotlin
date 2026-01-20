@@ -1,14 +1,5 @@
 KtArrayAccessExpression(182,188): 'm["a"]'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      "a" -> (KaVariableSignature:
-        name = k
-        receiverType = null
-        returnType = kotlin.String
-        symbol = k: K1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = m
@@ -31,3 +22,12 @@ KtArrayAccessExpression(182,188): 'm["a"]'
       contextParameters = []
       callableId = /MyMap.get
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      "a" -> (KaVariableSignature:
+        name = k
+        receiverType = null
+        returnType = kotlin.String
+        symbol = k: K1
+        contextParameters = []
+        callableId = null)
+    }

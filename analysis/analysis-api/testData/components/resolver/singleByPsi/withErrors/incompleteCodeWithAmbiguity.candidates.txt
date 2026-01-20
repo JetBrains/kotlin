@@ -1,7 +1,6 @@
 KtCallExpression(89,100): 'Foo<String>'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -23,12 +22,12 @@ KtCallExpression(89,100): 'Foo<String>'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -50,5 +49,6 @@ KtCallExpression(89,100): 'Foo<String>'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false

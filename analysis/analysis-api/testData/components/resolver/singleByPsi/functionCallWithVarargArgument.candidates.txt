@@ -1,7 +1,26 @@
 KtCallExpression(49,66): 'function(1, 2, 3)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(vararg a: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg a: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /function
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = a
           receiverType = null
@@ -24,23 +43,4 @@ KtCallExpression(49,66): 'function(1, 2, 3)'
           contextParameters = []
           callableId = null)
       }
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /function(vararg a: kotlin.Int): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = vararg a: kotlin.Int
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /function
-      typeArgumentsMapping = {}
     isInBestCandidates = true

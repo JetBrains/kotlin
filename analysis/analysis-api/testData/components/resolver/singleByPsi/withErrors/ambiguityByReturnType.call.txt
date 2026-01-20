@@ -2,18 +2,6 @@ KtCallExpression(208,319): 'sumOf { c ->'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          { c ->
-                          println("Level 3: $c")
-                          gif(a + b + c > 50) 1L else 0
-                      } -> (KaVariableSignature:
-            name = selector
-            receiverType = null
-            returnType = (kotlin.Int) -> kotlin.Int
-            symbol = selector: (T) -> kotlin.Int
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -37,20 +25,20 @@ KtCallExpression(208,319): 'sumOf { c ->'
           callableId = kotlin/collections/sumOf
         typeArgumentsMapping = {
           T -> (kotlin.Int)
-        },
-      KaSimpleFunctionCall:
-        argumentMapping = {
+        }
+        valueArgumentMapping = {
           { c ->
                           println("Level 3: $c")
                           gif(a + b + c > 50) 1L else 0
                       } -> (KaVariableSignature:
             name = selector
             receiverType = null
-            returnType = (kotlin.Int) -> kotlin.UInt
-            symbol = selector: (T) -> kotlin.UInt
+            returnType = (kotlin.Int) -> kotlin.Int
+            symbol = selector: (T) -> kotlin.Int
             contextParameters = []
             callableId = null)
-        }
+        },
+      KaSimpleFunctionCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -74,6 +62,18 @@ KtCallExpression(208,319): 'sumOf { c ->'
           callableId = kotlin/collections/sumOf
         typeArgumentsMapping = {
           T -> (kotlin.Int)
+        }
+        valueArgumentMapping = {
+          { c ->
+                          println("Level 3: $c")
+                          gif(a + b + c > 50) 1L else 0
+                      } -> (KaVariableSignature:
+            name = selector
+            receiverType = null
+            returnType = (kotlin.Int) -> kotlin.UInt
+            symbol = selector: (T) -> kotlin.UInt
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:

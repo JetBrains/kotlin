@@ -1,7 +1,6 @@
 KtCallExpression(99,102): 'a()'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -16,4 +15,5 @@ KtCallExpression(99,102): 'a()'
         contextParameters = []
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

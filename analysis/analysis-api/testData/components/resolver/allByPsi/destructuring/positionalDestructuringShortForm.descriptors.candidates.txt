@@ -412,15 +412,6 @@ KtBlockExpression(412,414): '{}'
 KtCallExpression(420,447): 'foo { [first, second,] -> }'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { [first, second,] -> } -> (KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = kotlin.Function1<Tuple, kotlin.Unit>
-          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -440,20 +431,20 @@ KtCallExpression(420,447): 'foo { [first, second,] -> }'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { [first, second,] -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = kotlin.Function1<Tuple, kotlin.Unit>
+          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(420,423): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { [first, second,] -> } -> (KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = kotlin.Function1<Tuple, kotlin.Unit>
-          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -473,6 +464,15 @@ KtNameReferenceExpression(420,423): 'foo'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { [first, second,] -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = kotlin.Function1<Tuple, kotlin.Unit>
+          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtLambdaArgument(424,447): '{ [first, second,] -> }'
@@ -505,15 +505,6 @@ KtBlockExpression(446,446): ''
 KtCallExpression(452,470): 'foo { [first] -> }'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { [first] -> } -> (KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = kotlin.Function1<Tuple, kotlin.Unit>
-          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -533,20 +524,20 @@ KtCallExpression(452,470): 'foo { [first] -> }'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { [first] -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = kotlin.Function1<Tuple, kotlin.Unit>
+          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(452,455): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { [first] -> } -> (KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = kotlin.Function1<Tuple, kotlin.Unit>
-          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -566,6 +557,15 @@ KtNameReferenceExpression(452,455): 'foo'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { [first] -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = kotlin.Function1<Tuple, kotlin.Unit>
+          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtLambdaArgument(456,470): '{ [first] -> }'
@@ -595,15 +595,6 @@ KtBlockExpression(469,469): ''
 KtCallExpression(475,501): 'foo { [first: String] -> }'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { [first: String] -> } -> (KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = kotlin.Function1<Tuple, kotlin.Unit>
-          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -623,20 +614,20 @@ KtCallExpression(475,501): 'foo { [first: String] -> }'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { [first: String] -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = kotlin.Function1<Tuple, kotlin.Unit>
+          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(475,478): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { [first: String] -> } -> (KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = kotlin.Function1<Tuple, kotlin.Unit>
-          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -656,6 +647,15 @@ KtNameReferenceExpression(475,478): 'foo'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { [first: String] -> } -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = kotlin.Function1<Tuple, kotlin.Unit>
+          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtLambdaArgument(479,501): '{ [first: String] -> }'

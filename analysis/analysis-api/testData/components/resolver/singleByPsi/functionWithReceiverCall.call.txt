@@ -1,14 +1,5 @@
 KtCallExpression(54,65): 'function(1)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      1 -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = a: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -31,3 +22,12 @@ KtCallExpression(54,65): 'function(1)'
       contextParameters = []
       callableId = /function
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      1 -> (KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = a: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }

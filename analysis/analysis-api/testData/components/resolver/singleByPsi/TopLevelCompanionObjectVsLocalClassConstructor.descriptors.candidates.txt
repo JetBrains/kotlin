@@ -1,7 +1,6 @@
 KtNameReferenceExpression(92,100): 'Conflict'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -13,11 +12,11 @@ KtNameReferenceExpression(92,100): 'Conflict'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,4 +28,5 @@ KtNameReferenceExpression(92,100): 'Conflict'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false

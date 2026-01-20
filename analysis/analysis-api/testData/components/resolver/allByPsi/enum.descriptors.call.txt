@@ -42,15 +42,6 @@ KtInitializerList(54,57): '(1)'
 
 KtSuperTypeCallEntry(54,57): '(1)'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      1 -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -71,19 +62,19 @@ KtSuperTypeCallEntry(54,57): '(1)'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      1 -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(54,54): ''
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -104,6 +95,15 @@ KtConstructorCalleeExpression(54,54): ''
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtTypeReference(54,54): ''
   null
@@ -113,15 +113,6 @@ KtUserType(54,54): ''
 
 KtEnumEntrySuperclassReferenceExpression(54,54): ''
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      1 -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -142,6 +133,15 @@ KtEnumEntrySuperclassReferenceExpression(54,54): ''
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      1 -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
 
 KtValueArgumentList(54,57): '(1)'
   null
@@ -160,15 +160,6 @@ KtInitializerList(76,79): '(2)'
 
 KtSuperTypeCallEntry(76,79): '(2)'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      2 -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -189,19 +180,19 @@ KtSuperTypeCallEntry(76,79): '(2)'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      2 -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(76,76): ''
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -222,6 +213,15 @@ KtConstructorCalleeExpression(76,76): ''
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtTypeReference(76,76): ''
   null
@@ -231,15 +231,6 @@ KtUserType(76,76): ''
 
 KtEnumEntrySuperclassReferenceExpression(76,76): ''
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      2 -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -260,6 +251,15 @@ KtEnumEntrySuperclassReferenceExpression(76,76): ''
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      2 -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
 
 KtValueArgumentList(76,79): '(2)'
   null
@@ -331,7 +331,6 @@ KtBlockExpression(220,254): '{'
 KtDotQualifiedExpression(234,244): 'this.baz()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -346,6 +345,7 @@ KtDotQualifiedExpression(234,244): 'this.baz()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(234,238): 'this'
   null
@@ -355,7 +355,6 @@ KtNameReferenceExpression(234,238): 'this'
 
 KtCallExpression(239,244): 'baz()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this
@@ -370,11 +369,11 @@ KtCallExpression(239,244): 'baz()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(239,242): 'baz'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -389,6 +388,7 @@ KtNameReferenceExpression(239,242): 'baz'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(242,244): '()'
   null

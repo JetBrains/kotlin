@@ -1,21 +1,5 @@
 KtArrayAccessExpression(93,104): 'variable[0]'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      0 -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
-        contextParameters = []
-        callableId = null),
-      4 -> (KaVariableSignature:
-        name = v
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = v: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = variable
@@ -45,3 +29,19 @@ KtArrayAccessExpression(93,104): 'variable[0]'
       contextParameters = []
       callableId = /MyClass.set
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      0 -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        contextParameters = []
+        callableId = null),
+      4 -> (KaVariableSignature:
+        name = v
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = v: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }

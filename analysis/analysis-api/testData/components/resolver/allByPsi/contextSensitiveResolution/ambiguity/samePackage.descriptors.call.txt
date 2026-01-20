@@ -30,7 +30,6 @@ KtSuperTypeList(114,122): 'Sealed()'
 
 KtSuperTypeCallEntry(114,122): 'Sealed()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -43,11 +42,11 @@ KtSuperTypeCallEntry(114,122): 'Sealed()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(114,120): 'Sealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -60,6 +59,7 @@ KtConstructorCalleeExpression(114,120): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(114,120): 'Sealed'
   null
@@ -70,7 +70,6 @@ KtUserType(114,120): 'Sealed'
 KtNameReferenceExpression(114,120): 'Sealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -83,6 +82,7 @@ KtNameReferenceExpression(114,120): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(120,122): '()'
   null
@@ -116,7 +116,6 @@ KtSuperTypeList(154,162): 'Sealed()'
 
 KtSuperTypeCallEntry(154,162): 'Sealed()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -129,11 +128,11 @@ KtSuperTypeCallEntry(154,162): 'Sealed()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(154,160): 'Sealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -146,6 +145,7 @@ KtConstructorCalleeExpression(154,160): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(154,160): 'Sealed'
   null
@@ -156,7 +156,6 @@ KtUserType(154,160): 'Sealed'
 KtNameReferenceExpression(154,160): 'Sealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -169,6 +168,7 @@ KtNameReferenceExpression(154,160): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(160,162): '()'
   null
@@ -184,7 +184,6 @@ KtSuperTypeList(183,191): 'Sealed()'
 
 KtSuperTypeCallEntry(183,191): 'Sealed()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -197,11 +196,11 @@ KtSuperTypeCallEntry(183,191): 'Sealed()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(183,189): 'Sealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -214,6 +213,7 @@ KtConstructorCalleeExpression(183,189): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(183,189): 'Sealed'
   null
@@ -224,7 +224,6 @@ KtUserType(183,189): 'Sealed'
 KtNameReferenceExpression(183,189): 'Sealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -237,6 +236,7 @@ KtNameReferenceExpression(183,189): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(189,191): '()'
   null
@@ -270,7 +270,6 @@ KtSuperTypeList(223,231): 'Sealed()'
 
 KtSuperTypeCallEntry(223,231): 'Sealed()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -283,11 +282,11 @@ KtSuperTypeCallEntry(223,231): 'Sealed()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(223,229): 'Sealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -300,6 +299,7 @@ KtConstructorCalleeExpression(223,229): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(223,229): 'Sealed'
   null
@@ -310,7 +310,6 @@ KtUserType(223,229): 'Sealed'
 KtNameReferenceExpression(223,229): 'Sealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -323,6 +322,7 @@ KtNameReferenceExpression(223,229): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(229,231): '()'
   null
@@ -362,7 +362,6 @@ KtSuperTypeList(278,286): 'Sealed()'
 
 KtSuperTypeCallEntry(278,286): 'Sealed()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -375,11 +374,11 @@ KtSuperTypeCallEntry(278,286): 'Sealed()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(278,284): 'Sealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -392,6 +391,7 @@ KtConstructorCalleeExpression(278,284): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(278,284): 'Sealed'
   null
@@ -402,7 +402,6 @@ KtUserType(278,284): 'Sealed'
 KtNameReferenceExpression(278,284): 'Sealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -415,6 +414,7 @@ KtNameReferenceExpression(278,284): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(284,286): '()'
   null
@@ -1352,15 +1352,6 @@ KtNameReferenceExpression(1173,1180): 'Boolean'
 KtBinaryExpression(1183,1189): 's == A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1383,6 +1374,15 @@ KtBinaryExpression(1183,1189): 's == A'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1183,1184): 's'
   KaSuccessCallInfo:
@@ -1404,15 +1404,6 @@ KtNameReferenceExpression(1183,1184): 's'
 KtOperationReferenceExpression(1185,1187): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1435,6 +1426,15 @@ KtOperationReferenceExpression(1185,1187): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1188,1189): 'A'
   null
@@ -1469,15 +1469,6 @@ KtNameReferenceExpression(1222,1229): 'Boolean'
 KtBinaryExpression(1232,1245): 's == Sealed.A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1500,6 +1491,15 @@ KtBinaryExpression(1232,1245): 's == Sealed.A'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1232,1233): 's'
   KaSuccessCallInfo:
@@ -1521,15 +1521,6 @@ KtNameReferenceExpression(1232,1233): 's'
 KtOperationReferenceExpression(1234,1236): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1552,6 +1543,15 @@ KtOperationReferenceExpression(1234,1236): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtDotQualifiedExpression(1237,1245): 'Sealed.A'
   null
@@ -1592,15 +1592,6 @@ KtNameReferenceExpression(1280,1287): 'Boolean'
 KtBinaryExpression(1290,1300): 's == foo.A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        foo.A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1623,6 +1614,15 @@ KtBinaryExpression(1290,1300): 's == foo.A'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        foo.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1290,1291): 's'
   KaSuccessCallInfo:
@@ -1644,15 +1644,6 @@ KtNameReferenceExpression(1290,1291): 's'
 KtOperationReferenceExpression(1292,1294): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        foo.A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1675,6 +1666,15 @@ KtOperationReferenceExpression(1292,1294): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        foo.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtDotQualifiedExpression(1295,1300): 'foo.A'
   null
@@ -1715,15 +1715,6 @@ KtNameReferenceExpression(1329,1336): 'Boolean'
 KtBinaryExpression(1339,1352): 's == Sealed.C'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.C -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1746,6 +1737,15 @@ KtBinaryExpression(1339,1352): 's == Sealed.C'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.C -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1339,1340): 's'
   KaSuccessCallInfo:
@@ -1767,15 +1767,6 @@ KtNameReferenceExpression(1339,1340): 's'
 KtOperationReferenceExpression(1341,1343): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.C -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1798,6 +1789,15 @@ KtOperationReferenceExpression(1341,1343): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.C -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtDotQualifiedExpression(1344,1352): 'Sealed.C'
   null

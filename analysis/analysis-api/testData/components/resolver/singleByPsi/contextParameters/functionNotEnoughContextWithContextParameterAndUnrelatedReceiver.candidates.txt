@@ -1,7 +1,6 @@
 KtCallExpression(92,97): 'foo()'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -28,5 +27,6 @@ KtCallExpression(92,97): 'foo()'
         ]
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'string: String' found.>
     isInBestCandidates = true

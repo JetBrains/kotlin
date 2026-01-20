@@ -1,15 +1,6 @@
 KtOperationReferenceExpression(177,180): '!in'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        f -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -33,4 +24,13 @@ KtOperationReferenceExpression(177,180): '!in'
         callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        f -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          contextParameters = []
+          callableId = null)
       }

@@ -1,7 +1,6 @@
 KtCallExpression(127,130): 'c()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = /bar(<extension receiver>: kotlin.Boolean): kotlin.Unit
@@ -27,4 +26,5 @@ KtCallExpression(127,130): 'c()'
         ]
         callableId = /Container.c
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

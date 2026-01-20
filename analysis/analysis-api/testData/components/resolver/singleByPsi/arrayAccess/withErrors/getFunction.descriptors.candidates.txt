@@ -1,15 +1,6 @@
 KtArrayAccessExpression(44,48): '1[2]'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -32,5 +23,14 @@ KtArrayAccessExpression(44,48): '1[2]'
         contextParameters = []
         callableId = /get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = index
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = index: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with get>
     isInBestCandidates = true

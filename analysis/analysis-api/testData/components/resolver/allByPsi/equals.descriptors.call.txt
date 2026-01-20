@@ -55,15 +55,6 @@ KtReturnExpression(72,98): 'return super.equals(other)'
 KtDotQualifiedExpression(79,98): 'super.equals(other)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        other -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = super
@@ -86,6 +77,15 @@ KtDotQualifiedExpression(79,98): 'super.equals(other)'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtSuperExpression(79,84): 'super'
   null
@@ -95,15 +95,6 @@ KtNameReferenceExpression(79,84): 'super'
 
 KtCallExpression(85,98): 'equals(other)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      other -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = super
@@ -126,19 +117,19 @@ KtCallExpression(85,98): 'equals(other)'
       contextParameters = []
       callableId = kotlin/Any.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      other -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(85,91): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        other -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = super
@@ -161,6 +152,15 @@ KtNameReferenceExpression(85,91): 'equals'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(91,98): '(other)'
   null
@@ -199,7 +199,6 @@ KtSuperTypeList(142,151): 'Another()'
 
 KtSuperTypeCallEntry(142,151): 'Another()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -212,11 +211,11 @@ KtSuperTypeCallEntry(142,151): 'Another()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(142,149): 'Another'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -229,6 +228,7 @@ KtConstructorCalleeExpression(142,149): 'Another'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(142,149): 'Another'
   null
@@ -239,7 +239,6 @@ KtUserType(142,149): 'Another'
 KtNameReferenceExpression(142,149): 'Another'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -252,6 +251,7 @@ KtNameReferenceExpression(142,149): 'Another'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(149,151): '()'
   null
@@ -301,15 +301,6 @@ KtReturnExpression(210,236): 'return super.equals(other)'
 KtDotQualifiedExpression(217,236): 'super.equals(other)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        other -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = super
@@ -332,6 +323,15 @@ KtDotQualifiedExpression(217,236): 'super.equals(other)'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtSuperExpression(217,222): 'super'
   null
@@ -341,15 +341,6 @@ KtNameReferenceExpression(217,222): 'super'
 
 KtCallExpression(223,236): 'equals(other)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      other -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = super
@@ -372,19 +363,19 @@ KtCallExpression(223,236): 'equals(other)'
       contextParameters = []
       callableId = kotlin/Any.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      other -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(223,229): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        other -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = super
@@ -407,6 +398,15 @@ KtNameReferenceExpression(223,229): 'equals'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(229,236): '(other)'
   null
@@ -547,15 +547,6 @@ KtNameReferenceExpression(311,313): 'm2'
 KtBinaryExpression(318,326): 'm1 == m2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -578,6 +569,15 @@ KtBinaryExpression(318,326): 'm1 == m2'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(318,320): 'm1'
   KaSuccessCallInfo:
@@ -599,15 +599,6 @@ KtNameReferenceExpression(318,320): 'm1'
 KtOperationReferenceExpression(321,323): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -630,6 +621,15 @@ KtOperationReferenceExpression(321,323): '=='
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(324,326): 'm2'
   KaSuccessCallInfo:
@@ -651,15 +651,6 @@ KtNameReferenceExpression(324,326): 'm2'
 KtBinaryExpression(331,339): 'm1 != m2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -682,6 +673,15 @@ KtBinaryExpression(331,339): 'm1 != m2'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(331,333): 'm1'
   KaSuccessCallInfo:
@@ -703,15 +703,6 @@ KtNameReferenceExpression(331,333): 'm1'
 KtOperationReferenceExpression(334,336): '!='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -734,6 +725,15 @@ KtOperationReferenceExpression(334,336): '!='
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(337,339): 'm2'
   KaSuccessCallInfo:
@@ -755,15 +755,6 @@ KtNameReferenceExpression(337,339): 'm2'
 KtDotQualifiedExpression(344,357): 'm1.equals(m2)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -786,6 +777,15 @@ KtDotQualifiedExpression(344,357): 'm1.equals(m2)'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(344,346): 'm1'
   KaSuccessCallInfo:
@@ -806,15 +806,6 @@ KtNameReferenceExpression(344,346): 'm1'
 
 KtCallExpression(347,357): 'equals(m2)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      m2 -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = m1
@@ -837,19 +828,19 @@ KtCallExpression(347,357): 'equals(m2)'
       contextParameters = []
       callableId = /MyClass.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      m2 -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(347,353): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -872,6 +863,15 @@ KtNameReferenceExpression(347,353): 'equals'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(353,357): '(m2)'
   null
@@ -979,15 +979,6 @@ KtNameReferenceExpression(384,386): 'm1'
 KtBinaryExpression(391,399): 'm2 == m1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1010,6 +1001,15 @@ KtBinaryExpression(391,399): 'm2 == m1'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(391,393): 'm2'
   KaSuccessCallInfo:
@@ -1031,15 +1031,6 @@ KtNameReferenceExpression(391,393): 'm2'
 KtOperationReferenceExpression(394,396): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1062,6 +1053,15 @@ KtOperationReferenceExpression(394,396): '=='
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(397,399): 'm1'
   KaSuccessCallInfo:
@@ -1083,15 +1083,6 @@ KtNameReferenceExpression(397,399): 'm1'
 KtBinaryExpression(404,412): 'm2 != m1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1114,6 +1105,15 @@ KtBinaryExpression(404,412): 'm2 != m1'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(404,406): 'm2'
   KaSuccessCallInfo:
@@ -1135,15 +1135,6 @@ KtNameReferenceExpression(404,406): 'm2'
 KtOperationReferenceExpression(407,409): '!='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1166,6 +1157,15 @@ KtOperationReferenceExpression(407,409): '!='
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(410,412): 'm1'
   KaSuccessCallInfo:
@@ -1187,15 +1187,6 @@ KtNameReferenceExpression(410,412): 'm1'
 KtDotQualifiedExpression(417,430): 'm2.equals(m1)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1218,6 +1209,15 @@ KtDotQualifiedExpression(417,430): 'm2.equals(m1)'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(417,419): 'm2'
   KaSuccessCallInfo:
@@ -1238,15 +1238,6 @@ KtNameReferenceExpression(417,419): 'm2'
 
 KtCallExpression(420,430): 'equals(m1)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      m1 -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = m2
@@ -1269,19 +1260,19 @@ KtCallExpression(420,430): 'equals(m1)'
       contextParameters = []
       callableId = /MyClass.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      m1 -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(420,426): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1304,6 +1295,15 @@ KtNameReferenceExpression(420,426): 'equals'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(426,430): '(m1)'
   null
@@ -1342,7 +1342,6 @@ KtProperty(454,477): 'val another = Another()'
 
 KtCallExpression(468,477): 'Another()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1354,11 +1353,11 @@ KtCallExpression(468,477): 'Another()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(468,475): 'Another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1370,6 +1369,7 @@ KtNameReferenceExpression(468,475): 'Another'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(475,477): '()'
   null
@@ -1457,15 +1457,6 @@ KtNameReferenceExpression(518,525): 'another'
 KtBinaryExpression(530,550): 'another == Another()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1488,6 +1479,15 @@ KtBinaryExpression(530,550): 'another == Another()'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(530,537): 'another'
   KaSuccessCallInfo:
@@ -1509,15 +1509,6 @@ KtNameReferenceExpression(530,537): 'another'
 KtOperationReferenceExpression(538,540): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1540,10 +1531,18 @@ KtOperationReferenceExpression(538,540): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtCallExpression(541,550): 'Another()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1555,11 +1554,11 @@ KtCallExpression(541,550): 'Another()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(541,548): 'Another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1571,6 +1570,7 @@ KtNameReferenceExpression(541,548): 'Another'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(548,550): '()'
   null
@@ -1578,15 +1578,6 @@ KtValueArgumentList(548,550): '()'
 KtBinaryExpression(555,575): 'another != Another()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1609,6 +1600,15 @@ KtBinaryExpression(555,575): 'another != Another()'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(555,562): 'another'
   KaSuccessCallInfo:
@@ -1630,15 +1630,6 @@ KtNameReferenceExpression(555,562): 'another'
 KtOperationReferenceExpression(563,565): '!='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1661,10 +1652,18 @@ KtOperationReferenceExpression(563,565): '!='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtCallExpression(566,575): 'Another()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1676,11 +1675,11 @@ KtCallExpression(566,575): 'Another()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(566,573): 'Another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1692,6 +1691,7 @@ KtNameReferenceExpression(566,573): 'Another'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(573,575): '()'
   null
@@ -1699,15 +1699,6 @@ KtValueArgumentList(573,575): '()'
 KtDotQualifiedExpression(580,605): 'another.equals(Another())'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1730,6 +1721,15 @@ KtDotQualifiedExpression(580,605): 'another.equals(Another())'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(580,587): 'another'
   KaSuccessCallInfo:
@@ -1750,15 +1750,6 @@ KtNameReferenceExpression(580,587): 'another'
 
 KtCallExpression(588,605): 'equals(Another())'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      Another() -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = another
@@ -1781,19 +1772,19 @@ KtCallExpression(588,605): 'equals(Another())'
       contextParameters = []
       callableId = kotlin/Any.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      Another() -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(588,594): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1816,6 +1807,15 @@ KtNameReferenceExpression(588,594): 'equals'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(594,605): '(Another())'
   null
@@ -1825,7 +1825,6 @@ KtValueArgument(595,604): 'Another()'
 
 KtCallExpression(595,604): 'Another()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1837,11 +1836,11 @@ KtCallExpression(595,604): 'Another()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(595,602): 'Another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1853,6 +1852,7 @@ KtNameReferenceExpression(595,602): 'Another'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(602,604): '()'
   null
@@ -1862,7 +1862,6 @@ KtProperty(611,630): 'val child = Child()'
 
 KtCallExpression(623,630): 'Child()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1874,11 +1873,11 @@ KtCallExpression(623,630): 'Child()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(623,628): 'Child'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1890,6 +1889,7 @@ KtNameReferenceExpression(623,628): 'Child'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(628,630): '()'
   null
@@ -1899,7 +1899,6 @@ KtProperty(635,658): 'val myClass = MyClass()'
 
 KtCallExpression(649,658): 'MyClass()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1911,11 +1910,11 @@ KtCallExpression(649,658): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(649,656): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1927,6 +1926,7 @@ KtNameReferenceExpression(649,656): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(656,658): '()'
   null
@@ -2014,15 +2014,6 @@ KtNameReferenceExpression(697,702): 'child'
 KtBinaryExpression(708,724): 'child == myClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2045,6 +2036,15 @@ KtBinaryExpression(708,724): 'child == myClass'
         contextParameters = []
         callableId = /Child.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(708,713): 'child'
   KaSuccessCallInfo:
@@ -2066,15 +2066,6 @@ KtNameReferenceExpression(708,713): 'child'
 KtOperationReferenceExpression(714,716): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2097,6 +2088,15 @@ KtOperationReferenceExpression(714,716): '=='
         contextParameters = []
         callableId = /Child.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(717,724): 'myClass'
   KaSuccessCallInfo:
@@ -2118,15 +2118,6 @@ KtNameReferenceExpression(717,724): 'myClass'
 KtDotQualifiedExpression(729,750): 'child.equals(myClass)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2149,6 +2140,15 @@ KtDotQualifiedExpression(729,750): 'child.equals(myClass)'
         contextParameters = []
         callableId = /Child.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(729,734): 'child'
   KaSuccessCallInfo:
@@ -2169,15 +2169,6 @@ KtNameReferenceExpression(729,734): 'child'
 
 KtCallExpression(735,750): 'equals(myClass)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      myClass -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = child
@@ -2200,19 +2191,19 @@ KtCallExpression(735,750): 'equals(myClass)'
       contextParameters = []
       callableId = /Child.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      myClass -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(735,741): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2235,6 +2226,15 @@ KtNameReferenceExpression(735,741): 'equals'
         contextParameters = []
         callableId = /Child.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(741,750): '(myClass)'
   null
@@ -2262,15 +2262,6 @@ KtNameReferenceExpression(742,749): 'myClass'
 KtBinaryExpression(755,771): 'myClass != child'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -2293,6 +2284,15 @@ KtBinaryExpression(755,771): 'myClass != child'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(755,762): 'myClass'
   KaSuccessCallInfo:
@@ -2314,15 +2314,6 @@ KtNameReferenceExpression(755,762): 'myClass'
 KtOperationReferenceExpression(763,765): '!='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -2345,6 +2336,15 @@ KtOperationReferenceExpression(763,765): '!='
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(766,771): 'child'
   KaSuccessCallInfo:
@@ -2366,7 +2366,6 @@ KtNameReferenceExpression(766,771): 'child'
 KtPrefixExpression(776,798): '!myClass.equals(child)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass.equals(child)
@@ -2381,11 +2380,11 @@ KtPrefixExpression(776,798): '!myClass.equals(child)'
         contextParameters = []
         callableId = kotlin/Boolean.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtOperationReferenceExpression(776,777): '!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass.equals(child)
@@ -2400,19 +2399,11 @@ KtOperationReferenceExpression(776,777): '!'
         contextParameters = []
         callableId = kotlin/Boolean.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -2435,6 +2426,15 @@ KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(777,784): 'myClass'
   KaSuccessCallInfo:
@@ -2455,15 +2455,6 @@ KtNameReferenceExpression(777,784): 'myClass'
 
 KtCallExpression(785,798): 'equals(child)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      child -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = myClass
@@ -2486,19 +2477,19 @@ KtCallExpression(785,798): 'equals(child)'
       contextParameters = []
       callableId = /MyClass.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      child -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(785,791): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -2521,6 +2512,15 @@ KtNameReferenceExpression(785,791): 'equals'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(791,798): '(child)'
   null
@@ -2548,15 +2548,6 @@ KtNameReferenceExpression(792,797): 'child'
 KtBinaryExpression(804,820): 'another == child'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -2579,6 +2570,15 @@ KtBinaryExpression(804,820): 'another == child'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(804,811): 'another'
   KaSuccessCallInfo:
@@ -2600,15 +2600,6 @@ KtNameReferenceExpression(804,811): 'another'
 KtOperationReferenceExpression(812,814): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -2631,6 +2622,15 @@ KtOperationReferenceExpression(812,814): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(815,820): 'child'
   KaSuccessCallInfo:
@@ -2652,15 +2652,6 @@ KtNameReferenceExpression(815,820): 'child'
 KtDotQualifiedExpression(825,846): 'another.equals(child)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -2683,6 +2674,15 @@ KtDotQualifiedExpression(825,846): 'another.equals(child)'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(825,832): 'another'
   KaSuccessCallInfo:
@@ -2703,15 +2703,6 @@ KtNameReferenceExpression(825,832): 'another'
 
 KtCallExpression(833,846): 'equals(child)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      child -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = another
@@ -2734,19 +2725,19 @@ KtCallExpression(833,846): 'equals(child)'
       contextParameters = []
       callableId = kotlin/Any.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      child -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(833,839): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -2769,6 +2760,15 @@ KtNameReferenceExpression(833,839): 'equals'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(839,846): '(child)'
   null
@@ -2796,15 +2796,6 @@ KtNameReferenceExpression(840,845): 'child'
 KtBinaryExpression(851,867): 'child == another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2827,6 +2818,15 @@ KtBinaryExpression(851,867): 'child == another'
         contextParameters = []
         callableId = /Child.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(851,856): 'child'
   KaSuccessCallInfo:
@@ -2848,15 +2848,6 @@ KtNameReferenceExpression(851,856): 'child'
 KtOperationReferenceExpression(857,859): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2879,6 +2870,15 @@ KtOperationReferenceExpression(857,859): '=='
         contextParameters = []
         callableId = /Child.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(860,867): 'another'
   KaSuccessCallInfo:
@@ -2900,15 +2900,6 @@ KtNameReferenceExpression(860,867): 'another'
 KtDotQualifiedExpression(872,893): 'child.equals(another)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2931,6 +2922,15 @@ KtDotQualifiedExpression(872,893): 'child.equals(another)'
         contextParameters = []
         callableId = /Child.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(872,877): 'child'
   KaSuccessCallInfo:
@@ -2951,15 +2951,6 @@ KtNameReferenceExpression(872,877): 'child'
 
 KtCallExpression(878,893): 'equals(another)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      another -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = child
@@ -2982,19 +2973,19 @@ KtCallExpression(878,893): 'equals(another)'
       contextParameters = []
       callableId = /Child.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      another -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(878,884): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -3017,6 +3008,15 @@ KtNameReferenceExpression(878,884): 'equals'
         contextParameters = []
         callableId = /Child.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(884,893): '(another)'
   null
@@ -3044,15 +3044,6 @@ KtNameReferenceExpression(885,892): 'another'
 KtBinaryExpression(899,917): 'another == myClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -3075,6 +3066,15 @@ KtBinaryExpression(899,917): 'another == myClass'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(899,906): 'another'
   KaSuccessCallInfo:
@@ -3096,15 +3096,6 @@ KtNameReferenceExpression(899,906): 'another'
 KtOperationReferenceExpression(907,909): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -3127,6 +3118,15 @@ KtOperationReferenceExpression(907,909): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(910,917): 'myClass'
   KaSuccessCallInfo:
@@ -3148,15 +3148,6 @@ KtNameReferenceExpression(910,917): 'myClass'
 KtDotQualifiedExpression(922,945): 'another.equals(myClass)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -3179,6 +3170,15 @@ KtDotQualifiedExpression(922,945): 'another.equals(myClass)'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(922,929): 'another'
   KaSuccessCallInfo:
@@ -3199,15 +3199,6 @@ KtNameReferenceExpression(922,929): 'another'
 
 KtCallExpression(930,945): 'equals(myClass)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      myClass -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = another
@@ -3230,19 +3221,19 @@ KtCallExpression(930,945): 'equals(myClass)'
       contextParameters = []
       callableId = kotlin/Any.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      myClass -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(930,936): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -3265,6 +3256,15 @@ KtNameReferenceExpression(930,936): 'equals'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(936,945): '(myClass)'
   null
@@ -3292,15 +3292,6 @@ KtNameReferenceExpression(937,944): 'myClass'
 KtBinaryExpression(950,968): 'myClass != another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -3323,6 +3314,15 @@ KtBinaryExpression(950,968): 'myClass != another'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(950,957): 'myClass'
   KaSuccessCallInfo:
@@ -3344,15 +3344,6 @@ KtNameReferenceExpression(950,957): 'myClass'
 KtOperationReferenceExpression(958,960): '!='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -3375,6 +3366,15 @@ KtOperationReferenceExpression(958,960): '!='
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(961,968): 'another'
   KaSuccessCallInfo:
@@ -3396,7 +3396,6 @@ KtNameReferenceExpression(961,968): 'another'
 KtPrefixExpression(973,997): '!myClass.equals(another)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass.equals(another)
@@ -3411,11 +3410,11 @@ KtPrefixExpression(973,997): '!myClass.equals(another)'
         contextParameters = []
         callableId = kotlin/Boolean.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtOperationReferenceExpression(973,974): '!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass.equals(another)
@@ -3430,19 +3429,11 @@ KtOperationReferenceExpression(973,974): '!'
         contextParameters = []
         callableId = kotlin/Boolean.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -3465,6 +3456,15 @@ KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(974,981): 'myClass'
   KaSuccessCallInfo:
@@ -3485,15 +3485,6 @@ KtNameReferenceExpression(974,981): 'myClass'
 
 KtCallExpression(982,997): 'equals(another)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      another -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = myClass
@@ -3516,19 +3507,19 @@ KtCallExpression(982,997): 'equals(another)'
       contextParameters = []
       callableId = /MyClass.equals
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      another -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(982,988): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -3551,6 +3542,15 @@ KtNameReferenceExpression(982,988): 'equals'
         contextParameters = []
         callableId = /MyClass.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(988,997): '(another)'
   null

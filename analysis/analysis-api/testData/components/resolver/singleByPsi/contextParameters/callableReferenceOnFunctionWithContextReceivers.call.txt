@@ -1,7 +1,7 @@
 KtCallableReferenceExpression(65,70): '::foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      valueArgumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []

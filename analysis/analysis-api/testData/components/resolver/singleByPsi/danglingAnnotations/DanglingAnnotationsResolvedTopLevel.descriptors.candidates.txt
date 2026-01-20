@@ -1,7 +1,6 @@
 KtNameReferenceExpression(45,49): 'Ann0'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -13,4 +12,5 @@ KtNameReferenceExpression(45,49): 'Ann0'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

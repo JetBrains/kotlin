@@ -1,7 +1,6 @@
 KtNameReferenceExpression(174,180): 'stream'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = collection
@@ -16,4 +15,5 @@ KtNameReferenceExpression(174,180): 'stream'
         contextParameters = []
         callableId = kotlin/collections/Collection.stream
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

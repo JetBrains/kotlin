@@ -1,6 +1,5 @@
 KtCallExpression(117,127): 'thisProp()'
   KaImplicitInvokeCall:
-    argumentMapping = {}
     contextArguments = [
       KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -47,3 +46,4 @@ KtCallExpression(117,127): 'thisProp()'
       ]
       callableId = /invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

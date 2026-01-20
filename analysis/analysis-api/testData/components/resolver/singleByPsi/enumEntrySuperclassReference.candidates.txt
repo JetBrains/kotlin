@@ -1,15 +1,6 @@
 KtEnumEntrySuperclassReferenceExpression(127,127): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -30,4 +21,13 @@ KtEnumEntrySuperclassReferenceExpression(127,127): ''
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

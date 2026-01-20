@@ -37,7 +37,6 @@ KtPropertyDelegate(74,87): 'by Delegate()'
 KtCallExpression(77,87): 'Delegate()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -49,12 +48,12 @@ KtCallExpression(77,87): 'Delegate()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(77,85): 'Delegate'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -66,6 +65,7 @@ KtNameReferenceExpression(77,85): 'Delegate'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(85,87): '()'

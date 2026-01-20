@@ -5,15 +5,6 @@ KtOperationReferenceExpression(195,197): '+='
         kind = PLUS_ASSIGN
         operand = foo
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {
-            variable -> (KaVariableSignature:
-              name = f
-              receiverType = null
-              returnType = test.Foo
-              symbol = f: test.Foo
-              contextParameters = []
-              callableId = null)
-          }
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = variable
@@ -36,6 +27,15 @@ KtOperationReferenceExpression(195,197): '+='
             contextParameters = []
             callableId = test/WithOperator.plus
           typeArgumentsMapping = {}
+          valueArgumentMapping = {
+            variable -> (KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = test.Foo
+              symbol = f: test.Foo
+              contextParameters = []
+              callableId = null)
+          }
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = null

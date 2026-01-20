@@ -1,7 +1,6 @@
 KtNameReferenceExpression(589,592): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -13,4 +12,5 @@ KtNameReferenceExpression(589,592): 'bar'
         contextParameters = []
         callableId = pkg/Foo.bar
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

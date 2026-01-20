@@ -69,7 +69,6 @@ KtSuperTypeList(257,266): 'MyClass()'
 
 KtSuperTypeCallEntry(257,266): 'MyClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -82,11 +81,11 @@ KtSuperTypeCallEntry(257,266): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(257,264): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -99,6 +98,7 @@ KtConstructorCalleeExpression(257,264): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(257,264): 'MyClass'
   null
@@ -109,7 +109,6 @@ KtUserType(257,264): 'MyClass'
 KtNameReferenceExpression(257,264): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -122,6 +121,7 @@ KtNameReferenceExpression(257,264): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(264,266): '()'
   null
@@ -152,7 +152,6 @@ KtSuperTypeList(332,341): 'MyClass()'
 
 KtSuperTypeCallEntry(332,341): 'MyClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -165,11 +164,11 @@ KtSuperTypeCallEntry(332,341): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(332,339): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -182,6 +181,7 @@ KtConstructorCalleeExpression(332,339): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(332,339): 'MyClass'
   null
@@ -192,7 +192,6 @@ KtUserType(332,339): 'MyClass'
 KtNameReferenceExpression(332,339): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -205,6 +204,7 @@ KtNameReferenceExpression(332,339): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(339,341): '()'
   null
@@ -241,7 +241,6 @@ KtSuperTypeList(428,435): 'Super()'
 
 KtSuperTypeCallEntry(428,435): 'Super()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -254,11 +253,11 @@ KtSuperTypeCallEntry(428,435): 'Super()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(428,433): 'Super'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -271,6 +270,7 @@ KtConstructorCalleeExpression(428,433): 'Super'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(428,433): 'Super'
   null
@@ -281,7 +281,6 @@ KtUserType(428,433): 'Super'
 KtNameReferenceExpression(428,433): 'Super'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -294,6 +293,7 @@ KtNameReferenceExpression(428,433): 'Super'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(433,435): '()'
   null
@@ -315,7 +315,6 @@ KtNameReferenceExpression(463,470): 'MyClass'
 
 KtCallExpression(473,479): 'TODO()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -327,11 +326,11 @@ KtCallExpression(473,479): 'TODO()'
       contextParameters = []
       callableId = kotlin/TODO
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(473,477): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -343,6 +342,7 @@ KtNameReferenceExpression(473,477): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(477,479): '()'
   null
@@ -361,7 +361,6 @@ KtNameReferenceExpression(512,526): 'InheritorClass'
 
 KtCallExpression(529,545): 'InheritorClass()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -373,11 +372,11 @@ KtCallExpression(529,545): 'InheritorClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(529,543): 'InheritorClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -389,6 +388,7 @@ KtNameReferenceExpression(529,543): 'InheritorClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(543,545): '()'
   null
@@ -458,15 +458,6 @@ KtPropertyDelegate(713,725): 'by lazy {""}'
 
 KtCallExpression(716,725): 'lazy {""}'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      {""} -> (KaVariableSignature:
-        name = initializer
-        receiverType = null
-        returnType = kotlin.Function0<kotlin.String>
-        symbol = initializer: kotlin.Function0<T>
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -488,19 +479,19 @@ KtCallExpression(716,725): 'lazy {""}'
     typeArgumentsMapping = {
       T -> (kotlin.String)
     }
+    valueArgumentMapping = {
+      {""} -> (KaVariableSignature:
+        name = initializer
+        receiverType = null
+        returnType = kotlin.Function0<kotlin.String>
+        symbol = initializer: kotlin.Function0<T>
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(716,720): 'lazy'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -521,6 +512,15 @@ KtNameReferenceExpression(716,720): 'lazy'
         callableId = kotlin/lazy
       typeArgumentsMapping = {
         T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.String>
+          symbol = initializer: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
 
 KtLambdaArgument(721,725): '{""}'
@@ -570,7 +570,6 @@ KtNameReferenceExpression(789,796): 'MyClass'
 
 KtCallExpression(799,805): 'TODO()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -582,11 +581,11 @@ KtCallExpression(799,805): 'TODO()'
       contextParameters = []
       callableId = kotlin/TODO
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(799,803): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -598,6 +597,7 @@ KtNameReferenceExpression(799,803): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(803,805): '()'
   null
@@ -661,15 +661,6 @@ KtBlockExpression(927,1304): '{'
 
 KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      EnumValue1 -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyEnum
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = anonymousEnumConsumer
@@ -692,6 +683,15 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      EnumValue1 -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = MyEnum
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
   KaSuccessCallInfo:
@@ -723,15 +723,6 @@ KtNameReferenceExpression(955,965): 'EnumValue1'
 
 KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      InheritorObject -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = anonymousConsumer
@@ -754,6 +745,15 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      InheritorObject -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(972,989): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -785,15 +785,6 @@ KtNameReferenceExpression(990,1005): 'InheritorObject'
 
 KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      propMyClass -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = anonymousConsumer
@@ -816,6 +807,15 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      propMyClass -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -847,15 +847,6 @@ KtNameReferenceExpression(1029,1040): 'propMyClass'
 
 KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      prop -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = anonymousConsumer
@@ -878,6 +869,15 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      prop -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -909,15 +909,6 @@ KtNameReferenceExpression(1065,1069): 'prop'
 
 KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      constProp -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = anonymousConsumer
@@ -940,6 +931,15 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      constProp -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -971,15 +971,6 @@ KtNameReferenceExpression(1093,1102): 'constProp'
 
 KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      lazyProp -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = anonymousConsumer
@@ -1002,6 +993,15 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      lazyProp -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -1033,15 +1033,6 @@ KtNameReferenceExpression(1126,1134): 'lazyProp'
 
 KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      lambdaProp -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = anonymousConsumer
@@ -1064,6 +1055,15 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      lambdaProp -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -1095,15 +1095,6 @@ KtNameReferenceExpression(1158,1168): 'lambdaProp'
 
 KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      superProp -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = anonymousConsumer
@@ -1126,6 +1117,15 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      superProp -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -1157,15 +1157,6 @@ KtNameReferenceExpression(1192,1201): 'superProp'
 
 KtCallExpression(1208,1233): 'anonymousConsumer(func())'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      func() -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = anonymousConsumer
@@ -1188,6 +1179,15 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      func() -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -1227,15 +1227,6 @@ KtValueArgumentList(1230,1232): '()'
 
 KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      superFunc() -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = anonymousConsumer
@@ -1258,6 +1249,15 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      superFunc() -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -1297,15 +1297,6 @@ KtValueArgumentList(1265,1267): '()'
 
 KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      lambdaProp -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = anonymousConsumer
@@ -1328,6 +1319,15 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      lambdaProp -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
   KaSuccessCallInfo:

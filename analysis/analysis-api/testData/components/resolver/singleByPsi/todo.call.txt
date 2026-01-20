@@ -1,15 +1,6 @@
 KtNameReferenceExpression(55,59): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Not implemented yet" -> (KaVariableSignature:
-          name = reason
-          receiverType = null
-          returnType = kotlin.String
-          symbol = reason: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,3 +20,12 @@ KtNameReferenceExpression(55,59): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Not implemented yet" -> (KaVariableSignature:
+          name = reason
+          receiverType = null
+          returnType = kotlin.String
+          symbol = reason: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }

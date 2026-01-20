@@ -1,7 +1,6 @@
 KtConstructorCalleeExpression(31,32): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -14,5 +13,6 @@ KtConstructorCalleeExpression(31,32): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = true

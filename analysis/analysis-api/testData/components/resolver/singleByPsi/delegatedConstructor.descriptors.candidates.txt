@@ -1,7 +1,6 @@
 KtConstructorCalleeExpression(126,127): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -14,20 +13,12 @@ KtConstructorCalleeExpression(126,127): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        5 -> (KaVariableSignature:
-          name = p
-          receiverType = null
-          returnType = kotlin.String
-          symbol = p: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -48,20 +39,20 @@ KtConstructorCalleeExpression(126,127): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        5 -> (KaVariableSignature:
+          name = p
+          receiverType = null
+          returnType = kotlin.String
+          symbol = p: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        5 -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = x: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -82,4 +73,13 @@ KtConstructorCalleeExpression(126,127): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        5 -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

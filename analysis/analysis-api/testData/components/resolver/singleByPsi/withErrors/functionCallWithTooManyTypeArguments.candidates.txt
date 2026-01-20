@@ -1,7 +1,6 @@
 KtCallExpression(39,64): 'generic<String, String>()'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -15,5 +14,6 @@ KtCallExpression(39,64): 'generic<String, String>()'
       typeArgumentsMapping = {
         A -> (kotlin.String)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: One type argument expected for 'fun <A> generic(): Unit'.>
     isInBestCandidates = true

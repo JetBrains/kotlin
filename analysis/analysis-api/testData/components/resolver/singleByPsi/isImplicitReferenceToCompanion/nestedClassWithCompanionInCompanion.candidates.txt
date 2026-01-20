@@ -1,7 +1,6 @@
 KtNameReferenceExpression(146,163): 'NestedInCompanion'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -13,5 +12,6 @@ KtNameReferenceExpression(146,163): 'NestedInCompanion'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false

@@ -51,15 +51,6 @@ KtParameterList(72,74): '()'
 
 KtConstructorDelegationCall(76,84): 'this(10)'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      10 -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = x: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = r/A
@@ -82,18 +73,18 @@ KtConstructorDelegationCall(76,84): 'this(10)'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      10 -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = x: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
 
 KtConstructorDelegationReferenceExpression(76,80): 'this'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      10 -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = x: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = r/A
@@ -116,6 +107,15 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      10 -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = x: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
 
 KtValueArgumentList(80,84): '(10)'
   null

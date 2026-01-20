@@ -459,7 +459,6 @@ KtProperty(484,500): 'var foo = Test()'
 
 KtCallExpression(494,500): 'Test()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -471,11 +470,11 @@ KtCallExpression(494,500): 'Test()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(494,498): 'Test'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -487,6 +486,7 @@ KtNameReferenceExpression(494,498): 'Test'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(498,500): '()'
   null

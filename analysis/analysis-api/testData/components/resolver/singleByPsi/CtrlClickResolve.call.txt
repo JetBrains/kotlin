@@ -1,15 +1,6 @@
 KtNameReferenceExpression(202,210): 'IntArray'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        array("1", "2", "3") -> (KaVariableSignature:
-          name = content
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg content: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,3 +20,12 @@ KtNameReferenceExpression(202,210): 'IntArray'
         contextParameters = []
         callableId = ctrl_click/IntArray
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        array("1", "2", "3") -> (KaVariableSignature:
+          name = content
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg content: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }

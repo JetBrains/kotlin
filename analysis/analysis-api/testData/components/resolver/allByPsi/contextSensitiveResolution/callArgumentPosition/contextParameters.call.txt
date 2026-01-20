@@ -36,7 +36,6 @@ KtSuperTypeList(189,199): 'MySealed()'
 
 KtSuperTypeCallEntry(189,199): 'MySealed()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -49,11 +48,11 @@ KtSuperTypeCallEntry(189,199): 'MySealed()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(189,197): 'MySealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -66,6 +65,7 @@ KtConstructorCalleeExpression(189,197): 'MySealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(189,197): 'MySealed'
   null
@@ -147,24 +147,6 @@ KtBlockExpression(293,416): '{'
 
 KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      EnumValue1 -> (KaVariableSignature:
-        name = receiver
-        receiverType = null
-        returnType = MyEnum
-        symbol = receiver: T
-        contextParameters = []
-        callableId = null),
-      {
-              foo()
-          } -> (KaVariableSignature:
-        name = block
-        receiverType = null
-        returnType = MyEnum.() -> kotlin.Unit
-        symbol = block: T.() -> R
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -194,28 +176,28 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
       T -> (MyEnum),
       R -> (kotlin.Unit)
     }
+    valueArgumentMapping = {
+      EnumValue1 -> (KaVariableSignature:
+        name = receiver
+        receiverType = null
+        returnType = MyEnum
+        symbol = receiver: T
+        contextParameters = []
+        callableId = null),
+      {
+              foo()
+          } -> (KaVariableSignature:
+        name = block
+        receiverType = null
+        returnType = MyEnum.() -> kotlin.Unit
+        symbol = block: T.() -> R
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(299,303): 'with'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = receiver
-          receiverType = null
-          returnType = MyEnum
-          symbol = receiver: T
-          contextParameters = []
-          callableId = null),
-        {
-                foo()
-            } -> (KaVariableSignature:
-          name = block
-          receiverType = null
-          returnType = MyEnum.() -> kotlin.Unit
-          symbol = block: T.() -> R
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -244,6 +226,24 @@ KtNameReferenceExpression(299,303): 'with'
       typeArgumentsMapping = {
         T -> (MyEnum),
         R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = receiver
+          receiverType = null
+          returnType = MyEnum
+          symbol = receiver: T
+          contextParameters = []
+          callableId = null),
+        {
+                foo()
+            } -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = MyEnum.() -> kotlin.Unit
+          symbol = block: T.() -> R
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(303,317): '<MyEnum, Unit>'
@@ -313,7 +313,6 @@ KtBlockExpression(339,344): 'foo()'
 
 KtCallExpression(339,344): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = [
       KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -357,11 +356,11 @@ KtCallExpression(339,344): 'foo()'
       ]
       callableId = /foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(339,342): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -405,30 +404,13 @@ KtNameReferenceExpression(339,342): 'foo'
         ]
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(342,344): '()'
   null
 
 KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      InheritorObject -> (KaVariableSignature:
-        name = receiver
-        receiverType = null
-        returnType = MySealed
-        symbol = receiver: T
-        contextParameters = []
-        callableId = null),
-      {
-              foo()
-          } -> (KaVariableSignature:
-        name = block
-        receiverType = null
-        returnType = MySealed.() -> kotlin.Unit
-        symbol = block: T.() -> R
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -458,28 +440,28 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
       T -> (MySealed),
       R -> (kotlin.Unit)
     }
+    valueArgumentMapping = {
+      InheritorObject -> (KaVariableSignature:
+        name = receiver
+        receiverType = null
+        returnType = MySealed
+        symbol = receiver: T
+        contextParameters = []
+        callableId = null),
+      {
+              foo()
+          } -> (KaVariableSignature:
+        name = block
+        receiverType = null
+        returnType = MySealed.() -> kotlin.Unit
+        symbol = block: T.() -> R
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(356,360): 'with'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = receiver
-          receiverType = null
-          returnType = MySealed
-          symbol = receiver: T
-          contextParameters = []
-          callableId = null),
-        {
-                foo()
-            } -> (KaVariableSignature:
-          name = block
-          receiverType = null
-          returnType = MySealed.() -> kotlin.Unit
-          symbol = block: T.() -> R
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -508,6 +490,24 @@ KtNameReferenceExpression(356,360): 'with'
       typeArgumentsMapping = {
         T -> (MySealed),
         R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = receiver
+          receiverType = null
+          returnType = MySealed
+          symbol = receiver: T
+          contextParameters = []
+          callableId = null),
+        {
+                foo()
+            } -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = MySealed.() -> kotlin.Unit
+          symbol = block: T.() -> R
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(360,376): '<MySealed, Unit>'
@@ -560,7 +560,6 @@ KtBlockExpression(403,408): 'foo()'
 
 KtCallExpression(403,408): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = [
       KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -604,11 +603,11 @@ KtCallExpression(403,408): 'foo()'
       ]
       callableId = /foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(403,406): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -652,6 +651,7 @@ KtNameReferenceExpression(403,406): 'foo'
         ]
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(406,408): '()'
   null
@@ -715,24 +715,6 @@ KtBlockExpression(501,560): '{'
 
 KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      EnumValue1 -> (KaVariableSignature:
-        name = receiver
-        receiverType = null
-        returnType = MyEnum
-        symbol = receiver: T
-        contextParameters = []
-        callableId = null),
-      {
-              "".a
-          } -> (KaVariableSignature:
-        name = block
-        receiverType = null
-        returnType = MyEnum.() -> kotlin.Unit
-        symbol = block: T.() -> R
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -762,28 +744,28 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
       T -> (MyEnum),
       R -> (kotlin.Unit)
     }
+    valueArgumentMapping = {
+      EnumValue1 -> (KaVariableSignature:
+        name = receiver
+        receiverType = null
+        returnType = MyEnum
+        symbol = receiver: T
+        contextParameters = []
+        callableId = null),
+      {
+              "".a
+          } -> (KaVariableSignature:
+        name = block
+        receiverType = null
+        returnType = MyEnum.() -> kotlin.Unit
+        symbol = block: T.() -> R
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(507,511): 'with'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = receiver
-          receiverType = null
-          returnType = MyEnum
-          symbol = receiver: T
-          contextParameters = []
-          callableId = null),
-        {
-                "".a
-            } -> (KaVariableSignature:
-          name = block
-          receiverType = null
-          returnType = MyEnum.() -> kotlin.Unit
-          symbol = block: T.() -> R
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -812,6 +794,24 @@ KtNameReferenceExpression(507,511): 'with'
       typeArgumentsMapping = {
         T -> (MyEnum),
         R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = receiver
+          receiverType = null
+          returnType = MyEnum
+          symbol = receiver: T
+          contextParameters = []
+          callableId = null),
+        {
+                "".a
+            } -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = MyEnum.() -> kotlin.Unit
+          symbol = block: T.() -> R
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(511,525): '<MyEnum, Unit>'

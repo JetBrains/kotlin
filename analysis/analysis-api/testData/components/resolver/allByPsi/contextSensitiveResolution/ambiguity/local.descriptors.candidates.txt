@@ -31,7 +31,6 @@ KtSuperTypeList(114,122): 'Sealed()'
 KtSuperTypeCallEntry(114,122): 'Sealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -44,12 +43,12 @@ KtSuperTypeCallEntry(114,122): 'Sealed()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(114,120): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -62,6 +61,7 @@ KtConstructorCalleeExpression(114,120): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(114,120): 'Sealed'
@@ -73,7 +73,6 @@ KtUserType(114,120): 'Sealed'
 KtNameReferenceExpression(114,120): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -86,6 +85,7 @@ KtNameReferenceExpression(114,120): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(120,122): '()'
@@ -121,7 +121,6 @@ KtSuperTypeList(154,162): 'Sealed()'
 KtSuperTypeCallEntry(154,162): 'Sealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -134,12 +133,12 @@ KtSuperTypeCallEntry(154,162): 'Sealed()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(154,160): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -152,6 +151,7 @@ KtConstructorCalleeExpression(154,160): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(154,160): 'Sealed'
@@ -163,7 +163,6 @@ KtUserType(154,160): 'Sealed'
 KtNameReferenceExpression(154,160): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -176,6 +175,7 @@ KtNameReferenceExpression(154,160): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(160,162): '()'
@@ -193,7 +193,6 @@ KtSuperTypeList(183,191): 'Sealed()'
 KtSuperTypeCallEntry(183,191): 'Sealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -206,12 +205,12 @@ KtSuperTypeCallEntry(183,191): 'Sealed()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(183,189): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -224,6 +223,7 @@ KtConstructorCalleeExpression(183,189): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(183,189): 'Sealed'
@@ -235,7 +235,6 @@ KtUserType(183,189): 'Sealed'
 KtNameReferenceExpression(183,189): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -248,6 +247,7 @@ KtNameReferenceExpression(183,189): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(189,191): '()'
@@ -283,7 +283,6 @@ KtSuperTypeList(223,231): 'Sealed()'
 KtSuperTypeCallEntry(223,231): 'Sealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -296,12 +295,12 @@ KtSuperTypeCallEntry(223,231): 'Sealed()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(223,229): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -314,6 +313,7 @@ KtConstructorCalleeExpression(223,229): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(223,229): 'Sealed'
@@ -325,7 +325,6 @@ KtUserType(223,229): 'Sealed'
 KtNameReferenceExpression(223,229): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -338,6 +337,7 @@ KtNameReferenceExpression(223,229): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(229,231): '()'
@@ -379,7 +379,6 @@ KtSuperTypeList(278,286): 'Sealed()'
 KtSuperTypeCallEntry(278,286): 'Sealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -392,12 +391,12 @@ KtSuperTypeCallEntry(278,286): 'Sealed()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(278,284): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -410,6 +409,7 @@ KtConstructorCalleeExpression(278,284): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(278,284): 'Sealed'
@@ -421,7 +421,6 @@ KtUserType(278,284): 'Sealed'
 KtNameReferenceExpression(278,284): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -434,6 +433,7 @@ KtNameReferenceExpression(278,284): 'Sealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(284,286): '()'

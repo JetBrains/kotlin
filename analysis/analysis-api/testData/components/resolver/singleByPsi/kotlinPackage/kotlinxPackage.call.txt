@@ -1,7 +1,6 @@
 KtNameReferenceExpression(52,55): 'bar'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -13,3 +12,4 @@ KtNameReferenceExpression(52,55): 'bar'
         contextParameters = []
         callableId = kotlinx/pckg/bar
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

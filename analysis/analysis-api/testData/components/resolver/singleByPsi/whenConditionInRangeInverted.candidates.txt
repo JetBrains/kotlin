@@ -1,15 +1,6 @@
 KtWhenConditionInRange(177,190): '!in MyClass()'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = str
-          receiverType = null
-          returnType = kotlin.String
-          symbol = str: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass()
@@ -32,20 +23,20 @@ KtWhenConditionInRange(177,190): '!in MyClass()'
         contextParameters = []
         callableId = /MyClass.contains
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for 'fun contains(str: String): Boolean'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -69,5 +60,14 @@ KtWhenConditionInRange(177,190): '!in MyClass()'
         callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true

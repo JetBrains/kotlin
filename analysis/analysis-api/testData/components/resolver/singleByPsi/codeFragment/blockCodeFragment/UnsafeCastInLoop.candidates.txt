@@ -1,7 +1,6 @@
 KtNameReferenceExpression(218,221): 'inc'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = num
@@ -16,5 +15,6 @@ KtNameReferenceExpression(218,221): 'inc'
         contextParameters = []
         callableId = kotlin/Int.inc
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNSAFE_CALL: Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'Int?'.>
     isInBestCandidates = true

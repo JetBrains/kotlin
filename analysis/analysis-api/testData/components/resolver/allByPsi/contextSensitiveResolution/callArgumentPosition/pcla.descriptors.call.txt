@@ -138,7 +138,6 @@ KtNameReferenceExpression(253,254): 'S'
 
 KtCallExpression(257,263): 'TODO()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -150,11 +149,11 @@ KtCallExpression(257,263): 'TODO()'
       contextParameters = []
       callableId = kotlin/TODO
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(257,261): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -166,6 +165,7 @@ KtNameReferenceExpression(257,261): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(261,263): '()'
   null
@@ -193,18 +193,6 @@ KtBlockExpression(284,492): '{'
 
 KtCallExpression(290,340): 'generate {'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      {
-              yield(m)
-              yield(X)
-          } -> (KaVariableSignature:
-        name = g
-        receiverType = null
-        returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-        symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -226,22 +214,22 @@ KtCallExpression(290,340): 'generate {'
     typeArgumentsMapping = {
       S -> (MyEnum)
     }
+    valueArgumentMapping = {
+      {
+              yield(m)
+              yield(X)
+          } -> (KaVariableSignature:
+        name = g
+        receiverType = null
+        returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+        symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(290,298): 'generate'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                yield(m)
-                yield(X)
-            } -> (KaVariableSignature:
-          name = g
-          receiverType = null
-          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -263,6 +251,18 @@ KtNameReferenceExpression(290,298): 'generate'
       typeArgumentsMapping = {
         S -> (MyEnum)
       }
+      valueArgumentMapping = {
+        {
+                yield(m)
+                yield(X)
+            } -> (KaVariableSignature:
+          name = g
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
 
 KtLambdaArgument(299,340): '{'
   null
@@ -278,15 +278,6 @@ KtBlockExpression(309,334): 'yield(m)'
 
 KtCallExpression(309,317): 'yield(m)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      m -> (KaVariableSignature:
-        name = t
-        receiverType = null
-        returnType = MyEnum
-        symbol = t: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -333,19 +324,19 @@ KtCallExpression(309,317): 'yield(m)'
       contextParameters = []
       callableId = /Controller.yield
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      m -> (KaVariableSignature:
+        name = t
+        receiverType = null
+        returnType = MyEnum
+        symbol = t: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(309,314): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -392,6 +383,15 @@ KtNameReferenceExpression(309,314): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(314,317): '(m)'
   null
@@ -418,15 +418,6 @@ KtNameReferenceExpression(315,316): 'm'
 
 KtCallExpression(326,334): 'yield(X)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      X -> (KaVariableSignature:
-        name = t
-        receiverType = null
-        returnType = MyEnum
-        symbol = t: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -473,19 +464,19 @@ KtCallExpression(326,334): 'yield(X)'
       contextParameters = []
       callableId = /Controller.yield
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      X -> (KaVariableSignature:
+        name = t
+        receiverType = null
+        returnType = MyEnum
+        symbol = t: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(326,331): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -532,6 +523,15 @@ KtNameReferenceExpression(326,331): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(331,334): '(X)'
   null
@@ -561,18 +561,6 @@ KtNameReferenceExpression(332,333): 'X'
 
 KtCallExpression(346,396): 'generate {'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      {
-              yield(X)
-              yield(m)
-          } -> (KaVariableSignature:
-        name = g
-        receiverType = null
-        returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-        symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -594,22 +582,22 @@ KtCallExpression(346,396): 'generate {'
     typeArgumentsMapping = {
       S -> (MyEnum)
     }
+    valueArgumentMapping = {
+      {
+              yield(X)
+              yield(m)
+          } -> (KaVariableSignature:
+        name = g
+        receiverType = null
+        returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+        symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(346,354): 'generate'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                yield(X)
-                yield(m)
-            } -> (KaVariableSignature:
-          name = g
-          receiverType = null
-          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -631,6 +619,18 @@ KtNameReferenceExpression(346,354): 'generate'
       typeArgumentsMapping = {
         S -> (MyEnum)
       }
+      valueArgumentMapping = {
+        {
+                yield(X)
+                yield(m)
+            } -> (KaVariableSignature:
+          name = g
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
 
 KtLambdaArgument(355,396): '{'
   null
@@ -646,15 +646,6 @@ KtBlockExpression(365,390): 'yield(X)'
 
 KtCallExpression(365,373): 'yield(X)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      X -> (KaVariableSignature:
-        name = t
-        receiverType = null
-        returnType = MyEnum
-        symbol = t: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -701,19 +692,19 @@ KtCallExpression(365,373): 'yield(X)'
       contextParameters = []
       callableId = /Controller.yield
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      X -> (KaVariableSignature:
+        name = t
+        receiverType = null
+        returnType = MyEnum
+        symbol = t: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(365,370): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -760,6 +751,15 @@ KtNameReferenceExpression(365,370): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(370,373): '(X)'
   null
@@ -789,15 +789,6 @@ KtNameReferenceExpression(371,372): 'X'
 
 KtCallExpression(382,390): 'yield(m)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      m -> (KaVariableSignature:
-        name = t
-        receiverType = null
-        returnType = MyEnum
-        symbol = t: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -844,19 +835,19 @@ KtCallExpression(382,390): 'yield(m)'
       contextParameters = []
       callableId = /Controller.yield
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      m -> (KaVariableSignature:
+        name = t
+        receiverType = null
+        returnType = MyEnum
+        symbol = t: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(382,387): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -903,6 +894,15 @@ KtNameReferenceExpression(382,387): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(387,390): '(m)'
   null
@@ -941,17 +941,6 @@ KtNameReferenceExpression(409,415): 'MyEnum'
 
 KtCallExpression(418,451): 'generate {'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      {
-              yield(X)
-          } -> (KaVariableSignature:
-        name = g
-        receiverType = null
-        returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-        symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -973,21 +962,21 @@ KtCallExpression(418,451): 'generate {'
     typeArgumentsMapping = {
       S -> (MyEnum)
     }
+    valueArgumentMapping = {
+      {
+              yield(X)
+          } -> (KaVariableSignature:
+        name = g
+        receiverType = null
+        returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+        symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(418,426): 'generate'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                yield(X)
-            } -> (KaVariableSignature:
-          name = g
-          receiverType = null
-          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1009,6 +998,17 @@ KtNameReferenceExpression(418,426): 'generate'
       typeArgumentsMapping = {
         S -> (MyEnum)
       }
+      valueArgumentMapping = {
+        {
+                yield(X)
+            } -> (KaVariableSignature:
+          name = g
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
 
 KtLambdaArgument(427,451): '{'
   null
@@ -1024,15 +1024,6 @@ KtBlockExpression(437,445): 'yield(X)'
 
 KtCallExpression(437,445): 'yield(X)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      X -> (KaVariableSignature:
-        name = t
-        receiverType = null
-        returnType = MyEnum
-        symbol = t: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -1079,19 +1070,19 @@ KtCallExpression(437,445): 'yield(X)'
       contextParameters = []
       callableId = /Controller.yield
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      X -> (KaVariableSignature:
+        name = t
+        receiverType = null
+        returnType = MyEnum
+        symbol = t: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(437,442): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -1138,6 +1129,15 @@ KtNameReferenceExpression(437,442): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(442,445): '(X)'
   null
@@ -1154,17 +1154,6 @@ KtCallExpression(457,490): 'generate {'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          {
-                  yield(X)
-              } -> (KaVariableSignature:
-            name = g
-            receiverType = null
-            returnType = kotlin.coroutines.SuspendFunction1<Controller<ERROR_TYPE>, kotlin.Unit>
-            symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1185,6 +1174,17 @@ KtCallExpression(457,490): 'generate {'
           callableId = /generate
         typeArgumentsMapping = {
           S -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          {
+                  yield(X)
+              } -> (KaVariableSignature:
+            name = g
+            receiverType = null
+            returnType = kotlin.coroutines.SuspendFunction1<Controller<ERROR_TYPE>, kotlin.Unit>
+            symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generate>
@@ -1193,17 +1193,6 @@ KtNameReferenceExpression(457,465): 'generate'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          {
-                  yield(X)
-              } -> (KaVariableSignature:
-            name = g
-            receiverType = null
-            returnType = kotlin.coroutines.SuspendFunction1<Controller<ERROR_TYPE>, kotlin.Unit>
-            symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1224,6 +1213,17 @@ KtNameReferenceExpression(457,465): 'generate'
           callableId = /generate
         typeArgumentsMapping = {
           S -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          {
+                  yield(X)
+              } -> (KaVariableSignature:
+            name = g
+            receiverType = null
+            returnType = kotlin.coroutines.SuspendFunction1<Controller<ERROR_TYPE>, kotlin.Unit>
+            symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generate>
@@ -1242,15 +1242,6 @@ KtBlockExpression(476,484): 'yield(X)'
 
 KtCallExpression(476,484): 'yield(X)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      X -> (KaVariableSignature:
-        name = t
-        receiverType = null
-        returnType = TypeVariable(S)
-        symbol = t: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -1297,19 +1288,19 @@ KtCallExpression(476,484): 'yield(X)'
       contextParameters = []
       callableId = /Controller.yield
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      X -> (KaVariableSignature:
+        name = t
+        receiverType = null
+        returnType = TypeVariable(S)
+        symbol = t: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(476,481): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = TypeVariable(S)
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -1356,6 +1347,15 @@ KtNameReferenceExpression(476,481): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = TypeVariable(S)
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(481,484): '(X)'
   null

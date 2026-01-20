@@ -1,15 +1,6 @@
 KtNameReferenceExpression(31,32): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        42 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -30,4 +21,13 @@ KtNameReferenceExpression(31,32): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        42 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

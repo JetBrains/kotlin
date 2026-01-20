@@ -37,7 +37,6 @@ KtSuperTypeList(166,175): 'MyClass()'
 KtSuperTypeCallEntry(166,175): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -50,12 +49,12 @@ KtSuperTypeCallEntry(166,175): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(166,173): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -68,6 +67,7 @@ KtConstructorCalleeExpression(166,173): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(166,173): 'MyClass'
@@ -166,15 +166,6 @@ KtProperty(301,340): 'val r1 = 1 infixEnumConsumer EnumValue1'
 KtBinaryExpression(310,340): '1 infixEnumConsumer EnumValue1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -197,6 +188,15 @@ KtBinaryExpression(310,340): '1 infixEnumConsumer EnumValue1'
         contextParameters = []
         callableId = /infixEnumConsumer
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(310,311): '1'
@@ -205,15 +205,6 @@ KtConstantExpression(310,311): '1'
 KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -236,6 +227,15 @@ KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
         contextParameters = []
         callableId = /infixEnumConsumer
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(330,340): 'EnumValue1'
@@ -265,15 +265,6 @@ KtProperty(345,389): 'val r2 = 1 infixEnumConsumer InheritorObject'
 KtBinaryExpression(354,389): '1 infixEnumConsumer InheritorObject'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -296,6 +287,15 @@ KtBinaryExpression(354,389): '1 infixEnumConsumer InheritorObject'
         contextParameters = []
         callableId = /infixEnumConsumer
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(354,355): '1'
@@ -304,15 +304,6 @@ KtConstantExpression(354,355): '1'
 KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -335,6 +326,15 @@ KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
         contextParameters = []
         callableId = /infixEnumConsumer
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(374,389): 'InheritorObject'
@@ -346,15 +346,6 @@ KtProperty(394,434): 'val r3 = 1 infixConsumer InheritorObject'
 KtBinaryExpression(403,434): '1 infixConsumer InheritorObject'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -377,6 +368,15 @@ KtBinaryExpression(403,434): '1 infixConsumer InheritorObject'
         contextParameters = []
         callableId = /infixConsumer
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(403,404): '1'
@@ -385,15 +385,6 @@ KtConstantExpression(403,404): '1'
 KtOperationReferenceExpression(405,418): 'infixConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -416,12 +407,20 @@ KtOperationReferenceExpression(405,418): 'infixConsumer'
         contextParameters = []
         callableId = /infixConsumer
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(419,434): 'InheritorObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -433,5 +432,6 @@ KtNameReferenceExpression(419,434): 'InheritorObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false

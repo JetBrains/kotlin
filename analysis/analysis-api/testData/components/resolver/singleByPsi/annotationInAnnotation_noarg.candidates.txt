@@ -1,7 +1,6 @@
 KtCallExpression(131,143): 'Annotation()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -21,4 +20,5 @@ KtCallExpression(131,143): 'Annotation()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

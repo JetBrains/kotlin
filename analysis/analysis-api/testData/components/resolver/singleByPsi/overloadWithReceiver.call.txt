@@ -1,6 +1,5 @@
 KtCallExpression(50,57): 'myRun()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaImplicitReceiverValue:
@@ -14,3 +13,4 @@ KtCallExpression(50,57): 'myRun()'
       contextParameters = []
       callableId = foo/myRun
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

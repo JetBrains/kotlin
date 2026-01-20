@@ -1,7 +1,6 @@
 KtNameReferenceExpression(140,151): 'materialize'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -16,3 +15,4 @@ KtNameReferenceExpression(140,151): 'materialize'
         contextParameters = []
         callableId = test/MyClass.materialize
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

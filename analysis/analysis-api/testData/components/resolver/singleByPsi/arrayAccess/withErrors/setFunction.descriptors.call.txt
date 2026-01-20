@@ -2,22 +2,6 @@ KtArrayAccessExpression(59,63): '1[2]'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          2 -> (KaVariableSignature:
-            name = index
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = index: kotlin.Int
-            contextParameters = []
-            callableId = null),
-          42 -> (KaVariableSignature:
-            name = value
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = value: kotlin.Int
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -47,5 +31,21 @@ KtArrayAccessExpression(59,63): '1[2]'
           contextParameters = []
           callableId = /set
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          2 -> (KaVariableSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            contextParameters = []
+            callableId = null),
+          42 -> (KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with set>

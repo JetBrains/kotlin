@@ -1,7 +1,6 @@
 KtAnnotationEntry(23,37): '@receiver:Anno'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -13,4 +12,5 @@ KtAnnotationEntry(23,37): '@receiver:Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

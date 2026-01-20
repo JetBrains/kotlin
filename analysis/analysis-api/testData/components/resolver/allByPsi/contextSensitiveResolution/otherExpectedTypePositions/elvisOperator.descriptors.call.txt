@@ -24,7 +24,6 @@ KtSuperTypeList(128,137): 'MyClass()'
 
 KtSuperTypeCallEntry(128,137): 'MyClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -37,11 +36,11 @@ KtSuperTypeCallEntry(128,137): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(128,135): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -54,6 +53,7 @@ KtConstructorCalleeExpression(128,135): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(128,135): 'MyClass'
   null
@@ -64,7 +64,6 @@ KtUserType(128,135): 'MyClass'
 KtNameReferenceExpression(128,135): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -77,6 +76,7 @@ KtNameReferenceExpression(128,135): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(135,137): '()'
   null
@@ -104,7 +104,6 @@ KtNameReferenceExpression(187,194): 'MyClass'
 
 KtCallExpression(197,206): 'MyClass()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -116,11 +115,11 @@ KtCallExpression(197,206): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(197,204): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -132,6 +131,7 @@ KtNameReferenceExpression(197,204): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(204,206): '()'
   null
@@ -304,15 +304,6 @@ KtCallExpression(571,619): 'receive<MyClass>(NestedInheritor ?: myClassProp)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          NestedInheritor ?: myClassProp -> (KaVariableSignature:
-            name = e
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = e: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -333,6 +324,15 @@ KtCallExpression(571,619): 'receive<MyClass>(NestedInheritor ?: myClassProp)'
           callableId = /receive
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          NestedInheritor ?: myClassProp -> (KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = e: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -341,15 +341,6 @@ KtNameReferenceExpression(571,578): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          NestedInheritor ?: myClassProp -> (KaVariableSignature:
-            name = e
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = e: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -370,6 +361,15 @@ KtNameReferenceExpression(571,578): 'receive'
           callableId = /receive
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          NestedInheritor ?: myClassProp -> (KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = e: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -415,15 +415,6 @@ KtCallExpression(624,671): 'receive<MyClass>(NestedInheritor ?: stringProp)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          NestedInheritor ?: stringProp -> (KaVariableSignature:
-            name = e
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = e: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -444,6 +435,15 @@ KtCallExpression(624,671): 'receive<MyClass>(NestedInheritor ?: stringProp)'
           callableId = /receive
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          NestedInheritor ?: stringProp -> (KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = e: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -452,15 +452,6 @@ KtNameReferenceExpression(624,631): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          NestedInheritor ?: stringProp -> (KaVariableSignature:
-            name = e
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = e: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -481,6 +472,15 @@ KtNameReferenceExpression(624,631): 'receive'
           callableId = /receive
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          NestedInheritor ?: stringProp -> (KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = e: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -526,15 +526,6 @@ KtCallExpression(676,733): 'receive<MyClass>(NestedInheritor ?: getNestedInherit
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          NestedInheritor ?: getNestedInheritor() -> (KaVariableSignature:
-            name = e
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = e: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -555,6 +546,15 @@ KtCallExpression(676,733): 'receive<MyClass>(NestedInheritor ?: getNestedInherit
           callableId = /receive
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          NestedInheritor ?: getNestedInheritor() -> (KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = e: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -563,15 +563,6 @@ KtNameReferenceExpression(676,683): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          NestedInheritor ?: getNestedInheritor() -> (KaVariableSignature:
-            name = e
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = e: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -592,6 +583,15 @@ KtNameReferenceExpression(676,683): 'receive'
           callableId = /receive
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          NestedInheritor ?: getNestedInheritor() -> (KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = e: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>

@@ -73,7 +73,6 @@ KtBlockExpression(161,253): '{'
 KtDotQualifiedExpression(167,185): 'MyAlias.function()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -88,6 +87,7 @@ KtDotQualifiedExpression(167,185): 'MyAlias.function()'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(167,174): 'MyAlias'
@@ -96,7 +96,6 @@ KtNameReferenceExpression(167,174): 'MyAlias'
 KtCallExpression(175,185): 'function()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -111,12 +110,12 @@ KtCallExpression(175,185): 'function()'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(175,183): 'function'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -131,6 +130,7 @@ KtNameReferenceExpression(175,183): 'function'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(183,185): '()'
@@ -184,7 +184,6 @@ KtNameReferenceExpression(198,206): 'property'
 KtCallableReferenceExpression(212,229): 'MyAlias::function'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -199,6 +198,7 @@ KtCallableReferenceExpression(212,229): 'MyAlias::function'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(212,219): 'MyAlias'
@@ -207,7 +207,6 @@ KtNameReferenceExpression(212,219): 'MyAlias'
 KtNameReferenceExpression(221,229): 'function'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -222,6 +221,7 @@ KtNameReferenceExpression(221,229): 'function'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtCallableReferenceExpression(234,251): 'MyAlias::property'

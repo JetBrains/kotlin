@@ -39,15 +39,6 @@ KtBlockExpression(72,300): '{'
 
 KtCallExpression(78,104): 'print(javaClass.something)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      javaClass.something -> (KaVariableSignature:
-        name = message
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = message: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -67,19 +58,19 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       contextParameters = []
       callableId = kotlin/io/print
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      javaClass.something -> (KaVariableSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = message: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(78,83): 'print'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        javaClass.something -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -99,6 +90,15 @@ KtNameReferenceExpression(78,83): 'print'
         contextParameters = []
         callableId = kotlin/io/print
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(83,104): '(javaClass.something)'
   null
@@ -274,7 +274,6 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
         kind = PLUS_ASSIGN
         operand = 1
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -297,6 +296,7 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
             contextParameters = []
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -379,7 +379,6 @@ KtOperationReferenceExpression(157,159): '+='
         kind = PLUS_ASSIGN
         operand = 1
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -402,6 +401,7 @@ KtOperationReferenceExpression(157,159): '+='
             contextParameters = []
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -429,7 +429,6 @@ KtPostfixExpression(166,187): 'javaClass.something++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -444,6 +443,7 @@ KtPostfixExpression(166,187): 'javaClass.something++'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -526,7 +526,6 @@ KtOperationReferenceExpression(185,187): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -541,6 +540,7 @@ KtOperationReferenceExpression(185,187): '++'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -566,7 +566,6 @@ KtPrefixExpression(192,213): '--javaClass.something'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -581,6 +580,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
             contextParameters = []
             callableId = kotlin/Int.dec
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = PREFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -606,7 +606,6 @@ KtOperationReferenceExpression(192,194): '--'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -621,6 +620,7 @@ KtOperationReferenceExpression(192,194): '--'
             contextParameters = []
             callableId = kotlin/Int.dec
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = PREFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -703,7 +703,6 @@ KtPostfixExpression(219,230): 'something++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
@@ -718,6 +717,7 @@ KtPostfixExpression(219,230): 'something++'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -801,7 +801,6 @@ KtOperationReferenceExpression(228,230): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
@@ -816,6 +815,7 @@ KtOperationReferenceExpression(228,230): '++'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -860,7 +860,6 @@ KtPostfixExpression(235,248): '(something)++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = (something)
@@ -875,6 +874,7 @@ KtPostfixExpression(235,248): '(something)++'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -961,7 +961,6 @@ KtOperationReferenceExpression(246,248): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = (something)
@@ -976,6 +975,7 @@ KtOperationReferenceExpression(246,248): '++'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []

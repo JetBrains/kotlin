@@ -1,7 +1,6 @@
 KtDotQualifiedExpression(73,80): 'f.foo()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -26,5 +25,6 @@ KtDotQualifiedExpression(73,80): 'f.foo()'
       typeArgumentsMapping = {
         A -> (kotlin.String)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
     isInBestCandidates = true

@@ -55,15 +55,6 @@ KtDeclarationModifierList(157,163): '@A1(X)'
 KtAnnotationEntry(157,163): '@A1(X)'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = value: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -83,20 +74,20 @@ KtAnnotationEntry(157,163): '@A1(X)'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(158,160): 'A1'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = value: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -116,6 +107,15 @@ KtConstructorCalleeExpression(158,160): 'A1'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(158,160): 'A1'
@@ -127,15 +127,6 @@ KtUserType(158,160): 'A1'
 KtNameReferenceExpression(158,160): 'A1'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = value: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -155,6 +146,15 @@ KtNameReferenceExpression(158,160): 'A1'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(160,163): '(X)'
@@ -208,22 +208,6 @@ KtDeclarationModifierList(233,242): '@A2(X, Y)'
 KtAnnotationEntry(233,242): '@A2(X, Y)'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg value: MyEnum
-          contextParameters = []
-          callableId = null),
-        Y -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg value: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -243,27 +227,27 @@ KtAnnotationEntry(233,242): '@A2(X, Y)'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null),
+        Y -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(234,236): 'A2'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg value: MyEnum
-          contextParameters = []
-          callableId = null),
-        Y -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg value: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -283,6 +267,22 @@ KtConstructorCalleeExpression(234,236): 'A2'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null),
+        Y -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(234,236): 'A2'
@@ -294,22 +294,6 @@ KtUserType(234,236): 'A2'
 KtNameReferenceExpression(234,236): 'A2'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg value: MyEnum
-          contextParameters = []
-          callableId = null),
-        Y -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg value: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -329,6 +313,22 @@ KtNameReferenceExpression(234,236): 'A2'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null),
+        Y -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(236,242): '(X, Y)'
@@ -361,15 +361,6 @@ KtDeclarationModifierList(259,271): '@A2(*[X, Y])'
 KtAnnotationEntry(259,271): '@A2(*[X, Y])'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        [X, Y] -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg value: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -389,20 +380,20 @@ KtAnnotationEntry(259,271): '@A2(*[X, Y])'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [X, Y] -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(260,262): 'A2'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        [X, Y] -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg value: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -422,6 +413,15 @@ KtConstructorCalleeExpression(260,262): 'A2'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [X, Y] -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(260,262): 'A2'
@@ -433,15 +433,6 @@ KtUserType(260,262): 'A2'
 KtNameReferenceExpression(260,262): 'A2'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        [X, Y] -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg value: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -461,6 +452,15 @@ KtNameReferenceExpression(260,262): 'A2'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [X, Y] -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg value: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(262,271): '(*[X, Y])'
@@ -472,22 +472,6 @@ KtValueArgument(263,270): '*[X, Y]'
 KtCollectionLiteralExpression(264,270): '[X, Y]'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null),
-        Y -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -508,6 +492,22 @@ KtCollectionLiteralExpression(264,270): '[X, Y]'
         callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg elements: T
+          contextParameters = []
+          callableId = null),
+        Y -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg elements: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
     isInBestCandidates = true
@@ -572,15 +572,6 @@ KtDeclarationModifierList(342,350): '@A3([X])'
 KtAnnotationEntry(342,350): '@A3([X])'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        [X] -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Array<MyEnum>
-          symbol = value: kotlin.Array<MyEnum>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -600,20 +591,20 @@ KtAnnotationEntry(342,350): '@A3([X])'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [X] -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Array<MyEnum>
+          symbol = value: kotlin.Array<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(343,345): 'A3'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        [X] -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Array<MyEnum>
-          symbol = value: kotlin.Array<MyEnum>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -633,6 +624,15 @@ KtConstructorCalleeExpression(343,345): 'A3'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [X] -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Array<MyEnum>
+          symbol = value: kotlin.Array<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(343,345): 'A3'
@@ -644,15 +644,6 @@ KtUserType(343,345): 'A3'
 KtNameReferenceExpression(343,345): 'A3'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        [X] -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Array<MyEnum>
-          symbol = value: kotlin.Array<MyEnum>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -672,6 +663,15 @@ KtNameReferenceExpression(343,345): 'A3'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [X] -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Array<MyEnum>
+          symbol = value: kotlin.Array<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(345,350): '([X])'
@@ -683,15 +683,6 @@ KtValueArgument(346,349): '[X]'
 KtCollectionLiteralExpression(346,349): '[X]'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -712,6 +703,15 @@ KtCollectionLiteralExpression(346,349): '[X]'
         callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg elements: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
     isInBestCandidates = true
@@ -734,15 +734,6 @@ KtDeclarationModifierList(367,382): '@A3(arrayOf(X))'
 KtAnnotationEntry(367,382): '@A3(arrayOf(X))'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        arrayOf(X) -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Array<MyEnum>
-          symbol = value: kotlin.Array<MyEnum>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -762,20 +753,20 @@ KtAnnotationEntry(367,382): '@A3(arrayOf(X))'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        arrayOf(X) -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Array<MyEnum>
+          symbol = value: kotlin.Array<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(368,370): 'A3'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        arrayOf(X) -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Array<MyEnum>
-          symbol = value: kotlin.Array<MyEnum>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -795,6 +786,15 @@ KtConstructorCalleeExpression(368,370): 'A3'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        arrayOf(X) -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Array<MyEnum>
+          symbol = value: kotlin.Array<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(368,370): 'A3'
@@ -806,15 +806,6 @@ KtUserType(368,370): 'A3'
 KtNameReferenceExpression(368,370): 'A3'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        arrayOf(X) -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Array<MyEnum>
-          symbol = value: kotlin.Array<MyEnum>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -834,6 +825,15 @@ KtNameReferenceExpression(368,370): 'A3'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        arrayOf(X) -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Array<MyEnum>
+          symbol = value: kotlin.Array<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(370,382): '(arrayOf(X))'
@@ -845,15 +845,6 @@ KtValueArgument(371,381): 'arrayOf(X)'
 KtCallExpression(371,381): 'arrayOf(X)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -874,6 +865,15 @@ KtCallExpression(371,381): 'arrayOf(X)'
         callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = vararg elements: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
     isInBestCandidates = true
@@ -881,15 +881,6 @@ KtCallExpression(371,381): 'arrayOf(X)'
 KtNameReferenceExpression(371,378): 'arrayOf'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -910,6 +901,15 @@ KtNameReferenceExpression(371,378): 'arrayOf'
         callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = vararg elements: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
     isInBestCandidates = true
@@ -962,15 +962,6 @@ KtDeclarationModifierList(443,457): '@A4(MAX_VALUE)'
 KtAnnotationEntry(443,457): '@A4(MAX_VALUE)'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        MAX_VALUE -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = value: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -990,20 +981,20 @@ KtAnnotationEntry(443,457): '@A4(MAX_VALUE)'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        MAX_VALUE -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(444,446): 'A4'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        MAX_VALUE -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = value: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1023,6 +1014,15 @@ KtConstructorCalleeExpression(444,446): 'A4'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        MAX_VALUE -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(444,446): 'A4'
@@ -1034,15 +1034,6 @@ KtUserType(444,446): 'A4'
 KtNameReferenceExpression(444,446): 'A4'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        MAX_VALUE -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = value: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1062,6 +1053,15 @@ KtNameReferenceExpression(444,446): 'A4'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        MAX_VALUE -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(446,457): '(MAX_VALUE)'
@@ -1088,15 +1088,6 @@ KtDeclarationModifierList(473,528): '@Retention(RUNTIME)'
 KtAnnotationEntry(473,492): '@Retention(RUNTIME)'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        RUNTIME -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationRetention
-          symbol = value: kotlin.annotation.AnnotationRetention
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1116,20 +1107,20 @@ KtAnnotationEntry(473,492): '@Retention(RUNTIME)'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        RUNTIME -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationRetention
+          symbol = value: kotlin.annotation.AnnotationRetention
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(474,483): 'Retention'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        RUNTIME -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationRetention
-          symbol = value: kotlin.annotation.AnnotationRetention
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1149,6 +1140,15 @@ KtConstructorCalleeExpression(474,483): 'Retention'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        RUNTIME -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationRetention
+          symbol = value: kotlin.annotation.AnnotationRetention
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(474,483): 'Retention'
@@ -1160,15 +1160,6 @@ KtUserType(474,483): 'Retention'
 KtNameReferenceExpression(474,483): 'Retention'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        RUNTIME -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationRetention
-          symbol = value: kotlin.annotation.AnnotationRetention
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1188,6 +1179,15 @@ KtNameReferenceExpression(474,483): 'Retention'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        RUNTIME -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationRetention
+          symbol = value: kotlin.annotation.AnnotationRetention
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(483,492): '(RUNTIME)'
@@ -1202,22 +1202,6 @@ KtNameReferenceExpression(484,491): 'RUNTIME'
 KtAnnotationEntry(493,517): '@Target(CLASS, PROPERTY)'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        CLASS -> (KaVariableSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          contextParameters = []
-          callableId = null),
-        PROPERTY -> (KaVariableSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1237,27 +1221,27 @@ KtAnnotationEntry(493,517): '@Target(CLASS, PROPERTY)'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        CLASS -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null),
+        PROPERTY -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(494,500): 'Target'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        CLASS -> (KaVariableSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          contextParameters = []
-          callableId = null),
-        PROPERTY -> (KaVariableSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1277,6 +1261,22 @@ KtConstructorCalleeExpression(494,500): 'Target'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        CLASS -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null),
+        PROPERTY -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(494,500): 'Target'
@@ -1288,22 +1288,6 @@ KtUserType(494,500): 'Target'
 KtNameReferenceExpression(494,500): 'Target'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        CLASS -> (KaVariableSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          contextParameters = []
-          callableId = null),
-        PROPERTY -> (KaVariableSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1323,6 +1307,22 @@ KtNameReferenceExpression(494,500): 'Target'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        CLASS -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null),
+        PROPERTY -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(500,517): '(CLASS, PROPERTY)'
@@ -1349,7 +1349,6 @@ KtDeclarationModifierList(549,562): '@MyAnnotation'
 KtAnnotationEntry(549,562): '@MyAnnotation'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1361,12 +1360,12 @@ KtAnnotationEntry(549,562): '@MyAnnotation'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(550,562): 'MyAnnotation'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1378,6 +1377,7 @@ KtConstructorCalleeExpression(550,562): 'MyAnnotation'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(550,562): 'MyAnnotation'
@@ -1389,7 +1389,6 @@ KtUserType(550,562): 'MyAnnotation'
 KtNameReferenceExpression(550,562): 'MyAnnotation'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1401,6 +1400,7 @@ KtNameReferenceExpression(550,562): 'MyAnnotation'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(570,573): 'Int'
@@ -1424,7 +1424,6 @@ KtDeclarationModifierList(579,592): '@MyAnnotation'
 KtAnnotationEntry(579,592): '@MyAnnotation'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1436,12 +1435,12 @@ KtAnnotationEntry(579,592): '@MyAnnotation'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(580,592): 'MyAnnotation'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1453,6 +1452,7 @@ KtConstructorCalleeExpression(580,592): 'MyAnnotation'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(580,592): 'MyAnnotation'
@@ -1464,7 +1464,6 @@ KtUserType(580,592): 'MyAnnotation'
 KtNameReferenceExpression(580,592): 'MyAnnotation'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1476,6 +1475,7 @@ KtNameReferenceExpression(580,592): 'MyAnnotation'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNamedFunction(608,641): '@MyAnnotation'
@@ -1487,7 +1487,6 @@ KtDeclarationModifierList(608,621): '@MyAnnotation'
 KtAnnotationEntry(608,621): '@MyAnnotation'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1499,12 +1498,12 @@ KtAnnotationEntry(608,621): '@MyAnnotation'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(609,621): 'MyAnnotation'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1516,6 +1515,7 @@ KtConstructorCalleeExpression(609,621): 'MyAnnotation'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(609,621): 'MyAnnotation'
@@ -1527,7 +1527,6 @@ KtUserType(609,621): 'MyAnnotation'
 KtNameReferenceExpression(609,621): 'MyAnnotation'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1539,6 +1538,7 @@ KtNameReferenceExpression(609,621): 'MyAnnotation'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtParameterList(636,638): '()'

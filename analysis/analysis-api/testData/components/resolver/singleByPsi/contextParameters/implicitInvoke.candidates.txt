@@ -1,7 +1,6 @@
 KtCallExpression(117,127): 'thisProp()'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -48,4 +47,5 @@ KtCallExpression(117,127): 'thisProp()'
         ]
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

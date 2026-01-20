@@ -1,7 +1,6 @@
 KtConstructorDelegationReferenceExpression(136,136): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -14,4 +13,5 @@ KtConstructorDelegationReferenceExpression(136,136): ''
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

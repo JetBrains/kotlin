@@ -1,15 +1,6 @@
 KtConstructorDelegationCall(111,125): 'this(s.length)'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        s.length -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = p1: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -30,11 +21,19 @@ KtConstructorDelegationCall(111,125): 'this(s.length)'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        s.length -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p1: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -55,5 +54,6 @@ KtConstructorDelegationCall(111,125): 'this(s.length)'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
     isInBestCandidates = false

@@ -19,7 +19,26 @@ KtDeclarationModifierList(33,187): '@Target('
 KtAnnotationEntry(33,176): '@Target('
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         AnnotationTarget.TYPE_PARAMETER -> (KaVariableSignature:
           name = allowedTargets
           receiverType = null
@@ -49,31 +68,31 @@ KtAnnotationEntry(33,176): '@Target('
           contextParameters = []
           callableId = null)
       }
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.annotation.Target
-        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
-        valueParameters = [
-          KaVariableSignature:
-            name = allowedTargets
-            receiverType = null
-            returnType = kotlin.annotation.AnnotationTarget
-            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(34,40): 'Target'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         AnnotationTarget.TYPE_PARAMETER -> (KaVariableSignature:
           name = allowedTargets
           receiverType = null
@@ -103,25 +122,6 @@ KtConstructorCalleeExpression(34,40): 'Target'
           contextParameters = []
           callableId = null)
       }
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.annotation.Target
-        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
-        valueParameters = [
-          KaVariableSignature:
-            name = allowedTargets
-            receiverType = null
-            returnType = kotlin.annotation.AnnotationTarget
-            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(34,40): 'Target'
@@ -163,7 +163,6 @@ KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -175,6 +174,7 @@ KtNameReferenceExpression(46,62): 'AnnotationTarget'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -226,7 +226,6 @@ KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
 KtNameReferenceExpression(83,99): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -238,6 +237,7 @@ KtNameReferenceExpression(83,99): 'AnnotationTarget'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -289,7 +289,6 @@ KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
 KtNameReferenceExpression(114,130): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -301,6 +300,7 @@ KtNameReferenceExpression(114,130): 'AnnotationTarget'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -352,7 +352,6 @@ KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
 KtNameReferenceExpression(152,168): 'AnnotationTarget'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -364,6 +363,7 @@ KtNameReferenceExpression(152,168): 'AnnotationTarget'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -430,15 +430,6 @@ KtDeclarationModifierList(259,282): '@Anno("function $prop")'
 KtAnnotationEntry(259,282): '@Anno("function $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "function $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -458,20 +449,20 @@ KtAnnotationEntry(259,282): '@Anno("function $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "function $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(260,264): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "function $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -491,6 +482,15 @@ KtConstructorCalleeExpression(260,264): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "function $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(260,264): 'Anno'
@@ -547,15 +547,6 @@ KtDeclarationModifierList(288,317): '@Anno("type parameter $prop")'
 KtAnnotationEntry(288,317): '@Anno("type parameter $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "type parameter $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -575,20 +566,20 @@ KtAnnotationEntry(288,317): '@Anno("type parameter $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "type parameter $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(289,293): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "type parameter $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -608,6 +599,15 @@ KtConstructorCalleeExpression(289,293): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "type parameter $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(289,293): 'Anno'
@@ -661,15 +661,6 @@ KtDeclarationModifierList(322,347): '@Anno("bound type $prop")'
 KtAnnotationEntry(322,347): '@Anno("bound type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "bound type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -689,20 +680,20 @@ KtAnnotationEntry(322,347): '@Anno("bound type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "bound type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(323,327): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "bound type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -722,6 +713,15 @@ KtConstructorCalleeExpression(323,327): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "bound type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(323,327): 'Anno'
@@ -787,15 +787,6 @@ KtDeclarationModifierList(353,385): '@Anno("nested bound type $prop")'
 KtAnnotationEntry(353,385): '@Anno("nested bound type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested bound type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -815,20 +806,20 @@ KtAnnotationEntry(353,385): '@Anno("nested bound type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested bound type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(354,358): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested bound type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -848,6 +839,15 @@ KtConstructorCalleeExpression(354,358): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested bound type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(354,358): 'Anno'
@@ -907,15 +907,6 @@ KtDeclarationModifierList(395,456): '@receiver:Anno("receiver $prop") @Anno("rec
 KtAnnotationEntry(395,427): '@receiver:Anno("receiver $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "receiver $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -935,6 +926,15 @@ KtAnnotationEntry(395,427): '@receiver:Anno("receiver $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "receiver $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtAnnotationUseSiteTarget(396,404): 'receiver'
@@ -943,15 +943,6 @@ KtAnnotationUseSiteTarget(396,404): 'receiver'
 KtConstructorCalleeExpression(405,409): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "receiver $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -971,6 +962,15 @@ KtConstructorCalleeExpression(405,409): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "receiver $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(405,409): 'Anno'
@@ -1018,15 +1018,6 @@ KtNameReferenceExpression(421,425): 'prop'
 KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "receiver type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1046,20 +1037,20 @@ KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "receiver type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(429,433): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "receiver type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1079,6 +1070,15 @@ KtConstructorCalleeExpression(429,433): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "receiver type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(429,433): 'Anno'
@@ -1144,15 +1144,6 @@ KtDeclarationModifierList(462,497): '@Anno("nested receiver type $prop")'
 KtAnnotationEntry(462,497): '@Anno("nested receiver type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested receiver type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1172,20 +1163,20 @@ KtAnnotationEntry(462,497): '@Anno("nested receiver type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested receiver type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(463,467): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested receiver type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1205,6 +1196,15 @@ KtConstructorCalleeExpression(463,467): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested receiver type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(463,467): 'Anno'
@@ -1270,15 +1270,6 @@ KtDeclarationModifierList(503,545): '@Anno("nested nested receiver type $prop")'
 KtAnnotationEntry(503,545): '@Anno("nested nested receiver type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested nested receiver type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1298,20 +1289,20 @@ KtAnnotationEntry(503,545): '@Anno("nested nested receiver type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested nested receiver type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(504,508): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested nested receiver type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1331,6 +1322,15 @@ KtConstructorCalleeExpression(504,508): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested nested receiver type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(504,508): 'Anno'
@@ -1393,15 +1393,6 @@ KtDeclarationModifierList(561,585): '@Anno("parameter $prop")'
 KtAnnotationEntry(561,585): '@Anno("parameter $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "parameter $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1421,20 +1412,20 @@ KtAnnotationEntry(561,585): '@Anno("parameter $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "parameter $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(562,566): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "parameter $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1454,6 +1445,15 @@ KtConstructorCalleeExpression(562,566): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "parameter $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(562,566): 'Anno'
@@ -1507,15 +1507,6 @@ KtDeclarationModifierList(593,622): '@Anno("parameter type $prop")'
 KtAnnotationEntry(593,622): '@Anno("parameter type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1535,20 +1526,20 @@ KtAnnotationEntry(593,622): '@Anno("parameter type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(594,598): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1568,6 +1559,15 @@ KtConstructorCalleeExpression(594,598): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(594,598): 'Anno'
@@ -1633,15 +1633,6 @@ KtDeclarationModifierList(634,670): '@Anno("nested parameter type $prop")'
 KtAnnotationEntry(634,670): '@Anno("nested parameter type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1661,20 +1652,20 @@ KtAnnotationEntry(634,670): '@Anno("nested parameter type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(635,639): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1694,6 +1685,15 @@ KtConstructorCalleeExpression(635,639): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(635,639): 'Anno'
@@ -1759,15 +1759,6 @@ KtDeclarationModifierList(676,719): '@Anno("nested nested parameter type $prop")
 KtAnnotationEntry(676,719): '@Anno("nested nested parameter type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested nested parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1787,20 +1778,20 @@ KtAnnotationEntry(676,719): '@Anno("nested nested parameter type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested nested parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(677,681): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested nested parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1820,6 +1811,15 @@ KtConstructorCalleeExpression(677,681): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested nested parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(677,681): 'Anno'
@@ -1882,15 +1882,6 @@ KtDeclarationModifierList(735,761): '@Anno("return type $prop")'
 KtAnnotationEntry(735,761): '@Anno("return type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "return type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1910,20 +1901,20 @@ KtAnnotationEntry(735,761): '@Anno("return type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "return type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(736,740): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "return type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1943,6 +1934,15 @@ KtConstructorCalleeExpression(736,740): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "return type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(736,740): 'Anno'
@@ -2008,15 +2008,6 @@ KtDeclarationModifierList(767,800): '@Anno("nested return type $prop")'
 KtAnnotationEntry(767,800): '@Anno("nested return type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested return type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2036,20 +2027,20 @@ KtAnnotationEntry(767,800): '@Anno("nested return type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested return type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(768,772): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested return type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2069,6 +2060,15 @@ KtConstructorCalleeExpression(768,772): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested return type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(768,772): 'Anno'
@@ -2134,15 +2134,6 @@ KtDeclarationModifierList(806,846): '@Anno("nested nested return type $prop")'
 KtAnnotationEntry(806,846): '@Anno("nested nested return type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested nested return type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2162,20 +2153,20 @@ KtAnnotationEntry(806,846): '@Anno("nested nested return type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested nested return type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(807,811): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested nested return type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2195,6 +2186,15 @@ KtConstructorCalleeExpression(807,811): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested nested return type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(807,811): 'Anno'
@@ -2263,15 +2263,6 @@ KtDeclarationModifierList(871,901): '@Anno("constraint type $prop")'
 KtAnnotationEntry(871,901): '@Anno("constraint type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "constraint type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2291,20 +2282,20 @@ KtAnnotationEntry(871,901): '@Anno("constraint type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "constraint type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(872,876): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "constraint type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2324,6 +2315,15 @@ KtConstructorCalleeExpression(872,876): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "constraint type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(872,876): 'Anno'
@@ -2392,15 +2392,6 @@ KtDeclarationModifierList(913,950): '@Anno("nested constraint type $prop")'
 KtAnnotationEntry(913,950): '@Anno("nested constraint type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested constraint type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2420,20 +2411,20 @@ KtAnnotationEntry(913,950): '@Anno("nested constraint type $prop")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested constraint type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(914,918): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "nested constraint type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2453,6 +2444,15 @@ KtConstructorCalleeExpression(914,918): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested constraint type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(914,918): 'Anno'

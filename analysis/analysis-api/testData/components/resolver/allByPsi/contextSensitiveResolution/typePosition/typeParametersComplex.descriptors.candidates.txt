@@ -55,7 +55,6 @@ KtSuperTypeList(150,168): 'SealedGeneric<T>()'
 KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -68,12 +67,12 @@ KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -86,6 +85,7 @@ KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(150,166): 'SealedGeneric<T>'
@@ -97,7 +97,6 @@ KtUserType(150,166): 'SealedGeneric<T>'
 KtNameReferenceExpression(150,163): 'SealedGeneric'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -110,6 +109,7 @@ KtNameReferenceExpression(150,163): 'SealedGeneric'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeArgumentList(163,166): '<T>'
@@ -163,7 +163,6 @@ KtSuperTypeList(209,227): 'SealedGeneric<T>()'
 KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -176,12 +175,12 @@ KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -194,6 +193,7 @@ KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(209,225): 'SealedGeneric<T>'
@@ -205,7 +205,6 @@ KtUserType(209,225): 'SealedGeneric<T>'
 KtNameReferenceExpression(209,222): 'SealedGeneric'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -218,6 +217,7 @@ KtNameReferenceExpression(209,222): 'SealedGeneric'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeArgumentList(222,225): '<T>'

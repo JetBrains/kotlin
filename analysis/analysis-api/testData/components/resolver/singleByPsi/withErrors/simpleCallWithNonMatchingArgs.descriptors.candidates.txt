@@ -1,7 +1,6 @@
 KtCallExpression(14,20): 'foo(1)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -13,5 +12,6 @@ KtCallExpression(14,20): 'foo(1)'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public fun foo(): Unit defined in root package in file simpleCallWithNonMatchingArgs.kt>
     isInBestCandidates = true

@@ -1,6 +1,5 @@
 KtCallableReferenceExpression(230,238): 'Bar::foo'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -42,3 +41,4 @@ KtCallableReferenceExpression(230,238): 'Bar::foo'
       contextParameters = []
       callableId = /Foo.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

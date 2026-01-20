@@ -1,6 +1,5 @@
 KtCallExpression(95,100): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = /Dependency.Nested
@@ -14,3 +13,4 @@ KtCallExpression(95,100): 'foo()'
       contextParameters = []
       callableId = /Dependency.Nested.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

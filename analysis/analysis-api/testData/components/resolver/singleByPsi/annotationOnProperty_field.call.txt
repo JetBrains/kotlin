@@ -1,6 +1,5 @@
 KtAnnotationEntry(23,34): '@field:Anno'
   KaAnnotationCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -12,3 +11,4 @@ KtAnnotationEntry(23,34): '@field:Anno'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

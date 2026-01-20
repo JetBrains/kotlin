@@ -1,7 +1,7 @@
 KtCallableReferenceExpression(246,251): '::add'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      valueArgumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:

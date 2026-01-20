@@ -1,15 +1,6 @@
 KtArrayAccessExpression(205,209): 'a[2]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = a
@@ -32,4 +23,13 @@ KtArrayAccessExpression(205,209): 'a[2]'
         contextParameters = []
         callableId = test/B.get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

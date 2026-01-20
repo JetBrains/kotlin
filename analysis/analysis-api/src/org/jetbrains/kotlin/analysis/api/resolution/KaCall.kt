@@ -59,7 +59,15 @@ public interface KaFunctionCall<S : KaFunctionSymbol> : KaSingleCall<S, KaFuncti
      * A mapping from the call's argument expressions to their associated parameter symbols in a stable order. In case of `vararg`
      * parameters, multiple arguments may be mapped to the same [KaValueParameterSymbol].
      */
+    public val valueArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
+
+    /**
+     * A mapping from the call's argument expressions to their associated parameter symbols in a stable order. In case of `vararg`
+     * parameters, multiple arguments may be mapped to the same [KaValueParameterSymbol].
+     */
+    @Deprecated("Use 'valueArgumentMapping' instead", ReplaceWith("valueArgumentMapping"))
     public val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
+        get() = valueArgumentMapping
 
     @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")
     override val partiallyAppliedSymbol: KaPartiallyAppliedSymbol<S, KaFunctionSignature<S>>

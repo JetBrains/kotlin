@@ -36,7 +36,6 @@ KtSuperTypeList(166,175): 'MyClass()'
 
 KtSuperTypeCallEntry(166,175): 'MyClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -49,11 +48,11 @@ KtSuperTypeCallEntry(166,175): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(166,173): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -66,6 +65,7 @@ KtConstructorCalleeExpression(166,173): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(166,173): 'MyClass'
   null
@@ -76,7 +76,6 @@ KtUserType(166,173): 'MyClass'
 KtNameReferenceExpression(166,173): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -89,6 +88,7 @@ KtNameReferenceExpression(166,173): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(173,175): '()'
   null
@@ -180,15 +180,6 @@ KtBlockExpression(333,403): '{'
 KtBinaryExpression(339,353): 'i + EnumValue1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = enumArg
-          receiverType = null
-          returnType = MyEnum
-          symbol = enumArg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -211,6 +202,15 @@ KtBinaryExpression(339,353): 'i + EnumValue1'
         contextParameters = []
         callableId = /OperatorHolder.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = enumArg
+          receiverType = null
+          returnType = MyEnum
+          symbol = enumArg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(339,340): 'i'
   KaSuccessCallInfo:
@@ -232,15 +232,6 @@ KtNameReferenceExpression(339,340): 'i'
 KtOperationReferenceExpression(341,342): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = enumArg
-          receiverType = null
-          returnType = MyEnum
-          symbol = enumArg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -263,6 +254,15 @@ KtOperationReferenceExpression(341,342): '+'
         contextParameters = []
         callableId = /OperatorHolder.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = enumArg
+          receiverType = null
+          returnType = MyEnum
+          symbol = enumArg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(343,353): 'EnumValue1'
   KaErrorCallInfo:
@@ -272,15 +272,6 @@ KtNameReferenceExpression(343,353): 'EnumValue1'
 KtBinaryExpression(358,377): 'i + InheritorObject'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = enumArg
-          receiverType = null
-          returnType = MyEnum
-          symbol = enumArg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -303,6 +294,15 @@ KtBinaryExpression(358,377): 'i + InheritorObject'
         contextParameters = []
         callableId = /OperatorHolder.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = enumArg
+          receiverType = null
+          returnType = MyEnum
+          symbol = enumArg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(358,359): 'i'
   KaSuccessCallInfo:
@@ -324,15 +324,6 @@ KtNameReferenceExpression(358,359): 'i'
 KtOperationReferenceExpression(360,361): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = enumArg
-          receiverType = null
-          returnType = MyEnum
-          symbol = enumArg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -355,6 +346,15 @@ KtOperationReferenceExpression(360,361): '+'
         contextParameters = []
         callableId = /OperatorHolder.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = enumArg
+          receiverType = null
+          returnType = MyEnum
+          symbol = enumArg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(362,377): 'InheritorObject'
   KaErrorCallInfo:
@@ -364,15 +364,6 @@ KtNameReferenceExpression(362,377): 'InheritorObject'
 KtBinaryExpression(382,401): 'i - InheritorObject'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -395,6 +386,15 @@ KtBinaryExpression(382,401): 'i - InheritorObject'
         contextParameters = []
         callableId = /OperatorHolder.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(382,383): 'i'
   KaSuccessCallInfo:
@@ -416,15 +416,6 @@ KtNameReferenceExpression(382,383): 'i'
 KtOperationReferenceExpression(384,385): '-'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -447,6 +438,15 @@ KtOperationReferenceExpression(384,385): '-'
         contextParameters = []
         callableId = /OperatorHolder.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(386,401): 'InheritorObject'
   KaErrorCallInfo:

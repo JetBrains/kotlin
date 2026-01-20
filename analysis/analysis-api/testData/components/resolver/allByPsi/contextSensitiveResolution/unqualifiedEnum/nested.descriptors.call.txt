@@ -339,7 +339,6 @@ KtConstantExpression(531,532): '3'
 
 KtCallExpression(577,582): 'baz()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -351,11 +350,11 @@ KtCallExpression(577,582): 'baz()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(577,580): 'baz'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -367,6 +366,7 @@ KtNameReferenceExpression(577,580): 'baz'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(580,582): '()'
   null

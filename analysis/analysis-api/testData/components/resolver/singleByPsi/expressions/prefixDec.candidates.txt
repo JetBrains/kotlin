@@ -4,7 +4,6 @@ KtPrefixExpression(138,148): '--variable'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = variable
@@ -19,6 +18,7 @@ KtPrefixExpression(138,148): '--variable'
             contextParameters = []
             callableId = /MyClass.dec
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = PREFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []

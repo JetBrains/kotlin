@@ -2,15 +2,6 @@ KtConstructorCalleeExpression(40,41): 'A'
   KaErrorCallInfo:
     candidateCalls = [
       KaDelegatedConstructorCall:
-        argumentMapping = {
-          5 -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = kotlin.String
-            symbol = x: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -31,5 +22,14 @@ KtConstructorCalleeExpression(40,41): 'A'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          5 -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>

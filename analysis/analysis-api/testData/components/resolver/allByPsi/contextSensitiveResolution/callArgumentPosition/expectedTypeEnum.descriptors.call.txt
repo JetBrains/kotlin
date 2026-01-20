@@ -121,15 +121,6 @@ KtCallExpression(215,229): 'id(EnumValue1)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyEnum
-            symbol = x: X
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -150,6 +141,15 @@ KtCallExpression(215,229): 'id(EnumValue1)'
           callableId = /id
         typeArgumentsMapping = {
           X -> (MyEnum)
+        }
+        valueArgumentMapping = {
+          EnumValue1 -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
@@ -158,15 +158,6 @@ KtNameReferenceExpression(215,217): 'id'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyEnum
-            symbol = x: X
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -187,6 +178,15 @@ KtNameReferenceExpression(215,217): 'id'
           callableId = /id
         typeArgumentsMapping = {
           X -> (MyEnum)
+        }
+        valueArgumentMapping = {
+          EnumValue1 -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
@@ -206,15 +206,6 @@ KtCallExpression(235,266): 'receive<MyEnum>(id(EnumValue1))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          id(EnumValue1) -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -235,6 +226,15 @@ KtCallExpression(235,266): 'receive<MyEnum>(id(EnumValue1))'
           callableId = /receive
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          id(EnumValue1) -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -243,15 +243,6 @@ KtNameReferenceExpression(235,242): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          id(EnumValue1) -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -272,6 +263,15 @@ KtNameReferenceExpression(235,242): 'receive'
           callableId = /receive
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          id(EnumValue1) -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -301,15 +301,6 @@ KtCallExpression(251,265): 'id(EnumValue1)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = x: X
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -330,6 +321,15 @@ KtCallExpression(251,265): 'id(EnumValue1)'
           callableId = /id
         typeArgumentsMapping = {
           X -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          EnumValue1 -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = x: X
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
@@ -338,15 +338,6 @@ KtNameReferenceExpression(251,253): 'id'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = x: X
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -367,6 +358,15 @@ KtNameReferenceExpression(251,253): 'id'
           callableId = /id
         typeArgumentsMapping = {
           X -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          EnumValue1 -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = x: X
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>

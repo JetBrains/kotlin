@@ -1,7 +1,6 @@
 KtNameReferenceExpression(183,194): 'suspendHere'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -43,5 +42,6 @@ KtNameReferenceExpression(183,194): 'suspendHere'
         contextParameters = []
         callableId = /Controller.suspendHere
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'.>
     isInBestCandidates = true

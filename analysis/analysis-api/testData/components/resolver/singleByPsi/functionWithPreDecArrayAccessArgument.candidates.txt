@@ -1,22 +1,6 @@
 KtCallExpression(44,64): 'foo(--list[i], list)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        --list[i] -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        list -> (KaVariableSignature:
-          name = list
-          receiverType = null
-          returnType = kotlin.collections.MutableList<kotlin.Int>
-          symbol = list: kotlin.collections.MutableList<kotlin.Int>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -43,4 +27,20 @@ KtCallExpression(44,64): 'foo(--list[i], list)'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        --list[i] -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        list -> (KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = kotlin.collections.MutableList<kotlin.Int>
+          symbol = list: kotlin.collections.MutableList<kotlin.Int>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

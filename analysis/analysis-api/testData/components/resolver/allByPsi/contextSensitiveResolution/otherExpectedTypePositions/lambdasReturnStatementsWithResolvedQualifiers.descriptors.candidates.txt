@@ -28,7 +28,6 @@ KtSuperTypeList(122,132): 'MySealed()'
 KtSuperTypeCallEntry(122,132): 'MySealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -41,12 +40,12 @@ KtSuperTypeCallEntry(122,132): 'MySealed()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(122,130): 'MySealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -59,6 +58,7 @@ KtConstructorCalleeExpression(122,130): 'MySealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(122,130): 'MySealed'
@@ -70,7 +70,6 @@ KtUserType(122,130): 'MySealed'
 KtNameReferenceExpression(122,130): 'MySealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -83,6 +82,7 @@ KtNameReferenceExpression(122,130): 'MySealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(130,132): '()'
@@ -100,7 +100,6 @@ KtSuperTypeList(153,163): 'MySealed()'
 KtSuperTypeCallEntry(153,163): 'MySealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -113,12 +112,12 @@ KtSuperTypeCallEntry(153,163): 'MySealed()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(153,161): 'MySealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -131,6 +130,7 @@ KtConstructorCalleeExpression(153,161): 'MySealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(153,161): 'MySealed'
@@ -142,7 +142,6 @@ KtUserType(153,161): 'MySealed'
 KtNameReferenceExpression(153,161): 'MySealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -155,6 +154,7 @@ KtNameReferenceExpression(153,161): 'MySealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(161,163): '()'
@@ -256,7 +256,6 @@ KtNameReferenceExpression(263,264): 'T'
 KtCallExpression(267,273): 'TODO()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -268,11 +267,11 @@ KtCallExpression(267,273): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -292,13 +291,13 @@ KtCallExpression(267,273): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(267,271): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -310,11 +309,11 @@ KtNameReferenceExpression(267,271): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -334,6 +333,7 @@ KtNameReferenceExpression(267,271): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
@@ -376,7 +376,6 @@ KtNameReferenceExpression(293,294): 'X'
 KtCallExpression(297,303): 'TODO()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -388,11 +387,11 @@ KtCallExpression(297,303): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -412,13 +411,13 @@ KtCallExpression(297,303): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(297,301): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -430,11 +429,11 @@ KtNameReferenceExpression(297,301): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -454,6 +453,7 @@ KtNameReferenceExpression(297,301): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
@@ -496,18 +496,6 @@ KtNameReferenceExpression(349,350): 'X'
 KtCallExpression(356,433): 'myRunWithMySealed {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRunWithMySealed X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<MySealed>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -527,23 +515,23 @@ KtCallExpression(356,433): 'myRunWithMySealed {'
         contextParameters = []
         callableId = /myRunWithMySealed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                if (b) return@myRunWithMySealed X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed>
+          symbol = b: kotlin.Function0<MySealed>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(356,373): 'myRunWithMySealed'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRunWithMySealed X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<MySealed>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -563,6 +551,18 @@ KtNameReferenceExpression(356,373): 'myRunWithMySealed'
         contextParameters = []
         callableId = /myRunWithMySealed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                if (b) return@myRunWithMySealed X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed>
+          symbol = b: kotlin.Function0<MySealed>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtLambdaArgument(374,433): '{'
@@ -622,18 +622,6 @@ KtNameReferenceExpression(426,427): 'Y'
 KtCallExpression(439,524): 'myRunWithMySealed {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRunWithMySealed id(X)
-                id(Y)
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<MySealed>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -653,23 +641,23 @@ KtCallExpression(439,524): 'myRunWithMySealed {'
         contextParameters = []
         callableId = /myRunWithMySealed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                if (b) return@myRunWithMySealed id(X)
+                id(Y)
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed>
+          symbol = b: kotlin.Function0<MySealed>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(439,456): 'myRunWithMySealed'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRunWithMySealed id(X)
-                id(Y)
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<MySealed>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -689,6 +677,18 @@ KtNameReferenceExpression(439,456): 'myRunWithMySealed'
         contextParameters = []
         callableId = /myRunWithMySealed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                if (b) return@myRunWithMySealed id(X)
+                id(Y)
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed>
+          symbol = b: kotlin.Function0<MySealed>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtLambdaArgument(457,524): '{'
@@ -742,15 +742,6 @@ KtLabelReferenceExpression(480,498): '@myRunWithMySealed'
 KtCallExpression(499,504): 'id(X)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -771,6 +762,15 @@ KtCallExpression(499,504): 'id(X)'
         callableId = /id
       typeArgumentsMapping = {
         X -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = x: X
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
     isInBestCandidates = true
@@ -778,15 +778,6 @@ KtCallExpression(499,504): 'id(X)'
 KtNameReferenceExpression(499,501): 'id'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -807,6 +798,15 @@ KtNameReferenceExpression(499,501): 'id'
         callableId = /id
       typeArgumentsMapping = {
         X -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = x: X
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
     isInBestCandidates = true
@@ -823,15 +823,6 @@ KtNameReferenceExpression(502,503): 'X'
 KtCallExpression(513,518): 'id(Y)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Y -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -852,6 +843,15 @@ KtCallExpression(513,518): 'id(Y)'
         callableId = /id
       typeArgumentsMapping = {
         X -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        Y -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = x: X
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
     isInBestCandidates = true
@@ -859,15 +859,6 @@ KtCallExpression(513,518): 'id(Y)'
 KtNameReferenceExpression(513,515): 'id'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Y -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -888,6 +879,15 @@ KtNameReferenceExpression(513,515): 'id'
         callableId = /id
       typeArgumentsMapping = {
         X -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        Y -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = x: X
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
     isInBestCandidates = true
@@ -904,18 +904,6 @@ KtNameReferenceExpression(516,517): 'Y'
 KtCallExpression(530,593): 'myRun<MySealed> {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRun X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -936,24 +924,24 @@ KtCallExpression(530,593): 'myRun<MySealed> {'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MySealed)
+      }
+      valueArgumentMapping = {
+        {
+                if (b) return@myRun X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(530,535): 'myRun'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRun X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -974,6 +962,18 @@ KtNameReferenceExpression(530,535): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MySealed)
+      }
+      valueArgumentMapping = {
+        {
+                if (b) return@myRun X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1049,18 +1049,6 @@ KtNameReferenceExpression(586,587): 'Y'
 KtCallExpression(598,682): 'foo('
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        myRun {
-                    if (b) return@myRun X
-                    Y
-                } -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MySealed
-          symbol = a: MySealed
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1080,23 +1068,23 @@ KtCallExpression(598,682): 'foo('
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myRun {
+                    if (b) return@myRun X
+                    Y
+                } -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MySealed
+          symbol = a: MySealed
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(598,601): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        myRun {
-                    if (b) return@myRun X
-                    Y
-                } -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MySealed
-          symbol = a: MySealed
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1116,6 +1104,18 @@ KtNameReferenceExpression(598,601): 'foo'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myRun {
+                    if (b) return@myRun X
+                    Y
+                } -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MySealed
+          symbol = a: MySealed
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(601,682): '('
@@ -1127,18 +1127,6 @@ KtValueArgument(611,676): 'myRun {'
 KtCallExpression(611,676): 'myRun {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                    if (b) return@myRun X
-                    Y
-                } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1159,24 +1147,24 @@ KtCallExpression(611,676): 'myRun {'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MySealed)
+      }
+      valueArgumentMapping = {
+        {
+                    if (b) return@myRun X
+                    Y
+                } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(611,616): 'myRun'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                    if (b) return@myRun X
-                    Y
-                } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1197,6 +1185,18 @@ KtNameReferenceExpression(611,616): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MySealed)
+      }
+      valueArgumentMapping = {
+        {
+                    if (b) return@myRun X
+                    Y
+                } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1269,18 +1269,6 @@ KtNameReferenceExpression(695,703): 'MySealed'
 KtCallExpression(706,759): 'myRun {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRun X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1301,24 +1289,24 @@ KtCallExpression(706,759): 'myRun {'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MySealed)
+      }
+      valueArgumentMapping = {
+        {
+                if (b) return@myRun X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(706,711): 'myRun'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRun X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1339,6 +1327,18 @@ KtNameReferenceExpression(706,711): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MySealed)
+      }
+      valueArgumentMapping = {
+        {
+                if (b) return@myRun X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1399,18 +1399,6 @@ KtNameReferenceExpression(752,753): 'Y'
 KtCallExpression(765,818): 'myRun {'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRun X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<ERROR_TYPE>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1431,6 +1419,18 @@ KtCallExpression(765,818): 'myRun {'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        {
+                if (b) return@myRun X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<ERROR_TYPE>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with myRun>
     isInBestCandidates = true
@@ -1438,18 +1438,6 @@ KtCallExpression(765,818): 'myRun {'
 KtNameReferenceExpression(765,770): 'myRun'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRun X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<ERROR_TYPE>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1470,6 +1458,18 @@ KtNameReferenceExpression(765,770): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        {
+                if (b) return@myRun X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<ERROR_TYPE>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with myRun>
     isInBestCandidates = true
@@ -1531,18 +1531,6 @@ KtNameReferenceExpression(811,812): 'Y'
 KtCallExpression(823,885): 'myRun {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRun MySealed.X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed.X>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1563,24 +1551,24 @@ KtCallExpression(823,885): 'myRun {'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MySealed.X)
+      }
+      valueArgumentMapping = {
+        {
+                if (b) return@myRun MySealed.X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed.X>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(823,828): 'myRun'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRun MySealed.X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MySealed.X>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1601,6 +1589,18 @@ KtNameReferenceExpression(823,828): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MySealed.X)
+      }
+      valueArgumentMapping = {
+        {
+                if (b) return@myRun MySealed.X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MySealed.X>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 

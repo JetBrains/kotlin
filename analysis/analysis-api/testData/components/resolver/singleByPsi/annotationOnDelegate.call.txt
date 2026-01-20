@@ -1,6 +1,5 @@
 KtAnnotationEntry(0,18): '@delegate:Suppress'
   KaAnnotationCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -20,3 +19,4 @@ KtAnnotationEntry(0,18): '@delegate:Suppress'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

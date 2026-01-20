@@ -167,15 +167,6 @@ KtParameterList(191,193): '()'
 KtBinaryExpression(196,224): 'current <= this@iterator.end'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        this@iterator.end -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = current
@@ -198,6 +189,15 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
         contextParameters = []
         callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        this@iterator.end -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(196,203): 'current'
   KaSuccessCallInfo:
@@ -221,15 +221,6 @@ KtNameReferenceExpression(196,203): 'current'
 KtOperationReferenceExpression(204,206): '<='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        this@iterator.end -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = current
@@ -252,6 +243,15 @@ KtOperationReferenceExpression(204,206): '<='
         contextParameters = []
         callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        this@iterator.end -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtDotQualifiedExpression(207,224): 'this@iterator.end'
   KaSuccessCallInfo:
@@ -329,7 +329,6 @@ KtPostfixExpression(256,265): 'current++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = current
@@ -344,6 +343,7 @@ KtPostfixExpression(256,265): 'current++'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -387,7 +387,6 @@ KtOperationReferenceExpression(263,265): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = current
@@ -402,6 +401,7 @@ KtOperationReferenceExpression(263,265): '++'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -440,22 +440,6 @@ KtContainerNode(297,318): 'IntProgression(1, 10)'
 
 KtCallExpression(297,318): 'IntProgression(1, 10)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      1 -> (KaVariableSignature:
-        name = start
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = start: kotlin.Int
-        contextParameters = []
-        callableId = null),
-      10 -> (KaVariableSignature:
-        name = end
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = end: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -482,26 +466,26 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      1 -> (KaVariableSignature:
+        name = start
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = start: kotlin.Int
+        contextParameters = []
+        callableId = null),
+      10 -> (KaVariableSignature:
+        name = end
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = end: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(297,311): 'IntProgression'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = start
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = start: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        10 -> (KaVariableSignature:
-          name = end
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = end: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -528,6 +512,22 @@ KtNameReferenceExpression(297,311): 'IntProgression'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = start
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = start: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        10 -> (KaVariableSignature:
+          name = end
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = end: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(311,318): '(1, 10)'
   null

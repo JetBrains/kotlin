@@ -1,15 +1,6 @@
 KtCallExpression(43,66): 'generic<Int, String>(5)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        5 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: A
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -30,6 +21,15 @@ KtCallExpression(43,66): 'generic<Int, String>(5)'
         callableId = /generic
       typeArgumentsMapping = {
         A -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        5 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: A
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generic>
     isInBestCandidates = true

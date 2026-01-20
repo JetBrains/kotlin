@@ -1,7 +1,6 @@
 KtCallExpression(96,101): 'foo()'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -21,5 +20,6 @@ KtCallExpression(96,101): 'foo()'
         ]
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<AMBIGUOUS_CONTEXT_ARGUMENT: Multiple potential context arguments for 'string: String' in scope.>
     isInBestCandidates = true

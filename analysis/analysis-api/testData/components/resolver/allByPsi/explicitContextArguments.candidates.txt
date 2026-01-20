@@ -259,15 +259,6 @@ KtBlockExpression(389,627): '{'
 KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str2" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -309,11 +300,7 @@ KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str2" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -322,6 +309,10 @@ KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -356,21 +347,21 @@ KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(395,402): 'unnamed'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str2" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -412,11 +403,7 @@ KtNameReferenceExpression(395,402): 'unnamed'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str2" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -425,6 +412,10 @@ KtNameReferenceExpression(395,402): 'unnamed'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -459,6 +450,15 @@ KtNameReferenceExpression(395,402): 'unnamed'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
@@ -483,15 +483,6 @@ KtLiteralStringTemplateEntry(434,438): 'str2'
 KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str2" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -533,11 +524,7 @@ KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
         ]
         callableId = /named
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str2" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -546,6 +533,10 @@ KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -580,21 +571,21 @@ KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
         ]
         callableId = /named
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(445,450): 'named'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str2" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -636,11 +627,7 @@ KtNameReferenceExpression(445,450): 'named'
         ]
         callableId = /named
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str2" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -649,6 +636,10 @@ KtNameReferenceExpression(445,450): 'named'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -683,6 +674,15 @@ KtNameReferenceExpression(445,450): 'named'
         ]
         callableId = /named
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
@@ -707,15 +707,6 @@ KtLiteralStringTemplateEntry(482,486): 'str2'
 KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str3" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -758,11 +749,7 @@ KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regul
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str3" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -771,6 +758,10 @@ KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regul
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -805,21 +796,21 @@ KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regul
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(494,501): 'unnamed'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str3" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -862,11 +853,7 @@ KtNameReferenceExpression(494,501): 'unnamed'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str3" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -875,6 +862,10 @@ KtNameReferenceExpression(494,501): 'unnamed'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -909,6 +900,15 @@ KtNameReferenceExpression(494,501): 'unnamed'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
@@ -927,7 +927,6 @@ KtNameReferenceExpression(518,526): 'explicit'
 KtCallExpression(529,539): 'Explicit()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -939,12 +938,12 @@ KtCallExpression(529,539): 'Explicit()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(529,537): 'Explicit'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -956,6 +955,7 @@ KtNameReferenceExpression(529,537): 'Explicit'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(537,539): '()'
@@ -979,15 +979,6 @@ KtLiteralStringTemplateEntry(552,556): 'str3'
 KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str3" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -1030,11 +1021,7 @@ KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular
         ]
         callableId = /named
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str3" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -1043,6 +1030,10 @@ KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1077,21 +1068,21 @@ KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular
         ]
         callableId = /named
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(563,568): 'named'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str3" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -1134,11 +1125,7 @@ KtNameReferenceExpression(563,568): 'named'
         ]
         callableId = /named
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str3" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -1147,6 +1134,10 @@ KtNameReferenceExpression(563,568): 'named'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1181,6 +1172,15 @@ KtNameReferenceExpression(563,568): 'named'
         ]
         callableId = /named
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
@@ -1199,7 +1199,6 @@ KtNameReferenceExpression(585,593): 'explicit'
 KtCallExpression(596,606): 'Explicit()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1211,12 +1210,12 @@ KtCallExpression(596,606): 'Explicit()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(596,604): 'Explicit'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1228,6 +1227,7 @@ KtNameReferenceExpression(596,604): 'Explicit'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(604,606): '()'
@@ -1269,25 +1269,6 @@ KtBlockExpression(658,933): '{'
 KtCallExpression(664,794): 'with(Explicit()) {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Explicit() -> (KaVariableSignature:
-          name = receiver
-          receiverType = null
-          returnType = Explicit
-          symbol = receiver: T
-          contextParameters = []
-          callableId = null),
-        {
-                unnamed/*explicit regular*/(regular = "str2")
-                named/*explicit regular*/(regular = "str2")
-            } -> (KaVariableSignature:
-          name = block
-          receiverType = null
-          returnType = Explicit.() -> kotlin.Unit
-          symbol = block: T.() -> R
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1316,31 +1297,31 @@ KtCallExpression(664,794): 'with(Explicit()) {'
       typeArgumentsMapping = {
         T -> (Explicit),
         R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = receiver
+          receiverType = null
+          returnType = Explicit
+          symbol = receiver: T
+          contextParameters = []
+          callableId = null),
+        {
+                unnamed/*explicit regular*/(regular = "str2")
+                named/*explicit regular*/(regular = "str2")
+            } -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = Explicit.() -> kotlin.Unit
+          symbol = block: T.() -> R
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(664,668): 'with'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Explicit() -> (KaVariableSignature:
-          name = receiver
-          receiverType = null
-          returnType = Explicit
-          symbol = receiver: T
-          contextParameters = []
-          callableId = null),
-        {
-                unnamed/*explicit regular*/(regular = "str2")
-                named/*explicit regular*/(regular = "str2")
-            } -> (KaVariableSignature:
-          name = block
-          receiverType = null
-          returnType = Explicit.() -> kotlin.Unit
-          symbol = block: T.() -> R
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1369,6 +1350,25 @@ KtNameReferenceExpression(664,668): 'with'
       typeArgumentsMapping = {
         T -> (Explicit),
         R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = receiver
+          receiverType = null
+          returnType = Explicit
+          symbol = receiver: T
+          contextParameters = []
+          callableId = null),
+        {
+                unnamed/*explicit regular*/(regular = "str2")
+                named/*explicit regular*/(regular = "str2")
+            } -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = Explicit.() -> kotlin.Unit
+          symbol = block: T.() -> R
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1381,7 +1381,6 @@ KtValueArgument(669,679): 'Explicit()'
 KtCallExpression(669,679): 'Explicit()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1393,12 +1392,12 @@ KtCallExpression(669,679): 'Explicit()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(669,677): 'Explicit'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1410,6 +1409,7 @@ KtNameReferenceExpression(669,677): 'Explicit'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(677,679): '()'
@@ -1430,15 +1430,6 @@ KtBlockExpression(691,788): 'unnamed/*explicit regular*/(regular = "str2")'
 KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str2" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1520,11 +1511,7 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str2" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -1533,6 +1520,10 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1567,21 +1558,21 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(691,698): 'unnamed'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str2" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1663,11 +1654,7 @@ KtNameReferenceExpression(691,698): 'unnamed'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str2" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -1676,6 +1663,10 @@ KtNameReferenceExpression(691,698): 'unnamed'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1710,6 +1701,15 @@ KtNameReferenceExpression(691,698): 'unnamed'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
@@ -1734,15 +1734,6 @@ KtLiteralStringTemplateEntry(730,734): 'str2'
 KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str2" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1824,11 +1815,7 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
         ]
         callableId = /named
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str2" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -1837,6 +1824,10 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1871,21 +1862,21 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
         ]
         callableId = /named
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(745,750): 'named'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str2" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1967,11 +1958,7 @@ KtNameReferenceExpression(745,750): 'named'
         ]
         callableId = /named
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str2" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -1980,6 +1967,10 @@ KtNameReferenceExpression(745,750): 'named'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2014,6 +2005,15 @@ KtNameReferenceExpression(745,750): 'named'
         ]
         callableId = /named
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
@@ -2038,15 +2038,6 @@ KtLiteralStringTemplateEntry(782,786): 'str2'
 KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str3" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2109,11 +2100,7 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str3" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -2122,6 +2109,10 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2156,21 +2147,21 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(800,807): 'unnamed'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str3" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2233,11 +2224,7 @@ KtNameReferenceExpression(800,807): 'unnamed'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str3" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -2246,6 +2233,10 @@ KtNameReferenceExpression(800,807): 'unnamed'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2280,6 +2271,15 @@ KtNameReferenceExpression(800,807): 'unnamed'
         ]
         callableId = /unnamed
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
@@ -2298,7 +2298,6 @@ KtNameReferenceExpression(824,832): 'explicit'
 KtCallExpression(835,845): 'Explicit()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2310,12 +2309,12 @@ KtCallExpression(835,845): 'Explicit()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(835,843): 'Explicit'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2327,6 +2326,7 @@ KtNameReferenceExpression(835,843): 'Explicit'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(843,845): '()'
@@ -2350,15 +2350,6 @@ KtLiteralStringTemplateEntry(858,862): 'str3'
 KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str3" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2421,11 +2412,7 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
         ]
         callableId = /named
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str3" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -2434,6 +2421,10 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2468,21 +2459,21 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
         ]
         callableId = /named
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(869,874): 'named'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str3" -> (KaVariableSignature:
-          name = regular
-          receiverType = null
-          returnType = kotlin.String
-          symbol = regular: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2545,11 +2536,7 @@ KtNameReferenceExpression(869,874): 'named'
         ]
         callableId = /named
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "str3" -> (KaVariableSignature:
           name = regular
           receiverType = null
@@ -2558,6 +2545,10 @@ KtNameReferenceExpression(869,874): 'named'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2592,6 +2583,15 @@ KtNameReferenceExpression(869,874): 'named'
         ]
         callableId = /named
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 's: String' found.>
     isInBestCandidates = false
 
@@ -2610,7 +2610,6 @@ KtNameReferenceExpression(891,899): 'explicit'
 KtCallExpression(902,912): 'Explicit()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2622,12 +2621,12 @@ KtCallExpression(902,912): 'Explicit()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(902,910): 'Explicit'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2639,6 +2638,7 @@ KtNameReferenceExpression(902,910): 'Explicit'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(910,912): '()'

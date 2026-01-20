@@ -133,7 +133,6 @@ KtSuperTypeList(291,304): 'SealedClass()'
 KtSuperTypeCallEntry(291,304): 'SealedClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -146,12 +145,12 @@ KtSuperTypeCallEntry(291,304): 'SealedClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(291,302): 'SealedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -164,6 +163,7 @@ KtConstructorCalleeExpression(291,302): 'SealedClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(291,302): 'SealedClass'
@@ -175,7 +175,6 @@ KtUserType(291,302): 'SealedClass'
 KtNameReferenceExpression(291,302): 'SealedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -188,6 +187,7 @@ KtNameReferenceExpression(291,302): 'SealedClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(302,304): '()'
@@ -223,7 +223,6 @@ KtSuperTypeList(353,366): 'SealedClass()'
 KtSuperTypeCallEntry(353,366): 'SealedClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -236,12 +235,12 @@ KtSuperTypeCallEntry(353,366): 'SealedClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(353,364): 'SealedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -254,6 +253,7 @@ KtConstructorCalleeExpression(353,364): 'SealedClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(353,364): 'SealedClass'
@@ -265,7 +265,6 @@ KtUserType(353,364): 'SealedClass'
 KtNameReferenceExpression(353,364): 'SealedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -278,6 +277,7 @@ KtNameReferenceExpression(353,364): 'SealedClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(364,366): '()'
@@ -331,7 +331,6 @@ KtSuperTypeList(442,460): 'SealedGeneric<T>()'
 KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -344,12 +343,12 @@ KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(442,458): 'SealedGeneric<T>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -362,6 +361,7 @@ KtConstructorCalleeExpression(442,458): 'SealedGeneric<T>'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(442,458): 'SealedGeneric<T>'
@@ -373,7 +373,6 @@ KtUserType(442,458): 'SealedGeneric<T>'
 KtNameReferenceExpression(442,455): 'SealedGeneric'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -386,6 +385,7 @@ KtNameReferenceExpression(442,455): 'SealedGeneric'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeArgumentList(455,458): '<T>'
@@ -439,7 +439,6 @@ KtSuperTypeList(501,519): 'SealedGeneric<T>()'
 KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -452,12 +451,12 @@ KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(501,517): 'SealedGeneric<T>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -470,6 +469,7 @@ KtConstructorCalleeExpression(501,517): 'SealedGeneric<T>'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(501,517): 'SealedGeneric<T>'
@@ -481,7 +481,6 @@ KtUserType(501,517): 'SealedGeneric<T>'
 KtNameReferenceExpression(501,514): 'SealedGeneric'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -494,6 +493,7 @@ KtNameReferenceExpression(501,514): 'SealedGeneric'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeArgumentList(514,517): '<T>'
@@ -655,7 +655,6 @@ KtNameReferenceExpression(680,696): 'SealedInheritor2'
 KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -670,11 +669,11 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = toString
@@ -689,11 +688,11 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -708,6 +707,7 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtDotQualifiedExpression(700,714): 'instance.prop2'
@@ -737,7 +737,6 @@ KtNameReferenceExpression(709,714): 'prop2'
 KtCallExpression(715,725): 'toString()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -752,11 +751,11 @@ KtCallExpression(715,725): 'toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = toString
@@ -771,11 +770,11 @@ KtCallExpression(715,725): 'toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -790,12 +789,12 @@ KtCallExpression(715,725): 'toString()'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtNameReferenceExpression(715,723): 'toString'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -810,6 +809,7 @@ KtNameReferenceExpression(715,723): 'toString'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -834,7 +834,6 @@ KtNameReferenceExpression(715,723): 'toString'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -849,6 +848,7 @@ KtNameReferenceExpression(715,723): 'toString'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtValueArgumentList(723,725): '()'
@@ -1031,7 +1031,6 @@ KtNameReferenceExpression(944,960): 'SealedInheritor2'
 KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1046,11 +1045,11 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = toString
@@ -1065,11 +1064,11 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1084,6 +1083,7 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtDotQualifiedExpression(964,978): 'instance.prop2'
@@ -1113,7 +1113,6 @@ KtNameReferenceExpression(973,978): 'prop2'
 KtCallExpression(979,989): 'toString()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1128,11 +1127,11 @@ KtCallExpression(979,989): 'toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = toString
@@ -1147,11 +1146,11 @@ KtCallExpression(979,989): 'toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1166,12 +1165,12 @@ KtCallExpression(979,989): 'toString()'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtNameReferenceExpression(979,987): 'toString'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1186,6 +1185,7 @@ KtNameReferenceExpression(979,987): 'toString'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -1210,7 +1210,6 @@ KtNameReferenceExpression(979,987): 'toString'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1225,6 +1224,7 @@ KtNameReferenceExpression(979,987): 'toString'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtValueArgumentList(987,989): '()'
@@ -1347,7 +1347,6 @@ KtNameReferenceExpression(1128,1144): 'SealedInheritor2'
 KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1362,11 +1361,11 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = toString
@@ -1381,11 +1380,11 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1400,6 +1399,7 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtDotQualifiedExpression(1148,1162): 'instance.prop2'
@@ -1429,7 +1429,6 @@ KtNameReferenceExpression(1157,1162): 'prop2'
 KtCallExpression(1163,1173): 'toString()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1444,11 +1443,11 @@ KtCallExpression(1163,1173): 'toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = toString
@@ -1463,11 +1462,11 @@ KtCallExpression(1163,1173): 'toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1482,12 +1481,12 @@ KtCallExpression(1163,1173): 'toString()'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtNameReferenceExpression(1163,1171): 'toString'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1502,6 +1501,7 @@ KtNameReferenceExpression(1163,1171): 'toString'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -1526,7 +1526,6 @@ KtNameReferenceExpression(1163,1171): 'toString'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1541,6 +1540,7 @@ KtNameReferenceExpression(1163,1171): 'toString'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtValueArgumentList(1171,1173): '()'
@@ -1870,7 +1870,6 @@ KtNameReferenceExpression(1619,1635): 'SealedInheritor2'
 KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1885,11 +1884,11 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = toString
@@ -1904,11 +1903,11 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1923,6 +1922,7 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtDotQualifiedExpression(1639,1653): 'instance.prop2'
@@ -1952,7 +1952,6 @@ KtNameReferenceExpression(1648,1653): 'prop2'
 KtCallExpression(1654,1664): 'toString()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1967,11 +1966,11 @@ KtCallExpression(1654,1664): 'toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = toString
@@ -1986,11 +1985,11 @@ KtCallExpression(1654,1664): 'toString()'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2005,12 +2004,12 @@ KtCallExpression(1654,1664): 'toString()'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtNameReferenceExpression(1654,1662): 'toString'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -2025,6 +2024,7 @@ KtNameReferenceExpression(1654,1662): 'toString'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -2049,7 +2049,6 @@ KtNameReferenceExpression(1654,1662): 'toString'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2064,6 +2063,7 @@ KtNameReferenceExpression(1654,1662): 'toString'
         contextParameters = []
         callableId = kotlin/toString
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtValueArgumentList(1662,1664): '()'
@@ -2810,7 +2810,6 @@ KtNameReferenceExpression(2630,2639): 'SCOption1'
 KtDotQualifiedExpression(2643,2650): 'i.prop1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2825,11 +2824,11 @@ KtDotQualifiedExpression(2643,2650): 'i.prop1'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = prop1
@@ -2844,6 +2843,7 @@ KtDotQualifiedExpression(2643,2650): 'i.prop1'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtNameReferenceExpression(2643,2644): 'i'
@@ -2867,7 +2867,6 @@ KtNameReferenceExpression(2643,2644): 'i'
 KtNameReferenceExpression(2645,2650): 'prop1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2882,6 +2881,7 @@ KtNameReferenceExpression(2645,2650): 'prop1'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -2922,7 +2922,6 @@ KtNameReferenceExpression(2662,2671): 'SCOption2'
 KtDotQualifiedExpression(2675,2682): 'i.prop2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2937,11 +2936,11 @@ KtDotQualifiedExpression(2675,2682): 'i.prop2'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = prop2
@@ -2956,6 +2955,7 @@ KtDotQualifiedExpression(2675,2682): 'i.prop2'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtNameReferenceExpression(2675,2676): 'i'
@@ -2979,7 +2979,6 @@ KtNameReferenceExpression(2675,2676): 'i'
 KtNameReferenceExpression(2677,2682): 'prop2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2994,6 +2993,7 @@ KtNameReferenceExpression(2677,2682): 'prop2'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -3052,7 +3052,6 @@ KtDeclarationModifierList(2751,2766): '@UnsafeVariance'
 KtAnnotationEntry(2751,2766): '@UnsafeVariance'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3064,12 +3063,12 @@ KtAnnotationEntry(2751,2766): '@UnsafeVariance'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3081,6 +3080,7 @@ KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(2752,2766): 'UnsafeVariance'
@@ -3092,7 +3092,6 @@ KtUserType(2752,2766): 'UnsafeVariance'
 KtNameReferenceExpression(2752,2766): 'UnsafeVariance'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3104,6 +3103,7 @@ KtNameReferenceExpression(2752,2766): 'UnsafeVariance'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtUserType(2767,2768): 'T'

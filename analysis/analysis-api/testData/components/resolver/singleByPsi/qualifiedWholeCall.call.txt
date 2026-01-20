@@ -1,15 +1,6 @@
 KtDotQualifiedExpression(48,54): 'A.y(1)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = A
@@ -32,3 +23,12 @@ KtDotQualifiedExpression(48,54): 'A.y(1)'
         contextParameters = []
         callableId = /A.y
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }

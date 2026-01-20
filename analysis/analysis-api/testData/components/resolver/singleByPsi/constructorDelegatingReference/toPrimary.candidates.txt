@@ -1,7 +1,6 @@
 KtConstructorDelegationReferenceExpression(38,42): 'this'
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -14,20 +13,12 @@ KtConstructorDelegationReferenceExpression(38,42): 'this'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -48,4 +39,13 @@ KtConstructorDelegationReferenceExpression(38,42): 'this'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

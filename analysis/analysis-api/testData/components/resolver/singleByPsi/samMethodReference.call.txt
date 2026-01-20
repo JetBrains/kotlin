@@ -1,14 +1,5 @@
 KtCallExpression(146,166): 'test(this::uiMethod)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      this::uiMethod -> (KaVariableSignature:
-        name = foo
-        receiverType = null
-        returnType = Test.Foo
-        symbol = foo: Test.Foo
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = /Test
@@ -30,3 +21,12 @@ KtCallExpression(146,166): 'test(this::uiMethod)'
       contextParameters = []
       callableId = /Test.test
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      this::uiMethod -> (KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = Test.Foo
+        symbol = foo: Test.Foo
+        contextParameters = []
+        callableId = null)
+    }

@@ -1,29 +1,6 @@
 KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: O1
-          contextParameters = []
-          callableId = null),
-        { s -> true } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = (kotlin.Int) -> kotlin.Boolean
-          symbol = b: (kotlin.Int) -> kotlin.Boolean
-          contextParameters = []
-          callableId = null),
-        "str" -> (KaVariableSignature:
-          name = c
-          receiverType = null
-          returnType = kotlin.String
-          symbol = c: T1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -60,33 +37,33 @@ KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
         T1 -> (kotlin.String),
         O1 -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Int
-          symbol = a: O3
+          symbol = a: O1
           contextParameters = []
           callableId = null),
         { s -> true } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.String
-          symbol = b: kotlin.String
+          returnType = (kotlin.Int) -> kotlin.Boolean
+          symbol = b: (kotlin.Int) -> kotlin.Boolean
           contextParameters = []
           callableId = null),
         "str" -> (KaVariableSignature:
           name = c
           receiverType = null
           returnType = kotlin.String
-          symbol = c: T3
+          symbol = c: T1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -122,6 +99,29 @@ KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
       typeArgumentsMapping = {
         T3 -> (kotlin.String),
         O3 -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: O3
+          contextParameters = []
+          callableId = null),
+        { s -> true } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          contextParameters = []
+          callableId = null),
+        "str" -> (KaVariableSignature:
+          name = c
+          receiverType = null
+          returnType = kotlin.String
+          symbol = c: T3
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(Int) -> Boolean', but 'String' was expected.>
     isInBestCandidates = false

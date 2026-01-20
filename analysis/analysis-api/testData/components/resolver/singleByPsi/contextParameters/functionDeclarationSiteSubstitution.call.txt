@@ -1,22 +1,6 @@
 KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        1L -> (KaVariableSignature:
-          name = rp1
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = rp1: kotlin.Long
-          contextParameters = []
-          callableId = null),
-        "str" -> (KaVariableSignature:
-          name = rp2
-          receiverType = null
-          returnType = kotlin.String
-          symbol = rp2: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -108,3 +92,19 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
         ]
         callableId = /Another.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1L -> (KaVariableSignature:
+          name = rp1
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = rp1: kotlin.Long
+          contextParameters = []
+          callableId = null),
+        "str" -> (KaVariableSignature:
+          name = rp2
+          receiverType = null
+          returnType = kotlin.String
+          symbol = rp2: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }

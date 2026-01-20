@@ -1,7 +1,6 @@
 KtPrefixExpression(191,200): '-variable'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = variable
@@ -16,3 +15,4 @@ KtPrefixExpression(191,200): '-variable'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

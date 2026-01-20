@@ -46,7 +46,6 @@ KtBlockExpression(43,60): '{'
 KtCallExpression(49,58): 'foo(s = )'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -58,13 +57,13 @@ KtCallExpression(49,58): 'foo(s = )'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
     isInBestCandidates = true
 
 KtNameReferenceExpression(49,52): 'foo'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -76,6 +75,7 @@ KtNameReferenceExpression(49,52): 'foo'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
     isInBestCandidates = true
 

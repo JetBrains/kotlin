@@ -304,7 +304,6 @@ KtProperty(393,418): 'val foo = JavaClass.foo()'
 KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = JavaClass
@@ -319,12 +318,12 @@ KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
         contextParameters = []
         callableId = /JavaClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(403,412): 'JavaClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -336,13 +335,13 @@ KtNameReferenceExpression(403,412): 'JavaClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtCallExpression(413,418): 'foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = JavaClass
@@ -357,12 +356,12 @@ KtCallExpression(413,418): 'foo()'
         contextParameters = []
         callableId = /JavaClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(413,416): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = JavaClass
@@ -377,6 +376,7 @@ KtNameReferenceExpression(413,416): 'foo'
         contextParameters = []
         callableId = /JavaClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(416,418): '()'

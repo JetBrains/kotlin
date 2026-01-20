@@ -1,15 +1,6 @@
 KtBinaryExpression(357,375): 'oldItem == newItem'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        newItem -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = oldItem
@@ -32,3 +23,12 @@ KtBinaryExpression(357,375): 'oldItem == newItem'
         contextParameters = []
         callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        newItem -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }

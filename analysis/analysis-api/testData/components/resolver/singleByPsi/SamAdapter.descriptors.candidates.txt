@@ -1,15 +1,6 @@
 KtNameReferenceExpression(35,46): 'invokeLater'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {  } -> (KaVariableSignature:
-          name = doRun
-          receiverType = null
-          returnType = java.lang.Runnable!
-          symbol = doRun: java.lang.Runnable!
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,4 +20,13 @@ KtNameReferenceExpression(35,46): 'invokeLater'
         contextParameters = []
         callableId = javax/swing/SwingUtilities.invokeLater
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {  } -> (KaVariableSignature:
+          name = doRun
+          receiverType = null
+          returnType = java.lang.Runnable!
+          symbol = doRun: java.lang.Runnable!
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

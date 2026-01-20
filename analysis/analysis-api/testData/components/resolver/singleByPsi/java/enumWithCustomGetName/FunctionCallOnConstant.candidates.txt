@@ -1,7 +1,6 @@
 KtNameReferenceExpression(54,61): 'getName'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = JavaEnum.A
@@ -16,4 +15,5 @@ KtNameReferenceExpression(54,61): 'getName'
         contextParameters = []
         callableId = /JavaEnum.getName
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

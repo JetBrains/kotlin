@@ -1,6 +1,5 @@
 KtCallExpression(134,137): 'c()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = [
       KaImplicitReceiverValue:
         symbol = /Foo
@@ -26,3 +25,4 @@ KtCallExpression(134,137): 'c()'
       ]
       callableId = /Container.c
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

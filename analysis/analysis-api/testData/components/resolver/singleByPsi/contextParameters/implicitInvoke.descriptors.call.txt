@@ -1,6 +1,5 @@
 KtCallExpression(117,127): 'thisProp()'
   KaImplicitInvokeCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -15,3 +14,4 @@ KtCallExpression(117,127): 'thisProp()'
       contextParameters = []
       callableId = /invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

@@ -1,7 +1,6 @@
 KtAnnotationEntry(40,49): '@Suppress'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -21,4 +20,5 @@ KtAnnotationEntry(40,49): '@Suppress'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

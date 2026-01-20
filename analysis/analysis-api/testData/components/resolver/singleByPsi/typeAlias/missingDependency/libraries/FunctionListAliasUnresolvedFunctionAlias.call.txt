@@ -1,15 +1,6 @@
 KtNameReferenceExpression(157,162): 'check'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        emptyList() -> (KaVariableSignature:
-          name = list
-          receiverType = null
-          returnType = {library2.ListAlias<(kotlin.String) -> kotlin.Int>=} kotlin.collections.List<(kotlin.String) -> kotlin.Int>
-          symbol = list: {library2.ListAlias<(kotlin.String) -> kotlin.Int>=} kotlin.collections.List<(kotlin.String) -> kotlin.Int>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m
@@ -32,3 +23,12 @@ KtNameReferenceExpression(157,162): 'check'
         contextParameters = []
         callableId = library3/MyInterface.check
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        emptyList() -> (KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = {library2.ListAlias<(kotlin.String) -> kotlin.Int>=} kotlin.collections.List<(kotlin.String) -> kotlin.Int>
+          symbol = list: {library2.ListAlias<(kotlin.String) -> kotlin.Int>=} kotlin.collections.List<(kotlin.String) -> kotlin.Int>
+          contextParameters = []
+          callableId = null)
+      }

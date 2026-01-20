@@ -36,7 +36,6 @@ KtNameReferenceExpression(132,139): 'MyClass'
 
 KtCallExpression(142,151): 'MyClass()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -48,11 +47,11 @@ KtCallExpression(142,151): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(142,149): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -64,6 +63,7 @@ KtNameReferenceExpression(142,149): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(149,151): '()'
   null

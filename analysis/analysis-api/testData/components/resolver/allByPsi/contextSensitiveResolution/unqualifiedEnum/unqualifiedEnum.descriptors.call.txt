@@ -168,15 +168,6 @@ KtWhenConditionWithExpression(302,312): 's == FIRST'
 KtBinaryExpression(302,312): 's == FIRST'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        FIRST -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -199,6 +190,15 @@ KtBinaryExpression(302,312): 's == FIRST'
         contextParameters = []
         callableId = kotlin/Enum.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        FIRST -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(302,303): 's'
   KaSuccessCallInfo:
@@ -220,15 +220,6 @@ KtNameReferenceExpression(302,303): 's'
 KtOperationReferenceExpression(304,306): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        FIRST -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -251,6 +242,15 @@ KtOperationReferenceExpression(304,306): '=='
         contextParameters = []
         callableId = kotlin/Enum.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        FIRST -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(307,312): 'FIRST'
   KaErrorCallInfo:
@@ -269,15 +269,6 @@ KtWhenConditionWithExpression(326,337): 's == SECOND'
 KtBinaryExpression(326,337): 's == SECOND'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        SECOND -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -300,6 +291,15 @@ KtBinaryExpression(326,337): 's == SECOND'
         contextParameters = []
         callableId = kotlin/Enum.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        SECOND -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(326,327): 's'
   KaSuccessCallInfo:
@@ -321,15 +321,6 @@ KtNameReferenceExpression(326,327): 's'
 KtOperationReferenceExpression(328,330): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        SECOND -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -352,6 +343,15 @@ KtOperationReferenceExpression(328,330): '=='
         contextParameters = []
         callableId = kotlin/Enum.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        SECOND -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(331,337): 'SECOND'
   KaErrorCallInfo:
@@ -370,15 +370,6 @@ KtWhenConditionWithExpression(351,361): 's == THIRD'
 KtBinaryExpression(351,361): 's == THIRD'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        THIRD -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -401,6 +392,15 @@ KtBinaryExpression(351,361): 's == THIRD'
         contextParameters = []
         callableId = kotlin/Enum.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        THIRD -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(351,352): 's'
   KaSuccessCallInfo:
@@ -422,15 +422,6 @@ KtNameReferenceExpression(351,352): 's'
 KtOperationReferenceExpression(353,355): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        THIRD -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -453,6 +444,15 @@ KtOperationReferenceExpression(353,355): '=='
         contextParameters = []
         callableId = kotlin/Enum.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        THIRD -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(356,361): 'THIRD'
   KaErrorCallInfo:

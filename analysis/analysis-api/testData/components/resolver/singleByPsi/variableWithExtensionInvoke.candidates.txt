@@ -1,15 +1,6 @@
 KtCallExpression(76,81): 'f("")'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        "" -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = kotlin.String
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -33,5 +24,14 @@ KtCallExpression(76,81): 'f("")'
         callableId = /invoke
       typeArgumentsMapping = {
         T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "" -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = kotlin.String
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true

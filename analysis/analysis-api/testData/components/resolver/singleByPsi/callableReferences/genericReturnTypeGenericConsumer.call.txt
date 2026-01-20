@@ -1,6 +1,5 @@
 KtCallableReferenceExpression(64,77): 'Foo<Int>::foo'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -12,3 +11,4 @@ KtCallableReferenceExpression(64,77): 'Foo<Int>::foo'
       contextParameters = []
       callableId = /Foo.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

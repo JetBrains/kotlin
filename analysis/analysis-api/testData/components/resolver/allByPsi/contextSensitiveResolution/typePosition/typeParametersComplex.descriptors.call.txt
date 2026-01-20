@@ -54,7 +54,6 @@ KtSuperTypeList(150,168): 'SealedGeneric<T>()'
 
 KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -67,11 +66,11 @@ KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -84,6 +83,7 @@ KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(150,166): 'SealedGeneric<T>'
   null
@@ -94,7 +94,6 @@ KtUserType(150,166): 'SealedGeneric<T>'
 KtNameReferenceExpression(150,163): 'SealedGeneric'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -107,6 +106,7 @@ KtNameReferenceExpression(150,163): 'SealedGeneric'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(163,166): '<T>'
   null
@@ -158,7 +158,6 @@ KtSuperTypeList(209,227): 'SealedGeneric<T>()'
 
 KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -171,11 +170,11 @@ KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -188,6 +187,7 @@ KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(209,225): 'SealedGeneric<T>'
   null
@@ -198,7 +198,6 @@ KtUserType(209,225): 'SealedGeneric<T>'
 KtNameReferenceExpression(209,222): 'SealedGeneric'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -211,6 +210,7 @@ KtNameReferenceExpression(209,222): 'SealedGeneric'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(222,225): '<T>'
   null

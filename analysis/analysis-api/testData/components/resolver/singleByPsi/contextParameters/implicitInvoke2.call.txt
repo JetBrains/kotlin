@@ -1,6 +1,5 @@
 KtCallExpression(99,102): 'a()'
   KaImplicitInvokeCall:
-    argumentMapping = {}
     contextArguments = [
       KaImplicitReceiverValue:
         symbol = <unused var>: A
@@ -27,3 +26,4 @@ KtCallExpression(99,102): 'a()'
       ]
       callableId = /invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

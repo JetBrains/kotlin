@@ -1,7 +1,6 @@
 KtCallExpression(95,100): 'foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = /Dependency.Nested
@@ -15,11 +14,11 @@ KtCallExpression(95,100): 'foo()'
         contextParameters = []
         callableId = /Dependency.Nested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = /Dependency.Nested
@@ -41,5 +40,6 @@ KtCallExpression(95,100): 'foo()'
         contextParameters = []
         callableId = /Dependency.Nested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'p0'.>
     isInBestCandidates = false

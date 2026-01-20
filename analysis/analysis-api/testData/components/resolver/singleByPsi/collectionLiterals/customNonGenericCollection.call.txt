@@ -1,28 +1,5 @@
 KtCollectionLiteralExpression(173,188): '["1", "2", "3"]'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      "1" -> (KaVariableSignature:
-        name = vals
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg vals: kotlin.String
-        contextParameters = []
-        callableId = null),
-      "2" -> (KaVariableSignature:
-        name = vals
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg vals: kotlin.String
-        contextParameters = []
-        callableId = null),
-      "3" -> (KaVariableSignature:
-        name = vals
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg vals: kotlin.String
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = ["1", "2", "3"]
@@ -45,3 +22,26 @@ KtCollectionLiteralExpression(173,188): '["1", "2", "3"]'
       contextParameters = []
       callableId = /MyList.Companion.of
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      "1" -> (KaVariableSignature:
+        name = vals
+        receiverType = null
+        returnType = kotlin.String
+        symbol = vararg vals: kotlin.String
+        contextParameters = []
+        callableId = null),
+      "2" -> (KaVariableSignature:
+        name = vals
+        receiverType = null
+        returnType = kotlin.String
+        symbol = vararg vals: kotlin.String
+        contextParameters = []
+        callableId = null),
+      "3" -> (KaVariableSignature:
+        name = vals
+        receiverType = null
+        returnType = kotlin.String
+        symbol = vararg vals: kotlin.String
+        contextParameters = []
+        callableId = null)
+    }

@@ -2,15 +2,6 @@ KtOperationReferenceExpression(97,98): '>'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          1 -> (KaVariableSignature:
-            name = number
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = number: kotlin.Int
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -32,17 +23,17 @@ KtOperationReferenceExpression(97,98): '>'
           ]
           contextParameters = []
           callableId = /compareTo
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
-            name = int
+            name = number
             receiverType = null
             returnType = kotlin.Int
-            symbol = int: kotlin.Int
+            symbol = number: kotlin.Int
             contextParameters = []
             callableId = null)
-        }
+        },
+      KaSimpleFunctionCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -65,6 +56,15 @@ KtOperationReferenceExpression(97,98): '>'
           contextParameters = []
           callableId = /compareTo
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          1 -> (KaVariableSignature:
+            name = int
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = int: kotlin.Int
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
     fun <T> T.compareTo(int: Int): Int

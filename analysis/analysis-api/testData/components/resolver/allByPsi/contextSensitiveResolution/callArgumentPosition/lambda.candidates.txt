@@ -58,7 +58,6 @@ KtSuperTypeList(217,226): 'MyClass()'
 KtSuperTypeCallEntry(217,226): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -71,12 +70,12 @@ KtSuperTypeCallEntry(217,226): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(217,224): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -89,6 +88,7 @@ KtConstructorCalleeExpression(217,224): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(217,224): 'MyClass'
@@ -130,7 +130,6 @@ KtSuperTypeList(292,301): 'MyClass()'
 KtSuperTypeCallEntry(292,301): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -143,12 +142,12 @@ KtSuperTypeCallEntry(292,301): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(292,299): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -161,6 +160,7 @@ KtConstructorCalleeExpression(292,299): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(292,299): 'MyClass'
@@ -208,7 +208,6 @@ KtSuperTypeList(388,395): 'Super()'
 KtSuperTypeCallEntry(388,395): 'Super()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -221,12 +220,12 @@ KtSuperTypeCallEntry(388,395): 'Super()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(388,393): 'Super'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -239,6 +238,7 @@ KtConstructorCalleeExpression(388,393): 'Super'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(388,393): 'Super'
@@ -271,7 +271,6 @@ KtNameReferenceExpression(423,430): 'MyClass'
 KtCallExpression(433,439): 'TODO()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -283,11 +282,11 @@ KtCallExpression(433,439): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -307,13 +306,13 @@ KtCallExpression(433,439): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(433,437): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -325,11 +324,11 @@ KtNameReferenceExpression(433,437): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -349,6 +348,7 @@ KtNameReferenceExpression(433,437): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
 
@@ -370,7 +370,6 @@ KtNameReferenceExpression(472,486): 'InheritorClass'
 KtCallExpression(489,505): 'InheritorClass()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -382,12 +381,12 @@ KtCallExpression(489,505): 'InheritorClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(489,503): 'InheritorClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -399,6 +398,7 @@ KtNameReferenceExpression(489,503): 'InheritorClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(503,505): '()'
@@ -419,7 +419,6 @@ KtNameReferenceExpression(539,554): 'InheritorObject'
 KtNameReferenceExpression(557,572): 'InheritorObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -431,6 +430,7 @@ KtNameReferenceExpression(557,572): 'InheritorObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -485,15 +485,6 @@ KtPropertyDelegate(673,685): 'by lazy {""}'
 KtCallExpression(676,685): 'lazy {""}'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = () -> kotlin.String
-          symbol = initializer: () -> T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -515,11 +506,7 @@ KtCallExpression(676,685): 'lazy {""}'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
@@ -528,6 +515,10 @@ KtCallExpression(676,685): 'lazy {""}'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -556,12 +547,7 @@ KtCallExpression(676,685): 'lazy {""}'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
@@ -570,6 +556,11 @@ KtCallExpression(676,685): 'lazy {""}'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -597,6 +588,15 @@ KtCallExpression(676,685): 'lazy {""}'
         callableId = kotlin/lazy
       typeArgumentsMapping = {
         T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode'.>
     isInBestCandidates = false
@@ -604,15 +604,6 @@ KtCallExpression(676,685): 'lazy {""}'
 KtNameReferenceExpression(676,680): 'lazy'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = () -> kotlin.String
-          symbol = initializer: () -> T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -634,11 +625,7 @@ KtNameReferenceExpression(676,680): 'lazy'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
@@ -647,6 +634,10 @@ KtNameReferenceExpression(676,680): 'lazy'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -675,12 +666,7 @@ KtNameReferenceExpression(676,680): 'lazy'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
@@ -689,6 +675,11 @@ KtNameReferenceExpression(676,680): 'lazy'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -716,6 +707,15 @@ KtNameReferenceExpression(676,680): 'lazy'
         callableId = kotlin/lazy
       typeArgumentsMapping = {
         T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode'.>
     isInBestCandidates = false
@@ -750,7 +750,6 @@ KtBlockExpression(712,727): 'InheritorObject'
 KtNameReferenceExpression(712,727): 'InheritorObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -762,6 +761,7 @@ KtNameReferenceExpression(712,727): 'InheritorObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -783,7 +783,6 @@ KtNameReferenceExpression(749,756): 'MyClass'
 KtCallExpression(759,765): 'TODO()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -795,11 +794,11 @@ KtCallExpression(759,765): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -819,13 +818,13 @@ KtCallExpression(759,765): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(759,763): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -837,11 +836,11 @@ KtNameReferenceExpression(759,763): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -861,6 +860,7 @@ KtNameReferenceExpression(759,763): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
 
@@ -912,15 +912,6 @@ KtBlockExpression(824,1172): '{'
 KtCallExpression(830,855): 'lMyClass(InheritorObject)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -943,6 +934,15 @@ KtCallExpression(830,855): 'lMyClass(InheritorObject)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(830,838): 'lMyClass'
@@ -972,7 +972,6 @@ KtValueArgument(839,854): 'InheritorObject'
 KtNameReferenceExpression(839,854): 'InheritorObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -984,21 +983,13 @@ KtNameReferenceExpression(839,854): 'InheritorObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtCallExpression(860,881): 'lMyClass(propMyClass)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        propMyClass -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1021,6 +1012,15 @@ KtCallExpression(860,881): 'lMyClass(propMyClass)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        propMyClass -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(860,868): 'lMyClass'
@@ -1071,15 +1071,6 @@ KtNameReferenceExpression(869,880): 'propMyClass'
 KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        propInheritorClass -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1102,6 +1093,15 @@ KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        propInheritorClass -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(886,894): 'lMyClass'
@@ -1152,15 +1152,6 @@ KtNameReferenceExpression(895,913): 'propInheritorClass'
 KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        propInheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1183,6 +1174,15 @@ KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        propInheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(919,927): 'lMyClass'
@@ -1233,15 +1233,6 @@ KtNameReferenceExpression(928,947): 'propInheritorObject'
 KtCallExpression(954,976): 'lMyClass(NestedObject)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        NestedObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1264,6 +1255,15 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        NestedObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(954,962): 'lMyClass'
@@ -1293,7 +1293,6 @@ KtValueArgument(963,975): 'NestedObject'
 KtNameReferenceExpression(963,975): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1305,21 +1304,13 @@ KtNameReferenceExpression(963,975): 'NestedObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtCallExpression(981,995): 'lMyClass(prop)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        prop -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1342,6 +1333,15 @@ KtCallExpression(981,995): 'lMyClass(prop)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        prop -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(981,989): 'lMyClass'
@@ -1392,15 +1392,6 @@ KtNameReferenceExpression(990,994): 'prop'
 KtCallExpression(1000,1019): 'lMyClass(superProp)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        superProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1423,6 +1414,15 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        superProp -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1000,1008): 'lMyClass'
@@ -1473,15 +1473,6 @@ KtNameReferenceExpression(1009,1018): 'superProp'
 KtCallExpression(1024,1043): 'lMyClass(constProp)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        constProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1504,6 +1495,15 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        constProp -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1024,1032): 'lMyClass'
@@ -1554,15 +1554,6 @@ KtNameReferenceExpression(1033,1042): 'constProp'
 KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        lazyProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1585,6 +1576,15 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        lazyProp -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1048,1056): 'lMyClass'
@@ -1635,15 +1635,6 @@ KtNameReferenceExpression(1057,1065): 'lazyProp'
 KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        lambdaProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1666,6 +1657,15 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        lambdaProp -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1071,1079): 'lMyClass'
@@ -1716,15 +1716,6 @@ KtNameReferenceExpression(1080,1090): 'lambdaProp'
 KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        InheritorClass() -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1747,6 +1738,15 @@ KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorClass() -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1097,1105): 'lMyClass'
@@ -1785,15 +1785,6 @@ KtValueArgumentList(1120,1122): '()'
 KtCallExpression(1128,1144): 'lMyClass(func())'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        func() -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1816,6 +1807,15 @@ KtCallExpression(1128,1144): 'lMyClass(func())'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        func() -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1128,1136): 'lMyClass'
@@ -1854,15 +1854,6 @@ KtValueArgumentList(1141,1143): '()'
 KtCallExpression(1149,1170): 'lMyClass(superFunc())'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        superFunc() -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lMyClass
@@ -1885,6 +1876,15 @@ KtCallExpression(1149,1170): 'lMyClass(superFunc())'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        superFunc() -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1149,1157): 'lMyClass'

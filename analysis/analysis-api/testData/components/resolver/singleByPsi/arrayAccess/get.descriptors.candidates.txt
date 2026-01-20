@@ -1,15 +1,6 @@
 KtArrayAccessExpression(70,77): 'list[0]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -32,19 +23,19 @@ KtArrayAccessExpression(70,77): 'list[0]'
         contextParameters = []
         callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = index
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = index: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = key
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = key: K
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -70,20 +61,20 @@ KtArrayAccessExpression(70,77): 'list[0]'
         K -> (kotlin.Int),
         V -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = name
-          receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -106,5 +97,14 @@ KtArrayAccessExpression(70,77): 'list[0]'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     isInBestCandidates = false
