@@ -32,15 +32,15 @@ public class DataAndAllArgs {
 // FILE: TestJavaUsage.java
 public class TestJavaUsage {
     public static void main(String[] args) {
-        DataAndNoArgs o1 = new TestJava("name", "lastName"); // constructor DataAndNoArgs in class DataAndNoArgs cannot be applied to given types
+        DataAndNoArgs o1 = new DataAndNoArgs("name", "lastName"); // constructor DataAndNoArgs in class DataAndNoArgs cannot be applied to given types
         DataAndAllArgs o2 = new DataAndAllArgs("abc"); // error
     }
 }
 
 // FILE: UsageFromKotlin.kt
 fun main() {
-    DataAndNoArgs("name", "lastName") // It should be incorrect
-    DataAndNoArgs() // OK
-    DataAndAllArgs("abc") // It should be incorrect
-    DataAndAllArgs("abc", 3) // OK
+    DataAndNoArgs(<!TOO_MANY_ARGUMENTS!>"name"<!>, <!TOO_MANY_ARGUMENTS!>"lastName"<!>)
+    DataAndNoArgs()
+    <!NONE_APPLICABLE!>DataAndAllArgs<!>("abc")
+    DataAndAllArgs("abc", 3)
 }

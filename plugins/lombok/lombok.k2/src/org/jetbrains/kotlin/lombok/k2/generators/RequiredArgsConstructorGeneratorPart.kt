@@ -23,7 +23,10 @@ class RequiredArgsConstructorGeneratorPart(session: FirSession) : AbstractConstr
     override fun getConstructorInfo(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? {
         return lombokService.getRequiredArgsConstructor(classSymbol)
             ?: runIf(!containsExplicitConstructor(classSymbol)) {
-                lombokService.getData(classSymbol)?.asRequiredArgsConstructor()
+                lombokService.getData(classSymbol)?.takeIf {
+                    lombokService.getAllArgsConstructor(classSymbol) == null &&
+                            lombokService.getNoArgsConstructor(classSymbol) == null
+                }?.asRequiredArgsConstructor()
             }
     }
 
