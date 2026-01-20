@@ -6,9 +6,11 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxCoreTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
+import org.jetbrains.kotlin.test.HeavyTest
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -34,6 +36,16 @@ fun main(args: Array<String>) {
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                     *noPartialLinkage(),
+                    codegenBox(),
+                )
+            ) {
+                model("box", excludeDirs = k1BoxTestDir)
+                model("boxInline")
+            }
+            testClass<AbstractNativeCodegenBoxCoreTest>(
+                suiteTestClassName = "NativeCodegenBoxTestGenerated",
+                annotations = listOf(
+                    annotation(HeavyTest::class.java),
                     codegenBox(),
                 )
             ) {

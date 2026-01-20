@@ -12,6 +12,8 @@ dependencies {
 
     testImplementation(testFixtures(project(":native:native.tests")))
     testFixturesImplementation(testFixtures(project(":native:native.tests")))
+    testFixturesImplementation(testFixtures(project(":native:native.tests:klib-ir-inliner")))
+    testFixturesImplementation(testFixtures(project(":native:native.tests:klib-compatibility")))
 }
 
 sourceSets {
@@ -26,6 +28,10 @@ projectTests {
     nativeTestTask("test") {
         // nativeTest sets workingDir to rootDir so here we need to override it
         workingDir = projectDir
+        systemProperty(
+            "kotlin.internal.native.test.compat.currentCompilerDist",
+            rootProject.projectDir.resolve("kotlin-native/dist")
+        )
     }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeCodegenBoxTestsKt", generateTestsInBuildDirectory = true) {
