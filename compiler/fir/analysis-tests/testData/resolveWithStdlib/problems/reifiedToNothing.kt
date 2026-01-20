@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
 // DUMP_INFERENCE_LOGS: MERMAID, MARKDOWN, FIXATION
 
@@ -14,7 +14,7 @@ fun parse(token: String, flag: Boolean): Result? {
     return ifTrue(flag) {
         try {
             // P shouldn't be inferred to Nothing
-            parse(decode(token))
+            <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>parse<!>(decode(token))
         } catch (e: Exception) {
             null
         }

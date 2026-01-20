@@ -15,9 +15,9 @@ FILE: reifiedToNothing.kt
 
     }
     public final fun parse(token: R|kotlin/String|, flag: R|kotlin/Boolean|): R|Result?| {
-        ^parse R|/ifTrue|<R|Result|>(R|<local>/flag|, <L> = ifTrue@fun <anonymous>(): R|Result?| <inline=Inline, kind=UNKNOWN>  {
+        ^parse R|/ifTrue|<R|kotlin/Nothing|>(R|<local>/flag|, <L> = ifTrue@fun <anonymous>(): R|kotlin/Nothing?| <inline=Inline, kind=UNKNOWN>  {
             ^ try {
-                R|/parse|<R|Result|>(R|/decode|(R|<local>/token|))
+                R|/parse|<R|kotlin/Nothing|>(R|/decode|(R|<local>/token|))
             }
             catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
                 Null(null)
