@@ -11,9 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskState
 import org.gradle.api.execution.TaskExecutionListener
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.report.*
 import org.jetbrains.report.json.*
 import java.io.File
@@ -21,30 +19,6 @@ import java.io.File
 /*
  * This file includes short-cuts that may potentially be implemented in Kotlin MPP Gradle plugin in the future.
  */
-
-typealias TargetPreset = (String, KotlinNativeTarget.() -> (Unit)) -> (KotlinNativeTarget)
-
-// A short-cut for evaluation of the default host Kotlin/Native preset.
-fun defaultHostPreset(subproject: Project): TargetPreset {
-    return when (HostManager.host) {
-        KonanTarget.MACOS_X64 -> subproject.kotlin::macosX64
-        KonanTarget.MACOS_ARM64 -> subproject.kotlin::macosArm64
-        KonanTarget.LINUX_X64 -> subproject.kotlin::linuxX64
-        KonanTarget.MINGW_X64 -> subproject.kotlin::mingwX64
-        else -> throw Exception("Host OS '$hostOs' is not supported in Kotlin/Native ${subproject.displayName}.")
-    }
-}
-
-fun targetHostPreset(
-        subproject: Project,
-        crossTarget: String,
-): TargetPreset {
-    return when(crossTarget) {
-        "linuxArm64" -> subproject.kotlin::linuxArm64
-        "linuxX64" -> subproject.kotlin::linuxX64
-        else -> throw Exception("Running becnhmarks on target $crossTarget isn't supported yet.")
-    }
-}
 
 fun getNativeProgramExtension(): String = when {
     PlatformInfo.isMac() -> ".kexe"
@@ -114,17 +88,6 @@ fun getCompileOnlyBenchmarksOpts(project: Project, defaultCompilerOpts: List<Str
             listOfNotNull("-g", cacheOption)
         else listOf()
     } ?: defaultCompilerOpts + listOfNotNull(cacheOption?.takeIf { !defaultCompilerOpts.contains("-opt") })
-}
-
-// A short-cut to add a Kotlin/Native run task.
-fun createRunTask(
-        subproject: Project,
-        name: String,
-        linkTask: Task,
-        executable: String,
-        outputFileName: String
-): Task {
-    return subproject.tasks.create(name, RunKotlinNativeTask::class.java, linkTask, executable, outputFileName)
 }
 
 fun getCompileBenchmarkTime(subproject: Project,
