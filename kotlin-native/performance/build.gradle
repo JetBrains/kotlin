@@ -69,7 +69,7 @@ tasks.register("buildAnalyzer") {
 
 task konanRun {
     subprojects.each {
-        if (it.name != "benchmarksAnalyzer") {
+        if (it.name != "benchmarksAnalyzer" && it.name != "benchmarksLauncher") {
             dependsOn "${it.path}:konanRun"
         }
     }
@@ -114,7 +114,7 @@ task mergeNativeReports {
 }
 
 subprojects.each {
-    if (it.name != "benchmarksAnalyzer") {
+    if (it.name != "benchmarksAnalyzer" && it.name != "benchmarksLauncher") {
         it.afterEvaluate {
             it.konanJsonReport.finalizedBy mergeNativeReports
         }

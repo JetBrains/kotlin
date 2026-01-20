@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.benchmark
 
 import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
@@ -47,6 +47,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
 
     override fun KotlinNativeTarget.createNativeBinary(project: Project) {
         binaries.framework(nativeFrameworkName, listOf(project.benchmark.buildType)) {
+            export(project.dependencies.project(":benchmarksLauncher"))
             // Specify settings configured by a user in the benchmark extension.
             project.afterEvaluate {
                 linkerOpts.addAll(project.benchmark.linkerOpts)
