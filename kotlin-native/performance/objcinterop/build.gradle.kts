@@ -3,33 +3,54 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.benchmark.BenchmarkingPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("benchmarking")
 }
 
-benchmark {
-    applicationName = "ObjCInterop"
-    commonSrcDirs = listOf("../reports/src/main/kotlin/report", "src/main/kotlin", "../shared/src/main/kotlin")
-    nativeSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/common")
-    mingwSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/mingw")
-    posixSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/posix")
-}
-
-
-val native = kotlin.targets.getByName("native") as KotlinNativeTarget
-native.apply {
-    compilations["main"].cinterops {
-        create("classes") {
-            headers("$projectDir/src/nativeInterop/cinterop/complexNumbers.h")
-            extraOpts("-Xccall-mode", "indirect") // Required for -Xcompile-source
-            extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/complexNumbers.m")
-            extraOpts("-Xsource-compiler-option", "-lobjc", "-Xsource-compiler-option", "-fobjc-arc",
-                    "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)=")
+kotlin {
+    targets.filterIsInstance<KotlinNativeTarget>().forEach {
+        it.compilations.getByName("main") {
+            cinterops {
+                val classes by creating {
+                    headers("$projectDir/src/nativeInterop/cinterop/complexNumbers.h")
+                    extraOpts("-Xccall-mode", "indirect") // Required for -Xcompile-source
+                    extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/complexNumbers.m")
+                    extraOpts("-Xsource-compiler-option", "-lobjc", "-Xsource-compiler-option", "-fobjc-arc")
+                }
+            }
         }
     }
+
+    applyDefaultHierarchyTemplate() // due to custom posixMain source set
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(kotlin("stdlib"))
+                implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
+            }
+            kotlin.srcDir("src/main/kotlin")
+            kotlin.srcDir("../reports/src/main/kotlin/report")
+            kotlin.srcDir("../shared/src/main/kotlin")
+        }
+        nativeMain {
+            kotlin.srcDir("src/main/kotlin-native")
+            kotlin.srcDir("../shared/src/main/kotlin-native/common")
+        }
+        mingwMain {
+            kotlin.srcDir("../shared/src/main/kotlin-native/mingw")
+        }
+        val posixMain by creating {
+            dependsOn(nativeMain.get())
+            kotlin.srcDir("../shared/src/main/kotlin-native/posix")
+        }
+        linuxMain.get().dependsOn(posixMain)
+        appleMain.get().dependsOn(posixMain)
+    }
+}
+
+benchmark {
+    applicationName = "ObjCInterop"
 }

@@ -5,24 +5,12 @@
 
 package org.jetbrains.kotlin
 
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
-import org.gradle.api.plugins.ExtraPropertiesExtension
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import java.io.File
 
 /*
  * This file includes internal short-cuts visible only inside of the 'buildSrc' module.
  */
 
-internal val hostOs by lazy { System.getProperty("os.name") }
-
 internal val Project.kotlin: KotlinMultiplatformExtension
     get() = extensions.getByName("kotlin") as KotlinMultiplatformExtension
-
-internal val NamedDomainObjectContainer<out KotlinCompilation<*>>.main: KotlinNativeCompilation
-    get() = getByName(::main.name) as KotlinNativeCompilation

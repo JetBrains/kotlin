@@ -3,31 +3,54 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.benchmark.BenchmarkingPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.konan.target.*
 
 plugins {
     id("benchmarking")
 }
 
-benchmark {
-    applicationName = "Numerical"
-    commonSrcDirs = listOf("src/main/kotlin", "../reports/src/main/kotlin/report", "../shared/src/main/kotlin")
-    nativeSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/common")
-    mingwSrcDirs = listOf("../shared/src/main/kotlin-native/mingw")
-    posixSrcDirs = listOf("../shared/src/main/kotlin-native/posix")
-}
-
-val native = kotlin.targets.getByName("native") as KotlinNativeTarget
-native.apply {
-    compilations["main"].cinterops {
-        create("cinterop") {
-            headers("$projectDir/src/nativeInterop/cinterop/pi.h")
-            extraOpts("-Xccall-mode", "indirect") // Required for -Xcompile-source
-            extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/pi.c")
-            extraOpts("-Xsource-compiler-option", "-O3")
+kotlin {
+    targets.filterIsInstance<KotlinNativeTarget>().forEach {
+        it.compilations.getByName("main") {
+            cinterops {
+                val cinterop by creating {
+                    headers("$projectDir/src/nativeInterop/cinterop/pi.h")
+                    extraOpts("-Xccall-mode", "indirect") // Required for -Xcompile-source
+                    extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/pi.c")
+                    extraOpts("-Xsource-compiler-option", "-O3")
+                }
+            }
         }
     }
+
+    applyDefaultHierarchyTemplate() // due to custom posixMain source set
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(kotlin("stdlib"))
+                implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
+            }
+            kotlin.srcDir("src/main/kotlin")
+            kotlin.srcDir("../reports/src/main/kotlin/report")
+            kotlin.srcDir("../shared/src/main/kotlin")
+        }
+        nativeMain {
+            kotlin.srcDir("src/main/kotlin-native")
+            kotlin.srcDir("../shared/src/main/kotlin-native/common")
+        }
+        mingwMain {
+            kotlin.srcDir("../shared/src/main/kotlin-native/mingw")
+        }
+        val posixMain by creating {
+            dependsOn(nativeMain.get())
+            kotlin.srcDir("../shared/src/main/kotlin-native/posix")
+        }
+        linuxMain.get().dependsOn(posixMain)
+        appleMain.get().dependsOn(posixMain)
+    }
+}
+
+benchmark {
+    applicationName = "Numerical"
 }
