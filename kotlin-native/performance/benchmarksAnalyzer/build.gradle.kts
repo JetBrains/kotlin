@@ -18,17 +18,14 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(kotlin("stdlib"))
+                implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
             }
             kotlin.srcDir("../../tools/benchmarks/shared/src/main/kotlin")
-            kotlin.srcDir("../../endorsedLibraries/kotlinx.cli/src/main/kotlin")
         }
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
             }
-        }
-        nativeMain {
-            kotlin.srcDir("../../endorsedLibraries/kotlinx.cli/src/main/kotlin-native")
         }
     }
 }
