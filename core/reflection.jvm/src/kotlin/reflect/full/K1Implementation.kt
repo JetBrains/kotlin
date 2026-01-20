@@ -11,11 +11,13 @@ import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KTypeParameterImpl
+import kotlin.reflect.jvm.internal.KTypeParameterOwnerImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal fun KClassifier.createK1KType(
     arguments: List<KTypeProjection>,
+    container: KTypeParameterOwnerImpl?,
     nullable: Boolean,
 ): DescriptorKType {
     val descriptor = when (this) {
@@ -26,7 +28,7 @@ internal fun KClassifier.createK1KType(
 
     checkArgumentsSize(descriptor.typeConstructor.parameters.size, arguments.size)
 
-    return DescriptorKType(createKotlinType(descriptor.typeConstructor, arguments, nullable))
+    return DescriptorKType(container, createKotlinType(descriptor.typeConstructor, arguments, nullable))
 }
 
 private fun createKotlinType(typeConstructor: TypeConstructor, arguments: List<KTypeProjection>, nullable: Boolean): SimpleType {

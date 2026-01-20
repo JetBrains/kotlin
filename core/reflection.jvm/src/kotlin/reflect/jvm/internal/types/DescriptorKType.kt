@@ -23,12 +23,25 @@ import kotlin.reflect.KTypeProjection
 import kotlin.reflect.jvm.internal.*
 import kotlin.reflect.jvm.jvmErasure
 
-internal class DescriptorKType(
+internal class DescriptorKType private constructor(
     val type: KotlinType,
     computeJavaType: (() -> Type)?,
+    internal val container: KTypeParameterOwnerImpl?,
     private val isAbbreviation: Boolean,
 ) : AbstractKType(computeJavaType) {
-    constructor(type: KotlinType, computeJavaType: (() -> Type)? = null) : this(type, computeJavaType, isAbbreviation = false)
+    constructor(type: KotlinType, computeJavaType: (() -> Type)? = null) : this(
+        type,
+        computeJavaType,
+        container = null,
+        isAbbreviation = false,
+    )
+
+    constructor(container: KTypeParameterOwnerImpl?, type: KotlinType, computeJavaType: (() -> Type)? = null) : this(
+        type,
+        computeJavaType,
+        container,
+        isAbbreviation = false,
+    )
 
     override val classifier: KClassifier? by ReflectProperties.lazySoft { convert(type) }
 
@@ -77,7 +90,7 @@ internal class DescriptorKType(
     private fun TypeProjection.toKTypeProjection(computeJavaType: (() -> Type)? = null): KTypeProjection {
         if (isStarProjection) return KTypeProjection.STAR
 
-        val result = DescriptorKType(type, computeJavaType)
+        val result = DescriptorKType(container, type, computeJavaType)
         return when (projectionKind) {
             Variance.INVARIANT -> KTypeProjection.invariant(result)
             Variance.IN_VARIANCE -> KTypeProjection.contravariant(result)
@@ -95,7 +108,7 @@ internal class DescriptorKType(
         // If the type is not marked nullable, it's either a non-null type or a platform type.
         if (!type.isFlexible() && isMarkedNullable == nullable) return this
 
-        return DescriptorKType(TypeUtils.makeNullableAsSpecified(type, nullable))
+        return DescriptorKType(container, TypeUtils.makeNullableAsSpecified(type, nullable))
     }
 
     override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType {
@@ -104,11 +117,11 @@ internal class DescriptorKType(
                 DefinitelyNotNullType.makeDefinitelyNotNull(type.unwrap(), true) ?: return this
             else
                 (type as? DefinitelyNotNullType)?.original ?: return this
-        return DescriptorKType(result)
+        return DescriptorKType(container, result)
     }
 
     override val abbreviation: KType?
-        get() = type.getAbbreviation()?.let { DescriptorKType(it, computeJavaType, isAbbreviation = true) }
+        get() = type.getAbbreviation()?.let { DescriptorKType(it, computeJavaType, isAbbreviation = true, container = container) }
 
     override val isDefinitelyNotNullType: Boolean
         get() = type.isDefinitelyNotNullType
@@ -128,7 +141,7 @@ internal class DescriptorKType(
                         classDescriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(container, descriptor) }
                     },
                     {
-                        classDescriptor.typeConstructor.supertypes.map(::DescriptorKType)
+                        classDescriptor.typeConstructor.supertypes.map { DescriptorKType(container, it) }
                     },
                 )
             }
@@ -143,13 +156,13 @@ internal class DescriptorKType(
 
     override fun lowerBoundIfFlexible(): AbstractKType? =
         when (val unwrapped = type.unwrap()) {
-            is FlexibleType -> DescriptorKType(unwrapped.lowerBound)
+            is FlexibleType -> DescriptorKType(container, unwrapped.lowerBound)
             else -> null
         }
 
     override fun upperBoundIfFlexible(): AbstractKType? =
         when (val unwrapped = type.unwrap()) {
-            is FlexibleType -> DescriptorKType(unwrapped.upperBound)
+            is FlexibleType -> DescriptorKType(container, unwrapped.upperBound)
             else -> null
         }
 
@@ -163,3 +176,15 @@ internal class DescriptorKType(
             (31 * ((31 * type.hashCode()) + classifier.hashCode())) + arguments.hashCode()
         } else super.hashCode()
 }
+
+private val KTypeParameterOwnerImpl.declaringContainersIncludingSelf: Sequence<KTypeParameterOwnerImpl>
+    get() = generateSequence(this@declaringContainersIncludingSelf) {
+        when (it) {
+            is MutableCollectionKClass<*> -> it.klass.declaringKClass as? KClassImpl<*>
+            is KClass<*> -> it.declaringKClass as? KClassImpl<*>
+            is DescriptorKCallable<*> -> it.container as? KTypeParameterOwnerImpl
+            else -> it
+        }
+    }
+
+private val KClass<*>.declaringKClass: KClass<*>? get() = java.declaringClass?.kotlin

@@ -226,7 +226,7 @@ internal class DescriptorKFunction private constructor(
     }
 
     override fun computeReturnType(): DescriptorKType =
-        DescriptorKType(descriptor.returnType!!) {
+        DescriptorKType(this, descriptor.returnType!!) {
             extractContinuationArgument() ?: caller.returnType
         }
 
