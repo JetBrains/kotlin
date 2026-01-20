@@ -26,7 +26,6 @@ include ':ring'
 include ':cinterop'
 include ':helloworld'
 include ':numerical'
-include ':framework'
 include ':startup'
 include ':logging'
 if (System.getProperty("os.name") == "Mac OS X") {
