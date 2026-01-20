@@ -24,9 +24,21 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
     @field:Volatile
     var lastAccessedAnnotationIds: Collection<ClassId>? = null
 
+    @field:Volatile
+    var lastAnnotatedSymbolClassAsString: String? = null
+
+    @field:Volatile
+    var lastSymbolAnnotationClass: String? = null
+
+    var lastExtraSymbolInfo: List<String>? = null
+
     override fun annotationInfos(): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
         val indices = mutableMapOf<ClassId?, Int>()
         lastAccessedAnnotationIds = annotatedSymbol.annotations.classIds
+        lastAnnotatedSymbolClassAsString = annotatedSymbol::class.qualifiedName
+        lastSymbolAnnotationClass = annotatedSymbol.annotations::class.qualifiedName
+        lastExtraSymbolInfo = annotatedSymbol.getExtraInfo()
+
         annotatedSymbol.annotations.map { annotation ->
             // to preserve the initial annotations order
             val index = indices.merge(annotation.classId, 0) { old, _ -> old + 1 }!!

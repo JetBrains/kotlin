@@ -112,12 +112,14 @@ private fun FirAnnotationContainer.isDefinitelyEmpty(anchorElement: FirBasedSymb
 }
 
 @SymbolInternals
-fun FirAnnotationContainer.resolvedAnnotationsWithClassIds(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
-    if (isDefinitelyEmpty(anchorElement)) return emptyList()
+fun FirAnnotationContainer.resolvedAnnotationsWithClassIds(
+    anchorElement: FirBasedSymbol<*>, stringBuilder: StringBuilder? = null): List<FirAnnotation> {
+    stringBuilder?.append("called resolvedAnnotationsWithClassIds")
+    if (isDefinitelyEmpty(anchorElement)) return emptyList<FirAnnotation>().also { stringBuilder?.append("isDefinitelyEmpty in Fir returned try") }
 
     anchorElement.lazyResolveToPhase(FirResolvePhase.TYPES)
 
-    return annotations
+    return annotations.also { stringBuilder?.append("Fir returned ${annotations.size} annotations after resoling to types") }
 }
 
 private fun FirAnnotationContainer.resolvedAnnotationClassIds(anchorElement: FirBasedSymbol<*>): List<ClassId> {

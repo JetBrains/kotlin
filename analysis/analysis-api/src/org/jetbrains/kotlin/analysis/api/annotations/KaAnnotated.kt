@@ -17,4 +17,8 @@ public interface KaAnnotated {
      * A list of annotations applied to the annotated entity.
      */
     public val annotations: KaAnnotationList
+
+    public fun getExtraInfo(): List<String> {
+        return emptyList()
+    }
 }

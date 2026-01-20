@@ -44,7 +44,18 @@ internal class GranularAnnotationsBox(
         if (annotationsProvider is SymbolAnnotationsProvider<*>) {
             annotationInfo.add(
                 annotationsProvider.lastAccessedAnnotationIds
-                    ?.joinToString(prefix = "Annotation provider annotation IDs:", separator = System.lineSeparator()).orEmpty()
+                    ?.joinToString(prefix = "Annotation provider annotation IDs: ", separator = System.lineSeparator()).orEmpty()
+            )
+            annotationInfo.add(
+                annotationsProvider.lastAnnotatedSymbolClassAsString.let { "Last annotated symbol class: $it" }
+            )
+
+            annotationInfo.add(
+                annotationsProvider.lastSymbolAnnotationClass.let { "Last annotated symbol's annotations class: $it" }
+            )
+
+            annotationInfo.add(
+                annotationsProvider.lastExtraSymbolInfo.let { "Last info from the depths of FIR: ${it?.joinToString(prefix = "[\n", postfix = "]\n", separator = System.lineSeparator())}" }
             )
         }
 

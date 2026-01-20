@@ -38,12 +38,23 @@ internal class KaFirBackingFieldSymbol private constructor(
     override val origin: KaSymbolOrigin
         get() = withValidityAssertion { super<KaBackingFieldSymbol>.origin }
 
+    @get:Synchronized
+    val backingFieldInfo: MutableList<String> = mutableListOf()
+
+    override fun getExtraInfo(): List<String> = backingFieldInfo + stringBuilder.toString()
+
+    val stringBuilder: StringBuilder = StringBuilder()
+
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
-            if (owningKaProperty.backingPsi?.cannotHaveBackingFieldAnnotation() == true)
+            if (owningKaProperty.backingPsi?.cannotHaveBackingFieldAnnotation() == true) {
+                backingFieldInfo += "Backing field ${firSymbol.name} cannot have backing field annotations"
                 KaBaseEmptyAnnotationList(token)
-            else
-                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            } else {
+                KaFirAnnotationListForDeclaration.create(firSymbol, builder, stringBuilder).also {
+                    backingFieldInfo += "Normal annotation creation for backing field:"
+                }
+            }
         }
 
     override val returnType: KaType

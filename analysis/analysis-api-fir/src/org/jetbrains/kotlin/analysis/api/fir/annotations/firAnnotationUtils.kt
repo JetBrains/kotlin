@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithClassIds
@@ -166,7 +167,8 @@ internal fun annotations(
     firSymbol: FirBasedSymbol<*>,
     builder: KaSymbolByFirBuilder,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): List<KaAnnotation> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).map { annotation ->
+    stringBuilder: StringBuilder? = null,
+): List<KaAnnotation> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol, stringBuilder).map { annotation ->
     annotation.toKaAnnotation(builder)
 }
 
@@ -174,8 +176,13 @@ internal fun annotationClassIds(
     firSymbol: FirBasedSymbol<*>,
     useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): Collection<ClassId> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapNotNull {
-    it.toAnnotationClassId(useSiteSession)
+    stringBuilder: StringBuilder? = null
+): Collection<ClassId> {
+    stringBuilder?.append("called annotationClassIds")?.append(System.lineSeparator())
+    return annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapNotNull {
+        stringBuilder?.append("Mapping annotation to ClassId: ")?.append(it.render())
+        it.toAnnotationClassId(useSiteSession)
+    }
 }
 
 internal fun hasAnnotation(

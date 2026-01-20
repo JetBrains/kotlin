@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.utils.relfection.renderAsDataClassToString
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -19,8 +20,13 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KaFirAnnotationListForDeclaration private constructor(
     val firSymbol: FirBasedSymbol<*>,
     private val builder: KaSymbolByFirBuilder,
+    private val stringBuilder: StringBuilder? = null,
 ) : AbstractList<KaAnnotation>(), KaAnnotationList {
-    private val backingAnnotations by lazy { annotations(firSymbol, builder) }
+    private val backingAnnotations by lazy {
+        annotations(firSymbol, builder, stringBuilder = stringBuilder).also {
+            stringBuilder?.append("Resolved lazy backing annotations in Fir")?.append(System.lineSeparator())
+        }
+    }
 
     override val token: KaLifetimeToken
         get() = builder.token
@@ -39,6 +45,7 @@ internal class KaFirAnnotationListForDeclaration private constructor(
         get() = withValidityAssertion { backingAnnotations.size }
 
     override fun iterator(): Iterator<KaAnnotation> = withValidityAssertion {
+        stringBuilder?.append("Iterator called for annotation list in Fir")?.append(System.lineSeparator())
         return backingAnnotations.iterator()
     }
 
@@ -56,18 +63,40 @@ internal class KaFirAnnotationListForDeclaration private constructor(
 
     override val classIds: Collection<ClassId>
         get() = withValidityAssertion {
-            annotationClassIds(firSymbol, useSiteSession)
+            stringBuilder?.append("Getting classIds in KaFirAnnotationListForDeclration")?.append(System.lineSeparator())
+            annotationClassIds(firSymbol, useSiteSession, stringBuilder = stringBuilder)
         }
 
     companion object {
-        fun create(firSymbol: FirBasedSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationList {
+        fun create(firSymbol: FirBasedSymbol<*>, builder: KaSymbolByFirBuilder, stringBuilder: StringBuilder? = null): KaAnnotationList {
             return when {
-                firSymbol is FirBackingFieldSymbol && firSymbol.propertySymbol.annotations.any { it.useSiteTarget == null } ->
-                    KaFirAnnotationListForDeclaration(firSymbol, builder)
-                firSymbol.annotations.isEmpty() ->
+                firSymbol is FirBackingFieldSymbol && firSymbol.propertySymbol.annotations.any { it.useSiteTarget == null } -> {
+                    stringBuilder?.append("Creating annotations for backing field that has annotations without use-site targets ")?.append(
+                        System.lineSeparator()
+                    )
+                    KaFirAnnotationListForDeclaration(firSymbol, builder, stringBuilder)
+                }
+                firSymbol.annotations.isEmpty() -> {
+                    stringBuilder
+                        ?.append(
+                            "firSymbol annotations are empty, creating empty annotation list, " + System.lineSeparator() +
+                                    "symbol is ${firSymbol::class.java.canonicalName}, " + System.lineSeparator() +
+                                    "renderedSymbol is ${firSymbol.renderAsDataClassToString()} " + System.lineSeparator() +
+                                    "its annotations is ${firSymbol.annotations::class.java}"
+                        )?.append(System.lineSeparator())
                     KaBaseEmptyAnnotationList(builder.token)
-                else ->
-                    KaFirAnnotationListForDeclaration(firSymbol, builder)
+                }
+                else -> {
+                    stringBuilder?.append(
+                        "Creating annotations from else branch, " + System.lineSeparator() +
+                                "symbol is ${firSymbol::class.java.canonicalName}, " + System.lineSeparator() +
+                                "renderedSymbol is ${firSymbol.renderAsDataClassToString()} " + System.lineSeparator() +
+                                "its annotations is ${firSymbol.annotations::class.java} with size ${firSymbol.annotations.size}"
+                    )?.append(
+                        System.lineSeparator()
+                    )
+                    KaFirAnnotationListForDeclaration(firSymbol, builder, stringBuilder)
+                }
             }
         }
     }
