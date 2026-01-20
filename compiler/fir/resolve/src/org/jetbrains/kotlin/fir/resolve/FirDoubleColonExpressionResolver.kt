@@ -76,7 +76,7 @@ class FirDoubleColonExpressionResolver(
         return lhs != null && lhs.canBeConsideredProperType()
     }
 
-    internal fun resolveDoubleColonLHS(doubleColonExpression: FirCallableReferenceAccess): DoubleColonLHS? {
+    fun resolveDoubleColonLHS(doubleColonExpression: FirCallableReferenceAccess): DoubleColonLHS? {
         val resultForExpr = tryResolveLHS(doubleColonExpression, this::shouldTryResolveLHSAsExpression, this::resolveExpressionOnLHS)
         if (resultForExpr != null && !resultForExpr.isObjectQualifier) {
             return resultForExpr

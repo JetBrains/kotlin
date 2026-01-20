@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
@@ -26,7 +27,7 @@ class SingleCandidateResolver(
     private val firSession: FirSession,
     private val firFile: FirFile,
 ) {
-    private val bodyResolveComponents = createStubBodyResolveComponents(firSession)
+    val bodyResolveComponents = createStubBodyResolveComponents(firSession)
     private val firCallCompleter = FirCallCompleter(
         bodyResolveComponents.transformer,
         bodyResolveComponents,
@@ -84,6 +85,11 @@ class SingleCandidateResolver(
                 firFile,
                 firSession
             )
+            SingleCandidateResolutionMode.CHECK_EXTENSION_CALLABlE_REFERENCE_FOR_COMPLETION -> CheckCallableReferenceForCompletionCandidateInfoProvider(
+                resolutionParameters,
+                firFile,
+                firSession
+            )
         }
     }
 
@@ -120,6 +126,7 @@ class ResolutionParameters(
     val explicitReceiver: FirExpression? = null,
     /** THIS IS UNSAFE TO PASS ORIGINAL ARGUMENTS. THEY HAVE TO BE COPIED TO AVOID MUTABILITY ISSUES */
     val argumentList: FirArgumentList = FirEmptyArgumentList,
+    val callableReferenceLHS: DoubleColonLHS? = null,
     val typeArgumentList: List<FirTypeProjection> = emptyList(),
     val allowUnsafeCall: Boolean = false,
     val allowUnstableSmartCast: Boolean = false,
@@ -132,5 +139,13 @@ enum class SingleCandidateResolutionMode {
      * Arguments and type arguments are not expected and not checked.
      * Explicit receiver can be passed and will always be interpreted as extension receiver.
      */
-    CHECK_EXTENSION_FOR_COMPLETION
+    CHECK_EXTENSION_FOR_COMPLETION,
+
+    /**
+     * Run resolution stages necessary to type check callable extension receiver (explicit/implicit) for candidate function.
+     * Candidate is expected to be taken from context scope.
+     * Arguments and type arguments are not expected and not checked.
+     * Explicit receiver can be passed and will always be interpreted as callable reference LHS.
+     */
+    CHECK_EXTENSION_CALLABlE_REFERENCE_FOR_COMPLETION,
 }
