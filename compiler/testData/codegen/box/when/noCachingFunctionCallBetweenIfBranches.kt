@@ -1,5 +1,5 @@
 // similar to KT-83607, KT-83740
-// WASM_CHECK_INSTRUCTION_NOT_IN_SCOPE: instruction=br_table scope_function=box
+// WASM_CHECK_INSTRUCTION_NOT_IN_FUNCTION: instruction=br_table inFunction=box
 
 object State {
     var counter = 0
