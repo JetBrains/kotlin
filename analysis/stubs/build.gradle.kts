@@ -35,6 +35,8 @@ projectTests {
         workingDir = rootDir
     }
 
+    testGenerator("org.jetbrains.kotlin.analysis.stubs.TestGeneratorKt")
+
     withJvmStdlibAndReflect()
 }
 

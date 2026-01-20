@@ -12,6 +12,7 @@
         <list>
           <option value=":generators:analysis-api-generator:generateTests" />
           <option value=":analysis:symbol-light-classes:generateTests" />
+          <option value=":analysis:stubs:generateTests" />
         </list>
       </option>
       <option name="vmOptions" />
