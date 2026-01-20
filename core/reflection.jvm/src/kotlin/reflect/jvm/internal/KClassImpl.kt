@@ -258,7 +258,7 @@ internal class KClassImpl<T : Any>(
             if (useK1Implementation) {
                 descriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(this@KClassImpl, descriptor) }
             } else if (kmClass == null) {
-                jClass.typeParameters.toKTypeParameters()
+                jClass.typeParameters.toKTypeParameters(this@KClassImpl)
             } else {
                 typeParameterTable.ownTypeParameters
             }
@@ -409,8 +409,21 @@ internal class KClassImpl<T : Any>(
 
         val declaredNonStaticMembers: Collection<ReflectKCallable<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
-        private val declaredStaticMembers: Collection<ReflectKCallable<*>>
-                by ReflectProperties.lazySoft { getMembers(staticScope, DECLARED) }
+        private val declaredStaticMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft {
+            if (useK1Implementation || kmClass != null || classKind == ClassKind.ENUM_ENTRY) {
+                // For Kotlin classes, use the legacy implementation for now to create enum's static functions.
+                getMembers(staticScope, DECLARED)
+            } else buildList {
+                for (method in jClass.declaredMethods) {
+                    if (Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
+                        add(JavaKNamedFunction(this@KClassImpl, method, CallableReference.NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+                    }
+                }
+
+                // Static properties are still descriptor-based for now.
+                getMembers(staticScope, DECLARED).filterTo(this) { it is KProperty<*> }
+            }
+        }
         private val inheritedNonStaticMembers_k1Impl: Collection<ReflectKCallable<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, INHERITED) }
         private val inheritedStaticMembers_k1Impl: Collection<ReflectKCallable<*>>

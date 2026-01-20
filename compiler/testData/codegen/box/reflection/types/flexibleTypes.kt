@@ -58,7 +58,12 @@ fun box(): String {
         assertEquals(Int::class.javaObjectType, it)
     }
 
-    check(J::raw, List::class, "kotlin.collections.MutableList<(raw) kotlin.Any?>")
+    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
+        check(J::raw, List::class, "kotlin.collections.MutableList<(raw) kotlin.Any?>")
+    } else {
+        check(J::raw, List::class, "kotlin.collections.MutableList<(raw) kotlin.Any!>")
+    }
+
     check(K::raw, List::class, "kotlin.collections.MutableList<(raw) kotlin.Any?>")
 
     val ref: (Number) -> Number = J::generic

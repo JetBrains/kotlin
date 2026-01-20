@@ -21,7 +21,7 @@ internal abstract class JavaKCallable<out R>(
 
     final override val modality: Modality
         get() = overriddenStorage.modality ?: when {
-            Modifier.isFinal(member.modifiers) -> Modality.FINAL
+            Modifier.isFinal(member.modifiers) || member.isEnumValuesValueOfMethod() -> Modality.FINAL
             Modifier.isAbstract(member.modifiers) -> Modality.ABSTRACT
             else -> Modality.OPEN
         }

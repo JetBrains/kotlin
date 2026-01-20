@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import java.lang.reflect.*
 import kotlin.reflect.*
+import kotlin.reflect.full.functions
 import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.getMutableCollectionKClass
 import kotlin.reflect.jvm.javaConstructor
+import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.jvmErasure
 
 internal fun Type.toKType(
@@ -22,6 +24,8 @@ internal fun Type.toKType(
     replaceNonArrayArgumentsWithStarProjections: Boolean = false,
     howThisTypeIsUsed: TypeUsage = TypeUsage.COMMON,
 ): KType {
+    if (this == Void.TYPE) return StandardKTypes.UNIT_RETURN_TYPE
+
     val base: SimpleKType = when (this) {
         is Class<*> -> {
             if (allTypeParameters().isNotEmpty() && !replaceNonArrayArgumentsWithStarProjections) {
@@ -200,6 +204,17 @@ private val TypeVariable<*>.kotlinContainer: KTypeParameterOwnerImpl
                             constructedClass.constructors.joinToString("\n") { "  - $it (${it.javaConstructor})" }
                 )
         }
+        is Method -> {
+            require(Modifier.isStatic(container.modifiers)) {
+                "Only static methods are supported for now: $container"
+            }
+            val containingClass = container.declaringClass.kotlin as KClassImpl<*>
+            containingClass.functions.singleOrNull { it.javaMethod == container } as JavaKFunction?
+                ?: throw KotlinReflectionInternalError(
+                    "Method $container is not found in $containingClass:\n" +
+                            containingClass.functions.joinToString("\n") { "  - $it (${it.javaMethod})" }
+                )
+        }
         else -> throw KotlinReflectionInternalError("Unsupported container of a type parameter: $container ($this)")
     }
 
@@ -210,9 +225,9 @@ private fun TypeVariable<*>.findKTypeParameterInContainer(knownTypeParameters: M
         ?: kotlinContainer.typeParameters.singleOrNull { it.name == name }
         ?: throw KotlinReflectionInternalError("Type parameter $name is not found in $kotlinContainer")
 
-internal fun Array<out TypeVariable<*>>.toKTypeParameters(): List<KTypeParameter> {
+internal fun Array<out TypeVariable<*>>.toKTypeParameters(container: KTypeParameterOwnerImpl): List<KTypeParameter> {
     val kTypeParameters = this.associateWith {
-        KTypeParameterImpl(it.kotlinContainer, it.name, KVariance.INVARIANT, isReified = false)
+        KTypeParameterImpl(container, it.name, KVariance.INVARIANT, isReified = false)
     }
     for ((typeVariable, kTypeParameter) in kTypeParameters) {
         kTypeParameter.upperBounds = typeVariable.bounds.map { it.toKType(kTypeParameters) }
@@ -247,3 +262,9 @@ internal fun Int.computeVisibilityForJavaModifiers(): KVisibility? = when {
     // Java's protected also allows access in the same package, so it's not the same as Kotlin's protected.
     else -> null
 }
+
+internal fun Member.isEnumValuesValueOfMethod(): Boolean =
+    this is Method && declaringClass.isEnum && Modifier.isStatic(modifiers) && (
+            (name == "values" && parameterTypes.size == 0) ||
+                    (name == "valueOf" && parameterTypes.singleOrNull() == String::class.java)
+            )

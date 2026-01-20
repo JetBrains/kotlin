@@ -10,7 +10,6 @@ import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
 import kotlin.reflect.full.createDefaultType
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.CallerImpl
@@ -38,11 +37,11 @@ internal class JavaKConstructor(
     override val isVararg: Boolean
         get() = jConstructor.isVarArgs
 
-    override val typeParameters: List<KTypeParameter> by lazy(PUBLICATION) {
+    override val javaTypeParameters: Array<out TypeVariable<*>> by lazy(PUBLICATION) {
         @Suppress("UNCHECKED_CAST")
         val classTypeParameters = jClass.typeParameters as Array<TypeVariable<*>>
         val constructorTypeParameters = jConstructor.typeParameters
-        (classTypeParameters + constructorTypeParameters).toKTypeParameters()
+        classTypeParameters + constructorTypeParameters
     }
 
     override val returnType: KType by lazy(PUBLICATION) {

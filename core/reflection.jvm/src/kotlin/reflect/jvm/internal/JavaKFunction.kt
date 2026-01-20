@@ -10,6 +10,7 @@ import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.FunctionBase
 import kotlin.reflect.KParameter
+import kotlin.reflect.KTypeParameter
 import kotlin.reflect.jvm.internal.calls.arity
 
 internal abstract class JavaKFunction(
@@ -21,6 +22,7 @@ internal abstract class JavaKFunction(
     ReflectKFunction, FunctionBase<Any?>, FunctionWithAllInvokes {
     abstract val parameterTypes: Array<out Class<*>>
     abstract val genericParameterTypes: Array<Type>
+    abstract val javaTypeParameters: Array<out TypeVariable<*>>
     abstract val isVararg: Boolean
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
@@ -30,6 +32,10 @@ internal abstract class JavaKFunction(
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
         if (isBound) computeParameters(includeReceivers = false)
         else allParameters
+    }
+
+    override val typeParameters: List<KTypeParameter> by lazy(PUBLICATION) {
+        javaTypeParameters.toKTypeParameters(this)
     }
 
     override val annotations: List<Annotation>
@@ -42,7 +48,13 @@ internal abstract class JavaKFunction(
 
     override val isInline: Boolean get() = false
     override val isExternal: Boolean get() = Modifier.isNative(member.modifiers)
-    override val isOperator: Boolean get() = false
+    override val isOperator: Boolean
+        get() {
+            require(this is JavaKConstructor || Modifier.isStatic(member.modifiers)) {
+                "Only Java constructors and static functions are supported for now: $member"
+            }
+            return false
+        }
     override val isInfix: Boolean get() = false
 
     override fun equals(other: Any?): Boolean {
@@ -59,7 +71,9 @@ internal abstract class JavaKFunction(
 
 private fun JavaKFunction.computeParameters(includeReceivers: Boolean): List<KParameter> = buildList {
     val function = this@computeParameters
-    require(function is JavaKConstructor) { "Only Java constructors are supported for now: $this" }
+    require(function is JavaKConstructor || Modifier.isStatic(member.modifiers)) {
+        "Only Java constructors and static functions are supported for now: $member"
+    }
 
     val isInnerClassConstructor = member is Constructor<*> && member.declaringClass.isInner
     val genericParameterTypes = genericParameterTypes
@@ -74,6 +88,8 @@ private fun JavaKFunction.computeParameters(includeReceivers: Boolean): List<KPa
     // Skip synthetic parameters, such as outer class instance and enum name/ordinal.
     val shift = names?.size?.minus(genericParameterTypes.size) ?: 0
 
+    val knownTypeParameters = javaTypeParameters.zip(typeParameters).toMap()
+
     for ((i, type) in genericParameterTypes.withIndex()) {
         // If constructor is generic, its `genericParameterTypes` does not have the outer class instance parameter.
         // If it's not generic, `genericParameterTypes` delegates to `parameterTypes`, which has the outer class instance parameter. We need
@@ -84,15 +100,18 @@ private fun JavaKFunction.computeParameters(includeReceivers: Boolean): List<KPa
         // classes compiled by Groovy (see the test `SimpleKotlinGradleIT.testGroovyInterop`). In this case, we must manually skip them.
         // We detect this case by the fact that `genericParameterTypes` and `parameterTypes` have the same size (note that `parameterTypes`
         // always has the types of name/ordinal, `String` and `int`).
-        if (i < 2 && member.declaringClass.isEnum && genericParameterTypes.size == parameterTypes.size) continue
+        if (i < 2 && member.declaringClass.isEnum && member is Constructor<*> && genericParameterTypes.size == parameterTypes.size) continue
 
         val name = when {
             names != null -> names.getOrNull(i + shift) ?: error("No parameter with index $i+$shift (name=$name type=$type) in $member")
             else -> "arg$i"
         }
+
+        val nullability = if (member.isEnumValuesValueOfMethod()) TypeNullability.NOT_NULL else TypeNullability.FLEXIBLE
+
         add(
             JavaKParameter(
-                function, name, type.toKType(emptyMap()), size, KParameter.Kind.VALUE,
+                function, name, type.toKType(knownTypeParameters, nullability), size, KParameter.Kind.VALUE,
                 isVararg = i == genericParameterTypes.lastIndex && isVararg,
             )
         )
