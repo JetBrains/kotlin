@@ -30,6 +30,8 @@ projectTests {
         workingDir = rootDir
     }
 
+    testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.konan.compiler.based.TestGeneratorKt")
+
     nativeTestTask("llFirNativeTests", "llFirNative", requirePlatformLibs = true)
 }
 

@@ -732,7 +732,6 @@ include ":jps:jps-common",
         ":jps:jps-platform-api-signatures"
 
 include ":generators:analysis-api-generator",
-        ":generators:analysis-api-generator:generator-kotlin-native",
         ":analysis",
         ":analysis:low-level-api-fir",
         ":analysis:low-level-api-fir:tests-jdk11",

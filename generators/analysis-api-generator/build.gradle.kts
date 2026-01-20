@@ -28,8 +28,6 @@ dependencies {
     testFixturesImplementation(intellijCore())
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt", testSourceSet) {
-    dependsOn(":generators:analysis-api-generator:generator-kotlin-native:generateAnalysisApiNativeTests")
-}
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt", testSourceSet)
 
 testsJar()
