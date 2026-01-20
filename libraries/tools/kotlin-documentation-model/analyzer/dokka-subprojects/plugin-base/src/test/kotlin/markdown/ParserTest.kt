@@ -67,7 +67,7 @@ class ParserTest : KDocTest() {
     }
 
     @Test
-    fun `Text with Bold and Emphasis decorators`() {
+    fun `Text with Strong and Emphasis decorators`() {
         val kdoc = """
         | This is **simple** test of _string_
         | Next **_line_**
@@ -80,11 +80,11 @@ class ParserTest : KDocTest() {
                             P(
                                 listOf(
                                     Text("This is "),
-                                    B(listOf(Text("simple"))),
+                                    Strong(listOf(Text("simple"))),
                                     Text(" test of "),
-                                    I(listOf(Text("string"))),
+                                    Em(listOf(Text("string"))),
                                     Text(" Next "),
-                                    B(listOf(I(listOf(Text("line")))))
+                                    Strong(listOf(Em(listOf(Text("line")))))
                                 )
                             )
                         ), name = MARKDOWN_ELEMENT_FILE_NAME
@@ -197,7 +197,7 @@ class ParserTest : KDocTest() {
             listOf(
                 Description(
                     CustomDocTag(
-                        listOf(P(listOf(I(listOf(Text("text")))))),
+                        listOf(P(listOf(Em(listOf(Text("text")))))),
                         name = MARKDOWN_ELEMENT_FILE_NAME
                     )
                 )
@@ -229,7 +229,7 @@ class ParserTest : KDocTest() {
             listOf(
                 Description(
                     CustomDocTag(
-                        listOf(P(listOf(I(listOf(Text("text")))))),
+                        listOf(P(listOf(Em(listOf(Text("text")))))),
                         name = MARKDOWN_ELEMENT_FILE_NAME
                     )
                 )
@@ -239,7 +239,7 @@ class ParserTest : KDocTest() {
     }
 
     @Test
-    fun `Stars as italic bounds`() {
+    fun `Stars as emphasis bounds`() {
         val kdoc = "The abstract syntax tree node for a multiplying expression.  A multiplying\n" +
                 "expression is a binary expression where the operator is a multiplying operator\n" +
                 "such as \"*\", \"/\", or \"mod\".  A simple example would be \"5*x\"."
@@ -255,7 +255,7 @@ class ParserTest : KDocTest() {
                                                 "expression is a binary expression where the operator is a multiplying operator " +
                                                 "such as \""
                                     ),
-                                    I(listOf(Text("\", \"/\", or \"mod\".  A simple example would be \"5"))),
+                                    Em(listOf(Text("\", \"/\", or \"mod\".  A simple example would be \"5"))),
                                     Text("x\".")
                                 )
                             )
@@ -268,7 +268,7 @@ class ParserTest : KDocTest() {
     }
 
     @Test
-    fun `Stars as bold bounds`() {
+    fun `Stars as strong bounds`() {
         val kdoc = "The abstract syntax tree node for a multiplying expression.  A multiplying\n" +
                 "expression is a binary expression where the operator is a multiplying operator\n" +
                 "such as \"**\", \"/\", or \"mod\".  A simple example would be \"5**x\"."
@@ -284,7 +284,7 @@ class ParserTest : KDocTest() {
                                                 "expression is a binary expression where the operator is a multiplying operator " +
                                                 "such as \""
                                     ),
-                                    B(listOf(Text("\", \"/\", or \"mod\".  A simple example would be \"5"))),
+                                    Strong(listOf(Text("\", \"/\", or \"mod\".  A simple example would be \"5"))),
                                     Text("x\".")
                                 )
                             )
@@ -367,7 +367,7 @@ class ParserTest : KDocTest() {
     }
 
     @Test
-    fun `Unordered list with Bold`() {
+    fun `Unordered list with Strong`() {
         val kdoc = """
         | * list **item** 1
         |  continue 1
@@ -386,7 +386,7 @@ class ParserTest : KDocTest() {
                                             P(
                                                 listOf(
                                                     Text("list "),
-                                                    B(listOf(Text("item"))),
+                                                    Strong(listOf(Text("item"))),
                                                     Text(" 1 continue 1")
                                                 )
                                             )
@@ -397,7 +397,7 @@ class ParserTest : KDocTest() {
                                             P(
                                                 listOf(
                                                     Text("list "),
-                                                    B(listOf(Text("item"))),
+                                                    Strong(listOf(Text("item"))),
                                                     Text(" 2 continue 2")
                                                 )
                                             )
@@ -543,7 +543,7 @@ class ParserTest : KDocTest() {
     }
 
     @Test
-    fun `Ordered list with Bold`() {
+    fun `Ordered list with Strong`() {
         val kdoc = """
         | 1. list **item** 1
         |  continue 1
@@ -562,7 +562,7 @@ class ParserTest : KDocTest() {
                                             P(
                                                 listOf(
                                                     Text("list "),
-                                                    B(listOf(Text("item"))),
+                                                    Strong(listOf(Text("item"))),
                                                     Text(" 1 continue 1")
                                                 )
                                             )
@@ -573,7 +573,7 @@ class ParserTest : KDocTest() {
                                             P(
                                                 listOf(
                                                     Text("list "),
-                                                    B(listOf(Text("item"))),
+                                                    Strong(listOf(Text("item"))),
                                                     Text(" 2 continue 2")
                                                 )
                                             )
@@ -757,7 +757,7 @@ class ParserTest : KDocTest() {
     }
 
     @Test
-    fun `Bold New Line Bold`() {
+    fun `Strong New Line Strong`() {
         val kdoc = """
         | **line 1**\
         | **line 2**
@@ -769,9 +769,9 @@ class ParserTest : KDocTest() {
                         listOf(
                             P(
                                 listOf(
-                                    B(listOf(Text("line 1"))),
+                                    Strong(listOf(Text("line 1"))),
                                     Br,
-                                    B(listOf(Text("line 2")))
+                                    Strong(listOf(Text("line 2")))
                                 )
                             )
                         ), name = MARKDOWN_ELEMENT_FILE_NAME
@@ -978,7 +978,7 @@ class ParserTest : KDocTest() {
                                     P(
                                         listOf(
                                             Text("text "),
-                                            B(listOf(Text("1"))),
+                                            Strong(listOf(Text("1"))),
                                             Text(" text 2")
                                         )
                                     ),
@@ -1425,8 +1425,8 @@ class ParserTest : KDocTest() {
     }
 
     @Test
-    fun `Bold + italic + link`() {
-        val kdoc = "It's very easy to make some words **bold** and other words *italic* with Markdown.\n" +
+    fun `Strong + emphasis + link`() {
+        val kdoc = "It's very easy to make some words **strong** and other words *emphasis* with Markdown.\n" +
                 "You can even [link to Google!](http://google.com)"
         val expectedDocumentationNode = DocumentationNode(
             listOf(
@@ -1436,9 +1436,9 @@ class ParserTest : KDocTest() {
                             P(
                                 listOf(
                                     Text("It's very easy to make some words "),
-                                    B(listOf(Text("bold"))),
+                                    Strong(listOf(Text("strong"))),
                                     Text(" and other words "),
-                                    I(listOf(Text("italic"))),
+                                    Em(listOf(Text("emphasis"))),
                                     Text(" with Markdown. You can even "),
                                     A(listOf(Text("link to Google!")), mapOf("href" to "http://google.com"))
                                 )
@@ -1744,7 +1744,7 @@ class ParserTest : KDocTest() {
                 Text("second "),
                 Strikethrough(listOf(Text("header"))),
                 Text("   in a "),
-                B(listOf(Text("long"))),
+                Strong(listOf(Text("long"))),
                 Text(" sentence ending     with whitespaces")
             )),
             H3(listOf(Text("third      header"))),
