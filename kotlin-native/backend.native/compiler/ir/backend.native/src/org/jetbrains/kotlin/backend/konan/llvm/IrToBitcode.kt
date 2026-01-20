@@ -2009,9 +2009,12 @@ internal class CodeGeneratorVisitor(
 
         private val inlineFunctionScope: DIScopeOpaqueRef? by lazy {
             val owner = inlinedBlock.inlinedFunctionSymbol?.owner
-            if (owner == null) {
+            require(owner == null || owner is IrSimpleFunction) { "Inline constructors should've been lowered: ${owner?.render()}" }
+            if (owner != null && owner.startOffset != UNDEFINED_OFFSET) {
+                owner.scope(fileEntry().line(inlinedBlock.inlinedFunctionStartOffset))
+            } else {
                 @Suppress("UNCHECKED_CAST")
-                return@lazy debugInfo.diFunctionScope(
+                debugInfo.diFunctionScope(
                         inlinedBlock.inlinedFunctionFileEntry,
                         name = "<inlined-lambda>",
                         linkageName = "<inlined-lambda>",
@@ -2021,9 +2024,6 @@ internal class CodeGeneratorVisitor(
                         isTransparentStepping = false
                 ) as DIScopeOpaqueRef
             }
-
-            require(owner is IrSimpleFunction) { "Inline constructors should've been lowered: ${owner.render()}" }
-            owner.scope(fileEntry().line(inlinedBlock.inlinedFunctionStartOffset))
         }
 
         override fun location(offset: Int): LocationInfo? {
