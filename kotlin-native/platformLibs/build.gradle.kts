@@ -3,20 +3,24 @@
  * that can be found in the LICENSE file.
  */
 
+import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanInteropTask
 import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.nativeDistribution.nativeBootstrapDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import org.jetbrains.kotlin.platformLibs.*
 import org.jetbrains.kotlin.platformManager
+import org.jetbrains.kotlin.tools.NativeToolsExtension
 import org.jetbrains.kotlin.utils.capitalized
 
 plugins {
     id("base")
     id("platform-manager")
+    id("native-dependencies")
 }
 
 // region: Util functions.
@@ -91,6 +95,10 @@ enabledTargets(platformManager).forEach { target ->
             df.config.depends.forEach { defName ->
                 this.klibFiles.from(tasks.named(interopTaskName(defFileToLibName(targetName, defName), targetName)))
             }
+
+            val nativeDependenciesExtension = project.extensions.getByType<NativeDependenciesExtension>()
+            val nativeDependenciesRoot = nativeDependenciesExtension.nativeDependenciesRoot
+
             this.extraOpts.addAll(
                     "-Xpurge-user-libs",
                     "-Xshort-module-name", df.name,
@@ -98,6 +106,7 @@ enabledTargets(platformManager).forEach { target ->
                     "-no-default-libs",
                     "-no-endorsed-libs",
                     "-Xccall-mode", "indirect", // Default is `-Xccall-mode both`, but platform libs use `indirect` for now. See KT-82062.
+                    "-compiler-option", "-ffile-prefix-map=$nativeDependenciesRoot=NATIVE_DEPS"
             )
             if (target.family.isAppleFamily) {
                 // Platform Libraries for Apple targets use modules. Use shared cache for them.
