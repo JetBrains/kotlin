@@ -25,10 +25,9 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
-     >: TypeVariable(T)?
+     >: ft<TypeVariable(T) & Any, TypeVariable(T)?>
      >: kotlin/String!
      = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
     FIXED TO: kotlin/String!
 TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -60,10 +59,9 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
-     >: TypeVariable(T)?
+     >: ft<TypeVariable(T) & Any, TypeVariable(T)?>
      >: kotlin/String!
      = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
     FIXED TO: kotlin/String!
 TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -96,6 +94,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      = kotlin/String
+     <: kotlin/String?
      <: kotlin/String!
     FIXED TO: kotlin/String
 ********************************
@@ -126,10 +125,9 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
-     >: TypeVariable(T)?
+     >: ft<TypeVariable(T) & Any, TypeVariable(T)?>
      >: kotlin/String!
      = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
     FIXED TO: kotlin/String!
 TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -161,10 +159,9 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
-     >: TypeVariable(T)?
+     >: ft<TypeVariable(T) & Any, TypeVariable(T)?>
      >: kotlin/String!
      = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
     FIXED TO: kotlin/String!
 TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -233,6 +230,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      = kotlin/String
+     <: kotlin/String?
      <: kotlin/String!
     FIXED TO: kotlin/String
 ********************************

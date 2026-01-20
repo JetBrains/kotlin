@@ -19,5 +19,5 @@ FILE: Test.kt
     }
     public final fun testWithBounds(): R|kotlin/Unit| {
         lval s: R|kotlin/String?| = Null(null)
-        Q|JavaClass|.R|/JavaClass.consumeWithBounds*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=null) kotlin/String!|, R|kotlin/String?|>(R|<local>/s|)
+        Q|JavaClass|.R|/JavaClass.consumeWithBounds*s|<R|kotlin/String|, R|kotlin/String?|>(R|<local>/s|)
     }

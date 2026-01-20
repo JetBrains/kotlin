@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-79864
-// LATEST_LV_DIFFERENCE
 
 import kotlin.reflect.KClass
 
@@ -10,7 +9,7 @@ fun <F : Enum<*>> field(defValue: F) {
     val tmp = defValue::class.myJava
     java.lang.Enum.valueOf(tmp, "str")
 
-    java.lang.Enum.valueOf(<!ARGUMENT_TYPE_MISMATCH!>defValue::class.myJava<!>, "str")
+    java.lang.Enum.valueOf(defValue::class.myJava, "str")
 
     expect {
         val tmp = defValue::class.myJava
@@ -18,7 +17,7 @@ fun <F : Enum<*>> field(defValue: F) {
     }
 
     expect {
-        java.lang.Enum.valueOf(<!ARGUMENT_TYPE_MISMATCH!>defValue::class.myJava<!>, "str")
+        java.lang.Enum.valueOf(defValue::class.myJava, "str")
     }
 }
 
