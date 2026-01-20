@@ -25,21 +25,18 @@ internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
     annotationsBox: AnnotationsBox = EmptyAnnotationsBox,
 ) : SymbolLightModifierList<T>(containingDeclaration, modifiersBox, annotationsBox) {
     init {
-        val (creationTrace, populationTrace, psiAnnotations) = when (annotationsBox) {
-            is EmptyAnnotationsBox -> Triple(null, null, null)
-            is GranularAnnotationsBox -> Triple(annotationsBox.trace, annotationsBox.cachePopulatedTrace, { annotationsBox.cachedAnnotations })
-            is ComputeAllAtOnceAnnotationsBox -> Triple(null, annotationsBox.trace, null)
-        }
-
-        this.putUserData(
-            DEBUG_KEY,
-            DebugUserData(
-                annotationsBox::class.java.simpleName,
-                creationTrace,
-                populationTrace,
-                psiAnnotations,
+        if (annotationsBox is GranularAnnotationsBox) {
+            this.putUserData(
+                DEBUG_KEY,
+                DebugUserData(
+                    annotationsBox::class.java.simpleName,
+                    annotationsBox.trace,
+                    annotationsBox.cachePopulatedTrace,
+                    { annotationsBox.cachedAnnotations },
+                    { annotationsBox.annotationInfo.joinToString(System.lineSeparator()) },
+                )
             )
-        )
+        }
     }
 
     override fun hasModifierProperty(name: String): Boolean = when {

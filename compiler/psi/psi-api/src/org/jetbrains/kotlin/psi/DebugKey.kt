@@ -15,4 +15,5 @@ class DebugUserData(
     val annoBoxCreationThrowable: Throwable? = null,
     val annoBoxPopulationThrowable: Throwable? = null,
     val getCachedAnnotations: (() -> Collection<PsiAnnotation>?)? = null,
+    val getExtraAnnotationInfo: (() -> String)? = null,
 )

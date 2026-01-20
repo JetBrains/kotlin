@@ -24,13 +24,29 @@ internal class GranularAnnotationsBox(
 
     val trace = Throwable()
 
+    @get:Synchronized
+    val annotationInfo: MutableList<String> = mutableListOf()
+
     @Volatile
     var cachePopulatedTrace: Throwable? = null
 
     private fun getOrComputeCachedAnnotations(owner: PsiElement): Collection<PsiAnnotation> {
-        cachedAnnotations?.let { return it }
+        annotationInfo.add("Owner: ${owner.text}")
+        cachedAnnotations?.let {
+            annotationInfo.add("Cached: ${it.size} annotations. ${it.joinToString(System.lineSeparator()) { it.text }}")
+            return it
+        }
 
         cachePopulatedTrace = Throwable()
+
+        annotationInfo.add("Annotation provider ${annotationsProvider::class.java.canonicalName} has ${annotationsProvider.annotationInfos().size} annotations")
+
+        if (annotationsProvider is SymbolAnnotationsProvider<*>) {
+            annotationInfo.add(
+                annotationsProvider.lastAccessedAnnotationIds
+                    ?.joinToString(prefix = "Annotation provider annotation IDs:", separator = System.lineSeparator()).orEmpty()
+            )
+        }
 
         val annotations = annotationsProvider.annotationInfos().mapNotNullTo(SmartList<PsiAnnotation>()) { applicationInfo ->
             applicationInfo.annotation.classId?.let { _ ->

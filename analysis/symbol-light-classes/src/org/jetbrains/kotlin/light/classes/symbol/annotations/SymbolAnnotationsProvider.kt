@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
@@ -20,8 +21,12 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
     private inline fun <T> withAnnotatedSymbol(crossinline action: KaSession.(KaAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
+    @field:Volatile
+    var lastAccessedAnnotationIds: Collection<ClassId>? = null
+
     override fun annotationInfos(): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
         val indices = mutableMapOf<ClassId?, Int>()
+        lastAccessedAnnotationIds = annotatedSymbol.annotations.classIds
         annotatedSymbol.annotations.map { annotation ->
             // to preserve the initial annotations order
             val index = indices.merge(annotation.classId, 0) { old, _ -> old + 1 }!!
