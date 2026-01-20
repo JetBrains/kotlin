@@ -100,4 +100,14 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
             action(index, children[index])
         }
     }
+
+    /**
+     * If [this] set contains a single child, returns it. Otherwise, returns `null`.
+     */
+    internal fun getSingleChildOrNull(): AbstractSet? {
+        if (children.size == 1) {
+            return children[0]
+        }
+        return null
+    }
 }
