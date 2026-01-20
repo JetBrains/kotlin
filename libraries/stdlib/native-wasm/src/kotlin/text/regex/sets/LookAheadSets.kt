@@ -43,7 +43,7 @@ internal class PositiveLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
         get() = "PositiveLookaheadJointSet"
 
     override fun reportOwnProperties(properties: SetProperties) {
-        children.forEach { it.collectProperties(properties, fSet) }
+        forEachChildrenIndexed { _, child -> child.collectProperties(properties, fSet) }
         properties.nonTrivialBacktracking = true // just in case
         properties.requiresCheckpointing = true
     }
@@ -69,7 +69,7 @@ internal class NegativeLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
         get() = "NegativeLookaheadJointSet"
 
     override fun reportOwnProperties(properties: SetProperties) {
-        children.forEach { it.collectProperties(properties, fSet) }
+        forEachChildrenIndexed { _, child -> child.collectProperties(properties, fSet) }
         properties.nonTrivialBacktracking = true // just in case
         properties.requiresCheckpointing = true
     }
