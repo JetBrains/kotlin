@@ -213,6 +213,8 @@ public class org/jetbrains/kotlin/kdoc/lexer/KDocToken : org/jetbrains/kotlin/le
 public abstract interface class org/jetbrains/kotlin/kdoc/lexer/KDocTokens {
 	public static final field CODE_BLOCK_TEXT Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
 	public static final field CODE_BLOCK_TEXT_Id I
+	public static final field CODE_SPAN_TEXT Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
+	public static final field CODE_SPAN_TEXT_Id I
 	public static final field CONTENT_TOKENS Lcom/intellij/psi/tree/TokenSet;
 	public static final field END Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
 	public static final field END_Id I

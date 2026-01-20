@@ -75,6 +75,8 @@ import kotlin.jvm.JvmStatic // Not needed on JVM, but needed when compiling othe
 %state CODE_BLOCK_LINE_BEGINNING
 %state CODE_BLOCK_CONTENTS_BEGINNING
 %state INDENTED_CODE_BLOCK
+%state CODE_SPAN_CONTENTS
+%state CODE_SPAN_LINE_BEGINNING
 
 WHITE_SPACE_CHAR    = [\ \t\f]
 LINE_BREAK_CHAR     = [\r\n]
@@ -85,12 +87,16 @@ PLAIN_IDENTIFIER = {LETTER} ({LETTER} | {DIGIT})*
 IDENTIFIER = {PLAIN_IDENTIFIER} | `[^`\n]+`
 QUALIFIED_NAME = {IDENTIFIER} ([\.] {IDENTIFIER}?)* // Handle incorrect/incomplete qualifiers for correct resolving
 CODE_LINK=\[{QUALIFIED_NAME}\]
-BACKTICK_CODE_FENCE="`"{3,10} // arbitrary big high end, because flex does not support unlimited upper bound
-TILDA_CODE_FENCE="~"{3,10}
-CODE_FENCE_START=({BACKTICK_CODE_FENCE} | {TILDA_CODE_FENCE}).*
+BACKTICK_STRING="`"+
+TILDA_STRING="~"+
+// Fenced code blocks only start at the beginning of a new line and don't contain any backtick
+// characters after the initial fence.
 // `org.jetbrains.kotlin.kdoc.lexer.KDocLexer` relies on these two types of ending fences.
 // If this set is changed, please, update `KDocLexer` accordingly
-CODE_FENCE_END={BACKTICK_CODE_FENCE} | {TILDA_CODE_FENCE}
+BACKTICK_CODE_FENCE_START = "``" {BACKTICK_STRING} [^`{LINE_BREAK_CHAR}]*
+TILDA_CODE_FENCE_START = "~~" {TILDA_STRING} [^{LINE_BREAK_CHAR}]*
+CODE_FENCE_START={BACKTICK_CODE_FENCE_START} | {TILDA_CODE_FENCE_START}
+CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
 
 %%
 
@@ -179,13 +185,59 @@ CODE_FENCE_END={BACKTICK_CODE_FENCE} | {TILDA_CODE_FENCE}
 }
 
 <CONTENTS_BEGINNING> {
-    {CODE_FENCE_START} {
-              lastBlockType = BlockType.Code
-              codeFenceChar = zzBuffer[zzStartRead]
-              codeFenceLength = countRepeating(codeFenceChar)
-              yybeginAndUpdate(CODE_BLOCK_LINE_BEGINNING)
-              return KDocTokens.TEXT
+    {CODE_FENCE_START} / {LINE_BREAK_CHAR} {
+            lastBlockType = BlockType.Code
+            codeFenceChar = zzBuffer[zzStartRead]
+            codeFenceLength = countRepeating(codeFenceChar)
+            yybeginAndUpdate(CODE_BLOCK_LINE_BEGINNING)
+            return KDocTokens.TEXT
     }
+}
+
+<CONTENTS_BEGINNING, CONTENTS> {
+    {BACKTICK_STRING} {
+            codeFenceChar = zzBuffer[zzStartRead]
+            codeFenceLength = countRepeating(codeFenceChar)
+            yybeginAndUpdate(CODE_SPAN_CONTENTS)
+            return KDocTokens.TEXT;
+      }
+}
+
+<CODE_SPAN_CONTENTS> {
+    {LINE_BREAK_CHAR} {
+            yybeginAndUpdate(CODE_SPAN_LINE_BEGINNING)
+            return SyntaxTokenTypes.WHITE_SPACE
+      }
+
+    {BACKTICK_STRING} {
+            val ch = zzBuffer[zzStartRead]
+            val length = countRepeating(ch)
+            if (length == codeFenceLength && ch == codeFenceChar) {
+                // Code span end
+                codeFenceLength = -1
+                codeFenceChar = 0.toChar()
+                yybeginAndUpdate(CONTENTS)
+                return KDocTokens.TEXT
+            } else {
+                return KDocTokens.CODE_SPAN_TEXT
+            }
+      }
+
+    [^] {
+            return KDocTokens.CODE_SPAN_TEXT
+      }
+}
+
+<CODE_SPAN_LINE_BEGINNING> {
+    {WHITE_SPACE_CHAR}+ {
+            return SyntaxTokenTypes.WHITE_SPACE
+    }
+
+    "*"+ {
+            yybeginAndUpdate(CODE_SPAN_CONTENTS)
+            return KDocTokens.LEADING_ASTERISK
+    }
+
 }
 
 <LINE_BEGINNING, CONTENTS_BEGINNING, CONTENTS> {
@@ -266,17 +318,17 @@ CODE_FENCE_END={BACKTICK_CODE_FENCE} | {TILDA_CODE_FENCE}
 
 <CODE_BLOCK_LINE_BEGINNING, CODE_BLOCK_CONTENTS_BEGINNING> {
     {CODE_FENCE_END} / [\n] {
-              val ch =  zzBuffer[zzStartRead]
-              val length = countRepeating(ch)
-              if (length == codeFenceLength && ch == codeFenceChar) {
-                  // Code fence end
-                  codeFenceChar = 0.toChar()
-                  codeFenceLength = -1
-                  yybeginAndUpdate(CONTENTS)
-                  return KDocTokens.TEXT
-              } else {
-                  return KDocTokens.CODE_BLOCK_TEXT
-              }
+            val ch =  zzBuffer[zzStartRead]
+            val length = countRepeating(ch)
+            if (length == codeFenceLength && ch == codeFenceChar) {
+                // Code fence end
+                codeFenceChar = 0.toChar()
+                codeFenceLength = -1
+                yybeginAndUpdate(CONTENTS)
+                return KDocTokens.TEXT
+            } else {
+                return KDocTokens.CODE_BLOCK_TEXT
+            }
     }
 }
 

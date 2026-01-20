@@ -21,6 +21,7 @@ object KDocTokens : SyntaxElementTypesWithIds() {
     const val MARKDOWN_ESCAPED_CHAR_ID: Int = MARKDOWN_LINK_ID + 1
     const val KDOC_LPAR_ID: Int = MARKDOWN_ESCAPED_CHAR_ID + 1
     const val KDOC_RPAR_ID: Int = KDOC_LPAR_ID + 1
+    const val CODE_SPAN_TEXT_ID: Int = KDOC_RPAR_ID + 1
     // Remember to update the first ID constant in `KtTokens` after adding a new token
 
     val START: SyntaxElementType = register(START_ID, "KDOC_START")
@@ -29,6 +30,7 @@ object KDocTokens : SyntaxElementTypesWithIds() {
 
     val TEXT: SyntaxElementType = register(TEXT_ID, "KDOC_TEXT")
     val CODE_BLOCK_TEXT: SyntaxElementType = register(CODE_BLOCK_TEXT_ID, "KDOC_CODE_BLOCK_TEXT")
+    val CODE_SPAN_TEXT: SyntaxElementType = register(CODE_SPAN_TEXT_ID, "KDOC_CODE_SPAN_TEXT")
 
     val TAG_NAME: SyntaxElementType = register(TAG_NAME_ID, "KDOC_TAG_NAME")
     val MARKDOWN_LINK: SyntaxElementType = register(MARKDOWN_LINK_ID, "KDOC_MARKDOWN_LINK")
