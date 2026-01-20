@@ -2,7 +2,7 @@
   <configuration default="false" name="Generate Analysis Tests" type="GradleRunConfiguration" factoryName="Gradle" folderName="Analysis">
     <ExternalSystemSettings>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/generators/analysis-api-generator" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
@@ -10,7 +10,8 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="generateTests" />
+          <option value=":generators:analysis-api-generator:generateTests" />
+          <option value=":analysis:symbol-light-classes:generateTests" />
         </list>
       </option>
       <option name="vmOptions" />

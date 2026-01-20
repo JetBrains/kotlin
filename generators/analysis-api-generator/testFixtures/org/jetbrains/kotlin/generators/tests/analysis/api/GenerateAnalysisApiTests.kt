@@ -21,6 +21,5 @@ private fun AnalysisApiTestGroup.generateTests() {
         generateFirLowLevelApiTests()
         generateStandaloneFirLowLevelTests()
         generateStubsTests()
-        generateSymbolLightClassesTests()
     }
 }
