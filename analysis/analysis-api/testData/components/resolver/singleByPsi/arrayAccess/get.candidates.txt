@@ -1,15 +1,6 @@
 KtArrayAccessExpression(70,77): 'list[0]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -32,4 +23,13 @@ KtArrayAccessExpression(70,77): 'list[0]'
         contextParameters = []
         callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = index
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = index: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

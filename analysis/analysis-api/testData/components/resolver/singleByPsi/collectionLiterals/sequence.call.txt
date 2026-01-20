@@ -1,6 +1,27 @@
 KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
   KaSimpleFunctionCall:
-    argumentMapping = {
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.sequences.Sequence<kotlin.String>
+      symbol = kotlin/sequences/sequenceOf(vararg elements: T): kotlin.sequences.Sequence<T>
+      valueParameters = [
+        KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg elements: T
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/sequences/sequenceOf
+    typeArgumentsMapping = {
+      T -> (kotlin.String)
+    }
+    valueArgumentMapping = {
       "1" -> (KaVariableSignature:
         name = elements
         receiverType = null
@@ -22,25 +43,4 @@ KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
         symbol = vararg elements: T
         contextParameters = []
         callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.sequences.Sequence<kotlin.String>
-      symbol = kotlin/sequences/sequenceOf(vararg elements: T): kotlin.sequences.Sequence<T>
-      valueParameters = [
-        KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/sequences/sequenceOf
-    typeArgumentsMapping = {
-      T -> (kotlin.String)
     }

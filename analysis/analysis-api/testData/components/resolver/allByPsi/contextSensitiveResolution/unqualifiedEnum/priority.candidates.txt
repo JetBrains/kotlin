@@ -76,7 +76,6 @@ KtDotQualifiedExpression(134,146): 'Second.THREE'
 KtNameReferenceExpression(134,140): 'Second'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -88,6 +87,7 @@ KtNameReferenceExpression(134,140): 'Second'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 

@@ -1,7 +1,6 @@
 KtCallExpression(72,75): 'f()'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = f
@@ -27,4 +26,5 @@ KtCallExpression(72,75): 'f()'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

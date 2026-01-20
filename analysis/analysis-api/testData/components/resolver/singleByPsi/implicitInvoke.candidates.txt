@@ -1,15 +1,6 @@
 KtCallExpression(110,117): 'x(true)'
   KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        true -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -32,20 +23,20 @@ KtCallExpression(110,117): 'x(true)'
         contextParameters = []
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        true -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Boolean', but 'Int' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        true -> (KaVariableSignature:
-          name = c
-          receiverType = null
-          returnType = kotlin.Char
-          symbol = c: kotlin.Char
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -65,20 +56,20 @@ KtCallExpression(110,117): 'x(true)'
         contextParameters = []
         callableId = /x
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        true -> (KaVariableSignature:
+          name = c
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = c: kotlin.Char
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Boolean', but 'Char' was expected.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        true -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -98,4 +89,13 @@ KtCallExpression(110,117): 'x(true)'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        true -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = b: kotlin.Boolean
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

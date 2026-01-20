@@ -1,15 +1,6 @@
 KtNameReferenceExpression(23,31): 'Suppress'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
-      argumentMapping = {
-        "" -> (KaVariableSignature:
-          name = names
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg names: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,3 +20,12 @@ KtNameReferenceExpression(23,31): 'Suppress'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "" -> (KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }

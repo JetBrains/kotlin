@@ -1,7 +1,6 @@
 KtNameReferenceExpression(31,41): 'emptyArray'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -15,3 +14,4 @@ KtNameReferenceExpression(31,41): 'emptyArray'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
+      valueArgumentMapping = {}

@@ -1,15 +1,6 @@
 KtBinaryExpression(17,32): '"dsd" + class A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        class A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "dsd"
@@ -32,11 +23,7 @@ KtBinaryExpression(17,32): '"dsd" + class A'
         contextParameters = []
         callableId = kotlin/String.plus
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         class A -> (KaVariableSignature:
           name = other
           receiverType = null
@@ -45,6 +32,10 @@ KtBinaryExpression(17,32): '"dsd" + class A'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -67,4 +58,13 @@ KtBinaryExpression(17,32): '"dsd" + class A'
         contextParameters = []
         callableId = kotlin/plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        class A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = false

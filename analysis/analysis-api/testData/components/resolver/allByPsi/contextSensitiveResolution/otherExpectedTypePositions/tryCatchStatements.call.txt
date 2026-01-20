@@ -24,7 +24,6 @@ KtSuperTypeList(128,137): 'MyClass()'
 
 KtSuperTypeCallEntry(128,137): 'MyClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -37,11 +36,11 @@ KtSuperTypeCallEntry(128,137): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(128,135): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -54,6 +53,7 @@ KtConstructorCalleeExpression(128,135): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(128,135): 'MyClass'
   null
@@ -90,7 +90,6 @@ KtNameReferenceExpression(187,194): 'MyClass'
 
 KtCallExpression(197,206): 'MyClass()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -102,11 +101,11 @@ KtCallExpression(197,206): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(197,204): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -118,6 +117,7 @@ KtNameReferenceExpression(197,204): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(204,206): '()'
   null
@@ -184,15 +184,6 @@ KtSuperTypeList(372,384): 'Exception(m)'
 
 KtSuperTypeCallEntry(372,384): 'Exception(m)'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      m -> (KaVariableSignature:
-        name = message
-        receiverType = null
-        returnType = kotlin.String!
-        symbol = message: kotlin.String!
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -213,19 +204,19 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      m -> (KaVariableSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = message: kotlin.String!
+        contextParameters = []
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(372,381): 'Exception'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {
-        m -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String!
-          symbol = message: kotlin.String!
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -246,6 +237,15 @@ KtConstructorCalleeExpression(372,381): 'Exception'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String!
+          symbol = message: kotlin.String!
+          contextParameters = []
+          callableId = null)
+      }
 
 KtTypeReference(372,381): 'Exception'
   null
@@ -305,15 +305,6 @@ KtSuperTypeList(406,418): 'Exception(m)'
 
 KtSuperTypeCallEntry(406,418): 'Exception(m)'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      m -> (KaVariableSignature:
-        name = message
-        receiverType = null
-        returnType = kotlin.String!
-        symbol = message: kotlin.String!
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -334,19 +325,19 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      m -> (KaVariableSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = message: kotlin.String!
+        contextParameters = []
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(406,415): 'Exception'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {
-        m -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String!
-          symbol = message: kotlin.String!
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -367,6 +358,15 @@ KtConstructorCalleeExpression(406,415): 'Exception'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String!
+          symbol = message: kotlin.String!
+          contextParameters = []
+          callableId = null)
+      }
 
 KtTypeReference(406,415): 'Exception'
   null
@@ -426,15 +426,6 @@ KtSuperTypeList(440,452): 'Exception(m)'
 
 KtSuperTypeCallEntry(440,452): 'Exception(m)'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      m -> (KaVariableSignature:
-        name = message
-        receiverType = null
-        returnType = kotlin.String!
-        symbol = message: kotlin.String!
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -455,19 +446,19 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      m -> (KaVariableSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = message: kotlin.String!
+        contextParameters = []
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(440,449): 'Exception'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {
-        m -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String!
-          symbol = message: kotlin.String!
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -488,6 +479,15 @@ KtConstructorCalleeExpression(440,449): 'Exception'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String!
+          symbol = message: kotlin.String!
+          contextParameters = []
+          callableId = null)
+      }
 
 KtTypeReference(440,449): 'Exception'
   null
@@ -592,7 +592,6 @@ KtNameReferenceExpression(503,504): 'T'
 
 KtCallExpression(507,510): 'b()'
   KaImplicitInvokeCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = b
@@ -607,6 +606,7 @@ KtCallExpression(507,510): 'b()'
       contextParameters = []
       callableId = kotlin/Function0.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(507,508): 'b'
   KaSuccessCallInfo:
@@ -782,7 +782,28 @@ KtCallExpression(1108,1497): 'receive<MyClass>('
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           try {
                       NestedInheritor
                       NestedInheritor
@@ -804,27 +825,6 @@ KtCallExpression(1108,1497): 'receive<MyClass>('
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyClass
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -833,7 +833,28 @@ KtNameReferenceExpression(1108,1115): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           try {
                       NestedInheritor
                       NestedInheritor
@@ -855,27 +876,6 @@ KtNameReferenceExpression(1108,1115): 'receive'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyClass
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1081,7 +1081,28 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = /run(b: () -> T): T
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = () -> MyClass
+              symbol = b: () -> T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /run
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           {
                   try {
                       NestedInheritor
@@ -1105,27 +1126,6 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
             symbol = b: () -> T
             contextParameters = []
             callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /run(b: () -> T): T
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = () -> MyClass
-              symbol = b: () -> T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /run
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1134,7 +1134,28 @@ KtNameReferenceExpression(1503,1506): 'run'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = /run(b: () -> T): T
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = () -> MyClass
+              symbol = b: () -> T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /run
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           {
                   try {
                       NestedInheritor
@@ -1158,27 +1179,6 @@ KtNameReferenceExpression(1503,1506): 'run'
             symbol = b: () -> T
             contextParameters = []
             callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /run(b: () -> T): T
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = () -> MyClass
-              symbol = b: () -> T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /run
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>

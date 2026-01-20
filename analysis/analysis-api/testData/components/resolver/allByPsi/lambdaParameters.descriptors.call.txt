@@ -91,7 +91,6 @@ KtConstantExpression(74,75): '1'
 KtDotQualifiedExpression(80,94): 'prop.action1()'
   KaSuccessCallInfo:
     call = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = action1
@@ -109,6 +108,7 @@ KtDotQualifiedExpression(80,94): 'prop.action1()'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(80,84): 'prop'
   KaSuccessCallInfo:
@@ -129,7 +129,6 @@ KtNameReferenceExpression(80,84): 'prop'
 
 KtCallExpression(85,94): 'action1()'
   KaImplicitInvokeCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = action1
@@ -147,6 +146,7 @@ KtCallExpression(85,94): 'action1()'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(85,92): 'action1'
   KaSuccessCallInfo:
@@ -170,15 +170,6 @@ KtValueArgumentList(92,94): '()'
 
 KtCallExpression(99,112): 'action1(prop)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      prop -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = action1
@@ -201,6 +192,15 @@ KtCallExpression(99,112): 'action1(prop)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      prop -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(99,106): 'action1'
   KaSuccessCallInfo:
@@ -277,15 +277,6 @@ KtValueArgumentList(130,132): '()'
 
 KtCallExpression(151,164): 'action2(prop)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      prop -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = action2
@@ -308,6 +299,15 @@ KtCallExpression(151,164): 'action2(prop)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      prop -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(151,158): 'action2'
   KaSuccessCallInfo:

@@ -33,7 +33,6 @@ KtBlockExpression(56,123): '{'
 
 KtCallExpression(66,71): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = one/MyClass
@@ -47,11 +46,11 @@ KtCallExpression(66,71): 'foo()'
       contextParameters = []
       callableId = one/MyClass.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(66,69): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/MyClass
@@ -65,6 +64,7 @@ KtNameReferenceExpression(66,69): 'foo'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(69,71): '()'
   null
@@ -72,7 +72,6 @@ KtValueArgumentList(69,71): '()'
 KtDotQualifiedExpression(80,90): 'this.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -87,6 +86,7 @@ KtDotQualifiedExpression(80,90): 'this.foo()'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(80,84): 'this'
   null
@@ -96,7 +96,6 @@ KtNameReferenceExpression(80,84): 'this'
 
 KtCallExpression(85,90): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this
@@ -111,11 +110,11 @@ KtCallExpression(85,90): 'foo()'
       contextParameters = []
       callableId = one/MyClass.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(85,88): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -130,6 +129,7 @@ KtNameReferenceExpression(85,88): 'foo'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(88,90): '()'
   null
@@ -137,7 +137,6 @@ KtValueArgumentList(88,90): '()'
 KtDotQualifiedExpression(99,117): 'this@MyClass.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@MyClass
@@ -152,6 +151,7 @@ KtDotQualifiedExpression(99,117): 'this@MyClass.foo()'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(99,111): 'this@MyClass'
   null
@@ -167,7 +167,6 @@ KtLabelReferenceExpression(103,111): '@MyClass'
 
 KtCallExpression(112,117): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@MyClass
@@ -182,11 +181,11 @@ KtCallExpression(112,117): 'foo()'
       contextParameters = []
       callableId = one/MyClass.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(112,115): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@MyClass
@@ -201,6 +200,7 @@ KtNameReferenceExpression(112,115): 'foo'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(115,117): '()'
   null
@@ -231,7 +231,6 @@ KtBlockExpression(189,306): '{'
 
 KtCallExpression(203,208): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = one/MyClass.InnerOuter
@@ -245,11 +244,11 @@ KtCallExpression(203,208): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(203,206): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/MyClass.InnerOuter
@@ -263,6 +262,7 @@ KtNameReferenceExpression(203,206): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(206,208): '()'
   null
@@ -270,7 +270,6 @@ KtValueArgumentList(206,208): '()'
 KtDotQualifiedExpression(221,231): 'this.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -285,6 +284,7 @@ KtDotQualifiedExpression(221,231): 'this.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(221,225): 'this'
   null
@@ -294,7 +294,6 @@ KtNameReferenceExpression(221,225): 'this'
 
 KtCallExpression(226,231): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this
@@ -309,11 +308,11 @@ KtCallExpression(226,231): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(226,229): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -328,6 +327,7 @@ KtNameReferenceExpression(226,229): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(229,231): '()'
   null
@@ -335,7 +335,6 @@ KtValueArgumentList(229,231): '()'
 KtDotQualifiedExpression(244,265): 'this@InnerOuter.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerOuter
@@ -350,6 +349,7 @@ KtDotQualifiedExpression(244,265): 'this@InnerOuter.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(244,259): 'this@InnerOuter'
   null
@@ -365,7 +365,6 @@ KtLabelReferenceExpression(248,259): '@InnerOuter'
 
 KtCallExpression(260,265): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@InnerOuter
@@ -380,11 +379,11 @@ KtCallExpression(260,265): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(260,263): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerOuter
@@ -399,6 +398,7 @@ KtNameReferenceExpression(260,263): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(263,265): '()'
   null
@@ -406,7 +406,6 @@ KtValueArgumentList(263,265): '()'
 KtDotQualifiedExpression(278,296): 'this@MyClass.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@MyClass
@@ -421,6 +420,7 @@ KtDotQualifiedExpression(278,296): 'this@MyClass.foo()'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(278,290): 'this@MyClass'
   null
@@ -436,7 +436,6 @@ KtLabelReferenceExpression(282,290): '@MyClass'
 
 KtCallExpression(291,296): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@MyClass
@@ -451,11 +450,11 @@ KtCallExpression(291,296): 'foo()'
       contextParameters = []
       callableId = one/MyClass.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(291,294): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@MyClass
@@ -470,6 +469,7 @@ KtNameReferenceExpression(291,294): 'foo'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(294,296): '()'
   null
@@ -500,7 +500,6 @@ KtBlockExpression(385,1208): '{'
 
 KtCallExpression(403,408): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = one/MyClass.InnerOuter.InnerNested
@@ -514,11 +513,11 @@ KtCallExpression(403,408): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.InnerNested.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(403,406): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/MyClass.InnerOuter.InnerNested
@@ -532,6 +531,7 @@ KtNameReferenceExpression(403,406): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(406,408): '()'
   null
@@ -539,7 +539,6 @@ KtValueArgumentList(406,408): '()'
 KtDotQualifiedExpression(425,435): 'this.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -554,6 +553,7 @@ KtDotQualifiedExpression(425,435): 'this.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(425,429): 'this'
   null
@@ -563,7 +563,6 @@ KtNameReferenceExpression(425,429): 'this'
 
 KtCallExpression(430,435): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this
@@ -578,11 +577,11 @@ KtCallExpression(430,435): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.InnerNested.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(430,433): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -597,6 +596,7 @@ KtNameReferenceExpression(430,433): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(433,435): '()'
   null
@@ -604,7 +604,6 @@ KtValueArgumentList(433,435): '()'
 KtDotQualifiedExpression(452,474): 'this@InnerNested.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerNested
@@ -619,6 +618,7 @@ KtDotQualifiedExpression(452,474): 'this@InnerNested.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(452,468): 'this@InnerNested'
   null
@@ -634,7 +634,6 @@ KtLabelReferenceExpression(456,468): '@InnerNested'
 
 KtCallExpression(469,474): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@InnerNested
@@ -649,11 +648,11 @@ KtCallExpression(469,474): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.InnerNested.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(469,472): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerNested
@@ -668,6 +667,7 @@ KtNameReferenceExpression(469,472): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(472,474): '()'
   null
@@ -675,7 +675,6 @@ KtValueArgumentList(472,474): '()'
 KtDotQualifiedExpression(491,512): 'this@InnerOuter.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerOuter
@@ -690,6 +689,7 @@ KtDotQualifiedExpression(491,512): 'this@InnerOuter.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(491,506): 'this@InnerOuter'
   null
@@ -705,7 +705,6 @@ KtLabelReferenceExpression(495,506): '@InnerOuter'
 
 KtCallExpression(507,512): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@InnerOuter
@@ -720,11 +719,11 @@ KtCallExpression(507,512): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(507,510): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerOuter
@@ -739,6 +738,7 @@ KtNameReferenceExpression(507,510): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(510,512): '()'
   null
@@ -746,7 +746,6 @@ KtValueArgumentList(510,512): '()'
 KtDotQualifiedExpression(529,547): 'this@MyClass.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@MyClass
@@ -761,6 +760,7 @@ KtDotQualifiedExpression(529,547): 'this@MyClass.foo()'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(529,541): 'this@MyClass'
   null
@@ -776,7 +776,6 @@ KtLabelReferenceExpression(533,541): '@MyClass'
 
 KtCallExpression(542,547): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@MyClass
@@ -791,11 +790,11 @@ KtCallExpression(542,547): 'foo()'
       contextParameters = []
       callableId = one/MyClass.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(542,545): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@MyClass
@@ -810,6 +809,7 @@ KtNameReferenceExpression(542,545): 'foo'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(545,547): '()'
   null
@@ -858,7 +858,6 @@ KtBlockExpression(603,839): '{'
 
 KtCallExpression(625,630): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -892,11 +891,11 @@ KtCallExpression(625,630): 'foo()'
       contextParameters = []
       callableId = one/MyClass.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(625,628): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -930,6 +929,7 @@ KtNameReferenceExpression(625,628): 'foo'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(628,630): '()'
   null
@@ -937,7 +937,6 @@ KtValueArgumentList(628,630): '()'
 KtDotQualifiedExpression(651,661): 'this.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -952,6 +951,7 @@ KtDotQualifiedExpression(651,661): 'this.foo()'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(651,655): 'this'
   null
@@ -961,7 +961,6 @@ KtNameReferenceExpression(651,655): 'this'
 
 KtCallExpression(656,661): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this
@@ -976,11 +975,11 @@ KtCallExpression(656,661): 'foo()'
       contextParameters = []
       callableId = one/MyClass.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(656,659): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -995,6 +994,7 @@ KtNameReferenceExpression(656,659): 'foo'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(659,661): '()'
   null
@@ -1002,7 +1002,6 @@ KtValueArgumentList(659,661): '()'
 KtDotQualifiedExpression(682,697): 'this@anon.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@anon
@@ -1017,6 +1016,7 @@ KtDotQualifiedExpression(682,697): 'this@anon.foo()'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(682,691): 'this@anon'
   null
@@ -1032,7 +1032,6 @@ KtLabelReferenceExpression(686,691): '@anon'
 
 KtCallExpression(692,697): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@anon
@@ -1047,11 +1046,11 @@ KtCallExpression(692,697): 'foo()'
       contextParameters = []
       callableId = one/MyClass.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(692,695): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@anon
@@ -1066,6 +1065,7 @@ KtNameReferenceExpression(692,695): 'foo'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(695,697): '()'
   null
@@ -1073,7 +1073,6 @@ KtValueArgumentList(695,697): '()'
 KtDotQualifiedExpression(718,740): 'this@InnerNested.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerNested
@@ -1088,6 +1087,7 @@ KtDotQualifiedExpression(718,740): 'this@InnerNested.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(718,734): 'this@InnerNested'
   null
@@ -1103,7 +1103,6 @@ KtLabelReferenceExpression(722,734): '@InnerNested'
 
 KtCallExpression(735,740): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@InnerNested
@@ -1118,11 +1117,11 @@ KtCallExpression(735,740): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.InnerNested.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(735,738): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerNested
@@ -1137,6 +1136,7 @@ KtNameReferenceExpression(735,738): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(738,740): '()'
   null
@@ -1144,7 +1144,6 @@ KtValueArgumentList(738,740): '()'
 KtDotQualifiedExpression(761,782): 'this@InnerOuter.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerOuter
@@ -1159,6 +1158,7 @@ KtDotQualifiedExpression(761,782): 'this@InnerOuter.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(761,776): 'this@InnerOuter'
   null
@@ -1174,7 +1174,6 @@ KtLabelReferenceExpression(765,776): '@InnerOuter'
 
 KtCallExpression(777,782): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@InnerOuter
@@ -1189,11 +1188,11 @@ KtCallExpression(777,782): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(777,780): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerOuter
@@ -1208,6 +1207,7 @@ KtNameReferenceExpression(777,780): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(780,782): '()'
   null
@@ -1215,7 +1215,6 @@ KtValueArgumentList(780,782): '()'
 KtDotQualifiedExpression(803,821): 'this@MyClass.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@MyClass
@@ -1230,6 +1229,7 @@ KtDotQualifiedExpression(803,821): 'this@MyClass.foo()'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(803,815): 'this@MyClass'
   null
@@ -1245,7 +1245,6 @@ KtLabelReferenceExpression(807,815): '@MyClass'
 
 KtCallExpression(816,821): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@MyClass
@@ -1260,11 +1259,11 @@ KtCallExpression(816,821): 'foo()'
       contextParameters = []
       callableId = one/MyClass.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(816,819): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@MyClass
@@ -1279,28 +1278,13 @@ KtNameReferenceExpression(816,819): 'foo'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(819,821): '()'
   null
 
 KtCallExpression(857,1107): 'myWith { t ->'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      { t ->
-                          foo()
-                          this.foo()
-                          this@myWith.foo()
-                          this@InnerNested.foo()
-                          this@InnerOuter.foo()
-                          this@MyClass.foo()
-                      } -> (KaVariableSignature:
-        name = body
-        receiverType = null
-        returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
-        symbol = body: T.(T) -> kotlin.Unit
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaImplicitReceiverValue:
@@ -1324,26 +1308,26 @@ KtCallExpression(857,1107): 'myWith { t ->'
     typeArgumentsMapping = {
       T -> (one.MyClass.InnerOuter.InnerNested)
     }
+    valueArgumentMapping = {
+      { t ->
+                          foo()
+                          this.foo()
+                          this@myWith.foo()
+                          this@InnerNested.foo()
+                          this@InnerOuter.foo()
+                          this@MyClass.foo()
+                      } -> (KaVariableSignature:
+        name = body
+        receiverType = null
+        returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+        symbol = body: T.(T) -> kotlin.Unit
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(857,863): 'myWith'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        { t ->
-                            foo()
-                            this.foo()
-                            this@myWith.foo()
-                            this@InnerNested.foo()
-                            this@InnerOuter.foo()
-                            this@MyClass.foo()
-                        } -> (KaVariableSignature:
-          name = body
-          receiverType = null
-          returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
-          symbol = body: T.(T) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaImplicitReceiverValue:
@@ -1367,6 +1351,22 @@ KtNameReferenceExpression(857,863): 'myWith'
       typeArgumentsMapping = {
         T -> (one.MyClass.InnerOuter.InnerNested)
       }
+      valueArgumentMapping = {
+        { t ->
+                            foo()
+                            this.foo()
+                            this@myWith.foo()
+                            this@InnerNested.foo()
+                            this@InnerOuter.foo()
+                            this@MyClass.foo()
+                        } -> (KaVariableSignature:
+          name = body
+          receiverType = null
+          returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+          symbol = body: T.(T) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
 
 KtLambdaArgument(864,1107): '{ t ->'
   null
@@ -1388,7 +1388,6 @@ KtBlockExpression(891,1089): 'foo()'
 
 KtCallExpression(891,896): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -1422,11 +1421,11 @@ KtCallExpression(891,896): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.InnerNested.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(891,894): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -1460,6 +1459,7 @@ KtNameReferenceExpression(891,894): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(894,896): '()'
   null
@@ -1467,7 +1467,6 @@ KtValueArgumentList(894,896): '()'
 KtDotQualifiedExpression(917,927): 'this.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -1482,6 +1481,7 @@ KtDotQualifiedExpression(917,927): 'this.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(917,921): 'this'
   null
@@ -1491,7 +1491,6 @@ KtNameReferenceExpression(917,921): 'this'
 
 KtCallExpression(922,927): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this
@@ -1506,11 +1505,11 @@ KtCallExpression(922,927): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.InnerNested.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(922,925): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -1525,6 +1524,7 @@ KtNameReferenceExpression(922,925): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(925,927): '()'
   null
@@ -1532,7 +1532,6 @@ KtValueArgumentList(925,927): '()'
 KtDotQualifiedExpression(948,965): 'this@myWith.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@myWith
@@ -1547,6 +1546,7 @@ KtDotQualifiedExpression(948,965): 'this@myWith.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(948,959): 'this@myWith'
   null
@@ -1562,7 +1562,6 @@ KtLabelReferenceExpression(952,959): '@myWith'
 
 KtCallExpression(960,965): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@myWith
@@ -1577,11 +1576,11 @@ KtCallExpression(960,965): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.InnerNested.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(960,963): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@myWith
@@ -1596,6 +1595,7 @@ KtNameReferenceExpression(960,963): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(963,965): '()'
   null
@@ -1603,7 +1603,6 @@ KtValueArgumentList(963,965): '()'
 KtDotQualifiedExpression(986,1008): 'this@InnerNested.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerNested
@@ -1618,6 +1617,7 @@ KtDotQualifiedExpression(986,1008): 'this@InnerNested.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(986,1002): 'this@InnerNested'
   null
@@ -1633,7 +1633,6 @@ KtLabelReferenceExpression(990,1002): '@InnerNested'
 
 KtCallExpression(1003,1008): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@InnerNested
@@ -1648,11 +1647,11 @@ KtCallExpression(1003,1008): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.InnerNested.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(1003,1006): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerNested
@@ -1667,6 +1666,7 @@ KtNameReferenceExpression(1003,1006): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(1006,1008): '()'
   null
@@ -1674,7 +1674,6 @@ KtValueArgumentList(1006,1008): '()'
 KtDotQualifiedExpression(1029,1050): 'this@InnerOuter.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerOuter
@@ -1689,6 +1688,7 @@ KtDotQualifiedExpression(1029,1050): 'this@InnerOuter.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(1029,1044): 'this@InnerOuter'
   null
@@ -1704,7 +1704,6 @@ KtLabelReferenceExpression(1033,1044): '@InnerOuter'
 
 KtCallExpression(1045,1050): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@InnerOuter
@@ -1719,11 +1718,11 @@ KtCallExpression(1045,1050): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(1045,1048): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@InnerOuter
@@ -1738,6 +1737,7 @@ KtNameReferenceExpression(1045,1048): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(1048,1050): '()'
   null
@@ -1745,7 +1745,6 @@ KtValueArgumentList(1048,1050): '()'
 KtDotQualifiedExpression(1071,1089): 'this@MyClass.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@MyClass
@@ -1760,6 +1759,7 @@ KtDotQualifiedExpression(1071,1089): 'this@MyClass.foo()'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(1071,1083): 'this@MyClass'
   null
@@ -1775,7 +1775,6 @@ KtLabelReferenceExpression(1075,1083): '@MyClass'
 
 KtCallExpression(1084,1089): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@MyClass
@@ -1790,11 +1789,11 @@ KtCallExpression(1084,1089): 'foo()'
       contextParameters = []
       callableId = one/MyClass.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(1084,1087): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@MyClass
@@ -1809,23 +1808,13 @@ KtNameReferenceExpression(1084,1087): 'foo'
         contextParameters = []
         callableId = one/MyClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(1087,1089): '()'
   null
 
 KtCallExpression(1125,1194): 'myWith label@{'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      label@{
-                          this@label.foo()
-                      } -> (KaVariableSignature:
-        name = body
-        receiverType = null
-        returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
-        symbol = body: T.(T) -> kotlin.Unit
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaImplicitReceiverValue:
@@ -1849,21 +1838,21 @@ KtCallExpression(1125,1194): 'myWith label@{'
     typeArgumentsMapping = {
       T -> (one.MyClass.InnerOuter.InnerNested)
     }
+    valueArgumentMapping = {
+      label@{
+                          this@label.foo()
+                      } -> (KaVariableSignature:
+        name = body
+        receiverType = null
+        returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+        symbol = body: T.(T) -> kotlin.Unit
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1125,1131): 'myWith'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        label@{
-                            this@label.foo()
-                        } -> (KaVariableSignature:
-          name = body
-          receiverType = null
-          returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
-          symbol = body: T.(T) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaImplicitReceiverValue:
@@ -1886,6 +1875,17 @@ KtNameReferenceExpression(1125,1131): 'myWith'
         callableId = one/myWith
       typeArgumentsMapping = {
         T -> (one.MyClass.InnerOuter.InnerNested)
+      }
+      valueArgumentMapping = {
+        label@{
+                            this@label.foo()
+                        } -> (KaVariableSignature:
+          name = body
+          receiverType = null
+          returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+          symbol = body: T.(T) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
       }
 
 KtLambdaArgument(1132,1194): 'label@{'
@@ -1912,7 +1912,6 @@ KtBlockExpression(1160,1176): 'this@label.foo()'
 KtDotQualifiedExpression(1160,1176): 'this@label.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@label
@@ -1927,6 +1926,7 @@ KtDotQualifiedExpression(1160,1176): 'this@label.foo()'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtThisExpression(1160,1170): 'this@label'
   null
@@ -1942,7 +1942,6 @@ KtLabelReferenceExpression(1164,1170): '@label'
 
 KtCallExpression(1171,1176): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this@label
@@ -1957,11 +1956,11 @@ KtCallExpression(1171,1176): 'foo()'
       contextParameters = []
       callableId = one/MyClass.InnerOuter.InnerNested.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(1171,1174): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this@label
@@ -1976,6 +1975,7 @@ KtNameReferenceExpression(1171,1174): 'foo'
         contextParameters = []
         callableId = one/MyClass.InnerOuter.InnerNested.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(1174,1176): '()'
   null
@@ -2051,15 +2051,6 @@ KtBlockExpression(1266,1284): '{'
 
 KtCallExpression(1272,1282): 'body(this)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      this -> (KaVariableSignature:
-        name = p2
-        receiverType = null
-        returnType = T
-        symbol = p2: P2
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = body
@@ -2110,6 +2101,15 @@ KtCallExpression(1272,1282): 'body(this)'
       contextParameters = []
       callableId = kotlin/Function2.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      this -> (KaVariableSignature:
+        name = p2
+        receiverType = null
+        returnType = T
+        symbol = p2: P2
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1272,1276): 'body'
   KaSuccessCallInfo:

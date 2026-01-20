@@ -5,15 +5,6 @@ KtOperationReferenceExpression(250,252): '+='
         kind = PLUS_ASSIGN
         operand = MyClass()
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {
-            variable[0] -> (KaVariableSignature:
-              name = v
-              receiverType = null
-              returnType = MyClass
-              symbol = v: MyClass
-              contextParameters = []
-              callableId = null)
-          }
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = variable[0]
@@ -36,16 +27,16 @@ KtOperationReferenceExpression(250,252): '+='
             contextParameters = []
             callableId = /MyClass.plus
           typeArgumentsMapping = {}
+          valueArgumentMapping = {
+            variable[0] -> (KaVariableSignature:
+              name = v
+              receiverType = null
+              returnType = MyClass
+              symbol = v: MyClass
+              contextParameters = []
+              callableId = null)
+          }
       getterCall = KaSimpleFunctionCall:
-        argumentMapping = {
-          0 -> (KaVariableSignature:
-            name = i
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = i: kotlin.Int
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
@@ -68,19 +59,19 @@ KtOperationReferenceExpression(250,252): '+='
           contextParameters = []
           callableId = /MyClass.get
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          0 -> (KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null)
+        }
       indexArguments = [
         0
       ]
       setterCall = KaSimpleFunctionCall:
-        argumentMapping = {
-          0 -> (KaVariableSignature:
-            name = v
-            receiverType = null
-            returnType = MyClass
-            symbol = v: MyClass
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
@@ -110,3 +101,12 @@ KtOperationReferenceExpression(250,252): '+='
           contextParameters = []
           callableId = /MyClass.set
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          0 -> (KaVariableSignature:
+            name = v
+            receiverType = null
+            returnType = MyClass
+            symbol = v: MyClass
+            contextParameters = []
+            callableId = null)
+        }

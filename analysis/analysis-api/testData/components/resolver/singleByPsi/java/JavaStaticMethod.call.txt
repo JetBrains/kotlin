@@ -1,7 +1,6 @@
 KtNameReferenceExpression(589,592): 'bar'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Foo
@@ -16,3 +15,4 @@ KtNameReferenceExpression(589,592): 'bar'
         contextParameters = []
         callableId = pkg/Foo.bar
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

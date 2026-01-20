@@ -67,15 +67,6 @@ KtBlockExpression(116,152): '{'
 KtCallExpression(122,128): 'foo(X)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = b.MyEnum
-          symbol = a: b.MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -95,20 +86,20 @@ KtCallExpression(122,128): 'foo(X)'
         contextParameters = []
         callableId = b/foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = b.MyEnum
+          symbol = a: b.MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(122,125): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = b.MyEnum
-          symbol = a: b.MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -128,6 +119,15 @@ KtNameReferenceExpression(122,125): 'foo'
         contextParameters = []
         callableId = b/foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = b.MyEnum
+          symbol = a: b.MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(125,128): '(X)'
@@ -160,15 +160,6 @@ KtNameReferenceExpression(126,127): 'X'
 KtCallExpression(133,139): 'foo(Y)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Y -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = b.MyEnum
-          symbol = a: b.MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -188,20 +179,20 @@ KtCallExpression(133,139): 'foo(Y)'
         contextParameters = []
         callableId = b/foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Y -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = b.MyEnum
+          symbol = a: b.MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(133,136): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Y -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = b.MyEnum
-          symbol = a: b.MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -221,6 +212,15 @@ KtNameReferenceExpression(133,136): 'foo'
         contextParameters = []
         callableId = b/foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Y -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = b.MyEnum
+          symbol = a: b.MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(136,139): '(Y)'
@@ -253,15 +253,6 @@ KtNameReferenceExpression(137,138): 'Y'
 KtCallExpression(144,150): 'foo(Z)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Z -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = b.MyEnum
-          symbol = a: b.MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -281,20 +272,20 @@ KtCallExpression(144,150): 'foo(Z)'
         contextParameters = []
         callableId = b/foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Z -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = b.MyEnum
+          symbol = a: b.MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(144,147): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Z -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = b.MyEnum
-          symbol = a: b.MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -314,6 +305,15 @@ KtNameReferenceExpression(144,147): 'foo'
         contextParameters = []
         callableId = b/foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Z -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = b.MyEnum
+          symbol = a: b.MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(147,150): '(Z)'

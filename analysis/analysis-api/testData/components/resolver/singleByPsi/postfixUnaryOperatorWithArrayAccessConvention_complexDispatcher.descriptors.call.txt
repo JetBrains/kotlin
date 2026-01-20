@@ -4,7 +4,6 @@ KtPostfixExpression(182,190): 'm["a"]++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = m["a"]
@@ -19,9 +18,9 @@ KtPostfixExpression(182,190): 'm["a"]++'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       getterCall = KaSimpleFunctionCall:
-        argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
@@ -44,11 +43,11 @@ KtPostfixExpression(182,190): 'm["a"]++'
           contextParameters = []
           callableId = /MyMap.get
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
       indexArguments = [
         "a"
       ]
       setterCall = KaSimpleFunctionCall:
-        argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Foo
@@ -80,3 +79,4 @@ KtPostfixExpression(182,190): 'm["a"]++'
           contextParameters = []
           callableId = /Foo.set
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}

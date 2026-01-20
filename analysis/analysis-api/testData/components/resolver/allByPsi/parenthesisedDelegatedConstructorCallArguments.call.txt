@@ -72,15 +72,6 @@ KtNameReferenceExpression(51,57): 'String'
 
 KtConstructorDelegationCall(61,74): 'this((((i))))'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      (((i))) -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = T
-        symbol = i: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -102,19 +93,19 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
       callableId = null
     typeArgumentsMapping = {
       T -> (T)
+    }
+    valueArgumentMapping = {
+      (((i))) -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = i: T
+        contextParameters = []
+        callableId = null)
     }
 
 KtConstructorDelegationReferenceExpression(61,65): 'this'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      (((i))) -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = T
-        symbol = i: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -136,6 +127,15 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
       callableId = null
     typeArgumentsMapping = {
       T -> (T)
+    }
+    valueArgumentMapping = {
+      (((i))) -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = i: T
+        contextParameters = []
+        callableId = null)
     }
 
 KtValueArgumentList(65,74): '((((i))))'
@@ -202,15 +202,6 @@ KtNameReferenceExpression(104,107): 'Int'
 
 KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      (((i))) -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = T
-        symbol = i: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -232,19 +223,19 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
       callableId = null
     typeArgumentsMapping = {
       T -> (T)
+    }
+    valueArgumentMapping = {
+      (((i))) -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = i: T
+        contextParameters = []
+        callableId = null)
     }
 
 KtConstructorDelegationReferenceExpression(111,115): 'this'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      (((i))) -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = T
-        symbol = i: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -266,6 +257,15 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
       callableId = null
     typeArgumentsMapping = {
       T -> (T)
+    }
+    valueArgumentMapping = {
+      (((i))) -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = i: T
+        contextParameters = []
+        callableId = null)
     }
 
 KtValueArgumentList(115,128): '(i = (((i))))'
@@ -350,15 +350,6 @@ KtParameterList(172,174): '()'
 
 KtConstructorDelegationCall(177,189): 'super(((1)))'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      ((1)) -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -380,19 +371,19 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
       callableId = null
     typeArgumentsMapping = {
       T -> (kotlin.Int)
+    }
+    valueArgumentMapping = {
+      ((1)) -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: T
+        contextParameters = []
+        callableId = null)
     }
 
 KtConstructorDelegationReferenceExpression(177,182): 'super'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      ((1)) -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -414,6 +405,15 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
       callableId = null
     typeArgumentsMapping = {
       T -> (kotlin.Int)
+    }
+    valueArgumentMapping = {
+      ((1)) -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: T
+        contextParameters = []
+        callableId = null)
     }
 
 KtValueArgumentList(182,189): '(((1)))'
@@ -451,15 +451,6 @@ KtNameReferenceExpression(214,217): 'Int'
 
 KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      ((value)) -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -481,19 +472,19 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
       callableId = null
     typeArgumentsMapping = {
       T -> (kotlin.Int)
+    }
+    valueArgumentMapping = {
+      ((value)) -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: T
+        contextParameters = []
+        callableId = null)
     }
 
 KtConstructorDelegationReferenceExpression(221,226): 'super'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      ((value)) -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -515,6 +506,15 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
       callableId = null
     typeArgumentsMapping = {
       T -> (kotlin.Int)
+    }
+    valueArgumentMapping = {
+      ((value)) -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: T
+        contextParameters = []
+        callableId = null)
     }
 
 KtValueArgumentList(226,241): '(i = ((value)))'
@@ -572,15 +572,6 @@ KtNameReferenceExpression(266,272): 'String'
 
 KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      ((5)) as Int -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -602,19 +593,19 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
       callableId = null
     typeArgumentsMapping = {
       T -> (kotlin.Int)
+    }
+    valueArgumentMapping = {
+      ((5)) as Int -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: T
+        contextParameters = []
+        callableId = null)
     }
 
 KtConstructorDelegationReferenceExpression(276,281): 'super'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      ((5)) as Int -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -636,6 +627,15 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
       callableId = null
     typeArgumentsMapping = {
       T -> (kotlin.Int)
+    }
+    valueArgumentMapping = {
+      ((5)) as Int -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: T
+        contextParameters = []
+        callableId = null)
     }
 
 KtValueArgumentList(281,299): '(i = ((5)) as Int)'

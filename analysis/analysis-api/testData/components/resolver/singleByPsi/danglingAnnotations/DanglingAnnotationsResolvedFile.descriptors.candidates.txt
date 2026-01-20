@@ -1,15 +1,6 @@
 KtNameReferenceExpression(49,56): 'JvmName'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "" -> (KaVariableSignature:
-          name = name
-          receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,4 +20,13 @@ KtNameReferenceExpression(49,56): 'JvmName'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "" -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

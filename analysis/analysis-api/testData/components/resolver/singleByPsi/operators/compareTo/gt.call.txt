@@ -1,15 +1,6 @@
 KtOperationReferenceExpression(114,115): '>'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyClass
-          symbol = value: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m
@@ -32,3 +23,12 @@ KtOperationReferenceExpression(114,115): '>'
         contextParameters = []
         callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyClass
+          symbol = value: MyClass
+          contextParameters = []
+          callableId = null)
+      }

@@ -2,7 +2,6 @@ KtSuperTypeCallEntry(93,106): 'Foo<String>()'
   KaCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
-        argumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -25,5 +24,6 @@ KtSuperTypeCallEntry(93,106): 'Foo<String>()'
         typeArgumentsMapping = {
           T -> (kotlin.String)
         }
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'.>

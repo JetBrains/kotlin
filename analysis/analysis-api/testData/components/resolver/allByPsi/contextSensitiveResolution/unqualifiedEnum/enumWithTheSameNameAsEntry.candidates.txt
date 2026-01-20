@@ -91,7 +91,6 @@ KtDotQualifiedExpression(135,138): 'A.A'
 KtNameReferenceExpression(135,136): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -103,6 +102,7 @@ KtNameReferenceExpression(135,136): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -163,7 +163,6 @@ KtDotQualifiedExpression(150,153): 'A.B'
 KtNameReferenceExpression(150,151): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -175,6 +174,7 @@ KtNameReferenceExpression(150,151): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 

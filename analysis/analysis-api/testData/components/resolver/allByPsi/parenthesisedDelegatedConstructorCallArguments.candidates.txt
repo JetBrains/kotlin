@@ -73,15 +73,6 @@ KtNameReferenceExpression(51,57): 'String'
 KtConstructorDelegationCall(61,74): 'this((((i))))'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        (((i))) -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = T
-          symbol = i: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -104,11 +95,7 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
       typeArgumentsMapping = {
         T -> (T)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -117,6 +104,10 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -146,12 +137,7 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
       typeArgumentsMapping = {
         T -> (T)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -160,6 +146,11 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -188,6 +179,15 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
         callableId = null
       typeArgumentsMapping = {
         T -> (T)
+      }
+      valueArgumentMapping = {
+        (((i))) -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = T
+          symbol = i: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -195,15 +195,6 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
 KtConstructorDelegationReferenceExpression(61,65): 'this'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        (((i))) -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = T
-          symbol = i: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -226,11 +217,7 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
       typeArgumentsMapping = {
         T -> (T)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -239,6 +226,10 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -268,12 +259,7 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
       typeArgumentsMapping = {
         T -> (T)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -282,6 +268,11 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -310,6 +301,15 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
         callableId = null
       typeArgumentsMapping = {
         T -> (T)
+      }
+      valueArgumentMapping = {
+        (((i))) -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = T
+          symbol = i: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -380,15 +380,6 @@ KtNameReferenceExpression(104,107): 'Int'
 KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        (((i))) -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = T
-          symbol = i: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -411,11 +402,7 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
       typeArgumentsMapping = {
         T -> (T)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -424,6 +411,10 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -453,12 +444,7 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
       typeArgumentsMapping = {
         T -> (T)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -467,6 +453,11 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -495,6 +486,15 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
         callableId = null
       typeArgumentsMapping = {
         T -> (T)
+      }
+      valueArgumentMapping = {
+        (((i))) -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = T
+          symbol = i: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -502,15 +502,6 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
 KtConstructorDelegationReferenceExpression(111,115): 'this'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        (((i))) -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = T
-          symbol = i: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -533,11 +524,7 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
       typeArgumentsMapping = {
         T -> (T)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -546,6 +533,10 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -575,12 +566,7 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
       typeArgumentsMapping = {
         T -> (T)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -589,6 +575,11 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -617,6 +608,15 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
         callableId = null
       typeArgumentsMapping = {
         T -> (T)
+      }
+      valueArgumentMapping = {
+        (((i))) -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = T
+          symbol = i: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -705,15 +705,6 @@ KtParameterList(172,174): '()'
 KtConstructorDelegationCall(177,189): 'super(((1)))'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        ((1)) -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -736,11 +727,7 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -749,6 +736,10 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -778,12 +769,7 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -792,6 +778,11 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -820,6 +811,15 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
         callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        ((1)) -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -827,15 +827,6 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
 KtConstructorDelegationReferenceExpression(177,182): 'super'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        ((1)) -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -858,11 +849,7 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -871,6 +858,10 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -900,12 +891,7 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -914,6 +900,11 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -942,6 +933,15 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
         callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        ((1)) -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -982,15 +982,6 @@ KtNameReferenceExpression(214,217): 'Int'
 KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        ((value)) -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1013,11 +1004,7 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1026,6 +1013,10 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1055,12 +1046,7 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1069,6 +1055,11 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1097,6 +1088,15 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
         callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        ((value)) -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -1104,15 +1104,6 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
 KtConstructorDelegationReferenceExpression(221,226): 'super'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        ((value)) -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1135,11 +1126,7 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1148,6 +1135,10 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1177,12 +1168,7 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1191,6 +1177,11 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1219,6 +1210,15 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
         callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        ((value)) -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -1280,15 +1280,6 @@ KtNameReferenceExpression(266,272): 'String'
 KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        ((5)) as Int -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1311,11 +1302,7 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1324,6 +1311,10 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1353,12 +1344,7 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1367,6 +1353,11 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1395,6 +1386,15 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
         callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        ((5)) as Int -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -1402,15 +1402,6 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
 KtConstructorDelegationReferenceExpression(276,281): 'super'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        ((5)) as Int -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1433,11 +1424,7 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1446,6 +1433,10 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1475,12 +1466,7 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1489,6 +1475,11 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1517,6 +1508,15 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
         callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        ((5)) as Int -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false

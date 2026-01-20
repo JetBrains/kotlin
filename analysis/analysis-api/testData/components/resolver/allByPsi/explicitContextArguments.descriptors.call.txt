@@ -260,44 +260,6 @@ KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /unnamed
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -317,6 +279,44 @@ KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
           contextParameters = []
           callableId = /unnamed
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /unnamed
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -326,44 +326,6 @@ KtNameReferenceExpression(395,402): 'unnamed'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /unnamed
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -383,6 +345,44 @@ KtNameReferenceExpression(395,402): 'unnamed'
           contextParameters = []
           callableId = /unnamed
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /unnamed
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -410,44 +410,6 @@ KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /named(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /named
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -467,6 +429,44 @@ KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
           contextParameters = []
           callableId = /named
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /named(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /named
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -476,44 +476,6 @@ KtNameReferenceExpression(445,450): 'named'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /named(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /named
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -533,6 +495,44 @@ KtNameReferenceExpression(445,450): 'named'
           contextParameters = []
           callableId = /named
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /named(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /named
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -560,44 +560,6 @@ KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regul
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /unnamed
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -617,6 +579,44 @@ KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regul
           contextParameters = []
           callableId = /unnamed
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /unnamed
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -626,44 +626,6 @@ KtNameReferenceExpression(494,501): 'unnamed'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /unnamed
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -683,6 +645,44 @@ KtNameReferenceExpression(494,501): 'unnamed'
           contextParameters = []
           callableId = /unnamed
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /unnamed
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -702,7 +702,6 @@ KtNameReferenceExpression(518,526): 'explicit'
 
 KtCallExpression(529,539): 'Explicit()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -714,11 +713,11 @@ KtCallExpression(529,539): 'Explicit()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(529,537): 'Explicit'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -730,6 +729,7 @@ KtNameReferenceExpression(529,537): 'Explicit'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(537,539): '()'
   null
@@ -753,44 +753,6 @@ KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /named(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /named
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -810,6 +772,44 @@ KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular
           contextParameters = []
           callableId = /named
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /named(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /named
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -819,44 +819,6 @@ KtNameReferenceExpression(563,568): 'named'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /named(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /named
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -876,6 +838,44 @@ KtNameReferenceExpression(563,568): 'named'
           contextParameters = []
           callableId = /named
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /named(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /named
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -895,7 +895,6 @@ KtNameReferenceExpression(585,593): 'explicit'
 
 KtCallExpression(596,606): 'Explicit()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -907,11 +906,11 @@ KtCallExpression(596,606): 'Explicit()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(596,604): 'Explicit'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -923,6 +922,7 @@ KtNameReferenceExpression(596,604): 'Explicit'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(604,606): '()'
   null
@@ -962,25 +962,6 @@ KtBlockExpression(658,933): '{'
 
 KtCallExpression(664,794): 'with(Explicit()) {'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      Explicit() -> (KaVariableSignature:
-        name = receiver
-        receiverType = null
-        returnType = Explicit
-        symbol = receiver: T
-        contextParameters = []
-        callableId = null),
-      {
-              unnamed/*explicit regular*/(regular = "str2")
-              named/*explicit regular*/(regular = "str2")
-          } -> (KaVariableSignature:
-        name = block
-        receiverType = null
-        returnType = kotlin.Function1<Explicit, kotlin.Unit>
-        symbol = block: kotlin.Function1<T, R>
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1010,29 +991,29 @@ KtCallExpression(664,794): 'with(Explicit()) {'
       T -> (Explicit),
       R -> (kotlin.Unit)
     }
+    valueArgumentMapping = {
+      Explicit() -> (KaVariableSignature:
+        name = receiver
+        receiverType = null
+        returnType = Explicit
+        symbol = receiver: T
+        contextParameters = []
+        callableId = null),
+      {
+              unnamed/*explicit regular*/(regular = "str2")
+              named/*explicit regular*/(regular = "str2")
+          } -> (KaVariableSignature:
+        name = block
+        receiverType = null
+        returnType = kotlin.Function1<Explicit, kotlin.Unit>
+        symbol = block: kotlin.Function1<T, R>
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(664,668): 'with'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Explicit() -> (KaVariableSignature:
-          name = receiver
-          receiverType = null
-          returnType = Explicit
-          symbol = receiver: T
-          contextParameters = []
-          callableId = null),
-        {
-                unnamed/*explicit regular*/(regular = "str2")
-                named/*explicit regular*/(regular = "str2")
-            } -> (KaVariableSignature:
-          name = block
-          receiverType = null
-          returnType = kotlin.Function1<Explicit, kotlin.Unit>
-          symbol = block: kotlin.Function1<T, R>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1062,6 +1043,25 @@ KtNameReferenceExpression(664,668): 'with'
         T -> (Explicit),
         R -> (kotlin.Unit)
       }
+      valueArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = receiver
+          receiverType = null
+          returnType = Explicit
+          symbol = receiver: T
+          contextParameters = []
+          callableId = null),
+        {
+                unnamed/*explicit regular*/(regular = "str2")
+                named/*explicit regular*/(regular = "str2")
+            } -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = kotlin.Function1<Explicit, kotlin.Unit>
+          symbol = block: kotlin.Function1<T, R>
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(668,680): '(Explicit())'
   null
@@ -1071,7 +1071,6 @@ KtValueArgument(669,679): 'Explicit()'
 
 KtCallExpression(669,679): 'Explicit()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1083,11 +1082,11 @@ KtCallExpression(669,679): 'Explicit()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(669,677): 'Explicit'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1099,6 +1098,7 @@ KtNameReferenceExpression(669,677): 'Explicit'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(677,679): '()'
   null
@@ -1119,44 +1119,6 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /unnamed
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1176,6 +1138,44 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
           contextParameters = []
           callableId = /unnamed
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /unnamed
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -1185,44 +1185,6 @@ KtNameReferenceExpression(691,698): 'unnamed'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /unnamed
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1242,6 +1204,44 @@ KtNameReferenceExpression(691,698): 'unnamed'
           contextParameters = []
           callableId = /unnamed
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /unnamed
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -1269,44 +1269,6 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /named(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /named
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1326,6 +1288,44 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
           contextParameters = []
           callableId = /named
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /named(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /named
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -1335,44 +1335,6 @@ KtNameReferenceExpression(745,750): 'named'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /named(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /named
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str2" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1392,6 +1354,44 @@ KtNameReferenceExpression(745,750): 'named'
           contextParameters = []
           callableId = /named
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /named(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /named
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str2" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -1419,44 +1419,6 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /unnamed
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1476,6 +1438,44 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
           contextParameters = []
           callableId = /unnamed
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /unnamed
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -1485,44 +1485,6 @@ KtNameReferenceExpression(800,807): 'unnamed'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /unnamed
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1542,6 +1504,44 @@ KtNameReferenceExpression(800,807): 'unnamed'
           contextParameters = []
           callableId = /unnamed
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /unnamed
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -1561,7 +1561,6 @@ KtNameReferenceExpression(824,832): 'explicit'
 
 KtCallExpression(835,845): 'Explicit()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1573,11 +1572,11 @@ KtCallExpression(835,845): 'Explicit()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(835,843): 'Explicit'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1589,6 +1588,7 @@ KtNameReferenceExpression(835,843): 'Explicit'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(843,845): '()'
   null
@@ -1612,44 +1612,6 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /named(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /named
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1669,6 +1631,44 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
           contextParameters = []
           callableId = /named
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /named(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /named
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -1678,44 +1678,6 @@ KtNameReferenceExpression(869,874): 'named'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /named(regular: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = regular
-              receiverType = null
-              returnType = kotlin.String
-              symbol = regular: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /named
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          "str3" -> (KaVariableSignature:
-            name = regular
-            receiverType = null
-            returnType = kotlin.String
-            symbol = regular: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1735,6 +1697,44 @@ KtNameReferenceExpression(869,874): 'named'
           contextParameters = []
           callableId = /named
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /named(regular: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = regular
+              receiverType = null
+              returnType = kotlin.String
+              symbol = regular: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /named
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "str3" -> (KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
@@ -1754,7 +1754,6 @@ KtNameReferenceExpression(891,899): 'explicit'
 
 KtCallExpression(902,912): 'Explicit()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1766,11 +1765,11 @@ KtCallExpression(902,912): 'Explicit()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(902,910): 'Explicit'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1782,6 +1781,7 @@ KtNameReferenceExpression(902,910): 'Explicit'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(910,912): '()'
   null

@@ -117,7 +117,6 @@ KtNameReferenceExpression(200,201): 'T'
 
 KtCallExpression(204,210): 'TODO()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -129,11 +128,11 @@ KtCallExpression(204,210): 'TODO()'
       contextParameters = []
       callableId = kotlin/TODO
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(204,208): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -145,6 +144,7 @@ KtNameReferenceExpression(204,208): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(208,210): '()'
   null
@@ -184,7 +184,6 @@ KtNameReferenceExpression(230,231): 'X'
 
 KtCallExpression(234,240): 'TODO()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -196,11 +195,11 @@ KtCallExpression(234,240): 'TODO()'
       contextParameters = []
       callableId = kotlin/TODO
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(234,238): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -212,6 +211,7 @@ KtNameReferenceExpression(234,238): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(238,240): '()'
   null
@@ -251,18 +251,6 @@ KtNameReferenceExpression(284,285): 'X'
 
 KtCallExpression(291,364): 'myRunWithMyEnum {'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      {
-              if (b) return@myRunWithMyEnum X
-              Y
-          } -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Function0<MyEnum>
-        symbol = b: kotlin.Function0<MyEnum>
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -282,22 +270,22 @@ KtCallExpression(291,364): 'myRunWithMyEnum {'
       contextParameters = []
       callableId = /myRunWithMyEnum
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      {
+              if (b) return@myRunWithMyEnum X
+              Y
+          } -> (KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Function0<MyEnum>
+        symbol = b: kotlin.Function0<MyEnum>
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(291,306): 'myRunWithMyEnum'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRunWithMyEnum X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<MyEnum>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -317,6 +305,18 @@ KtNameReferenceExpression(291,306): 'myRunWithMyEnum'
         contextParameters = []
         callableId = /myRunWithMyEnum
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                if (b) return@myRunWithMyEnum X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
 
 KtLambdaArgument(307,364): '{'
   null
@@ -377,18 +377,6 @@ KtNameReferenceExpression(357,358): 'Y'
 
 KtCallExpression(370,451): 'myRunWithMyEnum {'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      {
-              if (b) return@myRunWithMyEnum id(X)
-              id(Y)
-          } -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Function0<MyEnum>
-        symbol = b: kotlin.Function0<MyEnum>
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -408,22 +396,22 @@ KtCallExpression(370,451): 'myRunWithMyEnum {'
       contextParameters = []
       callableId = /myRunWithMyEnum
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      {
+              if (b) return@myRunWithMyEnum id(X)
+              id(Y)
+          } -> (KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Function0<MyEnum>
+        symbol = b: kotlin.Function0<MyEnum>
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(370,385): 'myRunWithMyEnum'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRunWithMyEnum id(X)
-                id(Y)
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<MyEnum>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -443,6 +431,18 @@ KtNameReferenceExpression(370,385): 'myRunWithMyEnum'
         contextParameters = []
         callableId = /myRunWithMyEnum
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                if (b) return@myRunWithMyEnum id(X)
+                id(Y)
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
 
 KtLambdaArgument(386,451): '{'
   null
@@ -495,15 +495,6 @@ KtCallExpression(426,431): 'id(X)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          X -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyEnum
-            symbol = x: X
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -524,6 +515,15 @@ KtCallExpression(426,431): 'id(X)'
           callableId = /id
         typeArgumentsMapping = {
           X -> (MyEnum)
+        }
+        valueArgumentMapping = {
+          X -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
@@ -532,15 +532,6 @@ KtNameReferenceExpression(426,428): 'id'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          X -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyEnum
-            symbol = x: X
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -561,6 +552,15 @@ KtNameReferenceExpression(426,428): 'id'
           callableId = /id
         typeArgumentsMapping = {
           X -> (MyEnum)
+        }
+        valueArgumentMapping = {
+          X -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
@@ -580,15 +580,6 @@ KtCallExpression(440,445): 'id(Y)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          Y -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyEnum
-            symbol = x: X
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -609,6 +600,15 @@ KtCallExpression(440,445): 'id(Y)'
           callableId = /id
         typeArgumentsMapping = {
           X -> (MyEnum)
+        }
+        valueArgumentMapping = {
+          Y -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
@@ -617,15 +617,6 @@ KtNameReferenceExpression(440,442): 'id'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          Y -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyEnum
-            symbol = x: X
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -646,6 +637,15 @@ KtNameReferenceExpression(440,442): 'id'
           callableId = /id
         typeArgumentsMapping = {
           X -> (MyEnum)
+        }
+        valueArgumentMapping = {
+          Y -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
@@ -663,18 +663,6 @@ KtNameReferenceExpression(443,444): 'Y'
 
 KtCallExpression(457,518): 'myRun<MyEnum> {'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      {
-              if (b) return@myRun X
-              Y
-          } -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Function0<MyEnum>
-        symbol = b: kotlin.Function0<T>
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -696,22 +684,22 @@ KtCallExpression(457,518): 'myRun<MyEnum> {'
     typeArgumentsMapping = {
       T -> (MyEnum)
     }
+    valueArgumentMapping = {
+      {
+              if (b) return@myRun X
+              Y
+          } -> (KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Function0<MyEnum>
+        symbol = b: kotlin.Function0<T>
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(457,462): 'myRun'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRun X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -732,6 +720,18 @@ KtNameReferenceExpression(457,462): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                if (b) return@myRun X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(462,470): '<MyEnum>'
@@ -808,18 +808,6 @@ KtNameReferenceExpression(511,512): 'Y'
 
 KtCallExpression(523,607): 'foo('
   KaSimpleFunctionCall:
-    argumentMapping = {
-      myRun {
-                  if (b) return@myRun X
-                  Y
-              } -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = MyEnum
-        symbol = a: MyEnum
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -839,22 +827,22 @@ KtCallExpression(523,607): 'foo('
       contextParameters = []
       callableId = /foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      myRun {
+                  if (b) return@myRun X
+                  Y
+              } -> (KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = MyEnum
+        symbol = a: MyEnum
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(523,526): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        myRun {
-                    if (b) return@myRun X
-                    Y
-                } -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyEnum
-          symbol = a: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -874,6 +862,18 @@ KtNameReferenceExpression(523,526): 'foo'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myRun {
+                    if (b) return@myRun X
+                    Y
+                } -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = a: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(526,607): '('
   null
@@ -883,18 +883,6 @@ KtValueArgument(536,601): 'myRun {'
 
 KtCallExpression(536,601): 'myRun {'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      {
-                  if (b) return@myRun X
-                  Y
-              } -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Function0<MyEnum>
-        symbol = b: kotlin.Function0<T>
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -916,22 +904,22 @@ KtCallExpression(536,601): 'myRun {'
     typeArgumentsMapping = {
       T -> (MyEnum)
     }
+    valueArgumentMapping = {
+      {
+                  if (b) return@myRun X
+                  Y
+              } -> (KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Function0<MyEnum>
+        symbol = b: kotlin.Function0<T>
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(536,541): 'myRun'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                    if (b) return@myRun X
-                    Y
-                } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -952,6 +940,18 @@ KtNameReferenceExpression(536,541): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                    if (b) return@myRun X
+                    Y
+                } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
 
 KtLambdaArgument(542,601): '{'
@@ -1025,18 +1025,6 @@ KtNameReferenceExpression(620,626): 'MyEnum'
 
 KtCallExpression(629,682): 'myRun {'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      {
-              if (b) return@myRun X
-              Y
-          } -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Function0<MyEnum>
-        symbol = b: kotlin.Function0<T>
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1058,22 +1046,22 @@ KtCallExpression(629,682): 'myRun {'
     typeArgumentsMapping = {
       T -> (MyEnum)
     }
+    valueArgumentMapping = {
+      {
+              if (b) return@myRun X
+              Y
+          } -> (KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Function0<MyEnum>
+        symbol = b: kotlin.Function0<T>
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(629,634): 'myRun'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRun X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1094,6 +1082,18 @@ KtNameReferenceExpression(629,634): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                if (b) return@myRun X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
 
 KtLambdaArgument(635,682): '{'
@@ -1157,18 +1157,6 @@ KtCallExpression(688,741): 'myRun {'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          {
-                  if (b) return@myRun X
-                  Y
-              } -> (KaVariableSignature:
-            name = b
-            receiverType = null
-            returnType = kotlin.Function0<ERROR_TYPE>
-            symbol = b: kotlin.Function0<T>
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1189,6 +1177,18 @@ KtCallExpression(688,741): 'myRun {'
           callableId = /myRun
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          {
+                  if (b) return@myRun X
+                  Y
+              } -> (KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Function0<ERROR_TYPE>
+            symbol = b: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with myRun>
@@ -1197,18 +1197,6 @@ KtNameReferenceExpression(688,693): 'myRun'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          {
-                  if (b) return@myRun X
-                  Y
-              } -> (KaVariableSignature:
-            name = b
-            receiverType = null
-            returnType = kotlin.Function0<ERROR_TYPE>
-            symbol = b: kotlin.Function0<T>
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1229,6 +1217,18 @@ KtNameReferenceExpression(688,693): 'myRun'
           callableId = /myRun
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          {
+                  if (b) return@myRun X
+                  Y
+              } -> (KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Function0<ERROR_TYPE>
+            symbol = b: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with myRun>
@@ -1292,18 +1292,6 @@ KtNameReferenceExpression(734,735): 'Y'
 
 KtCallExpression(746,806): 'myRun {'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      {
-              if (b) return@myRun MyEnum.X
-              Y
-          } -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Function0<MyEnum>
-        symbol = b: kotlin.Function0<T>
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1325,22 +1313,22 @@ KtCallExpression(746,806): 'myRun {'
     typeArgumentsMapping = {
       T -> (MyEnum)
     }
+    valueArgumentMapping = {
+      {
+              if (b) return@myRun MyEnum.X
+              Y
+          } -> (KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Function0<MyEnum>
+        symbol = b: kotlin.Function0<T>
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(746,751): 'myRun'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (b) return@myRun MyEnum.X
-                Y
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1361,6 +1349,18 @@ KtNameReferenceExpression(746,751): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                if (b) return@myRun MyEnum.X
+                Y
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
 
 KtLambdaArgument(752,806): '{'

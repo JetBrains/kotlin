@@ -73,7 +73,6 @@ KtBlockExpression(161,253): '{'
 KtDotQualifiedExpression(167,185): 'MyAlias.function()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -88,13 +87,13 @@ KtDotQualifiedExpression(167,185): 'MyAlias.function()'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(167,174): 'MyAlias'
   null
 
 KtCallExpression(175,185): 'function()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = MyAlias
@@ -109,11 +108,11 @@ KtCallExpression(175,185): 'function()'
       contextParameters = []
       callableId = test/MyClass.Companion.function
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(175,183): 'function'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -128,6 +127,7 @@ KtNameReferenceExpression(175,183): 'function'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(183,185): '()'
   null
@@ -177,7 +177,6 @@ KtNameReferenceExpression(198,206): 'property'
 
 KtCallableReferenceExpression(212,229): 'MyAlias::function'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = MyAlias
@@ -192,6 +191,7 @@ KtCallableReferenceExpression(212,229): 'MyAlias::function'
       contextParameters = []
       callableId = test/MyClass.Companion.function
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(212,219): 'MyAlias'
   null
@@ -199,7 +199,6 @@ KtNameReferenceExpression(212,219): 'MyAlias'
 KtNameReferenceExpression(221,229): 'function'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -214,6 +213,7 @@ KtNameReferenceExpression(221,229): 'function'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtCallableReferenceExpression(234,251): 'MyAlias::property'
   KaSimpleVariableAccessCall:

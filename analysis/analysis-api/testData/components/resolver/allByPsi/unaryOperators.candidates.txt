@@ -28,7 +28,6 @@ KtProperty(34,53): 'val negative = -one'
 KtPrefixExpression(49,53): '-one'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = one
@@ -43,12 +42,12 @@ KtPrefixExpression(49,53): '-one'
         contextParameters = []
         callableId = kotlin/Int.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(49,50): '-'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = one
@@ -63,6 +62,7 @@ KtOperationReferenceExpression(49,50): '-'
         contextParameters = []
         callableId = kotlin/Int.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(50,53): 'one'
@@ -89,7 +89,6 @@ KtProperty(58,77): 'val positive = +one'
 KtPrefixExpression(73,77): '+one'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = one
@@ -104,12 +103,12 @@ KtPrefixExpression(73,77): '+one'
         contextParameters = []
         callableId = kotlin/Int.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(73,74): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = one
@@ -124,6 +123,7 @@ KtOperationReferenceExpression(73,74): '+'
         contextParameters = []
         callableId = kotlin/Int.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(74,77): 'one'
@@ -147,7 +147,6 @@ KtNameReferenceExpression(74,77): 'one'
 KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = +(-MyClass().unaryMinus().not())
@@ -162,12 +161,12 @@ KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
         contextParameters = []
         callableId = /MyClass.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(83,84): '!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = +(-MyClass().unaryMinus().not())
@@ -182,6 +181,7 @@ KtOperationReferenceExpression(83,84): '!'
         contextParameters = []
         callableId = /MyClass.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtParenthesizedExpression(84,118): '(+(-MyClass().unaryMinus().not()))'
@@ -190,7 +190,6 @@ KtParenthesizedExpression(84,118): '(+(-MyClass().unaryMinus().not()))'
 KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = -MyClass().unaryMinus().not()
@@ -205,12 +204,12 @@ KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
         contextParameters = []
         callableId = /MyClass.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(85,86): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = -MyClass().unaryMinus().not()
@@ -225,6 +224,7 @@ KtOperationReferenceExpression(85,86): '+'
         contextParameters = []
         callableId = /MyClass.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtParenthesizedExpression(86,117): '(-MyClass().unaryMinus().not())'
@@ -233,7 +233,6 @@ KtParenthesizedExpression(86,117): '(-MyClass().unaryMinus().not())'
 KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass().unaryMinus().not()
@@ -248,12 +247,12 @@ KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(87,88): '-'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass().unaryMinus().not()
@@ -268,12 +267,12 @@ KtOperationReferenceExpression(87,88): '-'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass().unaryMinus()
@@ -288,12 +287,12 @@ KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
         contextParameters = []
         callableId = /MyClass.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass()
@@ -308,12 +307,12 @@ KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtCallExpression(88,97): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -325,12 +324,12 @@ KtCallExpression(88,97): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(88,95): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -342,6 +341,7 @@ KtNameReferenceExpression(88,95): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(95,97): '()'
@@ -350,7 +350,6 @@ KtValueArgumentList(95,97): '()'
 KtCallExpression(98,110): 'unaryMinus()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass()
@@ -365,12 +364,12 @@ KtCallExpression(98,110): 'unaryMinus()'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(98,108): 'unaryMinus'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass()
@@ -385,6 +384,7 @@ KtNameReferenceExpression(98,108): 'unaryMinus'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(108,110): '()'
@@ -393,7 +393,6 @@ KtValueArgumentList(108,110): '()'
 KtCallExpression(111,116): 'not()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass().unaryMinus()
@@ -408,12 +407,12 @@ KtCallExpression(111,116): 'not()'
         contextParameters = []
         callableId = /MyClass.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(111,114): 'not'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass().unaryMinus()
@@ -428,6 +427,7 @@ KtNameReferenceExpression(111,114): 'not'
         contextParameters = []
         callableId = /MyClass.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(114,116): '()'

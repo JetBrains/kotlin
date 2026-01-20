@@ -1,15 +1,6 @@
 KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "UNCHECKED_CAST" -> (KaVariableSignature:
-          name = names
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg names: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,4 +20,13 @@ KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "UNCHECKED_CAST" -> (KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

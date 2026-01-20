@@ -1,7 +1,6 @@
 KtCallExpression(89,94): 'foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = param
@@ -16,4 +15,5 @@ KtCallExpression(89,94): 'foo()'
         contextParameters = []
         callableId = /Context.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

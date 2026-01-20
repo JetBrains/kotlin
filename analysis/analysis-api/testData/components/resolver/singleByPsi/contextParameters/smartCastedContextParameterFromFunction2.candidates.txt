@@ -1,7 +1,6 @@
 KtCallExpression(97,102): 'foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = [
         KaSmartCastedReceiverValue:
           original = KaImplicitReceiverValue:
@@ -27,4 +26,5 @@ KtCallExpression(97,102): 'foo()'
         ]
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

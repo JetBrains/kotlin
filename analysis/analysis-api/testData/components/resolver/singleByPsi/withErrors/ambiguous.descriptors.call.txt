@@ -2,15 +2,6 @@ KtCallExpression(98,109): 'function(1)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          1 -> (KaVariableSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.Char
-            symbol = a: kotlin.Char
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -29,17 +20,17 @@ KtCallExpression(98,109): 'function(1)'
           ]
           contextParameters = []
           callableId = /function
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
-            name = b
+            name = a
             receiverType = null
-            returnType = kotlin.Boolean
-            symbol = b: kotlin.Boolean
+            returnType = kotlin.Char
+            symbol = a: kotlin.Char
             contextParameters = []
             callableId = null)
-        }
+        },
+      KaSimpleFunctionCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -58,17 +49,17 @@ KtCallExpression(98,109): 'function(1)'
           ]
           contextParameters = []
           callableId = /function
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
-            name = c
+            name = b
             receiverType = null
-            returnType = kotlin.String
-            symbol = c: kotlin.String
+            returnType = kotlin.Boolean
+            symbol = b: kotlin.Boolean
             contextParameters = []
             callableId = null)
-        }
+        },
+      KaSimpleFunctionCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -88,6 +79,15 @@ KtCallExpression(98,109): 'function(1)'
           contextParameters = []
           callableId = /function
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          1 -> (KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = kotlin.String
+            symbol = c: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     public fun function(b: Boolean): Unit defined in root package in file ambiguous.kt

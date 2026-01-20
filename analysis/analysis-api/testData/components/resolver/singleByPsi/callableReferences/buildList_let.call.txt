@@ -1,6 +1,5 @@
 KtCallableReferenceExpression(246,251): '::add'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -47,3 +46,4 @@ KtCallableReferenceExpression(246,251): '::add'
       contextParameters = []
       callableId = kotlin/collections/MutableList.add
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

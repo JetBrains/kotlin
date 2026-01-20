@@ -1,6 +1,5 @@
 KtCallExpression(120,123): 'c()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = [
       KaImplicitReceiverValue:
         symbol = val f: kotlin.Unit
@@ -24,3 +23,4 @@ KtCallExpression(120,123): 'c()'
       ]
       callableId = /c
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

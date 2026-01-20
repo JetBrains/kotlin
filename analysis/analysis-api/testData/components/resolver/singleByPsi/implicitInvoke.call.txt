@@ -1,14 +1,5 @@
 KtCallExpression(110,117): 'x(true)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      true -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Boolean
-        symbol = b: kotlin.Boolean
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -28,3 +19,12 @@ KtCallExpression(110,117): 'x(true)'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      true -> (KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null)
+    }

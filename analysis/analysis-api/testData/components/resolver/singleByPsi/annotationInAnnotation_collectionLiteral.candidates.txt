@@ -1,15 +1,6 @@
 KtCallExpression(131,156): 'Annotation(*["v1", "v2"])'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        ["v1", "v2"] -> (KaVariableSignature:
-          name = strings
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg strings: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,4 +20,13 @@ KtCallExpression(131,156): 'Annotation(*["v1", "v2"])'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        ["v1", "v2"] -> (KaVariableSignature:
+          name = strings
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg strings: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

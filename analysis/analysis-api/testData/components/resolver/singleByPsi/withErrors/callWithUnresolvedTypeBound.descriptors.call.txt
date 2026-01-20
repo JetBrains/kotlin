@@ -1,14 +1,5 @@
 KtCallExpression(86,92): 'foo(x)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      x -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = x: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -29,4 +20,13 @@ KtCallExpression(86,92): 'foo(x)'
       callableId = /foo
     typeArgumentsMapping = {
       T -> (kotlin.String)
+    }
+    valueArgumentMapping = {
+      x -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = x: kotlin.Int
+        contextParameters = []
+        callableId = null)
     }

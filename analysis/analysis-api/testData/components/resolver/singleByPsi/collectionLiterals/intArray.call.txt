@@ -1,14 +1,5 @@
 KtCollectionLiteralExpression(57,60): '[1]'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      1 -> (KaVariableSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = vararg elements: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -28,3 +19,12 @@ KtCollectionLiteralExpression(57,60): '[1]'
       contextParameters = []
       callableId = kotlin/intArrayOf
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      1 -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }

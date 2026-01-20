@@ -43,7 +43,6 @@ KtSuperTypeList(176,185): 'MyClass()'
 KtSuperTypeCallEntry(176,185): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -56,12 +55,12 @@ KtSuperTypeCallEntry(176,185): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(176,183): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -74,6 +73,7 @@ KtConstructorCalleeExpression(176,183): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(176,183): 'MyClass'
@@ -85,7 +85,6 @@ KtUserType(176,183): 'MyClass'
 KtNameReferenceExpression(176,183): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -98,6 +97,7 @@ KtNameReferenceExpression(176,183): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(183,185): '()'
@@ -127,7 +127,6 @@ KtNameReferenceExpression(235,242): 'MyClass'
 KtCallExpression(245,254): 'MyClass()'
   KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -153,12 +152,12 @@ KtCallExpression(245,254): 'MyClass()'
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is MyClass.Companion but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -170,12 +169,12 @@ KtCallExpression(245,254): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(245,252): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -187,6 +186,7 @@ KtNameReferenceExpression(245,252): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(252,254): '()'
@@ -249,7 +249,6 @@ KtProperty(375,421): 'val ClassMemberAlias = MyClass.NestedInheritor'
 KtDotQualifiedExpression(398,421): 'MyClass.NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -275,6 +274,7 @@ KtDotQualifiedExpression(398,421): 'MyClass.NestedInheritor'
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
@@ -296,15 +296,6 @@ KtBlockExpression(450,609): '{'
 KtCallExpression(456,491): 'receive<MyClass>(NestedInheritor!!)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedInheritor!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -325,21 +316,21 @@ KtCallExpression(456,491): 'receive<MyClass>(NestedInheritor!!)'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        NestedInheritor!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(456,463): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedInheritor!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -360,6 +351,15 @@ KtNameReferenceExpression(456,463): 'receive'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        NestedInheritor!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -387,15 +387,6 @@ KtValueArgument(473,490): 'NestedInheritor!!'
 KtPostfixExpression(473,490): 'NestedInheritor!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedInheritor -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -416,6 +407,15 @@ KtPostfixExpression(473,490): 'NestedInheritor!!'
         callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = ERROR_TYPE?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
@@ -426,15 +426,6 @@ KtNameReferenceExpression(473,488): 'NestedInheritor'
 KtOperationReferenceExpression(488,490): '!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedInheritor -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -456,21 +447,21 @@ KtOperationReferenceExpression(488,490): '!!'
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = ERROR_TYPE?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
 
 KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClassProp!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -491,21 +482,21 @@ KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        myClassProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(496,503): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClassProp!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -526,6 +517,15 @@ KtNameReferenceExpression(496,503): 'receive'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        myClassProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -553,15 +553,6 @@ KtValueArgument(513,526): 'myClassProp!!'
 KtPostfixExpression(513,526): 'myClassProp!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClassProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -582,6 +573,15 @@ KtPostfixExpression(513,526): 'myClassProp!!'
         callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        myClassProp -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = ERROR_TYPE?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
@@ -592,15 +592,6 @@ KtNameReferenceExpression(513,524): 'myClassProp'
 KtOperationReferenceExpression(524,526): '!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClassProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -622,21 +613,21 @@ KtOperationReferenceExpression(524,526): '!!'
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        myClassProp -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = ERROR_TYPE?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
 
 KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        stringProp!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -657,21 +648,21 @@ KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        stringProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(532,539): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        stringProp!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -692,6 +683,15 @@ KtNameReferenceExpression(532,539): 'receive'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        stringProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -719,15 +719,6 @@ KtValueArgument(549,561): 'stringProp!!'
 KtPostfixExpression(549,561): 'stringProp!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        stringProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -748,6 +739,15 @@ KtPostfixExpression(549,561): 'stringProp!!'
         callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        stringProp -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = ERROR_TYPE?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
@@ -758,15 +758,6 @@ KtNameReferenceExpression(549,559): 'stringProp'
 KtOperationReferenceExpression(559,561): '!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        stringProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -788,21 +779,21 @@ KtOperationReferenceExpression(559,561): '!!'
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        stringProp -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = ERROR_TYPE?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
 
 KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        getNestedInheritor()!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -823,21 +814,21 @@ KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        getNestedInheritor()!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(567,574): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        getNestedInheritor()!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -858,6 +849,15 @@ KtNameReferenceExpression(567,574): 'receive'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        getNestedInheritor()!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -885,15 +885,6 @@ KtValueArgument(584,606): 'getNestedInheritor()!!'
 KtPostfixExpression(584,606): 'getNestedInheritor()!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        getNestedInheritor() -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -914,6 +905,15 @@ KtPostfixExpression(584,606): 'getNestedInheritor()!!'
         callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        getNestedInheritor() -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = ERROR_TYPE?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
@@ -930,15 +930,6 @@ KtValueArgumentList(602,604): '()'
 KtOperationReferenceExpression(604,606): '!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        getNestedInheritor() -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -959,6 +950,15 @@ KtOperationReferenceExpression(604,606): '!!'
         callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        getNestedInheritor() -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = ERROR_TYPE?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
@@ -990,7 +990,6 @@ KtProperty(645,791): 'val map = mapOf<MyClass, Int>(MyClass.myClassProp to 1,  M
 KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyClass.stringProp to 2, MyClass.NestedInheritor to 3, MyClass.getNestedInheritor() to 4)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1005,20 +1004,12 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
         K -> (MyClass),
         V -> (kotlin.Int)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K, V> mapOf(): Map<K, V> defined in kotlin.collections>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        MyClass.myClassProp to 1 -> (KaVariableSignature:
-          name = pair
-          receiverType = null
-          returnType = kotlin.Pair<MyClass, kotlin.Int>
-          symbol = pair: kotlin.Pair<K, V>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1041,12 +1032,43 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
         K -> (MyClass),
         V -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        MyClass.myClassProp to 1 -> (KaVariableSignature:
+          name = pair
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = pair: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> defined in kotlin.collections>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+        symbol = kotlin/collections/mapOf(vararg pairs: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
+        valueParameters = [
+          KaVariableSignature:
+            name = pairs
+            receiverType = null
+            returnType = kotlin.Pair<MyClass, kotlin.Int>
+            symbol = vararg pairs: kotlin.Pair<K, V>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/mapOf
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         MyClass.myClassProp to 1 -> (KaVariableSignature:
           name = pairs
           receiverType = null
@@ -1075,28 +1097,6 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
           symbol = vararg pairs: kotlin.Pair<K, V>
           contextParameters = []
           callableId = null)
-      }
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.collections.Map<MyClass, kotlin.Int>
-        symbol = kotlin/collections/mapOf(vararg pairs: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
-        valueParameters = [
-          KaVariableSignature:
-            name = pairs
-            receiverType = null
-            returnType = kotlin.Pair<MyClass, kotlin.Int>
-            symbol = vararg pairs: kotlin.Pair<K, V>
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/collections/mapOf
-      typeArgumentsMapping = {
-        K -> (MyClass),
-        V -> (kotlin.Int)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but MyClass was expected>
     isInBestCandidates = true
@@ -1104,7 +1104,6 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
 KtNameReferenceExpression(655,660): 'mapOf'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1119,20 +1118,12 @@ KtNameReferenceExpression(655,660): 'mapOf'
         K -> (MyClass),
         V -> (kotlin.Int)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with mapOf>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        MyClass.myClassProp to 1 -> (KaVariableSignature:
-          name = pair
-          receiverType = null
-          returnType = kotlin.Pair<MyClass, kotlin.Int>
-          symbol = pair: kotlin.Pair<K, V>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1155,12 +1146,43 @@ KtNameReferenceExpression(655,660): 'mapOf'
         K -> (MyClass),
         V -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        MyClass.myClassProp to 1 -> (KaVariableSignature:
+          name = pair
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = pair: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with mapOf>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+        symbol = kotlin/collections/mapOf(vararg pairs: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
+        valueParameters = [
+          KaVariableSignature:
+            name = pairs
+            receiverType = null
+            returnType = kotlin.Pair<MyClass, kotlin.Int>
+            symbol = vararg pairs: kotlin.Pair<K, V>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/mapOf
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         MyClass.myClassProp to 1 -> (KaVariableSignature:
           name = pairs
           receiverType = null
@@ -1189,28 +1211,6 @@ KtNameReferenceExpression(655,660): 'mapOf'
           symbol = vararg pairs: kotlin.Pair<K, V>
           contextParameters = []
           callableId = null)
-      }
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.collections.Map<MyClass, kotlin.Int>
-        symbol = kotlin/collections/mapOf(vararg pairs: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
-        valueParameters = [
-          KaVariableSignature:
-            name = pairs
-            receiverType = null
-            returnType = kotlin.Pair<MyClass, kotlin.Int>
-            symbol = vararg pairs: kotlin.Pair<K, V>
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/collections/mapOf
-      typeArgumentsMapping = {
-        K -> (MyClass),
-        V -> (kotlin.Int)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with mapOf>
     isInBestCandidates = true
@@ -1251,15 +1251,6 @@ KtValueArgument(675,699): 'MyClass.myClassProp to 1'
 KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = that
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = that: B
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1284,6 +1275,15 @@ KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
       typeArgumentsMapping = {
         A -> (MyClass),
         B -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1310,7 +1310,6 @@ KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1336,6 +1335,7 @@ KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
@@ -1366,15 +1366,6 @@ KtNameReferenceExpression(683,694): 'myClassProp'
 KtOperationReferenceExpression(695,697): 'to'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = that
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = that: B
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1400,6 +1391,15 @@ KtOperationReferenceExpression(695,697): 'to'
         A -> (MyClass),
         B -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(698,699): '1'
@@ -1411,15 +1411,6 @@ KtValueArgument(702,725): 'MyClass.stringProp to 2'
 KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = that
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = that: B
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1444,6 +1435,15 @@ KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
       typeArgumentsMapping = {
         A -> (kotlin.String),
         B -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1470,7 +1470,6 @@ KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1496,6 +1495,7 @@ KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
@@ -1526,15 +1526,6 @@ KtNameReferenceExpression(710,720): 'stringProp'
 KtOperationReferenceExpression(721,723): 'to'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = that
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = that: B
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1560,6 +1551,15 @@ KtOperationReferenceExpression(721,723): 'to'
         A -> (kotlin.String),
         B -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(724,725): '2'
@@ -1571,15 +1571,6 @@ KtValueArgument(727,755): 'MyClass.NestedInheritor to 3'
 KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = that
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = that: B
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1605,12 +1596,20 @@ KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
         A -> (MyClass.NestedInheritor),
         B -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtDotQualifiedExpression(727,750): 'MyClass.NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1636,6 +1635,7 @@ KtDotQualifiedExpression(727,750): 'MyClass.NestedInheritor'
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
@@ -1648,15 +1648,6 @@ KtNameReferenceExpression(735,750): 'NestedInheritor'
 KtOperationReferenceExpression(751,753): 'to'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = that
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = that: B
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1682,6 +1673,15 @@ KtOperationReferenceExpression(751,753): 'to'
         A -> (MyClass.NestedInheritor),
         B -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(754,755): '3'
@@ -1693,15 +1693,6 @@ KtValueArgument(757,790): 'MyClass.getNestedInheritor() to 4'
 KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        4 -> (KaVariableSignature:
-          name = that
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = that: B
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1727,12 +1718,20 @@ KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
         A -> (MyClass.NestedInheritor),
         B -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass
@@ -1747,6 +1746,7 @@ KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
         contextParameters = []
         callableId = /MyClass.Companion.getNestedInheritor
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(757,764): 'MyClass'
@@ -1755,7 +1755,6 @@ KtNameReferenceExpression(757,764): 'MyClass'
 KtCallExpression(765,785): 'getNestedInheritor()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass
@@ -1770,12 +1769,12 @@ KtCallExpression(765,785): 'getNestedInheritor()'
         contextParameters = []
         callableId = /MyClass.Companion.getNestedInheritor
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(765,783): 'getNestedInheritor'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass
@@ -1790,6 +1789,7 @@ KtNameReferenceExpression(765,783): 'getNestedInheritor'
         contextParameters = []
         callableId = /MyClass.Companion.getNestedInheritor
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(783,785): '()'
@@ -1798,15 +1798,6 @@ KtValueArgumentList(783,785): '()'
 KtOperationReferenceExpression(786,788): 'to'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        4 -> (KaVariableSignature:
-          name = that
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = that: B
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1831,6 +1822,15 @@ KtOperationReferenceExpression(786,788): 'to'
       typeArgumentsMapping = {
         A -> (MyClass.NestedInheritor),
         B -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1843,15 +1843,6 @@ KtReturnExpression(796,819): 'return map[myClassProp]'
 KtArrayAccessExpression(803,819): 'map[myClassProp]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClassProp -> (KaVariableSignature:
-          name = key
-          receiverType = null
-          returnType = MyClass
-          symbol = key: K
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = map
@@ -1874,11 +1865,7 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
         contextParameters = []
         callableId = kotlin/collections/Map.get
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         myClassProp -> (KaVariableSignature:
           name = key
           receiverType = null
@@ -1887,6 +1874,10 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1912,20 +1903,20 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
         K -> (MyClass),
         V -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        myClassProp -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with get>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClassProp -> (KaVariableSignature:
-          name = name
-          receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1948,6 +1939,15 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        myClassProp -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
 
@@ -1981,15 +1981,6 @@ KtReturnExpression(824,846): 'return map[stringProp]'
 KtArrayAccessExpression(831,846): 'map[stringProp]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        stringProp -> (KaVariableSignature:
-          name = key
-          receiverType = null
-          returnType = MyClass
-          symbol = key: K
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = map
@@ -2012,11 +2003,7 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
         contextParameters = []
         callableId = kotlin/collections/Map.get
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         stringProp -> (KaVariableSignature:
           name = key
           receiverType = null
@@ -2025,6 +2012,10 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2050,20 +2041,20 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
         K -> (MyClass),
         V -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        stringProp -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with get>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        stringProp -> (KaVariableSignature:
-          name = name
-          receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2086,6 +2077,15 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        stringProp -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
 
@@ -2119,15 +2119,6 @@ KtReturnExpression(851,878): 'return map[NestedInheritor]'
 KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedInheritor -> (KaVariableSignature:
-          name = key
-          receiverType = null
-          returnType = MyClass
-          symbol = key: K
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = map
@@ -2150,11 +2141,7 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
         contextParameters = []
         callableId = kotlin/collections/Map.get
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         NestedInheritor -> (KaVariableSignature:
           name = key
           receiverType = null
@@ -2163,6 +2150,10 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2188,20 +2179,20 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
         K -> (MyClass),
         V -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with get>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedInheritor -> (KaVariableSignature:
-          name = name
-          receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2224,6 +2215,15 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
 
@@ -2257,15 +2257,6 @@ KtReturnExpression(883,915): 'return map[getNestedInheritor()]'
 KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        getNestedInheritor() -> (KaVariableSignature:
-          name = key
-          receiverType = null
-          returnType = MyClass
-          symbol = key: K
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = map
@@ -2288,11 +2279,7 @@ KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
         contextParameters = []
         callableId = kotlin/collections/Map.get
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         getNestedInheritor() -> (KaVariableSignature:
           name = key
           receiverType = null
@@ -2301,6 +2288,10 @@ KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2326,20 +2317,20 @@ KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
         K -> (MyClass),
         V -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        getNestedInheritor() -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with get>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        getNestedInheritor() -> (KaVariableSignature:
-          name = name
-          receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2362,6 +2353,15 @@ KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        getNestedInheritor() -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
 
@@ -2500,15 +2500,6 @@ KtReturnExpression(1086,1099): 'return null!!'
 KtPostfixExpression(1093,1099): 'null!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        null -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2529,6 +2520,15 @@ KtPostfixExpression(1093,1099): 'null!!'
         callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
+      }
+      valueArgumentMapping = {
+        null -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -2538,15 +2538,6 @@ KtConstantExpression(1093,1097): 'null'
 KtOperationReferenceExpression(1097,1099): '!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        null -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2567,6 +2558,15 @@ KtOperationReferenceExpression(1097,1099): '!!'
         callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
+      }
+      valueArgumentMapping = {
+        null -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -2657,15 +2657,6 @@ KtNameReferenceExpression(1226,1237): 'myClassProp'
 KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        a -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyClass
-          symbol = value: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass.myClassProp..NestedInheritor
@@ -2688,6 +2679,15 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         contextParameters = []
         callableId = kotlin/ranges/ClosedFloatingPointRange.contains
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyClass
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1242,1243): 'a'
@@ -2729,15 +2729,6 @@ KtNameReferenceExpression(1242,1243): 'a'
 KtOperationReferenceExpression(1244,1247): '!in'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        a -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = MyClass
-          symbol = value: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass.myClassProp..NestedInheritor
@@ -2760,20 +2751,20 @@ KtOperationReferenceExpression(1244,1247): '!in'
         contextParameters = []
         callableId = kotlin/ranges/ClosedFloatingPointRange.contains
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyClass
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedInheritor -> (KaVariableSignature:
-          name = that
-          receiverType = null
-          returnType = MyClass
-          symbol = that: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2796,6 +2787,15 @@ KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
         contextParameters = []
         callableId = /rangeTo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = MyClass
+          symbol = that: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
@@ -2821,7 +2821,6 @@ KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2847,6 +2846,7 @@ KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
 
@@ -2877,15 +2877,6 @@ KtNameReferenceExpression(1256,1267): 'myClassProp'
 KtOperationReferenceExpression(1267,1269): '..'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedInheritor -> (KaVariableSignature:
-          name = that
-          receiverType = null
-          returnType = MyClass
-          symbol = that: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2908,6 +2899,15 @@ KtOperationReferenceExpression(1267,1269): '..'
         contextParameters = []
         callableId = /rangeTo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = MyClass
+          symbol = that: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1269,1284): 'NestedInheritor'

@@ -57,7 +57,6 @@ KtSuperTypeList(218,227): 'MyClass()'
 
 KtSuperTypeCallEntry(218,227): 'MyClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -70,11 +69,11 @@ KtSuperTypeCallEntry(218,227): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(218,225): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -87,6 +86,7 @@ KtConstructorCalleeExpression(218,225): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(218,225): 'MyClass'
   null
@@ -126,7 +126,6 @@ KtSuperTypeList(293,302): 'MyClass()'
 
 KtSuperTypeCallEntry(293,302): 'MyClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -139,11 +138,11 @@ KtSuperTypeCallEntry(293,302): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(293,300): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -156,6 +155,7 @@ KtConstructorCalleeExpression(293,300): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(293,300): 'MyClass'
   null
@@ -201,7 +201,6 @@ KtSuperTypeList(389,396): 'Super()'
 
 KtSuperTypeCallEntry(389,396): 'Super()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -214,11 +213,11 @@ KtSuperTypeCallEntry(389,396): 'Super()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(389,394): 'Super'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -231,6 +230,7 @@ KtConstructorCalleeExpression(389,394): 'Super'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(389,394): 'Super'
   null
@@ -261,7 +261,6 @@ KtNameReferenceExpression(424,431): 'MyClass'
 
 KtCallExpression(434,440): 'TODO()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -273,11 +272,11 @@ KtCallExpression(434,440): 'TODO()'
       contextParameters = []
       callableId = kotlin/TODO
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(434,438): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -289,6 +288,7 @@ KtNameReferenceExpression(434,438): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(438,440): '()'
   null
@@ -307,7 +307,6 @@ KtNameReferenceExpression(473,487): 'InheritorClass'
 
 KtCallExpression(490,506): 'InheritorClass()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -319,11 +318,11 @@ KtCallExpression(490,506): 'InheritorClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(490,504): 'InheritorClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -335,6 +334,7 @@ KtNameReferenceExpression(490,504): 'InheritorClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(504,506): '()'
   null
@@ -404,15 +404,6 @@ KtPropertyDelegate(674,686): 'by lazy {""}'
 
 KtCallExpression(677,686): 'lazy {""}'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      {""} -> (KaVariableSignature:
-        name = initializer
-        receiverType = null
-        returnType = () -> kotlin.String
-        symbol = initializer: () -> T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -434,19 +425,19 @@ KtCallExpression(677,686): 'lazy {""}'
     typeArgumentsMapping = {
       T -> (kotlin.String)
     }
+    valueArgumentMapping = {
+      {""} -> (KaVariableSignature:
+        name = initializer
+        receiverType = null
+        returnType = () -> kotlin.String
+        symbol = initializer: () -> T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(677,681): 'lazy'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = () -> kotlin.String
-          symbol = initializer: () -> T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -467,6 +458,15 @@ KtNameReferenceExpression(677,681): 'lazy'
         callableId = kotlin/lazy
       typeArgumentsMapping = {
         T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
+          contextParameters = []
+          callableId = null)
       }
 
 KtLambdaArgument(682,686): '{""}'
@@ -501,7 +501,6 @@ KtNameReferenceExpression(707,714): 'MyClass'
 
 KtCallExpression(717,723): 'TODO()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -513,11 +512,11 @@ KtCallExpression(717,723): 'TODO()'
       contextParameters = []
       callableId = kotlin/TODO
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(717,721): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -529,6 +528,7 @@ KtNameReferenceExpression(717,721): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(721,723): '()'
   null
@@ -621,15 +621,6 @@ KtBlockExpression(862,1348): '{'
 
 KtCallExpression(868,908): 'receiverVarArg<MyClass>(InheritorObject)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      InheritorObject -> (KaVariableSignature:
-        name = arg
-        receiverType = null
-        returnType = MyClass
-        symbol = vararg arg: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -651,19 +642,19 @@ KtCallExpression(868,908): 'receiverVarArg<MyClass>(InheritorObject)'
     typeArgumentsMapping = {
       T -> (MyClass)
     }
+    valueArgumentMapping = {
+      InheritorObject -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = MyClass
+        symbol = vararg arg: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(868,882): 'receiverVarArg'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = vararg arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -684,6 +675,15 @@ KtNameReferenceExpression(868,882): 'receiverVarArg'
         callableId = /receiverVarArg
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = vararg arg: T
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(882,891): '<MyClass>'
@@ -712,15 +712,6 @@ KtNameReferenceExpression(892,907): 'InheritorObject'
 
 KtCallExpression(913,939): 'receiverVarArg<MyClass>(i)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      i -> (KaVariableSignature:
-        name = arg
-        receiverType = null
-        returnType = MyClass
-        symbol = vararg arg: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -742,19 +733,19 @@ KtCallExpression(913,939): 'receiverVarArg<MyClass>(i)'
     typeArgumentsMapping = {
       T -> (MyClass)
     }
+    valueArgumentMapping = {
+      i -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = MyClass
+        symbol = vararg arg: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(913,927): 'receiverVarArg'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = vararg arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -775,6 +766,15 @@ KtNameReferenceExpression(913,927): 'receiverVarArg'
         callableId = /receiverVarArg
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = vararg arg: T
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(927,936): '<MyClass>'
@@ -817,15 +817,6 @@ KtNameReferenceExpression(937,938): 'i'
 
 KtCallExpression(944,980): 'receiverVarArg<MyClass>(propMyClass)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      propMyClass -> (KaVariableSignature:
-        name = arg
-        receiverType = null
-        returnType = MyClass
-        symbol = vararg arg: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -847,19 +838,19 @@ KtCallExpression(944,980): 'receiverVarArg<MyClass>(propMyClass)'
     typeArgumentsMapping = {
       T -> (MyClass)
     }
+    valueArgumentMapping = {
+      propMyClass -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = MyClass
+        symbol = vararg arg: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(944,958): 'receiverVarArg'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        propMyClass -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = vararg arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -880,6 +871,15 @@ KtNameReferenceExpression(944,958): 'receiverVarArg'
         callableId = /receiverVarArg
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        propMyClass -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = vararg arg: T
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(958,967): '<MyClass>'
@@ -925,15 +925,6 @@ KtNameReferenceExpression(968,979): 'propMyClass'
 
 KtCallExpression(985,1028): 'receiverVarArg<MyClass>(propInheritorClass)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      propInheritorClass -> (KaVariableSignature:
-        name = arg
-        receiverType = null
-        returnType = MyClass
-        symbol = vararg arg: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -955,19 +946,19 @@ KtCallExpression(985,1028): 'receiverVarArg<MyClass>(propInheritorClass)'
     typeArgumentsMapping = {
       T -> (MyClass)
     }
+    valueArgumentMapping = {
+      propInheritorClass -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = MyClass
+        symbol = vararg arg: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(985,999): 'receiverVarArg'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        propInheritorClass -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = vararg arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -988,6 +979,15 @@ KtNameReferenceExpression(985,999): 'receiverVarArg'
         callableId = /receiverVarArg
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        propInheritorClass -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = vararg arg: T
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(999,1008): '<MyClass>'
@@ -1033,15 +1033,6 @@ KtNameReferenceExpression(1009,1027): 'propInheritorClass'
 
 KtCallExpression(1033,1077): 'receiverVarArg<MyClass>(propInheritorObject)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      propInheritorObject -> (KaVariableSignature:
-        name = arg
-        receiverType = null
-        returnType = MyClass
-        symbol = vararg arg: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1063,19 +1054,19 @@ KtCallExpression(1033,1077): 'receiverVarArg<MyClass>(propInheritorObject)'
     typeArgumentsMapping = {
       T -> (MyClass)
     }
+    valueArgumentMapping = {
+      propInheritorObject -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = MyClass
+        symbol = vararg arg: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1033,1047): 'receiverVarArg'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        propInheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = vararg arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1096,6 +1087,15 @@ KtNameReferenceExpression(1033,1047): 'receiverVarArg'
         callableId = /receiverVarArg
       typeArgumentsMapping = {
         T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        propInheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = vararg arg: T
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(1047,1056): '<MyClass>'
@@ -1143,15 +1143,6 @@ KtCallExpression(1083,1112): 'receiverVarArg<MyClass>(prop)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          prop -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1172,6 +1163,15 @@ KtCallExpression(1083,1112): 'receiverVarArg<MyClass>(prop)'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          prop -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1180,15 +1180,6 @@ KtNameReferenceExpression(1083,1097): 'receiverVarArg'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          prop -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1209,6 +1200,15 @@ KtNameReferenceExpression(1083,1097): 'receiverVarArg'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          prop -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1258,15 +1258,6 @@ KtCallExpression(1117,1151): 'receiverVarArg<MyClass>(constProp)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          constProp -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1287,6 +1278,15 @@ KtCallExpression(1117,1151): 'receiverVarArg<MyClass>(constProp)'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          constProp -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1295,15 +1295,6 @@ KtNameReferenceExpression(1117,1131): 'receiverVarArg'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          constProp -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1324,6 +1315,15 @@ KtNameReferenceExpression(1117,1131): 'receiverVarArg'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          constProp -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1373,15 +1373,6 @@ KtCallExpression(1156,1189): 'receiverVarArg<MyClass>(lazyProp)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          lazyProp -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1402,6 +1393,15 @@ KtCallExpression(1156,1189): 'receiverVarArg<MyClass>(lazyProp)'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          lazyProp -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1410,15 +1410,6 @@ KtNameReferenceExpression(1156,1170): 'receiverVarArg'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          lazyProp -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1439,6 +1430,15 @@ KtNameReferenceExpression(1156,1170): 'receiverVarArg'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          lazyProp -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1488,15 +1488,6 @@ KtCallExpression(1194,1229): 'receiverVarArg<MyClass>(lambdaProp)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          lambdaProp -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1517,6 +1508,15 @@ KtCallExpression(1194,1229): 'receiverVarArg<MyClass>(lambdaProp)'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          lambdaProp -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
@@ -1525,15 +1525,6 @@ KtNameReferenceExpression(1194,1208): 'receiverVarArg'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          lambdaProp -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1554,6 +1545,15 @@ KtNameReferenceExpression(1194,1208): 'receiverVarArg'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          lambdaProp -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
@@ -1603,15 +1603,6 @@ KtCallExpression(1234,1268): 'receiverVarArg<MyClass>(superProp)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          superProp -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1632,6 +1623,15 @@ KtCallExpression(1234,1268): 'receiverVarArg<MyClass>(superProp)'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          superProp -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1640,15 +1640,6 @@ KtNameReferenceExpression(1234,1248): 'receiverVarArg'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          superProp -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1669,6 +1660,15 @@ KtNameReferenceExpression(1234,1248): 'receiverVarArg'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          superProp -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1718,15 +1718,6 @@ KtCallExpression(1274,1305): 'receiverVarArg<MyClass>(func())'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          func() -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1747,6 +1738,15 @@ KtCallExpression(1274,1305): 'receiverVarArg<MyClass>(func())'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          func() -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiverVarArg>
@@ -1755,15 +1755,6 @@ KtNameReferenceExpression(1274,1288): 'receiverVarArg'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          func() -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1784,6 +1775,15 @@ KtNameReferenceExpression(1274,1288): 'receiverVarArg'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          func() -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiverVarArg>
@@ -1826,15 +1826,6 @@ KtCallExpression(1310,1346): 'receiverVarArg<MyClass>(superFunc())'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          superFunc() -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1855,6 +1846,15 @@ KtCallExpression(1310,1346): 'receiverVarArg<MyClass>(superFunc())'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          superFunc() -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiverVarArg>
@@ -1863,15 +1863,6 @@ KtNameReferenceExpression(1310,1324): 'receiverVarArg'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          superFunc() -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1892,6 +1883,15 @@ KtNameReferenceExpression(1310,1324): 'receiverVarArg'
           callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
+        }
+        valueArgumentMapping = {
+          superFunc() -> (KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiverVarArg>

@@ -1,15 +1,6 @@
 KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        this@usage -> (KaVariableSignature:
-          name = v
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = v: C
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: kotlin.Int
@@ -79,3 +70,12 @@ KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
         ]
         callableId = /Another.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        this@usage -> (KaVariableSignature:
+          name = v
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = v: C
+          contextParameters = []
+          callableId = null)
+      }

@@ -24,7 +24,6 @@ KtSuperTypeList(130,139): 'MyClass()'
 
 KtSuperTypeCallEntry(130,139): 'MyClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -37,11 +36,11 @@ KtSuperTypeCallEntry(130,139): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(130,137): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -54,6 +53,7 @@ KtConstructorCalleeExpression(130,137): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(130,137): 'MyClass'
   null
@@ -123,18 +123,6 @@ KtBlockExpression(220,335): '{'
 
 KtCallExpression(226,333): 'receiveMyClass('
   KaSimpleFunctionCall:
-    argumentMapping = {
-      when {
-                  b -> myClass
-                  else -> NestedInheritor
-              } -> (KaVariableSignature:
-        name = m
-        receiverType = null
-        returnType = MyClass
-        symbol = m: MyClass
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -154,22 +142,22 @@ KtCallExpression(226,333): 'receiveMyClass('
       contextParameters = []
       callableId = /receiveMyClass
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      when {
+                  b -> myClass
+                  else -> NestedInheritor
+              } -> (KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyClass
+        symbol = m: MyClass
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(226,240): 'receiveMyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        when {
-                    b -> myClass
-                    else -> NestedInheritor
-                } -> (KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass
-          symbol = m: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -189,6 +177,18 @@ KtNameReferenceExpression(226,240): 'receiveMyClass'
         contextParameters = []
         callableId = /receiveMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        when {
+                    b -> myClass
+                    else -> NestedInheritor
+                } -> (KaVariableSignature:
+          name = m
+          receiverType = null
+          returnType = MyClass
+          symbol = m: MyClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(240,333): '('
   null
@@ -286,18 +286,6 @@ KtBlockExpression(396,512): '{'
 
 KtCallExpression(402,510): 'receiveMyClass('
   KaSimpleFunctionCall:
-    argumentMapping = {
-      when {
-                  b -> subClass
-                  else -> NestedInheritor
-              } -> (KaVariableSignature:
-        name = m
-        receiverType = null
-        returnType = MyClass
-        symbol = m: MyClass
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -317,22 +305,22 @@ KtCallExpression(402,510): 'receiveMyClass('
       contextParameters = []
       callableId = /receiveMyClass
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      when {
+                  b -> subClass
+                  else -> NestedInheritor
+              } -> (KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyClass
+        symbol = m: MyClass
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(402,416): 'receiveMyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        when {
-                    b -> subClass
-                    else -> NestedInheritor
-                } -> (KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass
-          symbol = m: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -352,6 +340,18 @@ KtNameReferenceExpression(402,416): 'receiveMyClass'
         contextParameters = []
         callableId = /receiveMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        when {
+                    b -> subClass
+                    else -> NestedInheritor
+                } -> (KaVariableSignature:
+          name = m
+          receiverType = null
+          returnType = MyClass
+          symbol = m: MyClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(416,510): '('
   null
@@ -461,19 +461,6 @@ KtBlockExpression(587,737): '{'
 
 KtCallExpression(593,735): 'receiveMyClass('
   KaSimpleFunctionCall:
-    argumentMapping = {
-      when {
-                  b1 -> subClass
-                  b2 -> NestedInheritor
-                  else -> OtherInheritor
-              } -> (KaVariableSignature:
-        name = m
-        receiverType = null
-        returnType = MyClass
-        symbol = m: MyClass
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -493,23 +480,23 @@ KtCallExpression(593,735): 'receiveMyClass('
       contextParameters = []
       callableId = /receiveMyClass
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      when {
+                  b1 -> subClass
+                  b2 -> NestedInheritor
+                  else -> OtherInheritor
+              } -> (KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyClass
+        symbol = m: MyClass
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(593,607): 'receiveMyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        when {
-                    b1 -> subClass
-                    b2 -> NestedInheritor
-                    else -> OtherInheritor
-                } -> (KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass
-          symbol = m: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -529,6 +516,19 @@ KtNameReferenceExpression(593,607): 'receiveMyClass'
         contextParameters = []
         callableId = /receiveMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        when {
+                    b1 -> subClass
+                    b2 -> NestedInheritor
+                    else -> OtherInheritor
+                } -> (KaVariableSignature:
+          name = m
+          receiverType = null
+          returnType = MyClass
+          symbol = m: MyClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(607,735): '('
   null
@@ -633,7 +633,6 @@ KtSuperTypeList(791,803): 'OtherClass()'
 
 KtSuperTypeCallEntry(791,803): 'OtherClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -646,11 +645,11 @@ KtSuperTypeCallEntry(791,803): 'OtherClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(791,801): 'OtherClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -663,6 +662,7 @@ KtConstructorCalleeExpression(791,801): 'OtherClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(791,801): 'OtherClass'
   null
@@ -684,7 +684,6 @@ KtSuperTypeList(819,825): 'Base()'
 
 KtSuperTypeCallEntry(819,825): 'Base()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -697,11 +696,11 @@ KtSuperTypeCallEntry(819,825): 'Base()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(819,823): 'Base'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -714,6 +713,7 @@ KtConstructorCalleeExpression(819,823): 'Base'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(819,823): 'Base'
   null
@@ -735,7 +735,6 @@ KtSuperTypeList(840,846): 'Base()'
 
 KtSuperTypeCallEntry(840,846): 'Base()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -748,11 +747,11 @@ KtSuperTypeCallEntry(840,846): 'Base()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(840,844): 'Base'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -765,6 +764,7 @@ KtConstructorCalleeExpression(840,844): 'Base'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(840,844): 'Base'
   null
@@ -786,7 +786,6 @@ KtSuperTypeList(863,875): 'OtherClass()'
 
 KtSuperTypeCallEntry(863,875): 'OtherClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -799,11 +798,11 @@ KtSuperTypeCallEntry(863,875): 'OtherClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(863,873): 'OtherClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -816,6 +815,7 @@ KtConstructorCalleeExpression(863,873): 'OtherClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(863,873): 'OtherClass'
   null
@@ -921,19 +921,6 @@ KtBlockExpression(1006,1141): '{'
 
 KtCallExpression(1012,1139): 'receiveOtherClass('
   KaSimpleFunctionCall:
-    argumentMapping = {
-      when {
-                  b1 -> subClass1
-                  b2 -> subClass2
-                  else -> C
-              } -> (KaVariableSignature:
-        name = m
-        receiverType = null
-        returnType = OtherClass
-        symbol = m: OtherClass
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -953,23 +940,23 @@ KtCallExpression(1012,1139): 'receiveOtherClass('
       contextParameters = []
       callableId = /receiveOtherClass
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      when {
+                  b1 -> subClass1
+                  b2 -> subClass2
+                  else -> C
+              } -> (KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = OtherClass
+        symbol = m: OtherClass
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1012,1029): 'receiveOtherClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        when {
-                    b1 -> subClass1
-                    b2 -> subClass2
-                    else -> C
-                } -> (KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = OtherClass
-          symbol = m: OtherClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -989,6 +976,19 @@ KtNameReferenceExpression(1012,1029): 'receiveOtherClass'
         contextParameters = []
         callableId = /receiveOtherClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        when {
+                    b1 -> subClass1
+                    b2 -> subClass2
+                    else -> C
+                } -> (KaVariableSignature:
+          name = m
+          receiverType = null
+          returnType = OtherClass
+          symbol = m: OtherClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(1029,1139): '('
   null
@@ -1102,7 +1102,6 @@ KtSuperTypeList(1206,1217): 'OpenClass()'
 
 KtSuperTypeCallEntry(1206,1217): 'OpenClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1115,11 +1114,11 @@ KtSuperTypeCallEntry(1206,1217): 'OpenClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(1206,1215): 'OpenClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1132,6 +1131,7 @@ KtConstructorCalleeExpression(1206,1215): 'OpenClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(1206,1215): 'OpenClass'
   null
@@ -1201,18 +1201,6 @@ KtBlockExpression(1304,1434): '{'
 
 KtCallExpression(1310,1432): 'receiveOpenClass('
   KaSimpleFunctionCall:
-    argumentMapping = {
-      when {
-                  b -> openClass
-                  else -> NestedInheritorOfOpenClass
-              } -> (KaVariableSignature:
-        name = m
-        receiverType = null
-        returnType = OpenClass
-        symbol = m: OpenClass
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1232,22 +1220,22 @@ KtCallExpression(1310,1432): 'receiveOpenClass('
       contextParameters = []
       callableId = /receiveOpenClass
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      when {
+                  b -> openClass
+                  else -> NestedInheritorOfOpenClass
+              } -> (KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = OpenClass
+        symbol = m: OpenClass
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1310,1326): 'receiveOpenClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        when {
-                    b -> openClass
-                    else -> NestedInheritorOfOpenClass
-                } -> (KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = OpenClass
-          symbol = m: OpenClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1267,6 +1255,18 @@ KtNameReferenceExpression(1310,1326): 'receiveOpenClass'
         contextParameters = []
         callableId = /receiveOpenClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        when {
+                    b -> openClass
+                    else -> NestedInheritorOfOpenClass
+                } -> (KaVariableSignature:
+          name = m
+          receiverType = null
+          returnType = OpenClass
+          symbol = m: OpenClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(1326,1432): '('
   null
@@ -1364,18 +1364,6 @@ KtBlockExpression(1506,1635): '{'
 
 KtCallExpression(1512,1633): 'receiveOpenClass('
   KaSimpleFunctionCall:
-    argumentMapping = {
-      when {
-                  b -> subClass
-                  else -> NestedInheritorOfOpenClass
-              } -> (KaVariableSignature:
-        name = m
-        receiverType = null
-        returnType = OpenClass
-        symbol = m: OpenClass
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1395,22 +1383,22 @@ KtCallExpression(1512,1633): 'receiveOpenClass('
       contextParameters = []
       callableId = /receiveOpenClass
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      when {
+                  b -> subClass
+                  else -> NestedInheritorOfOpenClass
+              } -> (KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = OpenClass
+        symbol = m: OpenClass
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(1512,1528): 'receiveOpenClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        when {
-                    b -> subClass
-                    else -> NestedInheritorOfOpenClass
-                } -> (KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = OpenClass
-          symbol = m: OpenClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1430,6 +1418,18 @@ KtNameReferenceExpression(1512,1528): 'receiveOpenClass'
         contextParameters = []
         callableId = /receiveOpenClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        when {
+                    b -> subClass
+                    else -> NestedInheritorOfOpenClass
+                } -> (KaVariableSignature:
+          name = m
+          receiverType = null
+          returnType = OpenClass
+          symbol = m: OpenClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(1528,1633): '('
   null

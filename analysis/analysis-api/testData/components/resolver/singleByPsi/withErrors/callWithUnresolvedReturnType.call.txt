@@ -2,15 +2,6 @@ KtCallExpression(81,87): 'foo(x)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          x -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = x: kotlin.Int
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -31,6 +22,15 @@ KtCallExpression(81,87): 'foo(x)'
           callableId = /foo
         typeArgumentsMapping = {
           T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+        }
+        valueArgumentMapping = {
+          x -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<OTHER_ERROR: CS errors: /foo>

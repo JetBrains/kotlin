@@ -1,7 +1,6 @@
 KtCallExpression(205,216): 'funMember()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -67,4 +66,5 @@ KtCallExpression(205,216): 'funMember()'
         ]
         callableId = /Base.funMember
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

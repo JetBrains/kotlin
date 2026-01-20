@@ -1,14 +1,5 @@
 KtCallExpression(108,119): 'processB(a)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      a -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = B
-        symbol = b: B
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -28,3 +19,12 @@ KtCallExpression(108,119): 'processB(a)'
       contextParameters = []
       callableId = /processB
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      a -> (KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = B
+        symbol = b: B
+        contextParameters = []
+        callableId = null)
+    }

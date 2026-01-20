@@ -1,7 +1,6 @@
 KtNameReferenceExpression(55,61): 'values'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = E
@@ -16,3 +15,4 @@ KtNameReferenceExpression(55,61): 'values'
         contextParameters = []
         callableId = test/E.values
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

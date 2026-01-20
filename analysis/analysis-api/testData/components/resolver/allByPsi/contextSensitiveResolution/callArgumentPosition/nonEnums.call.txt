@@ -39,7 +39,6 @@ KtNameReferenceExpression(91,98): 'MyClass'
 
 KtCallExpression(101,107): 'TODO()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -51,11 +50,11 @@ KtCallExpression(101,107): 'TODO()'
       contextParameters = []
       callableId = kotlin/TODO
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(101,105): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -67,6 +66,7 @@ KtNameReferenceExpression(101,105): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(105,107): '()'
   null
@@ -85,7 +85,6 @@ KtSuperTypeList(167,176): 'MyClass()'
 
 KtSuperTypeCallEntry(167,176): 'MyClass()'
   KaDelegatedConstructorCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -98,11 +97,11 @@ KtSuperTypeCallEntry(167,176): 'MyClass()'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(167,174): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -115,6 +114,7 @@ KtConstructorCalleeExpression(167,174): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(167,174): 'MyClass'
   null
@@ -208,7 +208,6 @@ KtNameReferenceExpression(285,286): 'X'
 
 KtCallExpression(289,295): 'TODO()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -220,11 +219,11 @@ KtCallExpression(289,295): 'TODO()'
       contextParameters = []
       callableId = kotlin/TODO
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtNameReferenceExpression(289,293): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -236,6 +235,7 @@ KtNameReferenceExpression(289,293): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(293,295): '()'
   null
@@ -260,15 +260,6 @@ KtBlockExpression(315,640): '{'
 
 KtCallExpression(321,341): 'expectInt(MAX_VALUE)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      MAX_VALUE -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = x: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -288,19 +279,19 @@ KtCallExpression(321,341): 'expectInt(MAX_VALUE)'
       contextParameters = []
       callableId = /expectInt
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      MAX_VALUE -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = x: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(321,330): 'expectInt'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        MAX_VALUE -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = x: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -320,6 +311,15 @@ KtNameReferenceExpression(321,330): 'expectInt'
         contextParameters = []
         callableId = /expectInt
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        MAX_VALUE -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(330,341): '(MAX_VALUE)'
   null
@@ -349,15 +349,6 @@ KtNameReferenceExpression(331,340): 'MAX_VALUE'
 
 KtCallExpression(347,365): 'expectMyClass(FOO)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      FOO -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = MyClass
-        symbol = x: MyClass
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -377,19 +368,19 @@ KtCallExpression(347,365): 'expectMyClass(FOO)'
       contextParameters = []
       callableId = /expectMyClass
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      FOO -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyClass
+        symbol = x: MyClass
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(347,360): 'expectMyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        FOO -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyClass
-          symbol = x: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -409,6 +400,15 @@ KtNameReferenceExpression(347,360): 'expectMyClass'
         contextParameters = []
         callableId = /expectMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        FOO -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = MyClass
+          symbol = x: MyClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(360,365): '(FOO)'
   null
@@ -438,15 +438,6 @@ KtNameReferenceExpression(361,364): 'FOO'
 
 KtCallExpression(370,392): 'expectMyClass(id(FOO))'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      id(FOO) -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = MyClass
-        symbol = x: MyClass
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -466,19 +457,19 @@ KtCallExpression(370,392): 'expectMyClass(id(FOO))'
       contextParameters = []
       callableId = /expectMyClass
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      id(FOO) -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyClass
+        symbol = x: MyClass
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(370,383): 'expectMyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        id(FOO) -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyClass
-          symbol = x: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -498,6 +489,15 @@ KtNameReferenceExpression(370,383): 'expectMyClass'
         contextParameters = []
         callableId = /expectMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        id(FOO) -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = MyClass
+          symbol = x: MyClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(383,392): '(id(FOO))'
   null
@@ -507,15 +507,6 @@ KtValueArgument(384,391): 'id(FOO)'
 
 KtCallExpression(384,391): 'id(FOO)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      FOO -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = MyClass
-        symbol = x: X
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -537,19 +528,19 @@ KtCallExpression(384,391): 'id(FOO)'
     typeArgumentsMapping = {
       X -> (MyClass)
     }
+    valueArgumentMapping = {
+      FOO -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyClass
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(384,386): 'id'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        FOO -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyClass
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -570,6 +561,15 @@ KtNameReferenceExpression(384,386): 'id'
         callableId = /id
       typeArgumentsMapping = {
         X -> (MyClass)
+      }
+      valueArgumentMapping = {
+        FOO -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = MyClass
+          symbol = x: X
+          contextParameters = []
+          callableId = null)
       }
 
 KtValueArgumentList(386,391): '(FOO)'
@@ -602,15 +602,6 @@ KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          FOR_TYPE_MISMATCH -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyClass
-            symbol = x: MyClass
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -630,6 +621,15 @@ KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
           contextParameters = []
           callableId = /expectMyClass
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          FOR_TYPE_MISMATCH -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: MyClass
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
@@ -637,15 +637,6 @@ KtNameReferenceExpression(398,411): 'expectMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          FOR_TYPE_MISMATCH -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyClass
-            symbol = x: MyClass
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -665,6 +656,15 @@ KtNameReferenceExpression(398,411): 'expectMyClass'
           contextParameters = []
           callableId = /expectMyClass
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          FOR_TYPE_MISMATCH -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: MyClass
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
@@ -698,15 +698,6 @@ KtCallExpression(435,471): 'expectMyClass(id(FOR_TYPE_MISMATCH))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          id(FOR_TYPE_MISMATCH) -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyClass
-            symbol = x: MyClass
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -726,6 +717,15 @@ KtCallExpression(435,471): 'expectMyClass(id(FOR_TYPE_MISMATCH))'
           contextParameters = []
           callableId = /expectMyClass
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          id(FOR_TYPE_MISMATCH) -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: MyClass
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
@@ -733,15 +733,6 @@ KtNameReferenceExpression(435,448): 'expectMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          id(FOR_TYPE_MISMATCH) -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyClass
-            symbol = x: MyClass
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -761,6 +752,15 @@ KtNameReferenceExpression(435,448): 'expectMyClass'
           contextParameters = []
           callableId = /expectMyClass
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          id(FOR_TYPE_MISMATCH) -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: MyClass
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
@@ -772,15 +772,6 @@ KtValueArgument(449,470): 'id(FOR_TYPE_MISMATCH)'
 
 KtCallExpression(449,470): 'id(FOR_TYPE_MISMATCH)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      FOR_TYPE_MISMATCH -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = MyClass
-        symbol = x: X
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -802,19 +793,19 @@ KtCallExpression(449,470): 'id(FOR_TYPE_MISMATCH)'
     typeArgumentsMapping = {
       X -> (MyClass)
     }
+    valueArgumentMapping = {
+      FOR_TYPE_MISMATCH -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyClass
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(449,451): 'id'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        FOR_TYPE_MISMATCH -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyClass
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -835,6 +826,15 @@ KtNameReferenceExpression(449,451): 'id'
         callableId = /id
       typeArgumentsMapping = {
         X -> (MyClass)
+      }
+      valueArgumentMapping = {
+        FOR_TYPE_MISMATCH -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = MyClass
+          symbol = x: X
+          contextParameters = []
+          callableId = null)
       }
 
 KtValueArgumentList(451,470): '(FOR_TYPE_MISMATCH)'
@@ -865,15 +865,6 @@ KtNameReferenceExpression(452,469): 'FOR_TYPE_MISMATCH'
 
 KtCallExpression(477,495): 'expectMyClass(Bar)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      Bar -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = MyClass
-        symbol = x: MyClass
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -893,19 +884,19 @@ KtCallExpression(477,495): 'expectMyClass(Bar)'
       contextParameters = []
       callableId = /expectMyClass
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      Bar -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyClass
+        symbol = x: MyClass
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(477,490): 'expectMyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Bar -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyClass
-          symbol = x: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -925,6 +916,15 @@ KtNameReferenceExpression(477,490): 'expectMyClass'
         contextParameters = []
         callableId = /expectMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Bar -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = MyClass
+          symbol = x: MyClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(490,495): '(Bar)'
   null
@@ -937,15 +937,6 @@ KtNameReferenceExpression(491,494): 'Bar'
 
 KtCallExpression(500,522): 'expectMyClass(id(Bar))'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      id(Bar) -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = MyClass
-        symbol = x: MyClass
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -965,19 +956,19 @@ KtCallExpression(500,522): 'expectMyClass(id(Bar))'
       contextParameters = []
       callableId = /expectMyClass
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      id(Bar) -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyClass
+        symbol = x: MyClass
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(500,513): 'expectMyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        id(Bar) -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyClass
-          symbol = x: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -997,6 +988,15 @@ KtNameReferenceExpression(500,513): 'expectMyClass'
         contextParameters = []
         callableId = /expectMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        id(Bar) -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = MyClass
+          symbol = x: MyClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(513,522): '(id(Bar))'
   null
@@ -1006,15 +1006,6 @@ KtValueArgument(514,521): 'id(Bar)'
 
 KtCallExpression(514,521): 'id(Bar)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      Bar -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = MyClass
-        symbol = x: X
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1036,19 +1027,19 @@ KtCallExpression(514,521): 'id(Bar)'
     typeArgumentsMapping = {
       X -> (MyClass)
     }
+    valueArgumentMapping = {
+      Bar -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyClass
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(514,516): 'id'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Bar -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyClass
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1070,6 +1061,15 @@ KtNameReferenceExpression(514,516): 'id'
       typeArgumentsMapping = {
         X -> (MyClass)
       }
+      valueArgumentMapping = {
+        Bar -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = MyClass
+          symbol = x: X
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(516,521): '(Bar)'
   null
@@ -1084,15 +1084,6 @@ KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          ForTypeMismatch -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyClass
-            symbol = x: MyClass
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1112,6 +1103,15 @@ KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
           contextParameters = []
           callableId = /expectMyClass
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          ForTypeMismatch -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: MyClass
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
 
@@ -1119,15 +1119,6 @@ KtNameReferenceExpression(528,541): 'expectMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          ForTypeMismatch -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyClass
-            symbol = x: MyClass
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1147,6 +1138,15 @@ KtNameReferenceExpression(528,541): 'expectMyClass'
           contextParameters = []
           callableId = /expectMyClass
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          ForTypeMismatch -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: MyClass
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
 
@@ -1163,15 +1163,6 @@ KtCallExpression(563,597): 'expectMyClass(id(ForTypeMismatch))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          id(ForTypeMismatch) -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyClass
-            symbol = x: MyClass
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1191,6 +1182,15 @@ KtCallExpression(563,597): 'expectMyClass(id(ForTypeMismatch))'
           contextParameters = []
           callableId = /expectMyClass
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          id(ForTypeMismatch) -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: MyClass
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
 
@@ -1198,15 +1198,6 @@ KtNameReferenceExpression(563,576): 'expectMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          id(ForTypeMismatch) -> (KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MyClass
-            symbol = x: MyClass
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1226,6 +1217,15 @@ KtNameReferenceExpression(563,576): 'expectMyClass'
           contextParameters = []
           callableId = /expectMyClass
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          id(ForTypeMismatch) -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: MyClass
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
 
@@ -1237,15 +1237,6 @@ KtValueArgument(577,596): 'id(ForTypeMismatch)'
 
 KtCallExpression(577,596): 'id(ForTypeMismatch)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      ForTypeMismatch -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = MyClass
-        symbol = x: X
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1267,19 +1258,19 @@ KtCallExpression(577,596): 'id(ForTypeMismatch)'
     typeArgumentsMapping = {
       X -> (MyClass)
     }
+    valueArgumentMapping = {
+      ForTypeMismatch -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyClass
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(577,579): 'id'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        ForTypeMismatch -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyClass
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1301,6 +1292,15 @@ KtNameReferenceExpression(577,579): 'id'
       typeArgumentsMapping = {
         X -> (MyClass)
       }
+      valueArgumentMapping = {
+        ForTypeMismatch -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = MyClass
+          symbol = x: X
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(579,596): '(ForTypeMismatch)'
   null
@@ -1314,15 +1314,6 @@ KtNameReferenceExpression(580,595): 'ForTypeMismatch'
 KtDotQualifiedExpression(603,638): 'JavaClass.expectJavaClass(INSTANCE)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        INSTANCE -> (KaVariableSignature:
-          name = j
-          receiverType = null
-          returnType = JavaClass!
-          symbol = j: JavaClass!
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = JavaClass
@@ -1345,21 +1336,21 @@ KtDotQualifiedExpression(603,638): 'JavaClass.expectJavaClass(INSTANCE)'
         contextParameters = []
         callableId = /JavaClass.expectJavaClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        INSTANCE -> (KaVariableSignature:
+          name = j
+          receiverType = null
+          returnType = JavaClass!
+          symbol = j: JavaClass!
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(603,612): 'JavaClass'
   null
 
 KtCallExpression(613,638): 'expectJavaClass(INSTANCE)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      INSTANCE -> (KaVariableSignature:
-        name = j
-        receiverType = null
-        returnType = JavaClass!
-        symbol = j: JavaClass!
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = JavaClass
@@ -1382,19 +1373,19 @@ KtCallExpression(613,638): 'expectJavaClass(INSTANCE)'
       contextParameters = []
       callableId = /JavaClass.expectJavaClass
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      INSTANCE -> (KaVariableSignature:
+        name = j
+        receiverType = null
+        returnType = JavaClass!
+        symbol = j: JavaClass!
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(613,628): 'expectJavaClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        INSTANCE -> (KaVariableSignature:
-          name = j
-          receiverType = null
-          returnType = JavaClass!
-          symbol = j: JavaClass!
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = JavaClass
@@ -1417,6 +1408,15 @@ KtNameReferenceExpression(613,628): 'expectJavaClass'
         contextParameters = []
         callableId = /JavaClass.expectJavaClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        INSTANCE -> (KaVariableSignature:
+          name = j
+          receiverType = null
+          returnType = JavaClass!
+          symbol = j: JavaClass!
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(628,638): '(INSTANCE)'
   null

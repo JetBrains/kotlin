@@ -2,20 +2,6 @@ KtNameReferenceExpression(159,163): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = testing/test(): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = testing/test
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -27,6 +13,20 @@ KtNameReferenceExpression(159,163): 'test'
           contextParameters = []
           callableId = testing/test
         typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = testing/test(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = testing/test
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
     fun test(): Unit

@@ -1,6 +1,5 @@
 KtCallExpression(105,111): 'peek()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = foo()
@@ -15,3 +14,4 @@ KtCallExpression(105,111): 'peek()'
       contextParameters = []
       callableId = /F.peek
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

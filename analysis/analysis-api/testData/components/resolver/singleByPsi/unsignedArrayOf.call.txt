@@ -1,14 +1,5 @@
 KtCallExpression(39,55): 'uintArrayOf(42u)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      42u -> (KaVariableSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.UInt
-        symbol = vararg elements: kotlin.UInt
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -28,3 +19,12 @@ KtCallExpression(39,55): 'uintArrayOf(42u)'
       contextParameters = []
       callableId = kotlin/uintArrayOf
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      42u -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.UInt
+        symbol = vararg elements: kotlin.UInt
+        contextParameters = []
+        callableId = null)
+    }

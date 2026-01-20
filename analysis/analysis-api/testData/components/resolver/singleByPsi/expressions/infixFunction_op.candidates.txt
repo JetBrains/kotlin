@@ -1,15 +1,6 @@
 KtOperationReferenceExpression(58,65): 'infixOp'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "str" -> (KaVariableSignature:
-          name = rhs
-          receiverType = null
-          returnType = kotlin.String
-          symbol = rhs: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -32,4 +23,13 @@ KtOperationReferenceExpression(58,65): 'infixOp'
         contextParameters = []
         callableId = /infixOp
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str" -> (KaVariableSignature:
+          name = rhs
+          receiverType = null
+          returnType = kotlin.String
+          symbol = rhs: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

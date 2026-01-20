@@ -2,7 +2,6 @@ KtOperationReferenceExpression(68,70): '+='
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = l
@@ -24,9 +23,9 @@ KtOperationReferenceExpression(68,70): '+='
           ]
           contextParameters = []
           callableId = kotlin/collections/MutableList.get
-        typeArgumentsMapping = {},
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
       KaSimpleFunctionCall:
-        argumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = l
@@ -55,9 +54,9 @@ KtOperationReferenceExpression(68,70): '+='
           ]
           contextParameters = []
           callableId = kotlin/collections/MutableList.set
-        typeArgumentsMapping = {},
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
       KaSimpleFunctionCall:
-        argumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -80,5 +79,6 @@ KtOperationReferenceExpression(68,70): '+='
           contextParameters = []
           callableId = /plus
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with set>

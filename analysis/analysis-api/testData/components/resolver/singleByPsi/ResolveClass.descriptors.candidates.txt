@@ -1,7 +1,6 @@
 KtNameReferenceExpression(556,560): 'Test'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -14,4 +13,5 @@ KtNameReferenceExpression(556,560): 'Test'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

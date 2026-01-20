@@ -1,21 +1,5 @@
 KtCallExpression(146,220): 'arrayOf(Annotation("v1", "v2"), Annotation(strings = arrayOf("v3", "v4")))'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      Annotation("v1", "v2") -> (KaVariableSignature:
-        name = elements
-        receiverType = null
-        returnType = Annotation
-        symbol = vararg elements: T
-        contextParameters = []
-        callableId = null),
-      Annotation(strings = arrayOf("v3", "v4")) -> (KaVariableSignature:
-        name = elements
-        receiverType = null
-        returnType = Annotation
-        symbol = vararg elements: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -36,4 +20,20 @@ KtCallExpression(146,220): 'arrayOf(Annotation("v1", "v2"), Annotation(strings =
       callableId = kotlin/arrayOf
     typeArgumentsMapping = {
       T -> (Annotation)
+    }
+    valueArgumentMapping = {
+      Annotation("v1", "v2") -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = Annotation
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null),
+      Annotation(strings = arrayOf("v3", "v4")) -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = Annotation
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null)
     }

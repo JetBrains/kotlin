@@ -24,7 +24,6 @@ KtDeclarationModifierList(36,41): '@Anno'
 
 KtAnnotationEntry(36,41): '@Anno'
   KaAnnotationCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -36,11 +35,11 @@ KtAnnotationEntry(36,41): '@Anno'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(37,41): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -52,6 +51,7 @@ KtConstructorCalleeExpression(37,41): 'Anno'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(37,41): 'Anno'
   null

@@ -1,7 +1,6 @@
 KtCollectionLiteralExpression(163,165): '[]'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -23,5 +22,6 @@ KtCollectionLiteralExpression(163,165): '[]'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
     isInBestCandidates = true

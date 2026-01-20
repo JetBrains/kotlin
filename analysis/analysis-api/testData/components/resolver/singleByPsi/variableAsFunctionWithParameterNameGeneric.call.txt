@@ -1,14 +1,5 @@
 KtCallExpression(81,85): 'x(1)'
   KaImplicitInvokeCall:
-    argumentMapping = {
-      1 -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = x
@@ -31,3 +22,12 @@ KtCallExpression(81,85): 'x(1)'
       contextParameters = []
       callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      1 -> (KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }

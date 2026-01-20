@@ -1,7 +1,6 @@
 KtCallExpression(135,142): 'i()()()'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -16,11 +15,11 @@ KtCallExpression(135,142): 'i()()()'
         contextParameters = []
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -35,12 +34,12 @@ KtCallExpression(135,142): 'i()()()'
         contextParameters = []
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Double but Int was expected>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -55,5 +54,6 @@ KtCallExpression(135,142): 'i()()()'
         contextParameters = []
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Double but Long was expected>
     isInBestCandidates = false

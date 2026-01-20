@@ -1,15 +1,6 @@
 KtNameReferenceExpression(82,86): 'copy'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = aaa
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = aaa: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = d
@@ -32,4 +23,13 @@ KtNameReferenceExpression(82,86): 'copy'
         contextParameters = []
         callableId = /Data.copy
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = aaa
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = aaa: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

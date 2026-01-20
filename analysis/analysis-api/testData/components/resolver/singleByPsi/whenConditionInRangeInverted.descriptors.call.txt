@@ -1,14 +1,5 @@
 KtWhenConditionInRange(177,190): '!in MyClass()'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      f -> (KaVariableSignature:
-        name = int
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = int: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -32,4 +23,13 @@ KtWhenConditionInRange(177,190): '!in MyClass()'
       callableId = /contains
     typeArgumentsMapping = {
       T -> (MyClass)
+    }
+    valueArgumentMapping = {
+      f -> (KaVariableSignature:
+        name = int
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = int: kotlin.Int
+        contextParameters = []
+        callableId = null)
     }

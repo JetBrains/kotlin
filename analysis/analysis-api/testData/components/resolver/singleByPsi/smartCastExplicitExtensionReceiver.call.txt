@@ -1,6 +1,5 @@
 KtCallExpression(52,57): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaSmartCastedReceiverValue:
@@ -17,3 +16,4 @@ KtCallExpression(52,57): 'foo()'
       contextParameters = []
       callableId = /foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

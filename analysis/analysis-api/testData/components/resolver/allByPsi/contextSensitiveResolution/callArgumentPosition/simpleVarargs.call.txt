@@ -57,22 +57,6 @@ KtBlockExpression(151,168): '{'
 
 KtCallExpression(157,166): 'foo(X, Y)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      X -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = MyEnum
-        symbol = vararg a: MyEnum
-        contextParameters = []
-        callableId = null),
-      Y -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = MyEnum
-        symbol = vararg a: MyEnum
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -92,26 +76,26 @@ KtCallExpression(157,166): 'foo(X, Y)'
       contextParameters = []
       callableId = /foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      X -> (KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = MyEnum
+        symbol = vararg a: MyEnum
+        contextParameters = []
+        callableId = null),
+      Y -> (KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = MyEnum
+        symbol = vararg a: MyEnum
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(157,160): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg a: MyEnum
-          contextParameters = []
-          callableId = null),
-        Y -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg a: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -131,6 +115,22 @@ KtNameReferenceExpression(157,160): 'foo'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg a: MyEnum
+          contextParameters = []
+          callableId = null),
+        Y -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg a: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(160,166): '(X, Y)'
   null

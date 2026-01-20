@@ -2,7 +2,7 @@ KtCallExpression(120,123): 'c()'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
+        valueArgumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []

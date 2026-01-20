@@ -1,6 +1,5 @@
 KtCallExpression(80,85): 'foo()'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = /BaseClass
@@ -14,3 +13,4 @@ KtCallExpression(80,85): 'foo()'
       contextParameters = []
       callableId = /BaseClass.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

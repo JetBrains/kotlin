@@ -148,7 +148,6 @@ KtReturnExpression(239,258): 'return MyDelegate()'
 KtCallExpression(246,258): 'MyDelegate()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -160,12 +159,12 @@ KtCallExpression(246,258): 'MyDelegate()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(246,256): 'MyDelegate'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -177,6 +176,7 @@ KtNameReferenceExpression(246,256): 'MyDelegate'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(256,258): '()'
@@ -323,7 +323,6 @@ KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
 KtCallExpression(446,463): 'ResourceID<Int>()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -335,12 +334,12 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(446,456): 'ResourceID'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -352,6 +351,7 @@ KtNameReferenceExpression(446,456): 'ResourceID'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeArgumentList(456,461): '<Int>'

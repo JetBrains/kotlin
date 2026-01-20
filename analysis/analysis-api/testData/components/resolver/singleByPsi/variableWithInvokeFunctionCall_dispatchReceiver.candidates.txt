@@ -1,7 +1,6 @@
 KtCallExpression(83,86): 'f()'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -16,4 +15,5 @@ KtCallExpression(83,86): 'f()'
         contextParameters = []
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

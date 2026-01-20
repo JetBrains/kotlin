@@ -1,15 +1,6 @@
 KtNameReferenceExpression(248,251): 'add'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        s -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = kotlin.String
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -56,4 +47,13 @@ KtNameReferenceExpression(248,251): 'add'
         contextParameters = []
         callableId = test/Target.add
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        s -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = kotlin.String
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

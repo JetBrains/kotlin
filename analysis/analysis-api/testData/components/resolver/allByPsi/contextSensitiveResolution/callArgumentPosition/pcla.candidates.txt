@@ -139,7 +139,7 @@ KtNameReferenceExpression(253,254): 'S'
 KtCallExpression(257,263): 'TODO()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      valueArgumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
@@ -157,7 +157,7 @@ KtCallExpression(257,263): 'TODO()'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      valueArgumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
@@ -185,7 +185,7 @@ KtCallExpression(257,263): 'TODO()'
 KtNameReferenceExpression(257,261): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      valueArgumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
@@ -203,7 +203,7 @@ KtNameReferenceExpression(257,261): 'TODO'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      valueArgumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
@@ -255,7 +255,7 @@ KtBlockExpression(284,492): '{'
 KtCallExpression(290,340): 'generate {'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {
                 yield(m)
                 yield(X)
@@ -295,7 +295,7 @@ KtCallExpression(290,340): 'generate {'
 KtNameReferenceExpression(290,298): 'generate'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {
                 yield(m)
                 yield(X)
@@ -347,7 +347,7 @@ KtBlockExpression(309,334): 'yield(m)'
 KtCallExpression(309,317): 'yield(m)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         m -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -408,7 +408,7 @@ KtCallExpression(309,317): 'yield(m)'
 KtNameReferenceExpression(309,314): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         m -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -494,7 +494,7 @@ KtNameReferenceExpression(315,316): 'm'
 KtCallExpression(326,334): 'yield(X)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         X -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -555,7 +555,7 @@ KtCallExpression(326,334): 'yield(X)'
 KtNameReferenceExpression(326,331): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         X -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -642,7 +642,7 @@ KtNameReferenceExpression(332,333): 'X'
 KtCallExpression(346,396): 'generate {'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {
                 yield(X)
                 yield(m)
@@ -682,7 +682,7 @@ KtCallExpression(346,396): 'generate {'
 KtNameReferenceExpression(346,354): 'generate'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {
                 yield(X)
                 yield(m)
@@ -734,7 +734,7 @@ KtBlockExpression(365,390): 'yield(X)'
 KtCallExpression(365,373): 'yield(X)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         X -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -795,7 +795,7 @@ KtCallExpression(365,373): 'yield(X)'
 KtNameReferenceExpression(365,370): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         X -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -882,7 +882,7 @@ KtNameReferenceExpression(371,372): 'X'
 KtCallExpression(382,390): 'yield(m)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         m -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -943,7 +943,7 @@ KtCallExpression(382,390): 'yield(m)'
 KtNameReferenceExpression(382,387): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         m -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -1041,7 +1041,7 @@ KtNameReferenceExpression(409,415): 'MyEnum'
 KtCallExpression(418,451): 'generate {'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {
                 yield(X)
             } -> (KaVariableSignature:
@@ -1080,7 +1080,7 @@ KtCallExpression(418,451): 'generate {'
 KtNameReferenceExpression(418,426): 'generate'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {
                 yield(X)
             } -> (KaVariableSignature:
@@ -1131,7 +1131,7 @@ KtBlockExpression(437,445): 'yield(X)'
 KtCallExpression(437,445): 'yield(X)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         X -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -1192,7 +1192,7 @@ KtCallExpression(437,445): 'yield(X)'
 KtNameReferenceExpression(437,442): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         X -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -1262,7 +1262,7 @@ KtNameReferenceExpression(443,444): 'X'
 KtCallExpression(457,490): 'generate {'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {
                 yield(X)
             } -> (KaVariableSignature:
@@ -1302,7 +1302,7 @@ KtCallExpression(457,490): 'generate {'
 KtNameReferenceExpression(457,465): 'generate'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {
                 yield(X)
             } -> (KaVariableSignature:
@@ -1354,7 +1354,7 @@ KtBlockExpression(476,484): 'yield(X)'
 KtCallExpression(476,484): 'yield(X)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         X -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -1415,7 +1415,7 @@ KtCallExpression(476,484): 'yield(X)'
 KtNameReferenceExpression(476,481): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         X -> (KaVariableSignature:
           name = t
           receiverType = null

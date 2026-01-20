@@ -1,7 +1,6 @@
 KtNameReferenceExpression(93,95): 'AA'
   KaApplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = AA
@@ -16,11 +15,11 @@ KtNameReferenceExpression(93,95): 'AA'
         contextParameters = []
         callableId = /AA.Companion.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -32,4 +31,5 @@ KtNameReferenceExpression(93,95): 'AA'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

@@ -157,39 +157,6 @@ KtBlockExpression(174,763): '{'
 KtCallExpression(180,749): 'foo1 {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                foo2 {
-                    foo3 {
-                        foo1(
-                            {
-                                return@foo3
-                                return@foo2
-                                return@foo1
-                            },
-                        )
-        
-                        foo2(label@ fun(s: String) {
-                            return
-                            return@label
-                            return@foo3
-                            return@foo2
-                            return@foo1
-                        })
-        
-                        return@foo3
-                        return@foo2
-                        return@foo1
-                    }
-                }
-            } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.Int) -> kotlin.Unit
-          symbol = action: (kotlin.Int) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -209,44 +176,44 @@ KtCallExpression(180,749): 'foo1 {'
         contextParameters = []
         callableId = returnPack/foo1
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                foo2 {
+                    foo3 {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    }
+                }
+            } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.Int) -> kotlin.Unit
+          symbol = action: (kotlin.Int) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(180,184): 'foo1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                foo2 {
-                    foo3 {
-                        foo1(
-                            {
-                                return@foo3
-                                return@foo2
-                                return@foo1
-                            },
-                        )
-        
-                        foo2(label@ fun(s: String) {
-                            return
-                            return@label
-                            return@foo3
-                            return@foo2
-                            return@foo1
-                        })
-        
-                        return@foo3
-                        return@foo2
-                        return@foo1
-                    }
-                }
-            } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.Int) -> kotlin.Unit
-          symbol = action: (kotlin.Int) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -266,6 +233,39 @@ KtNameReferenceExpression(180,184): 'foo1'
         contextParameters = []
         callableId = returnPack/foo1
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                foo2 {
+                    foo3 {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    }
+                }
+            } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.Int) -> kotlin.Unit
+          symbol = action: (kotlin.Int) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtLambdaArgument(185,749): '{'
@@ -283,37 +283,6 @@ KtBlockExpression(195,743): 'foo2 {'
 KtCallExpression(195,743): 'foo2 {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                    foo3 {
-                        foo1(
-                            {
-                                return@foo3
-                                return@foo2
-                                return@foo1
-                            },
-                        )
-        
-                        foo2(label@ fun(s: String) {
-                            return
-                            return@label
-                            return@foo3
-                            return@foo2
-                            return@foo1
-                        })
-        
-                        return@foo3
-                        return@foo2
-                        return@foo1
-                    }
-                } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.String) -> kotlin.Unit
-          symbol = action: (kotlin.String) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -333,42 +302,42 @@ KtCallExpression(195,743): 'foo2 {'
         contextParameters = []
         callableId = returnPack/foo2
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                    foo3 {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    }
+                } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.String) -> kotlin.Unit
+          symbol = action: (kotlin.String) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(195,199): 'foo2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                    foo3 {
-                        foo1(
-                            {
-                                return@foo3
-                                return@foo2
-                                return@foo1
-                            },
-                        )
-        
-                        foo2(label@ fun(s: String) {
-                            return
-                            return@label
-                            return@foo3
-                            return@foo2
-                            return@foo1
-                        })
-        
-                        return@foo3
-                        return@foo2
-                        return@foo1
-                    }
-                } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.String) -> kotlin.Unit
-          symbol = action: (kotlin.String) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -388,6 +357,37 @@ KtNameReferenceExpression(195,199): 'foo2'
         contextParameters = []
         callableId = returnPack/foo2
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                    foo3 {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    }
+                } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.String) -> kotlin.Unit
+          symbol = action: (kotlin.String) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtLambdaArgument(200,743): '{'
@@ -405,35 +405,6 @@ KtBlockExpression(214,733): 'foo3 {'
 KtCallExpression(214,733): 'foo3 {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                        foo1(
-                            {
-                                return@foo3
-                                return@foo2
-                                return@foo1
-                            },
-                        )
-        
-                        foo2(label@ fun(s: String) {
-                            return
-                            return@label
-                            return@foo3
-                            return@foo2
-                            return@foo1
-                        })
-        
-                        return@foo3
-                        return@foo2
-                        return@foo1
-                    } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.Boolean) -> kotlin.Unit
-          symbol = action: (kotlin.Boolean) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -453,40 +424,40 @@ KtCallExpression(214,733): 'foo3 {'
         contextParameters = []
         callableId = returnPack/foo3
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.Boolean) -> kotlin.Unit
+          symbol = action: (kotlin.Boolean) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(214,218): 'foo3'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                        foo1(
-                            {
-                                return@foo3
-                                return@foo2
-                                return@foo1
-                            },
-                        )
-        
-                        foo2(label@ fun(s: String) {
-                            return
-                            return@label
-                            return@foo3
-                            return@foo2
-                            return@foo1
-                        })
-        
-                        return@foo3
-                        return@foo2
-                        return@foo1
-                    } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.Boolean) -> kotlin.Unit
-          symbol = action: (kotlin.Boolean) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -506,6 +477,35 @@ KtNameReferenceExpression(214,218): 'foo3'
         contextParameters = []
         callableId = returnPack/foo3
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.Boolean) -> kotlin.Unit
+          symbol = action: (kotlin.Boolean) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtLambdaArgument(219,733): '{'
@@ -523,19 +523,6 @@ KtBlockExpression(237,719): 'foo1('
 KtCallExpression(237,413): 'foo1('
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                                return@foo3
-                                return@foo2
-                                return@foo1
-                            } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.Int) -> kotlin.Unit
-          symbol = action: (kotlin.Int) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -555,24 +542,24 @@ KtCallExpression(237,413): 'foo1('
         contextParameters = []
         callableId = returnPack/foo1
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.Int) -> kotlin.Unit
+          symbol = action: (kotlin.Int) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(237,241): 'foo1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                                return@foo3
-                                return@foo2
-                                return@foo1
-                            } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.Int) -> kotlin.Unit
-          symbol = action: (kotlin.Int) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -592,6 +579,19 @@ KtNameReferenceExpression(237,241): 'foo1'
         contextParameters = []
         callableId = returnPack/foo1
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.Int) -> kotlin.Unit
+          symbol = action: (kotlin.Int) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(241,413): '('
@@ -639,21 +639,6 @@ KtLabelReferenceExpression(367,372): '@foo1'
 KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        label@ fun(s: String) {
-                            return
-                            return@label
-                            return@foo3
-                            return@foo2
-                            return@foo1
-                        } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.String) -> kotlin.Unit
-          symbol = action: (kotlin.String) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -673,26 +658,26 @@ KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
         contextParameters = []
         callableId = returnPack/foo2
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.String) -> kotlin.Unit
+          symbol = action: (kotlin.String) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(431,435): 'foo2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        label@ fun(s: String) {
-                            return
-                            return@label
-                            return@foo3
-                            return@foo2
-                            return@foo1
-                        } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.String) -> kotlin.Unit
-          symbol = action: (kotlin.String) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -712,6 +697,21 @@ KtNameReferenceExpression(431,435): 'foo2'
         contextParameters = []
         callableId = returnPack/foo2
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.String) -> kotlin.Unit
+          symbol = action: (kotlin.String) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(435,634): '(label@ fun(s: String) {'

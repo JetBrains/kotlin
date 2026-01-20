@@ -1,15 +1,6 @@
 KtNameReferenceExpression(67,70): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = t: ERROR_TYPE
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,3 +20,12 @@ KtNameReferenceExpression(67,70): 'foo'
         contextParameters = []
         callableId = main/foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = t: ERROR_TYPE
+          contextParameters = []
+          callableId = null)
+      }

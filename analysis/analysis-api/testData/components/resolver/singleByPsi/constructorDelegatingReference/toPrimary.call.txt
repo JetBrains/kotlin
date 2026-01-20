@@ -1,14 +1,5 @@
 KtConstructorDelegationReferenceExpression(38,42): 'this'
   KaDelegatedConstructorCall:
-    argumentMapping = {
-      2 -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = a: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -29,3 +20,12 @@ KtConstructorDelegationReferenceExpression(38,42): 'this'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      2 -> (KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = a: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }

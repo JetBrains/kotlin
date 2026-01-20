@@ -1,14 +1,5 @@
 KtAnnotationEntry(90,110): '@Annotation(Color.R)'
   KaAnnotationCall:
-    argumentMapping = {
-      Color.R -> (KaVariableSignature:
-        name = color
-        receiverType = null
-        returnType = Color
-        symbol = color: Color
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -28,3 +19,12 @@ KtAnnotationEntry(90,110): '@Annotation(Color.R)'
       contextParameters = []
       callableId = null
     typeArgumentsMapping = {}
+    valueArgumentMapping = {
+      Color.R -> (KaVariableSignature:
+        name = color
+        receiverType = null
+        returnType = Color
+        symbol = color: Color
+        contextParameters = []
+        callableId = null)
+    }

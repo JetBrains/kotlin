@@ -49,7 +49,6 @@ KtSuperTypeList(197,206): 'MyClass()'
 KtSuperTypeCallEntry(197,206): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -62,12 +61,12 @@ KtSuperTypeCallEntry(197,206): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(197,204): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -80,6 +79,7 @@ KtConstructorCalleeExpression(197,204): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(197,204): 'MyClass'
@@ -91,7 +91,6 @@ KtUserType(197,204): 'MyClass'
 KtNameReferenceExpression(197,204): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -104,6 +103,7 @@ KtNameReferenceExpression(197,204): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(204,206): '()'
@@ -121,7 +121,6 @@ KtSuperTypeList(237,246): 'MyClass()'
 KtSuperTypeCallEntry(237,246): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -134,12 +133,12 @@ KtSuperTypeCallEntry(237,246): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(237,244): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -152,6 +151,7 @@ KtConstructorCalleeExpression(237,244): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(237,244): 'MyClass'
@@ -163,7 +163,6 @@ KtUserType(237,244): 'MyClass'
 KtNameReferenceExpression(237,244): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -176,6 +175,7 @@ KtNameReferenceExpression(237,244): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(244,246): '()'
@@ -199,7 +199,6 @@ KtSuperTypeList(298,307): 'MySuper()'
 KtSuperTypeCallEntry(298,307): 'MySuper()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -212,12 +211,12 @@ KtSuperTypeCallEntry(298,307): 'MySuper()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(298,305): 'MySuper'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -230,6 +229,7 @@ KtConstructorCalleeExpression(298,305): 'MySuper'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(298,305): 'MySuper'
@@ -241,7 +241,6 @@ KtUserType(298,305): 'MySuper'
 KtNameReferenceExpression(298,305): 'MySuper'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -254,6 +253,7 @@ KtNameReferenceExpression(298,305): 'MySuper'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(305,307): '()'
@@ -277,7 +277,6 @@ KtNameReferenceExpression(335,342): 'MyClass'
 KtCallExpression(345,351): 'TODO()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -289,11 +288,11 @@ KtCallExpression(345,351): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -313,13 +312,13 @@ KtCallExpression(345,351): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(345,349): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -331,11 +330,11 @@ KtNameReferenceExpression(345,349): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -355,6 +354,7 @@ KtNameReferenceExpression(345,349): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
@@ -376,7 +376,6 @@ KtNameReferenceExpression(384,398): 'InheritorClass'
 KtCallExpression(401,417): 'InheritorClass()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -388,12 +387,12 @@ KtCallExpression(401,417): 'InheritorClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(401,415): 'InheritorClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -405,6 +404,7 @@ KtNameReferenceExpression(401,415): 'InheritorClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(415,417): '()'
@@ -458,7 +458,6 @@ KtNameReferenceExpression(535,542): 'MyClass'
 KtCallExpression(545,551): 'TODO()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -470,11 +469,11 @@ KtCallExpression(545,551): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -494,13 +493,13 @@ KtCallExpression(545,551): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(545,549): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -512,11 +511,11 @@ KtNameReferenceExpression(545,549): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -536,6 +535,7 @@ KtNameReferenceExpression(545,549): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
@@ -560,15 +560,6 @@ KtPropertyDelegate(581,593): 'by lazy {""}'
 KtCallExpression(584,593): 'lazy {""}'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<ERROR_TYPE>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -596,21 +587,21 @@ KtCallExpression(584,593): 'lazy {""}'
         callableId = kotlin/lazy
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = kotlin.Function0<ERROR_TYPE>
+          symbol = initializer: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<ERROR_TYPE>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -639,20 +630,20 @@ KtCallExpression(584,593): 'lazy {""}'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = kotlin.Function0<ERROR_TYPE>
+          symbol = initializer: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode'>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -674,20 +665,20 @@ KtCallExpression(584,593): 'lazy {""}'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.String>
+          symbol = initializer: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(584,588): 'lazy'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<ERROR_TYPE>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -716,12 +707,7 @@ KtNameReferenceExpression(584,588): 'lazy'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
@@ -730,6 +716,11 @@ KtNameReferenceExpression(584,588): 'lazy'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -758,20 +749,20 @@ KtNameReferenceExpression(584,588): 'lazy'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = kotlin.Function0<ERROR_TYPE>
+          symbol = initializer: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode'>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -792,6 +783,15 @@ KtNameReferenceExpression(584,588): 'lazy'
         callableId = kotlin/lazy
       typeArgumentsMapping = {
         T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.String>
+          symbol = initializer: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -909,15 +909,6 @@ KtBlockExpression(732,1163): '{'
 KtCallExpression(738,775): 'consumeMyClass(test(InheritorObject))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(InheritorObject) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -937,20 +928,20 @@ KtCallExpression(738,775): 'consumeMyClass(test(InheritorObject))'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(InheritorObject) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(738,752): 'consumeMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(InheritorObject) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -970,6 +961,15 @@ KtNameReferenceExpression(738,752): 'consumeMyClass'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(InheritorObject) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(752,775): '(test(InheritorObject))'
@@ -981,15 +981,6 @@ KtValueArgument(753,774): 'test(InheritorObject)'
 KtCallExpression(753,774): 'test(InheritorObject)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1010,6 +1001,15 @@ KtCallExpression(753,774): 'test(InheritorObject)'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1017,15 +1017,6 @@ KtCallExpression(753,774): 'test(InheritorObject)'
 KtNameReferenceExpression(753,757): 'test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1046,6 +1037,15 @@ KtNameReferenceExpression(753,757): 'test'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1062,15 +1062,6 @@ KtNameReferenceExpression(758,773): 'InheritorObject'
 KtCallExpression(781,814): 'consumeMyClass(test(propMyClass))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(propMyClass) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1090,20 +1081,20 @@ KtCallExpression(781,814): 'consumeMyClass(test(propMyClass))'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(propMyClass) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(781,795): 'consumeMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(propMyClass) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1123,6 +1114,15 @@ KtNameReferenceExpression(781,795): 'consumeMyClass'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(propMyClass) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(795,814): '(test(propMyClass))'
@@ -1134,15 +1134,6 @@ KtValueArgument(796,813): 'test(propMyClass)'
 KtCallExpression(796,813): 'test(propMyClass)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        propMyClass -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1163,6 +1154,15 @@ KtCallExpression(796,813): 'test(propMyClass)'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        propMyClass -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1170,15 +1170,6 @@ KtCallExpression(796,813): 'test(propMyClass)'
 KtNameReferenceExpression(796,800): 'test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        propMyClass -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1199,6 +1190,15 @@ KtNameReferenceExpression(796,800): 'test'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        propMyClass -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1215,15 +1215,6 @@ KtNameReferenceExpression(801,812): 'propMyClass'
 KtCallExpression(819,859): 'consumeMyClass(test(propInheritorClass))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(propInheritorClass) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1243,20 +1234,20 @@ KtCallExpression(819,859): 'consumeMyClass(test(propInheritorClass))'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(propInheritorClass) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(819,833): 'consumeMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(propInheritorClass) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1276,6 +1267,15 @@ KtNameReferenceExpression(819,833): 'consumeMyClass'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(propInheritorClass) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(833,859): '(test(propInheritorClass))'
@@ -1287,15 +1287,6 @@ KtValueArgument(834,858): 'test(propInheritorClass)'
 KtCallExpression(834,858): 'test(propInheritorClass)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        propInheritorClass -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1316,6 +1307,15 @@ KtCallExpression(834,858): 'test(propInheritorClass)'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        propInheritorClass -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1323,15 +1323,6 @@ KtCallExpression(834,858): 'test(propInheritorClass)'
 KtNameReferenceExpression(834,838): 'test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        propInheritorClass -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1352,6 +1343,15 @@ KtNameReferenceExpression(834,838): 'test'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        propInheritorClass -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1368,15 +1368,6 @@ KtNameReferenceExpression(839,857): 'propInheritorClass'
 KtCallExpression(864,905): 'consumeMyClass(test(propInheritorObject))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(propInheritorObject) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1396,20 +1387,20 @@ KtCallExpression(864,905): 'consumeMyClass(test(propInheritorObject))'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(propInheritorObject) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(864,878): 'consumeMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(propInheritorObject) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1429,6 +1420,15 @@ KtNameReferenceExpression(864,878): 'consumeMyClass'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(propInheritorObject) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(878,905): '(test(propInheritorObject))'
@@ -1440,15 +1440,6 @@ KtValueArgument(879,904): 'test(propInheritorObject)'
 KtCallExpression(879,904): 'test(propInheritorObject)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        propInheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1469,6 +1460,15 @@ KtCallExpression(879,904): 'test(propInheritorObject)'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        propInheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1476,15 +1476,6 @@ KtCallExpression(879,904): 'test(propInheritorObject)'
 KtNameReferenceExpression(879,883): 'test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        propInheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1505,6 +1496,15 @@ KtNameReferenceExpression(879,883): 'test'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        propInheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1521,15 +1521,6 @@ KtNameReferenceExpression(884,903): 'propInheritorObject'
 KtCallExpression(911,945): 'consumeMyClass(test(NestedObject))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(NestedObject) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1549,20 +1540,20 @@ KtCallExpression(911,945): 'consumeMyClass(test(NestedObject))'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(NestedObject) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(911,925): 'consumeMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(NestedObject) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1582,6 +1573,15 @@ KtNameReferenceExpression(911,925): 'consumeMyClass'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(NestedObject) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(925,945): '(test(NestedObject))'
@@ -1593,15 +1593,6 @@ KtValueArgument(926,944): 'test(NestedObject)'
 KtCallExpression(926,944): 'test(NestedObject)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1622,6 +1613,15 @@ KtCallExpression(926,944): 'test(NestedObject)'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        NestedObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1629,15 +1629,6 @@ KtCallExpression(926,944): 'test(NestedObject)'
 KtNameReferenceExpression(926,930): 'test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1658,6 +1649,15 @@ KtNameReferenceExpression(926,930): 'test'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        NestedObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1674,15 +1674,6 @@ KtNameReferenceExpression(931,943): 'NestedObject'
 KtCallExpression(950,976): 'consumeMyClass(test(prop))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(prop) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1702,20 +1693,20 @@ KtCallExpression(950,976): 'consumeMyClass(test(prop))'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(prop) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(950,964): 'consumeMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(prop) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1735,6 +1726,15 @@ KtNameReferenceExpression(950,964): 'consumeMyClass'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(prop) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(964,976): '(test(prop))'
@@ -1746,15 +1746,6 @@ KtValueArgument(965,975): 'test(prop)'
 KtCallExpression(965,975): 'test(prop)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        prop -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1775,6 +1766,15 @@ KtCallExpression(965,975): 'test(prop)'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        prop -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1782,15 +1782,6 @@ KtCallExpression(965,975): 'test(prop)'
 KtNameReferenceExpression(965,969): 'test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        prop -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1811,6 +1802,15 @@ KtNameReferenceExpression(965,969): 'test'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        prop -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1827,15 +1827,6 @@ KtNameReferenceExpression(970,974): 'prop'
 KtCallExpression(981,1012): 'consumeMyClass(test(superProp))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(superProp) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1855,20 +1846,20 @@ KtCallExpression(981,1012): 'consumeMyClass(test(superProp))'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(superProp) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(981,995): 'consumeMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(superProp) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1888,6 +1879,15 @@ KtNameReferenceExpression(981,995): 'consumeMyClass'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(superProp) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(995,1012): '(test(superProp))'
@@ -1899,15 +1899,6 @@ KtValueArgument(996,1011): 'test(superProp)'
 KtCallExpression(996,1011): 'test(superProp)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        superProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1928,6 +1919,15 @@ KtCallExpression(996,1011): 'test(superProp)'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        superProp -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1935,15 +1935,6 @@ KtCallExpression(996,1011): 'test(superProp)'
 KtNameReferenceExpression(996,1000): 'test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        superProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1964,6 +1955,15 @@ KtNameReferenceExpression(996,1000): 'test'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        superProp -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -1980,15 +1980,6 @@ KtNameReferenceExpression(1001,1010): 'superProp'
 KtCallExpression(1017,1047): 'consumeMyClass(test(lazyProp))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(lazyProp) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2008,20 +1999,20 @@ KtCallExpression(1017,1047): 'consumeMyClass(test(lazyProp))'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(lazyProp) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1017,1031): 'consumeMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(lazyProp) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2041,6 +2032,15 @@ KtNameReferenceExpression(1017,1031): 'consumeMyClass'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(lazyProp) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(1031,1047): '(test(lazyProp))'
@@ -2052,15 +2052,6 @@ KtValueArgument(1032,1046): 'test(lazyProp)'
 KtCallExpression(1032,1046): 'test(lazyProp)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        lazyProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2081,6 +2072,15 @@ KtCallExpression(1032,1046): 'test(lazyProp)'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        lazyProp -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -2088,15 +2088,6 @@ KtCallExpression(1032,1046): 'test(lazyProp)'
 KtNameReferenceExpression(1032,1036): 'test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        lazyProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2117,6 +2108,15 @@ KtNameReferenceExpression(1032,1036): 'test'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        lazyProp -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -2133,15 +2133,6 @@ KtNameReferenceExpression(1037,1045): 'lazyProp'
 KtCallExpression(1052,1084): 'consumeMyClass(test(lambdaProp))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(lambdaProp) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2161,20 +2152,20 @@ KtCallExpression(1052,1084): 'consumeMyClass(test(lambdaProp))'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(lambdaProp) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1052,1066): 'consumeMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(lambdaProp) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2194,6 +2185,15 @@ KtNameReferenceExpression(1052,1066): 'consumeMyClass'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(lambdaProp) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(1066,1084): '(test(lambdaProp))'
@@ -2205,15 +2205,6 @@ KtValueArgument(1067,1083): 'test(lambdaProp)'
 KtCallExpression(1067,1083): 'test(lambdaProp)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        lambdaProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2234,6 +2225,15 @@ KtCallExpression(1067,1083): 'test(lambdaProp)'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        lambdaProp -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -2241,15 +2241,6 @@ KtCallExpression(1067,1083): 'test(lambdaProp)'
 KtNameReferenceExpression(1067,1071): 'test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        lambdaProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2270,6 +2261,15 @@ KtNameReferenceExpression(1067,1071): 'test'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        lambdaProp -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -2286,15 +2286,6 @@ KtNameReferenceExpression(1072,1082): 'lambdaProp'
 KtCallExpression(1090,1128): 'consumeMyClass(test(InheritorClass()))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(InheritorClass()) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2314,20 +2305,20 @@ KtCallExpression(1090,1128): 'consumeMyClass(test(InheritorClass()))'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(InheritorClass()) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1090,1104): 'consumeMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(InheritorClass()) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2347,6 +2338,15 @@ KtNameReferenceExpression(1090,1104): 'consumeMyClass'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(InheritorClass()) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(1104,1128): '(test(InheritorClass()))'
@@ -2358,15 +2358,6 @@ KtValueArgument(1105,1127): 'test(InheritorClass())'
 KtCallExpression(1105,1127): 'test(InheritorClass())'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorClass() -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2387,6 +2378,15 @@ KtCallExpression(1105,1127): 'test(InheritorClass())'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        InheritorClass() -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -2394,15 +2394,6 @@ KtCallExpression(1105,1127): 'test(InheritorClass())'
 KtNameReferenceExpression(1105,1109): 'test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorClass() -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2423,6 +2414,15 @@ KtNameReferenceExpression(1105,1109): 'test'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        InheritorClass() -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -2445,15 +2445,6 @@ KtValueArgumentList(1124,1126): '()'
 KtCallExpression(1133,1161): 'consumeMyClass(test(func()))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(func()) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2473,20 +2464,20 @@ KtCallExpression(1133,1161): 'consumeMyClass(test(func()))'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(func()) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1133,1147): 'consumeMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        test(func()) -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2506,6 +2497,15 @@ KtNameReferenceExpression(1133,1147): 'consumeMyClass'
         contextParameters = []
         callableId = /consumeMyClass
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test(func()) -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(1147,1161): '(test(func()))'
@@ -2517,15 +2517,6 @@ KtValueArgument(1148,1160): 'test(func())'
 KtCallExpression(1148,1160): 'test(func())'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        func() -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2546,6 +2537,15 @@ KtCallExpression(1148,1160): 'test(func())'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        func() -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true
@@ -2553,15 +2553,6 @@ KtCallExpression(1148,1160): 'test(func())'
 KtNameReferenceExpression(1148,1152): 'test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        func() -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2582,6 +2573,15 @@ KtNameReferenceExpression(1148,1152): 'test'
         callableId = /test
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        func() -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
     isInBestCandidates = true

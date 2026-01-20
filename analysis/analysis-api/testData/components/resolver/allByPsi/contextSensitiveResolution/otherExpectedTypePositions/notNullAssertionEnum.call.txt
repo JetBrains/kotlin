@@ -321,15 +321,6 @@ KtOperationReferenceExpression(491,493): '!!'
 
 KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      Option1!! -> (KaVariableSignature:
-        name = e
-        receiverType = null
-        returnType = MyEnum
-        symbol = e: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -351,19 +342,19 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
     typeArgumentsMapping = {
       T -> (MyEnum)
     }
+    valueArgumentMapping = {
+      Option1!! -> (KaVariableSignature:
+        name = e
+        receiverType = null
+        returnType = MyEnum
+        symbol = e: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(499,506): 'receive'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Option1!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyEnum
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -384,6 +375,15 @@ KtNameReferenceExpression(499,506): 'receive'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        Option1!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(506,514): '<MyEnum>'
@@ -435,15 +435,6 @@ KtOperationReferenceExpression(522,524): '!!'
 
 KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
   KaSimpleFunctionCall:
-    argumentMapping = {
-      enumProp!! -> (KaVariableSignature:
-        name = e
-        receiverType = null
-        returnType = MyEnum
-        symbol = e: T
-        contextParameters = []
-        callableId = null)
-    }
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -465,19 +456,19 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
     typeArgumentsMapping = {
       T -> (MyEnum)
     }
+    valueArgumentMapping = {
+      enumProp!! -> (KaVariableSignature:
+        name = e
+        receiverType = null
+        returnType = MyEnum
+        symbol = e: T
+        contextParameters = []
+        callableId = null)
+    }
 
 KtNameReferenceExpression(530,537): 'receive'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        enumProp!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyEnum
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -498,6 +489,15 @@ KtNameReferenceExpression(530,537): 'receive'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        enumProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(537,545): '<MyEnum>'
@@ -551,15 +551,6 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          stringProp!! -> (KaVariableSignature:
-            name = e
-            receiverType = null
-            returnType = MyEnum
-            symbol = e: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -580,6 +571,15 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
           callableId = /receive
         typeArgumentsMapping = {
           T -> (MyEnum)
+        }
+        valueArgumentMapping = {
+          stringProp!! -> (KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum?' was expected.>
@@ -588,15 +588,6 @@ KtNameReferenceExpression(562,569): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          stringProp!! -> (KaVariableSignature:
-            name = e
-            receiverType = null
-            returnType = MyEnum
-            symbol = e: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -617,6 +608,15 @@ KtNameReferenceExpression(562,569): 'receive'
           callableId = /receive
         typeArgumentsMapping = {
           T -> (MyEnum)
+        }
+        valueArgumentMapping = {
+          stringProp!! -> (KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum?' was expected.>

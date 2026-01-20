@@ -2,15 +2,6 @@ KtCallExpression(128,144): 'function<Int>(1)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          1 -> (KaVariableSignature:
-            name = t
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = t: T
-            contextParameters = []
-            callableId = null)
-        }
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -38,17 +29,17 @@ KtCallExpression(128,144): 'function<Int>(1)'
           callableId = /function
         typeArgumentsMapping = {
           T -> (kotlin.Int)
-        },
-      KaSimpleFunctionCall:
-        argumentMapping = {
+        }
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
-            name = u
+            name = t
             receiverType = null
             returnType = kotlin.Int
-            symbol = u: U
+            symbol = t: T
             contextParameters = []
             callableId = null)
-        }
+        },
+      KaSimpleFunctionCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -76,17 +67,17 @@ KtCallExpression(128,144): 'function<Int>(1)'
           callableId = /function
         typeArgumentsMapping = {
           U -> (kotlin.Int)
-        },
-      KaSimpleFunctionCall:
-        argumentMapping = {
+        }
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
-            name = v
+            name = u
             receiverType = null
             returnType = kotlin.Int
-            symbol = v: V
+            symbol = u: U
             contextParameters = []
             callableId = null)
-        }
+        },
+      KaSimpleFunctionCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -114,6 +105,15 @@ KtCallExpression(128,144): 'function<Int>(1)'
           callableId = /function
         typeArgumentsMapping = {
           V -> (kotlin.Int)
+        }
+        valueArgumentMapping = {
+          1 -> (KaVariableSignature:
+            name = v
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = v: V
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:

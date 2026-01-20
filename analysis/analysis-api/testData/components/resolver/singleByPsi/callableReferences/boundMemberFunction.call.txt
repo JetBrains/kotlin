@@ -1,6 +1,5 @@
 KtCallableReferenceExpression(72,80): 'obj::foo'
   KaSimpleFunctionCall:
-    argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = obj
@@ -23,3 +22,4 @@ KtCallableReferenceExpression(72,80): 'obj::foo'
       contextParameters = []
       callableId = /Foo.foo
     typeArgumentsMapping = {}
+    valueArgumentMapping = {}

@@ -2,7 +2,6 @@ KtCallExpression(68,73): 'foo()'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -29,5 +28,6 @@ KtCallExpression(68,73): 'foo()'
           ]
           callableId = /foo
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'int: Int' found.>

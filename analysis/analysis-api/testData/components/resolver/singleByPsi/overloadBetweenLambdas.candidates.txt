@@ -1,15 +1,6 @@
 KtNameReferenceExpression(129,133): 'post'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {} -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (T) -> kotlin.Unit
-          symbol = action: (T) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,19 +20,19 @@ KtNameReferenceExpression(129,133): 'post'
         contextParameters = []
         callableId = test/post
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {} -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (T) -> kotlin.Unit
+          symbol = action: (T) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {} -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.Unit) -> kotlin.Unit
-          symbol = action: (kotlin.Unit) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -61,4 +52,13 @@ KtNameReferenceExpression(129,133): 'post'
         contextParameters = []
         callableId = test/post
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {} -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.Unit) -> kotlin.Unit
+          symbol = action: (kotlin.Unit) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

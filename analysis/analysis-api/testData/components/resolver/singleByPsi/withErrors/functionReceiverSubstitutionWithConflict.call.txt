@@ -2,7 +2,6 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -24,9 +23,9 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
           ]
           contextParameters = []
           callableId = /foo
-        typeArgumentsMapping = {},
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
       KaSimpleFunctionCall:
-        argumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -49,6 +48,7 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
           contextParameters = []
           callableId = /foo
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
     

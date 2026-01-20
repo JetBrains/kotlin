@@ -1,7 +1,6 @@
 KtDotQualifiedExpression(162,171): 'b.clear()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
         original = KaExplicitReceiverValue:
@@ -18,4 +17,5 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
         contextParameters = []
         callableId = kotlin/collections/MutableList.clear
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

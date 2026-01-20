@@ -1,7 +1,6 @@
 KtCollectionLiteralExpression(136,138): '[]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = []
@@ -24,4 +23,5 @@ KtCollectionLiteralExpression(136,138): '[]'
         contextParameters = []
         callableId = /MyList.Companion.of
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

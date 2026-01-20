@@ -1,7 +1,6 @@
 KtCallExpression(102,105): 'c()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = /Foo
@@ -15,4 +14,5 @@ KtCallExpression(102,105): 'c()'
         contextParameters = []
         callableId = /Container.c
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

@@ -1,22 +1,6 @@
 KtCollectionLiteralExpression(213,223): '["1", "2"]'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "1" -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null),
-        "2" -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -37,6 +21,22 @@ KtCollectionLiteralExpression(213,223): '["1", "2"]'
         callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "1" -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg elements: T
+          contextParameters = []
+          callableId = null),
+        "2" -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg elements: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
     isInBestCandidates = true

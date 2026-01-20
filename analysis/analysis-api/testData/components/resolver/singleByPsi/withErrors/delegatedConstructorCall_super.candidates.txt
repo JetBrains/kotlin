@@ -1,15 +1,6 @@
 KtConstructorDelegationCall(118,130): 'super(i + j)'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        i + j -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = p1: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -30,4 +21,13 @@ KtConstructorDelegationCall(118,130): 'super(i + j)'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i + j -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p1: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

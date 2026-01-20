@@ -4,7 +4,6 @@ KtPostfixExpression(138,148): 'variable++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = variable
@@ -19,6 +18,7 @@ KtPostfixExpression(138,148): 'variable++'
             contextParameters = []
             callableId = /MyClass.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []

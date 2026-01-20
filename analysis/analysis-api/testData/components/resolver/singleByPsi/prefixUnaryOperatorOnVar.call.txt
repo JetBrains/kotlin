@@ -4,7 +4,6 @@ KtPrefixExpression(31,34): '++i'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = i
@@ -19,6 +18,7 @@ KtPrefixExpression(31,34): '++i'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = PREFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []

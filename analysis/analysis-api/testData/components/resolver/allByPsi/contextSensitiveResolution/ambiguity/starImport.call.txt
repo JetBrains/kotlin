@@ -1390,15 +1390,6 @@ KtNameReferenceExpression(1301,1308): 'Boolean'
 KtBinaryExpression(1311,1317): 's == A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1421,6 +1412,15 @@ KtBinaryExpression(1311,1317): 's == A'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1311,1312): 's'
   KaSuccessCallInfo:
@@ -1442,15 +1442,6 @@ KtNameReferenceExpression(1311,1312): 's'
 KtOperationReferenceExpression(1313,1315): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1473,6 +1464,15 @@ KtOperationReferenceExpression(1313,1315): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1316,1317): 'A'
   null
@@ -1507,15 +1507,6 @@ KtNameReferenceExpression(1350,1357): 'Boolean'
 KtBinaryExpression(1360,1373): 's == Sealed.A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1538,6 +1529,15 @@ KtBinaryExpression(1360,1373): 's == Sealed.A'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1360,1361): 's'
   KaSuccessCallInfo:
@@ -1559,15 +1559,6 @@ KtNameReferenceExpression(1360,1361): 's'
 KtOperationReferenceExpression(1362,1364): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1590,6 +1581,15 @@ KtOperationReferenceExpression(1362,1364): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtDotQualifiedExpression(1365,1373): 'Sealed.A'
   null
@@ -1630,15 +1630,6 @@ KtNameReferenceExpression(1408,1415): 'Boolean'
 KtBinaryExpression(1418,1428): 's == foo.A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        foo.A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1661,6 +1652,15 @@ KtBinaryExpression(1418,1428): 's == foo.A'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        foo.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1418,1419): 's'
   KaSuccessCallInfo:
@@ -1682,15 +1682,6 @@ KtNameReferenceExpression(1418,1419): 's'
 KtOperationReferenceExpression(1420,1422): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        foo.A -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1713,6 +1704,15 @@ KtOperationReferenceExpression(1420,1422): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        foo.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtDotQualifiedExpression(1423,1428): 'foo.A'
   null
@@ -1753,15 +1753,6 @@ KtNameReferenceExpression(1458,1465): 'Boolean'
 KtBinaryExpression(1468,1481): 's == Sealed.C'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.C -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1784,6 +1775,15 @@ KtBinaryExpression(1468,1481): 's == Sealed.C'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.C -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1468,1469): 's'
   KaSuccessCallInfo:
@@ -1805,15 +1805,6 @@ KtNameReferenceExpression(1468,1469): 's'
 KtOperationReferenceExpression(1470,1472): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.C -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1836,6 +1827,15 @@ KtOperationReferenceExpression(1470,1472): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.C -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtDotQualifiedExpression(1473,1481): 'Sealed.C'
   null
@@ -1876,15 +1876,6 @@ KtNameReferenceExpression(1514,1521): 'Boolean'
 KtBinaryExpression(1524,1539): 's == CompanionA'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        CompanionA -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1907,6 +1898,15 @@ KtBinaryExpression(1524,1539): 's == CompanionA'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1524,1525): 's'
   KaSuccessCallInfo:
@@ -1928,15 +1928,6 @@ KtNameReferenceExpression(1524,1525): 's'
 KtOperationReferenceExpression(1526,1528): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        CompanionA -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -1959,6 +1950,15 @@ KtOperationReferenceExpression(1526,1528): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1529,1539): 'CompanionA'
   null
@@ -1993,15 +1993,6 @@ KtNameReferenceExpression(1572,1579): 'Boolean'
 KtBinaryExpression(1582,1604): 's == Sealed.CompanionA'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.CompanionA -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -2024,6 +2015,15 @@ KtBinaryExpression(1582,1604): 's == Sealed.CompanionA'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1582,1583): 's'
   KaSuccessCallInfo:
@@ -2045,15 +2045,6 @@ KtNameReferenceExpression(1582,1583): 's'
 KtOperationReferenceExpression(1584,1586): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.CompanionA -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -2076,6 +2067,15 @@ KtOperationReferenceExpression(1584,1586): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtDotQualifiedExpression(1587,1604): 'Sealed.CompanionA'
   KaSuccessCallInfo:
@@ -2150,15 +2150,6 @@ KtNameReferenceExpression(1639,1646): 'Boolean'
 KtBinaryExpression(1649,1668): 's == foo.CompanionA'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        foo.CompanionA -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -2181,6 +2172,15 @@ KtBinaryExpression(1649,1668): 's == foo.CompanionA'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        foo.CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1649,1650): 's'
   KaSuccessCallInfo:
@@ -2202,15 +2202,6 @@ KtNameReferenceExpression(1649,1650): 's'
 KtOperationReferenceExpression(1651,1653): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        foo.CompanionA -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -2233,6 +2224,15 @@ KtOperationReferenceExpression(1651,1653): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        foo.CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtDotQualifiedExpression(1654,1668): 'foo.CompanionA'
   null
@@ -2273,15 +2273,6 @@ KtNameReferenceExpression(1698,1705): 'Boolean'
 KtBinaryExpression(1708,1714): 's == F'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        F -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -2304,6 +2295,15 @@ KtBinaryExpression(1708,1714): 's == F'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1708,1709): 's'
   KaSuccessCallInfo:
@@ -2325,15 +2325,6 @@ KtNameReferenceExpression(1708,1709): 's'
 KtOperationReferenceExpression(1710,1712): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        F -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -2356,6 +2347,15 @@ KtOperationReferenceExpression(1710,1712): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1713,1714): 'F'
   null
@@ -2390,15 +2390,6 @@ KtNameReferenceExpression(1747,1754): 'Boolean'
 KtBinaryExpression(1757,1770): 's == Sealed.F'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.F -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -2421,6 +2412,15 @@ KtBinaryExpression(1757,1770): 's == Sealed.F'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1757,1758): 's'
   KaSuccessCallInfo:
@@ -2442,15 +2442,6 @@ KtNameReferenceExpression(1757,1758): 's'
 KtOperationReferenceExpression(1759,1761): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Sealed.F -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -2473,6 +2464,15 @@ KtOperationReferenceExpression(1759,1761): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Sealed.F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtDotQualifiedExpression(1762,1770): 'Sealed.F'
   null
@@ -2513,15 +2513,6 @@ KtNameReferenceExpression(1805,1812): 'Boolean'
 KtBinaryExpression(1815,1825): 's == foo.F'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        foo.F -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -2544,6 +2535,15 @@ KtBinaryExpression(1815,1825): 's == foo.F'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        foo.F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1815,1816): 's'
   KaSuccessCallInfo:
@@ -2565,15 +2565,6 @@ KtNameReferenceExpression(1815,1816): 's'
 KtOperationReferenceExpression(1817,1819): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        foo.F -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -2596,6 +2587,15 @@ KtOperationReferenceExpression(1817,1819): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        foo.F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtDotQualifiedExpression(1820,1825): 'foo.F'
   null

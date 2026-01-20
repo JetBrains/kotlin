@@ -1,7 +1,6 @@
 KtCallExpression(136,139): 's()'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
       contextArguments = [
         KaSmartCastedReceiverValue:
           original = KaImplicitReceiverValue:
@@ -30,4 +29,5 @@ KtCallExpression(136,139): 's()'
         ]
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
