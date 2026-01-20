@@ -108,6 +108,12 @@ public class FirLightTreeBlackBoxCodegenTestForLombokGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("builderWithSuperBuilder.kt")
+  public void testBuilderWithSuperBuilder() {
+    runTest("plugins/lombok/testData/box/builderWithSuperBuilder.kt");
+  }
+
+  @Test
   @TestMetadata("canEqualInClassWithDataAnn.kt")
   public void testCanEqualInClassWithDataAnn() {
     runTest("plugins/lombok/testData/box/canEqualInClassWithDataAnn.kt");
