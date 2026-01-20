@@ -71,6 +71,8 @@ projectTests {
         }
     }
 
+    testGenerator("org.jetbrains.kotlin.analysis.api.standalone.fir.test.TestGeneratorKt")
+
     withJvmStdlibAndReflect()
     withPluginSandboxAnnotations()
 }

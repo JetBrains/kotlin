@@ -15,6 +15,7 @@
           <option value=":analysis:stubs:generateTests" />
           <option value=":analysis:low-level-api-fir:generateTests" />
           <option value=":analysis:low-level-api-fir:low-level-api-fir-native:generateTests" />
+          <option value=":analysis:analysis-api-standalone:generateTests" />
         </list>
       </option>
       <option name="vmOptions" />
