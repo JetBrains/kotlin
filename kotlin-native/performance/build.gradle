@@ -131,11 +131,6 @@ task cinterop {
     dependsOn 'cinterop:konanRun'
 }
 
-task framework {
-    dependsOn 'clean'
-    dependsOn 'framework:konanRun'
-}
-
 task helloworld {
     dependsOn 'clean'
     dependsOn 'helloworld:konanRun'
