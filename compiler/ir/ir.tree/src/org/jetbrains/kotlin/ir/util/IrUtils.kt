@@ -1220,6 +1220,49 @@ fun IrClass.addFakeOverrides(
     }
 }
 
+/**
+ * Appends the type and value parameters of [source] to [this],
+ * converting dispatch, extension and context receivers into regular parameters,
+ * also replacing the return type of this with [returnType],
+ * performing all the necessary substitutions wrt the new type parameters.
+ */
+fun IrFunction.copyFunctionSignatureAsStaticFrom(
+    source: IrFunction,
+    returnType: IrType = source.returnType,
+    dispatchReceiverType: IrType? = source.dispatchReceiverParameter?.type,
+    typeParametersFromContext: List<IrTypeParameter> = listOf(),
+) {
+    assert(typeParameters.isEmpty())
+    val newTypeParametersFromContext = copyAndRenameConflictingTypeParametersFrom(
+        typeParametersFromContext,
+        source.typeParameters
+    )
+    val newTypeParametersFromFunction = copyTypeParametersFrom(source)
+    val typeParameterMap =
+        (typeParametersFromContext + source.typeParameters)
+            .zip(newTypeParametersFromContext + newTypeParametersFromFunction).toMap()
+
+    fun remap(type: IrType): IrType =
+        type.remapTypeParameters(source, this, typeParameterMap)
+
+    typeParameters.forEach { it.superTypes = it.superTypes.memoryOptimizedMap(::remap) }
+
+    copyValueParametersToStatic(source, origin, dispatchReceiverType, typeParameterMap)
+
+    // TODO(KT-83771): think on moving this logic inside [copyValueParametersToStatic]
+    parameters.forEachIndexed { index, parameter ->
+        val oldParam = source.parameters[index]
+        parameter.origin = when (oldParam.kind) {
+            IrParameterKind.DispatchReceiver -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+            IrParameterKind.ExtensionReceiver -> IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+            IrParameterKind.Context -> IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
+            IrParameterKind.Regular -> oldParam.origin
+        }
+    }
+
+    this.returnType = remap(returnType)
+}
+
 fun IrFactory.createStaticFunctionWithReceivers(
     irParent: IrDeclarationParent,
     name: Name,
@@ -1253,38 +1296,9 @@ fun IrFactory.createStaticFunctionWithReceivers(
         isFakeOverride = isFakeOverride,
     ).apply {
         parent = irParent
-
-        val newTypeParametersFromContext = copyAndRenameConflictingTypeParametersFrom(
-            typeParametersFromContext,
-            oldFunction.typeParameters
-        )
-        val newTypeParametersFromFunction = copyTypeParametersFrom(oldFunction)
-        val typeParameterMap =
-            (typeParametersFromContext + oldFunction.typeParameters)
-                .zip(newTypeParametersFromContext + newTypeParametersFromFunction).toMap()
-
-        fun remap(type: IrType): IrType =
-            type.remapTypeParameters(oldFunction, this, typeParameterMap)
-
-        typeParameters.forEach { it.superTypes = it.superTypes.memoryOptimizedMap(::remap) }
-
         annotations = oldFunction.annotations
 
-        returnType = remap(returnType)
-
-        copyValueParametersToStatic(oldFunction, origin, dispatchReceiverType, typeParameterMap)
-
-        // TODO: think on moving this logic inside [copyValueParametersToStatic]
-        parameters.forEachIndexed { index, parameter ->
-            val oldParam = oldFunction.parameters[index]
-            parameter.origin = when (oldParam.kind) {
-                IrParameterKind.DispatchReceiver -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
-                IrParameterKind.ExtensionReceiver -> IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
-                IrParameterKind.Context -> IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
-                IrParameterKind.Regular -> oldParam.origin
-            }
-        }
-
+        copyFunctionSignatureAsStaticFrom(oldFunction, returnType, dispatchReceiverType, typeParametersFromContext)
         remapMultiFieldValueClassStructure(oldFunction, this, null)
 
         if (copyMetadata) metadata = oldFunction.metadata
@@ -1307,7 +1321,7 @@ fun IrContainerExpression.unwrapBlock(): IrExpression = statements.singleOrNull(
  * @returns List of newly created, possibly renamed, copies of type parameters
  *     in order of the corresponding parameters in [context].
  */
-private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
+private fun IrFunction.copyAndRenameConflictingTypeParametersFrom(
     contextParameters: List<IrTypeParameter>,
     existingParameters: Collection<IrTypeParameter>
 ): List<IrTypeParameter> {

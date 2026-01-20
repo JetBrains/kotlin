@@ -162,7 +162,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 
         val PROMISIFIED_MEMBER_WRAPPER by IrDeclarationOriginImpl.Regular
         val EXPORTED_SUSPEND_FUNCTION_BRIDGE by IrDeclarationOriginImpl.Regular
-        val EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER by IrDeclarationOriginImpl.Regular
+        val EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER_WITH_DEFAULT by IrDeclarationOriginImpl.Regular
 
         var IrFunction.bridgeFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
         var IrFunction.virtualBridgeFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
@@ -287,16 +287,19 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
         promisifiedWrapperFunction: IrSimpleFunction,
         implementationBridge: IrSimpleFunction,
     ): IrSimpleFunction =
-        buildBridgeFunction("${originalFunc.name}$EXPORTED_VIRTUAL_SUSPEND_FUNCTION_BRIDGE_SUFFIX", originalFunc) { bridgeFunction ->
+        buildBridgeFunction(
+            "${originalFunc.name}$EXPORTED_VIRTUAL_SUSPEND_FUNCTION_BRIDGE_SUFFIX",
+            originalFunc,
+            isStatic = true,
+        ) { bridgeFunction ->
             bridgeFunction.modality = Modality.FINAL
 
-            val dispatchReceiverParameter =
-                bridgeFunction.dispatchReceiverParameter ?: compilationException(
-                    "This function should be applied only to a member function",
-                    bridgeFunction
-                )
-
-            dispatchReceiverParameter.kind = IrParameterKind.Regular
+            val dispatchReceiverParameter = bridgeFunction.parameters.firstOrNull {
+                it.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+            } ?: compilationException(
+                "This function should be applied only to a function that previously had a dispatch receiver",
+                bridgeFunction
+            )
 
             val isFunctionImplementedOnKotlinSide = irCall(jsIsFunction).apply {
                 arguments[0] = irCall(jsMethodReference).apply {
@@ -374,6 +377,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
     private fun buildBridgeFunction(
         name: String,
         originalFunc: IrSimpleFunction,
+        isStatic: Boolean = false,
         bodyFactory: IrBlockBodyBuilder.(IrSimpleFunction) -> Unit,
     ): IrSimpleFunction =
         context.irFactory.buildFun {
@@ -383,7 +387,11 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
             startOffset = UNDEFINED_OFFSET
             endOffset = UNDEFINED_OFFSET
         }.also { bridgeFunc ->
-            bridgeFunc.copyFunctionSignatureFrom(originalFunc)
+            if (isStatic) {
+                bridgeFunc.copyFunctionSignatureAsStaticFrom(originalFunc)
+            } else {
+                bridgeFunc.copyFunctionSignatureFrom(originalFunc)
+            }
 
             bridgeFunc.parent = originalFunc.parent
 
@@ -393,8 +401,10 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
             }.compactIfPossible()
 
             bridgeFunc.parameters.forEach {
-                it.defaultValue = null
-                it.origin = EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER
+                if (it.defaultValue != null) {
+                    it.defaultValue = null
+                    it.origin = EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER_WITH_DEFAULT
+                }
             }
 
             bridgeFunc.body = context.createIrBuilder(bridgeFunc.symbol)
@@ -546,8 +556,8 @@ class IgnoreOriginalSuspendFunctionsThatWereExportedLowering(private val context
 private fun IrSimpleFunction.isExportedSuspendFunction(context: JsIrBackendContext): Boolean =
     isSuspend && isExported(context)
 
-val IrValueParameter.isProxyParameterForExportedSuspendFunction: Boolean
-    get() = origin == PrepareSuspendFunctionsForExportLowering.EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER
+val IrValueParameter.isProxyParameterWithDefaultForExportedSuspendFunction: Boolean
+    get() = origin == PrepareSuspendFunctionsForExportLowering.EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER_WITH_DEFAULT
 
 val IrOverridableDeclaration<*>.isPromisifiedMemberWrapper: Boolean
     get() = origin == PrepareSuspendFunctionsForExportLowering.PROMISIFIED_MEMBER_WRAPPER
