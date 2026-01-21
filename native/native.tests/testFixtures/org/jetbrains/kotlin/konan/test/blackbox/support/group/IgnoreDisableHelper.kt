@@ -49,7 +49,7 @@ internal fun Settings.isDisabledNative(directives: Directives) =
         )
     )
 
-// Note: this method would ignore DISABLED_NATIVE without parameters, since it would be not a StringDirective, but new SimpleDirective
+// Note: this method would accept DISABLED_NATIVE without parameters as an unconditional test exclusion: don't even try to compile
 internal fun Settings.isDisabledNative(registeredDirectives: RegisteredDirectives) =
     evaluate(
         getDirectiveValues(
@@ -69,7 +69,7 @@ internal fun Settings.isIgnoredWithIGNORE_NATIVE(directives: Directives) =
         )
     )
 
-// Note: this method would ignore IGNORE_NATIVE without parameters, since it would be not a StringDirective, but new SimpleDirective
+// Note: this method would treat IGNORE_NATIVE without parameters as an unconditional "test must fail on any config". Same as // IGNORE_BACKEND: NATIVE
 internal fun Settings.isIgnoredWithIGNORE_NATIVE(registeredDirectives: RegisteredDirectives) =
     evaluate(
         getDirectiveValues(
@@ -84,7 +84,7 @@ internal fun Settings.isIgnoredTarget(directives: Directives): Boolean {
     return isIgnoredWithIGNORE_NATIVE(directives) || isIgnoredWithIGNORE_BACKEND(directives::get)
 }
 
-// Note: this method would ignore IGNORE_NATIVE without parameters, since it would be not a StringDirective, but new SimpleDirective
+// Note: this method would treat IGNORE_NATIVE without parameters as an unconditional "test must fail on any config". Same as // IGNORE_BACKEND: NATIVE
 internal fun Settings.isIgnoredTarget(registeredDirectives: RegisteredDirectives): Boolean {
     return isIgnoredWithIGNORE_NATIVE(registeredDirectives) || isIgnoredWithIGNORE_BACKEND(registeredDirectives::get)
 }
@@ -157,5 +157,5 @@ internal fun Settings.getDirectiveValues(
     listValues: (StringDirective) -> List<String>?,
 ): List<String?> = buildList {
     if (isSpecified(directive))
-        listValues(directive)?.let { addAll(it) } ?: add(null)
+        listValues(directive)?.takeIf { it.isNotEmpty() }?.let { addAll(it) } ?: add(null)
 }
