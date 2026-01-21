@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 // NO_CHECK_LAMBDA_INLINING
 private fun funOK() = "OK"
 

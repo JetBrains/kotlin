@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 private val String.privateVal: String
     get() = this
 

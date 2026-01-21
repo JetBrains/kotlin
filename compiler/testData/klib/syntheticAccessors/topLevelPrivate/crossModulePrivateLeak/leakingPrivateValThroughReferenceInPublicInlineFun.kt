@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 // MODULE: lib
 // FILE: A.kt
 private val privateVal: String = "OK"

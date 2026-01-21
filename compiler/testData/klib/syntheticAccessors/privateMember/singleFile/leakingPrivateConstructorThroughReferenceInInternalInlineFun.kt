@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 import kotlin.reflect.KFunction1
 
 class A private constructor(val s: String) {
