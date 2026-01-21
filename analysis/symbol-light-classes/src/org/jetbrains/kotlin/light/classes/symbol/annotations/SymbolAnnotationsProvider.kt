@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -30,7 +31,11 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
     @field:Volatile
     var lastSymbolAnnotationClass: String? = null
 
+    @field:Volatile
     var lastExtraSymbolInfo: List<String>? = null
+
+    @field:Volatile
+    var owningPropertyInfoForBackingField: List<String>? = null
 
     override fun annotationInfos(): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
         val indices = mutableMapOf<ClassId?, Int>()
@@ -38,6 +43,20 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
         lastAnnotatedSymbolClassAsString = annotatedSymbol::class.qualifiedName
         lastSymbolAnnotationClass = annotatedSymbol.annotations::class.qualifiedName
         lastExtraSymbolInfo = annotatedSymbol.getExtraInfo()
+
+        if (annotatedSymbol is KaBackingFieldSymbol) { // expected from the debug info
+            owningPropertyInfoForBackingField = buildList {
+                add("Backing field owning property class: ${annotatedSymbol.owningProperty::class.qualifiedName}")
+                add("Backing field owning property annotations class: ${annotatedSymbol.owningProperty.annotations::class.qualifiedName}")
+                add(
+                    "Backing field owning property annotations class IDs: ${
+                        annotatedSymbol.owningProperty.annotations.classIds.joinToString(
+                            "; "
+                        ) { it.asString() }
+                    }"
+                )
+            }
+        }
 
         annotatedSymbol.annotations.map { annotation ->
             // to preserve the initial annotations order

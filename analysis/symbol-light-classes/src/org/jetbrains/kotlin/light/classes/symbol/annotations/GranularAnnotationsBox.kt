@@ -37,8 +37,6 @@ internal class GranularAnnotationsBox(
             return it
         }
 
-        cachePopulatedTrace = Throwable()
-
         annotationInfo.add("Annotation provider ${annotationsProvider::class.java.canonicalName} has ${annotationsProvider.annotationInfos().size} annotations")
 
         if (annotationsProvider is SymbolAnnotationsProvider<*>) {
@@ -57,6 +55,10 @@ internal class GranularAnnotationsBox(
             annotationInfo.add(
                 annotationsProvider.lastExtraSymbolInfo.let { "Last info from the depths of FIR: ${it?.joinToString(prefix = "[\n", postfix = "]\n", separator = System.lineSeparator())}" }
             )
+
+            annotationInfo.add(
+                annotationsProvider.owningPropertyInfoForBackingField.let { "Owning property info for backing field: ${it?.joinToString(prefix = "[\n", postfix = "]\n", separator = System.lineSeparator())}" }
+            )
         }
 
         val annotations = annotationsProvider.annotationInfos().mapNotNullTo(SmartList<PsiAnnotation>()) { applicationInfo ->
@@ -70,6 +72,7 @@ internal class GranularAnnotationsBox(
 
         val resultAnnotations = annotationFilter.filtered(annotations)
         fieldUpdater.compareAndSet(this, null, resultAnnotations)
+        cachePopulatedTrace = Throwable()
 
         return getOrComputeCachedAnnotations(owner)
     }
