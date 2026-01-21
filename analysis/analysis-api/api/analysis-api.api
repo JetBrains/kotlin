@@ -101,61 +101,75 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstan
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$BooleanValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
 	public abstract fun getValue ()Ljava/lang/Boolean;
+	public synthetic fun getValue ()Ljava/lang/Object;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$ByteValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
 	public abstract fun getValue ()Ljava/lang/Byte;
+	public synthetic fun getValue ()Ljava/lang/Object;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$CharValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
 	public abstract fun getValue ()Ljava/lang/Character;
+	public synthetic fun getValue ()Ljava/lang/Object;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$DoubleValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
 	public abstract fun getValue ()Ljava/lang/Double;
+	public synthetic fun getValue ()Ljava/lang/Object;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$ErrorValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
 	public abstract fun getErrorMessage ()Ljava/lang/String;
+	public synthetic fun getValue ()Ljava/lang/Object;
 	public abstract fun getValue ()Ljava/lang/Void;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$FloatValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
 	public abstract fun getValue ()Ljava/lang/Float;
+	public synthetic fun getValue ()Ljava/lang/Object;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$IntValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
 	public abstract fun getValue ()Ljava/lang/Integer;
+	public synthetic fun getValue ()Ljava/lang/Object;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$LongValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
 	public abstract fun getValue ()Ljava/lang/Long;
+	public synthetic fun getValue ()Ljava/lang/Object;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$NullValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$ShortValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
+	public synthetic fun getValue ()Ljava/lang/Object;
 	public abstract fun getValue ()Ljava/lang/Short;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$StringValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
+	public synthetic fun getValue ()Ljava/lang/Object;
 	public abstract fun getValue ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$UByteValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
+	public synthetic fun getValue ()Ljava/lang/Object;
 	public abstract fun getValue-w2LRezQ ()B
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$UIntValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
+	public synthetic fun getValue ()Ljava/lang/Object;
 	public abstract fun getValue-pVg5ArA ()I
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$ULongValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
+	public synthetic fun getValue ()Ljava/lang/Object;
 	public abstract fun getValue-s-VKNKU ()J
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/base/KaConstantValue$UShortValue : org/jetbrains/kotlin/analysis/api/base/KaConstantValue {
+	public synthetic fun getValue ()Ljava/lang/Object;
 	public abstract fun getValue-Mh2AYeg ()S
 }
 
