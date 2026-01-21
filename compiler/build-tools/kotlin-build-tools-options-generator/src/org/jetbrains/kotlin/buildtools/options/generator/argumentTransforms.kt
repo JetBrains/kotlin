@@ -43,6 +43,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xfragment-dependency")
             drop("Xseparate-kmp-compilation")
             drop("Xdirect-java-actualization")
+            drop("Xfragment-friend-dependency")
         }
         with(removedCommonCompilerArguments) {
             drop("Xuse-k2")
