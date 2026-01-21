@@ -501,6 +501,7 @@ enum class LanguageFeature(
     KlibAnnotationsInMetadata(sinceVersion = KOTLIN_2_5, "KT-81466"),
     ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases(sinceVersion = KOTLIN_2_5, "KTLC-288"),
     ForbidExternalEnumEntriesAndPrimaryConstructorProperties(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-389"),
+    ProperSupportOfInnerClassesInCallableReferenceLHS(sinceVersion = KOTLIN_2_5, "KTLC-388"),
 
     // End of 2.* language features --------------------------------------------------
 
