@@ -63,7 +63,6 @@ abstract class AbstractLibraryAbiReaderTest(
             +WITH_STDLIB
             DUMP_KLIB_ABI with KlibAbiDumpMode.ALL_SIGNATURE_VERSIONS
             LANGUAGE with listOf(
-                "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                 "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
             )
         }
