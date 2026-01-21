@@ -27,7 +27,12 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.lang.ref.SoftReference
+import java.net.URLClassLoader
+import java.util.jar.Attributes
+import java.util.jar.JarFile
+import java.util.jar.Manifest
 import java.util.regex.Pattern
+import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 import kotlin.reflect.KClass
 
@@ -36,7 +41,46 @@ val kotlinPathsForDistDirectoryForTestsOrNull: KotlinPaths?
 val PathUtil.kotlinPathsForDistDirectoryForTests: KotlinPaths
     get() = kotlinPathsForDistDirectoryForTestsOrNull ?: kotlinPathsForDistDirectory
 
-object MockLibraryUtil {
+object MockLibraryUtil : AbstractMockLibraryUtil() {
+    @Synchronized
+    override fun createCompilerClassLoader(): ClassLoader {
+        return ClassPreloadingUtils.preloadClasses(
+            listOf(PathUtil.kotlinPathsForDistDirectoryForTests.compilerPath),
+            Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null
+        )
+    }
+}
+
+object NoPreloadingMockLibraryUtil : AbstractMockLibraryUtil() {
+    override fun createCompilerClassLoader(): ClassLoader {
+        val compilerJarFile = PathUtil.kotlinPathsForDistDirectoryForTests.compilerPath
+        val compilerJarFolder = compilerJarFile.parentFile
+
+        val additionalCompilerClasspath = ZipFile(compilerJarFile).use { zipFile ->
+            val manifestEntry = zipFile.getEntry(JarFile.MANIFEST_NAME) ?: error("Manifest not found in Kotlin compiler JAR")
+            val manifest = zipFile.getInputStream(manifestEntry).use { inputStream -> Manifest(inputStream) }
+            manifest.mainAttributes.getValue(Attributes.Name.CLASS_PATH).orEmpty().split(" ")
+                .filter { it.endsWith(".jar") }
+                .map { File(compilerJarFolder, it) }
+                .filter { it.exists() }
+        }
+
+        val compilerClasspath = listOf(compilerJarFile) + additionalCompilerClasspath
+        val compilerClasspathUrls = compilerClasspath.map { it.toURI().toURL() }.toTypedArray()
+
+        // Enforce there are no traces of Kotlin in the classpath
+        val bootstrapClassLoader = ClassLoader.getSystemClassLoader().parent
+        if (bootstrapClassLoader != null) {
+            require(bootstrapClassLoader.getResource(Unit::class.java.name.replace('.', '/') + ".class") == null) {
+                "Kotlin is found in the classpath of the isolated ClassLoader"
+            }
+        }
+
+        return URLClassLoader(compilerClasspathUrls, bootstrapClassLoader)
+    }
+}
+
+abstract class AbstractMockLibraryUtil {
     private var compilerClassLoader = SoftReference<ClassLoader>(null)
 
     fun compileJvmLibraryToJar(
@@ -218,11 +262,5 @@ object MockLibraryUtil {
         return classLoader.loadClass(compilerClass.java.name)
     }
 
-    @Synchronized
-    private fun createCompilerClassLoader(): ClassLoader {
-        return ClassPreloadingUtils.preloadClasses(
-            listOf(PathUtil.kotlinPathsForDistDirectoryForTests.compilerPath),
-            Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null
-        )
-    }
+    protected abstract fun createCompilerClassLoader(): ClassLoader
 }
