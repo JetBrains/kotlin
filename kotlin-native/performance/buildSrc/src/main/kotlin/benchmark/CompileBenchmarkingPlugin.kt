@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.benchmark
 import org.gradle.api.*
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.Exec
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.*
 import javax.inject.Inject
 
@@ -52,6 +53,19 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
 
             group = BenchmarkingPlugin.BENCHMARKING_GROUP
             description = "Runs the compile only benchmark for Kotlin/Native."
+
+            doLast {
+                val nativeCompileTime = getCompileBenchmarkTime(
+                        project,
+                        this@with.applicationName,
+                        buildSteps.names,
+                        repeatNumber,
+                        exitCodes
+                )
+                layout.buildDirectory.file(nativeBenchResults).get().asFile.writeText(
+                        nativeCompileTime.joinToString(prefix = "[", postfix = "]") { it.toJson() }
+                )
+            }
         }
 
         // Compile tasks.
@@ -72,33 +86,20 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
         }
 
         // Report task.
-        tasks.create("konanJsonReport").apply {
-
+        val konanJsonReport by tasks.registering(JsonReportTask::class) {
             group = BenchmarkingPlugin.BENCHMARKING_GROUP
             description = "Builds the benchmarking report for Kotlin/Native."
 
-            doLast {
-                val nativeCompileTime = getCompileBenchmarkTime(
-                    project,
-                    applicationName,
-                    buildSteps.names,
-                    repeatNumber,
-                    exitCodes
-                )
-                val nativeExecutable = layout.buildDirectory.file("program${getNativeProgramExtension()}").get().asFile
-                val properties = commonBenchmarkProperties + mapOf(
-                    "type" to "native",
-                    "compilerVersion" to konanVersion,
-                    "benchmarks" to "[]",
-                    "flags" to getCompilerFlags(benchmarkExtension).sorted(),
-                    "compileTime" to nativeCompileTime,
-                    "codeSize" to getCodeSizeBenchmark(applicationName, nativeExecutable.absolutePath)
-                )
-                val output = createJsonReport(properties)
-                layout.buildDirectory.file(nativeJson).get().asFile.writeText(output)
-            }
-            konanRun.finalizedBy(this)
+            this.applicationName.set(this@with.applicationName)
+            codeSizeBinary.set(layout.buildDirectory.file("program${getNativeProgramExtension()}"))
+            benchmarksReportFile.set(layout.buildDirectory.file(nativeBenchResults))
+            dependsOn(konanRun)
+            compilerVersion.set(project.konanVersion)
+            compilerFlags.set(getCompilerFlags(benchmarkExtension).sorted())
+            kotlinVersion.set(project.kotlinVersion)
+            reportFile.set(layout.buildDirectory.file(nativeJson))
         }
+        konanRun.finalizedBy(konanJsonReport)
     }
 
     private fun getCompilerFlags(benchmarkExtension: CompileBenchmarkExtension) =

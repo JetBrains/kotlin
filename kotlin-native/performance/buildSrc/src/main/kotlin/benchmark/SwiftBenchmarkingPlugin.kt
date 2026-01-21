@@ -30,11 +30,8 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
 
     override val benchmarkExtensionName: String = "swiftBenchmark"
 
-    override val Project.nativeLinkBinary: String
+    private val Project.nativeLinkBinary: String
         get() = File("${framework.outputFile.absolutePath}/$nativeFrameworkName").canonicalPath
-
-    override val Project.nativeLinkTaskArguments: List<String>
-        get() = framework.freeCompilerArgs.map { "\"$it\"" }
 
     private lateinit var framework: Framework
     val nativeFrameworkName = "benchmark"
@@ -71,6 +68,11 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     override fun RunKotlinNativeTask.configureKonanRunTask() {
         executable.set(project.layout.buildDirectory.file(project.benchmark.applicationName))
         dependsOn("buildSwift")
+    }
+
+    override fun JsonReportTask.configureKonanJsonReportTask() {
+        codeSizeBinary.set(project.file("${framework.outputFile.absolutePath}/$nativeFrameworkName"))
+        compilerFlags.addAll(framework.freeCompilerArgs.map { "\"$it\"" })
     }
 
     fun Array<String>.runCommand(

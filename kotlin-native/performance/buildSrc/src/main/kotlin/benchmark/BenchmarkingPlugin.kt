@@ -28,8 +28,8 @@ internal val Project.compilerArgs: List<String>
 internal val Project.kotlinVersion: String
     get() = property("kotlinVersion") as String
 
-internal val Project.konanVersion: String
-    get() = property("konanVersion") as String
+internal val Project.konanVersion: String?
+    get() = findProperty("konanVersion") as String?
 
 internal val Project.nativeJson: String
     get() = project.property("nativeJson") as String
@@ -39,15 +39,6 @@ internal val Project.buildType: NativeBuildType
 
 internal val Project.useCSet: Boolean
     get() = (findProperty("useCSet") as String?).toBoolean()
-
-internal val Project.commonBenchmarkProperties: Map<String, Any>
-    get() = mapOf(
-            "cpu" to System.getProperty("os.arch"),
-            "os" to System.getProperty("os.name"),
-            "jdkVersion" to System.getProperty("java.version"),
-            "jdkVendor" to System.getProperty("java.vendor"),
-            "kotlinVersion" to kotlinVersion
-    )
 
 open class BenchmarkExtension @Inject constructor(val project: Project) {
     var applicationName: String = project.name
@@ -62,8 +53,6 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
  * A plugin configuring a benchmark Kotlin/Native project.
  */
 abstract class BenchmarkingPlugin: Plugin<Project> {
-    protected abstract val Project.nativeLinkBinary: String
-    protected abstract val Project.nativeLinkTaskArguments: List<String>
     protected abstract val Project.benchmark: BenchmarkExtension
     protected abstract val benchmarkExtensionName: String
     protected abstract val benchmarkExtensionClass: KClass<*>
@@ -123,36 +112,26 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
         }
     }
 
-    private fun Project.collectCompilerFlags() = buildList {
-        if (benchmark.buildType.optimized) {
-            add("-opt")
-        }
-        if (benchmark.buildType.debuggable) {
-            add("-g")
-        }
-        addAll(project.nativeLinkTaskArguments)
-    }
+    protected abstract fun JsonReportTask.configureKonanJsonReportTask()
 
     private fun Project.createKonanJsonReportTask() {
-        tasks.register("konanJsonReport") {
+        tasks.register<JsonReportTask>("konanJsonReport") {
             group = BENCHMARKING_GROUP
             description = "Builds the benchmarking report for Kotlin/Native."
 
-            doLast {
-                val applicationName = benchmark.applicationName
-                val benchContents = layout.buildDirectory.file(nativeBenchResults).get().asFile.readText()
-
-                val properties = commonBenchmarkProperties + mapOf(
-                        "type" to "native",
-                        "compilerVersion" to konanVersion,
-                        "flags" to collectCompilerFlags(),
-                        "benchmarks" to benchContents,
-                        "codeSize" to getCodeSizeBenchmark(applicationName, nativeLinkBinary)
-                )
-
-                val output = createJsonReport(properties)
-                layout.buildDirectory.file(nativeJson).get().asFile.writeText(output)
+            applicationName.set(benchmark.applicationName)
+            benchmarksReportFile.set(layout.buildDirectory.file(nativeBenchResults))
+            compilerVersion.set(project.konanVersion)
+            if (benchmark.buildType.optimized) {
+                compilerFlags.add("-opt")
             }
+            if (benchmark.buildType.debuggable) {
+                compilerFlags.add("-g")
+            }
+            kotlinVersion.set(project.kotlinVersion)
+            reportFile.set(layout.buildDirectory.file(nativeJson))
+
+            configureKonanJsonReportTask()
         }
     }
 
