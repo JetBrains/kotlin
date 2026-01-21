@@ -14,7 +14,7 @@ interface I<T> {
         get() = TODO()
 }
 
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING!>D<!> : C<String>(), I<String> {
+abstract class D : C<String>(), I<String> {
 }
 
 fun main() {
