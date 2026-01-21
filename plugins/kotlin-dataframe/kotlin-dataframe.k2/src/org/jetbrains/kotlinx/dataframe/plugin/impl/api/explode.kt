@@ -22,20 +22,21 @@ internal class Explode0 : AbstractInterpreter<PluginDataFrameSchema>() {
                 }
             }
         }
-        return receiver.explodeImpl(dropEmpty, columns.resolve(receiver))
+        return receiver.explodeImpl(dropEmpty, columns)
     }
 }
 
 context(facade: KotlinTypeFacade)
-fun PluginDataFrameSchema.explodeImpl(dropEmpty: Boolean, selector: List<ColumnWithPathApproximation>): PluginDataFrameSchema {
-    val selected = selector.associateBy { it.path }
+fun PluginDataFrameSchema.explodeImpl(dropEmpty: Boolean, selector: ColumnsResolver): PluginDataFrameSchema {
+    val columns = selector.resolve(this)
+    val selected = columns.associateBy { it.path }
 
     fun makeNullable(column: SimpleCol): SimpleCol {
         return when (column) {
             is SimpleColumnGroup -> SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) })
             is SimpleFrameColumn -> column
             is SimpleDataColumn -> {
-                column.changeType(type = column.type.changeNullability { nullable -> selector.size > 1 || !dropEmpty || nullable })
+                column.changeType(type = column.type.changeNullability { nullable -> columns.size > 1 || !dropEmpty || nullable })
             }
         }
     }
@@ -70,7 +71,7 @@ fun PluginDataFrameSchema.explodeImpl(dropEmpty: Boolean, selector: List<ColumnW
     }
 
     return PluginDataFrameSchema(
-        columns().map { column ->
+        columns(impliedColumnsResolver = selector).map { column ->
             explode(column, emptyList())
         }
     )

@@ -6,6 +6,7 @@ import org.jetbrains.kotlinx.dataframe.api.renameToCamelCase
 import org.jetbrains.kotlinx.dataframe.api.toCamelCase
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 
 class Rename : AbstractInterpreter<RenameClauseApproximation>() {
     private val Arguments.receiver by dataFrame()
@@ -25,7 +26,7 @@ class RenameInto : AbstractSchemaModificationInterpreter() {
         require(columns.size == newNames.size)
         var i = 0
         return receiver.schema.map(
-            selected = columns.mapTo(mutableSetOf()) { it.path.path },
+            selected = receiver.columns,
             nextName = { newNames[i].also { i += 1 } },
         )
     }
@@ -39,7 +40,7 @@ class RenameIntoLambda : AbstractSchemaModificationInterpreter() {
         val columns = receiver.columns.resolve(receiver.schema)
         require(columns.size == 1)
         return receiver.schema.map(
-            selected = columns.mapTo(mutableSetOf()) { it.path.path },
+            selected = receiver.columns,
             nextName = { transform },
         )
     }
@@ -57,13 +58,18 @@ class RenameMapping : AbstractSchemaModificationInterpreter() {
             name to newName
         }
 
-        return receiver.asDataFrame().rename(*mappings.toTypedArray()).toPluginDataFrameSchema()
+        val expectedColumns = object : ColumnsResolver {
+            override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
+                return mappings.flatMap { stringApiColumnResolver(it.first, session.builtinTypes.nullableAnyType.coneType).resolve(df) }
+            }
+        }
+        return receiver.asDataFrame(impliedColumnsResolver = expectedColumns).rename(*mappings.toTypedArray()).toPluginDataFrameSchema()
     }
 }
 
-internal fun PluginDataFrameSchema.map(selected: ColumnsSet, nextName: () -> String): PluginDataFrameSchema =
+internal fun PluginDataFrameSchema.map(selected: ColumnsResolver, nextName: () -> String): PluginDataFrameSchema =
     PluginDataFrameSchema(
-        f(columns(), nextName, selected, emptyList()),
+        f(columns(impliedColumnsResolver = selected), nextName, selected.resolve(this).mapTo(mutableSetOf()) { it.path }, emptyList()),
     )
 
 internal fun f(
@@ -125,7 +131,7 @@ class RenameToCamelCase : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver by dataFrame()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        receiver.asDataFrame().renameToCamelCase().toPluginDataFrameSchema()
+        receiver.asDataFrame(impliedColumnsResolver = null).renameToCamelCase().toPluginDataFrameSchema()
 }
 
 class RenameToCamelCaseClause : AbstractSchemaModificationInterpreter() {
@@ -133,7 +139,7 @@ class RenameToCamelCaseClause : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val selectedPaths = receiver.columns.resolve(receiver.schema).map { it.path }
-        return receiver.schema.asDataFrame()
+        return receiver.schema.asDataFrame(impliedColumnsResolver = receiver.columns)
             .rename { selectedPaths.toColumnSet() }.toCamelCase()
             .toPluginDataFrameSchema()
     }

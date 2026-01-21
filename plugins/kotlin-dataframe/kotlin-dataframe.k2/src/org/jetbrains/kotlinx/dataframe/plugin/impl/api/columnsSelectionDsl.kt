@@ -20,14 +20,26 @@ internal class And10 : AbstractInterpreter<ColumnsResolver>() {
     }
 }
 
-class SingleColumnApproximation(val col: ColumnWithPathApproximation) : ColumnsResolver, SingleColumn<Any?>, ColumnReference<Any?> {
+interface SingleColumnApproximation : ColumnsResolver, SingleColumn<Any?>, ColumnReference<Any?> {
+    override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation>
+
+    override fun resolve(context: ColumnResolutionContext): List<ColumnWithPath<Any?>>
+
+    override fun resolveSingle(context: ColumnResolutionContext): ColumnWithPath<Any?>? {
+        return resolve(context).single()
+    }
+
+    val path: ColumnPath
+}
+
+class ResolvedDataColumn(private val col: ColumnWithPathApproximation) : SingleColumnApproximation {
 
     override fun name(): String {
         return col.column.name
     }
 
     override fun rename(newName: String): ColumnReference<Any?> {
-        return SingleColumnApproximation(ColumnWithPathApproximation(col.path, col.column.rename(newName)))
+        return ResolvedDataColumn(ColumnWithPathApproximation(col.path, col.column.rename(newName)))
     }
 
     override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
@@ -41,6 +53,8 @@ class SingleColumnApproximation(val col: ColumnWithPathApproximation) : ColumnsR
     override fun resolveSingle(context: ColumnResolutionContext): ColumnWithPath<Any?> {
         return ColumnWithPath(col.column.asDataColumn(), col.path)
     }
+
+    override val path: ColumnPath = col.path
 }
 
 interface ColumnsResolver : ColumnSet<Any?> {

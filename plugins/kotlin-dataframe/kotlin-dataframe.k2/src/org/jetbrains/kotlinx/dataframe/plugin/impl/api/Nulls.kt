@@ -17,7 +17,7 @@ class DropNulls0 : AbstractSchemaModificationInterpreter() {
         if (whereAllNull) return receiver
         return PluginDataFrameSchema(
             fillNullsImpl(
-                receiver.columns(),
+                receiver.columns(impliedColumnsResolver = columns),
                 columns.resolve(receiver).mapTo(mutableSetOf()) { it.path.path },
                 emptyList()
             )
@@ -50,7 +50,7 @@ class DropNa0 : AbstractSchemaModificationInterpreter() {
         if (whereAllNA) return receiver
         return PluginDataFrameSchema(
             fillNullsImpl(
-                receiver.columns(),
+                receiver.columns(impliedColumnsResolver = columns),
                 columns.resolve(receiver).mapTo(mutableSetOf()) { it.path.path },
                 emptyList()
             )

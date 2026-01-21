@@ -20,7 +20,10 @@ class Into0 : AbstractSchemaModificationInterpreter() {
     val Arguments.column: String by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.asDataFrame().group { receiver.columns }.into(column).toPluginDataFrameSchema()
+        return receiver.df
+            .asDataFrame(impliedColumnsResolver = receiver.columns)
+            .group { receiver.columns }.into(column)
+            .toPluginDataFrameSchema()
     }
 }
 
@@ -29,6 +32,9 @@ class IntoStringLambda : AbstractSchemaModificationInterpreter() {
     val Arguments.column: String by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.asDataFrame().group { receiver.columns }.into(column).toPluginDataFrameSchema()
+        return receiver.df
+            .asDataFrame(impliedColumnsResolver = receiver.columns)
+            .group { receiver.columns }.into(column)
+            .toPluginDataFrameSchema()
     }
 }

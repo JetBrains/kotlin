@@ -8,6 +8,6 @@ class Remove0 : AbstractSchemaModificationInterpreter() {
     val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.asDataFrame().remove { columns }.toPluginDataFrameSchema()
+        return receiver.asDataFrame(impliedColumnsResolver = null).remove { columns }.toPluginDataFrameSchema()
     }
 }

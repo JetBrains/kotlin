@@ -36,7 +36,7 @@ class Convert2 : AbstractInterpreter<ConvertApproximation>() {
 
     override fun Arguments.interpret(): ConvertApproximation {
         return ConvertApproximation(
-            receiver.createImpliedColumns(columns),
+            receiver.insertImpliedColumns(columns),
             columnsResolver { columns.map { pathOf(it) }.toColumnSet() }
         )
     }
@@ -169,7 +169,7 @@ internal class ConvertAsColumn : AbstractSchemaModificationInterpreter() {
     val Arguments.type: ColumnType by type(name("columnConverter"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.schema.asDataFrame()
+        return receiver.schema.asDataFrame(impliedColumnsResolver = receiver.columns)
             .convert { receiver.columns }
             .asColumn { simpleColumnOf("", typeArg2.coneType).asDataColumn() }
             .toPluginDataFrameSchema()

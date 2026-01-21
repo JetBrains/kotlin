@@ -281,6 +281,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformIntoRow
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformInward0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Std0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Std1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeTyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeUntyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols2
@@ -654,6 +656,8 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "GatherKeysInto" -> GatherKeysInto()
         "ConcatWithKeys" -> ConcatWithKeys()
         "DataFrameUnfold" -> DataFrameUnfold()
+        "StringInvokeUntyped" -> StringInvokeUntyped()
+        "StringInvokeTyped" -> StringInvokeTyped()
         else -> if (isTest) error(this) else null
     }
 }

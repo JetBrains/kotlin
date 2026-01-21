@@ -6,7 +6,13 @@ import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlinx.dataframe.api.asColumnGroup
+import org.jetbrains.kotlinx.dataframe.api.cast
+import org.jetbrains.kotlinx.dataframe.api.pathOf
 import org.jetbrains.kotlinx.dataframe.api.select
+import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
+import org.jetbrains.kotlinx.dataframe.columns.ColumnReference
+import org.jetbrains.kotlinx.dataframe.columns.ColumnResolutionContext
+import org.jetbrains.kotlinx.dataframe.columns.ColumnWithPath
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.impl.columns.ColumnsList
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
@@ -32,7 +38,7 @@ internal class SelectString : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.columns: List<String> by arg(defaultValue = Present(emptyList()))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val df = receiver.createImpliedColumns(columns)
+        val df = receiver.insertImpliedColumns(columns)
         return df.asDataFrame().select { columns.toColumnSet() }.toPluginDataFrameSchema()
     }
 }
@@ -44,7 +50,7 @@ internal class Expr0 : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.expression: ColumnType by type()
 
     override fun Arguments.interpret(): ColumnsResolver {
-        return SingleColumnApproximation(
+        return ResolvedDataColumn(
             ColumnWithPathApproximation(
                 ColumnPathApproximation(listOf(name)),
                 SimpleDataColumn(name, expression)
@@ -707,5 +713,55 @@ internal class NestedSelect : AbstractInterpreter<ColumnsResolver>() {
 
     override fun Arguments.interpret(): ColumnsResolver {
         return columnsResolver { receiver.asColumnGroup().select { selector } }
+    }
+}
+
+internal class StringInvokeUntyped : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: String by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return stringApiColumnResolver(name = receiver, session.builtinTypes.nullableAnyType.coneType)
+    }
+}
+
+internal class StringInvokeTyped : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: String by arg()
+    val Arguments.typeArg0 by type()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return stringApiColumnResolver(name = receiver, typeArg0.coneType)
+    }
+}
+
+fun Arguments.stringApiColumnResolver(name: String, type: ConeKotlinType): SingleColumnApproximation {
+    return object : ColumnsResolverAdapter(), SingleColumnApproximation {
+        // we want to help users gradually introduce typed information to their dataframe
+        // if they refer to a column by String API once, let's apply logic similar to smart cast and
+        // add such a column to the schema.
+        // over time all callers of columns() and asDataFrame() should be migrated to correctly use impliedColumnsResolver
+        override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
+            val df = df.asDataFrame()
+            val col = df.getColumnOrNull(name)
+                ?.let { ColumnWithPathApproximation(pathOf(name), it.asSimpleColumn(), isImpliedColumn = false) }
+                ?: createImpliedColumn(name, type)
+            return listOf(col)
+        }
+
+        private fun createImpliedColumn(name: String, type: ConeKotlinType): ColumnWithPathApproximation {
+            return ColumnWithPathApproximation(pathOf(name), simpleColumnOf(name, type), isImpliedColumn = true)
+        }
+
+        override fun rename(newName: String): ColumnReference<Any?> {
+            return stringApiColumnResolver(newName, type)
+        }
+
+        override fun name(): String = name
+
+        override val path: ColumnPath = ColumnPath(name)
+
+        override fun resolve(context: ColumnResolutionContext): List<ColumnWithPath<Any?>> {
+            return resolve(context.df.cast<ConeTypesAdapter>().toPluginDataFrameSchema())
+                .map { ColumnWithPath(it.column.asDataColumn(), it.path) }
+        }
     }
 }
