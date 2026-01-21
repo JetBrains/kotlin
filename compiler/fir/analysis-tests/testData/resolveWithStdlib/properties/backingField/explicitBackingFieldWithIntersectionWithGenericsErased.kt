@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 interface I<T> {
     val y: T
@@ -10,7 +10,7 @@ open class A<T>(x: T&Any) {
 
     fun <T> test(x: A<T>) {
         if (x is I<*>) {
-            val k: T&Any <!INITIALIZER_TYPE_MISMATCH!>=<!> x.y
+            val k: T&Any = x.y
         }
     }
 }

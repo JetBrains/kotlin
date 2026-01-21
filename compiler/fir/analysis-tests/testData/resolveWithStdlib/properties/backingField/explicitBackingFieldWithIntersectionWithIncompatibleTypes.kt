@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 interface I {
     val y : Any
 }
@@ -9,7 +9,7 @@ open class C<T>(x: T) {
 
     fun test(b: C<String>) {
         if (b is I) {
-            b.y.<!UNRESOLVED_REFERENCE!>length<!>
+            b.y.length
         }
     }
 }
