@@ -22,15 +22,6 @@ kotlin {
             }
         }
     }
-
-    sourceSets {
-        commonMain {
-            kotlin.srcDir("src/main/kotlin")
-        }
-        nativeMain {
-            kotlin.srcDir("src/main/kotlin-native")
-        }
-    }
 }
 
 benchmark {

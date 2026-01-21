@@ -7,14 +7,6 @@ plugins {
     id("benchmarking")
 }
 
-kotlin {
-    sourceSets {
-        commonMain {
-            kotlin.srcDir("src/main/kotlin")
-        }
-    }
-}
-
 benchmark {
     applicationName = "Logging"
     compilerOpts = listOf("-Xruntime-logs=logging=debug")
