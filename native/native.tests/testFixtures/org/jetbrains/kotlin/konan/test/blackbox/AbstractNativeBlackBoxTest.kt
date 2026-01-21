@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExternalSourceTransformersProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRunSettings
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TreeNode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.joinPackageNames
@@ -24,9 +26,10 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.extension.ExtendWith
+import java.io.File
 
 @ExtendWith(NativeBlackBoxTestSupport::class)
-abstract class AbstractNativeBlackBoxTest {
+abstract class AbstractNativeBlackBoxTest : ExternalSourceTransformersProvider {
     lateinit var testRunSettings: TestRunSettings
     lateinit var testRunProvider: TestRunProvider
 
@@ -114,4 +117,6 @@ abstract class AbstractNativeBlackBoxTest {
         val testRunner = createProperTestRunner(testRun, testRunSettings)
         testRunner.run()
     }
+
+    override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? = null
 }
