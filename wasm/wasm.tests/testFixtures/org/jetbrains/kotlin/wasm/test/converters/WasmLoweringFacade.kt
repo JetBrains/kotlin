@@ -131,7 +131,7 @@ class WasmLoweringFacade(
 
         val linkedModule = getLinkedModule(
             parameters,
-            allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) },
+            wasmCompiledFileFragments,
             configuration
         )
 
