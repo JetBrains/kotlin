@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMP
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.NATIVE_STANDALONE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.USE_EXPERIMENTAL
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
@@ -168,7 +167,7 @@ private class ExtTestDataFile(
                 // which is not desirable.
                 it != "+NewInference"
             },
-            optInsForSourceCode = optInsForSourceCode + structure.directives[USE_EXPERIMENTAL],
+            optInsForSourceCode = optInsForSourceCode,
             optInsForCompiler = optInsForCompiler,
             generatedSourcesDir = computeGeneratedSourcesDir(
                 testDataBaseDir = testRoots.baseDir,
