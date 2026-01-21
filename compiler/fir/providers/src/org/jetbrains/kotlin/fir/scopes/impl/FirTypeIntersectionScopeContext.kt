@@ -401,7 +401,7 @@ class FirTypeIntersectionScopeContext(
                 newReturnType = returnType,
                 newSource = dispatchReceiverType.toSymbol(session)?.source,
                 newSetterVisibility = setterVisibility,
-                explicitBackingFieldNewReturnType = fir.getExplicitBackingField()?.returnTypeRef?.coneType,
+                explicitBackingFieldNewReturnType = fir.getExplicitBackingField()?.returnTypeRef?.coneTypeSafe(),
             )
         }
     }
