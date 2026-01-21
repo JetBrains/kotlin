@@ -16,25 +16,5 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.File
-
 const val KLIB_MANIFEST_FILE_NAME = "manifest"
 const val KLIB_RESOURCES_FOLDER_NAME = "resources"
-
-/**
- * This scheme describes the Kotlin/Native Library (KLIB) layout.
- */
-interface KotlinLibraryLayout {
-    val libFile: File
-    val libraryName: String
-        get() = libFile.path
-    val component: String?
-    val componentDir: File
-        get() = File(libFile, component!!)
-    val manifestFile
-        get() = File(componentDir, KLIB_MANIFEST_FILE_NAME)
-    val resourcesDir
-        get() = File(componentDir, KLIB_RESOURCES_FOLDER_NAME)
-    val pre_1_4_manifest: File
-        get() = File(libFile, KLIB_MANIFEST_FILE_NAME)
-}
