@@ -444,16 +444,19 @@ object FirFakeOverrideGenerator {
         )
         deprecationsProvider = baseProperty.deprecationsProvider
 
-        getter = baseProperty.getter?.buildCopyIfNeeded(
-            moduleData = session.nullableModuleData ?: baseProperty.moduleData,
-            origin = origin,
-            propertyReturnTypeRef = this@buildProperty.returnTypeRef,
-            propertySymbol = newSymbol,
-            dispatchReceiverType = dispatchReceiverType,
-            derivedClassLookupTag = derivedClassLookupTag,
-            baseProperty = baseProperty,
-            newSource = newSource ?: baseProperty.getter?.source,
-        )
+        getter = baseProperty.getter?.let { getter ->
+            getter.buildCopyIfNeeded(
+                moduleData = session.nullableModuleData ?: baseProperty.moduleData,
+                origin = origin,
+                propertyReturnTypeRef = this@buildProperty.returnTypeRef,
+                propertySymbol = newSymbol,
+                dispatchReceiverType = dispatchReceiverType,
+                derivedClassLookupTag = derivedClassLookupTag,
+                baseProperty = baseProperty,
+                newSource = newSource ?: getter.source,
+                newVisibility = newVisibility ?: getter.visibility,
+            )
+        }
 
         setter = baseProperty.setter?.let { setter ->
             setter.buildCopyIfNeeded(

@@ -44,18 +44,18 @@ abstract class CA2 : ClassWithAbstractVal(), InterfaceWithAbstractVar
 abstract class CA3 : ClassWithAbstractVal(), InterfaceWithDefaultVal
 abstract class CA4 : ClassWithAbstractVal(), InterfaceWithDefaultVar
 
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING!>CB1<!> : ClassWithAbstractVar(), InterfaceWithAbstractVal
+abstract class CB1 : ClassWithAbstractVar(), InterfaceWithAbstractVal
 abstract class CB2 : ClassWithAbstractVar(), InterfaceWithAbstractVar
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING!>CB3<!> : ClassWithAbstractVar(), InterfaceWithDefaultVal
+abstract class CB3 : ClassWithAbstractVar(), InterfaceWithDefaultVal
 abstract class CB4 : ClassWithAbstractVar(), InterfaceWithDefaultVar
 
-abstract class CC1 : ClassWithDefaultVal(), InterfaceWithAbstractVal
-abstract <!VAR_IMPLEMENTED_BY_INHERITED_VAL_ERROR!>class CC2<!> : ClassWithDefaultVal(), InterfaceWithAbstractVar
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CC1<!> : ClassWithDefaultVal(), InterfaceWithAbstractVal
+abstract <!VAR_IMPLEMENTED_BY_INHERITED_VAL_ERROR!>class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CC2<!><!> : ClassWithDefaultVal(), InterfaceWithAbstractVar
 abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CC3<!> : ClassWithDefaultVal(), InterfaceWithDefaultVal
 abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CC4<!> : ClassWithDefaultVal(), InterfaceWithDefaultVar
 
 abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CD1<!> : ClassWithDefaultVar(), InterfaceWithAbstractVal
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CD2<!> : ClassWithDefaultVar(), InterfaceWithAbstractVar
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CD2<!> : ClassWithDefaultVar(), InterfaceWithAbstractVar
 abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CD3<!> : ClassWithDefaultVar(), InterfaceWithDefaultVal
 abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CD4<!> : ClassWithDefaultVar(), InterfaceWithDefaultVar
 

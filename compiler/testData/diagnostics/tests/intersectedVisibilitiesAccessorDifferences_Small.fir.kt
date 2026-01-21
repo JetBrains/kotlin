@@ -27,13 +27,13 @@ interface IVarDefault {
         set(value) {}
 }
 
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING!>C1<!> : WithInternalVar(), IVal
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C2<!> : WithInternalVar(), IVar
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING!>C3<!> : IVal, WithInternalVar()
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C4<!> : IVar, WithInternalVar()
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING!>C5<!> : WithInternalVar(), IValDefault
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C1<!> : WithInternalVar(), IVal
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C2<!> : WithInternalVar(), IVar
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C3<!> : IVal, WithInternalVar()
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C4<!> : IVar, WithInternalVar()
+abstract class C5 : WithInternalVar(), IValDefault
 abstract class C6 : WithInternalVar(), IVarDefault
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING!>C7<!> : IValDefault, WithInternalVar()
+abstract class C7 : IValDefault, WithInternalVar()
 abstract class C8 : IVarDefault, WithInternalVar()
 
 /* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, interfaceDeclaration, propertyDeclaration, setter */
