@@ -2442,9 +2442,17 @@ internal class WrongNumberOfTypeArgumentsImpl(
 internal class WrongNumberOfTypeArgumentsWarningImpl(
     override val expectedCount: Int,
     override val owner: KaSymbol,
+    override val type: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongNumberOfTypeArgumentsWarning
+
+internal class WrongNumberOfTypeArgumentsInLocalClassInLhsWarningImpl(
+    override val expectedCount: Int,
+    override val owner: KaSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongNumberOfTypeArgumentsInLocalClassInLhsWarning
 
 internal class NoTypeArgumentsOnRhsImpl(
     override val expectedCount: Int,

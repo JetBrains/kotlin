@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// RENDER_DIAGNOSTIC_ARGUMENTS
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // ISSUE: KT-66344, KT-82122
 // LATEST_LV_DIFFERENCE
 
@@ -7,13 +7,13 @@ class C<U> {
     fun <T> foo() {
         class L
 
-        val x = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("1; class L<Outer(T), Outer(U)> : Any")!>L<!>::toString
-        val y = L<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING("0; class L<Outer(T), Outer(U)> : Any")!><Int><!>::toString
-        val z = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("1; class L<Outer(T), Outer(U)> : Any")!>L<Int, Long><!>::toString
+        val x = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>L<!>::toString
+        val y = L<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_LOCAL_CLASS_IN_LHS_WARNING!><Int><!>::toString
+        val z = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>L<Int, Long><!>::toString
 
         x(L())
-        y(<!ARGUMENT_TYPE_MISMATCH("L<T (of fun <T> foo), U (of class C<U>)>; L<Int, *>")!>L()<!>)
-        z(<!ARGUMENT_TYPE_MISMATCH("L<T (of fun <T> foo), U (of class C<U>)>; L<Int, Long>")!>L()<!>)
+        y(<!ARGUMENT_TYPE_MISMATCH!>L()<!>)
+        z(<!ARGUMENT_TYPE_MISMATCH!>L()<!>)
     }
 }
 

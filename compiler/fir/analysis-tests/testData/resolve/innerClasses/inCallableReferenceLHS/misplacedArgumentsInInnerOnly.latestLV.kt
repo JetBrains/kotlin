@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82122
 // LATEST_LV_DIFFERENCE
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 open class X<A> {
     inner class Y<B> {

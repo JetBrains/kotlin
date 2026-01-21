@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.FE10LikeConeSubstitutor
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolated
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toTypeArgumentsWithSourceInfo
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequi
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePlaceholderProjectionInQualifierResolution
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.constructType
@@ -41,28 +43,54 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
      * @return true if **error** was reported
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkNonFatalDiagnostics(expression: FirCallableReferenceAccess, lhs: FirResolvedQualifier): Boolean {
+    private fun checkNonFatalDiagnostics(
+        expression: FirCallableReferenceAccess,
+        lhs: FirResolvedQualifier,
+        classSymbol: FirClassLikeSymbol<*>,
+        lhsType: ConeKotlinType,
+    ): Boolean {
         for (diagnostic in expression.nonFatalDiagnostics) {
             when (diagnostic) {
                 is ConeWrongNumberOfTypeArgumentsError -> {
-                    val (factory, positioning) = if (diagnostic.isDeprecationErrorForCallableReferenceLHS) {
-                        val factory = when {
-                            innerClassesProperlySupported -> FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
-                            else -> FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING
+                    val positioning =
+                        if (diagnostic.isDeprecationErrorForCallableReferenceLHS) {
+                            SourceElementPositioningStrategies.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER
+                        } else {
+                            // here, `desiredCount` corresponds to the number of type parameters for all parts of the qualifier altogether,
+                            // hence reporting on the whole qualifier
+                            SourceElementPositioningStrategies.DEFAULT
                         }
 
-                        factory to SourceElementPositioningStrategies.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER
-                    } else {
-                        // here, `desiredCount` corresponds to the number of type parameters for all parts of the qualifier altogether,
-                        // hence reporting on the whole qualifier
-                        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS to SourceElementPositioningStrategies.DEFAULT
+                    if (diagnostic.isDeprecationErrorForCallableReferenceLHS && !innerClassesProperlySupported) {
+                        if (classSymbol.isLocal) {
+                            reporter.reportOn(
+                                diagnostic.source,
+                                FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_LOCAL_CLASS_IN_LHS_WARNING,
+                                diagnostic.desiredCount,
+                                diagnostic.symbol,
+                                positioningStrategy = positioning,
+                            )
+                        } else {
+                            reporter.reportOn(
+                                diagnostic.source,
+                                FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING,
+                                diagnostic.desiredCount,
+                                diagnostic.symbol,
+                                lhsType,
+                                positioningStrategy = positioning,
+                            )
+                        }
+                        continue
                     }
 
                     reporter.reportOn(
-                        diagnostic.source, factory, diagnostic.desiredCount, diagnostic.symbol,
+                        diagnostic.source,
+                        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
+                        diagnostic.desiredCount,
+                        diagnostic.symbol,
                         positioningStrategy = positioning,
                     )
-                    if (factory.severity == Severity.ERROR) return true
+                    return true
                 }
                 is ConeOuterClassArgumentsRequired -> {
                     reporter.reportOn(
@@ -91,7 +119,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
             }
         }
 
-        if (checkNonFatalDiagnostics(expression, lhs)) return
+        if (checkNonFatalDiagnostics(expression, lhs, correspondingDeclaration, lhsType)) return
 
         val typeArgumentsWithSourceInfo = lhs.typeArguments.toTypeArgumentsWithSourceInfo()
         var typeArguments = when {
