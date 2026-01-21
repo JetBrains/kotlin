@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.incremental.multiproject
 import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.incremental.util.Either
-import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
