@@ -26,5 +26,4 @@ swiftBenchmark {
         "$projectDir/swiftSrc/main.swift",
         "$projectDir/swiftSrc/weakRefBenchmarks.swift",
     )
-    compileTasks = listOf("compileKotlinNative", "linkBenchmark${buildType.name.toLowerCase().capitalize()}FrameworkNative")
 }
