@@ -269,9 +269,7 @@
 /kotlin-native/runtime/test @JetBrains/kotlin-native vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
 /kotlin-native/licenses/ @JetBrains/kotlin-build-infrastructure
 /kotlin-native/klib/ @JetBrains/kotlin-common-backend
-/kotlin-native/tools/benchmarks @JetBrains/kotlin-native @JetBrains/kotlin-performance-qa
-/kotlin-native/tools/benchmarksAnalyzer @JetBrains/kotlin-native @JetBrains/kotlin-performance-qa
-/kotlin-native/performance @JetBrains/kotlin-native @JetBrains/kotlin-performance-qa
+/kotlin-native/performance @JetBrains/kotlin-native
 
 /libraries/examples/annotation-processor-example/ @JetBrains/kotlin-frontend
 /libraries/examples/kotlin-gradle-subplugin-example/ @JetBrains/kotlin-frontend
@@ -444,7 +442,6 @@
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle @JetBrains/kotlin-build-tools
 /kotlin-native/backend.native/tests/**.gradle @JetBrains/kotlin-native
 /kotlin-native/backend.native/tests/**/*.gradle.kts @JetBrains/kotlin-native
-/kotlin-native/tools/**/*.gradle @JetBrains/kotlin-native
 /kotlin-native/tools/**/*.gradle.kts @JetBrains/kotlin-native
 /kotlin-native/performance/**/*.gradle @JetBrains/kotlin-native
 /kotlin-native/performance/**/*.gradle.kts @JetBrains/kotlin-native
