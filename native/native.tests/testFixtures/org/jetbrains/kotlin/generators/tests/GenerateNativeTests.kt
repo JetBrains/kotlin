@@ -50,7 +50,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "FirInfrastructureTestGenerated",
                 annotations = listOf(
                     infrastructure(),
-                    provider<UseStandardTestCaseGroupProvider>()
+                    provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
                 model("samples")
@@ -120,7 +120,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "NativeLldbTestGenerated",
                 annotations = listOf(
                     debugger(),
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                     forceDebugMode(),
                     forceHostTarget(),
                 )
@@ -135,7 +135,7 @@ fun main(args: Array<String>) {
                 annotations = listOf(
                     debugger(),
                     stepping(),
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                     forceDebugMode(),
                     forceHostTarget(),
                 )
@@ -150,7 +150,7 @@ fun main(args: Array<String>) {
                 annotations = listOf(
                     debugger(),
                     stepping(),
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                     forceDebugMode(),
                     forceHostTarget(),
                     klibIrInliner(),
@@ -174,7 +174,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "FirNativeStandaloneTestGenerated",
                 annotations = listOf(
                     *standaloneNoTR(),
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                 )
             ) {
                 model()
@@ -183,7 +183,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "FirNativeStandaloneTestWithInlinedFunInKlibGenerated",
                 annotations = listOf(
                     *standaloneNoTR(),
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                     klibIrInliner(),
                 )
             ) {
@@ -226,7 +226,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "FirNativeGCTestGenerated",
                 annotations = listOf(
                     *gc(),
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                 )
             ) {
                 model()
