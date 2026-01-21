@@ -315,8 +315,8 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
     val asserts: Iterable<IrSimpleFunctionSymbol>
     val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
 
-    val testInitializer: IrClassSymbol? // KT-83151 Restore non-nullability of symbols available since 2.3
-    val testsProcessed: IrClassSymbol? // KT-83151 Restore non-nullability of symbols available since 2.3
+    val testInitializer: IrClassSymbol? // KT-83807 Restore non-nullability of symbols not available in 2.3.0 stdlib
+    val testsProcessed: IrClassSymbol? // KT-83807 Restore non-nullability of symbols not available in 2.3.0 stdlib
 
     val topLevelSuite: IrClassSymbol
     val baseClassSuite: IrClassSymbol
