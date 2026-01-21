@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE K1
 
 @file:JvmName("TestKt")
 package test
