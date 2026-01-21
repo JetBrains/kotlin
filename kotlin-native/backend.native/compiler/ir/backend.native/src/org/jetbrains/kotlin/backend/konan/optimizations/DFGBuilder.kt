@@ -593,191 +593,197 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                                     kind = DataFlowIR.VariableKind.Temporary
                             )
                     } else {
-                        when (value) {
-                            is IrGetValue -> getNode(value).value
-
-                            is IrVararg, is IrClassReference -> DataFlowIR.Node.Const(symbolTable.mapType(value.type))
-
-                            is IrRawFunctionReference -> {
-                                val callee = value.symbol.owner
-                                require(callee is IrSimpleFunction) { "All constructors should've been lowered: ${value.render()}" }
-                                DataFlowIR.Node.FunctionReference(
-                                        symbolTable.mapFunction(callee),
-                                        symbolTable.mapType(value.type),
-                                        /*TODO: substitute*/symbolTable.mapType(callee.returnType))
-                            }
-
-                            is IrConst ->
-                                if (value.value == null)
-                                    DataFlowIR.Node.Null
-                                else
-                                    DataFlowIR.Node.SimpleConst(symbolTable.mapType(value.type), value.value!!)
-
-                            is IrConstantPrimitive ->
-                                if (value.value.value == null)
-                                    DataFlowIR.Node.Null
-                                else
-                                    DataFlowIR.Node.SimpleConst(mapWrappedType(value.value.type, value.type), value.value.value!!)
-
-                            is IrConstructorCall, is IrDelegatingConstructorCall, is IrGetObjectValue -> error("Should've been lowered: ${value.render()}")
-
-                            is IrCall -> when (value.symbol) {
-                                in arrayGetSymbols -> {
-                                    val actualCallee = value.actualCallee
-                                    DataFlowIR.Node.ArrayRead(
-                                            symbolTable.mapFunction(actualCallee),
-                                            array = expressionToEdge(value.arguments[0]!!),
-                                            index = expressionToEdge(value.arguments[1]!!),
-                                            type = mapReturnType(value.type, context.irBuiltIns.anyType),
-                                            irCallSite = value)
-                                }
-
-                                in arraySetSymbols -> {
-                                    val actualCallee = value.actualCallee
-                                    DataFlowIR.Node.ArrayWrite(
-                                            symbolTable.mapFunction(actualCallee),
-                                            array = expressionToEdge(value.arguments[0]!!),
-                                            index = expressionToEdge(value.arguments[1]!!),
-                                            value = expressionToEdge(value.arguments[2]!!),
-                                            type = mapReturnType(value.arguments[2]!!.type, context.irBuiltIns.anyType))
-                                }
-
-                                createUninitializedInstanceSymbol ->
-                                    DataFlowIR.Node.AllocInstance(symbolTable.mapClassReferenceType(
-                                            value.typeArguments[0]!!.getClass()!!
-                                    ), value)
-
-                                createUninitializedArraySymbol ->
-                                    DataFlowIR.Node.AllocArray(symbolTable.mapClassReferenceType(
-                                            value.typeArguments[0]!!.getClass()!!
-                                    ), size = expressionToEdge(value.arguments[0]!!), value)
-
-                                createEmptyStringSymbol ->
-                                    // Technically, this allocates an array. However, this is an empty string, so let's treat it
-                                    // like a fixed-size object.
-                                    DataFlowIR.Node.AllocInstance(symbolTable.mapType(createEmptyStringSymbol.owner.returnType), value)
-
-                                reinterpret -> getNode(value.arguments[0]!!).value
-
-                                initInstanceSymbol -> error("Should've been lowered: ${value.render()}")
-
-                                saveCoroutineState -> DataFlowIR.Node.SaveCoroutineState(liveVariables[value]!!.map { variables[it]!!.value })
-
-                                restoreCoroutineState -> // This is a no-op for all analyses so far.
-                                    DataFlowIR.Node.StaticCall(
-                                            symbolTable.mapFunction(symbols.theUnitInstance.owner),
-                                            emptyList(),
-                                            symbolTable.mapType(unitType),
-                                            null
-                                    )
-
-                                else -> {
-                                    /*
-                                     * Resolve owner of the call with special handling of Any methods:
-                                     * if toString/eq/hc is invoked on an interface instance, we resolve
-                                     * owner as Any and dispatch it via vtable.
-                                     * Note: Keep on par with the codegen.
-                                     */
-                                    val callee = value.symbol.owner.let { it.findOverriddenMethodOfAny() ?: it }
-                                    val arguments = value.getArgumentsWithIr()
-                                            .map { expressionToEdge(it.second) }
-
-                                    if (value.isVirtualCall) {
-                                        val owner = callee.parentAsClass
-                                        val actualReceiverType = value.arguments[0]!!.type
-                                        val actualReceiverClassifier = actualReceiverType.classifierOrFail
-
-                                        val receiverType =
-                                                if (actualReceiverClassifier is IrTypeParameterSymbol
-                                                        || !callee.isReal /* Could be a bridge. */)
-                                                    symbolTable.mapClassReferenceType(owner)
-                                                else {
-                                                    if ((actualReceiverClassifier as IrClassSymbol).owner.isSubclassOf(owner)) {
-                                                        symbolTable.mapClassReferenceType(actualReceiverClassifier.owner) // Box if inline class.
-                                                    } else {
-                                                        symbolTable.mapClassReferenceType(owner)
-                                                    }
-                                                }
-
-                                        val isAnyMethod = callee.target.parentAsClass.isAny()
-                                        if (owner.isInterface && !isAnyMethod) {
-                                            val itablePlace = context.getLayoutBuilder(owner).itablePlace(callee)
-                                            DataFlowIR.Node.ItableCall(
-                                                    symbolTable.mapFunction(callee.target),
-                                                    receiverType,
-                                                    itablePlace.interfaceId,
-                                                    itablePlace.methodIndex,
-                                                    arguments,
-                                                    mapReturnType(value.type, callee.target.returnType),
-                                                    value
-                                            )
-                                        } else {
-                                            val vtableIndex = if (isAnyMethod)
-                                                context.getLayoutBuilder(context.irBuiltIns.anyClass.owner).vtableIndex(callee.target)
-                                            else
-                                                context.getLayoutBuilder(owner).vtableIndex(callee)
-                                            DataFlowIR.Node.VtableCall(
-                                                    symbolTable.mapFunction(callee.target),
-                                                    receiverType,
-                                                    vtableIndex,
-                                                    arguments,
-                                                    mapReturnType(value.type, callee.target.returnType),
-                                                    value
-                                            )
-                                        }
-                                    } else {
-                                        val actualCallee = value.actualCallee
-                                        DataFlowIR.Node.StaticCall(
-                                                symbolTable.mapFunction(actualCallee),
-                                                arguments,
-                                                mapReturnType(value.type, actualCallee.returnType),
-                                                value
-                                        )
-                                    }
-                                }
-                            }
-
-                            is IrGetField -> {
-                                val receiver = value.receiver?.let { expressionToEdge(it) }
-                                DataFlowIR.Node.FieldRead(
-                                        receiver,
-                                        symbolTable.mapField(value.symbol.owner),
-                                        mapReturnType(value.type, value.symbol.owner.type),
-                                        value
-                                )
-                            }
-
-                            is IrSetField -> {
-                                val receiver = value.receiver?.let { expressionToEdge(it) }
-                                DataFlowIR.Node.FieldWrite(
-                                        receiver,
-                                        symbolTable.mapField(value.symbol.owner),
-                                        expressionToEdge(value.value)
-                                )
-                            }
-
-                            is IrTypeOperatorCall -> {
-                                assert(!value.operator.isCast()) { "Casts should've been handled earlier" }
-                                expressionToEdge(value.argument) // Put argument as a separate vertex.
-                                DataFlowIR.Node.Const(symbolTable.mapType(value.type)) // All operators except casts are basically constants.
-                            }
-
-                            is IrConstantArray ->
-                                DataFlowIR.Node.Singleton(symbolTable.mapType(value.type), null, null)
-                            is IrConstantObject ->
-                                DataFlowIR.Node.Singleton(
-                                    symbolTable.mapType(value.type),
-                                    value.constructor.owner.loweredConstructorFunction?.let { symbolTable.mapFunction(it) },
-                                    value.valueArguments.map { expressionToEdge(it) }
-                                )
-
-                            else -> TODO("Unknown expression: ${ir2stringWhole(value)}")
-                        }
+                        toNode(value)
                     }
                 }
 
                 highestScope!!.nodes += node
                 Scoped(node, highestScope)
+            }
+        }
+
+        private fun toNode(value: IrExpression): DataFlowIR.Node {
+            return when (value) {
+                is IrGetValue -> getNode(value).value
+
+                is IrVararg, is IrClassReference -> DataFlowIR.Node.Const(symbolTable.mapType(value.type))
+
+                is IrRawFunctionReference -> {
+                    val callee = value.symbol.owner
+                    require(callee is IrSimpleFunction) { "All constructors should've been lowered: ${value.render()}" }
+                    DataFlowIR.Node.FunctionReference(
+                            symbolTable.mapFunction(callee),
+                            symbolTable.mapType(value.type),
+                            /*TODO: substitute*/symbolTable.mapType(callee.returnType))
+                }
+
+                is IrConst ->
+                    if (value.value == null)
+                        DataFlowIR.Node.Null
+                    else
+                        DataFlowIR.Node.SimpleConst(symbolTable.mapType(value.type), value.value!!)
+
+                is IrConstantPrimitive ->
+                    if (value.value.value == null)
+                        DataFlowIR.Node.Null
+                    else
+                        DataFlowIR.Node.SimpleConst(mapWrappedType(value.value.type, value.type), value.value.value!!)
+
+                is IrConstructorCall, is IrDelegatingConstructorCall, is IrGetObjectValue -> error("Should've been lowered: ${value.render()}")
+
+                is IrCall -> {
+                    when (value.symbol) {
+                        in arrayGetSymbols -> {
+                            val actualCallee = value.actualCallee
+                            DataFlowIR.Node.ArrayRead(
+                                    symbolTable.mapFunction(actualCallee),
+                                    array = expressionToEdge(value.arguments[0]!!),
+                                    index = expressionToEdge(value.arguments[1]!!),
+                                    type = mapReturnType(value.type, context.irBuiltIns.anyType),
+                                    irCallSite = value)
+                        }
+
+                        in arraySetSymbols -> {
+                            val actualCallee = value.actualCallee
+                            DataFlowIR.Node.ArrayWrite(
+                                    symbolTable.mapFunction(actualCallee),
+                                    array = expressionToEdge(value.arguments[0]!!),
+                                    index = expressionToEdge(value.arguments[1]!!),
+                                    value = expressionToEdge(value.arguments[2]!!),
+                                    type = mapReturnType(value.arguments[2]!!.type, context.irBuiltIns.anyType))
+                        }
+
+                        createUninitializedInstanceSymbol ->
+                            DataFlowIR.Node.AllocInstance(symbolTable.mapClassReferenceType(
+                                    value.typeArguments[0]!!.getClass()!!
+                            ), value)
+
+                        createUninitializedArraySymbol ->
+                            DataFlowIR.Node.AllocArray(symbolTable.mapClassReferenceType(
+                                    value.typeArguments[0]!!.getClass()!!
+                            ), size = expressionToEdge(value.arguments[0]!!), value)
+
+                        createEmptyStringSymbol ->
+                            // Technically, this allocates an array. However, this is an empty string, so let's treat it
+                            // like a fixed-size object.
+                            DataFlowIR.Node.AllocInstance(symbolTable.mapType(createEmptyStringSymbol.owner.returnType), value)
+
+                        reinterpret -> getNode(value.arguments[0]!!).value
+
+                        initInstanceSymbol -> error("Should've been lowered: ${value.render()}")
+
+                        saveCoroutineState -> DataFlowIR.Node.SaveCoroutineState(liveVariables[value]!!.map { variables[it]!!.value })
+
+                        restoreCoroutineState -> // This is a no-op for all analyses so far.
+                            DataFlowIR.Node.StaticCall(
+                                    symbolTable.mapFunction(symbols.theUnitInstance.owner),
+                                    emptyList(),
+                                    symbolTable.mapType(unitType),
+                                    null
+                            )
+
+                        else -> {
+                            /*
+                             * Resolve owner of the call with special handling of Any methods:
+                             * if toString/eq/hc is invoked on an interface instance, we resolve
+                             * owner as Any and dispatch it via vtable.
+                             * Note: Keep on par with the codegen.
+                             */
+                            val callee = value.symbol.owner.let { it.findOverriddenMethodOfAny() ?: it }
+                            val arguments = value.getArgumentsWithIr()
+                                    .map { expressionToEdge(it.second) }
+
+                            if (value.isVirtualCall) {
+                                val owner = callee.parentAsClass
+                                val actualReceiverType = value.arguments[0]!!.type
+                                val actualReceiverClassifier = actualReceiverType.classifierOrFail
+
+                                val receiverType =
+                                        if (actualReceiverClassifier is IrTypeParameterSymbol
+                                                || !callee.isReal /* Could be a bridge. */)
+                                            symbolTable.mapClassReferenceType(owner)
+                                        else {
+                                            if ((actualReceiverClassifier as IrClassSymbol).owner.isSubclassOf(owner)) {
+                                                symbolTable.mapClassReferenceType(actualReceiverClassifier.owner) // Box if inline class.
+                                            } else {
+                                                symbolTable.mapClassReferenceType(owner)
+                                            }
+                                        }
+
+                                val isAnyMethod = callee.target.parentAsClass.isAny()
+                                if (owner.isInterface && !isAnyMethod) {
+                                    val itablePlace = context.getLayoutBuilder(owner).itablePlace(callee)
+                                    DataFlowIR.Node.ItableCall(
+                                            symbolTable.mapFunction(callee.target),
+                                            receiverType,
+                                            itablePlace.interfaceId,
+                                            itablePlace.methodIndex,
+                                            arguments,
+                                            mapReturnType(value.type, callee.target.returnType),
+                                            value
+                                    )
+                                } else {
+                                    val vtableIndex = if (isAnyMethod)
+                                        context.getLayoutBuilder(context.irBuiltIns.anyClass.owner).vtableIndex(callee.target)
+                                    else
+                                        context.getLayoutBuilder(owner).vtableIndex(callee)
+                                    DataFlowIR.Node.VtableCall(
+                                            symbolTable.mapFunction(callee.target),
+                                            receiverType,
+                                            vtableIndex,
+                                            arguments,
+                                            mapReturnType(value.type, callee.target.returnType),
+                                            value
+                                    )
+                                }
+                            } else {
+                                val actualCallee = value.actualCallee
+                                DataFlowIR.Node.StaticCall(
+                                        symbolTable.mapFunction(actualCallee),
+                                        arguments,
+                                        mapReturnType(value.type, actualCallee.returnType),
+                                        value
+                                )
+                            }
+                        }
+                    }
+                }
+
+                is IrGetField -> {
+                    val receiver = value.receiver?.let { expressionToEdge(it) }
+                    DataFlowIR.Node.FieldRead(
+                            receiver,
+                            symbolTable.mapField(value.symbol.owner),
+                            mapReturnType(value.type, value.symbol.owner.type),
+                            value
+                    )
+                }
+
+                is IrSetField -> {
+                    val receiver = value.receiver?.let { expressionToEdge(it) }
+                    DataFlowIR.Node.FieldWrite(
+                            receiver,
+                            symbolTable.mapField(value.symbol.owner),
+                            expressionToEdge(value.value)
+                    )
+                }
+
+                is IrTypeOperatorCall -> {
+                    assert(!value.operator.isCast()) { "Casts should've been handled earlier" }
+                    expressionToEdge(value.argument) // Put argument as a separate vertex.
+                    DataFlowIR.Node.Const(symbolTable.mapType(value.type)) // All operators except casts are basically constants.
+                }
+
+                is IrConstantArray ->
+                    DataFlowIR.Node.Singleton(symbolTable.mapType(value.type), null, null)
+                is IrConstantObject ->
+                    DataFlowIR.Node.Singleton(
+                            symbolTable.mapType(value.type),
+                            value.constructor.owner.loweredConstructorFunction?.let { symbolTable.mapFunction(it) },
+                            value.valueArguments.map { expressionToEdge(it) }
+                    )
+
+                else -> TODO("Unknown expression: ${ir2stringWhole(value)}")
             }
         }
     }
