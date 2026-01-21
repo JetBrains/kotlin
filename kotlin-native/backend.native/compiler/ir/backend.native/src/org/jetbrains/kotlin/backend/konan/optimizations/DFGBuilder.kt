@@ -413,7 +413,6 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
     private val executeImplProducerClass = symbols.functionN(0).owner
     private val executeImplProducerInvoke = executeImplProducerClass.simpleFunctions()
             .single { it.name == OperatorNameConventions.INVOKE }
-    private val reinterpret = symbols.reinterpret
     private val saveCoroutineState = symbols.saveCoroutineState
     private val restoreCoroutineState = symbols.restoreCoroutineState
     private val objCObjectRawValueGetter = symbols.interopObjCObjectRawValueGetter
@@ -632,6 +631,9 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 is IrConstructorCall, is IrDelegatingConstructorCall, is IrGetObjectValue -> error("Should've been lowered: ${value.render()}")
 
                 is IrCall -> {
+                    val intrinsicType = tryGetIntrinsicType(value)
+                    if (intrinsicType == IntrinsicType.IDENTITY) return getNode(value.arguments[0]!!).value
+
                     when (value.symbol) {
                         in arrayGetSymbols -> {
                             val actualCallee = value.actualCallee
@@ -667,8 +669,6 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                             // Technically, this allocates an array. However, this is an empty string, so let's treat it
                             // like a fixed-size object.
                             DataFlowIR.Node.AllocInstance(symbolTable.mapType(createEmptyStringSymbol.owner.returnType), value)
-
-                        reinterpret -> getNode(value.arguments[0]!!).value
 
                         initInstanceSymbol -> error("Should've been lowered: ${value.render()}")
 
