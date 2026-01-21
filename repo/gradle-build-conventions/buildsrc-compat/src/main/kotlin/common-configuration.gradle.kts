@@ -303,7 +303,6 @@ fun Project.configureTests() {
             ":analysis:low-level-api-fir",
             ":analysis:low-level-api-fir:low-level-api-fir-native",
             ":analysis:stubs",
-            ":analysis:symbol-light-classes",
             ":compiler",
             ":compiler:android-tests",
             ":compiler:arguments",
