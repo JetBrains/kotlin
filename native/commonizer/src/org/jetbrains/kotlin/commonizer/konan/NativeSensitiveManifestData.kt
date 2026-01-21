@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.impl.toSpaceSeparatedString
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 
@@ -56,7 +55,9 @@ internal fun Properties.addNativeSensitiveManifestProperties(manifest: NativeSen
     // Make sure all the lists are sorted for reproducible output
 
     addOptionalProperty(KLIB_PROPERTY_DEPENDS, manifest.dependencies.isNotEmpty()) {
-        manifest.dependencies.sorted().toSpaceSeparatedString()
+        manifest.dependencies.sorted().joinToString(separator = " ") {
+            if (it.contains(" ")) "\"$it\"" else it
+        }
     }
 
     /*
