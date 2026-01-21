@@ -12,10 +12,19 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.impl.buildLibrary
+import org.jetbrains.kotlin.konan.library.writer.includeBitcode
+import org.jetbrains.kotlin.konan.library.writer.includeNativeIncludedBinaries
+import org.jetbrains.kotlin.konan.library.writer.legacyNativeDependenciesInManifest
+import org.jetbrains.kotlin.konan.library.writer.legacyNativeShortNameInManifest
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_HEADER
+import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loadSizeInfo
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.includeIr
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import java.util.Properties
 
@@ -63,21 +72,21 @@ fun PhaseContext.writeKlib(input: KlibWriterInput, klibOutputFileName: String, s
     val nativeTargetsForManifest = config.nativeTargetsForManifest?.map { it.visibleName }
         ?: if (this.config.metadataKlib) emptyList() else listOf(target.visibleName)
 
-    buildLibrary(
-        natives = config.nativeLibraries,
-        included = config.includeBinaries,
-        linkDependencies = linkDependencies,
-        metadata = input.serializerOutput.serializedMetadata!!,
-        ir = input.serializerOutput.serializedIr,
-        versions = versions,
-        target = target,
-        nativeTargetsForManifest = nativeTargetsForManifest,
-        output = klibOutputFileName,
-        moduleName = libraryName,
-        nopack = nopack,
-        shortName = shortLibraryName,
-        manifestProperties = manifestProperties,
-    )
+    KlibWriter {
+        format(if (nopack) KlibFormat.Directory else KlibFormat.ZipArchive)
+        manifest {
+            moduleName(libraryName)
+            versions(versions)
+            platformAndTargets(BuiltInsPlatform.NATIVE, nativeTargetsForManifest)
+            customProperties { this += manifestProperties }
+            legacyNativeShortNameInManifest(shortLibraryName)
+            legacyNativeDependenciesInManifest(linkDependencies.map { it.uniqueName })
+        }
+        includeMetadata(input.serializerOutput.serializedMetadata!!)
+        includeIr(input.serializerOutput.serializedIr)
+        includeBitcode(target, config.nativeLibraries)
+        includeNativeIncludedBinaries(target, config.includeBinaries)
+    }.writeTo(klibOutputFileName)
 
     loadSizeInfo(File(klibOutputFileName))?.flatten()?.let { stats ->
         performanceManager?.registerKlibElementStats(stats)
