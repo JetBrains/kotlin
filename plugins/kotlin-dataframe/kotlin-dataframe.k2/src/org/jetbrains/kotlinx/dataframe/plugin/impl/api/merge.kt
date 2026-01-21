@@ -26,8 +26,7 @@ class MergeInto0 : AbstractSchemaModificationInterpreter() {
     val Arguments.typeArg2 by type()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val columns = receiver.columns.resolve(receiver.df).map { it.path.toPath() }
-        return merge(receiver.df, columns, pathOf(columnName), simpleColumnOf(columnName, typeArg2.coneType))
+        return merge(receiver.df, receiver.columns, pathOf(columnName), simpleColumnOf(columnName, typeArg2.coneType))
     }
 }
 
@@ -64,11 +63,11 @@ class MergeBy1 : AbstractInterpreter<MergeApproximation>() {
 
 fun merge(
     schema: PluginDataFrameSchema,
-    columns: List<ColumnPath>,
+    columns: ColumnsResolver,
     path: ColumnPath,
     result: SimpleCol,
 ): PluginDataFrameSchema {
-    val df = schema.asDataFrame()
+    val df = schema.asDataFrame(impliedColumnsResolver = columns)
     val mergedPath = if (df.getColumnOrNull(path) != null) {
         val temp = ColumnNameGenerator(df.columnNames()).addUnique("temp")
         pathOf(temp)
@@ -76,7 +75,7 @@ fun merge(
         path
     }
 
-    val grouped = df.move { columns.toColumnSet() }.under { mergedPath }
+    val grouped = df.move { columns }.under { mergedPath }
 
     var res = grouped.replace { mergedPath }.with { result.rename(mergedPath.columnName).asDataColumn() }
     if (mergedPath != path) {

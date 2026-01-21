@@ -30,7 +30,10 @@ class DataFrameGroupBy : AbstractInterpreter<GroupBy>() {
     val Arguments.cols: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): GroupBy {
-        return GroupBy(keys = createPluginDataFrameSchema(cols.resolve(receiver), moveToTop), groups = receiver)
+        return GroupBy(
+            keys = createPluginDataFrameSchema(cols.resolve(receiver), moveToTop),
+            groups = receiver.insertImpliedColumns(cols)
+        )
     }
 }
 

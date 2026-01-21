@@ -16,7 +16,7 @@ class DataFrameUnfold : AbstractSchemaModificationInterpreter() {
     val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.asDataFrame().replace { columns }.with {
+        return receiver.asDataFrame(impliedColumnsResolver = columns).replace { columns }.with {
             val column = it.asSimpleColumn() as? SimpleDataColumn
             if (column != null) {
                 if (!column.type.coneType.canBeUnfolded(session)) {
