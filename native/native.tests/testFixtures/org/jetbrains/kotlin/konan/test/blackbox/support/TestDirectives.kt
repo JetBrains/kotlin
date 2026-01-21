@@ -199,10 +199,6 @@ object TestDirectives : SimpleDirectivesContainer() {
     val NATIVE_STANDALONE by directive(
         description = "Forces the Kotlin/Native test to run in a standalone mode (see also TestKind)."
     )
-
-    val USE_EXPERIMENTAL by stringDirective(
-        description = "Adds specified opt-in annotations"
-    )
 }
 
 // mimics class `JVMAssertionsMode`
