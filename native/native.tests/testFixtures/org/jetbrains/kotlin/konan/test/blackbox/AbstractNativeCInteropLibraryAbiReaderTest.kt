@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
-import org.jetbrains.kotlin.konan.test.blackbox.support.Location
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.MODULE
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExistingDepe
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.parseModule
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler.Companion.abiDumpFileExtension
@@ -125,8 +123,7 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
             val registeredDirectives = directivesParser.build()
 
             val moduleName = parseModule(
-                ParsedDirective(MODULE, registeredDirectives[MODULE]),
-                Location(sourceFile)
+                ParsedDirective(MODULE, registeredDirectives[MODULE])
             ).name
 
             val excludedPackages = registeredDirectives[KLIB_ABI_DUMP_EXCLUDED_PACKAGES]
