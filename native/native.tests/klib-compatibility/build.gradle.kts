@@ -71,27 +71,28 @@ fun Project.customCompilerTest(
             isNative.set(true)
         }
 
-        dependsOn(unarchiveCustomCompiler)
-        inputs.files(unarchiveCustomCompiler.get().outputs)
-        doFirst {
-            val customCompilerDir = customCompilersCollectionDir.listFiles()?.filter {
-                it.isDirectory && it.name.toString().endsWith(version.rawVersion)
-            }?.first()
-            if (customCompilerDir == null || !customCompilerDir.exists())
-                error ("Folder `$customCompilersCollectionDir` must have a subfolder with version ${version.rawVersion} of K/N prebuilt compiler")
+        inputs.files(unarchiveCustomCompiler.map { it.outputs })
 
-            systemProperty("kotlin.internal.native.test.compat.customCompilerDist", customCompilerDir.absolutePath)
+        val customCompilerDir = customCompilersCollectionDir.listFiles()?.filter {
+            it.isDirectory && it.name.toString().endsWith(version.rawVersion)
+        }?.first()
+        if (customCompilerDir == null || !customCompilerDir.exists())
+            error ("Folder `$customCompilersCollectionDir` must have a subfolder with version ${version.rawVersion} of K/N prebuilt compiler")
+
+        jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
+            classpath.from(customCompilerDir.absolutePath)
+            property.set("kotlin.internal.native.test.compat.customCompilerDist")
+        }
+        jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
             val konanLibDir = customCompilerDir.resolve("konan/lib")
             val runtimeJars = listOf("kotlin-native-compiler-embeddable.jar", "trove4j.jar")
-            systemProperty(
-                "kotlin.internal.native.test.compat.customCompilerClasspath",
-                runtimeJars.joinToString(File.pathSeparator) { konanLibDir.resolve(it).absolutePath }
-            )
-            systemProperty("kotlin.internal.native.test.compat.customCompilerVersion", version.rawVersion)
-            systemProperty(
-                "kotlin.internal.native.test.compat.currentCompilerDist",
-                rootProject.projectDir.resolve("kotlin-native/dist")
-            )
+            classpath.from(runtimeJars.map { konanLibDir.resolve(it).absolutePath })
+            property.set("kotlin.internal.native.test.compat.customCompilerClasspath")
+        }
+        systemProperty("kotlin.internal.native.test.compat.customCompilerVersion", version.rawVersion)
+        jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
+            classpath.from(rootProject.projectDir.resolve("kotlin-native/dist"))
+            property.set("kotlin.internal.native.test.compat.currentCompilerDist")
         }
         body()
     }
