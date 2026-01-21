@@ -493,7 +493,6 @@ enum class LanguageFeature(
     JvmEnhancedBridges(KOTLIN_2_4, "KT-82900"),
     DiscriminateNothingAsNullabilityConstraintInInference(KOTLIN_2_4, "KT-81948"),
     ResolveEqualsRhsInDependentContextWithCompletion(KOTLIN_2_4, "KT-81763"),
-    IrIntraModuleInlinerBeforeKlibSerialization(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_3, issue = "KT-79717"),
 
     // 2.5
 
@@ -595,6 +594,7 @@ enum class LanguageFeature(
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
     CollectionLiterals(sinceVersion = null, testOnly = true, issue = "KT-80489"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
+    IrIntraModuleInlinerBeforeKlibSerialization(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = false, issue = "KT-79717"),
     IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-79717"),
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = null, enabledInProgressiveMode = true, "KT-73611"),
