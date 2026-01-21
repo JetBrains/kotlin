@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.library.impl
 
-const val KLIB_DEFAULT_COMPONENT_NAME = "default"
-
 enum class BuiltInsPlatform {
     JVM, JS, NATIVE, WASM, COMMON;
 
