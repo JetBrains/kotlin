@@ -179,7 +179,9 @@ open class StatusComputationSession(
         when (superClassSymbol) {
             is FirRegularClassSymbol -> forceResolveStatusesOfClass(superClassSymbol.fir)
             is FirTypeAliasSymbol -> {
-                for (classifierSymbol in superTypeToSymbols(superClassSymbol.fir.expandedTypeRef)) {
+                // In certain situations (e.g. with `expect` and `actual` declarations), the supertype type alias might not be resolved yet.
+                // Hence, we have to use `resolvedExpandedTypeRef` to ensure that the type alias expansion has been resolved.
+                for (classifierSymbol in superTypeToSymbols(superClassSymbol.resolvedExpandedTypeRef)) {
                     forceResolveStatusOfCorrespondingClass(classifierSymbol)
                 }
             }
