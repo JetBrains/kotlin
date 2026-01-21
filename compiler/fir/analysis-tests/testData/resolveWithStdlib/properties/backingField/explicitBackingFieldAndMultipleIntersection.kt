@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-83770
 
 interface IAny { val y: Any }
@@ -10,7 +10,7 @@ open class H<T:Any>(x: T) {
 
     fun testMulti(b: H<String>) {
         if (b is IAny && b is ICharSeq) {
-            val s: String <!INITIALIZER_TYPE_MISMATCH!>=<!> b.y
+            val s: String = b.y
             b.y.length
         }
     }
