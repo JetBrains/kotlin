@@ -455,6 +455,7 @@ object FirFakeOverrideGenerator {
                 baseProperty = baseProperty,
                 newSource = newSource ?: getter.source,
                 newVisibility = newVisibility ?: getter.visibility,
+                newModality = newModality ?: getter.modality,
             )
         }
 
@@ -468,7 +469,8 @@ object FirFakeOverrideGenerator {
                 derivedClassLookupTag = derivedClassLookupTag,
                 baseProperty = baseProperty,
                 newSource = newSource ?: baseProperty.setter?.source,
-                newSetterVisibility ?: setter.visibility,
+                newVisibility = newSetterVisibility ?: setter.visibility,
+                newModality = newModality ?: setter.modality,
             )
         }
 
@@ -507,6 +509,7 @@ object FirFakeOverrideGenerator {
         baseProperty: FirProperty,
         newSource: KtSourceElement? = source,
         newVisibility: Visibility = visibility,
+        newModality: Modality? = modality,
     ) = when {
         annotations.isNotEmpty() || newVisibility != baseProperty.visibility ||
                 origin == FirDeclarationOrigin.Delegated ||
@@ -521,6 +524,7 @@ object FirFakeOverrideGenerator {
             baseProperty,
             newSource,
             newVisibility,
+            newModality,
         )
         else -> null
     }
@@ -535,6 +539,7 @@ object FirFakeOverrideGenerator {
         baseProperty: FirProperty,
         newSource: KtSourceElement? = source,
         newVisibility: Visibility = visibility,
+        newModality: Modality? = modality,
     ) = when (this) {
         is FirDefaultPropertyGetter -> FirDefaultPropertyGetter(
             source = newSource,
@@ -543,7 +548,7 @@ object FirFakeOverrideGenerator {
             propertyTypeRef = propertyReturnTypeRef,
             visibility = newVisibility,
             propertySymbol = propertySymbol,
-            modality = modality,
+            modality = newModality,
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
             isOverride = true,
