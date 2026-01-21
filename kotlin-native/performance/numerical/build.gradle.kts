@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+import org.jetbrains.kotlin.benchmarkingTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -10,6 +11,8 @@ plugins {
 }
 
 kotlin {
+    benchmarkingTargets()
+
     targets.filterIsInstance<KotlinNativeTarget>().forEach {
         it.compilations.getByName("main") {
             cinterops {

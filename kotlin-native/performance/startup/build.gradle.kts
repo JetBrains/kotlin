@@ -4,9 +4,14 @@
  */
 
 import org.jetbrains.kotlin.BenchmarkRepeatingType
+import org.jetbrains.kotlin.benchmarkingTargets
 
 plugins {
     id("benchmarking")
+}
+
+kotlin {
+    benchmarkingTargets()
 }
 
 benchmark {

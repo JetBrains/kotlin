@@ -4,7 +4,6 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.*
@@ -54,10 +53,6 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
                         Paths.get(layout.buildDirectory.get().asFile.absolutePath, benchmark.applicationName.get()))
             }
         }
-    }
-
-    override fun KotlinMultiplatformExtension.configureTargets() {
-        macosArm64()
     }
 
     override fun RunKotlinNativeTask.configureKonanRunTask() {

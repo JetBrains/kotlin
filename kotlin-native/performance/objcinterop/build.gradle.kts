@@ -10,6 +10,8 @@ plugins {
 }
 
 kotlin {
+    macosArm64()
+
     targets.filterIsInstance<KotlinNativeTarget>().forEach {
         it.compilations.getByName("main") {
             cinterops {
