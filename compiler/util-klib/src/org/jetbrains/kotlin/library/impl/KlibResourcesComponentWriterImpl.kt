@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.library.impl
 
-import org.jetbrains.kotlin.library.KLIB_RESOURCES_FOLDER_NAME
 import org.jetbrains.kotlin.library.KlibComponentLayout
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_RESOURCES_FOLDER_NAME
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
