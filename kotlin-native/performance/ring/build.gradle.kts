@@ -3,8 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
+import org.jetbrains.kotlin.benchmarkingTargets
+
 plugins {
     id("benchmarking")
+}
+
+kotlin {
+    benchmarkingTargets()
 }
 
 benchmark {

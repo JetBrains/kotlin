@@ -6,7 +6,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import javax.inject.Inject
@@ -55,7 +54,6 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
     protected abstract fun Project.createExtension(): BenchmarkExtension
 
     protected abstract fun Project.createNativeBinary(target: KotlinNativeTarget)
-    protected abstract fun KotlinMultiplatformExtension.configureTargets()
     protected abstract fun RunKotlinNativeTask.configureKonanRunTask()
     protected abstract fun JsonReportTask.configureKonanJsonReportTask()
 
@@ -67,7 +65,6 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
         createExtension()
 
         kotlin.apply {
-            configureTargets()
             sourceSets.commonMain.dependencies {
                 // All benchmarks require a benchmarks launcher.
                 // swiftinterop benchmarks also have to export it via ObjCExport => api instead of implementation dependency
@@ -77,8 +74,8 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
                 freeCompilerArgs.addAll(benchmark.compilerOpts)
                 freeCompilerArgs.addAll(compilerArgs)
             }
-            targets.filterIsInstance<KotlinNativeTarget>().forEach {
-                createNativeBinary(it)
+            targets.withType(KotlinNativeTarget::class).configureEach {
+                createNativeBinary(this)
             }
         }
 

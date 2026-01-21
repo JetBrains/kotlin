@@ -5,8 +5,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.JsonReportTask
 import org.jetbrains.kotlin.RunKotlinNativeTask
-import org.jetbrains.kotlin.benchmarkingTargets
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.hostKotlinNativeTarget
@@ -33,10 +31,6 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
                 enabled = false
             }
         }
-    }
-
-    override fun KotlinMultiplatformExtension.configureTargets() {
-        benchmarkingTargets()
     }
 
     override fun RunKotlinNativeTask.configureKonanRunTask() {
