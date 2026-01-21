@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 
@@ -24,9 +23,6 @@ class NativeLauncherAdditionalSourceProvider(testServices: TestServices) : MainF
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        if (!NativeEnvironmentConfigurator.isMainModule(module, testModuleStructure))
-            return emptyList()
-
         val fileWithBox = module.files.firstOrNull { containsBoxMethod(it.originalContent) } ?: return emptyList()
         val boxFqName = detectPackage(fileWithBox)?.let { "$it.$BOX_FUNCTION_NAME" } ?: BOX_FUNCTION_NAME
         val launcherContent = generateBoxFunctionLauncher(boxFqName)

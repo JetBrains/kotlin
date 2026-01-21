@@ -19,7 +19,9 @@ class NativeRunner(testServices: TestServices) : NativeBinaryArtifactHandler(tes
     private var artifact: BinaryArtifacts.Native? = null
     override fun processModule(module: TestModule, info: BinaryArtifacts.Native) {
         if (NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)) {
-            if (artifact != null) error("Internal error: more that one main module in the test: $artifact and $info")
+            if (artifact != null)
+                error("Internal error: more than one executable for the testcase: ${artifact!!.executable.name} and ${info.executable.name}\n" +
+                            "Only one module may have no incoming dependencies")
             artifact = info
         }
     }

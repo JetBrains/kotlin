@@ -28,7 +28,7 @@ class A
 @AnnotationWithDefault(<!EVALUATED("Other")!>"Other"<!>)
 class B
 
-// MODULE: main
+// MODULE: main(lib)
 // FILE: main.kt
 
 fun box(): String {
