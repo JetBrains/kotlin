@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestModel
 import org.jetbrains.kotlin.generators.tests.provider
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.swiftexport.ide.AbstractSymbolToSirTest
 import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractSwiftExportExecutionTest
 import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractSwiftExportWithBinaryCompilationTest
@@ -30,7 +30,7 @@ fun main() {
             testClass<AbstractSwiftExportWithResultValidationTest>(
                 suiteTestClassName = "SwiftExportWithResultValidationTest",
                 annotations = listOf(
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                 ),
             ) {
                 model("", extension = null, recursive = false)
@@ -43,7 +43,7 @@ fun main() {
             testClass<AbstractSwiftExportWithBinaryCompilationTest>(
                 suiteTestClassName = "SwiftExportWithBinaryCompilationTest",
                 annotations = listOf(
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                 ),
             ) {
                 model("", extension = null, recursive = false)
@@ -56,7 +56,7 @@ fun main() {
             testClass<AbstractSwiftExportExecutionTest>(
                 suiteTestClassName = "SwiftExportExecutionTestGenerated",
                 annotations = listOf(
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                 ),
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
@@ -69,7 +69,7 @@ fun main() {
             testClass<AbstractSwiftExportWithResultValidationTest>(
                 suiteTestClassName = "SwiftExportCoroutinesWithResultValidationTest",
                 annotations = listOf(
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                     annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
                 ),
             ) {
@@ -83,7 +83,7 @@ fun main() {
             testClass<AbstractSwiftExportWithBinaryCompilationTest>(
                 suiteTestClassName = "SwiftExportCoroutinesWithBinaryCompilationTest",
                 annotations = listOf(
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                     annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
                 ),
             ) {
@@ -97,7 +97,7 @@ fun main() {
             testClass<AbstractSwiftExportExecutionTest>(
                 suiteTestClassName = "SwiftExportCoroutinesExecutionTestGenerated",
                 annotations = listOf(
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                     annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
                 ),
             ) {

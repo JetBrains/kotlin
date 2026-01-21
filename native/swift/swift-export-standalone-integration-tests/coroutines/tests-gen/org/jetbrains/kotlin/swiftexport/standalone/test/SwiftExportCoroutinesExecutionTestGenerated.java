@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.test;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.jetbrains.kotlin.swiftexport.standalone.test.SwiftExportWithCoroutinesTestSupport;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/swift/swift-export-standalone-integration-tests/coroutines/testData/execution")
 @TestDataPath("$PROJECT_ROOT")
-@UseStandardTestCaseGroupProvider()
+@UseExtTestCaseGroupProvider()
 @ExtendWith(SwiftExportWithCoroutinesTestSupport.class)
 public class SwiftExportCoroutinesExecutionTestGenerated extends AbstractSwiftExportExecutionTest {
   @Test

@@ -1,4 +1,5 @@
-// FREE_COMPILER_ARGS: -Xprint-files -verbose
+// FREE_COMPILER_ARGS: -Xprint-files
+// FREE_COMPILER_ARGS: -verbose
 
 import kotlin.test.*
 
