@@ -11915,6 +11915,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldAndMultipleIntersectionWithVar.kt")
+        public void testExplicitBackingFieldAndMultipleIntersectionWithVar() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldAndMultipleIntersectionWithVar.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldAndPropertyIntersection.kt")
         public void testExplicitBackingFieldAndPropertyIntersection() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldAndPropertyIntersection.kt");

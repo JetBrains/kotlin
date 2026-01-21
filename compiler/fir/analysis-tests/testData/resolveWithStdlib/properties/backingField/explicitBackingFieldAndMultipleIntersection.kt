@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-83770
 
 interface IAny { val y: Any }
 interface ICharSeq { val y: CharSequence }
