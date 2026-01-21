@@ -24,7 +24,7 @@ class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
         return resolutionScopeCache.getOrPut(module) { module ->
             val analyzableModules = getAnalyzableModules(module)
             val searchScope = buildSearchScope(module, analyzableModules)
-            KaBaseResolutionScope(module, searchScope, analyzableModules)
+            KaBaseResolutionScope(module, searchScope)
         }
     }
 
