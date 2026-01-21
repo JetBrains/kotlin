@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.forTestCompile;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -75,6 +76,22 @@ public class ForTestCompileRuntime {
     @NotNull
     public static File distKotlincForTests() {
         return new File(propertyOrDist(KOTLIN_DIST_PATH, "dist"), "kotlinc");
+    }
+
+    @NotNull
+    public static File pluginSandboxAnnotationsJvmForTests() {
+        return propertyOrDist(
+                PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH,
+                "plugins/plugin-sandbox/plugin-annotations/build/libs/plugin-annotations-jvm" + "-" + KotlinCompilerVersion.VERSION + ".jar"
+        );
+    }
+
+    @NotNull
+    public static File pluginSandboxAnnotationsJsForTests() {
+        return propertyOrDist(
+                PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH,
+                "plugins/plugin-sandbox/plugin-annotations/build/libs/plugin-annotations-js" + "-" + KotlinCompilerVersion.VERSION + ".klib"
+        );
     }
 
     @NotNull
