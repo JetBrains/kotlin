@@ -296,29 +296,29 @@ open class TestCompilerArgs(
     }
 }
 
-internal fun parseTestKind(registeredDirectives: RegisteredDirectives, location: Location): TestKind? {
+internal fun parseTestKind(registeredDirectives: RegisteredDirectives): TestKind? {
     if (KIND !in registeredDirectives)
         return null // The default is determined by TEST_KIND global property
 
     val values = registeredDirectives[KIND]
-    return values.singleOrNull() ?: fail { "$location: Exactly one test kind expected in $KIND directive: $values" }
+    return values.singleOrNull() ?: fail { "Exactly one test kind expected in $KIND directive: $values" }
 }
 
-internal fun parseTestRunner(registeredDirectives: RegisteredDirectives, location: Location): TestRunnerType {
+internal fun parseTestRunner(registeredDirectives: RegisteredDirectives): TestRunnerType {
     if (TEST_RUNNER !in registeredDirectives)
         return TestRunnerType.DEFAULT // The default one.
 
     val values = registeredDirectives[TEST_RUNNER]
-    return values.singleOrNull() ?: fail { "$location: Exactly one test runner type expected in $TEST_RUNNER directive: $values" }
+    return values.singleOrNull() ?: fail { "Exactly one test runner type expected in $TEST_RUNNER directive: $values" }
 }
 
-internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, location: Location): String {
+internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives): String {
     if (ENTRY_POINT !in registeredDirectives)
         return "main" // The default one.
 
     val values = registeredDirectives[ENTRY_POINT]
-    val entryPoint = values.singleOrNull() ?: fail { "$location: Exactly one entry point expected in $ENTRY_POINT directive: $values" }
-    assertTrue(entryPoint.isNotEmpty()) { "$location: Invalid entry point in $ENTRY_POINT directive: $entryPoint" }
+    val entryPoint = values.singleOrNull() ?: fail { "Exactly one entry point expected in $ENTRY_POINT directive: $values" }
+    assertTrue(entryPoint.isNotEmpty()) { "Invalid entry point in $ENTRY_POINT directive: $entryPoint" }
 
     return entryPoint
 }
@@ -334,7 +334,7 @@ internal fun parseReplLLDBSpec(testDataFile: File): ReplLLDBSessionSpec {
     }
 }
 
-internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): TestModule.Exclusive {
+internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective): TestModule.Exclusive {
     val module = parsedDirective.values.singleOrNull()?.toString()?.let(TEST_MODULE_REGEX::matchEntire)?.let { match ->
         val name = match.groupValues[1]
         val directDependencySymbols = match.groupValues[3].split(',').filter(String::isNotEmpty).toSet()
@@ -343,7 +343,7 @@ internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirec
 
         val friendsThatAreNotDependencies = directFriendSymbols - directDependencySymbols
         assertTrue(friendsThatAreNotDependencies.isEmpty()) {
-            "$location: Found friends that are not dependencies: $friendsThatAreNotDependencies"
+            "Found friends that are not dependencies: $friendsThatAreNotDependencies"
         }
 
         TestModule.Exclusive(name, directDependencySymbols, directFriendSymbols, directDependsOnSymbols)
@@ -351,7 +351,7 @@ internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirec
 
     return module ?: fail {
         """
-            $location: Invalid contents of ${parsedDirective.directive} directive: ${parsedDirective.values}
+            Invalid contents of ${parsedDirective.directive} directive: ${parsedDirective.values}
             ${parsedDirective.directive.description}
         """.trimIndent()
     }
@@ -363,11 +363,11 @@ private val TEST_MODULE_REGEX = Regex("^([a-zA-Z0-9_]+)(" +          // name
                                               "(\\(([a-zA-Z0-9_,]*)\\))?" + // dependsOn
                                               ")?$")
 
-internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): String {
+internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDirective): String {
     val fileName = parsedDirective.values.singleOrNull()?.toString()
         ?: fail {
             """
-                $location: Exactly one file name expected in ${parsedDirective.directive} directive: ${parsedDirective.values}
+                Exactly one file name expected in ${parsedDirective.directive} directive: ${parsedDirective.values}
                 ${parsedDirective.directive.description}
             """.trimIndent()
         }
@@ -375,42 +375,42 @@ internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDir
     val fileExtension = fileName.split(".").last()
     if (fileExtension in KNOWN_EXTENSIONS)
         assertTrue(fileName.length > 3 && '/' !in fileName && '\\' !in fileName) {
-            "$location: Invalid file name with extension $fileExtension in ${parsedDirective.directive} directive: $fileName"
+            "Invalid file name with extension $fileExtension in ${parsedDirective.directive} directive: $fileName"
         }
     else
         assertTrue(false) {
-            "$location: Invalid file extension .$fileExtension in ${parsedDirective.directive} directive: $fileName"
+            "Invalid file extension .$fileExtension in ${parsedDirective.directive} directive: $fileName"
         }
 
     return fileName
 }
 
-internal fun parseExpectedTimeoutFailure(registeredDirectives: RegisteredDirectives, location: Location): Duration? =
+internal fun parseExpectedTimeoutFailure(registeredDirectives: RegisteredDirectives): Duration? =
     if (EXPECTED_TIMEOUT_FAILURE in registeredDirectives) {
         val value = registeredDirectives.singleOrZeroValue(EXPECTED_TIMEOUT_FAILURE)
-            ?: fail { "$location: Exactly one timeout value expected in $EXPECTED_TIMEOUT_FAILURE directive" }
+            ?: fail { "Exactly one timeout value expected in $EXPECTED_TIMEOUT_FAILURE directive" }
         Duration.parseOrNull(value)
-            ?: fail { "$location: Unexpected value for timeout: $value" }
+            ?: fail { "Unexpected value for timeout: $value" }
     } else {
         null
     }
 
-internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives, location: Location): TestRunCheck.ExitCode {
+internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives): TestRunCheck.ExitCode {
     if (EXIT_CODE !in registeredDirectives)
         return TestRunCheck.ExitCode.Expected(0)
 
     val values = registeredDirectives[EXIT_CODE]
     val exitCode = values.singleOrNull()
-        ?: fail { "$location: Exactly one exit code expected in $EXIT_CODE directive: $values" }
+        ?: fail { "Exactly one exit code expected in $EXIT_CODE directive: $values" }
 
     return when (exitCode) {
         "!0" -> TestRunCheck.ExitCode.AnyNonZero
         else -> exitCode.toIntOrNull()?.let(TestRunCheck.ExitCode::Expected)
-            ?: fail { "$location: Invalid exit code specified in $EXIT_CODE directive: $exitCode" }
+            ?: fail { "Invalid exit code specified in $EXIT_CODE directive: $exitCode" }
     }
 }
 
-internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, location: Location, settings: Settings): TestCompilerArgs {
+internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, settings: Settings): TestCompilerArgs {
     val assertionsMode = registeredDirectives.singleOrZeroValue(ASSERTIONS_MODE) ?: AssertionsMode.DEFAULT
     val freeCInteropArgs = registeredDirectives[FREE_CINTEROP_ARGS]
     val rawFreeCompilerArgs = registeredDirectives[FREE_COMPILER_ARGS]
@@ -419,7 +419,7 @@ internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, l
         val forbiddenCompilerArgs = TestCompilerArgs.findForbiddenArgs(freeCompilerArgs)
         assertTrue(forbiddenCompilerArgs.isEmpty()) {
             """
-            $location: Forbidden compiler arguments found in $FREE_COMPILER_ARGS directive: $forbiddenCompilerArgs
+            Forbidden compiler arguments found in $FREE_COMPILER_ARGS directive: $forbiddenCompilerArgs
             All arguments: $freeCompilerArgs
         """.trimIndent()
         }
@@ -429,25 +429,24 @@ internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, l
     return TestCompilerArgs(freeCompilerArgs + noDefaultLibsArgs, freeCInteropArgs, assertionsMode)
 }
 
-internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): OutputDataFile? =
-    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives, location)?.let { OutputDataFile(file = it) }
+internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives): OutputDataFile? =
+    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives)?.let { OutputDataFile(file = it) }
 
-internal fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): File? =
-    parseFileBasedDirective(baseDir, INPUT_DATA_FILE, registeredDirectives, location)
+internal fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives): File? =
+    parseFileBasedDirective(baseDir, INPUT_DATA_FILE, registeredDirectives)
 
 private fun parseFileBasedDirective(
     baseDir: File,
     directive: StringDirective,
-    registeredDirectives: RegisteredDirectives,
-    location: Location
+    registeredDirectives: RegisteredDirectives
 ): File? {
     if (directive !in registeredDirectives)
         return null
 
     val values = registeredDirectives[directive]
     val file = values.singleOrNull()?.let { baseDir.resolve(it) }
-        ?: fail { "$location: Exactly one file expected in $directive directive: $values" }
-    assertTrue(file.isFile) { "$location: File specified in $directive directive does not exist or is not a file: $file" }
+        ?: fail { "Exactly one file expected in $directive directive: $values" }
+    assertTrue(file.isFile) { "File specified in $directive directive does not exist or is not a file: $file" }
 
     return file
 }
@@ -465,13 +464,6 @@ internal fun parseOutputRegex(registeredDirectives: RegisteredDirectives): TestR
             }
         }
         true
-    }
-}
-
-internal class Location(private val testDataFile: File, val lineNumber: Int? = null) {
-    override fun toString() = buildString {
-        append(testDataFile.path)
-        if (lineNumber != null) append(':').append(lineNumber + 1)
     }
 }
 

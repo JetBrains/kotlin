@@ -159,7 +159,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                     val directive = parsedDirective.directive
                     when {
                         directive == TestDirectives.FILE -> {
-                            val newFileName = parseFileName(parsedDirective, location)
+                            val newFileName = parseFileName(parsedDirective)
                             finishTestFile(forceFinish = false, location)
                             beginTestFile(newFileName)
                         }
@@ -174,7 +174,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                             when (directive) {
                                 TestDirectives.MODULE -> {
                                     finishTestFile(forceFinish = false, location)
-                                    switchTestModule(parseModule(parsedDirective, location), location)
+                                    switchTestModule(parseModule(parsedDirective), location)
                                 }
                                 else -> {
                                     assertNotEquals(TestDirectives.FILE, lastParsedDirective) {
@@ -217,11 +217,11 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 it.files.any { it.location.extension == "def" && !it.text.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
             }) return null
 
-        val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location, settings)
-        val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives, location)
+        val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, settings)
+        val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives)
         val originalTestSourceFiles = testModules.values.flatMap { it.files }.map { it.location }
 
-        val testKind = parseTestKind(registeredDirectives, location) ?: settings.get<TestKind>()
+        val testKind = parseTestKind(registeredDirectives) ?: settings.get<TestKind>()
 
         if (testKind == TestKind.REGULAR) {
             // Fix package declarations to avoid unintended conflicts between symbols with the same name in different test cases.
@@ -260,17 +260,17 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             extras = when (testKind) {
                 TestKind.STANDALONE_NO_TR -> {
                     NoTestRunnerExtras(
-                        entryPoint = parseEntryPoint(registeredDirectives, location),
-                        inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location),
+                        entryPoint = parseEntryPoint(registeredDirectives),
+                        inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives),
                         arguments = parseProgramArguments(registeredDirectives)
                     )
                 }
                 TestKind.REGULAR, TestKind.STANDALONE -> {
-                    WithTestRunnerExtras(runnerType = parseTestRunner(registeredDirectives, location))
+                    WithTestRunnerExtras(runnerType = parseTestRunner(registeredDirectives))
                 }
                 TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> {
                     NoTestRunnerExtras(
-                        entryPoint = parseEntryPoint(registeredDirectives, location),
+                        entryPoint = parseEntryPoint(registeredDirectives),
                         arguments = lldbSpec!!.generateCLIArguments(settings.get<LLDB>().prettyPrinters)
                     )
                 }
@@ -282,6 +282,13 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
         )
 
         return testCase
+    }
+
+    private class Location(private val testDataFile: File, val lineNumber: Int? = null) {
+        override fun toString() = buildString {
+            append(testDataFile.path)
+            if (lineNumber != null) append(':').append(lineNumber + 1)
+        }
     }
 
     companion object {
@@ -360,7 +367,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
 
         private fun computeExitCodeCheck(testKind: TestKind, registeredDirectives: RegisteredDirectives, location: Location): ExitCode =
             if (testKind == TestKind.STANDALONE_NO_TR)
-                parseExpectedExitCode(registeredDirectives, location)
+                parseExpectedExitCode(registeredDirectives)
             else
                 ExitCode.Expected(0)
 
@@ -368,7 +375,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             testDataFile: File,
             registeredDirectives: RegisteredDirectives,
             location: Location
-        ): OutputDataFile? = parseOutputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
+        ): OutputDataFile? = parseOutputDataFile(baseDir = testDataFile.parentFile, registeredDirectives)
 
         private fun computeTestOutputFiltering(testKind: TestKind): TestFiltering = TestFiltering(
             if (testKind in listOf(TestKind.REGULAR, TestKind.STANDALONE)) TCTestOutputFilter else TestOutputFilter.NO_FILTERING
