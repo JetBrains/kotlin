@@ -4479,21 +4479,23 @@ public final class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackC
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Proxy : java/io/Serializable {
-	public fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/Boolean;)V
-	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/Boolean;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/util/Map;
 	public final fun component4 ()Ljava/lang/Boolean;
 	public final fun component5 ()Ljava/lang/Boolean;
-	public final fun copy (Ljava/util/List;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/Boolean;)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Proxy;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Proxy;Ljava/util/List;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/Boolean;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Proxy;
+	public final fun component6 ()Ljava/lang/Boolean;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Proxy;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Proxy;Ljava/util/List;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Proxy;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChangeOrigin ()Ljava/lang/Boolean;
 	public final fun getContext ()Ljava/util/List;
 	public final fun getPathRewrite ()Ljava/util/Map;
 	public final fun getSecure ()Ljava/lang/Boolean;
 	public final fun getTarget ()Ljava/lang/String;
+	public final fun getWs ()Ljava/lang/Boolean;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
