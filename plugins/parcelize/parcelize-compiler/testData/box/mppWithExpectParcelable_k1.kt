@@ -1,4 +1,3 @@
-// TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K2: ANY
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
