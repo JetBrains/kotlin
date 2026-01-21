@@ -19,7 +19,7 @@ class A
 @AnnotationWithAnnotationWithAnnotation(AnnotationWithAnnotation(Annotation(<!EVALUATED("String")!>"Str" + "ing"<!>)))
 class B
 
-// MODULE: main
+// MODULE: main(lib)
 // FILE: main.kt
 
 fun box(): String {

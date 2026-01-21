@@ -92,7 +92,7 @@ var b: Int
 @BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>)
 typealias C = Int
 
-// MODULE: main
+// MODULE: main(lib)
 // FILE: main.kt
 
 fun box(): String {
