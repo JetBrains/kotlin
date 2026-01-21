@@ -238,8 +238,9 @@ private class ExtTestDataFile(
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
         patchPackageNames(isStandaloneTest)
         patchFileLevelAnnotations()
-        val entryPointFunctionFQN = findEntryPoint()
-                generateTestLauncher(isStandaloneTest, entryPointFunctionFQN)
+        findEntryPoint()?.let { entryPointFunctionFQN ->
+            generateTestLauncher(isStandaloneTest, entryPointFunctionFQN)
+        }
 
         return doCreateTestCase(settings, isStandaloneTest, sharedModules)
     }
@@ -523,7 +524,7 @@ private class ExtTestDataFile(
     }
 
     /** Finds the fully-qualified name of the entry point function (aka `fun box(): String`). */
-    private fun findEntryPoint(): String = with(structure) {
+    private fun findEntryPoint(): String? = with(structure) {
         val result = mutableListOf<String>()
 
         filesToTransform.forEach { handler ->
@@ -543,11 +544,11 @@ private class ExtTestDataFile(
             })
         }
 
-        return result.singleOrNull()
-            ?: fail {
-                "Exactly one entry point function is expected in $testDataFile. " +
-                        "But ${if (result.size == 0) "none" else result.size} were found: $result"
-            }
+        return when (result.size) {
+            0 -> null
+            1 -> result.single()
+            else -> fail { "At most one entry point function is expected in $testDataFile. But ${result.size} were found: $result" }
+        }
     }
 
     /** Adds a wrapper to run it as Kotlin test. */
