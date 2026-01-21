@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(SwiftExportTestSupport::class)
-abstract class AbstractSwiftExportTest {
+abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     lateinit var testRunSettings: TestRunSettings
     lateinit var testRunProvider: TestRunProvider
 
@@ -306,6 +307,8 @@ abstract class AbstractSwiftExportTest {
             initialize(dependencies, null)
         }
     }
+
+    override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? = null
 }
 
 private fun modulemapFileToSwiftCompilerOptionsIfNeeded(modulemap: File?) = modulemap?.let {
