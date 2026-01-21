@@ -39,7 +39,6 @@ val PathUtil.kotlinPathsForDistDirectoryForTests: KotlinPaths
 object MockLibraryUtil {
     private var compilerClassLoader = SoftReference<ClassLoader>(null)
 
-    @JvmStatic
     fun compileJvmLibraryToJar(
         sourcesPath: String,
         jarName: String,
@@ -64,7 +63,6 @@ object MockLibraryUtil {
         )
     }
 
-    @JvmStatic
     fun compileJavaFilesLibraryToJar(
         sourcesPath: String,
         jarName: String,
@@ -87,7 +85,6 @@ object MockLibraryUtil {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    @JvmStatic
     fun compileLibraryToJar(
         sourcesPath: String,
         contentDir: File,
@@ -145,7 +142,6 @@ object MockLibraryUtil {
         return createJarFile(contentDir, classesDir, jarName, sourcesPath.takeIf { addSources })
     }
 
-    @JvmStatic
     fun createJarFile(contentDir: File, dirToAdd: File, jarName: String, sourcesPath: String? = null): File {
         val jarFile = File(contentDir, "$jarName.jar")
 
@@ -180,8 +176,6 @@ object MockLibraryUtil {
         KtAssert.assertEquals(String(outStream.toByteArray()), ExitCode.OK.name, invocationResult.name)
     }
 
-    @JvmStatic
-    @JvmOverloads
     fun compileKotlin(
         sourcesPath: String,
         outDir: File,
