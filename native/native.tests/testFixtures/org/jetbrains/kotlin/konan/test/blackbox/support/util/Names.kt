@@ -13,7 +13,7 @@ private fun sanitize(s: String, allowDots: Boolean = false, allowSlashes: Boolea
     s.forEach { ch ->
         append(
             when {
-                ch.isLetterOrDigit() || ch == '_' -> ch
+                ch.isLetterOrDigit() || ch == '_' || ch == '-' -> ch
                 allowDots && ch == '.' -> ch
                 allowSlashes && ch == '/' -> ch
                 else -> '_'
