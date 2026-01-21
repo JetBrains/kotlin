@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
@@ -27,13 +28,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.NATIVE_STANDALONE
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KlibIrInlinerMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -44,25 +46,20 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.FULL_JDK
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
-import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
@@ -113,6 +110,15 @@ internal open class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDispos
                     disabledTestCaseIds += TestCaseId.TestDataFile(testDataFile)
             }
 
+            val lldbTestCases = testCases.filter { it.kind == TestKind.STANDALONE_LLDB || it.kind == TestKind.STANDALONE_STEPPING }
+            if (lldbTestCases.isNotEmpty()
+                && (settings.get<OptimizationMode>() != OptimizationMode.DEBUG
+                        || !settings.get<LLDB>().isAvailable
+                        || settings.get<KotlinNativeTargets>().areDifferentTargets())
+            ) {
+                lldbTestCases.mapTo(disabledTestCaseIds) { it.id }
+            }
+
             TestCaseGroup.Default(disabledTestCaseIds, testCases)
         }
     }
@@ -127,7 +133,6 @@ private class ExtTestDataFile(
     private val testRoots = settings.get<TestRoots>()
     private val generatedSources = settings.get<GeneratedSources>()
     private val customKlibs = settings.get<CustomKlibs>()
-    private val timeouts = settings.get<Timeouts>()
     private val testMode = settings.get<TestMode>()
     private val cacheMode = settings.get<CacheMode>()
     private val optimizationMode = settings.get<OptimizationMode>()
@@ -139,11 +144,7 @@ private class ExtTestDataFile(
         else
             MANDATORY_SOURCE_TRANSFORMERS + customSourceTransformers
 
-        structureFactory.ExtTestDataFileStructure(testDataFile, allSourceTransformers).also {
-            assertFalse(it.directives.contains(OUTPUT_DATA_FILE)) {
-                "${testDataFile.absolutePath}: directive $OUTPUT_DATA_FILE is not supported by ExtTestDataFile"
-            }
-        }
+        structureFactory.ExtTestDataFileStructure(testDataFile, allSourceTransformers)
     }
 
     private val isExpectedFailure: Boolean = settings.isIgnoredTarget(structure.directives)
@@ -234,15 +235,28 @@ private class ExtTestDataFile(
     fun createTestCase(settings: Settings, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
         assertTrue(isRelevant)
 
-        val definitelyStandaloneTest = settings.get<TestKind>() != TestKind.REGULAR
+        var testKind = parseTestKind(structure.directives) ?: settings.get<TestKind>()
+        val definitelyStandaloneTest = testKind != TestKind.REGULAR
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
-        patchPackageNames(isStandaloneTest)
-        patchFileLevelAnnotations()
-        findEntryPoint()?.let { entryPointFunctionFQN ->
-            generateTestLauncher(isStandaloneTest, entryPointFunctionFQN)
+        if (testKind == TestKind.REGULAR && isStandaloneTest) {
+            testKind = TestKind.STANDALONE
         }
 
-        return doCreateTestCase(settings, isStandaloneTest, sharedModules)
+        patchPackageNames(isStandaloneTest)
+        patchFileLevelAnnotations()
+        findEntryPoint()?.let { (entryPointFunctionFQN, entryPointIsSuspend) ->
+            when (testKind) {
+                TestKind.REGULAR, TestKind.STANDALONE -> {
+                    generateTestLauncher(isStandaloneTest, entryPointFunctionFQN)
+                }
+                TestKind.STANDALONE_STEPPING -> {
+                    generateEntryPointForSteppingTest(entryPointIsSuspend, entryPointFunctionFQN)
+                }
+                else -> {}
+            }
+        }
+
+        return doCreateTestCase(settings, testKind, sharedModules)
     }
 
     /**
@@ -524,19 +538,20 @@ private class ExtTestDataFile(
     }
 
     /** Finds the fully-qualified name of the entry point function (aka `fun box(): String`). */
-    private fun findEntryPoint(): String? = with(structure) {
-        val result = mutableListOf<String>()
+    private fun findEntryPoint(): Pair<String, Boolean>? = with(structure) {
+        val result = mutableListOf<Pair<String, Boolean>>()
 
         filesToTransform.forEach { handler ->
             handler.accept(object : KtTreeVisitorVoid() {
                 override fun visitKtFile(file: KtFile) {
-                    val hasBoxFunction = file.getChildrenOfType<KtNamedFunction>().any { function ->
+                    val boxFunctions = file.getChildrenOfType<KtNamedFunction>().filter { function ->
                         function.name == BOX_FUNCTION_NAME.asString() && function.valueParameters.isEmpty()
                     }
 
-                    if (hasBoxFunction) {
+                    for (boxFunction in boxFunctions) {
                         val boxFunctionFqName = file.packageFqName.child(BOX_FUNCTION_NAME).asString()
-                        result += boxFunctionFqName
+                        val isSuspend = boxFunction.modifierList?.hasModifier(KtTokens.SUSPEND_KEYWORD) == true
+                        result += boxFunctionFqName to isSuspend
 
                         handler.module.markAsMain()
                     }
@@ -565,10 +580,30 @@ private class ExtTestDataFile(
         structure.addFileToMainModule(fileName = LAUNCHER_FILE_NAME, text = fileText)
     }
 
+    private fun generateEntryPointForSteppingTest(entryPointIsSuspend: Boolean, entryPointFunctionFQN: String) {
+        val fileText = if (entryPointIsSuspend) {
+            """
+            import kotlin.coroutines.startCoroutine
+
+            fun main() {
+                ::box.startCoroutine(EmptyContinuation)
+            }
+            """.trimIndent()
+        } else {
+            """
+            fun main() {
+                $entryPointFunctionFQN()
+            }
+            """.trimIndent()
+        }
+        structure.addFileToMainModule("Generated_Box_Main.kt", fileText)
+        structure.addFileToMainModule("coroutineHelpers.kt", File("compiler/testData/debug/nativeTestHelpers/coroutineHelpers.kt").readText())
+    }
+
     private fun doCreateTestCase(
         settings: Settings,
-        isStandaloneTest: Boolean,
-        sharedModules: ThreadSafeCache<String, TestModule.Shared?>
+        testKind: TestKind,
+        sharedModules: ThreadSafeCache<String, TestModule.Shared?>,
     ): TestCase = with(structure) {
         val modules = generateModules(
             testCaseDir = testDataFileSettings.generatedSourcesDir,
@@ -578,22 +613,63 @@ private class ExtTestDataFile(
                 }
             }
         )
+
+        val testFiltering = TestFiltering(
+            if (testKind in listOf(TestKind.REGULAR, TestKind.STANDALONE)) TCTestOutputFilter
+            else TestOutputFilter.NO_FILTERING
+        )
+
+        val lldbSpec = when (testKind) {
+            TestKind.STANDALONE_LLDB -> parseReplLLDBSpec(testDataFile)
+            TestKind.STANDALONE_STEPPING -> SteppingLLDBSessionSpec(structure.directives, testDataFile, originalTestSourceFiles)
+            else -> null
+        }
+        val outputMatcher = lldbSpec?.let {
+            OutputMatcher(Output.STDOUT) { output -> lldbSpec.checkLLDBOutput(output, settings.get()) }
+        } ?: parseOutputRegex(structure.directives)
+
+        val expectedExitCode = if (testKind == TestKind.STANDALONE_NO_TR) parseExpectedExitCode(structure.directives)
+        else ExitCode.Expected(0)
+
+        val expectedTimeoutFailure = parseExpectedTimeoutFailure(structure.directives)
+        val executionTimeoutCheck = if (expectedTimeoutFailure != null) ExecutionTimeout.ShouldExceed(expectedTimeoutFailure)
+        else ExecutionTimeout.ShouldNotExceed(settings.get<Timeouts>().executionTimeout)
+
         val fileCheckStage = retrieveFileCheckStage()
         val testCase = TestCase(
             id = TestCaseId.TestDataFile(testDataFile),
-            kind = if (isStandaloneTest) TestKind.STANDALONE else TestKind.REGULAR,
+            kind = testKind,
             modules = modules,
             freeCompilerArgs = assembleFreeCompilerArgs(settings),
             nominalPackageName = testDataFileSettings.nominalPackageName,
             expectedFailure = isExpectedFailure,
-            checks = TestRunChecks.Default(timeouts.executionTimeout).copy(
-                testFiltering = TestRunCheck.TestFiltering(TCTestOutputFilter),
-                // for expected failures, it does not matter, which exit code would the process have, since test might fail with other reasons
-                exitCodeCheck = TestRunCheck.ExitCode.Expected(0).takeUnless { isExpectedFailure },
-                fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) }
+            checks = TestRunChecks(
+                executionTimeoutCheck = executionTimeoutCheck,
+                testFiltering = testFiltering,
+                exitCodeCheck = expectedExitCode,
+                outputMatcher = outputMatcher,
+                outputDataFile = parseOutputDataFile(testDataFile.parentFile, structure.directives),
+                fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) },
             ),
             fileCheckStage = fileCheckStage,
-            extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)
+            extras = when (testKind) {
+                TestKind.STANDALONE_NO_TR -> {
+                    NoTestRunnerExtras(
+                        entryPoint = parseEntryPoint(structure.directives),
+                        inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, structure.directives),
+                        arguments = parseProgramArguments(structure.directives)
+                    )
+                }
+                TestKind.REGULAR, TestKind.STANDALONE -> {
+                    WithTestRunnerExtras(runnerType = parseTestRunner(structure.directives))
+                }
+                TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> {
+                    NoTestRunnerExtras(
+                        entryPoint = parseEntryPoint(structure.directives),
+                        arguments = lldbSpec!!.generateCLIArguments(settings.get<LLDB>().prettyPrinters)
+                    )
+                }
+            }
         )
         testCase.initialize(
             givenModules = customKlibs.klibs.mapToSet(TestModule::Given),
@@ -661,6 +737,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         }
 
         private val filesAndModules = FilesAndModules(originalTestDataFile, sourceTransformers)
+        val originalTestSourceFiles = mutableSetOf<File>()
 
         val directives: RegisteredDirectives get() = filesAndModules.directives
 
@@ -757,6 +834,9 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
                 file.parentFile.mkdirs()
                 file.writeText(extTestFile.text)
                 process(destination, TestFile.createCommitted(file, destination))
+                if (!extTestFile.isSynthetic) {
+                    originalTestSourceFiles += file
+                }
             }
 
             return destination
@@ -799,7 +879,8 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
     private class ExtTestFile(
         val name: String,
         val module: ExtTestModule,
-        var text: String
+        var text: String,
+        val isSynthetic: Boolean,
     ) {
         init {
             module.files += this
@@ -824,15 +905,16 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             ), JUnit5Assertions
         )
 
-        fun createFile(module: ExtTestModule, fileName: String, text: String): ExtTestFile =
-            ExtTestFile(getSanitizedFileName(fileName), module, text)
+        fun createFile(module: ExtTestModule, fileName: String, text: String, isSynthetic: Boolean = true): ExtTestFile =
+            ExtTestFile(getSanitizedFileName(fileName), module, text, isSynthetic)
 
         override fun createFile(module: ExtTestModule?, fileName: String, text: String, directives: Directives): ExtTestFile {
             recordRegisteredDirectives(module, directives)
             return createFile(
                 module = module ?: if (fileName == "CoroutineUtil.kt") supportModule else defaultModule,
                 fileName = fileName,
-                text = text
+                text = text,
+                isSynthetic = false,
             )
         }
 
