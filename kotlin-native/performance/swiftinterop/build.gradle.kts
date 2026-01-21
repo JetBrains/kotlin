@@ -9,14 +9,6 @@ plugins {
     id("swift-benchmarking")
 }
 
-kotlin {
-    sourceSets {
-        commonMain {
-            kotlin.srcDir("src/main/kotlin")
-        }
-    }
-}
-
 val konanDataDir = if (project.hasProperty("konan.data.dir")) project.property("konan.data.dir").toString() else null
 project.extra["platformManager"] = PlatformManager(buildDistribution(projectDir.parentFile.parentFile.absolutePath, konanDataDir), false)
 swiftBenchmark {
