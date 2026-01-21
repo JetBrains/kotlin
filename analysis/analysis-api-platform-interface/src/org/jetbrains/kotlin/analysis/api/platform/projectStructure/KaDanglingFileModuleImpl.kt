@@ -67,11 +67,12 @@ public class KaDanglingFileModuleImpl(
 
     override val baseContentScope: GlobalSearchScope
         get() {
-            val virtualFiles = files.mapNotNull { it.virtualFile }
-            return when {
-                virtualFiles.isEmpty() -> GlobalSearchScope.EMPTY_SCOPE
-                else -> GlobalSearchScope.filesScope(project, virtualFiles)
-            }
+            // The content scope should cover the dangling file regardless of whether it's physical or in memory (in-memory elements still
+            // need to be accepted by the resolution scope). To ensure that the content scope covers non-physical files, it's crucial
+            // to go through the file view provider. With it, we will get a virtual file even for non-physical PSI files.
+            // `PsiFile.virtualFile` would NOT achieve the same result, as it returns `null` for in-memory files.
+            val virtualFiles = files.map { it.viewProvider.virtualFile }
+            return GlobalSearchScope.filesScope(project, virtualFiles)
         }
 
     override val directRegularDependencies: List<KaModule>
