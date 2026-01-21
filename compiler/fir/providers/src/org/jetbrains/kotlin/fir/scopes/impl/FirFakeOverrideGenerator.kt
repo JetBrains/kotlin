@@ -506,7 +506,9 @@ object FirFakeOverrideGenerator {
         newVisibility: Visibility = visibility,
     ) = when {
         annotations.isNotEmpty() || newVisibility != baseProperty.visibility ||
-                origin == FirDeclarationOrigin.Delegated || origin is FirDeclarationOrigin.SubstitutionOverride -> buildCopy(
+                origin == FirDeclarationOrigin.Delegated ||
+                origin is FirDeclarationOrigin.SubstitutionOverride ||
+                origin is FirDeclarationOrigin.IntersectionOverride -> buildCopy(
             moduleData,
             origin,
             propertyReturnTypeRef,

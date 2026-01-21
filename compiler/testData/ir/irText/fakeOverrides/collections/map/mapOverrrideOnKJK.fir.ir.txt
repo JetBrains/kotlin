@@ -153,7 +153,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+          public abstract fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in <root>.Java1
@@ -161,7 +161,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-size> (): kotlin.Int declared in <root>.Java1
+          public abstract fun <get-size> (): kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open values: kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
@@ -169,7 +169,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+          public abstract fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
     PROPERTY name:entries visibility:public modality:OPEN [val]
@@ -333,7 +333,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+          public abstract fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in <root>.Java1
@@ -341,7 +341,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-size> (): kotlin.Int declared in <root>.Java1
+          public abstract fun <get-size> (): kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open values: kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
@@ -349,7 +349,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public open fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+          public abstract fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:a index:0 type:<root>.A
     VALUE_PARAMETER kind:Regular name:b index:1 type:<root>.B
