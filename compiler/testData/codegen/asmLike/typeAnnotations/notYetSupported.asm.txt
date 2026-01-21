@@ -57,7 +57,6 @@ public final class foo/Kotlin : java/lang/Object {
 public final class foo/Outer$Inner : java/lang/Object {
     final foo.Outer this$0
 
-    ()V
     public void <init>(foo.Outer this$0)
 }
 
