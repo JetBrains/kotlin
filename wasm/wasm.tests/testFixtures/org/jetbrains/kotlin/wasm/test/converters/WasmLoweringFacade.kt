@@ -129,12 +129,6 @@ class WasmLoweringFacade(
 
         val compilerResult = linkAndCompileWasmIrToBinary(parameters)
 
-        val linkedModule = getLinkedModule(
-            parameters,
-            wasmCompiledFileFragments,
-            configuration
-        )
-
         val dceDumpNameCache = DceDumpNameCache()
         eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
 
@@ -165,7 +159,7 @@ class WasmLoweringFacade(
         val compilerResultWithDCE = linkAndCompileWasmIrToBinary(dceParameters)
 
         return BinaryArtifacts.Wasm(
-            linkedModule,
+            compilerResult.linkedModule,
             compilerResult,
             compilerResultWithDCE,
             runIf(WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER in testServices.moduleStructure.allDirectives) {
@@ -185,6 +179,7 @@ class WasmLoweringFacade(
             useDebuggerCustomFormatters = useDebuggerCustomFormatters,
             dynamicJsModules = dynamicJsModules,
             baseFileName = baseFileName,
+            linkedModule = linkedModule,
         )
     }
 }
@@ -204,30 +199,4 @@ fun extractTestPackage(testServices: TestServices): String? {
     } ?: return null
 
     return fileWithBoxFunction.packageFqName.asString().takeIf { it.isNotEmpty() }
-}
-
-internal fun getLinkedModule(moduleConfiguration: WasmIrModuleConfiguration, wasmCompiledFileFragments: List<WasmCompiledFileFragment>, configuration: CompilerConfiguration): WasmModule {
-    val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
-
-    val wasmCompiledModuleFragment = WasmCompiledModuleFragment(
-        wasmCompiledFileFragments,
-        isWasmJsTarget,
-    )
-
-    val multimoduleParameters = moduleConfiguration.multimoduleOptions
-
-    val exceptionTagType: ExceptionTagType = when {
-        configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS) ->
-            ExceptionTagType.TRAP
-        isWasmJsTarget -> ExceptionTagType.JS_TAG
-        else -> ExceptionTagType.WASM_TAG
-    }
-
-    val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
-
-    return wasmCompiledModuleFragment.linkWasmCompiledFragments(
-        multimoduleOptions = multimoduleParameters,
-        exceptionTagType = exceptionTagType,
-        wasmCommandModuleInitialization = wasmCommandModuleInitialization
-    )
 }

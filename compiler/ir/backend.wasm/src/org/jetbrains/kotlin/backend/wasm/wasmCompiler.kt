@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.wasm.ir.ByteWriterWithOffsetWrite
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.writeTo
 import org.jetbrains.kotlin.wasm.ir.WasmExport
+import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationGeneratorImpl
@@ -66,6 +67,7 @@ class WasmCompilerResult(
     val useDebuggerCustomFormatters: Boolean,
     val dynamicJsModules: List<DynamicJsModule>,
     val baseFileName: String,
+    val linkedModule: WasmModule,
 )
 
 class DebugInformation(
@@ -360,6 +362,7 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
         useDebuggerCustomFormatters = debuggerParameters.useDebuggerCustomFormatters,
         dynamicJsModules = dynamicJsModules.map { it.copy(content = it.content.normalizeEmptyLines()) },
         baseFileName = baseFileName,
+        linkedModule = linkedModule,
     )
 }
 

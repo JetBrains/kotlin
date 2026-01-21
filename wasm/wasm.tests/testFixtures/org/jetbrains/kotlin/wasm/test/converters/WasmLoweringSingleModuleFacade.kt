@@ -117,14 +117,8 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
 
         val compileResult = linkAndCompileWasmIrToBinary(wasmIrToCompile)
 
-        val linkedModule = getLinkedModule(
-            wasmIrToCompile,
-            wasmIrToCompile.wasmCompiledFileFragments,
-            configuration
-        )
-
         return BinaryArtifacts.Wasm(
-            linkedModule,
+            compileResult.linkedModule,
             compileResult,
             compileResult,
             null,
