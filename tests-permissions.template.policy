@@ -78,6 +78,7 @@ grant {
     // JDK
     {{jdk}}
     {{java_library_paths}}
+    {{flight_recorder}}
 
     // Allow access to declared input directories
     {{inputs}}

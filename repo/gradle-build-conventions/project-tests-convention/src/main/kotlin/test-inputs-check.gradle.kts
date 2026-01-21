@@ -236,6 +236,14 @@ tasks.withType<Test>().configureEach {
                                 """permission java.io.FilePermission "${getJDKFromToolchain(service, version)}/-", "read,execute";"""
                             }).joinToString("\n    ")
                         )
+                        .replace(
+                            "{{flight_recorder}}",
+                            buildString {
+                                if (testInputsCheck.allowFlightRecorder.get()) {
+                                    append("""permission jdk.jfr.FlightRecorderPermission "registerEvent";""")
+                                }
+                            }
+                        )
                         .replace("{{gradle_user_home}}", """$gradleUserHomeDir""")
                         .replace("{{all_permissions_for_gradle_ro_dep_cache}}", allPermissionsForGradleRoDepCache ?: "")
                         .replace(

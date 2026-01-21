@@ -10,5 +10,6 @@ import javax.inject.Inject
 
 abstract class TestInputsCheckExtension @Inject constructor(objects: ObjectFactory){
     val isNative: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
+    val allowFlightRecorder: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
     val extraPermissions: ListProperty<String> = objects.listProperty(String::class.java)
 }
