@@ -104,7 +104,6 @@ open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: Str
             DiagnosticsDirectives.DIAGNOSTICS with "-warnings"
 
             LANGUAGE with listOf(
-                "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                 "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
             )
         }

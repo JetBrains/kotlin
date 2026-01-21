@@ -88,7 +88,6 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
 
         defaultDirectives {
             LANGUAGE with listOf(
-                "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                 "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
             )
         }
