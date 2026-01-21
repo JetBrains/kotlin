@@ -88,7 +88,7 @@ abstract class CustomKlibCompilerFirstStageFacade(
 
         return compileKlib(
             module = module,
-            customArgs = customArgs,
+            customArgs = customArgs + listOf("-XXLanguage:+MultiPlatformProjects").takeIf { isKmpSupported }.orEmpty(),
             sources = filesToCompile,
             regularDependencies = regularDependencies,
             friendDependencies = friendDependencies,
