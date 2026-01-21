@@ -9,15 +9,11 @@ import org.jetbrains.kotlin.backend.wasm.DebuggerCompileOptions
 import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
-import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.ExceptionTagType
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
@@ -27,7 +23,6 @@ import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -127,7 +122,10 @@ class WasmLoweringFacade(
             multimoduleOptions = null,
         )
 
-        val compilerResult = linkAndCompileWasmIrToBinary(parameters)
+        lateinit var linkedModule: WasmModule
+        val compilerResult = linkAndCompileWasmIrToBinary(parameters) {
+            linkedModule = it
+        }
 
         val dceDumpNameCache = DceDumpNameCache()
         eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
@@ -159,7 +157,7 @@ class WasmLoweringFacade(
         val compilerResultWithDCE = linkAndCompileWasmIrToBinary(dceParameters)
 
         return BinaryArtifacts.Wasm(
-            compilerResult.linkedModule,
+            linkedModule,
             compilerResult,
             compilerResultWithDCE,
             runIf(WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER in testServices.moduleStructure.allDirectives) {
@@ -179,7 +177,6 @@ class WasmLoweringFacade(
             useDebuggerCustomFormatters = useDebuggerCustomFormatters,
             dynamicJsModules = dynamicJsModules,
             baseFileName = baseFileName,
-            linkedModule = linkedModule,
         )
     }
 }

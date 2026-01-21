@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.test.PrecompileSetup
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestOutputName
@@ -115,10 +116,13 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             generateDwarf = generateDwarf,
         )
 
-        val compileResult = linkAndCompileWasmIrToBinary(wasmIrToCompile)
+        lateinit var linkedModule: WasmModule
+        val compileResult = linkAndCompileWasmIrToBinary(wasmIrToCompile) {
+            linkedModule = it
+        }
 
         return BinaryArtifacts.Wasm(
-            compileResult.linkedModule,
+            linkedModule,
             compileResult,
             compileResult,
             null,

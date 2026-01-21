@@ -67,7 +67,6 @@ class WasmCompilerResult(
     val useDebuggerCustomFormatters: Boolean,
     val dynamicJsModules: List<DynamicJsModule>,
     val baseFileName: String,
-    val linkedModule: WasmModule,
 )
 
 class DebugInformation(
@@ -198,11 +197,19 @@ class WasmIrModuleConfiguration(
     val multimoduleOptions: MultimoduleCompileOptions?,
 )
 
-fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration): WasmCompilerResult {
+fun linkAndCompileWasmIrToBinary(
+    moduleConfiguration: WasmIrModuleConfiguration,
+    onModuleLinked: ((WasmModule) -> Unit)? = null,
+): WasmCompilerResult {
+    val linkedModule = linkWasmModule(moduleConfiguration)
+    onModuleLinked?.invoke(linkedModule)
+    return compileWasmIrToBinary(linkedModule, moduleConfiguration)
+}
+
+private fun linkWasmModule(moduleConfiguration: WasmIrModuleConfiguration): WasmModule {
     val wasmCompiledFileFragments = moduleConfiguration.wasmCompiledFileFragments
 
     val configuration = moduleConfiguration.configuration
-    val baseFileName = moduleConfiguration.baseFileName
 
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
 
@@ -219,11 +226,22 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
 
     val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
 
-    val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(
+    return wasmCompiledModuleFragment.linkWasmCompiledFragments(
         multimoduleOptions = multimoduleParameters,
         exceptionTagType = exceptionTagType,
         wasmCommandModuleInitialization = wasmCommandModuleInitialization,
     )
+}
+
+private fun compileWasmIrToBinary(linkedModule: WasmModule, moduleConfiguration: WasmIrModuleConfiguration): WasmCompilerResult {
+    val wasmCompiledFileFragments = moduleConfiguration.wasmCompiledFileFragments
+
+    val configuration = moduleConfiguration.configuration
+    val baseFileName = moduleConfiguration.baseFileName
+
+    val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
+
+    val multimoduleParameters = moduleConfiguration.multimoduleOptions
 
     val wasmStartFunctionDefined = linkedModule.exports.any { it.name == wasmStartExportName }
     val wasmInitializeFunctionDefined = linkedModule.exports.any { it.name == wasmInitializeExportName }
@@ -341,7 +359,7 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
 
     } else {
         jsWrapper =
-            wasmCompiledModuleFragment.generateAsyncWasiWrapper(
+            generateAsyncWasiWrapper(
                 wasmFilePath = "./$baseFileName.wasm",
                 exports = linkedModule.exports,
                 useDebuggerCustomFormatters = debuggerParameters.useDebuggerCustomFormatters,
@@ -362,12 +380,11 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
         useDebuggerCustomFormatters = debuggerParameters.useDebuggerCustomFormatters,
         dynamicJsModules = dynamicJsModules.map { it.copy(content = it.content.normalizeEmptyLines()) },
         baseFileName = baseFileName,
-        linkedModule = linkedModule,
     )
 }
 
 //language=js
-fun WasmCompiledModuleFragment.generateAsyncWasiWrapper(
+private fun generateAsyncWasiWrapper(
     wasmFilePath: String,
     exports: List<WasmExport<*>>,
     useDebuggerCustomFormatters: Boolean,
@@ -401,7 +418,7 @@ ${generateExports(exports, wholeProgramMode = false, isStdlibModule = false)}
 """
 }
 
-fun generateImportObject(
+private fun generateImportObject(
     jsModuleImports: Set<String>,
     jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>,
     dependencyModules: Set<WasmModuleDependencyImport>,
@@ -511,7 +528,7 @@ $importObject
     """
 }
 
-fun generateJsImports(
+private fun generateJsImports(
     jsModuleImports: Set<String>,
     jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>,
     dependencyModules: Set<WasmModuleDependencyImport>,
@@ -570,7 +587,7 @@ ${if (!stdlibModuleOrWholeProgramMode) "import { __TAG as wasmTag, getCachedJsOb
 """.trimIndent()
 }
 
-fun generateImportObjectBody(
+private fun generateImportObjectBody(
     jsModuleImports: Set<String>,
     dependencyModules: Set<WasmModuleDependencyImport>,
 ): String {
@@ -606,7 +623,7 @@ $imports};
     """.trimIndent()
 }
 
-fun generateWebAssemblyJsInstanceInitializer(
+private fun generateWebAssemblyJsInstanceInitializer(
     jsModuleImports: Set<String>,
     wasmFilePath: String,
     exports: List<WasmExport<*>>,
@@ -763,7 +780,7 @@ private val WasmExport<*>.isWasmInternalUsageExport
     get() = name.startsWith(JsInteropFunctionsLowering.CALL_FUNCTION) ||
             WasmServiceImportExportKind.entries.any { name.startsWith(it.prefix) }
 
-fun generateExports(
+private fun generateExports(
     exports: List<WasmExport<*>>,
     wholeProgramMode: Boolean,
     isStdlibModule: Boolean,
