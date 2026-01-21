@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMutableMap<K of <root>.MyMap, V of <root>.MyMap>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-keys> (): kotlin.collections.MutableSet<K of kotlin.collections.AbstractMutableMap> declared in kotlin.collections.AbstractMutableMap
+          public open fun <get-keys> (): kotlin.collections.MutableSet<K of kotlin.collections.AbstractMutableMap> declared in kotlin.collections.AbstractMutableMap
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in kotlin.collections.AbstractMutableMap
@@ -158,7 +158,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMutableMap<K of <root>.MyMap, V of <root>.MyMap>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.AbstractMutableMap
+          public open fun <get-size> (): kotlin.Int declared in kotlin.collections.AbstractMutableMap
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open values: kotlin.collections.MutableCollection<V of kotlin.collections.AbstractMutableMap> declared in kotlin.collections.AbstractMutableMap
@@ -166,7 +166,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMutableMap<K of <root>.MyMap, V of <root>.MyMap>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-values> (): kotlin.collections.MutableCollection<V of kotlin.collections.AbstractMutableMap> declared in kotlin.collections.AbstractMutableMap
+          public open fun <get-values> (): kotlin.collections.MutableCollection<V of kotlin.collections.AbstractMutableMap> declared in kotlin.collections.AbstractMutableMap
     PROPERTY name:entries visibility:public modality:OPEN [val]
       overridden:
         public abstract entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of kotlin.collections.AbstractMutableMap, V of kotlin.collections.AbstractMutableMap>> declared in kotlin.collections.AbstractMutableMap

@@ -1983,7 +1983,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Boolean?> declared in <root>.Java3
+          public open fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Boolean?> declared in <root>.Java3
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in <root>.Java3
@@ -1991,7 +1991,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-size> (): kotlin.Int declared in <root>.Java3
+          public open fun <get-size> (): kotlin.Int declared in <root>.Java3
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open values: kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Boolean?> declared in <root>.Java3
@@ -1999,7 +1999,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Boolean?> declared in <root>.Java3
+          public open fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Boolean?> declared in <root>.Java3
   CLASS CLASS name:L modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java3]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.L
     CONSTRUCTOR visibility:public returnType:<root>.L [primary]
@@ -2163,7 +2163,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Boolean?> declared in <root>.Java3
+          public open fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Boolean?> declared in <root>.Java3
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in <root>.Java3
@@ -2171,7 +2171,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-size> (): kotlin.Int declared in <root>.Java3
+          public open fun <get-size> (): kotlin.Int declared in <root>.Java3
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open values: kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Boolean?> declared in <root>.Java3
@@ -2179,7 +2179,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Boolean?> declared in <root>.Java3
+          public open fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Boolean?> declared in <root>.Java3
   CLASS CLASS name:M modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface3]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.M
     CONSTRUCTOR visibility:public returnType:<root>.M [primary]
