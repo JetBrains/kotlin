@@ -144,7 +144,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 3, 20)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = `value`

@@ -4,12 +4,13 @@
  */
 package org.jetbrains.kotlin.cli.common.arguments
 
+import com.intellij.util.xmlb.annotations.Transient
+
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
-// Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/WasmCompilerArguments.kt
+// Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/KotlinWasmCompilerArguments.kt
 // DO NOT MODIFY IT MANUALLY.
 
-@Deprecated("This class was deprecated and will be removed soon.", level = DeprecationLevel.WARNING)
-abstract class K2WasmCompilerArguments : CommonJsWasmCompilerArguments() {
+class KotlinWasmCompilerArguments : CommonJsWasmCompilerArguments() {
     @Argument(
         value = "-Xir-dce-dump-reachability-info-to-file",
         valueDescription = "<path>",
@@ -202,4 +203,9 @@ abstract class K2WasmCompilerArguments : CommonJsWasmCompilerArguments() {
             field = value
         }
 
+    @get:Transient
+    @field:kotlin.jvm.Transient
+    override val configurator: CommonCompilerArgumentsConfigurator = KotlinWasmCompilerArgumentsConfigurator()
+
+    override fun copyOf(): Freezable = copyKotlinWasmCompilerArguments(this, KotlinWasmCompilerArguments())
 }

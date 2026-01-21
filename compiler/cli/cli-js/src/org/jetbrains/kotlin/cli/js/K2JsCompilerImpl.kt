@@ -120,7 +120,7 @@ class Ir2JsTransformer private constructor(
 }
 
 internal class K2JsCompilerImpl(
-    arguments: K2JSCompilerArguments,
+    override val arguments: K2JSCompilerArguments,
     configuration: CompilerConfiguration,
     moduleName: String,
     outputName: String,

@@ -9,7 +9,9 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.common.allowKotlinPackage
+import org.jetbrains.kotlin.cli.common.arguments.CommonJsWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
@@ -39,22 +41,90 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 import java.io.IOException
 
-object WebConfigurationPhase : AbstractConfigurationPhase<K2JSCompilerArguments>(
+//@Deprecated("Use JsConfigurationPhase or WasmConfigurationPhase instead")
+//object WebConfigurationPhase : AbstractConfigurationPhase<CommonJsWasmCompilerArguments>(
+//    name = "JsConfigurationPhase",
+//    postActions = setOf(CheckCompilationErrors.CheckMessageCollector),
+//    configurationUpdaters = listOf(
+//        CommonWebConfigurationUpdater,
+//        JsConfigurationUpdater,
+//        WasmConfigurationUpdater
+//    ) as List<ConfigurationUpdater<CommonJsWasmCompilerArguments>>
+//) {
+//    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
+//        return MetadataVersion(*versionArray)
+//    }
+//}
+
+
+object JsConfigurationPhase : AbstractConfigurationPhase<K2JSCompilerArguments>(
     name = "JsConfigurationPhase",
     postActions = setOf(CheckCompilationErrors.CheckMessageCollector),
-    configurationUpdaters = listOf(CommonWebConfigurationUpdater, JsConfigurationUpdater, WasmConfigurationUpdater)
+    configurationUpdaters = listOf(CommonJsConfigurationUpdater, JsConfigurationUpdater)
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         return MetadataVersion(*versionArray)
     }
 }
 
+object WasmConfigurationPhase : AbstractConfigurationPhase<KotlinWasmCompilerArguments>(
+    name = "WasmConfigurationPhase",
+    postActions = setOf(CheckCompilationErrors.CheckMessageCollector),
+    configurationUpdaters = listOf(CommonWasmConfigurationUpdater, WasmConfigurationUpdater)
+) {
+    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
+        return MetadataVersion(*versionArray)
+    }
+}
+
+
+object CommonWasmConfigurationUpdater : CommonWebConfigurationUpdater<KotlinWasmCompilerArguments>() {
+    override fun fillConfiguration(input: ArgumentsPipelineArtifact<KotlinWasmCompilerArguments>, configuration: CompilerConfiguration) {
+        super.fillConfiguration(input, configuration)
+        val (arguments, _, _, _, _) = input
+        configuration.wasmCompilation = arguments.wasm
+        configuration.icCacheReadOnly = arguments.icCacheReadonly
+        configuration.preserveIcOrder = arguments.preserveIcOrder
+    }
+
+    override fun setupPlatformSpecificArgumentsAndServices(
+        configuration: CompilerConfiguration,
+        arguments: KotlinWasmCompilerArguments,
+        services: Services,
+    ) {
+        super.setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
+        if (arguments.generateDwarf) {
+            configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, true)
+        }
+
+        if (arguments.debuggerCustomFormatters) {
+            configuration.useDebuggerCustomFormatters = true
+        }
+
+        if (arguments.wasm) {
+            // These parameters are not configured during K1 compilation. So, it's necessary to set them up here manually.
+            configuration.wasmCompilation = true
+            configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))
+
+            // K/Wasm support ES modules only.
+            configuration.moduleKind = ModuleKind.ES
+        }
+
+        configuration.sourceMapIncludeMappingsFromUnavailableFiles = arguments.includeUnavailableSourcesIntoSourceMap
+        configuration.dumpReachabilityInfoToFile = arguments.irDceDumpReachabilityInfoToFile
+
+    }
+
+}
+
+object CommonJsConfigurationUpdater : CommonWebConfigurationUpdater<K2JSCompilerArguments>()
+
 /**
  * Contains configuration updating logic shared between JS and WASM CLIs
  */
-object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
+abstract class CommonWebConfigurationUpdater<T : CommonJsWasmCompilerArguments> : ConfigurationUpdater<T>() {
     override fun fillConfiguration(
-        input: ArgumentsPipelineArtifact<K2JSCompilerArguments>,
+        input: ArgumentsPipelineArtifact<T>,
         configuration: CompilerConfiguration,
     ) {
         val (arguments, services, rootDisposable, _, _) = input
@@ -76,7 +146,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             }
         }
 
-        configuration.wasmCompilation = arguments.wasm
         configuration.produceKlibFile = arguments.irProduceKlibFile
         configuration.produceKlibDir = arguments.irProduceKlibDir
         arguments.main?.let { configuration.callMainMode = it }
@@ -84,8 +153,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
 
         configuration.perModuleOutputName = arguments.irPerModuleOutputName
         configuration.icCacheDirectory = arguments.cacheDirectory
-        configuration.icCacheReadOnly = arguments.icCacheReadonly
-        configuration.preserveIcOrder = arguments.preserveIcOrder
 
         // setup phase config for the first compilation stage (KLIB compilation)
         if (arguments.includes == null) {
@@ -106,20 +173,12 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
      * This part of the configuration update is shared between phased K2 CLI and
      * K1 implementation of [K2JSCompiler.setupPlatformSpecificArgumentsAndServices].
      */
-    internal fun setupPlatformSpecificArgumentsAndServices(
+    internal open fun setupPlatformSpecificArgumentsAndServices(
         configuration: CompilerConfiguration,
-        arguments: K2JSCompilerArguments,
+        arguments: T,
         services: Services,
     ) {
         val messageCollector = configuration.messageCollector
-
-        if (arguments.generateDwarf) {
-            configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, true)
-        }
-
-        if (arguments.debuggerCustomFormatters) {
-            configuration.useDebuggerCustomFormatters = true
-        }
 
         if (arguments.sourceMap) {
             configuration.sourceMap = true
@@ -150,14 +209,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.generateDts = arguments.generateDts
         configuration.generateStrictImplicitExport = arguments.strictImplicitExportType
 
-        if (arguments.wasm) {
-            // These parameters are not configured during K1 compilation. So, it's necessary to set them up here manually.
-            configuration.wasmCompilation = true
-            configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))
 
-            // K/Wasm support ES modules only.
-            configuration.moduleKind = ModuleKind.ES
-        }
 
         configuration.incrementalDataProvider = services[IncrementalDataProvider::class.java]
         configuration.incrementalResultsConsumer = services[IncrementalResultsConsumer::class.java]
@@ -180,7 +232,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             sourceMapContentEmbedding = SourceMapSourceEmbedding.INLINING
         }
         configuration.sourceMapEmbedSources = sourceMapContentEmbedding
-        configuration.sourceMapIncludeMappingsFromUnavailableFiles = arguments.includeUnavailableSourcesIntoSourceMap
+
 
         if (!arguments.sourceMap && sourceMapEmbedContentString != null) {
             messageCollector.report(WARNING, "source-map-embed-sources argument has no effect without source map", null)
@@ -203,7 +255,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
 
         configuration.printReachabilityInfo = arguments.irDcePrintReachabilityInfo
         configuration.fakeOverrideValidator = arguments.fakeOverrideValidator
-        configuration.dumpReachabilityInfoToFile = arguments.irDceDumpReachabilityInfoToFile
 
         arguments.irDceRuntimeDiagnostic?.let { configuration.dceRuntimeDiagnostic = it }
 
@@ -216,7 +267,11 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         )
     }
 
-    internal fun initializeCommonConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments, rootDisposable: Disposable) {
+    internal fun initializeCommonConfiguration(
+        configuration: CompilerConfiguration,
+        arguments: CommonJsWasmCompilerArguments,
+        rootDisposable: Disposable,
+    ) {
         configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = false, rootDisposable = rootDisposable)
 
         val libraries: List<String> = configureLibraries(arguments.libraries) + listOfNotNull(arguments.includes)
@@ -231,7 +286,8 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             configuration.addKotlinSourceRoot(arg, commonSources.contains(arg), hmppCliModuleStructure?.getModuleNameForSource(arg))
         }
         val moduleName = arguments.irModuleName ?: arguments.moduleName ?: run {
-            val message = "Specify the module name via ${K2JSCompilerArguments::irModuleName.cliArgument} or ${K2JSCompilerArguments::moduleName.cliArgument}"
+            val message =
+                "Specify the module name via ${K2JSCompilerArguments::irModuleName.cliArgument} or ${K2JSCompilerArguments::moduleName.cliArgument}"
             configuration.messageCollector.report(ERROR, message, location = null)
             return
         }

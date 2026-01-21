@@ -5,14 +5,8 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedCommonKlibBasedCompilerArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedCommonToolsArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedJsArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedJvmCompilerArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedMetadataArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedNativeArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedWasmArguments
+import org.jetbrains.kotlin.arguments.description.removed.*
+import org.jetbrains.kotlin.arguments.dsl.base.Modifier
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArguments
 
 val kotlinCompilerArguments = compilerArguments {
@@ -33,12 +27,22 @@ val kotlinCompilerArguments = compilerArguments {
                 mergeWith = setOf(actualCommonKlibBasedArguments, removedCommonKlibBasedCompilerArguments)
             ) {
                 subLevel(
-                    name = CompilerArgumentsLevelNames.wasmArguments,
-                    mergeWith = setOf(actualWasmArguments, removedWasmArguments)
+                    name = CompilerArgumentsLevelNames.commonJsWasmArguments,
+                    mergeWith = setOf(actualCommonJsWasmArguments)
                 ) {
                     subLevel(
-                        name = CompilerArgumentsLevelNames.jsArguments,
-                        mergeWith = setOf(actualJsArguments, removedJsArguments)
+                        name = CompilerArgumentsLevelNames.legacyWasmArguments,
+                        mergeWith = setOf(actualWasmArguments, removedWasmArguments)
+                    ) {
+                        modifier(Modifier.DEPRECATED)
+                        subLevel(
+                            name = CompilerArgumentsLevelNames.jsArguments,
+                            mergeWith = setOf(actualJsArguments, removedJsArguments)
+                        ) {}
+                    }
+                    subLevel(
+                        name = CompilerArgumentsLevelNames.wasmArguments,
+                        mergeWith = setOf(actualWasmArguments, removedWasmArguments)
                     ) {}
                 }
                 subLevel(

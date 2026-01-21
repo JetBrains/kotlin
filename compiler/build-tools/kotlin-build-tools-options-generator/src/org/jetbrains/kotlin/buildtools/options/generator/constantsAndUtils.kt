@@ -61,7 +61,7 @@ internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.commonKlibBasedArguments,
     CompilerArgumentsLevelNames.jsArguments,
     CompilerArgumentsLevelNames.nativeArguments,
-    CompilerArgumentsLevelNames.wasmArguments,
+    CompilerArgumentsLevelNames.legacyWasmArguments,
 )
 
 internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().replace("-", "_").let {
