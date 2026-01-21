@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.ClasspathChanges
-import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import java.io.File
 import javax.inject.Inject
