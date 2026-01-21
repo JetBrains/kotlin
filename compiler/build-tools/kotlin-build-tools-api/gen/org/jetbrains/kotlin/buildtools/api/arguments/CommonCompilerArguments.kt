@@ -347,19 +347,6 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_EXPLICIT_BACKING_FIELDS", KotlinReleaseVersion(2, 3, 0))
 
     /**
-     * Declare common klib friend dependencies for the specific fragment.
-     * This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
-     * The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-     *
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_FRAGMENT_FRIEND_DEPENDENCY: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_FRAGMENT_FRIEND_DEPENDENCY", KotlinReleaseVersion(2, 3, 0))
-
-    /**
      * Enable header compilation mode.
      * In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
      * compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation
