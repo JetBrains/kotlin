@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 class ClassicUnstableAndK2LanguageFeaturesSkipConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
     companion object {
         val unscheduledK2OnlyFeatures = setOf(
+            LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization,
             LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization,
             LanguageFeature.ContextParameters,
             LanguageFeature.ContractSyntaxV2,

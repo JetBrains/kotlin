@@ -29,6 +29,7 @@ abstract class AbstractAnalysisApiTypeScriptExportTest : AbstractKotlinCompilerT
     protected fun TestConfigurationBuilder.configureTypeScriptExport() {
         defaultDirectives {
             LANGUAGE with listOf(
+                "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                 "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
             )
             DIAGNOSTICS with "-warnings"
