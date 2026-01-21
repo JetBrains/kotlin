@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.wasm.DebuggerCompileOptions
-import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
-import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
+import org.jetbrains.kotlin.backend.wasm.WasmIrBinaryCompiler
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextForTesting
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
@@ -133,7 +132,7 @@ abstract class WasmAbstractInvalidationTest(
                 generateDwarf = false,
             )
 
-            val parameters = WasmIrModuleConfiguration(
+            val wasmIrBinaryCompiler = WasmIrBinaryCompiler(
                 wasmCompiledFileFragments = fileFragments,
                 moduleName = mainModuleInfo.moduleName,
                 configuration = configuration,
@@ -144,7 +143,7 @@ abstract class WasmAbstractInvalidationTest(
                 multimoduleOptions = null,
             )
 
-            val compilationResult = linkAndCompileWasmIrToBinary(parameters)
+            val compilationResult = wasmIrBinaryCompiler.linkAndCompileWasmIrToBinary()
 
             writeCompilationResult(compilationResult, buildDir, mainModuleInfo.moduleName)
 

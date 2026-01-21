@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.wasm.test
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
@@ -123,7 +122,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
             mainCallArguments = null
         )
 
-        val compileResult = linkAndCompileWasmIrToBinary(parametersForCompile)
+        val compileResult = parametersForCompile.linkAndCompileWasmIrToBinary()
 
         writeCompilationResult(
             result = compileResult,

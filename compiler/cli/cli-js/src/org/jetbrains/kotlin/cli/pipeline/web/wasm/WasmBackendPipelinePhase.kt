@@ -52,15 +52,15 @@ private val IrModuleFragment.outputFileName
         .replace(" ", "_")
         .let { URLEncoder.encode(it, "UTF-8") })
 
-object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, WasmIrModuleConfiguration>("WasmBackendPipelinePhase") {
+object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, WasmIrBinaryCompiler>("WasmBackendPipelinePhase") {
     override val configFiles: EnvironmentConfigFiles
         get() = EnvironmentConfigFiles.WASM_CONFIG_FILES
 
     override fun compileIntermediate(
-        intermediateResult: WasmIrModuleConfiguration,
+        intermediateResult: WasmIrBinaryCompiler,
         configuration: CompilerConfiguration,
     ): WasmBackendPipelineArtifact = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
-        val compileResult = linkAndCompileWasmIrToBinary(intermediateResult)
+        val compileResult = intermediateResult.linkAndCompileWasmIrToBinary()
         val outputDir = configuration.outputDir!!
         writeCompilationResult(
             result = compileResult,
@@ -73,7 +73,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
     override fun compileIncrementally(
         icCaches: IcCachesArtifacts,
         configuration: CompilerConfiguration,
-    ): WasmIrModuleConfiguration? = compileIncrementally(
+    ): WasmIrBinaryCompiler? = compileIncrementally(
         icCaches = icCaches,
         configuration = configuration,
         moduleName = configuration.moduleName!!,
@@ -93,7 +93,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         wasmDebug: Boolean,
         wasmGenerateWat: Boolean,
         generateDwarf: Boolean
-    ): WasmIrModuleConfiguration? {
+    ): WasmIrBinaryCompiler? {
         if (configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)) {
             configuration.messageCollector.report(
                 CompilerMessageSeverity.ERROR,
@@ -117,7 +117,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             useDebuggerCustomFormatters = useDebuggerCustomFormatters,
         )
 
-        return WasmIrModuleConfiguration(
+        return WasmIrBinaryCompiler(
             wasmCompiledFileFragments = wasmArtifacts,
             moduleName = moduleName,
             configuration = configuration,
@@ -133,7 +133,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         configuration: CompilerConfiguration,
         module: ModulesStructure,
         mainCallArguments: List<String>?,
-    ): WasmIrModuleConfiguration = compileNonIncrementally(
+    ): WasmIrBinaryCompiler = compileNonIncrementally(
         configuration = configuration,
         module = module,
         outputName = configuration.outputName!!,
@@ -153,7 +153,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         dceDumpDeclarationIrSizesToFile: String?,
         wasmDebug: Boolean,
         generateDwarf: Boolean
-    ): WasmIrModuleConfiguration {
+    ): WasmIrBinaryCompiler {
         return if (!configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)) {
             compileWholeProgramModeToWasmIr(
                 configuration = configuration,
@@ -184,7 +184,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         dceDumpDeclarationIrSizesToFile: String?,
         wasmDebug: Boolean,
         generateDwarf: Boolean
-    ): WasmIrModuleConfiguration {
+    ): WasmIrBinaryCompiler {
         val performanceManager = configuration.perfManager
         performanceManager?.let {
             @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
@@ -242,7 +242,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 useDebuggerCustomFormatters = useDebuggerCustomFormatters,
             )
 
-            return WasmIrModuleConfiguration(
+            return WasmIrBinaryCompiler(
                 wasmCompiledFileFragments = wasmCompiledFileFragments,
                 moduleName = allModules.last().descriptor.name.asString(),
                 configuration = configuration,
@@ -272,7 +272,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         module: ModulesStructure,
         wasmDebug: Boolean,
         generateDwarf: Boolean,
-    ): WasmIrModuleConfiguration {
+    ): WasmIrBinaryCompiler {
 
         val dependencyResolutionMap = parseDependencyResolutionMap(configuration)
 
@@ -330,7 +330,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
     generateDwarf: Boolean,
     outputFileNameBase: String? = null,
     dependencyResolutionMap: Map<String, String>,
-): WasmIrModuleConfiguration {
+): WasmIrBinaryCompiler {
     val mainModuleFragment = backendContext.irModuleFragment
     val moduleName = mainModuleFragment.name.asString()
 
@@ -409,7 +409,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
         initializeUnit = stdlibIsMainModule,
     )
 
-    return WasmIrModuleConfiguration(
+    return WasmIrBinaryCompiler(
         wasmCompiledFileFragments = wasmCompiledFileFragments,
         moduleName = moduleName,
         configuration = configuration,

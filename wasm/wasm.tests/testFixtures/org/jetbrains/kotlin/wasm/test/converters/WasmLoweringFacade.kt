@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.wasm.DebuggerCompileOptions
-import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
+import org.jetbrains.kotlin.backend.wasm.WasmIrBinaryCompiler
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
-import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.tools.WasmOptimizer
 import java.io.File
@@ -111,7 +109,7 @@ class WasmLoweringFacade(
             useDebuggerCustomFormatters = useDebuggerCustomFormatters,
         )
 
-        val parameters = WasmIrModuleConfiguration(
+        val wasmIrBinaryCompiler = WasmIrBinaryCompiler(
             wasmCompiledFileFragments = wasmCompiledFileFragments,
             moduleName = allModules.last().descriptor.name.asString(),
             configuration = configuration,
@@ -122,10 +120,8 @@ class WasmLoweringFacade(
             multimoduleOptions = null,
         )
 
-        lateinit var linkedModule: WasmModule
-        val compilerResult = linkAndCompileWasmIrToBinary(parameters) {
-            linkedModule = it
-        }
+        val compilerResult = wasmIrBinaryCompiler.linkAndCompileWasmIrToBinary()
+        val linkedModule = wasmIrBinaryCompiler.linkedModule
 
         val dceDumpNameCache = DceDumpNameCache()
         eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
@@ -143,7 +139,7 @@ class WasmLoweringFacade(
         )
         val wasmCompiledFileFragmentsDce = allModules.map { codeGeneratorDce.generateModuleAsSingleFileFragment(it) }
 
-        val dceParameters = WasmIrModuleConfiguration(
+        val dceWasmIrBinaryCompiler = WasmIrBinaryCompiler(
             wasmCompiledFileFragments = wasmCompiledFileFragmentsDce,
             moduleName = allModules.last().descriptor.name.asString(),
             configuration = configuration,
@@ -153,8 +149,7 @@ class WasmLoweringFacade(
             debuggerOptions = debuggerOptions,
             multimoduleOptions = null,
         )
-
-        val compilerResultWithDCE = linkAndCompileWasmIrToBinary(dceParameters)
+        val compilerResultWithDCE = dceWasmIrBinaryCompiler.linkAndCompileWasmIrToBinary()
 
         return BinaryArtifacts.Wasm(
             linkedModule,
