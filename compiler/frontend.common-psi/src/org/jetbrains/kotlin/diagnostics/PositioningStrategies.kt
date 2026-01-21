@@ -680,7 +680,7 @@ object PositioningStrategies {
                 is KtParameter -> markElement(element.valOrVarKeyword ?: element)
                 is KtProperty -> markElement(element.valOrVarKeyword)
                 is KtDestructuringDeclaration -> markElement(element.valOrVarKeyword ?: element)
-                else -> error("Declaration is neither a parameter nor a property: " + element.getElementTextWithContext())
+                else -> markElement(element)
             }
         }
     }
