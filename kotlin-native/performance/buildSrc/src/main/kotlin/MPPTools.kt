@@ -27,37 +27,6 @@ fun getNativeProgramExtension(): String = when {
     else -> error("Unknown host")
 }
 
-fun getFileSize(filePath: String): Long? {
-    val file = File(filePath)
-    return if (file.exists()) file.length() else null
-}
-
-fun getCodeSizeBenchmark(programName: String, filePath: String): BenchmarkResult {
-    val codeSize = getFileSize(filePath)
-    return BenchmarkResult(programName,
-            codeSize?. let { BenchmarkResult.Status.PASSED } ?: run { BenchmarkResult.Status.FAILED },
-            codeSize?.toDouble() ?: 0.0, BenchmarkResult.Metric.CODE_SIZE, codeSize?.toDouble() ?: 0.0, 1, 0)
-}
-
-// Create benchmarks json report based on information get from gradle project
-fun createJsonReport(projectProperties: Map<String, Any>): String {
-    fun getValue(key: String): String = projectProperties[key] as? String ?: "unknown"
-    val machine = Environment.Machine(getValue("cpu"), getValue("os"))
-    val jdk = Environment.JDKInstance(getValue("jdkVersion"), getValue("jdkVendor"))
-    val env = Environment(machine, jdk)
-    val flags: List<String> = (projectProperties["flags"] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
-    val backend = Compiler.Backend(Compiler.backendTypeFromString(getValue("type"))!! ,
-                                    getValue("compilerVersion"), flags)
-    val kotlin = Compiler(backend, getValue("kotlinVersion"))
-    val benchDesc = getValue("benchmarks")
-    val benchmarksArray = JsonTreeParser.parse(benchDesc)
-    val benchmarks = parseBenchmarksArray(benchmarksArray)
-            .union((projectProperties["compileTime"] as? List<*>)?.filterIsInstance<BenchmarkResult>() ?: emptyList()).union(
-                    listOf(projectProperties["codeSize"] as? BenchmarkResult).filterNotNull()).toList()
-    val report = BenchmarksReport(env, benchmarks, kotlin)
-    return report.toJson()
-}
-
 fun mergeReports(reports: List<File>): String {
     val reportsToMerge = reports.filter { it.exists() }.map {
         val json = it.inputStream().bufferedReader().use { it.readText() }
