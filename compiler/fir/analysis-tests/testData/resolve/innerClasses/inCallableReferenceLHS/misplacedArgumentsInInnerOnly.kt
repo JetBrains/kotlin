@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82122
 // LATEST_LV_DIFFERENCE
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 open class X<A> {
     inner class Y<B> {
@@ -26,7 +27,7 @@ fun <C> foo() {
             }
         }
 
-        val ref = Y<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!><Int, Int><!>::foo
+        val ref = Y<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_LOCAL_CLASS_IN_LHS_WARNING!><Int, Int><!>::foo
     }
 }
 
