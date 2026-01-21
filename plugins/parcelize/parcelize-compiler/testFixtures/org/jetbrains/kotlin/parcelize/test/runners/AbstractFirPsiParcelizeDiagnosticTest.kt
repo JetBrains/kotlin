@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.parcelize.test.runners
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
@@ -26,6 +28,8 @@ abstract class AbstractFirParcelizeDiagnosticTestBase(val parser: FirParser) : A
             +ENABLE_PARCELIZE
             +ENABLE_PLUGIN_PHASES
             FIR_PARSER with parser
+            // Robolectric 4.16 (onward) with Android SDK 36 requires JDK 21
+            JDK_KIND with TestJdkKind.FULL_JDK_21
         }
 
         useConfigurators(::ParcelizeEnvironmentConfigurator)

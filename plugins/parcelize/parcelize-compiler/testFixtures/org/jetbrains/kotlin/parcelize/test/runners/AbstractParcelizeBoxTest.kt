@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.parcelize.test.services.ParcelizeUtilSourcesProvider
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPAR
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -57,6 +59,8 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
             +ENABLE_PARCELIZE
             +REQUIRES_SEPARATE_PROCESS
             +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+            // Robolectric 4.16 (onward) with Android SDK 36 requires JDK 21
+            JDK_KIND with TestJdkKind.FULL_JDK_21
         }
 
         commonConfigurationForJvmTest(

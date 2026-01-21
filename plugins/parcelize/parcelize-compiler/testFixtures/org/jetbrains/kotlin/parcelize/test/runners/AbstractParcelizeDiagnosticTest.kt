@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.parcelize.test.runners
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.classicFrontendStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
@@ -34,6 +36,8 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
             +ENABLE_PARCELIZE
             +USE_PSI_CLASS_FILES_READING
             DIAGNOSTICS with "-UNUSED_PARAMETER"
+            // Robolectric 4.16 (onward) with Android SDK 36 requires JDK 21
+            JDK_KIND with TestJdkKind.FULL_JDK_21
         }
 
         enableMetaInfoHandler()
