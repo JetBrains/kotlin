@@ -16,5 +16,4 @@
 
 package org.jetbrains.kotlin.library
 
-const val KLIB_MANIFEST_FILE_NAME = "manifest"
 const val KLIB_RESOURCES_FOLDER_NAME = "resources"
