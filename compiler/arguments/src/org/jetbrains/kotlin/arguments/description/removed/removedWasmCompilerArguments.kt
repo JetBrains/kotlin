@@ -8,6 +8,6 @@ package org.jetbrains.kotlin.arguments.description.removed
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 
-val removedWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wasmArguments) {
+val removedWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.legacyWasmArguments) {
 
 }

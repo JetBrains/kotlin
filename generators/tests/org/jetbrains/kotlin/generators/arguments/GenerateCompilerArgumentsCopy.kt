@@ -19,6 +19,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.superclasses
 
+@Suppress("DEPRECATION")
 private val CLASSES_TO_PROCESS: List<KClass<*>> = listOf(
     JpsPluginSettings::class,
     CompilerSettings::class,
@@ -27,6 +28,7 @@ private val CLASSES_TO_PROCESS: List<KClass<*>> = listOf(
     K2JSCompilerArguments::class,
     K2WasmCompilerArguments::class,
     K2JVMCompilerArguments::class,
+    KotlinWasmCompilerArguments::class,
 )
 
 private val PACKAGE_TO_DIR_MAPPING: Map<Package, File> = mapOf(
@@ -77,6 +79,9 @@ private fun generateRec(
         }
 
         println("@OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)")
+        if (klass.annotations.any { it.annotationClass == Deprecated::class }) {
+            println("@Suppress(\"DEPRECATION\")")
+        }
         println("fun copy$klassName(from: $klassName, to: $klassName): $klassName {")
         withIndent {
             val superClasses: List<KClass<*>> = klass.superclasses.filterNot { it.java.isInterface }
@@ -141,6 +146,7 @@ fun generateConfigureLanguageFeatures(withPrinterToFile: (targetFile: File, Prin
     generateConfigureLanguageFeaturesImpl(CommonCompilerArguments::class.java, "Common", withPrinterToFile)
     generateConfigureLanguageFeaturesImpl(K2JVMCompilerArguments::class.java, "Jvm", withPrinterToFile)
     generateConfigureLanguageFeaturesImpl(K2JSCompilerArguments::class.java, "Js", withPrinterToFile)
+    generateConfigureLanguageFeaturesImpl(KotlinWasmCompilerArguments::class.java, "Wasm", withPrinterToFile)
 }
 
 private fun generateConfigureLanguageFeaturesImpl(
