@@ -96,10 +96,18 @@ public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
     }
 
     public void writeParameterType(@NotNull JvmMethodParameterKind parameterKind) {
-        writeParameterType(parameterKind.isSkippedInGenericSignature());
+        if (parameterKind == JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL) {
+            writeParameterType(WritingParameterToGenericSignatureMode.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER);
+            return;
+        }
+        if (parameterKind == JvmMethodParameterKind.OUTER) {
+            writeParameterType(WritingParameterToGenericSignatureMode.OUTER_THIS);
+            return;
+        }
+        writeParameterType(WritingParameterToGenericSignatureMode.REGULAR);
     }
 
-    public void writeParameterType(boolean isSkippedInGenericSignature) {
+    public void writeParameterType(WritingParameterToGenericSignatureMode mode) {
     }
 
     public void writeParameterTypeEnd() {

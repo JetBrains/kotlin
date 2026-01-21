@@ -9,7 +9,6 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor;
@@ -182,19 +181,19 @@ public class BothSignatureWriter extends JvmSignatureWriter {
     }
 
     @Override
-    public void writeParameterType(boolean isSkippedInGenericSignature) {
-        // This magic mimics the behavior of javac that enum constructor have these synthetic parameters in erased signature, but doesn't
-        // have them in generic signature. IDEA, javac and their friends rely on this behavior.
-        if (isSkippedInGenericSignature) {
-            generic = true;
-
+    public void writeParameterType(WritingParameterToGenericSignatureMode mode) {
+        if (mode == WritingParameterToGenericSignatureMode.REGULAR) {
+            push(signatureVisitor().visitParameterType());
+        } else {
             // pushing dummy visitor, because we don't want these parameters to appear in generic JVM signature
             push(new SignatureWriter());
         }
-        else {
-            push(signatureVisitor().visitParameterType());
+        // This magic mimics the behavior of javac that enum constructor have these synthetic parameters in erased signature, but doesn't
+        // have them in generic signature. IDEA, javac and their friends rely on this behavior.
+        if (mode == WritingParameterToGenericSignatureMode.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER) {
+            generic = true;
         }
-        super.writeParameterType(isSkippedInGenericSignature);
+        super.writeParameterType(mode);
     }
 
     @Override

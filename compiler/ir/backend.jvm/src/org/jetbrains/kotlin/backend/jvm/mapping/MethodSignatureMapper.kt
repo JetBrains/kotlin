@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
+import org.jetbrains.kotlin.codegen.signature.WritingParameterToGenericSignatureMode
 import org.jetbrains.kotlin.codegen.state.extractTypeMappingModeFromAnnotation
 import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFqName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNO
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -254,7 +254,14 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                 else parameter.type
             writeParameter(
                 sw = sw,
-                isSkippedInGenericSignature = parameter.kind == IrParameterKind.Regular && parameter.isSkippedInGenericSignature,
+                mode = when (parameter.origin) {
+                    JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS if parameter.kind == IrParameterKind.Regular ->
+                        WritingParameterToGenericSignatureMode.OUTER_THIS
+                    JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER if parameter.kind == IrParameterKind.Regular ->
+                        WritingParameterToGenericSignatureMode.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER
+                    else ->
+                        WritingParameterToGenericSignatureMode.REGULAR
+                },
                 type = type,
                 function = function,
                 materialized = parameter.kind == IrParameterKind.Regular && materialized
@@ -334,12 +341,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private fun writeParameter(
         sw: JvmSignatureWriter,
-        isSkippedInGenericSignature: Boolean,
+        mode: WritingParameterToGenericSignatureMode,
         type: IrType,
         function: IrFunction,
         materialized: Boolean = true
     ) {
-        sw.writeParameterType(isSkippedInGenericSignature)
+        sw.writeParameterType(mode)
         writeParameterType(sw, type, function, materialized)
         sw.writeParameterTypeEnd()
     }
