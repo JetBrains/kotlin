@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 
@@ -51,9 +50,6 @@ private fun Settings.isIgnoredWithIGNORE_BACKEND(registeredDirectives: Registere
         return true
     return false
 }
-
-internal fun Settings.isSelectedWithTARGET_BACKEND(registeredDirectives: RegisteredDirectives): Boolean =
-    registeredDirectives[ConfigurationDirectives.TARGET_BACKEND].let { it.isEmpty() || it.containsNativeOrAny }
 
 internal fun Settings.isIgnoredWithIGNORE_NATIVE(registeredDirectives: RegisteredDirectives) =
     evaluate(registeredDirectives, TestDirectives.IGNORE_NATIVE)

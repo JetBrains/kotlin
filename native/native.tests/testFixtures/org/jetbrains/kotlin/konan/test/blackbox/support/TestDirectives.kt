@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support
 
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ENTRY_POINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.KIND
@@ -17,12 +15,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DA
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_REGEX
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNNER
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.WITH_PLATFORM_LIBS
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedPaths
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLibs
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ReplLLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -230,8 +224,6 @@ enum class TestRunnerType {
 }
 
 internal val CINTEROP_SOURCE_EXTENSIONS = setOf("c", "cpp", "m", "mm")
-internal val CINTEROP_DEFINITION_EXTENSIONS = setOf("def", "h")
-internal val KNOWN_EXTENSIONS = setOf("kt") + CINTEROP_DEFINITION_EXTENSIONS + CINTEROP_SOURCE_EXTENSIONS
 
 internal class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs(emptyList(), cinteropArgs) {
     constructor(vararg cinteropArgs: String) : this(cinteropArgs.asList())
@@ -369,28 +361,6 @@ private val TEST_MODULE_REGEX = Regex("^([a-zA-Z0-9_]+)(" +          // name
                                               "(\\(([a-zA-Z0-9_,]*)\\))?" + // dependsOn
                                               ")?$")
 
-internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDirective): String {
-    val fileName = parsedDirective.values.singleOrNull()?.toString()
-        ?: fail {
-            """
-                Exactly one file name expected in ${parsedDirective.directive} directive: ${parsedDirective.values}
-                ${parsedDirective.directive.description}
-            """.trimIndent()
-        }
-
-    val fileExtension = fileName.split(".").last()
-    if (fileExtension in KNOWN_EXTENSIONS)
-        assertTrue(fileName.length > 3 && '/' !in fileName && '\\' !in fileName) {
-            "Invalid file name with extension $fileExtension in ${parsedDirective.directive} directive: $fileName"
-        }
-    else
-        assertTrue(false) {
-            "Invalid file extension .$fileExtension in ${parsedDirective.directive} directive: $fileName"
-        }
-
-    return fileName
-}
-
 internal fun parseExpectedTimeoutFailure(registeredDirectives: RegisteredDirectives): Duration? =
     if (EXPECTED_TIMEOUT_FAILURE in registeredDirectives) {
         val value = registeredDirectives.singleOrZeroValue(EXPECTED_TIMEOUT_FAILURE)
@@ -414,25 +384,6 @@ internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives): 
         else -> exitCode.toIntOrNull()?.let(TestRunCheck.ExitCode::Expected)
             ?: fail { "Invalid exit code specified in $EXIT_CODE directive: $exitCode" }
     }
-}
-
-internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, settings: Settings): TestCompilerArgs {
-    val assertionsMode = registeredDirectives.singleOrZeroValue(ASSERTIONS_MODE) ?: AssertionsMode.DEFAULT
-    val freeCInteropArgs = registeredDirectives[FREE_CINTEROP_ARGS]
-    val rawFreeCompilerArgs = registeredDirectives[FREE_COMPILER_ARGS]
-    val freeCompilerArgs = rawFreeCompilerArgs.map { PredefinedPaths.substitutePlaceholders(it, settings) }
-    if (freeCompilerArgs.isNotEmpty()) {
-        val forbiddenCompilerArgs = TestCompilerArgs.findForbiddenArgs(freeCompilerArgs)
-        assertTrue(forbiddenCompilerArgs.isEmpty()) {
-            """
-            Forbidden compiler arguments found in $FREE_COMPILER_ARGS directive: $forbiddenCompilerArgs
-            All arguments: $freeCompilerArgs
-        """.trimIndent()
-        }
-    }
-    val noDefaultLibsArgs =
-        if (settings.withPlatformLibs || WITH_PLATFORM_LIBS in registeredDirectives) emptyList() else listOf("-no-default-libs")
-    return TestCompilerArgs(freeCompilerArgs + noDefaultLibsArgs, freeCInteropArgs, assertionsMode)
 }
 
 internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives): OutputDataFile? =
