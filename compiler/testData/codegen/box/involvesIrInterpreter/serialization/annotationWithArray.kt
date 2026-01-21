@@ -15,7 +15,7 @@ class A
 @AnnotationWithArray([<!EVALUATED("String")!>"Str" + "ing"<!>, <!EVALUATED("String2")!>"String2"<!>, <!EVALUATED("String3")!>"String${3}"<!>])
 class B
 
-// MODULE: main
+// MODULE: main(lib)
 // FILE: main.kt
 
 fun box(): String {
