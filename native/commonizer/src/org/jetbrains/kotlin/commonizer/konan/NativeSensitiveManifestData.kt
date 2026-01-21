@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.impl.toSpaceSeparatedString
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 
@@ -84,4 +83,8 @@ internal fun Properties.addNativeSensitiveManifestProperties(manifest: NativeSen
         manifest.commonizerTarget?.konanTargets?.map { it.name }?.sorted()?.joinToString(" ")
             ?: error("Unexpected missing 'commonizerTarget'")
     }
+}
+
+private fun List<String>.toSpaceSeparatedString(): String = joinToString(separator = " ") {
+    if (it.contains(" ")) "\"$it\"" else it
 }
