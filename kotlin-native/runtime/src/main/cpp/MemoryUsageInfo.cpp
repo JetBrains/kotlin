@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <limits>
 
+#include "Memory.h"
 #include "Types.h"
 
 using namespace kotlin;
@@ -67,6 +68,7 @@ size_t kotlin::peakResidentSetSizeBytes() noexcept {
 #endif
 
 extern "C" RUNTIME_NOTHROW KLong Kotlin_MemoryUsageInfo_getPeakResidentSetSizeBytes() {
+    ThreadStateGuard guard(ThreadState::kNative); // No need to take chances here.
     auto result = peakResidentSetSizeBytes();
     // TODO: Need a common implementation for such conversions.
     if constexpr (sizeof(decltype(result)) >= sizeof(KLong)) {
