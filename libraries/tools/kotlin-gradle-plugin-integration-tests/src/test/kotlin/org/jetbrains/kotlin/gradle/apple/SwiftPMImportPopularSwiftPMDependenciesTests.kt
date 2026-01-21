@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadata
+import org.jetbrains.kotlin.gradle.uklibs.include
 import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.test.assertEquals
@@ -43,6 +44,72 @@ import kotlin.io.path.writeText
 )
 @NativeGradlePluginTests
 class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
+
+    /**
+     * KT-83057: Tests that cinterop commonization is transitively enabled for consumer projects.
+     *
+     * When a "facade" project declares SwiftPM dependencies, a "consumer" project depending on it
+     * must also have commonization enabled. This ensures type compatibility for cinterop bindings
+     * across modules.
+     */
+    @DisplayName("transitive SwiftPM dependency enables commonization in consumer project")
+    @GradleTest
+    fun `transitive SwiftPM dependency enables commonization in consumer project`(version: GradleVersion) {
+        if (!isTeamCityRun) {
+            Assumptions.assumeTrue(version >= GradleVersion.version("8.0"))
+        }
+
+        project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+
+            val facade = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+                        sourceSets.commonMain.get().compileSource("class Facade")
+
+                        swiftPMDependencies {
+                            `package`(
+                                url = url("https://github.com/lukaskubanek/LoremIpsum.git"),
+                                version = exact("2.0.1"),
+                                products = listOf(product("LoremIpsum"))
+                            )
+                        }
+                    }
+                }
+            }
+
+            val consumer = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+                        sourceSets.commonMain {
+                            compileSource(
+                                """
+                                class Consumer {
+                                    val facade = Facade()
+                                }
+                                """.trimIndent()
+                            )
+
+                            dependencies {
+                                implementation(project(":facade"))
+                            }
+                        }
+                    }
+                }
+            }
+
+            include(facade, "facade")
+            include(consumer, "consumer")
+
+            build(":consumer:build") {
+                assertTasksExecuted(":facade:commonizeCInterop", ":consumer:commonizeCInterop")
+            }
+        }
+    }
 
     @DisplayName("direct dependency on Firebase")
     @ParameterizedTest(name = "{displayName} with {0} and isStatic={1}")
