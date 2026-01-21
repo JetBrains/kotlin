@@ -10,15 +10,17 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AbstractStandaloneTest
+import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.junit.jupiter.api.Test
-import java.nio.file.Paths
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class StandaloneBehaviorTest : AbstractStandaloneTest() {
     override val suiteName: String
@@ -68,5 +70,45 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
         }
 
         error("Annotation argument wasn't found")
+    }
+
+    @Test
+    fun testNestedTypeAliasIndexing() {
+        lateinit var sourceModule: KaSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                val stdlibModule = addModule(
+                    buildKtLibraryModule {
+                        addBinaryRoot(StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests().toPath())
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        libraryName = "stdlib"
+                    }
+                )
+
+                platform = JvmPlatforms.defaultJvmPlatform
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath("nestedTypeAlias"))
+                        addRegularDependency(stdlibModule)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "source"
+                    }
+                )
+            }
+        }
+
+        val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
+        assert(ktFile.stub != null)
+
+        val topLevelTypeAlias = ktFile.declarations
+            .filterIsInstance<KtTypeAlias>()
+            .first { it.name == "AliasToTopLevelClassInsideNested" }
+
+        analyze(topLevelTypeAlias) {
+            val typeAliasSymbol = topLevelTypeAlias.symbol
+            val expandedType = typeAliasSymbol.expandedType
+
+            assertTrue(expandedType is KaErrorType, "Expending a typealias to a nested typealias should result in an error")
+        }
     }
 }
