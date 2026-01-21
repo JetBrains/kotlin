@@ -2,15 +2,14 @@ package org.jetbrains.kotlin.benchmark
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.project
-import org.gradle.kotlin.dsl.register
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import javax.inject.Inject
-import kotlin.collections.plus
-import kotlin.reflect.KClass
 
 internal val Project.nativeWarmup: Int
     get() = (property("nativeWarmup") as String).toInt()
@@ -40,13 +39,12 @@ internal val Project.buildType: NativeBuildType
 internal val Project.useCSet: Boolean
     get() = (findProperty("useCSet") as String?).toBoolean()
 
-open class BenchmarkExtension @Inject constructor(val project: Project) {
-    var applicationName: String = project.name
-    var compileTasks: List<String> = emptyList()
-    var linkerOpts: Collection<String> = emptyList()
-    var compilerOpts: List<String> = emptyList()
-    var buildType: NativeBuildType = project.buildType
-    var repeatingType: BenchmarkRepeatingType = BenchmarkRepeatingType.INTERNAL
+internal const val BENCHMARKING_GROUP = "benchmarking"
+
+open class BenchmarkExtension @Inject constructor(project: Project) {
+    val applicationName: Property<String> = project.objects.property(String::class.java).convention(project.name)
+    val compilerOpts: ListProperty<String> = project.objects.listProperty(String::class.java)
+    val repeatingType: Property<BenchmarkRepeatingType> = project.objects.property(BenchmarkRepeatingType::class.java).convention(BenchmarkRepeatingType.INTERNAL)
 }
 
 /**
@@ -54,23 +52,20 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
  */
 abstract class BenchmarkingPlugin: Plugin<Project> {
     protected abstract val Project.benchmark: BenchmarkExtension
-    protected abstract val benchmarkExtensionName: String
-    protected abstract val benchmarkExtensionClass: KClass<*>
+    protected abstract fun Project.createExtension(): BenchmarkExtension
 
-    protected open fun KotlinNativeTarget.createNativeBinary(project: Project) {
-        binaries.executable(NATIVE_EXECUTABLE_NAME, listOf(project.benchmark.buildType)) {
-            this.runTaskProvider?.configure {
-                group = ""
-                enabled = false
-            }
-        }
-    }
+    protected abstract fun Project.createNativeBinary(target: KotlinNativeTarget)
+    protected abstract fun KotlinMultiplatformExtension.configureTargets()
+    protected abstract fun RunKotlinNativeTask.configureKonanRunTask()
+    protected abstract fun JsonReportTask.configureKonanJsonReportTask()
 
-    protected open fun KotlinMultiplatformExtension.configureTargets() {
-        benchmarkingTargets()
-    }
+    protected open fun Project.createExtraTasks() {}
 
-    private fun Project.configureKotlinProject() {
+    override fun apply(target: Project) = with(target) {
+        pluginManager.apply("kotlin-multiplatform")
+
+        createExtension()
+
         kotlin.apply {
             configureTargets()
             sourceSets.commonMain.dependencies {
@@ -79,18 +74,17 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
                 api(project.dependencies.project(":benchmarksLauncher"))
             }
             compilerOptions {
-                freeCompilerArgs.addAll(benchmark.compilerOpts + compilerArgs)
+                freeCompilerArgs.addAll(benchmark.compilerOpts)
+                freeCompilerArgs.addAll(compilerArgs)
             }
             targets.filterIsInstance<KotlinNativeTarget>().forEach {
-                it.createNativeBinary(project)
+                createNativeBinary(it)
             }
         }
-    }
 
-    protected abstract fun RunKotlinNativeTask.configureKonanRunTask()
+        createExtraTasks()
 
-    private fun Project.createKonanRunTask() {
-        tasks.register<RunKotlinNativeTask>("konanRun") {
+        val konanRun by tasks.registering(RunKotlinNativeTask::class) {
             group = BENCHMARKING_GROUP
             description = "Runs the benchmark for Kotlin/Native."
 
@@ -100,32 +94,27 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             warmupCount.convention(nativeWarmup)
             repeatCount.convention(attempts)
             repeatingType.set(benchmark.repeatingType)
-            arguments.addAll("-p", "${benchmark.applicationName}::")
+            arguments.add("-p")
+            arguments.add(benchmark.applicationName.map { "$it::" })
             useCSet.convention(project.useCSet)
 
             // We do not want to cache benchmarking runs; we want the task to run whenever requested.
             outputs.upToDateWhen { false }
 
-            finalizedBy("konanJsonReport")
-
             configureKonanRunTask()
         }
-    }
 
-    protected abstract fun JsonReportTask.configureKonanJsonReportTask()
-
-    private fun Project.createKonanJsonReportTask() {
-        tasks.register<JsonReportTask>("konanJsonReport") {
+        val konanJsonReport by tasks.registering(JsonReportTask::class) {
             group = BENCHMARKING_GROUP
             description = "Builds the benchmarking report for Kotlin/Native."
 
             applicationName.set(benchmark.applicationName)
-            benchmarksReportFile.set(layout.buildDirectory.file(nativeBenchResults))
+            benchmarksReportFile.set(konanRun.map { it.reportFile.get() })
             compilerVersion.set(project.konanVersion)
-            if (benchmark.buildType.optimized) {
+            if (buildType.optimized) {
                 compilerFlags.add("-opt")
             }
-            if (benchmark.buildType.debuggable) {
+            if (buildType.debuggable) {
                 compilerFlags.add("-g")
             }
             kotlinVersion.set(project.kotlinVersion)
@@ -133,25 +122,9 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
             configureKonanJsonReportTask()
         }
-    }
 
-    protected open fun Project.createExtraTasks() {}
-
-    override fun apply(target: Project) = with(target) {
-        pluginManager.apply("kotlin-multiplatform")
-
-        // Use Kotlin compiler version specified by the project property.
-        target.logger.info("BenchmarkingPlugin.kt:apply($kotlinVersion)")
-
-        extensions.create(benchmarkExtensionName, benchmarkExtensionClass.java, this)
-        configureKotlinProject()
-        createExtraTasks()
-        createKonanRunTask()
-        createKonanJsonReportTask()
-    }
-
-    companion object {
-        const val NATIVE_EXECUTABLE_NAME = "benchmark"
-        const val BENCHMARKING_GROUP = "benchmarking"
+        konanRun.configure {
+            finalizedBy(konanJsonReport)
+        }
     }
 }

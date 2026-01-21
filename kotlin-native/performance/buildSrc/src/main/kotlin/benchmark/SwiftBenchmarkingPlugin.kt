@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.benchmark
 
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -12,7 +13,8 @@ import javax.inject.Inject
 import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 import java.nio.file.Path
-import kotlin.reflect.KClass
+
+private const val EXTENSION_NAME = "swiftBenchmark"
 
 open class SwiftBenchmarkExtension @Inject constructor(project: Project) : BenchmarkExtension(project) {
     var swiftSources: List<String> = emptyList()
@@ -22,13 +24,10 @@ open class SwiftBenchmarkExtension @Inject constructor(project: Project) : Bench
  * A plugin configuring a benchmark Kotlin/Native project.
  */
 open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
-    override val benchmarkExtensionClass: KClass<*>
-        get() = SwiftBenchmarkExtension::class
-
     override val Project.benchmark: SwiftBenchmarkExtension
-        get() = extensions.getByName(benchmarkExtensionName) as SwiftBenchmarkExtension
+        get() = extensions.getByName(EXTENSION_NAME) as SwiftBenchmarkExtension
 
-    override val benchmarkExtensionName: String = "swiftBenchmark"
+    override fun Project.createExtension() = extensions.create<SwiftBenchmarkExtension>(EXTENSION_NAME, this)
 
     private val Project.nativeLinkBinary: String
         get() = File("${framework.outputFile.absolutePath}/$nativeFrameworkName").canonicalPath
@@ -36,27 +35,23 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     private lateinit var framework: Framework
     val nativeFrameworkName = "benchmark"
 
-    override fun KotlinNativeTarget.createNativeBinary(project: Project) {
-        binaries.framework(nativeFrameworkName, listOf(project.benchmark.buildType)) {
-            export(project.dependencies.project(":benchmarksLauncher"))
-            // Specify settings configured by a user in the benchmark extension.
-            project.afterEvaluate {
-                linkerOpts.addAll(project.benchmark.linkerOpts)
-            }
+    override fun Project.createNativeBinary(target: KotlinNativeTarget) {
+        target.binaries.framework(nativeFrameworkName, listOf(project.buildType)) {
+            export(dependencies.project(":benchmarksLauncher"))
         }
     }
 
     override fun Project.createExtraTasks() {
         val nativeTarget = hostKotlinNativeTarget
         // Build executable from swift code.
-        framework = nativeTarget.binaries.getFramework(nativeFrameworkName, benchmark.buildType)
+        framework = nativeTarget.binaries.getFramework(nativeFrameworkName, project.buildType)
         tasks.create("buildSwift") {
             dependsOn(framework.linkTaskName)
             doLast {
                 val frameworkParentDirPath = framework.outputDirectory.absolutePath
                 val options = listOf("-O", "-wmo", "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath, "-F", frameworkParentDirPath)
                 compileSwift(project, nativeTarget.konanTarget, benchmark.swiftSources, options,
-                        Paths.get(layout.buildDirectory.get().asFile.absolutePath, benchmark.applicationName))
+                        Paths.get(layout.buildDirectory.get().asFile.absolutePath, benchmark.applicationName.get()))
             }
         }
     }
@@ -66,7 +61,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     }
 
     override fun RunKotlinNativeTask.configureKonanRunTask() {
-        executable.set(project.layout.buildDirectory.file(project.benchmark.applicationName))
+        executable.set(project.layout.buildDirectory.file(project.benchmark.applicationName.get()))
         dependsOn("buildSwift")
     }
 

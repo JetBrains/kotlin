@@ -51,7 +51,7 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
         val konanRun = tasks.create("konanRun") {
             dependsOn("configureBuild")
 
-            group = BenchmarkingPlugin.BENCHMARKING_GROUP
+            group = BENCHMARKING_GROUP
             description = "Runs the compile only benchmark for Kotlin/Native."
 
             doLast {
@@ -87,7 +87,7 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
 
         // Report task.
         val konanJsonReport by tasks.registering(JsonReportTask::class) {
-            group = BenchmarkingPlugin.BENCHMARKING_GROUP
+            group = BENCHMARKING_GROUP
             description = "Builds the benchmarking report for Kotlin/Native."
 
             this.applicationName.set(this@with.applicationName)
