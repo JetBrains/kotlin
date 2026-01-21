@@ -64,6 +64,9 @@ abstract class ProjectTestsExtension(val project: Project) {
     val stdlibWebRuntimeForTests: Configuration = project.configurations.create("stdlibWebRuntimeForTests") {
         isTransitive = false
     }
+    val distForTests: Configuration = project.configurations.create("distForTests") {
+        isTransitive = false
+    }
     val stdlibJsRuntimeForTests: Configuration = project.configurations.create("stdlibJsRuntimeForTests") {
         isTransitive = false
     }
@@ -162,6 +165,10 @@ abstract class ProjectTestsExtension(val project: Project) {
         KOTLIN_SCRIPTING_COMMON_JAR
         KOTLIN_SCRIPTING_JVM_JAR
         */
+    }
+
+    fun withDist() {
+        add(distForTests) { project(":kotlin-compiler", "distElements") }
     }
 
     abstract val mockJdkRuntime: RegularFileProperty
