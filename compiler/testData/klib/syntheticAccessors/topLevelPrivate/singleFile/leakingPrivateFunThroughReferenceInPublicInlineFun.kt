@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 private fun privateFun() = "OK"
 
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")

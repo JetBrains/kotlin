@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 // TARGET_BACKEND: NATIVE, JS_IR, WASM
 // The test should be unmuted for JVM when KT-77870 issue is fixed.
 import kotlin.reflect.KFunction1

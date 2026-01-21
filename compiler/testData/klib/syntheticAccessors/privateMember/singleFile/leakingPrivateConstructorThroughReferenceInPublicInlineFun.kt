@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 // Can be replaced with ignore after KT-69941
 
 import kotlin.reflect.KFunction1
