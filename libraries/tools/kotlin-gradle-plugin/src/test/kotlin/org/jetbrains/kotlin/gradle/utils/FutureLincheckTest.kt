@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.utils
 import org.jetbrains.kotlinx.lincheck.annotations.Operation
 import org.jetbrains.kotlinx.lincheck.check
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions
-import org.junit.Test
+import kotlin.test.Test
 
 class FutureLincheckTest {
     private val future = CompletableFuture<Int>()

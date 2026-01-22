@@ -5,23 +5,25 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.utils
 
-import org.junit.rules.ExternalResource
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.extension.AfterEachCallback
+import org.junit.jupiter.api.extension.BeforeEachCallback
+import org.junit.jupiter.api.extension.ExtensionContext
 import java.io.File
+import java.nio.file.Files
 
 /**
- * A JUnit Rule that mocks a Kotlin/Native (Konan) installation directory.
+ * A JUnit 5 Extension that mocks a Kotlin/Native (Konan) installation directory.
  *
- * This rule manages a temporary filesystem structure (`konan/`, `bin/`) required
+ * This extension manages a temporary filesystem structure (`konan/`, `bin/`) required
  * by the Kotlin Native Gradle Plugin during tests. It allows configuring whether
  * to copy the real `konan.properties` or run with an empty setup.
  *
  * Usage:
  * Call [setup] within your test or helper method to initialize the directory.
  */
-class MockKonanHomeRule : ExternalResource() {
+class MockKonanHomeExtension : BeforeEachCallback, AfterEachCallback {
 
-    private val temporaryFolder = TemporaryFolder()
+    private lateinit var temporaryFolder: File
 
     /**
      * The root directory of the mocked Kotlin/Native installation.
@@ -30,8 +32,8 @@ class MockKonanHomeRule : ExternalResource() {
     lateinit var konanHome: File
         private set
 
-    override fun before() {
-        temporaryFolder.create()
+    override fun beforeEach(context: ExtensionContext) {
+        temporaryFolder = Files.createTempDirectory("mock-konan").toFile()
     }
 
     /**
@@ -42,7 +44,7 @@ class MockKonanHomeRule : ExternalResource() {
         // Check if lateinit var is already set to prevent double initialization
         if (::konanHome.isInitialized) return
 
-        konanHome = temporaryFolder.newFolder("mock-konan-home")
+        konanHome = temporaryFolder.resolve("mock-konan-home").also { it.mkdirs() }
 
         // Create standard directory structure
         val konanDir = File(konanHome, "konan").apply { mkdirs() }
@@ -58,8 +60,8 @@ class MockKonanHomeRule : ExternalResource() {
         }
     }
 
-    override fun after() {
-        temporaryFolder.delete()
+    override fun afterEach(context: ExtensionContext) {
+        temporaryFolder.deleteRecursively()
     }
 
     companion object {

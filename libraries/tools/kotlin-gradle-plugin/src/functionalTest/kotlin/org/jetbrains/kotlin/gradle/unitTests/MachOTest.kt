@@ -9,17 +9,16 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.utils.MachO
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
+import kotlin.test.Test
 import java.io.File
 import java.io.InputStream
 import kotlin.test.assertEquals
 
 class MachOTest {
 
-    @get:Rule
-    val temporaryFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var temporaryFolder: File
 
     @Test
     fun `dynamic dummy`() {
@@ -52,7 +51,7 @@ class MachOTest {
     }
 
     private fun assertDylib(expected: Boolean, resource: String) {
-        val tmp = temporaryFolder.newFile()
+        val tmp = temporaryFolder.resolve("tmp").also { it.createNewFile() }
         tmp.writeResource(resource)
         return assertEquals(expected, MachO.isDylib(tmp, buildProject().logger))
     }

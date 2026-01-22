@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.unitTests.uklibs
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 
 class PrettyPrintTest {
@@ -111,7 +112,7 @@ class PrettyPrintTest {
     @Test
     fun equalityComparisonOfPrettyPrintedTypes() {
         data class C(
-            val value: String
+            val value: String,
         ) {
             // Equality of a.prettyPrinted == b.prettyPrinted must not depend on toString conversion
             override fun toString(): String {
@@ -132,15 +133,12 @@ class PrettyPrintTest {
         )
 
         // assertThrows only accepts Exception
-        assertEquals(
-            AssertionError::class.java,
-            runCatching {
-                assertEquals(
-                    C("A").prettyPrinted,
-                    C("B").prettyPrinted,
-                )
-            }.exceptionOrNull()?.let { it::class.java },
-        )
+        assertFailsWith<AssertionError> {
+            assertEquals(
+                C("A").prettyPrinted,
+                C("B").prettyPrinted,
+            )
+        }
     }
 
     @Test

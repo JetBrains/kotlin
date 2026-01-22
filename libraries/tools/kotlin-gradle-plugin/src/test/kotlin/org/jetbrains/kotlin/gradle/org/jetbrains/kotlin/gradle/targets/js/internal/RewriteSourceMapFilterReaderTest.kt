@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.gradle.org.jetbrains.kotlin.gradle.targets.js.internal
 
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.Test
 import java.io.Reader
 import java.io.StringReader
 

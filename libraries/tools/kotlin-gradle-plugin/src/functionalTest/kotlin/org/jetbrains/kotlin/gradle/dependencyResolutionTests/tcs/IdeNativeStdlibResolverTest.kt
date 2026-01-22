@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeNativeStdlibDependencyResolver
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.provisionKotlinNativeDistribution
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import kotlin.test.Test
 
 class IdeNativeStdlibResolverTest {
     // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
-    @Before
+    @BeforeEach
     fun setUp() {
         provisionKotlinNativeDistribution()
     }

@@ -9,8 +9,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataLibrariesIndexFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.TransformedMetadataLibraryRecord
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.FileNotFoundException
 import kotlin.test.Test
@@ -19,8 +18,8 @@ import kotlin.test.assertFailsWith
 
 class KotlinMetadataLibrariesIndexFileTest {
 
-    @get:Rule
-    val temporaryFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var temporaryFolder: File
 
     @Test
     fun `test - empty list`() {
@@ -35,20 +34,20 @@ class KotlinMetadataLibrariesIndexFileTest {
     @Test
     fun `test - file does not exist - read`() {
         assertFailsWith<FileNotFoundException> {
-            KotlinMetadataLibrariesIndexFile(temporaryFolder.newFolder().resolve("does-not-exist")).read()
+            KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("test").also { it.mkdirs() }.resolve("does-not-exist")).read()
         }
     }
 
     @Test
     fun `test - file and parent file does not exist - write`() {
-        KotlinMetadataLibrariesIndexFile(temporaryFolder.newFolder().resolve("does-not-exist")).apply {
+        KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("test").also { it.mkdirs() }.resolve("does-not-exist")).apply {
             write(emptyList())
             assertEquals(emptyList(), read())
         }
     }
 
     private fun testWriteRead(files: Iterable<File>) {
-        val index = KotlinMetadataLibrariesIndexFile(temporaryFolder.newFile())
+        val index = KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("index").also { it.createNewFile() })
         val records = files.map {
             TransformedMetadataLibraryRecord(
                 moduleId = "a",

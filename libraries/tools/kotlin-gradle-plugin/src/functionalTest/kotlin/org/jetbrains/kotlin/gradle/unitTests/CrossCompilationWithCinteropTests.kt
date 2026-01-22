@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -148,4 +148,3 @@ private fun KotlinMultiplatformExtension.addDummyCinterop(spec: (KotlinNativeTar
                 }
         }
 }
-

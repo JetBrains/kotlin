@@ -4,7 +4,7 @@ import jetbrains.buildServer.messages.serviceMessages.TestFinished
 import jetbrains.buildServer.messages.serviceMessages.TestStarted
 import jetbrains.buildServer.messages.serviceMessages.TestSuiteFinished
 import jetbrains.buildServer.messages.serviceMessages.TestSuiteStarted
-import org.junit.Test
+import kotlin.test.Test
 
 class TestNameParsing: TCServiceMessagesClientTest() {
     @Test

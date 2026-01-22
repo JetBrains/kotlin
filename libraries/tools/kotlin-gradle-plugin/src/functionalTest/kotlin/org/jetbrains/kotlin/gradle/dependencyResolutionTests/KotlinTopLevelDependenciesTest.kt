@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.unitTests.uklibs.MavenComponent
 import org.jetbrains.kotlin.gradle.unitTests.uklibs.generateMockRepository
 import org.jetbrains.kotlin.gradle.unitTests.uklibs.jvmRuntimeAttributes
 import org.jetbrains.kotlin.gradle.util.*
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**

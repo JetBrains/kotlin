@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
+import org.jetbrains.kotlin.gradle.testing.WithTemporaryFolder
+import org.jetbrains.kotlin.gradle.testing.newTempDirectory
 import org.jetbrains.kotlin.gradle.util.compileSources
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.junit.Assert
-import org.junit.Assert.assertArrayEquals
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
-import java.util.*
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertFalse
 
-class ClassAbiExtractorTest {
-    @Rule
-    @JvmField
-    var tmp = TemporaryFolder()
+class ClassAbiExtractorTest : WithTemporaryFolder {
+    @field:TempDir
+    override lateinit var temporaryFolder: Path
 
     @Test
     fun testDifferentClassName() {
@@ -110,7 +109,7 @@ class ClassAbiExtractorTest {
         """.trimIndent()
         )
 
-        assertArrayEquals(firstHash, secondHash)
+        assertContentEquals(firstHash, secondHash)
     }
 
     @Test
@@ -133,7 +132,7 @@ class ClassAbiExtractorTest {
         """.trimIndent()
         )
 
-        assertArrayEquals(firstHash, secondHash)
+        assertContentEquals(firstHash, secondHash)
     }
 
     @Test
@@ -223,7 +222,7 @@ class ClassAbiExtractorTest {
         """.trimIndent()
         )
 
-        assertArrayEquals(firstHash, secondHash)
+        assertContentEquals(firstHash, secondHash)
     }
 
     @Test
@@ -246,7 +245,7 @@ class ClassAbiExtractorTest {
         """.trimIndent()
         )
 
-        assertArrayEquals(firstHash, secondHash)
+        assertContentEquals(firstHash, secondHash)
     }
 
     @Test
@@ -294,7 +293,7 @@ class ClassAbiExtractorTest {
         """.trimIndent()
         )
 
-        assertArrayEquals(firstHash, secondHash)
+        assertContentEquals(firstHash, secondHash)
     }
 
     @Test
@@ -319,23 +318,22 @@ class ClassAbiExtractorTest {
         """.trimIndent()
         )
 
-        assertArrayEquals(firstHash, secondHash)
+        assertContentEquals(firstHash, secondHash)
     }
 
     private fun assertArrayNotEquals(first: ByteArray, second: ByteArray) {
-        Assert.assertFalse(Arrays.equals(first, second))
+        assertFalse(first.contentEquals(second))
     }
 
 
     private fun getHash(source: String, className: String = "A"): ByteArray {
-        val src = tmp.newFolder().resolve("$className.java")
-
+        val src = this@ClassAbiExtractorTest.newTempDirectory().resolve("$className.java").toFile()
         src.writeText(source)
 
-        val output = tmp.newFolder()
+        val output = this@ClassAbiExtractorTest.newTempDirectory().resolve("out").toFile().also { it.mkdirs() }
         compileSources(listOf(src), output)
 
-        val classFile = output.walk().filter { it.name == "$className.class" }.single()
+        val classFile = output.walk().first { it.name == "$className.class" }
 
         classFile.inputStream().use {
             val extractor = ClassAbiExtractor(ClassWriter(0))

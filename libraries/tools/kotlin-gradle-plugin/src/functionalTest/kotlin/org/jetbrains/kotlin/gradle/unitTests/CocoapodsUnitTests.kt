@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CocoapodsUnitTests {
     @Test
     fun `warning is reported on non-mac machines`() {
-        Assume.assumeTrue(!HostManager.hostIsMac)
+        Assumptions.assumeTrue(!HostManager.hostIsMac)
 
         buildProjectWithCocoapods {
             assertContainsDiagnostic(CocoapodsPluginDiagnostics.UnsupportedOs)
@@ -110,7 +110,7 @@ class CocoapodsUnitTests {
 
     @Test
     fun `KT-67666 regression -- don't crash with eagerly created link tasks`() {
-        Assume.assumeTrue(HostManager.hostIsMac)
+        Assumptions.assumeTrue(HostManager.hostIsMac)
 
         buildProjectWithCocoapods {
             kotlin {

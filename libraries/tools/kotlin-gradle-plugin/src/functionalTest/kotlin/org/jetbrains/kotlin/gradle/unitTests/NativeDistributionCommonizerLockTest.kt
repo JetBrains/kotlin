@@ -8,9 +8,8 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
+import kotlin.test.Test
 import java.io.File
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Proxy
@@ -25,12 +24,12 @@ import kotlin.test.fail
 
 class NativeDistributionCommonizerLockTest {
 
-    @get:Rule
-    val temporaryFolderRule = TemporaryFolder()
+    @field:TempDir
+    lateinit var temporaryFolderField: File
 
     @Test
     fun `test - isolated classpath`() {
-        val temporaryFolder = temporaryFolderRule.newFolder()
+        val temporaryFolder = temporaryFolderField.resolve("isolated").also { it.mkdirs() }
 
         /* Create the lock in two isolated classpaths */
         val classes = System.getProperty("java.class.path")

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.withModifiedSystemProperties
-import org.junit.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.parallel.Isolated
 
 @Isolated("Modifies system properties")

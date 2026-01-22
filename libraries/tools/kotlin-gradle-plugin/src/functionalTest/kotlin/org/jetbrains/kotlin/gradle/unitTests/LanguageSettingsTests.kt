@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.util.assertThrows
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class LanguageSettingsTests {
