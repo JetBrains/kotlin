@@ -562,3 +562,10 @@ tasks.withType<Test>().configureEach {
 }
 
 excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()
+
+registerKgpTestCoverageDataVariant(
+    configurationName = "integrationTestCoverageDataElements",
+    suiteName = "integrationTest",
+    execFile = layout.buildDirectory.file("jacoco/testkit/integration-tests.exec"),
+    testTask = tasks.named("kgpAllParallelTests"),
+)

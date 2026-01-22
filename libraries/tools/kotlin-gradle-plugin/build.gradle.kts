@@ -808,3 +808,10 @@ tasks.test {
         listOf("-DkgpNpmToolingPackageJson=${kgpNpmToolingPackageJson.orNull?.asFile?.invariantSeparatorsPath}")
     }
 }
+
+registerKgpTestCoverageDataVariant(
+    configurationName = "functionalTestCoverageDataElements",
+    suiteName = "functionalTest",
+    execFile = layout.buildDirectory.file("jacoco/functionalTest.exec"),
+    testTask = tasks.named("functionalTest"),
+)
