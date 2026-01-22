@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
@@ -32,18 +33,24 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.generateDts
+import org.jetbrains.kotlin.js.config.sourceMap
+import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmDebug
+import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
+import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
 import org.jetbrains.kotlin.wasm.ir.ByteWriterWithOffsetWrite
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.writeTo
 import org.jetbrains.kotlin.wasm.ir.WasmExport
+import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationGeneratorImpl
@@ -83,10 +90,7 @@ fun compileToLoweredIr(
     irModuleInfo: IrModuleInfo,
     mainModule: MainModule,
     configuration: CompilerConfiguration,
-    performanceManager: PerformanceManager?,
     exportedDeclarations: Set<FqName> = emptySet(),
-    generateTypeScriptFragment: Boolean,
-    propertyLazyInitialization: Boolean,
 ): LoweredIrWithExtraArtifacts {
     val (moduleFragment, moduleDependencies, irBuiltIns, symbolTable, irLinker) = irModuleInfo
 
@@ -96,7 +100,6 @@ fun compileToLoweredIr(
         irBuiltIns = irBuiltIns,
         symbolTable = symbolTable,
         irModuleFragment = moduleFragment,
-        propertyLazyInitialization = propertyLazyInitialization,
         configuration = configuration,
     )
 
@@ -121,21 +124,18 @@ fun compileToLoweredIr(
         for (file in module.files)
             markExportedDeclarations(context, file, exportedDeclarations)
 
-    val typeScriptFragment = runIf(generateTypeScriptFragment) {
+    val typeScriptFragment = runIf(configuration.generateDts) {
         val exportModel = ExportModelGenerator(context).generateExport(allModules)
         val exportModelToDtsTranslator = ExportModelToTsDeclarations(ModuleKind.ES)
         val fragment = exportModelToDtsTranslator.generateTypeScriptFragment(exportModel.declarations)
         TypeScriptFragment(exportModelToDtsTranslator.generateTypeScript("", listOf(fragment)))
     }
-    performanceManager?.notifyPhaseFinished(PhaseType.TranslationToIr)
 
-    performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-        lowerPreservingTags(
-            allModules,
-            context,
-            context.irFactory.stageController as WholeWorldStageController,
-        )
-    }
+    lowerPreservingTags(
+        allModules,
+        context,
+        context.irFactory.stageController as WholeWorldStageController,
+    )
 
     return LoweredIrWithExtraArtifacts(allModules, context, typeScriptFragment)
 }
@@ -178,29 +178,19 @@ class MultimoduleCompileOptions(
     val initializeUnit: Boolean,
 )
 
-class DebuggerCompileOptions(
-    val generateSourceMaps: Boolean,
-    val useDebuggerCustomFormatters: Boolean,
-    val generateDwarf: Boolean,
-    val emitNameSection: Boolean,
-)
-
 class WasmIrModuleConfiguration(
     val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
     val configuration: CompilerConfiguration,
     val moduleName: String,
     val baseFileName: String,
     val typeScriptFragment: TypeScriptFragment?,
-    val generateWat: Boolean,
-    val debuggerOptions: DebuggerCompileOptions,
     val multimoduleOptions: MultimoduleCompileOptions?,
 )
 
-fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration): WasmCompilerResult {
+fun linkWasmIr(moduleConfiguration: WasmIrModuleConfiguration): WasmModule {
     val wasmCompiledFileFragments = moduleConfiguration.wasmCompiledFileFragments
 
     val configuration = moduleConfiguration.configuration
-    val baseFileName = moduleConfiguration.baseFileName
 
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
 
@@ -217,27 +207,35 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
 
     val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
 
-    val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(
+    return wasmCompiledModuleFragment.linkWasmCompiledFragments(
         multimoduleOptions = multimoduleParameters,
         exceptionTagType = exceptionTagType,
         wasmCommandModuleInitialization = wasmCommandModuleInitialization,
     )
+}
+
+fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linkedModule: WasmModule): WasmCompilerResult {
+    val baseFileName = moduleConfiguration.baseFileName
+    val configuration = moduleConfiguration.configuration
+    val wasmCompiledFileFragments = moduleConfiguration.wasmCompiledFileFragments
+    val multimoduleParameters = moduleConfiguration.multimoduleOptions
+    val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
 
     val wasmStartFunctionDefined = linkedModule.exports.any { it.name == wasmStartExportName }
     val wasmInitializeFunctionDefined = linkedModule.exports.any { it.name == wasmInitializeExportName }
 
-    val debuggerParameters = moduleConfiguration.debuggerOptions
-    val dwarfGeneratorForBinary = runIf(debuggerParameters.generateDwarf) {
+    val dwarfGeneratorForBinary = runIf(configuration.wasmGenerateDwarf) {
         DwarfGenerator()
     }
-    val sourceMapGeneratorForBinary = runIf(debuggerParameters.generateSourceMaps) {
+    val sourceMapGeneratorForBinary = runIf(configuration.sourceMap) {
         SourceMapGenerator("$baseFileName.wasm", configuration)
     }
-    val sourceMapGeneratorForText = runIf(moduleConfiguration.generateWat && debuggerParameters.generateSourceMaps) {
+
+    val sourceMapGeneratorForText = runIf(configuration.wasmGenerateWat && configuration.sourceMap) {
         SourceMapGenerator("$baseFileName.wat", configuration)
     }
 
-    val wat = if (moduleConfiguration.generateWat) {
+    val wat = if (configuration.wasmGenerateWat) {
         val watGenerator = WasmIrToText(linkedModule, sourceMapGeneratorForText)
         watGenerator.appendWasmModule()
         watGenerator.toString()
@@ -252,7 +250,7 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
             writer,
             linkedModule,
             moduleConfiguration.moduleName,
-            debuggerParameters.emitNameSection,
+            configuration.wasmDebug,
             DebugInformationGeneratorImpl.createIfNeeded(
                 sourceMapGenerator = sourceMapGeneratorForBinary,
                 dwarfGenerator = dwarfGeneratorForBinary,
@@ -329,7 +327,7 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
             jsModuleImports = jsModuleImports,
             wasmFilePath = "./$baseFileName.wasm",
             exports = linkedModule.exports,
-            useDebuggerCustomFormatters = debuggerParameters.useDebuggerCustomFormatters,
+            useDebuggerCustomFormatters = configuration.useDebuggerCustomFormatters,
             baseFileName = baseFileName,
             isStdlibModule = isStdlibModule,
             wholeProgramMode = wholeProgramMode,
@@ -339,10 +337,10 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
 
     } else {
         jsWrapper =
-            wasmCompiledModuleFragment.generateAsyncWasiWrapper(
+            generateAsyncWasiWrapper(
                 wasmFilePath = "./$baseFileName.wasm",
                 exports = linkedModule.exports,
-                useDebuggerCustomFormatters = debuggerParameters.useDebuggerCustomFormatters,
+                useDebuggerCustomFormatters = configuration.useDebuggerCustomFormatters,
                 wasmStartFunctionDefined = wasmStartFunctionDefined,
                 wasmInitializeFunctionDefined = wasmInitializeFunctionDefined
             )
@@ -357,14 +355,14 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
             sourceMapGeneratorForText?.generate(),
         ),
         dts = moduleConfiguration.typeScriptFragment?.raw,
-        useDebuggerCustomFormatters = debuggerParameters.useDebuggerCustomFormatters,
+        useDebuggerCustomFormatters = configuration.useDebuggerCustomFormatters,
         dynamicJsModules = dynamicJsModules.map { it.copy(content = it.content.normalizeEmptyLines()) },
         baseFileName = baseFileName,
     )
 }
 
 //language=js
-fun WasmCompiledModuleFragment.generateAsyncWasiWrapper(
+fun generateAsyncWasiWrapper(
     wasmFilePath: String,
     exports: List<WasmExport<*>>,
     useDebuggerCustomFormatters: Boolean,
