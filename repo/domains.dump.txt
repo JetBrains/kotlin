@@ -226,6 +226,7 @@ Gradle:
  - libraries/tools/kotlin-gradle-plugin-idea-proto
  - libraries/tools/kotlin-gradle-plugin-integration-tests
  - libraries/tools/kotlin-gradle-plugin-tcs-android
+ - libraries/tools/kotlin-gradle-plugin-test-coverage
  - libraries/tools/kotlin-gradle-plugin-test-utils-embeddable
  - libraries/tools/kotlin-gradle-plugins-bom
  - libraries/tools/kotlin-gradle-statistics
