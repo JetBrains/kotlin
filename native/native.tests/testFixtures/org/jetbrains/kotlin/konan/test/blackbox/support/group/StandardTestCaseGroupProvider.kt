@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
+import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.SimpleDirective
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
@@ -164,7 +167,19 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                             beginTestFile(newFileName)
                         }
                         directive.applicability == DirectiveApplicability.Module -> {
-                            currentTestModule?.directives?.add(parsedDirective)
+                            if (currentTestModule != null) {
+                                RegisteredDirectivesBuilder(currentTestModule.directives).apply {
+                                    when (directive) {
+                                        // Those two directives are the only ones that will show up in practice. This code will be dropped soon.
+                                        TestDirectives.EXPORT_TO_SWIFT -> +(directive as SimpleDirective)
+                                        TestDirectives.SWIFT_EXPORT_CONFIG ->
+                                            @Suppress("UNCHECKED_CAST")
+                                            (directive as ValueDirective<Pair<String, String>>) with (parsedDirective.values as List<Pair<String, String>>)
+                                        else -> {}
+                                    }
+                                    currentTestModule.directives = build()
+                                }
+                            }
                         }
                         else -> {
                             assertFalse(expectFileDirectiveAfterModuleDirective) {

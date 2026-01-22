@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.ReturnValueCheckerMode
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
@@ -29,11 +26,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.NATIVE_STANDALONE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.USE_EXPERIMENTAL
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KlibIrInlinerMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -45,6 +45,13 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.FULL_JDK
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSION
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -54,6 +61,7 @@ import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -133,8 +141,8 @@ private class ExtTestDataFile(
             MANDATORY_SOURCE_TRANSFORMERS + customSourceTransformers
 
         structureFactory.ExtTestDataFileStructure(testDataFile, allSourceTransformers).also {
-            assertFalse(it.directives.contains(OUTPUT_DATA_FILE.name)) {
-                "${testDataFile.absolutePath}: directive ${OUTPUT_DATA_FILE.name} is not supported by ExtTestDataFile"
+            assertFalse(it.directives.contains(OUTPUT_DATA_FILE)) {
+                "${testDataFile.absolutePath}: directive $OUTPUT_DATA_FILE is not supported by ExtTestDataFile"
             }
         }
     }
@@ -142,7 +150,7 @@ private class ExtTestDataFile(
     private val isExpectedFailure: Boolean = settings.isIgnoredTarget(structure.directives)
 
     private val testDataFileSettings by lazy {
-        val optIns = structure.directives.multiValues(OPT_IN_DIRECTIVE)
+        val optIns = structure.directives[OPT_IN]
         val optInsForSourceCode = optIns subtract OPT_INS_PURELY_FOR_COMPILER
         val optInsForCompiler = optIns intersect OPT_INS_PURELY_FOR_COMPILER
         val extraLanguageSettings = buildSet {
@@ -155,12 +163,12 @@ private class ExtTestDataFile(
         }
 
         ExtTestDataFileSettings(
-            languageSettings = extraLanguageSettings + structure.directives.multiValues(LANGUAGE_DIRECTIVE) {
+            languageSettings = extraLanguageSettings + structure.directives[LANGUAGE].filter {
                 // It is already on by default, but passing it explicitly turns on a special "compatibility mode" in FE,
                 // which is not desirable.
                 it != "+NewInference"
             },
-            optInsForSourceCode = optInsForSourceCode + structure.directives.multiValues(USE_EXPERIMENTAL_DIRECTIVE),
+            optInsForSourceCode = optInsForSourceCode + structure.directives[USE_EXPERIMENTAL],
             optInsForCompiler = optInsForCompiler,
             generatedSourcesDir = computeGeneratedSourcesDir(
                 testDataBaseDir = testRoots.baseDir,
@@ -177,14 +185,15 @@ private class ExtTestDataFile(
     }
 
     val isRelevant: Boolean =
-        isCompatibleTarget(TargetBackend.NATIVE, testDataFile, /*separatedDirectiveValues=*/true) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
+        // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
+        isCompatibleTarget(TargetBackend.NATIVE, testDataFile, /*separatedDirectiveValues=*/ true)
                 && !settings.isDisabledNative(structure.directives)
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
-                && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
-                && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
-                && !(FILECHECK_STAGE.name in structure.directives
+                && structure.directives[API_VERSION].intersect(INCOMPATIBLE_API_VERSIONS).isEmpty()
+                && structure.directives[LANGUAGE_VERSION].intersect(INCOMPATIBLE_LANGUAGE_VERSIONS).isEmpty()
+                && !(FILECHECK_STAGE in structure.directives
                 && (cacheMode as? CacheMode.WithStaticCache)?.useStaticCacheForUserLibraries == true)
-                && !(optimizationMode != OptimizationMode.OPT && structure.directives[FILECHECK_STAGE.name] == "OptimizeTLSDataLoads")
+                && !(optimizationMode != OptimizationMode.OPT && "OptimizeTLSDataLoads" in structure.directives[FILECHECK_STAGE])
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
                 && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
                 && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
@@ -214,7 +223,7 @@ private class ExtTestDataFile(
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         if (!settings.withPlatformLibs && !structure.directives.contains(WITH_PLATFORM_LIBS))
             args += "-no-default-libs"
-        val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)
+        val freeCInteropArgs = structure.directives[FREE_CINTEROP_ARGS]
             .orEmpty().flatMap { it.split(" ") }
             .map { it.replace("\$generatedSourcesDir", testDataFileSettings.generatedSourcesDir.absolutePath) }
         testDataFileSettings.returnValueCheckerMode?.let {
@@ -242,7 +251,7 @@ private class ExtTestDataFile(
      * - test is compiled independently of any other tests
      */
     private fun determineIfStandaloneTest(): Boolean = with(structure) {
-        if (directives.contains(NATIVE_STANDALONE_DIRECTIVE)) return true
+        if (directives.contains(NATIVE_STANDALONE)) return true
         if (directives.contains(FILECHECK_STAGE)) return true
         if (directives.contains(ASSERTIONS_MODE)) return true
         if (isExpectedFailure) return true
@@ -595,7 +604,7 @@ private class ExtTestDataFile(
     }
 
     private fun retrieveFileCheckStage(): String? {
-        val fileCheckStages = structure.directives.multiValues(FILECHECK_STAGE.name)
+        val fileCheckStages = structure.directives[FILECHECK_STAGE]
         return when (fileCheckStages.size) {
             0 -> {
                 require(!isDirectiveDefined(testDataFile.readText(), FILECHECK_STAGE.name)) {
@@ -609,26 +618,14 @@ private class ExtTestDataFile(
     }
 
     companion object {
-        private val INCOMPATIBLE_DIRECTIVES = setOf("FULL_JDK", "JVM_TARGET", "DIAGNOSTICS")
+        private val INCOMPATIBLE_DIRECTIVES = setOf(FULL_JDK, JVM_TARGET, DIAGNOSTICS)
 
-        private const val API_VERSION_DIRECTIVE = "API_VERSION"
-        private val INCOMPATIBLE_API_VERSIONS = setOf("1.4")
+        private val INCOMPATIBLE_API_VERSIONS = setOf(ApiVersion.KOTLIN_1_4)
+        private val INCOMPATIBLE_LANGUAGE_VERSIONS = setOf(LanguageVersion.KOTLIN_1_3, LanguageVersion.KOTLIN_1_4)
 
-        private const val LANGUAGE_VERSION_DIRECTIVE = "LANGUAGE_VERSION"
-        private val INCOMPATIBLE_LANGUAGE_VERSIONS = setOf("1.3", "1.4")
-
-        private const val LANGUAGE_DIRECTIVE = "LANGUAGE"
-        private const val USE_EXPERIMENTAL_DIRECTIVE = "USE_EXPERIMENTAL"
-
-        private const val NATIVE_STANDALONE_DIRECTIVE = "NATIVE_STANDALONE"
-
-        private const val OPT_IN_DIRECTIVE = "OPT_IN"
         private val OPT_INS_PURELY_FOR_COMPILER = setOf(
             OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString()
         )
-
-        private fun Directives.multiValues(key: String, predicate: (String) -> Boolean = { true }): Set<String> =
-            listValues(key)?.flatMap { it.split(' ') }?.filter(predicate)?.toSet().orEmpty()
 
         private val BOX_FUNCTION_NAME = Name.identifier("box")
         private val OPT_IN_ANNOTATION_NAME = Name.identifier("OptIn")
@@ -665,7 +662,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
         private val filesAndModules = FilesAndModules(originalTestDataFile, sourceTransformers)
 
-        val directives: Directives get() = filesAndModules.directives
+        val directives: RegisteredDirectives get() = filesAndModules.directives
 
         val defFilesContents: List<String>
             get() = filesAndModules.parsedFiles.filterKeys { it.name.endsWith(".def") }.map {
@@ -720,7 +717,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
                         directRegularDependencySymbols = extTestModule.dependencies.mapToSet(::transformDependency),
                         directFriendDependencySymbols = extTestModule.friends.mapToSet(::transformDependency),
                         directDependsOnDependencySymbols = extTestModule.dependsOn.mapToSet(::transformDependency),
-                        registeredDirectives = extTestModule.directivesBuilder.build(),
+                        directives = extTestModule.directivesBuilder.build(),
                     ),
                     baseDir = testCaseDir
                 ) { module, file -> module.files += file }
@@ -820,9 +817,6 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
     private class ExtTestFileFactory : TestFiles.TestFileFactory<ExtTestModule, ExtTestFile> {
         private val defaultModule by lazy { createModule(DEFAULT_MODULE_NAME, emptyList(), emptyList(), emptyList()) }
         private val supportModule by lazy { createModule(SUPPORT_MODULE_NAME, emptyList(), emptyList(), emptyList()) }
-
-        val directives = Directives()
-
         val directivesParser = RegisteredDirectivesParser(
             ComposedDirectivesContainer(
                 TestDirectives, ConfigurationDirectives, LanguageSettingsDirectives,
@@ -834,12 +828,6 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             ExtTestFile(getSanitizedFileName(fileName), module, text)
 
         override fun createFile(module: ExtTestModule?, fileName: String, text: String, directives: Directives): ExtTestFile {
-            for ((key, list) in directives.allDirectives) {
-                for (value in list ?: listOf(null)) {
-                    this.directives.put(key, value)
-                }
-            }
-
             recordRegisteredDirectives(module, directives)
             return createFile(
                 module = module ?: if (fileName == "CoroutineUtil.kt") supportModule else defaultModule,
@@ -884,7 +872,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             /* parseDirectivesPerFile = */ true,
         )
 
-        val registeredDirectives: RegisteredDirectives = testFileFactory.directivesParser.build()
+        val directives: RegisteredDirectives = testFileFactory.directivesParser.build()
 
         private val lazyData: Triple<Map<String, ExtTestModule>, Map<ExtTestFile, KtFile>, MutableList<ExtTestFile>> by lazy {
             // Clean up contents of every individual test file. Important: This should be done only after parsing testData file,
@@ -911,8 +899,6 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
             Triple(modules, parsedFiles, nonParsedFiles)
         }
-
-        val directives: Directives get() = testFileFactory.directives
 
         val modules: Map<String, ExtTestModule> get() = lazyData.first
         val parsedFiles: Map<ExtTestFile, KtFile> get() = lazyData.second
