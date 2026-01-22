@@ -82,6 +82,7 @@ yarn = "1.22.22"
 # This is also the version of bouncycastle that is used by KGP
 bouncycastle = "1.84"
 kotlin-before-bta-v2 = "2.2.21"
+jacoco = "0.8.14"
 
 [libraries]
 kotlin-compiler-arguments-release = { module = "org.jetbrains.kotlin:kotlin-compiler-arguments-description", version.ref = "kotlin-release" }
@@ -202,6 +203,9 @@ bouncycastle-bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", vers
 bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
 
 gradlePlugin-gradle-node = { module = "com.github.node-gradle.node:com.github.node-gradle.node.gradle.plugin", version.ref = "gradle-node-plugin" }
+
+jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }
+jacoco-cli = { module = "org.jacoco:org.jacoco.cli", version.ref = "jacoco" }
 
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }

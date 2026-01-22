@@ -361,6 +361,7 @@ include(
     ":kotlin-gradle-plugin-test-utils-embeddable",
     ":kotlin-gradle-plugin-integration-tests",
     ":kotlin-gradle-plugins-bom",
+    ":kotlin-gradle-plugin-test-coverage",
     ":kotlin-privacy-manifests-plugin",
     ":compiler:build-tools:kotlin-build-statistics",
     ":gradle:android-test-fixes",
@@ -883,6 +884,7 @@ project(":kotlin-gradle-plugin-test-utils-embeddable").projectDir =
     File("$rootDir/libraries/tools/kotlin-gradle-plugin-test-utils-embeddable")
 project(":kotlin-gradle-plugin-integration-tests").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-integration-tests")
 project(":kotlin-gradle-plugins-bom").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugins-bom")
+project(":kotlin-gradle-plugin-test-coverage").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-test-coverage")
 project(":kotlin-privacy-manifests-plugin").projectDir = File("$rootDir/libraries/tools/kotlin-privacy-manifests-plugin")
 project(":gradle:android-test-fixes").projectDir = File("$rootDir/libraries/tools/gradle/android-test-fixes")
 project(":gradle:documentation").projectDir = File("$rootDir/libraries/tools/gradle/documentation")
