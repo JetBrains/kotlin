@@ -7,19 +7,16 @@ package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.wasm.wasmLowerings
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.createPhaseConfig
-import org.jetbrains.kotlin.cli.common.list
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmConfigurationUpdater
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.phaseConfig
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -61,19 +58,11 @@ internal class K2WasmCompilerImpl(
         targetConfiguration: CompilerConfiguration,
         moduleKind: ModuleKind?,
     ): ExitCode {
-        WasmBackendPipelinePhase.compileIncrementally(
-            icCaches,
-            configuration,
-            moduleName,
-            outputName,
-            arguments.preserveIcOrder,
-            arguments.wasmDebug,
-            arguments.wasmGenerateWat,
-            arguments.generateDwarf
-        )
-
+        val intermediate = WasmBackendPipelinePhase.compileIncrementally(icCaches, configuration)
         performanceManager?.notifyPhaseFinished(PhaseType.TranslationToIr)
 
+        if (intermediate == null) return ExitCode.COMPILATION_ERROR
+        WasmBackendPipelinePhase.compileIntermediate(intermediate, configuration)
         return OK
     }
 
@@ -82,21 +71,12 @@ internal class K2WasmCompilerImpl(
         module: ModulesStructure,
         moduleKind: ModuleKind?,
     ): ExitCode {
-        configuration.phaseConfig = createPhaseConfig(arguments).also {
-            if (arguments.listPhases) it.list(wasmLowerings)
+        configuration.perfManager?.let {
+            @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+            it.notifyCurrentPhaseFinishedIfNeeded() // TODO: KT-75227
         }
-
-
-        WasmBackendPipelinePhase.compileNonIncrementally(
-            configuration,
-            module,
-            outputName,
-            propertyLazyInitialization = arguments.irPropertyLazyInitialization,
-            dce = arguments.irDce,
-            dceDumpDeclarationIrSizesToFile = arguments.irDceDumpDeclarationIrSizesToFile,
-            wasmDebug = arguments.wasmDebug,
-            generateDwarf = arguments.generateDwarf
-        )
+        val intermediate = WasmBackendPipelinePhase.compileNonIncrementally(configuration, module, mainCallArguments)
+        WasmBackendPipelinePhase.compileIntermediate(intermediate, configuration)
 
         @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
         performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // TODO: KT-75227 (at least for K2)

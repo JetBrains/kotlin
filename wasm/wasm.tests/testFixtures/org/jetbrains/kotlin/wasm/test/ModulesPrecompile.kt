@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.wasm.test
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
+import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
+import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
@@ -18,16 +19,28 @@ import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBackendPipelinePhase
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.includes
+import org.jetbrains.kotlin.js.config.outputDir
+import org.jetbrains.kotlin.js.config.outputName
+import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
+import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorStub
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmDebug
+import org.jetbrains.kotlin.wasm.config.wasmDependencyResolutionMap
+import org.jetbrains.kotlin.wasm.config.wasmEnableArrayRangeChecks
+import org.jetbrains.kotlin.wasm.config.wasmForceDebugFriendlyCompilation
+import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
+import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
+import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.wasm.config.wasmUseNewExceptionProposal
 import java.io.File
 
 private val outputDir: File
@@ -75,12 +88,12 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
     )
 
     val configuration = CompilerConfiguration().also {
-        it.put(WasmConfigurationKeys.WASM_DEBUG, true)
-        it.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
-        it.put(JSConfigurationKeys.WASM_COMPILATION, true)
-        it.put(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
-        it.put(WasmConfigurationKeys.WASM_GENERATE_WAT, debugMode >= DebugMode.DEBUG)
-        it.put(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS, debugMode >= DebugMode.DEBUG)
+        it.wasmDebug = true
+        it.wasmEnableArrayRangeChecks = true
+        it.wasmCompilation = true
+        it.wasmTarget = WasmTarget.JS
+        it.wasmGenerateWat = debugMode >= DebugMode.DEBUG
+        it.useDebuggerCustomFormatters = debugMode >= DebugMode.DEBUG
         it.languageVersionSettings = languageSettings
     }
 
@@ -109,11 +122,11 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
         )
 
         with(configuration) {
-            put<File>(JSConfigurationKeys.OUTPUT_DIR, outputDir)
-            put<String>(JSConfigurationKeys.OUTPUT_NAME, outputName)
-            put<Boolean>(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY, true)
-            put<Boolean>(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, setup.newExceptionProposal)
-            put<Boolean>(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, setup.debugFriendly)
+            this.outputDir = outputDir
+            this.outputName = outputName
+            wasmIncludedModuleOnly = true
+            wasmUseNewExceptionProposal = setup.newExceptionProposal
+            wasmForceDebugFriendlyCompilation = setup.debugFriendly
             this.includes = includes
         }
 
@@ -123,7 +136,8 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
             mainCallArguments = null
         )
 
-        val compileResult = linkAndCompileWasmIrToBinary(parametersForCompile)
+        val linkedModule = linkWasmIr(parametersForCompile)
+        val compileResult = compileWasmIrToBinary(parametersForCompile, linkedModule)
 
         writeCompilationResult(
             result = compileResult,
@@ -147,9 +161,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
 
     val relativeStdlibPath = setup.stdlibOutputDir.relativeTo(setup.kotlinTestOutputDir).path.replace('\\', '/')
     val rawResolutionMap = "<kotlin>:$relativeStdlibPath/$precompiledStdlibOutputName"
-    with(configuration) {
-        put<String>(WasmConfigurationKeys.WASM_DEPENDENCY_RESOLUTION_MAP, rawResolutionMap)
-    }
+    configuration.wasmDependencyResolutionMap = rawResolutionMap
 
     compileWasmModule(
         includes = kotlinTestPath,
