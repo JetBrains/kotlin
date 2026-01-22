@@ -2175,6 +2175,29 @@ internal object KotlinToolingDiagnostics {
                 .solution("Please remove 'kotlin.compiler.executionStrategy=out-of-process' from project 'gradle.properties' file.")
         }
     }
+
+    internal object JvmSourceSetCreatedBeforeCompilation : ToolingDiagnosticFactory(
+        FATAL,
+        DiagnosticGroup.Kgp.Misconfiguration
+    ) {
+        operator fun invoke(targetName: String, sourceSetName: String, compilationName: String) = build {
+            title { "The compilation '$compilationName' cannot be created after the source set '$sourceSetName'" }
+                .description {
+                    """
+                        The source set '$sourceSetName' is already created and conflicts with the compilation '$compilationName'.
+                        
+                        Instead of creating the source set '$sourceSetName' manually, consider creating the 'compilation' and resolving
+                        the source set from there.
+                    
+                        kotlin {
+                            val compilation = $targetName().compilations.create("$compilationName")
+                            val sourceSet = compilation.defaultSourceSet
+                        }
+                        """.trimIndent()
+                }
+                .solution("Use the source set created by the compilation instead of creating it manually")
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
