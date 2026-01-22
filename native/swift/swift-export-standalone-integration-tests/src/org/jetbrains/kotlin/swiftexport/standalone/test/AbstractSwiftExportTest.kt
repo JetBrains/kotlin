@@ -276,7 +276,6 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
                     "kotlin.native.internal.InternalForKotlinNative", // for uninitialized object instance manipulation, and ExternalRCRef.
                     "-Xbinary=swiftExport=true",
                     "-Xcontext-parameters",
-                    "-XXLanguage:-ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds", // should be removed after fix of KT-83116
                 )
             ),
             nominalPackageName = PackageName(testName),

@@ -125,7 +125,7 @@ public interface BridgeFunctionBuilder {
     public val errorParameter: Any?
     public val isAsync: Boolean
 
-    public fun buildCall(args: String): String
+    public fun buildCall(args: String, selfCastType: String? = null): String
     public val argNames: List<String>
     public val name: String
 }
@@ -198,7 +198,7 @@ private class BridgeFunctionDescriptor(
             }
         }
 
-    override fun buildCall(args: String): String {
+    override fun buildCall(args: String, selfCastType: String?): String {
         return if (selfParameter == null) {
             if (extensionReceiverParameter == null) {
                 "$name$args"
@@ -207,10 +207,15 @@ private class BridgeFunctionDescriptor(
             }
         } else {
             val memberName = kotlinFqName.shortName().asString().kotlinIdentifier
-            if (extensionReceiverParameter == null) {
-                "__${selfParameter.name}.$memberName$args"
+            val selfRef = if (selfCastType != null) {
+                "(__${selfParameter.name} as $selfCastType)"
             } else {
-                "__${selfParameter.name}.run { __${extensionReceiverParameter.name}.$memberName$args }"
+                "__${selfParameter.name}"
+            }
+            if (extensionReceiverParameter == null) {
+                "$selfRef.$memberName$args"
+            } else {
+                "$selfRef.run { __${extensionReceiverParameter.name}.$memberName$args }"
             }
         }
     }

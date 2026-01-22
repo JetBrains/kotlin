@@ -5,6 +5,8 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.components.allOverriddenSymbols
+import org.jetbrains.kotlin.analysis.api.components.containingSymbol
 import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
@@ -16,7 +18,10 @@ import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
 import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
+import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.*
@@ -87,13 +92,16 @@ internal open class SirFunctionFromKtSymbol(
             SirParameter("", "receiver", it.type)
         }
 
+        // For F-bounded methods, use the interface type as self type to generate direct cast
+        val effectiveSelfType = computeFBoundedInterfaceSirType() ?: selfType
+
         generateFunctionBridge(
             baseBridgeName = baseName,
             explicitParameters = listOfNotNull(extensionReceiverParameter) + parameters,
             returnType = returnType,
             kotlinFqName = fqName,
             selfParameter = (parent !is SirModule && isInstance).ifTrue {
-                SirParameter("", "self", selfType ?: error("Only a member can have a self parameter"))
+                SirParameter("", "self", effectiveSelfType ?: error("Only a member can have a self parameter"))
             },
             extensionReceiverParameter = extensionReceiverParameter,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
@@ -116,6 +124,36 @@ internal open class SirFunctionFromKtSymbol(
 
             buildCall("($argumentsString)$castSuffix")
         }.orEmpty()
+    }
+
+    /**
+     * For methods on F-bounded classes that override interface methods, computes the interface SirType
+     * to use as the self parameter type. This allows the bridge to cast self directly to the interface type
+     * (e.g., "Comparable<Any?>") instead of first casting to the class type and then to the interface.
+     * Returns null if not applicable (not an F-bounded method).
+     */
+    private fun computeFBoundedInterfaceSirType(): SirType? = withSessions {
+        // Only for instance methods on F-bounded classes
+        if (!isInstance) return@withSessions null
+        val containingClass = (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>() ?: return@withSessions null
+        if (!containingClass.hasFBoundedTypeParameters()) return@withSessions null
+
+        // Find the interface that declares this method
+        val overriddenInterfaceMethod = ktSymbol.allOverriddenSymbols
+            .filterIsInstance<KaNamedFunctionSymbol>()
+            .firstOrNull { overridden ->
+                val containingSymbol = overridden.containingSymbol
+                containingSymbol is KaClassSymbol && containingSymbol.classKind == KaClassKind.INTERFACE
+            } ?: return@withSessions null
+
+        val interfaceSymbol = overriddenInterfaceMethod.containingSymbol as? KaNamedClassSymbol
+            ?: return@withSessions null
+
+        // Get the SirProtocol for the interface and wrap it in SirExistentialType
+        val sirProtocol = interfaceSymbol.toSir().allDeclarations.firstIsInstanceOrNull<SirProtocol>()
+            ?: return@withSessions null
+
+        SirExistentialType(sirProtocol)
     }
 
     override var body: SirFunctionBody?

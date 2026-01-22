@@ -17,8 +17,8 @@ public fun MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20Kotlin
 
 @ExportedBridge("SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing__")
 public fun SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SelfReferencing<SelfReferencing<*>>
-    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as SelfReferencing<SelfReferencing<*>>
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyComparable<kotlin.Any?>
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as SelfReferencing<*>
     val _result = __self.compareTo(__other)
     return _result
 }

@@ -125,7 +125,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         val typesRendered = typeParameters.map { it.upperBounds.firstOrNull() }
             .map {
                 when (it?.symbol?.classId?.asFqNameString()) {
-                    fqname -> classId?.asFqNameString() + "<${typeParameters.joinToString { "*" }}>"
+                    fqname -> "*"
                     else -> it?.symbol?.parametrisedTypeName()
                 }
             }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.containingSymbol
 import org.jetbrains.kotlin.analysis.api.components.defaultType
 import org.jetbrains.kotlin.analysis.api.components.isArrayOrPrimitiveArray
@@ -13,8 +12,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
-import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
@@ -94,31 +91,12 @@ internal sealed class SirInitFromKtSymbol(
     override val isAsync: Boolean get() = false
 
     protected val isBridged: Boolean
-        @OptIn(KaExperimentalApi::class)
         get() = withSessions {
             (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.let {
                 !it.modality.isAbstract() && !it.defaultType.isArrayOrPrimitiveArray && !it.hasFBoundedTypeParameters()
             } ?: false
         }
 
-    /**
-     * Checks if this class has F-bounded (self-referential) type parameters.
-     * F-bounded polymorphism is when a type parameter has an upper bound that references the class itself,
-     * e.g., `class SelfReferencing<T : SelfReferencing<T>>`.
-     *
-     * We skip bridge generation for such classes because:
-     * - Star projection (`SelfReferencing<*>`) is not allowed in constructor calls
-     * - Nested projections (`SelfReferencing<SelfReferencing<*>>`) violate the bound constraint
-     */
-    @OptIn(KaExperimentalApi::class)
-    private fun KaClassSymbol.hasFBoundedTypeParameters(): Boolean {
-        val classFqName = classId?.asFqNameString() ?: return false
-        return typeParameters.any { typeParam ->
-            typeParam.upperBounds.any { upperBound ->
-                upperBound.symbol?.classId?.asFqNameString() == classFqName
-            }
-        }
-    }
 }
 
 private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterParameterOfInnerClass(): SirParameter? {
