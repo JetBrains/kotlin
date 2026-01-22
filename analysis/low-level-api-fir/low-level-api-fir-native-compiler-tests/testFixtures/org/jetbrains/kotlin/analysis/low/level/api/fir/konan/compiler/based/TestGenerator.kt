@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("analysis/low-level-api-fir/low-level-api-fir-native/tests-gen", "compiler/testData/diagnostics") {
+        testGroup("analysis/low-level-api-fir/low-level-api-fir-native-compiler-tests/tests-gen", "compiler/testData/diagnostics") {
             testClass<AbstractLLNativeDiagnosticsTest>(
                 annotations = listOf(annotation(Tag::class.java, "llFirNative"))
             ) {

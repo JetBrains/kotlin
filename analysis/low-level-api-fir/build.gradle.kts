@@ -148,7 +148,7 @@ tasks.register("analysisLowLevelApiFirAllTests") {
 
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         dependsOn(
-            ":analysis:low-level-api-fir:low-level-api-fir-native:llFirNativeTests",
+            ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests:llFirNativeTests",
         )
     }
 }

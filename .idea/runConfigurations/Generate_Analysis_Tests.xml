@@ -13,7 +13,7 @@
           <option value=":analysis:symbol-light-classes:generateTests" />
           <option value=":analysis:stubs:generateTests" />
           <option value=":analysis:low-level-api-fir:generateTests" />
-          <option value=":analysis:low-level-api-fir:low-level-api-fir-native:generateTests" />
+          <option value=":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests:generateTests" />
           <option value=":analysis:analysis-api-standalone:generateTests" />
           <option value=":analysis:analysis-api-fir:generateTests" />
           <option value=":analysis:analysis-api-fe10:generateTests" />
