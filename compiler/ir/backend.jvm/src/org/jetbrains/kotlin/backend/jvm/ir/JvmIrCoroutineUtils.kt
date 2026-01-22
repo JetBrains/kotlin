@@ -92,7 +92,8 @@ fun IrFunction.hasContinuation(): Boolean = isInvokeSuspendOfLambda() ||
         !isEffectivelyInlineOnly() &&
         origin != IrDeclarationOrigin.INLINE_LAMBDA &&
         origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
-        origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+        origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE &&
+        origin != JvmLoweredDeclarationOrigin.INVOKE_OF_DEFAULT_VALUE_OF_INLINABLE_PARAMETER
 
 fun IrExpression?.isReadOfCrossinline(): Boolean = when (this) {
     is IrGetValue -> (symbol.owner as? IrValueParameter)?.isCrossinline == true
