@@ -1,11 +1,58 @@
 package org.jetbrains.kotlin.benchmark
 
 import org.gradle.api.*
+import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.TaskState
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.*
+import org.jetbrains.report.BenchmarkResult
 import javax.inject.Inject
+
+private fun getCompileBenchmarkTime(subproject: Project,
+                            programName: String, tasksNames: Iterable<String>,
+                            repeats: Int, exitCodes: Map<String, Int>) =
+        (1..repeats).map { number ->
+            var time = 0.0
+            var status = BenchmarkResult.Status.PASSED
+            tasksNames.forEach {
+                time += TaskTimerListener.getTimerListenerOfSubproject(subproject).getTime("$it$number")
+                status = if (exitCodes["$it$number"] != 0) BenchmarkResult.Status.FAILED else status
+            }
+
+            BenchmarkResult(programName, status, time, BenchmarkResult.Metric.COMPILE_TIME, time, number, 0)
+        }.toList()
+
+// Class time tracker for all tasks.
+private class TaskTimerListener: TaskExecutionListener {
+    companion object {
+        internal val timerListeners = mutableMapOf<String, TaskTimerListener>()
+
+        internal fun getTimerListenerOfSubproject(subproject: Project) =
+                timerListeners[subproject.name] ?: error("TimeListener for project ${subproject.name} wasn't set")
+    }
+
+    val tasksTimes = mutableMapOf<String, Double>()
+
+    fun getTime(taskName: String) = tasksTimes[taskName] ?: 0.0
+
+    private var startTime = System.nanoTime()
+
+    override fun beforeExecute(task: Task) {
+        startTime = System.nanoTime()
+    }
+
+    override fun afterExecute(task: Task, taskState: TaskState) {
+        tasksTimes[task.name] = (System.nanoTime() - startTime) / 1000.0
+    }
+}
+
+private fun addTimeListener(subproject: Project) {
+    val listener = TaskTimerListener()
+    TaskTimerListener.timerListeners.put(subproject.name, listener)
+    subproject.gradle.addListener(listener)
+}
 
 class BuildStep (private val _name: String): Named  {
     override fun getName(): String = _name
