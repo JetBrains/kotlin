@@ -6,6 +6,9 @@
 package org.jetbrains.sir.lightclasses.utils
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.mangler.mangledNameOrNull
@@ -38,3 +41,21 @@ internal val SirScopeDefiningDeclaration.objcClassSymbolName
     get() = attributes.firstIsInstanceOrNull<SirAttribute.ObjC>()?.name
         ?: this.mangledNameOrNull
         ?: error("Failed to mangle name for briding $this")
+
+/**
+ * Checks if this class has F-bounded (self-referential) type parameters.
+ * F-bounded polymorphism is when a type parameter has an upper bound that references the class itself,
+ * e.g., `class SelfReferencing<T : SelfReferencing<T>>`.
+ *
+ * We skip bridge generation for such classes because:
+ * - Star projection (`SelfReferencing<*>`) is not allowed in constructor calls
+ * - Nested projections (`SelfReferencing<SelfReferencing<*>>`) violate the bound constraint
+ */
+internal fun KaClassSymbol.hasFBoundedTypeParameters(): Boolean {
+    val classFqName = classId?.asFqNameString() ?: return false
+    return typeParameters.any { typeParam ->
+        typeParam.upperBounds.any { upperBound ->
+            upperBound.symbol?.classId?.asFqNameString() == classFqName
+        }
+    }
+}
