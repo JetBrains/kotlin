@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.util.GradleTestCapturingKotlinLogger
 import org.junit.jupiter.api.io.TempDir
-import kotlin.test.Test
 import java.io.File
 import java.io.IOException
+import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -34,9 +34,7 @@ class RunToolInSeparateProcessTest {
 
     @Test
     fun testWhitespacesInCompilerCliArgumentsDefault() {
-        expectWindowsFailure {
-            doDummyCompilerTest(expectJvmArgsFile = false)
-        }
+        doDummyCompilerTest(expectJvmArgsFile = true)
     }
 
     @Suppress("DEPRECATION")
