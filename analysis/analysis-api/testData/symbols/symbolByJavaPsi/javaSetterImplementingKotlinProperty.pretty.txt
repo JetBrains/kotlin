@@ -1,1 +1,1 @@
-NO_SYMBOLS
+open fun setFoo(foo: kotlin.Int)
