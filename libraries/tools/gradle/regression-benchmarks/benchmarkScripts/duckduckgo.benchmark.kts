@@ -24,6 +24,9 @@ val repoPatch = {
             .readText()
             .run { replace("<kotlin_version>", currentKotlinVersion) }
             .byteInputStream(),
+        "duckduckgo-4.patch" to File("benchmarkScripts/files/duckduckgo-4.patch")
+            .readText()
+            .byteInputStream(),
     )
 }
 
