@@ -45,12 +45,20 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
+import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
@@ -175,10 +183,10 @@ private class ExtTestDataFile(
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
                 && !(FILECHECK_STAGE.name in structure.directives
-                     && (cacheMode as? CacheMode.WithStaticCache)?.useStaticCacheForUserLibraries == true)
+                && (cacheMode as? CacheMode.WithStaticCache)?.useStaticCacheForUserLibraries == true)
                 && !(optimizationMode != OptimizationMode.OPT && structure.directives[FILECHECK_STAGE.name] == "OptimizeTLSDataLoads")
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
-                     && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
+                && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
                 && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
 
     private fun assembleFreeCompilerArgs(settings: Settings): TestCompilerArgs {
@@ -223,7 +231,7 @@ private class ExtTestDataFile(
         patchPackageNames(isStandaloneTest)
         patchFileLevelAnnotations()
         val entryPointFunctionFQN = findEntryPoint()
-        generateTestLauncher(isStandaloneTest, entryPointFunctionFQN)
+                generateTestLauncher(isStandaloneTest, entryPointFunctionFQN)
 
         return doCreateTestCase(settings, isStandaloneTest, sharedModules)
     }
@@ -712,6 +720,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
                         directRegularDependencySymbols = extTestModule.dependencies.mapToSet(::transformDependency),
                         directFriendDependencySymbols = extTestModule.friends.mapToSet(::transformDependency),
                         directDependsOnDependencySymbols = extTestModule.dependsOn.mapToSet(::transformDependency),
+                        registeredDirectives = extTestModule.directivesBuilder.build(),
                     ),
                     baseDir = testCaseDir
                 ) { module, file -> module.files += file }
@@ -781,6 +790,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         dependsOn: List<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
     ) : KotlinBaseTest.TestModule(name, dependencies, friends, dependsOn) {
         val files = mutableListOf<ExtTestFile>()
+        val directivesBuilder = RegisteredDirectivesParser(DirectivesContainer.Empty, JUnit5Assertions)
 
         val isSupport get() = name == SUPPORT_MODULE_NAME
         var isMain = false
@@ -813,6 +823,13 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
         val directives = Directives()
 
+        val directivesParser = RegisteredDirectivesParser(
+            ComposedDirectivesContainer(
+                TestDirectives, ConfigurationDirectives, LanguageSettingsDirectives,
+                CodegenTestDirectives, AdditionalFilesDirectives
+            ), JUnit5Assertions
+        )
+
         fun createFile(module: ExtTestModule, fileName: String, text: String): ExtTestFile =
             ExtTestFile(getSanitizedFileName(fileName), module, text)
 
@@ -823,11 +840,32 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
                 }
             }
 
+            recordRegisteredDirectives(module, directives)
             return createFile(
                 module = module ?: if (fileName == "CoroutineUtil.kt") supportModule else defaultModule,
                 fileName = fileName,
                 text = text
             )
+        }
+
+        private fun recordRegisteredDirectives(module: ExtTestModule?, directives: Directives) {
+            for ((name, valuesPerLine) in directives.allDirectives) {
+                for (rawValue in valuesPerLine ?: listOf(null)) {
+                    // Convert Directive to RegisteredDirective
+                    val splitValues = rawValue?.split(RegisteredDirectivesParser.SPACES_PATTERN)
+                        ?.filter { it.isNotBlank() }?.takeIf { it.isNotEmpty() }
+                    val rawDir = RegisteredDirectivesParser.RawDirective(name, splitValues, rawValue)
+                    val dir = directivesParser.convertToRegisteredDirective(rawDir) ?: continue
+
+                    // Register a given directive either globally or in a current module. (Registering in a file is not needed ATM.)
+                    if (dir.directive.applicability == DirectiveApplicability.Global) {
+                        directivesParser.addParsedDirective(dir)
+                    }
+                    if (dir.directive.applicability == DirectiveApplicability.Module) {
+                        module?.directivesBuilder?.addParsedDirective(dir)
+                    }
+                }
+            }
         }
 
         override fun createModule(name: String, dependencies: List<String>, friends: List<String>, dependsOn: List<String>): ExtTestModule =
@@ -845,6 +883,8 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             /* preserveLocations = */ true,
             /* parseDirectivesPerFile = */ true,
         )
+
+        val registeredDirectives: RegisteredDirectives = testFileFactory.directivesParser.build()
 
         private val lazyData: Triple<Map<String, ExtTestModule>, Map<ExtTestFile, KtFile>, MutableList<ExtTestFile>> by lazy {
             // Clean up contents of every individual test file. Important: This should be done only after parsing testData file,

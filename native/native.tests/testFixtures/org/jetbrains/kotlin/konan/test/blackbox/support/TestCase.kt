@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
@@ -92,7 +93,8 @@ sealed class TestModule {
         val directRegularDependencySymbols: Set<String>,
         val directFriendDependencySymbols: Set<String>,
         val directDependsOnDependencySymbols: Set<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
-        val directives: MutableList<RegisteredDirectivesParser.ParsedDirective> = mutableListOf()
+        val directives: MutableList<RegisteredDirectivesParser.ParsedDirective> = mutableListOf(),
+        var registeredDirectives: RegisteredDirectives = RegisteredDirectives.Empty,
     ) : TestModule() {
         init {
             val intersection = buildSet {
