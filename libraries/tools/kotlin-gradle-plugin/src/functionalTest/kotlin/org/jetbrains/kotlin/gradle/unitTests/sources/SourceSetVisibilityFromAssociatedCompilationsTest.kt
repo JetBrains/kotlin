@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.sources
 
+import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
@@ -59,12 +60,12 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
     @Test
     fun testCustomCompilationWithoutAssociation() {
         val jvm = kotlin.jvm()
-        val commonTest = kotlin.sourceSets.getByName("commonTest")
-        val jvmSpecialTest = kotlin.sourceSets.create("jvmSpecialTest")
-
-        jvmSpecialTest.dependsOn(commonTest)
 
         val jvmSpecialTestCompilation = jvm.compilations.create("specialTest") // note: No association with jvmMain!
+        val commonTest = kotlin.sourceSets.getByName("commonTest")
+        val jvmSpecialTest = kotlin.sourceSets.getByName("jvmSpecialTest")
+        jvmSpecialTest.dependsOn(commonTest)
+
         assertEquals(jvmSpecialTest, jvmSpecialTestCompilation.defaultSourceSet)
 
         jvmSpecialTest.assertVisibleSourceSetsFromAssociatedCompilations(*arrayOf())
@@ -75,14 +76,15 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
         val jvm = kotlin.jvm()
         kotlin.linuxX64()
 
+        val jvmSpecialTestCompilation = jvm.compilations.create("specialTest")
+
         val commonTest = kotlin.sourceSets.getByName("commonTest")
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val jvmMain = kotlin.sourceSets.getByName("jvmMain")
-        val jvmSpecialTest = kotlin.sourceSets.create("jvmSpecialTest")
+        val jvmSpecialTest = kotlin.sourceSets.getByName("jvmSpecialTest")
 
         jvmSpecialTest.dependsOn(commonTest)
 
-        val jvmSpecialTestCompilation = jvm.compilations.create("specialTest")
         assertEquals(jvmSpecialTest, jvmSpecialTestCompilation.defaultSourceSet)
 
         jvmSpecialTestCompilation.associateWith(jvm.compilations.getByName("main"))
@@ -130,16 +132,18 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
 
         listOf(null, "Main", "Test", "IntegrationTest").zipWithNext().forEach { (previousSuffix, suffix) ->
             val common = kotlin.sourceSets.maybeCreate("common$suffix")
-            val jvm = kotlin.sourceSets.maybeCreate("jvm$suffix")
-            val js = kotlin.sourceSets.maybeCreate("js$suffix")
+            val jvm by lazy { kotlin.sourceSets.getByName("jvm$suffix") }
+            val js by lazy { kotlin.sourceSets.maybeCreate("js$suffix") }
 
             if (previousSuffix != null) {
                 assertNotNull(suffix)
-                jvm.dependsOn(common)
-                js.dependsOn(common)
 
                 val previousJvmCompilation = kotlin.jvm().compilations.maybeCreate(previousSuffix.decapitalizeAsciiOnly())
                 val jvmCompilation = kotlin.jvm().compilations.maybeCreate(suffix.decapitalizeAsciiOnly())
+
+                jvm.dependsOn(common)
+                js.dependsOn(common)
+
                 assertEquals(jvm, jvmCompilation.defaultSourceSet)
                 jvmCompilation.associateWith(previousJvmCompilation)
 
@@ -194,14 +198,14 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
     }
 
     private fun String.assertVisibleSourceSetsFromAssociatedCompilations(
-        vararg expectedVisibleSourceSets: String
+        vararg expectedVisibleSourceSets: String,
     ) = assertEquals(
         expectedVisibleSourceSets.toSet(),
         getVisibleSourceSetsFromAssociateCompilations(kotlin.sourceSets.getByName(this)).map { it.name }.toSet()
     )
 
     private fun KotlinSourceSet.assertVisibleSourceSetsFromAssociatedCompilations(
-        vararg expectedVisibleSourceSets: KotlinSourceSet
+        vararg expectedVisibleSourceSets: KotlinSourceSet,
     ) = assertEquals(
         expectedVisibleSourceSets.map { it.name }.toSet(),
         getVisibleSourceSetsFromAssociateCompilations(this).map { it.name }.toSet()
