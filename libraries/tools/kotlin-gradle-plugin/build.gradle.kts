@@ -11,6 +11,7 @@ plugins {
     id("asm-deprecating-transformer")
     id("project-tests-convention")
     `java-test-fixtures`
+    id("org.jetbrains.kotlinx.kover") version "0.9.4"
 }
 
 repositories {
