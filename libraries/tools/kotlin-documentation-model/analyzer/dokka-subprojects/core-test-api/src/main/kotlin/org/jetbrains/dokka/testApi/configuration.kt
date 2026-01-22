@@ -61,13 +61,9 @@ public fun assertDokkaSourceSetEquals(
     assertEquals(expected.skipEmptyPackages, actual.skipEmptyPackages, "DokkaSourceSet.skipEmptyPackages")
     assertEquals(expected.skipDeprecated, actual.skipDeprecated, "DokkaSourceSet.skipDeprecated")
     assertEquals(expected.jdkVersion, actual.jdkVersion, "DokkaSourceSet.jdkVersion")
-    assertEquals(expected.sourceLinks, actual.sourceLinks, "DokkaSourceSet.sourceLinks")
+    assertSourceLinksEquals(expected.sourceLinks, actual.sourceLinks)
     assertEquals(expected.perPackageOptions, actual.perPackageOptions, "DokkaSourceSet.perPackageOptions")
-    assertEquals(
-        expected.externalDocumentationLinks,
-        actual.externalDocumentationLinks,
-        "DokkaSourceSet.externalDocumentationLinks"
-    )
+    assertExternalDocumentationLinksEquals(expected.externalDocumentationLinks, actual.externalDocumentationLinks)
     assertEquals(expected.languageVersion, actual.languageVersion, "DokkaSourceSet.languageVersion")
     assertEquals(expected.apiVersion, actual.apiVersion, "DokkaSourceSet.apiVersion")
     assertEquals(expected.noStdlibLink, actual.noStdlibLink, "DokkaSourceSet.noStdlibLink")
@@ -78,5 +74,36 @@ public fun assertDokkaSourceSetEquals(
         expected.documentedVisibilities,
         actual.documentedVisibilities,
         "DokkaSourceSet.documentedVisibilities"
+    )
+}
+
+private fun assertSourceLinksEquals(
+    expected: Set<DokkaConfiguration.SourceLinkDefinition>,
+    actual: Set<DokkaConfiguration.SourceLinkDefinition>
+) {
+    fun transform(link: DokkaConfiguration.SourceLinkDefinition) = Triple(
+        link.localDirectory,
+        link.remoteUrl.toURI(), // to avoid URL.equals calls
+        link.remoteLineSuffix
+    )
+    assertEquals(
+        expected.mapTo(mutableSetOf(), ::transform),
+        actual.mapTo(mutableSetOf(), ::transform),
+        "DokkaSourceSet.sourceLinks"
+    )
+}
+
+private fun assertExternalDocumentationLinksEquals(
+    expected: Set<DokkaConfiguration.ExternalDocumentationLink>,
+    actual: Set<DokkaConfiguration.ExternalDocumentationLink>
+) {
+    fun transform(link: DokkaConfiguration.ExternalDocumentationLink) = Pair(
+        link.url.toURI(), // to avoid URL.equals calls
+        link.packageListUrl.toURI(), // to avoid URL.equals calls
+    )
+    assertEquals(
+        expected.mapTo(mutableSetOf(), ::transform),
+        actual.mapTo(mutableSetOf(), ::transform),
+        "DokkaSourceSet.externalDocumentationLinks"
     )
 }
