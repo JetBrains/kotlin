@@ -19,6 +19,9 @@ interface I3<T: Number> : I2<T> {
 }
 
 // no bridges expected as there are no real overrides
+interface I4 : I1<Number>
+
+// no bridges expected as there are no real overrides
 open abstract class C1<T: Int> : I3<T>
 
 // bridges are expected both for Number & Object signatures
