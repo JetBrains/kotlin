@@ -47,7 +47,6 @@ class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlib
             module.customWebCompilerSettings(testServices).customKlibCompiler.callCompiler(
                 output = printStream,
                 listOfNotNull(
-                    K2JSCompilerArguments::wasm.cliArgument.takeIf { module.isWasmModule(testServices) },
                     K2JSCompilerArguments::irProduceKlibFile.cliArgument,
                     K2JSCompilerArguments::outputDir.cliArgument, outputKlibFile.parentFile.path,
                     K2JSCompilerArguments::moduleName.cliArgument, outputKlibFile.nameWithoutExtension,
