@@ -1,1 +1,1 @@
-NO_SYMBOLS
+open fun getFoo(): kotlin.Int
