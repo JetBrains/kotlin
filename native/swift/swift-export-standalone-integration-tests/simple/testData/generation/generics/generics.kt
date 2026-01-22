@@ -83,3 +83,18 @@ class Holder<T>(val xs: Array<T>) {
 
 // Make sure arrays appear in both public signatures and bodies.
 fun takeAndReturn(a: Array<String>): Array<String> = a
+
+// MODULE: f_bounded_type
+// EXPORT_TO_SWIFT
+// FILE: f_bounded_type.kt
+
+interface MyComparable<T> {
+    fun compareTo(other: T): Int
+}
+
+open class SelfReferencing<T : SelfReferencing<T>>: MyComparable<T> {
+    override fun compareTo(other: T): Int = TODO("Not yet implemented")
+}
+
+class ConcreteSelfReferencing() : SelfReferencing<ConcreteSelfReferencing>()
+
