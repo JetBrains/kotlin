@@ -252,8 +252,12 @@ class IrBuiltInsOverFir(
         )
     }
 
-    override val linkageErrorSymbol: IrSimpleFunctionSymbol
-        get() = shouldNotBeCalled()
+    override val linkageErrorSymbol: IrSimpleFunctionSymbol = addBuiltinOperatorSymbol(
+        "linkageErrorSymbol",
+        symbol = null,
+        nothingType,
+        "" to anyNType
+    )
 
     override val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
         syntheticSymbolsContainer.primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(
