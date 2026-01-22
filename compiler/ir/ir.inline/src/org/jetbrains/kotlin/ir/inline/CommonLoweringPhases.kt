@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.common.lower.VersionOverloadsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.AvoidLocalFOsInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.SignaturesComputationLowering
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningOnlyPrivateFunctionsPhase
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -102,5 +103,6 @@ fun loweringsOfTheFirstPhase(
             //           so InlineDeclarationCheckerLowering won't report any *CASCADING* diagnostics.
             this += ::InlineDeclarationCheckerLowering
         }
+        this += ::SignaturesComputationLowering
     }
 }

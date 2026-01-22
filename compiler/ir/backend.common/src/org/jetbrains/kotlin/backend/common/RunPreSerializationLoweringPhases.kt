@@ -19,7 +19,7 @@ fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLowe
 ): IrModuleFragment {
     return lowerings.fold(irModuleFragment) { module, lowering ->
         context.configuration.perfManager.tryMeasureDynamicPhaseTime(lowering.name, PhaseType.IrPreLowering) {
-            module.applyIf(!context.diagnosticReporter.hasErrors) {
+            module.applyIf(!context.diagnosticReporter.hasErrors || lowering.name == "SignaturesComputationLowering") {
                 runPhase(
                     lowering,
                     module,
