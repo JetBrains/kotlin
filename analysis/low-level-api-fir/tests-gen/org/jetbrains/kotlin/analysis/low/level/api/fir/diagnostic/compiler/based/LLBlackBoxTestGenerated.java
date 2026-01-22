@@ -65819,6 +65819,136 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/wasmStringSwitch")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WasmStringSwitch {
+    @Test
+    public void testAllFilesPresentInWasmStringSwitch() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/wasmStringSwitch"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("callSubjectIfChain.kt")
+    public void testCallSubjectIfChain() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/callSubjectIfChain.kt");
+    }
+
+    @Test
+    @TestMetadata("elseIfDifferentVariablesNoBraces.kt")
+    public void testElseIfDifferentVariablesNoBraces() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/elseIfDifferentVariablesNoBraces.kt");
+    }
+
+    @Test
+    @TestMetadata("ifFunctionCallsChain.kt")
+    public void testIfFunctionCallsChain() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/ifFunctionCallsChain.kt");
+    }
+
+    @Test
+    @TestMetadata("literalOnLeft.kt")
+    public void testLiteralOnLeft() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/literalOnLeft.kt");
+    }
+
+    @Test
+    @TestMetadata("mixedStringAndNonStringComparisons.kt")
+    public void testMixedStringAndNonStringComparisons() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/mixedStringAndNonStringComparisons.kt");
+    }
+
+    @Test
+    @TestMetadata("mixedVariables.kt")
+    public void testMixedVariables() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/mixedVariables.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedIfInElse.kt")
+    public void testNestedIfInElse() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/nestedIfInElse.kt");
+    }
+
+    @Test
+    @TestMetadata("nullableString.kt")
+    public void testNullableString() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/nullableString.kt");
+    }
+
+    @Test
+    @TestMetadata("rhsStringConcatenation.kt")
+    public void testRhsStringConcatenation() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/rhsStringConcatenation.kt");
+    }
+
+    @Test
+    @TestMetadata("safeCallElvisRHS.kt")
+    public void testSafeCallElvisRHS() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/safeCallElvisRHS.kt");
+    }
+
+    @Test
+    @TestMetadata("typeOperatorCast.kt")
+    public void testTypeOperatorCast() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/typeOperatorCast.kt");
+    }
+
+    @Test
+    @TestMetadata("typeOperatorSafeCast.kt")
+    public void testTypeOperatorSafeCast() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/typeOperatorSafeCast.kt");
+    }
+
+    @Test
+    @TestMetadata("variableSubject.kt")
+    public void testVariableSubject() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/variableSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("whenFunctionCall.kt")
+    public void testWhenFunctionCall() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/whenFunctionCall.kt");
+    }
+
+    @Test
+    @TestMetadata("whenIfExpressionRHS.kt")
+    public void testWhenIfExpressionRHS() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/whenIfExpressionRHS.kt");
+    }
+
+    @Test
+    @TestMetadata("whenLiteralLeftFunctionRight.kt")
+    public void testWhenLiteralLeftFunctionRight() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/whenLiteralLeftFunctionRight.kt");
+    }
+
+    @Test
+    @TestMetadata("whenMemberFunctionCall.kt")
+    public void testWhenMemberFunctionCall() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/whenMemberFunctionCall.kt");
+    }
+
+    @Test
+    @TestMetadata("whenOnVariable.kt")
+    public void testWhenOnVariable() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/whenOnVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("whenPropertyAccess.kt")
+    public void testWhenPropertyAccess() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/whenPropertyAccess.kt");
+    }
+
+    @Test
+    @TestMetadata("whenWhenExpressionRHS.kt")
+    public void testWhenWhenExpressionRHS() {
+      runTest("compiler/testData/codegen/box/wasmStringSwitch/whenWhenExpressionRHS.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/wasm-ir-checks")
   @TestDataPath("$PROJECT_ROOT")
   public class Wasm_ir_checks {
