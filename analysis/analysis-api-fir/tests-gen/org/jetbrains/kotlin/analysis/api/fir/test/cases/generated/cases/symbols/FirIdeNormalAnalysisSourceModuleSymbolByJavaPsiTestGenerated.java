@@ -64,6 +64,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByJavaPsiTestGenerated extend
   }
 
   @Test
+  @TestMetadata("javaGetter.kt")
+  public void testJavaGetter() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("javaGetterImplementingKotlinProperty.kt")
+  public void testJavaGetterImplementingKotlinProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaGetterImplementingKotlinProperty.kt");
+  }
+
+  @Test
   @TestMetadata("javaInterfaceOneMethod.kt")
   public void testJavaInterfaceOneMethod() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaInterfaceOneMethod.kt");
@@ -85,6 +97,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByJavaPsiTestGenerated extend
   @TestMetadata("javaInterfaceTwoMethodsFromLibrary.kt")
   public void testJavaInterfaceTwoMethodsFromLibrary() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaInterfaceTwoMethodsFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSetter.kt")
+  public void testJavaSetter() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSetterImplementingKotlinProperty.kt")
+  public void testJavaSetterImplementingKotlinProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaSetterImplementingKotlinProperty.kt");
   }
 
   @Test
