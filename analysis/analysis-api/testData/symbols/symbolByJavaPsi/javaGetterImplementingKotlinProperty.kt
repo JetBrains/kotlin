@@ -1,3 +1,4 @@
+// DO_NOT_CHECK_SYMBOL_RESTORE
 // FILE: main.kt
 interface A { val foo: Int }
 
