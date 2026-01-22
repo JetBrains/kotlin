@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
-import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -29,12 +29,12 @@ import org.jetbrains.kotlin.ir.backend.js.shouldGoToNextIcRound
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 
-object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, JsFir2IrPipelineArtifact>(
+object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, JsInliningPipelineArtifact>(
     name = "WebKlibInliningPipelinePhase",
     preActions = setOf(PerformanceNotifications.IrPreLoweringStarted),
     postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector),
 ) {
-    override fun executePhase(input: JsFir2IrPipelineArtifact): JsFir2IrPipelineArtifact {
+    override fun executePhase(input: JsFir2IrPipelineArtifact): JsInliningPipelineArtifact {
         val (fir2IrResult, firOutput, configuration, diagnosticCollector, moduleStructure) = input
         processIncrementalCompilationRoundIfNeeded(configuration, moduleStructure, firOutput, fir2IrResult)
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
@@ -42,21 +42,32 @@ object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, Js
             configuration.languageVersionSettings
         )
 
-        val transformedResult = if (configuration.wasmCompilation) {
-            PhaseEngine(
+        val (transformedResult, declarationTable) = if (configuration.wasmCompilation) {
+            val engine = PhaseEngine(
                 configuration.phaseConfig!!,
                 PhaserState(),
                 WasmPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration, irDiagnosticReporter),
-            ).runPreSerializationLoweringPhases(fir2IrResult, wasmLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
+            )
+            engine.runPreSerializationLoweringPhases(fir2IrResult, wasmLoweringsOfTheFirstPhase(configuration.languageVersionSettings)) to
+                    engine.context.declarationTable
         } else {
-            PhaseEngine(
+            val engine = PhaseEngine(
                 configuration.phaseConfig!!,
                 PhaserState(),
                 JsPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration, irDiagnosticReporter),
-            ).runPreSerializationLoweringPhases(fir2IrResult, jsLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
+            )
+            engine.runPreSerializationLoweringPhases(fir2IrResult, jsLoweringsOfTheFirstPhase(configuration.languageVersionSettings)) to
+                    engine.context.declarationTable
         }
 
-        return input.copy(result = transformedResult)
+        return JsInliningPipelineArtifact(
+            result = transformedResult,
+            frontendOutput = firOutput,
+            configuration = configuration,
+            diagnosticCollector = diagnosticCollector,
+            moduleStructure = moduleStructure,
+            declarationTable = declarationTable
+        )
     }
 
     private fun processIncrementalCompilationRoundIfNeeded(

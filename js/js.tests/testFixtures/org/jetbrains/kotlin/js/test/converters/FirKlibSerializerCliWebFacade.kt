@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.JsInliningPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -42,8 +42,8 @@ class FirKlibSerializerCliWebFacade(
             "FirKlibSerializerCliWebFacade expects Fir2IrCliBasedWebOutputArtifact as input, got ${inputArtifact::class.simpleName}"
         }
         val cliArtifact = inputArtifact.cliArtifact
-        require(cliArtifact is JsFir2IrPipelineArtifact) {
-            "FirKlibSerializerCliWebFacade expects JsFir2IrPipelineArtifact as input"
+        require(cliArtifact is JsInliningPipelineArtifact) {
+            "FirKlibSerializerCliWebFacade expects JsInliningPipelineArtifact as input"
         }
         val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
         val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
