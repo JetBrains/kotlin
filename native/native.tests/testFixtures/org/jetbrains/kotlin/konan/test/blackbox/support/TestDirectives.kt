@@ -162,14 +162,16 @@ object TestDirectives : SimpleDirectivesContainer() {
     )
 
     val DISABLE_NATIVE by stringDirective(
-        description = "Test is not compiled/run with and marked as disabled(GRAY)."
+        description = "Test is not compiled/run with and marked as disabled(GRAY).",
+        multiLine = true
     )
 
     val IGNORE_NATIVE by stringDirective(
         """
             Usage: // IGNORE_NATIVE: property1=value1[ && property2=value2][ && property3=value3]
             Declares this test is expected to fail in described run configuration
-        """.trimIndent()
+        """.trimIndent(),
+        multiLine = true
     )
 
     val PROGRAM_ARGS by stringDirective(
@@ -192,6 +194,14 @@ object TestDirectives : SimpleDirectivesContainer() {
         description = """
             Add all available Kotlin/Native platform libs for the Kotlin/Native target in effect to the classpath.
         """.trimIndent()
+    )
+
+    val NATIVE_STANDALONE by directive(
+        description = "Forces the Kotlin/Native test to run in a standalone mode (see also TestKind)."
+    )
+
+    val USE_EXPERIMENTAL by stringDirective(
+        description = "Adds specified opt-in annotations"
     )
 }
 
