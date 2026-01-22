@@ -18,7 +18,7 @@ import kotlin.experimental.ExperimentalTypeInference
  *
  * If the consuming code stops iterating the sequence before it's completed,
  * the remainder of the computation will not run at all.
- * In particular, it means that `finally` blocks may fail to run:
+ * In particular, it means that `finally` blocks may be left unexecuted:
  *
  * ```
  * val sequenceOfOne = sequence {
@@ -47,7 +47,7 @@ public fun <T> sequence(@BuilderInference block: suspend SequenceScope<T>.() -> 
  *
  * If the consuming code stops using the iterator without [Iterator.hasNext] returning `false` first,
  * the remainder of the computation will not run at all.
- * In particular, it means that `finally` blocks may fail to run:
+ * In particular, it means that `finally` blocks may be left unexecuted:
  *
  * ```
  * val singleElementIterator = iterator {
