@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
+import org.jetbrains.kotlin.backend.konan.serialization.KonanDeclarationTable
+import org.jetbrains.kotlin.backend.konan.serialization.KonanGlobalDeclarationTable
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -24,4 +26,6 @@ class NativePreSerializationLoweringContext(
     override val sharedVariablesManager = KlibSharedVariablesManager(symbols)
 
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
+
+    override val declarationTable: KonanDeclarationTable = KonanDeclarationTable(KonanGlobalDeclarationTable(irBuiltIns))
 }
