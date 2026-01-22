@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
+import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.createResolvable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -152,13 +154,22 @@ class LazyResolvedConfigurationTest {
     @Test
     fun `test - circular dependency handling`() {
         val project = buildProject()
-        val configuration = project.configurations.create("forTest")
-        configuration.isCanBeConsumed = true
-        // add dependency to itself
-        project.dependencies.add(configuration.name, project.dependencies.project(":", configuration = configuration.name))
-        project.artifacts.add(configuration.name, project.file("artifact.tmp"))
+        val resolvableConfiguration = project.configurations.createResolvable("forTest_resolvable")
+        val consumableConfiguration = project.configurations.createConsumable("forTest_consumable")
 
-        val lazyConfiguration = LazyResolvedConfigurationWithArtifacts(configuration)
+        // add dependency from the resolvable configuration to the consumable configuration
+        project.dependencies.add(
+            resolvableConfiguration.name,
+            project.dependencies.project(":", configuration = consumableConfiguration.name)
+        )
+
+        // add dependency from the consumable co to the resolvable configuration
+        resolvableConfiguration.extendsFrom(consumableConfiguration)
+
+        // add artifact onto the consumable configuration
+        project.artifacts.add(consumableConfiguration.name, project.file("artifact.tmp"))
+
+        val lazyConfiguration = LazyResolvedConfigurationWithArtifacts(resolvableConfiguration)
 
         val dependency = lazyConfiguration.allResolvedDependencies.singleOrNull() ?: fail("Expected to have single dependency")
         val id = dependency.resolvedVariant.owner
