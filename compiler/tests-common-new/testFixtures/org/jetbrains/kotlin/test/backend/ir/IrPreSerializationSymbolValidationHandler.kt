@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.backend.konan.BoxCache
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.wasm.BackendWasmSymbols
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.SymbolFinder
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
@@ -35,6 +37,7 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
     protected abstract fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols>
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
+        validateContainer(info.irBuiltIns)
         for (symbols in getSymbols(info.irBuiltIns)) {
             validateContainer(symbols)
         }
@@ -55,6 +58,7 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
     }
 
     private fun validateRecursive(result: Any?, klass: KClass<*>) {
+        @OptIn(InternalSymbolFinderAPI::class)
         when (result) {
             is PreSerializationKlibSymbols.SharedVariableBoxClassInfo -> validate(result.klass, klass)
             is Iterable<*> -> result.forEach { validateRecursive(it, klass) }
@@ -71,7 +75,8 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
             is BackendWasmSymbols.JsRelatedSymbols -> validateContainer(result)
             is BackendWasmSymbols.JsInteropAdapters -> validateContainer(result)
             is IrType -> validateRecursive(result.classifierOrNull, klass)
-            null, is FqName, is PrimitiveType, is Name, is String, is PrimitiveBinaryType, is BoxCache -> Unit // do nothing
+            null, is FqName, is Name, is String, is PrimitiveBinaryType, is BoxCache, is PrimitiveType, is UnsignedType,
+            is IrFactory, is LanguageVersionSettings, is IrExternalPackageFragment, is SymbolFinder -> Unit // do nothing
             else -> error("Unexpected type: ${result::class.qualifiedName}")
         }
     }
