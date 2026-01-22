@@ -28552,18 +28552,6 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
-    @TestMetadata("inlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationDisabled.kt")
-    public void testInlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationDisabled() {
-      runTest("compiler/testData/codegen/box/inline/inlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationDisabled.kt");
-    }
-
-    @Test
-    @TestMetadata("inlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationEnabled.kt")
-    public void testInlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationEnabled() {
-      runTest("compiler/testData/codegen/box/inline/inlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationEnabled.kt");
-    }
-
-    @Test
     @TestMetadata("inlinedLambdaWithErasedParamType.kt")
     public void testInlinedLambdaWithErasedParamType() {
       runTest("compiler/testData/codegen/box/inline/inlinedLambdaWithErasedParamType.kt");
