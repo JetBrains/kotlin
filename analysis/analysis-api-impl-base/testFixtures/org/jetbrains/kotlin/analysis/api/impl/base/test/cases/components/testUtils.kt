@@ -136,7 +136,9 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
                             // The multi-call already renders all calls via other properties
                             !(klass.isSubclassOf(KaMultiCall::class) && property.name == KaMultiCall::calls.name) &&
                             /** The call is already covered as a part of [KaCompoundOperation.operationCall] */
-                            !(klass.isSubclassOf(KaCompoundAccessCall::class) && property.name == KaCompoundAccessCall::operationCall.name)
+                            !(klass.isSubclassOf(KaCompoundAccessCall::class) && property.name == KaCompoundAccessCall::operationCall.name) &&
+                            /** This is already covered by [KaFunctionCall.valueArgumentMapping] and [KaFunctionCall.contextArguments] */
+                            !(klass.isSubclassOf(KaFunctionCall::class) && property.name == KaFunctionCall<*>::combinedArgumentMapping.name)
                 }.ifNotEmpty {
                     joinTo(this@buildString, separator = "\n  ", prefix = ":\n  ") { property ->
                         val name = property.name
@@ -432,7 +434,6 @@ internal fun assertConsistency(testServices: TestServices, call: KaCall) {
     if (call !is KaCallableMemberCall<*, *>) return
 
     val assertions = testServices.assertions
-    val typeArgumentsMapping = call.typeArgumentsMapping
     val symbol = call.symbol
 
     if (call is KaSingleCall<*, *>) {
@@ -448,6 +449,23 @@ internal fun assertConsistency(testServices: TestServices, call: KaCall) {
         assertions.assertEquals(call is KaImplicitInvokeCall, call.isImplicitInvoke)
     }
 
+    if (call is KaFunctionCall<*>) {
+        val combinedArgumentMapping = call.combinedArgumentMapping.toMutableMap()
+        for ((expression, parameterFromSpecificMap) in call.valueArgumentMapping + call.contextArgumentMapping) {
+            val parameterFromCombinedMap = combinedArgumentMapping.remove(expression)
+            assertions.assertNotNull(parameterFromCombinedMap) {
+                "Value argument for $parameterFromSpecificMap is not found in ${call::combinedArgumentMapping.name}: $combinedArgumentMapping"
+            }
+
+            assertions.assertEquals(parameterFromCombinedMap, parameterFromSpecificMap)
+        }
+
+        assertions.assertEquals(combinedArgumentMapping.size, 0) {
+            "Extra elements found in ${call::combinedArgumentMapping.name}: $combinedArgumentMapping"
+        }
+    }
+
+    val typeArgumentsMapping = call.typeArgumentsMapping
     val typeParameters = symbol.typeParameters
     for (parameterSymbol in typeParameters) {
         val mappedType = typeArgumentsMapping[parameterSymbol]

@@ -55,4 +55,7 @@ class KaBaseDelegatedConstructorCall(
     @KaExperimentalApi
     override val contextArgumentMapping: Map<KtExpression, KaVariableSignature<KaContextParameterSymbol>>
         get() = withValidityAssertion { backingArgumentMapping.toContextArgumentMapping() }
+
+    override val combinedArgumentMapping: Map<KtExpression, KaVariableSignature<KaParameterSymbol>>
+        get() = withValidityAssertion { backingArgumentMapping }
 }
