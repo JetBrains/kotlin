@@ -32,7 +32,7 @@ internal val Project.konanVersion: String?
 internal val Project.nativeJson: String
     get() = project.property("nativeJson") as String
 
-internal val Project.buildType: NativeBuildType
+val Project.buildType: NativeBuildType
     get() = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: NativeBuildType.RELEASE
 
 internal val Project.useCSet: Boolean
@@ -44,6 +44,10 @@ open class BenchmarkExtension @Inject constructor(project: Project) {
     val applicationName: Property<String> = project.objects.property(String::class.java).convention(project.name)
     val compilerOpts: ListProperty<String> = project.objects.listProperty(String::class.java)
     val repeatingType: Property<BenchmarkRepeatingType> = project.objects.property(BenchmarkRepeatingType::class.java).convention(BenchmarkRepeatingType.INTERNAL)
+    val prefixBenchmarksWithApplicationName: Property<Boolean> = project.objects.property(Boolean::class.java).convention(true)
+
+    val konanRun by project.tasks.registering(RunKotlinNativeTask::class)
+    val konanJsonReport by project.tasks.registering(JsonReportTask::class)
 }
 
 /**
@@ -81,7 +85,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
         createExtraTasks()
 
-        val konanRun by tasks.registering(RunKotlinNativeTask::class) {
+        benchmark.konanRun.configure {
             group = BENCHMARKING_GROUP
             description = "Runs the benchmark for Kotlin/Native."
 
@@ -91,22 +95,26 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             warmupCount.convention(nativeWarmup)
             repeatCount.convention(attempts)
             repeatingType.set(benchmark.repeatingType)
-            arguments.add("-p")
-            arguments.add(benchmark.applicationName.map { "$it::" })
+            if (benchmark.prefixBenchmarksWithApplicationName.get()) {
+                arguments.add("-p")
+                arguments.add(benchmark.applicationName.map { "$it::" })
+            }
             useCSet.convention(project.useCSet)
 
             // We do not want to cache benchmarking runs; we want the task to run whenever requested.
             outputs.upToDateWhen { false }
 
+            finalizedBy(benchmark.konanJsonReport)
+
             configureKonanRunTask()
         }
 
-        val konanJsonReport by tasks.registering(JsonReportTask::class) {
+        benchmark.konanJsonReport.configure {
             group = BENCHMARKING_GROUP
             description = "Builds the benchmarking report for Kotlin/Native."
 
             applicationName.set(benchmark.applicationName)
-            benchmarksReportFile.set(konanRun.map { it.reportFile.get() })
+            benchmarksReportFile.set(benchmark.konanRun.map { it.reportFile.get() })
             compilerVersion.set(project.konanVersion)
             if (buildType.optimized) {
                 compilerFlags.add("-opt")
@@ -118,10 +126,6 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             reportFile.set(layout.buildDirectory.file(nativeJson))
 
             configureKonanJsonReportTask()
-        }
-
-        konanRun.configure {
-            finalizedBy(konanJsonReport)
         }
     }
 }
