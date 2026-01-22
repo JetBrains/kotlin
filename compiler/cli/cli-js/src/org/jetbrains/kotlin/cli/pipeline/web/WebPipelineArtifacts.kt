@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.pipeline.web
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
@@ -41,6 +42,15 @@ data class JsFir2IrPipelineArtifact(
     override val diagnosticCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
     val hasErrors: Boolean,
+) : Fir2IrPipelineArtifact()
+
+data class JsInliningPipelineArtifact(
+    override val result: Fir2IrActualizedResult,
+    val frontendOutput: AllModulesFrontendOutput,
+    val configuration: CompilerConfiguration,
+    override val diagnosticCollector: BaseDiagnosticsCollector,
+    val moduleStructure: ModulesStructure,
+    val declarationTable: DeclarationTable.Default,
 ) : Fir2IrPipelineArtifact()
 
 data class JsSerializedKlibPipelineArtifact(
