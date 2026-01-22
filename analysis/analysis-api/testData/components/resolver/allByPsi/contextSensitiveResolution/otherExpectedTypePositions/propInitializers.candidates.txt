@@ -130,6 +130,7 @@ KtDotQualifiedExpression(292,306): 'MyEnum.Option1'
 KtNameReferenceExpression(292,298): 'MyEnum'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -193,6 +194,7 @@ KtDotQualifiedExpression(326,340): 'MyEnum.Option2'
 KtNameReferenceExpression(326,332): 'MyEnum'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

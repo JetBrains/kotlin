@@ -1,6 +1,7 @@
 KtNameReferenceExpression(83,94): 'setListener'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = jClass

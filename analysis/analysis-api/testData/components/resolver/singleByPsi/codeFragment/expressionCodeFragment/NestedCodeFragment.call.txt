@@ -1,6 +1,7 @@
 KtNameReferenceExpression(157,160): 'bar'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

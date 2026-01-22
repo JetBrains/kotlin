@@ -1,6 +1,7 @@
 KtCallExpression(99,102): 'a()'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: A

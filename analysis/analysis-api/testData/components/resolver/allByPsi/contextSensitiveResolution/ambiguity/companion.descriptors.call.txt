@@ -45,6 +45,7 @@ KtProperty(180,193): 'val A = Any()'
 
 KtCallExpression(188,193): 'Any()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -61,6 +62,7 @@ KtCallExpression(188,193): 'Any()'
 KtNameReferenceExpression(188,191): 'Any'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -113,6 +115,7 @@ KtReturnExpression(250,263): 'return x == A'
 KtBinaryExpression(257,263): 'x == A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = x
@@ -165,6 +168,7 @@ KtNameReferenceExpression(257,258): 'x'
 KtOperationReferenceExpression(259,261): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = x
@@ -252,6 +256,7 @@ KtReturnExpression(319,339): 'return x == MyEnum.A'
 KtBinaryExpression(326,339): 'x == MyEnum.A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = x
@@ -304,6 +309,7 @@ KtNameReferenceExpression(326,327): 'x'
 KtOperationReferenceExpression(328,330): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = x
@@ -381,6 +387,7 @@ KtReturnExpression(400,423): 'return x == Companion.A'
 KtBinaryExpression(407,423): 'x == Companion.A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = x
@@ -433,6 +440,7 @@ KtNameReferenceExpression(407,408): 'x'
 KtOperationReferenceExpression(409,411): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = x

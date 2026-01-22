@@ -259,6 +259,7 @@ KtBlockExpression(389,627): '{'
 KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -313,6 +314,7 @@ KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -362,6 +364,7 @@ KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
 KtNameReferenceExpression(395,402): 'unnamed'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -416,6 +419,7 @@ KtNameReferenceExpression(395,402): 'unnamed'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -483,6 +487,7 @@ KtLiteralStringTemplateEntry(434,438): 'str2'
 KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -537,6 +542,7 @@ KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -586,6 +592,7 @@ KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
 KtNameReferenceExpression(445,450): 'named'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -640,6 +647,7 @@ KtNameReferenceExpression(445,450): 'named'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -707,6 +715,15 @@ KtLiteralStringTemplateEntry(482,486): 'str2'
 KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -762,6 +779,15 @@ KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regul
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -811,6 +837,15 @@ KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regul
 KtNameReferenceExpression(494,501): 'unnamed'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -866,6 +901,15 @@ KtNameReferenceExpression(494,501): 'unnamed'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -927,6 +971,7 @@ KtNameReferenceExpression(518,526): 'explicit'
 KtCallExpression(529,539): 'Explicit()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -944,6 +989,7 @@ KtCallExpression(529,539): 'Explicit()'
 KtNameReferenceExpression(529,537): 'Explicit'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -979,6 +1025,15 @@ KtLiteralStringTemplateEntry(552,556): 'str3'
 KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -1034,6 +1089,15 @@ KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1083,6 +1147,15 @@ KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular
 KtNameReferenceExpression(563,568): 'named'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: Implicit
@@ -1138,6 +1211,15 @@ KtNameReferenceExpression(563,568): 'named'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1199,6 +1281,7 @@ KtNameReferenceExpression(585,593): 'explicit'
 KtCallExpression(596,606): 'Explicit()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1216,6 +1299,7 @@ KtCallExpression(596,606): 'Explicit()'
 KtNameReferenceExpression(596,604): 'Explicit'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1269,6 +1353,7 @@ KtBlockExpression(658,933): '{'
 KtCallExpression(664,794): 'with(Explicit()) {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1322,6 +1407,7 @@ KtCallExpression(664,794): 'with(Explicit()) {'
 KtNameReferenceExpression(664,668): 'with'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1381,6 +1467,7 @@ KtValueArgument(669,679): 'Explicit()'
 KtCallExpression(669,679): 'Explicit()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1398,6 +1485,7 @@ KtCallExpression(669,679): 'Explicit()'
 KtNameReferenceExpression(669,677): 'Explicit'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1430,6 +1518,7 @@ KtBlockExpression(691,788): 'unnamed/*explicit regular*/(regular = "str2")'
 KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1524,6 +1613,7 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1573,6 +1663,7 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
 KtNameReferenceExpression(691,698): 'unnamed'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1667,6 +1758,7 @@ KtNameReferenceExpression(691,698): 'unnamed'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1734,6 +1826,7 @@ KtLiteralStringTemplateEntry(730,734): 'str2'
 KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1828,6 +1921,7 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1877,6 +1971,7 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
 KtNameReferenceExpression(745,750): 'named'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1971,6 +2066,7 @@ KtNameReferenceExpression(745,750): 'named'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2038,6 +2134,15 @@ KtLiteralStringTemplateEntry(782,786): 'str2'
 KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2113,6 +2218,15 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2162,6 +2276,15 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
 KtNameReferenceExpression(800,807): 'unnamed'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2237,6 +2360,15 @@ KtNameReferenceExpression(800,807): 'unnamed'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2298,6 +2430,7 @@ KtNameReferenceExpression(824,832): 'explicit'
 KtCallExpression(835,845): 'Explicit()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2315,6 +2448,7 @@ KtCallExpression(835,845): 'Explicit()'
 KtNameReferenceExpression(835,843): 'Explicit'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2350,6 +2484,15 @@ KtLiteralStringTemplateEntry(858,862): 'str3'
 KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2425,6 +2568,15 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2474,6 +2626,15 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
 KtNameReferenceExpression(869,874): 'named'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2549,6 +2710,15 @@ KtNameReferenceExpression(869,874): 'named'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = explicit
+          receiverType = null
+          returnType = Explicit
+          symbol = explicit: Explicit
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2610,6 +2780,7 @@ KtNameReferenceExpression(891,899): 'explicit'
 KtCallExpression(902,912): 'Explicit()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2627,6 +2798,7 @@ KtCallExpression(902,912): 'Explicit()'
 KtNameReferenceExpression(902,910): 'Explicit'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

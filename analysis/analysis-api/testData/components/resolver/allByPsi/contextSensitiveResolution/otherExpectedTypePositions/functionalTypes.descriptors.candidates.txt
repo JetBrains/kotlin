@@ -79,6 +79,7 @@ KtProperty(305,341): 'val EnumOptionAlias = MyEnum.Option1'
 KtDotQualifiedExpression(327,341): 'MyEnum.Option1'
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -213,6 +214,7 @@ KtNameReferenceExpression(453,459): 'MyEnum'
 KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(true)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = { arg: Boolean -> if (arg) enumProp else Option1 }
@@ -248,6 +250,7 @@ KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(t
 
   KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -708,6 +711,7 @@ KtBlockExpression(975,1005): 'contextOf<MyEnum>() == Option1'
 KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = contextOf<MyEnum>()
@@ -744,6 +748,7 @@ KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
 KtCallExpression(975,994): 'contextOf<MyEnum>()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -771,6 +776,7 @@ KtCallExpression(975,994): 'contextOf<MyEnum>()'
 KtNameReferenceExpression(975,984): 'contextOf'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -816,6 +822,7 @@ KtValueArgumentList(992,994): '()'
 KtOperationReferenceExpression(995,997): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = contextOf<MyEnum>()

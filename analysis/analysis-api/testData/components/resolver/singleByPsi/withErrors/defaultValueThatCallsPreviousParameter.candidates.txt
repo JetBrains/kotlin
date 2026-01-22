@@ -1,6 +1,7 @@
 KtNameReferenceExpression(270,279): 'getString'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = context

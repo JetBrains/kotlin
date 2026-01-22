@@ -1,6 +1,7 @@
 KtAnnotationEntry(54,78): '@Suppress("DEPRECATION")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

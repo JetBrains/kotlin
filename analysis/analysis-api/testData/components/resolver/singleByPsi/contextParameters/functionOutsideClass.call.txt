@@ -1,5 +1,6 @@
 KtCallExpression(205,216): 'funMember()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = [
       KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:

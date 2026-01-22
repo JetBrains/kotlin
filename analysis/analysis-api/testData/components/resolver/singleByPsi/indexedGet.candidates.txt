@@ -1,6 +1,7 @@
 KtArrayAccessExpression(100,111): 'c[1, "foo"]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = c

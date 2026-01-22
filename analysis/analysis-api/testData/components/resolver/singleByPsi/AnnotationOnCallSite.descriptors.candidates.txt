@@ -1,6 +1,7 @@
 KtNameReferenceExpression(23,31): 'Suppress'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

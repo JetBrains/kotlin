@@ -2,6 +2,7 @@ KtDotQualifiedExpression(59,66): 'a.foo()'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = a

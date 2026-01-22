@@ -127,6 +127,7 @@ KtContainerNode(304,329): 'settings == BasicSettings'
 KtBinaryExpression(304,329): 'settings == BasicSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = settings
@@ -181,6 +182,7 @@ KtNameReferenceExpression(304,312): 'settings'
 KtOperationReferenceExpression(313,315): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = settings
@@ -223,6 +225,7 @@ KtContainerNodeForControlStructureBody(331,344): 'work("Basic")'
 KtCallExpression(331,344): 'work("Basic")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -256,6 +259,7 @@ KtCallExpression(331,344): 'work("Basic")'
 KtNameReferenceExpression(331,335): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -307,6 +311,7 @@ KtContainerNode(354,387): 'basicSettings == SpecificSettings'
 KtBinaryExpression(354,387): 'basicSettings == SpecificSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -361,6 +366,7 @@ KtNameReferenceExpression(354,367): 'basicSettings'
 KtOperationReferenceExpression(368,370): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -403,6 +409,7 @@ KtContainerNodeForControlStructureBody(389,405): 'work("Specific")'
 KtCallExpression(389,405): 'work("Specific")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -436,6 +443,7 @@ KtCallExpression(389,405): 'work("Specific")'
 KtNameReferenceExpression(389,393): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -487,6 +495,7 @@ KtContainerNode(414,456): 'basicSettings == Settings.SpecificSettings'
 KtBinaryExpression(414,456): 'basicSettings == Settings.SpecificSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -541,6 +550,7 @@ KtNameReferenceExpression(414,427): 'basicSettings'
 KtOperationReferenceExpression(428,430): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -589,6 +599,7 @@ KtContainerNodeForControlStructureBody(458,474): 'work("Specific")'
 KtCallExpression(458,474): 'work("Specific")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -622,6 +633,7 @@ KtCallExpression(458,474): 'work("Specific")'
 KtNameReferenceExpression(458,462): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -685,6 +697,7 @@ KtSuperTypeList(540,554): 'OpenSettings()'
 KtSuperTypeCallEntry(540,554): 'OpenSettings()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -703,6 +716,7 @@ KtSuperTypeCallEntry(540,554): 'OpenSettings()'
 KtConstructorCalleeExpression(540,552): 'OpenSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -727,6 +741,7 @@ KtUserType(540,552): 'OpenSettings'
 KtNameReferenceExpression(540,552): 'OpenSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -757,6 +772,7 @@ KtSuperTypeList(594,608): 'OpenSettings()'
 KtSuperTypeCallEntry(594,608): 'OpenSettings()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -775,6 +791,7 @@ KtSuperTypeCallEntry(594,608): 'OpenSettings()'
 KtConstructorCalleeExpression(594,606): 'OpenSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -799,6 +816,7 @@ KtUserType(594,606): 'OpenSettings'
 KtNameReferenceExpression(594,606): 'OpenSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -865,6 +883,7 @@ KtContainerNode(707,736): 'settings == OpenBasicSettings'
 KtBinaryExpression(707,736): 'settings == OpenBasicSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = settings
@@ -919,6 +938,7 @@ KtNameReferenceExpression(707,715): 'settings'
 KtOperationReferenceExpression(716,718): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = settings
@@ -961,6 +981,7 @@ KtContainerNodeForControlStructureBody(738,751): 'work("Basic")'
 KtCallExpression(738,751): 'work("Basic")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -994,6 +1015,7 @@ KtCallExpression(738,751): 'work("Basic")'
 KtNameReferenceExpression(738,742): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1045,6 +1067,7 @@ KtContainerNode(761,798): 'basicSettings == OpenSpecificSettings'
 KtBinaryExpression(761,798): 'basicSettings == OpenSpecificSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -1099,6 +1122,7 @@ KtNameReferenceExpression(761,774): 'basicSettings'
 KtOperationReferenceExpression(775,777): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -1141,6 +1165,7 @@ KtContainerNodeForControlStructureBody(800,816): 'work("Specific")'
 KtCallExpression(800,816): 'work("Specific")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1174,6 +1199,7 @@ KtCallExpression(800,816): 'work("Specific")'
 KtNameReferenceExpression(800,804): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1225,6 +1251,7 @@ KtContainerNode(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
 KtBinaryExpression(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -1279,6 +1306,7 @@ KtNameReferenceExpression(825,838): 'basicSettings'
 KtOperationReferenceExpression(839,841): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -1327,6 +1355,7 @@ KtContainerNodeForControlStructureBody(877,893): 'work("Specific")'
 KtCallExpression(877,893): 'work("Specific")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1360,6 +1389,7 @@ KtCallExpression(877,893): 'work("Specific")'
 KtNameReferenceExpression(877,881): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

@@ -1,5 +1,6 @@
 KtCallExpression(136,139): 's()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = [
       KaSmartCastedReceiverValue:
         original = KaImplicitReceiverValue:

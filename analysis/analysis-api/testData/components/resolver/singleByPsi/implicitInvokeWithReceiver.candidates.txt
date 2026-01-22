@@ -1,6 +1,7 @@
 KtDotQualifiedExpression(107,113): 'a.x(1)'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = a
@@ -37,6 +38,7 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
 
   KaApplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:

@@ -62,6 +62,31 @@ public interface KaFunctionCall<S : KaFunctionSymbol> : KaSingleCall<S, KaFuncti
     public val valueArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
 
     /**
+     * A mapping from the call's [explicit context argument](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0448-explicit-context-arguments.md)
+     * expressions to their associated context parameter symbols in a stable order.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * context(a: A, b: B)
+     * fun foo() { ... }
+     *
+     * fun test() {
+     *     with(A()) {
+     *         foo(b = B())  // explicit context argument `b = B()`
+     *     }
+     * }
+     * ```
+     *
+     * For the `foo(b = B())` call, `contextArgumentMapping` contains a single entry mapping the `B()` expression
+     * to the context parameter `b: B`.
+     *
+     * @see valueArgumentMapping
+     */
+    @KaExperimentalApi
+    public val contextArgumentMapping: Map<KtExpression, KaVariableSignature<KaContextParameterSymbol>>
+
+    /**
      * A mapping from the call's argument expressions to their associated parameter symbols in a stable order. In case of `vararg`
      * parameters, multiple arguments may be mapped to the same [KaValueParameterSymbol].
      */

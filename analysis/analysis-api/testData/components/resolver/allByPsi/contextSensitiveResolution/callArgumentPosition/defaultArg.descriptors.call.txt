@@ -36,6 +36,7 @@ KtSuperTypeList(166,175): 'MyClass()'
 
 KtSuperTypeCallEntry(166,175): 'MyClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -53,6 +54,7 @@ KtSuperTypeCallEntry(166,175): 'MyClass()'
 KtConstructorCalleeExpression(166,173): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -76,6 +78,7 @@ KtUserType(166,173): 'MyClass'
 KtNameReferenceExpression(166,173): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -119,6 +122,7 @@ KtNameReferenceExpression(220,227): 'MyClass'
 
 KtCallExpression(230,236): 'TODO()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -135,6 +139,7 @@ KtCallExpression(230,236): 'TODO()'
 KtNameReferenceExpression(230,234): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

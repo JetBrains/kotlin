@@ -48,6 +48,7 @@ KtSuperTypeList(197,206): 'MyClass()'
 
 KtSuperTypeCallEntry(197,206): 'MyClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -65,6 +66,7 @@ KtSuperTypeCallEntry(197,206): 'MyClass()'
 KtConstructorCalleeExpression(197,204): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -88,6 +90,7 @@ KtUserType(197,204): 'MyClass'
 KtNameReferenceExpression(197,204): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -116,6 +119,7 @@ KtSuperTypeList(237,246): 'MyClass()'
 
 KtSuperTypeCallEntry(237,246): 'MyClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -133,6 +137,7 @@ KtSuperTypeCallEntry(237,246): 'MyClass()'
 KtConstructorCalleeExpression(237,244): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -156,6 +161,7 @@ KtUserType(237,244): 'MyClass'
 KtNameReferenceExpression(237,244): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -190,6 +196,7 @@ KtSuperTypeList(298,307): 'MySuper()'
 
 KtSuperTypeCallEntry(298,307): 'MySuper()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -207,6 +214,7 @@ KtSuperTypeCallEntry(298,307): 'MySuper()'
 KtConstructorCalleeExpression(298,305): 'MySuper'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -230,6 +238,7 @@ KtUserType(298,305): 'MySuper'
 KtNameReferenceExpression(298,305): 'MySuper'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -264,6 +273,7 @@ KtNameReferenceExpression(335,342): 'MyClass'
 
 KtCallExpression(345,351): 'TODO()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -280,6 +290,7 @@ KtCallExpression(345,351): 'TODO()'
 KtNameReferenceExpression(345,349): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -310,6 +321,7 @@ KtNameReferenceExpression(384,398): 'InheritorClass'
 
 KtCallExpression(401,417): 'InheritorClass()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -326,6 +338,7 @@ KtCallExpression(401,417): 'InheritorClass()'
 KtNameReferenceExpression(401,415): 'InheritorClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -389,6 +402,7 @@ KtNameReferenceExpression(535,542): 'MyClass'
 
 KtCallExpression(545,551): 'TODO()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -405,6 +419,7 @@ KtCallExpression(545,551): 'TODO()'
 KtNameReferenceExpression(545,549): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -438,6 +453,7 @@ KtPropertyDelegate(581,593): 'by lazy {""}'
 
 KtCallExpression(584,593): 'lazy {""}'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -472,6 +488,7 @@ KtCallExpression(584,593): 'lazy {""}'
 KtNameReferenceExpression(584,588): 'lazy'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -617,6 +634,7 @@ KtCallExpression(738,775): 'consumeMyClass(test(InheritorObject))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -652,6 +670,7 @@ KtNameReferenceExpression(738,752): 'consumeMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -693,6 +712,7 @@ KtCallExpression(753,774): 'test(InheritorObject)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -730,6 +750,7 @@ KtNameReferenceExpression(753,757): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -778,6 +799,7 @@ KtCallExpression(781,814): 'consumeMyClass(test(propMyClass))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -813,6 +835,7 @@ KtNameReferenceExpression(781,795): 'consumeMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -854,6 +877,7 @@ KtCallExpression(796,813): 'test(propMyClass)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -891,6 +915,7 @@ KtNameReferenceExpression(796,800): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -939,6 +964,7 @@ KtCallExpression(819,859): 'consumeMyClass(test(propInheritorClass))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -974,6 +1000,7 @@ KtNameReferenceExpression(819,833): 'consumeMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1015,6 +1042,7 @@ KtCallExpression(834,858): 'test(propInheritorClass)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1052,6 +1080,7 @@ KtNameReferenceExpression(834,838): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1100,6 +1129,7 @@ KtCallExpression(864,905): 'consumeMyClass(test(propInheritorObject))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1135,6 +1165,7 @@ KtNameReferenceExpression(864,878): 'consumeMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1176,6 +1207,7 @@ KtCallExpression(879,904): 'test(propInheritorObject)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1213,6 +1245,7 @@ KtNameReferenceExpression(879,883): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1261,6 +1294,7 @@ KtCallExpression(911,945): 'consumeMyClass(test(NestedObject))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1296,6 +1330,7 @@ KtNameReferenceExpression(911,925): 'consumeMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1337,6 +1372,7 @@ KtCallExpression(926,944): 'test(NestedObject)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1374,6 +1410,7 @@ KtNameReferenceExpression(926,930): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1422,6 +1459,7 @@ KtCallExpression(950,976): 'consumeMyClass(test(prop))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1457,6 +1495,7 @@ KtNameReferenceExpression(950,964): 'consumeMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1498,6 +1537,7 @@ KtCallExpression(965,975): 'test(prop)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1535,6 +1575,7 @@ KtNameReferenceExpression(965,969): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1583,6 +1624,7 @@ KtCallExpression(981,1012): 'consumeMyClass(test(superProp))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1618,6 +1660,7 @@ KtNameReferenceExpression(981,995): 'consumeMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1659,6 +1702,7 @@ KtCallExpression(996,1011): 'test(superProp)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1696,6 +1740,7 @@ KtNameReferenceExpression(996,1000): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1744,6 +1789,7 @@ KtCallExpression(1017,1047): 'consumeMyClass(test(lazyProp))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1779,6 +1825,7 @@ KtNameReferenceExpression(1017,1031): 'consumeMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1820,6 +1867,7 @@ KtCallExpression(1032,1046): 'test(lazyProp)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1857,6 +1905,7 @@ KtNameReferenceExpression(1032,1036): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1905,6 +1954,7 @@ KtCallExpression(1052,1084): 'consumeMyClass(test(lambdaProp))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1940,6 +1990,7 @@ KtNameReferenceExpression(1052,1066): 'consumeMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1981,6 +2032,7 @@ KtCallExpression(1067,1083): 'test(lambdaProp)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -2018,6 +2070,7 @@ KtNameReferenceExpression(1067,1071): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -2066,6 +2119,7 @@ KtCallExpression(1090,1128): 'consumeMyClass(test(InheritorClass()))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -2101,6 +2155,7 @@ KtNameReferenceExpression(1090,1104): 'consumeMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -2142,6 +2197,7 @@ KtCallExpression(1105,1127): 'test(InheritorClass())'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -2179,6 +2235,7 @@ KtNameReferenceExpression(1105,1109): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -2235,6 +2292,7 @@ KtCallExpression(1133,1161): 'consumeMyClass(test(func()))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -2270,6 +2328,7 @@ KtNameReferenceExpression(1133,1147): 'consumeMyClass'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -2311,6 +2370,7 @@ KtCallExpression(1148,1160): 'test(func())'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -2348,6 +2408,7 @@ KtNameReferenceExpression(1148,1152): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

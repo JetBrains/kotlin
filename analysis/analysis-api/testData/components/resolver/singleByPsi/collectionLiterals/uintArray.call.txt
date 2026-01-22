@@ -1,5 +1,6 @@
 KtCollectionLiteralExpression(36,40): '[1u]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null

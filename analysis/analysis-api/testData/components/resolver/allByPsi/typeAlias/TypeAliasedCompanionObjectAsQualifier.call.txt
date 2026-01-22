@@ -73,6 +73,7 @@ KtBlockExpression(161,253): '{'
 KtDotQualifiedExpression(167,185): 'MyAlias.function()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -94,6 +95,7 @@ KtNameReferenceExpression(167,174): 'MyAlias'
 
 KtCallExpression(175,185): 'function()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = MyAlias
@@ -113,6 +115,7 @@ KtCallExpression(175,185): 'function()'
 KtNameReferenceExpression(175,183): 'function'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -177,6 +180,7 @@ KtNameReferenceExpression(198,206): 'property'
 
 KtCallableReferenceExpression(212,229): 'MyAlias::function'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = MyAlias

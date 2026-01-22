@@ -36,6 +36,7 @@ KtSuperTypeList(166,175): 'MyClass()'
 
 KtSuperTypeCallEntry(166,175): 'MyClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -53,6 +54,7 @@ KtSuperTypeCallEntry(166,175): 'MyClass()'
 KtConstructorCalleeExpression(166,173): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -163,6 +165,7 @@ KtProperty(301,340): 'val r1 = 1 infixEnumConsumer EnumValue1'
 KtBinaryExpression(310,340): '1 infixEnumConsumer EnumValue1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -201,6 +204,7 @@ KtConstantExpression(310,311): '1'
 KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -259,6 +263,7 @@ KtProperty(345,389): 'val r2 = 1 infixEnumConsumer InheritorObject'
 KtBinaryExpression(354,389): '1 infixEnumConsumer InheritorObject'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -297,6 +302,7 @@ KtConstantExpression(354,355): '1'
 KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -340,6 +346,7 @@ KtProperty(394,434): 'val r3 = 1 infixConsumer InheritorObject'
 KtBinaryExpression(403,434): '1 infixConsumer InheritorObject'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -378,6 +385,7 @@ KtConstantExpression(403,404): '1'
 KtOperationReferenceExpression(405,418): 'infixConsumer'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:

@@ -123,6 +123,7 @@ KtSuperTypeList(186,195): 'Base<C>()'
 
 KtSuperTypeCallEntry(186,195): 'Base<C>()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -140,6 +141,7 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
 KtConstructorCalleeExpression(186,193): 'Base<C>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -163,6 +165,7 @@ KtUserType(186,193): 'Base<C>'
 KtNameReferenceExpression(186,190): 'Base'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -347,6 +350,7 @@ KtNameReferenceExpression(378,389): 'NestedClass'
 
 KtCallExpression(392,405): 'NestedClass()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -363,6 +367,7 @@ KtCallExpression(392,405): 'NestedClass()'
 KtNameReferenceExpression(392,403): 'NestedClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -385,6 +390,7 @@ KtProperty(410,432): 'val inner = c1.Inner()'
 KtDotQualifiedExpression(422,432): 'c1.Inner()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = c1
@@ -420,6 +426,7 @@ KtNameReferenceExpression(422,424): 'c1'
 
 KtCallExpression(425,432): 'Inner()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = c1
@@ -439,6 +446,7 @@ KtCallExpression(425,432): 'Inner()'
 KtNameReferenceExpression(425,430): 'Inner'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = c1

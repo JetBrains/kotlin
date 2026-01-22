@@ -133,6 +133,7 @@ KtSuperTypeList(291,304): 'SealedClass()'
 KtSuperTypeCallEntry(291,304): 'SealedClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -151,6 +152,7 @@ KtSuperTypeCallEntry(291,304): 'SealedClass()'
 KtConstructorCalleeExpression(291,302): 'SealedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -208,6 +210,7 @@ KtSuperTypeList(353,366): 'SealedClass()'
 KtSuperTypeCallEntry(353,366): 'SealedClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -226,6 +229,7 @@ KtSuperTypeCallEntry(353,366): 'SealedClass()'
 KtConstructorCalleeExpression(353,364): 'SealedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -301,6 +305,7 @@ KtSuperTypeList(442,460): 'SealedGeneric<T>()'
 KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -321,6 +326,7 @@ KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
 KtConstructorCalleeExpression(442,458): 'SealedGeneric<T>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -398,6 +404,7 @@ KtSuperTypeList(501,519): 'SealedGeneric<T>()'
 KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -418,6 +425,7 @@ KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
 KtConstructorCalleeExpression(501,517): 'SealedGeneric<T>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -658,6 +666,7 @@ KtNameReferenceExpression(680,696): 'SealedInheritor2'
 KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -677,6 +686,7 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -761,6 +771,7 @@ KtNameReferenceExpression(709,714): 'prop2'
 KtCallExpression(715,725): 'toString()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -780,6 +791,7 @@ KtCallExpression(715,725): 'toString()'
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -800,6 +812,7 @@ KtCallExpression(715,725): 'toString()'
 KtNameReferenceExpression(715,723): 'toString'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -819,6 +832,7 @@ KtNameReferenceExpression(715,723): 'toString'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1031,6 +1045,7 @@ KtNameReferenceExpression(944,960): 'SealedInheritor2'
 KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1075,6 +1090,7 @@ KtNameReferenceExpression(973,978): 'prop2'
 KtCallExpression(979,989): 'toString()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1095,6 +1111,7 @@ KtCallExpression(979,989): 'toString()'
 KtNameReferenceExpression(979,987): 'toString'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1272,6 +1289,7 @@ KtNameReferenceExpression(1128,1144): 'SealedInheritor2'
 KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1291,6 +1309,7 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1375,6 +1394,7 @@ KtNameReferenceExpression(1157,1162): 'prop2'
 KtCallExpression(1163,1173): 'toString()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1394,6 +1414,7 @@ KtCallExpression(1163,1173): 'toString()'
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1414,6 +1435,7 @@ KtCallExpression(1163,1173): 'toString()'
 KtNameReferenceExpression(1163,1171): 'toString'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1433,6 +1455,7 @@ KtNameReferenceExpression(1163,1171): 'toString'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1817,6 +1840,7 @@ KtNameReferenceExpression(1619,1635): 'SealedInheritor2'
 KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1836,6 +1860,7 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1920,6 +1945,7 @@ KtNameReferenceExpression(1648,1653): 'prop2'
 KtCallExpression(1654,1664): 'toString()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1939,6 +1965,7 @@ KtCallExpression(1654,1664): 'toString()'
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1959,6 +1986,7 @@ KtCallExpression(1654,1664): 'toString()'
 KtNameReferenceExpression(1654,1662): 'toString'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1978,6 +2006,7 @@ KtNameReferenceExpression(1654,1662): 'toString'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2706,6 +2735,7 @@ KtDotQualifiedExpression(2598,2615): 'JClass.staticProp'
 KtNameReferenceExpression(2598,2604): 'JClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2936,6 +2966,7 @@ KtDeclarationModifierList(2751,2766): '@UnsafeVariance'
 KtAnnotationEntry(2751,2766): '@UnsafeVariance'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2953,6 +2984,7 @@ KtAnnotationEntry(2751,2766): '@UnsafeVariance'
 KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

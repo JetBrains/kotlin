@@ -124,6 +124,7 @@ KtSuperTypeList(186,195): 'Base<C>()'
 KtSuperTypeCallEntry(186,195): 'Base<C>()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -142,6 +143,7 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
 KtConstructorCalleeExpression(186,193): 'Base<C>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -166,6 +168,7 @@ KtUserType(186,193): 'Base<C>'
 KtNameReferenceExpression(186,190): 'Base'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -352,6 +355,7 @@ KtNameReferenceExpression(378,389): 'NestedClass'
 KtCallExpression(392,405): 'NestedClass()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -369,6 +373,7 @@ KtCallExpression(392,405): 'NestedClass()'
 KtNameReferenceExpression(392,403): 'NestedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -392,6 +397,7 @@ KtProperty(410,432): 'val inner = c1.Inner()'
 KtDotQualifiedExpression(422,432): 'c1.Inner()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = c1
@@ -430,6 +436,7 @@ KtNameReferenceExpression(422,424): 'c1'
 KtCallExpression(425,432): 'Inner()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = c1
@@ -450,6 +457,7 @@ KtCallExpression(425,432): 'Inner()'
 KtNameReferenceExpression(425,430): 'Inner'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = c1

@@ -2,6 +2,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
   KaCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -46,6 +47,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
             callableId = null)
         },
       KaDelegatedConstructorCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

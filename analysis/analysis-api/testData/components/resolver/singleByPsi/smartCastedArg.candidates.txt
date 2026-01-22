@@ -1,6 +1,7 @@
 KtCallExpression(108,119): 'processB(a)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

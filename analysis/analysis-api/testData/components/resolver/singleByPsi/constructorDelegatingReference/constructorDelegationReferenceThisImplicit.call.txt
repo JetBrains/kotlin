@@ -1,5 +1,6 @@
 KtConstructorDelegationReferenceExpression(136,136): ''
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null

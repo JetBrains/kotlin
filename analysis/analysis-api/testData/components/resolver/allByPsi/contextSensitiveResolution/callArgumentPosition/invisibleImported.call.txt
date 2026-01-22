@@ -66,6 +66,7 @@ KtBlockExpression(116,152): '{'
 
 KtCallExpression(122,128): 'foo(X)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -98,6 +99,7 @@ KtCallExpression(122,128): 'foo(X)'
 KtNameReferenceExpression(122,125): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -155,6 +157,7 @@ KtNameReferenceExpression(126,127): 'X'
 
 KtCallExpression(133,139): 'foo(Y)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -187,6 +190,7 @@ KtCallExpression(133,139): 'foo(Y)'
 KtNameReferenceExpression(133,136): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -244,6 +248,7 @@ KtNameReferenceExpression(137,138): 'Y'
 
 KtCallExpression(144,150): 'foo(Z)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -276,6 +281,7 @@ KtCallExpression(144,150): 'foo(Z)'
 KtNameReferenceExpression(144,147): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

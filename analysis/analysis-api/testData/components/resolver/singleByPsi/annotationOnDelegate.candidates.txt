@@ -1,6 +1,7 @@
 KtAnnotationEntry(0,18): '@delegate:Suppress'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

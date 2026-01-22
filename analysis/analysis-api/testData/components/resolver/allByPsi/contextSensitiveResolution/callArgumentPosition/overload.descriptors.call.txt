@@ -24,6 +24,7 @@ KtSuperTypeList(143,152): 'MyClass()'
 
 KtSuperTypeCallEntry(143,152): 'MyClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -41,6 +42,7 @@ KtSuperTypeCallEntry(143,152): 'MyClass()'
 KtConstructorCalleeExpression(143,150): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -64,6 +66,7 @@ KtUserType(143,150): 'MyClass'
 KtNameReferenceExpression(143,150): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -258,6 +261,7 @@ KtBlockExpression(402,429): '{ println("Enum version") }'
 
 KtCallExpression(404,427): 'println("Enum version")'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -290,6 +294,7 @@ KtCallExpression(404,427): 'println("Enum version")'
 KtNameReferenceExpression(404,411): 'println'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -342,6 +347,7 @@ KtBlockExpression(446,486): '{ println("Without arguments version") }'
 
 KtCallExpression(448,484): 'println("Without arguments version")'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -374,6 +380,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
 KtNameReferenceExpression(448,455): 'println'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -426,6 +433,7 @@ KtBlockExpression(500,529): '{'
 
 KtCallExpression(506,527): 'overload2(EnumValue1)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -458,6 +466,7 @@ KtCallExpression(506,527): 'overload2(EnumValue1)'
 KtNameReferenceExpression(506,515): 'overload2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -521,6 +530,7 @@ KtBlockExpression(557,584): '{ println("Enum version") }'
 
 KtCallExpression(559,582): 'println("Enum version")'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -553,6 +563,7 @@ KtCallExpression(559,582): 'println("Enum version")'
 KtNameReferenceExpression(559,566): 'println'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -632,6 +643,7 @@ KtBlockExpression(628,659): '{ println("With 2 arguments") }'
 
 KtCallExpression(630,657): 'println("With 2 arguments")'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -664,6 +676,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
 KtNameReferenceExpression(630,637): 'println'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -716,6 +729,7 @@ KtBlockExpression(673,702): '{'
 
 KtCallExpression(679,700): 'overload3(EnumValue1)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -748,6 +762,7 @@ KtCallExpression(679,700): 'overload3(EnumValue1)'
 KtNameReferenceExpression(679,688): 'overload3'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

@@ -1,6 +1,7 @@
 KtNameReferenceExpression(108,115): 'makeFoo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

@@ -1,6 +1,7 @@
 KtConstructorDelegationCall(108,116): 'super(s)'
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

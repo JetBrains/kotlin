@@ -49,6 +49,7 @@ KtDotQualifiedExpression(118,126): 'MyEnum.Y'
 KtNameReferenceExpression(118,124): 'MyEnum'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

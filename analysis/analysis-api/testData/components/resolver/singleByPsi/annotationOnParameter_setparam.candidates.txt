@@ -1,6 +1,7 @@
 KtAnnotationEntry(35,49): '@setparam:Anno'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

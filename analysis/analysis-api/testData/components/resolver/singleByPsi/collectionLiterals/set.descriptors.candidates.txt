@@ -1,6 +1,7 @@
 KtCollectionLiteralExpression(55,58): '[1]'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

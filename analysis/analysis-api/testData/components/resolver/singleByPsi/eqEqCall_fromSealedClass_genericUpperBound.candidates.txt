@@ -1,6 +1,7 @@
 KtBinaryExpression(357,375): 'oldItem == newItem'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = oldItem

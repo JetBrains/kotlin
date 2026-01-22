@@ -1,6 +1,7 @@
 KtSuperTypeCallEntry(26,44): 'java.lang.Object()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

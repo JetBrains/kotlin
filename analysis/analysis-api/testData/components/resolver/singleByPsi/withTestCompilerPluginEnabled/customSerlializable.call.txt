@@ -1,6 +1,7 @@
 KtNameReferenceExpression(331,351): 'serializeFirstTarget'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = serializer

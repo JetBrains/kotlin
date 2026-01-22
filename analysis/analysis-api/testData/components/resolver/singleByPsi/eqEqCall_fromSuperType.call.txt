@@ -1,6 +1,7 @@
 KtBinaryExpression(136,144): 'b1 == b2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b1

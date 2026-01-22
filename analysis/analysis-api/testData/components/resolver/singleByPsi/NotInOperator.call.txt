@@ -1,6 +1,7 @@
 KtOperationReferenceExpression(69,72): '!in'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Foo()

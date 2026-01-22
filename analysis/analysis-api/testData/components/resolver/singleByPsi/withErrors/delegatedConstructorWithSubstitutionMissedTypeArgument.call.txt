@@ -2,6 +2,7 @@ KtConstructorDelegationCall(106,118): 'super(1, "")'
   KaCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

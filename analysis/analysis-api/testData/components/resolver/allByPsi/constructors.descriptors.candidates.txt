@@ -40,6 +40,7 @@ KtNameReferenceExpression(57,60): 'Int'
 KtConstructorDelegationCall(61,61): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -58,6 +59,7 @@ KtConstructorDelegationCall(61,61): ''
 KtConstructorDelegationReferenceExpression(61,61): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -94,6 +96,7 @@ KtNameReferenceExpression(81,87): 'String'
 KtConstructorDelegationCall(88,88): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -112,6 +115,7 @@ KtConstructorDelegationCall(88,88): ''
 KtConstructorDelegationReferenceExpression(88,88): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -178,6 +182,7 @@ KtNameReferenceExpression(163,166): 'Int'
 KtConstructorDelegationCall(170,179): 'super(ci)'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -211,6 +216,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -246,6 +252,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
 KtConstructorDelegationReferenceExpression(170,175): 'super'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -279,6 +286,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -356,6 +364,7 @@ KtNameReferenceExpression(200,206): 'String'
 KtConstructorDelegationCall(210,219): 'super(cs)'
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -390,6 +399,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
 
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -424,6 +434,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
 KtConstructorDelegationReferenceExpression(210,215): 'super'
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -458,6 +469,7 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
 
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -525,6 +537,7 @@ KtBlockExpression(235,263): '{'
 KtDotQualifiedExpression(245,257): 'super.call()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = super
@@ -551,6 +564,7 @@ KtNameReferenceExpression(245,250): 'super'
 KtCallExpression(251,257): 'call()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = super
@@ -571,6 +585,7 @@ KtCallExpression(251,257): 'call()'
 KtNameReferenceExpression(251,255): 'call'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = super
@@ -606,6 +621,7 @@ KtSuperTypeList(294,307): 'BaseClass(42)'
 KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -639,6 +655,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -674,6 +691,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
 KtConstructorCalleeExpression(294,303): 'BaseClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -707,6 +725,7 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -748,6 +767,7 @@ KtUserType(294,303): 'BaseClass'
 KtNameReferenceExpression(294,303): 'BaseClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -781,6 +801,7 @@ KtNameReferenceExpression(294,303): 'BaseClass'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -846,6 +867,7 @@ KtNameReferenceExpression(329,335): 'String'
 KtConstructorDelegationCall(339,345): 'this()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -863,6 +885,7 @@ KtConstructorDelegationCall(339,345): 'this()'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -890,6 +913,7 @@ KtConstructorDelegationCall(339,345): 'this()'
 KtConstructorDelegationReferenceExpression(339,343): 'this'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -907,6 +931,7 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1009,6 +1034,7 @@ KtParameterList(441,443): '()'
 KtConstructorDelegationCall(446,454): 'super(1)'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1043,6 +1069,7 @@ KtConstructorDelegationCall(446,454): 'super(1)'
 KtConstructorDelegationReferenceExpression(446,451): 'super'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

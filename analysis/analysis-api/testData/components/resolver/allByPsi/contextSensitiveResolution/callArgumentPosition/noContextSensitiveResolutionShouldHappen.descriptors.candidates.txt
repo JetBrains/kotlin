@@ -70,6 +70,7 @@ KtBlockExpression(178,213): '{'
 KtCallExpression(184,190): 'foo(X)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -103,6 +104,7 @@ KtCallExpression(184,190): 'foo(X)'
 KtNameReferenceExpression(184,187): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -145,6 +147,7 @@ KtNameReferenceExpression(188,189): 'X'
 KtCallExpression(195,211): 'foo(WrongEnum.X)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -178,6 +181,7 @@ KtCallExpression(195,211): 'foo(WrongEnum.X)'
 KtNameReferenceExpression(195,198): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -232,6 +236,7 @@ KtDeclarationModifierList(215,236): '@DslMarker'
 KtAnnotationEntry(215,225): '@DslMarker'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -249,6 +254,7 @@ KtAnnotationEntry(215,225): '@DslMarker'
 KtConstructorCalleeExpression(216,225): 'DslMarker'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -272,6 +278,7 @@ KtUserType(216,225): 'DslMarker'
 KtNameReferenceExpression(216,225): 'DslMarker'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -295,6 +302,7 @@ KtDeclarationModifierList(250,256): '@MyDsl'
 KtAnnotationEntry(250,256): '@MyDsl'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -312,6 +320,7 @@ KtAnnotationEntry(250,256): '@MyDsl'
 KtConstructorCalleeExpression(251,256): 'MyDsl'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -335,6 +344,7 @@ KtUserType(251,256): 'MyDsl'
 KtNameReferenceExpression(251,256): 'MyDsl'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -358,6 +368,7 @@ KtDeclarationModifierList(266,272): '@MyDsl'
 KtAnnotationEntry(266,272): '@MyDsl'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -375,6 +386,7 @@ KtAnnotationEntry(266,272): '@MyDsl'
 KtConstructorCalleeExpression(267,272): 'MyDsl'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -398,6 +410,7 @@ KtUserType(267,272): 'MyDsl'
 KtNameReferenceExpression(267,272): 'MyDsl'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -481,6 +494,7 @@ KtBlockExpression(340,362): '{'
 KtCallExpression(350,356): 'foo(X)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaImplicitReceiverValue:
@@ -520,6 +534,7 @@ KtCallExpression(350,356): 'foo(X)'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -554,6 +569,7 @@ KtCallExpression(350,356): 'foo(X)'
 KtNameReferenceExpression(350,353): 'foo'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaImplicitReceiverValue:
@@ -593,6 +609,7 @@ KtNameReferenceExpression(350,353): 'foo'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

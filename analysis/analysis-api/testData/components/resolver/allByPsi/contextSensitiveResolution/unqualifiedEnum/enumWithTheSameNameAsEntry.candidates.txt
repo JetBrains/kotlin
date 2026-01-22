@@ -91,6 +91,7 @@ KtDotQualifiedExpression(135,138): 'A.A'
 KtNameReferenceExpression(135,136): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -163,6 +164,7 @@ KtDotQualifiedExpression(150,153): 'A.B'
 KtNameReferenceExpression(150,151): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

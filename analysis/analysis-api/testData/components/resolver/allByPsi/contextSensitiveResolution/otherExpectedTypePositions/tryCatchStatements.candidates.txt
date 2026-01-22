@@ -25,6 +25,7 @@ KtSuperTypeList(128,137): 'MyClass()'
 KtSuperTypeCallEntry(128,137): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -43,6 +44,7 @@ KtSuperTypeCallEntry(128,137): 'MyClass()'
 KtConstructorCalleeExpression(128,135): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -94,6 +96,7 @@ KtNameReferenceExpression(187,194): 'MyClass'
 KtCallExpression(197,206): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -111,6 +114,7 @@ KtCallExpression(197,206): 'MyClass()'
 KtNameReferenceExpression(197,204): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -152,6 +156,7 @@ KtParameterList(273,275): '()'
 KtNameReferenceExpression(278,293): 'NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -173,6 +178,7 @@ KtProperty(303,349): 'val ClassMemberAlias = MyClass.NestedInheritor'
 KtDotQualifiedExpression(326,349): 'MyClass.NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -191,6 +197,7 @@ KtDotQualifiedExpression(326,349): 'MyClass.NestedInheritor'
 KtNameReferenceExpression(326,333): 'MyClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -209,6 +216,7 @@ KtNameReferenceExpression(326,333): 'MyClass'
 KtNameReferenceExpression(334,349): 'NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -251,6 +259,7 @@ KtSuperTypeList(372,384): 'Exception(m)'
 KtSuperTypeCallEntry(372,384): 'Exception(m)'
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -269,6 +278,7 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -295,6 +305,7 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
 
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -328,6 +339,7 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -369,6 +381,7 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -425,6 +438,7 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
 KtConstructorCalleeExpression(372,381): 'Exception'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -443,6 +457,7 @@ KtConstructorCalleeExpression(372,381): 'Exception'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -469,6 +484,7 @@ KtConstructorCalleeExpression(372,381): 'Exception'
 
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -502,6 +518,7 @@ KtConstructorCalleeExpression(372,381): 'Exception'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -543,6 +560,7 @@ KtConstructorCalleeExpression(372,381): 'Exception'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -656,6 +674,7 @@ KtSuperTypeList(406,418): 'Exception(m)'
 KtSuperTypeCallEntry(406,418): 'Exception(m)'
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -674,6 +693,7 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -700,6 +720,7 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
 
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -733,6 +754,7 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -774,6 +796,7 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -830,6 +853,7 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
 KtConstructorCalleeExpression(406,415): 'Exception'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -848,6 +872,7 @@ KtConstructorCalleeExpression(406,415): 'Exception'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -874,6 +899,7 @@ KtConstructorCalleeExpression(406,415): 'Exception'
 
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -907,6 +933,7 @@ KtConstructorCalleeExpression(406,415): 'Exception'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -948,6 +975,7 @@ KtConstructorCalleeExpression(406,415): 'Exception'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1061,6 +1089,7 @@ KtSuperTypeList(440,452): 'Exception(m)'
 KtSuperTypeCallEntry(440,452): 'Exception(m)'
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1079,6 +1108,7 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1105,6 +1135,7 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
 
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1138,6 +1169,7 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1179,6 +1211,7 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1235,6 +1268,7 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
 KtConstructorCalleeExpression(440,449): 'Exception'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1253,6 +1287,7 @@ KtConstructorCalleeExpression(440,449): 'Exception'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1279,6 +1314,7 @@ KtConstructorCalleeExpression(440,449): 'Exception'
 
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1312,6 +1348,7 @@ KtConstructorCalleeExpression(440,449): 'Exception'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1353,6 +1390,7 @@ KtConstructorCalleeExpression(440,449): 'Exception'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1511,6 +1549,7 @@ KtNameReferenceExpression(503,504): 'T'
 KtCallExpression(507,510): 'b()'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -1582,6 +1621,7 @@ KtNameReferenceExpression(568,583): 'NestedInheritor'
 KtNameReferenceExpression(666,681): 'NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1714,6 +1754,7 @@ KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
 KtCallExpression(1108,1497): 'receive<MyClass>('
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1764,6 +1805,7 @@ KtCallExpression(1108,1497): 'receive<MyClass>('
 KtNameReferenceExpression(1108,1115): 'receive'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1844,6 +1886,7 @@ KtNameReferenceExpression(1152,1167): 'NestedInheritor'
 KtNameReferenceExpression(1180,1195): 'NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2015,6 +2058,7 @@ KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
 KtCallExpression(1503,1887): 'run<MyClass> {'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2066,6 +2110,7 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2118,6 +2163,7 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
 KtNameReferenceExpression(1503,1506): 'run'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2169,6 +2215,7 @@ KtNameReferenceExpression(1503,1506): 'run'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2257,6 +2304,7 @@ KtNameReferenceExpression(1544,1559): 'NestedInheritor'
 KtNameReferenceExpression(1572,1587): 'NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

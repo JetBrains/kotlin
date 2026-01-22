@@ -138,6 +138,7 @@ KtNameReferenceExpression(253,254): 'S'
 
 KtCallExpression(257,263): 'TODO()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -154,6 +155,7 @@ KtCallExpression(257,263): 'TODO()'
 KtNameReferenceExpression(257,261): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -193,6 +195,7 @@ KtBlockExpression(284,492): '{'
 
 KtCallExpression(290,340): 'generate {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -230,6 +233,7 @@ KtCallExpression(290,340): 'generate {'
 KtNameReferenceExpression(290,298): 'generate'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -278,6 +282,7 @@ KtBlockExpression(309,334): 'yield(m)'
 
 KtCallExpression(309,317): 'yield(m)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -337,6 +342,7 @@ KtCallExpression(309,317): 'yield(m)'
 KtNameReferenceExpression(309,314): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -418,6 +424,7 @@ KtNameReferenceExpression(315,316): 'm'
 
 KtCallExpression(326,334): 'yield(X)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -477,6 +484,7 @@ KtCallExpression(326,334): 'yield(X)'
 KtNameReferenceExpression(326,331): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -561,6 +569,7 @@ KtNameReferenceExpression(332,333): 'X'
 
 KtCallExpression(346,396): 'generate {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -598,6 +607,7 @@ KtCallExpression(346,396): 'generate {'
 KtNameReferenceExpression(346,354): 'generate'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -646,6 +656,7 @@ KtBlockExpression(365,390): 'yield(X)'
 
 KtCallExpression(365,373): 'yield(X)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -705,6 +716,7 @@ KtCallExpression(365,373): 'yield(X)'
 KtNameReferenceExpression(365,370): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -789,6 +801,7 @@ KtNameReferenceExpression(371,372): 'X'
 
 KtCallExpression(382,390): 'yield(m)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -848,6 +861,7 @@ KtCallExpression(382,390): 'yield(m)'
 KtNameReferenceExpression(382,387): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -941,6 +955,7 @@ KtNameReferenceExpression(409,415): 'MyEnum'
 
 KtCallExpression(418,451): 'generate {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -977,6 +992,7 @@ KtCallExpression(418,451): 'generate {'
 KtNameReferenceExpression(418,426): 'generate'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1024,6 +1040,7 @@ KtBlockExpression(437,445): 'yield(X)'
 
 KtCallExpression(437,445): 'yield(X)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -1083,6 +1100,7 @@ KtCallExpression(437,445): 'yield(X)'
 KtNameReferenceExpression(437,442): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -1154,6 +1172,7 @@ KtCallExpression(457,490): 'generate {'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1193,6 +1212,7 @@ KtNameReferenceExpression(457,465): 'generate'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1242,6 +1262,7 @@ KtBlockExpression(476,484): 'yield(X)'
 
 KtCallExpression(476,484): 'yield(X)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:
@@ -1301,6 +1322,7 @@ KtCallExpression(476,484): 'yield(X)'
 KtNameReferenceExpression(476,481): 'yield'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:

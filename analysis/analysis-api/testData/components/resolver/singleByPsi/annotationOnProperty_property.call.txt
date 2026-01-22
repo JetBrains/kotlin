@@ -1,5 +1,6 @@
 KtAnnotationEntry(23,37): '@property:Anno'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null

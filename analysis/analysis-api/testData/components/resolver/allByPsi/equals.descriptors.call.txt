@@ -55,6 +55,7 @@ KtReturnExpression(72,98): 'return super.equals(other)'
 KtDotQualifiedExpression(79,98): 'super.equals(other)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = super
@@ -95,6 +96,7 @@ KtNameReferenceExpression(79,84): 'super'
 
 KtCallExpression(85,98): 'equals(other)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = super
@@ -130,6 +132,7 @@ KtCallExpression(85,98): 'equals(other)'
 KtNameReferenceExpression(85,91): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = super
@@ -199,6 +202,7 @@ KtSuperTypeList(142,151): 'Another()'
 
 KtSuperTypeCallEntry(142,151): 'Another()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -216,6 +220,7 @@ KtSuperTypeCallEntry(142,151): 'Another()'
 KtConstructorCalleeExpression(142,149): 'Another'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -239,6 +244,7 @@ KtUserType(142,149): 'Another'
 KtNameReferenceExpression(142,149): 'Another'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -301,6 +307,7 @@ KtReturnExpression(210,236): 'return super.equals(other)'
 KtDotQualifiedExpression(217,236): 'super.equals(other)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = super
@@ -341,6 +348,7 @@ KtNameReferenceExpression(217,222): 'super'
 
 KtCallExpression(223,236): 'equals(other)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = super
@@ -376,6 +384,7 @@ KtCallExpression(223,236): 'equals(other)'
 KtNameReferenceExpression(223,229): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = super
@@ -547,6 +556,7 @@ KtNameReferenceExpression(311,313): 'm2'
 KtBinaryExpression(318,326): 'm1 == m2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -599,6 +609,7 @@ KtNameReferenceExpression(318,320): 'm1'
 KtOperationReferenceExpression(321,323): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -651,6 +662,7 @@ KtNameReferenceExpression(324,326): 'm2'
 KtBinaryExpression(331,339): 'm1 != m2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -703,6 +715,7 @@ KtNameReferenceExpression(331,333): 'm1'
 KtOperationReferenceExpression(334,336): '!='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -755,6 +768,7 @@ KtNameReferenceExpression(337,339): 'm2'
 KtDotQualifiedExpression(344,357): 'm1.equals(m2)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -806,6 +820,7 @@ KtNameReferenceExpression(344,346): 'm1'
 
 KtCallExpression(347,357): 'equals(m2)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = m1
@@ -841,6 +856,7 @@ KtCallExpression(347,357): 'equals(m2)'
 KtNameReferenceExpression(347,353): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1
@@ -979,6 +995,7 @@ KtNameReferenceExpression(384,386): 'm1'
 KtBinaryExpression(391,399): 'm2 == m1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1031,6 +1048,7 @@ KtNameReferenceExpression(391,393): 'm2'
 KtOperationReferenceExpression(394,396): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1083,6 +1101,7 @@ KtNameReferenceExpression(397,399): 'm1'
 KtBinaryExpression(404,412): 'm2 != m1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1135,6 +1154,7 @@ KtNameReferenceExpression(404,406): 'm2'
 KtOperationReferenceExpression(407,409): '!='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1187,6 +1207,7 @@ KtNameReferenceExpression(410,412): 'm1'
 KtDotQualifiedExpression(417,430): 'm2.equals(m1)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1238,6 +1259,7 @@ KtNameReferenceExpression(417,419): 'm2'
 
 KtCallExpression(420,430): 'equals(m1)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = m2
@@ -1273,6 +1295,7 @@ KtCallExpression(420,430): 'equals(m1)'
 KtNameReferenceExpression(420,426): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m2
@@ -1342,6 +1365,7 @@ KtProperty(454,477): 'val another = Another()'
 
 KtCallExpression(468,477): 'Another()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1358,6 +1382,7 @@ KtCallExpression(468,477): 'Another()'
 KtNameReferenceExpression(468,475): 'Another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1457,6 +1482,7 @@ KtNameReferenceExpression(518,525): 'another'
 KtBinaryExpression(530,550): 'another == Another()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1509,6 +1535,7 @@ KtNameReferenceExpression(530,537): 'another'
 KtOperationReferenceExpression(538,540): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1543,6 +1570,7 @@ KtOperationReferenceExpression(538,540): '=='
 
 KtCallExpression(541,550): 'Another()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1559,6 +1587,7 @@ KtCallExpression(541,550): 'Another()'
 KtNameReferenceExpression(541,548): 'Another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1578,6 +1607,7 @@ KtValueArgumentList(548,550): '()'
 KtBinaryExpression(555,575): 'another != Another()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1630,6 +1660,7 @@ KtNameReferenceExpression(555,562): 'another'
 KtOperationReferenceExpression(563,565): '!='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1664,6 +1695,7 @@ KtOperationReferenceExpression(563,565): '!='
 
 KtCallExpression(566,575): 'Another()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1680,6 +1712,7 @@ KtCallExpression(566,575): 'Another()'
 KtNameReferenceExpression(566,573): 'Another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1699,6 +1732,7 @@ KtValueArgumentList(573,575): '()'
 KtDotQualifiedExpression(580,605): 'another.equals(Another())'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1750,6 +1784,7 @@ KtNameReferenceExpression(580,587): 'another'
 
 KtCallExpression(588,605): 'equals(Another())'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = another
@@ -1785,6 +1820,7 @@ KtCallExpression(588,605): 'equals(Another())'
 KtNameReferenceExpression(588,594): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -1825,6 +1861,7 @@ KtValueArgument(595,604): 'Another()'
 
 KtCallExpression(595,604): 'Another()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1841,6 +1878,7 @@ KtCallExpression(595,604): 'Another()'
 KtNameReferenceExpression(595,602): 'Another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1862,6 +1900,7 @@ KtProperty(611,630): 'val child = Child()'
 
 KtCallExpression(623,630): 'Child()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1878,6 +1917,7 @@ KtCallExpression(623,630): 'Child()'
 KtNameReferenceExpression(623,628): 'Child'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1899,6 +1939,7 @@ KtProperty(635,658): 'val myClass = MyClass()'
 
 KtCallExpression(649,658): 'MyClass()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1915,6 +1956,7 @@ KtCallExpression(649,658): 'MyClass()'
 KtNameReferenceExpression(649,656): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2014,6 +2056,7 @@ KtNameReferenceExpression(697,702): 'child'
 KtBinaryExpression(708,724): 'child == myClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2066,6 +2109,7 @@ KtNameReferenceExpression(708,713): 'child'
 KtOperationReferenceExpression(714,716): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2118,6 +2162,7 @@ KtNameReferenceExpression(717,724): 'myClass'
 KtDotQualifiedExpression(729,750): 'child.equals(myClass)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2169,6 +2214,7 @@ KtNameReferenceExpression(729,734): 'child'
 
 KtCallExpression(735,750): 'equals(myClass)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = child
@@ -2204,6 +2250,7 @@ KtCallExpression(735,750): 'equals(myClass)'
 KtNameReferenceExpression(735,741): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2262,6 +2309,7 @@ KtNameReferenceExpression(742,749): 'myClass'
 KtBinaryExpression(755,771): 'myClass != child'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -2314,6 +2362,7 @@ KtNameReferenceExpression(755,762): 'myClass'
 KtOperationReferenceExpression(763,765): '!='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -2366,6 +2415,7 @@ KtNameReferenceExpression(766,771): 'child'
 KtPrefixExpression(776,798): '!myClass.equals(child)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass.equals(child)
@@ -2385,6 +2435,7 @@ KtPrefixExpression(776,798): '!myClass.equals(child)'
 KtOperationReferenceExpression(776,777): '!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass.equals(child)
@@ -2404,6 +2455,7 @@ KtOperationReferenceExpression(776,777): '!'
 KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -2455,6 +2507,7 @@ KtNameReferenceExpression(777,784): 'myClass'
 
 KtCallExpression(785,798): 'equals(child)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = myClass
@@ -2490,6 +2543,7 @@ KtCallExpression(785,798): 'equals(child)'
 KtNameReferenceExpression(785,791): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -2548,6 +2602,7 @@ KtNameReferenceExpression(792,797): 'child'
 KtBinaryExpression(804,820): 'another == child'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -2600,6 +2655,7 @@ KtNameReferenceExpression(804,811): 'another'
 KtOperationReferenceExpression(812,814): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -2652,6 +2708,7 @@ KtNameReferenceExpression(815,820): 'child'
 KtDotQualifiedExpression(825,846): 'another.equals(child)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -2703,6 +2760,7 @@ KtNameReferenceExpression(825,832): 'another'
 
 KtCallExpression(833,846): 'equals(child)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = another
@@ -2738,6 +2796,7 @@ KtCallExpression(833,846): 'equals(child)'
 KtNameReferenceExpression(833,839): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -2796,6 +2855,7 @@ KtNameReferenceExpression(840,845): 'child'
 KtBinaryExpression(851,867): 'child == another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2848,6 +2908,7 @@ KtNameReferenceExpression(851,856): 'child'
 KtOperationReferenceExpression(857,859): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2900,6 +2961,7 @@ KtNameReferenceExpression(860,867): 'another'
 KtDotQualifiedExpression(872,893): 'child.equals(another)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -2951,6 +3013,7 @@ KtNameReferenceExpression(872,877): 'child'
 
 KtCallExpression(878,893): 'equals(another)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = child
@@ -2986,6 +3049,7 @@ KtCallExpression(878,893): 'equals(another)'
 KtNameReferenceExpression(878,884): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = child
@@ -3044,6 +3108,7 @@ KtNameReferenceExpression(885,892): 'another'
 KtBinaryExpression(899,917): 'another == myClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -3096,6 +3161,7 @@ KtNameReferenceExpression(899,906): 'another'
 KtOperationReferenceExpression(907,909): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -3148,6 +3214,7 @@ KtNameReferenceExpression(910,917): 'myClass'
 KtDotQualifiedExpression(922,945): 'another.equals(myClass)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -3199,6 +3266,7 @@ KtNameReferenceExpression(922,929): 'another'
 
 KtCallExpression(930,945): 'equals(myClass)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = another
@@ -3234,6 +3302,7 @@ KtCallExpression(930,945): 'equals(myClass)'
 KtNameReferenceExpression(930,936): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = another
@@ -3292,6 +3361,7 @@ KtNameReferenceExpression(937,944): 'myClass'
 KtBinaryExpression(950,968): 'myClass != another'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -3344,6 +3414,7 @@ KtNameReferenceExpression(950,957): 'myClass'
 KtOperationReferenceExpression(958,960): '!='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -3396,6 +3467,7 @@ KtNameReferenceExpression(961,968): 'another'
 KtPrefixExpression(973,997): '!myClass.equals(another)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass.equals(another)
@@ -3415,6 +3487,7 @@ KtPrefixExpression(973,997): '!myClass.equals(another)'
 KtOperationReferenceExpression(973,974): '!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass.equals(another)
@@ -3434,6 +3507,7 @@ KtOperationReferenceExpression(973,974): '!'
 KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -3485,6 +3559,7 @@ KtNameReferenceExpression(974,981): 'myClass'
 
 KtCallExpression(982,997): 'equals(another)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = myClass
@@ -3520,6 +3595,7 @@ KtCallExpression(982,997): 'equals(another)'
 KtNameReferenceExpression(982,988): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass

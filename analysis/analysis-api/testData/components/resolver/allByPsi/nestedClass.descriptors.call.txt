@@ -66,6 +66,7 @@ KtSuperTypeList(74,81): 'Base(x)'
 
 KtSuperTypeCallEntry(74,81): 'Base(x)'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -99,6 +100,7 @@ KtSuperTypeCallEntry(74,81): 'Base(x)'
 KtConstructorCalleeExpression(74,78): 'Base'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -138,6 +140,7 @@ KtUserType(74,78): 'Base'
 KtNameReferenceExpression(74,78): 'Base'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

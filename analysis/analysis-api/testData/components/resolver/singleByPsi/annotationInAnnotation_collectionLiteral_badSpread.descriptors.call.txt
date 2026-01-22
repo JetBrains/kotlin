@@ -1,5 +1,6 @@
 KtCallExpression(153,177): 'Annotation(["v1", "v2"])'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null

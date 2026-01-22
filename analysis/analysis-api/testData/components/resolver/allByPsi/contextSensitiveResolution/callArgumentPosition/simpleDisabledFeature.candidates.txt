@@ -79,6 +79,7 @@ KtDotQualifiedExpression(159,167): 'MyEnum.X'
 KtNameReferenceExpression(159,165): 'MyEnum'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -118,6 +119,7 @@ KtNameReferenceExpression(166,167): 'X'
 KtCallExpression(173,179): 'foo(X)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -151,6 +153,7 @@ KtCallExpression(173,179): 'foo(X)'
 KtNameReferenceExpression(173,176): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -193,6 +196,7 @@ KtNameReferenceExpression(177,178): 'X'
 KtCallExpression(184,190): 'foo(L)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -226,6 +230,7 @@ KtCallExpression(184,190): 'foo(L)'
 KtNameReferenceExpression(184,187): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -283,6 +288,7 @@ KtNameReferenceExpression(188,189): 'L'
 KtCallExpression(195,210): 'foo(UNRESOLVED)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -316,6 +322,7 @@ KtCallExpression(195,210): 'foo(UNRESOLVED)'
 KtNameReferenceExpression(195,198): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

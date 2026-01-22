@@ -278,6 +278,7 @@ KtNameReferenceExpression(453,459): 'MyEnum'
 
 KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(true)'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = { arg: Boolean -> if (arg) enumProp else Option1 }
@@ -856,6 +857,7 @@ KtBlockExpression(975,1005): 'contextOf<MyEnum>() == Option1'
 KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = contextOf<MyEnum>()
@@ -890,6 +892,7 @@ KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
 
 KtCallExpression(975,994): 'contextOf<MyEnum>()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = [
       KaImplicitReceiverValue:
         symbol = <unused var>: MyEnum
@@ -920,6 +923,7 @@ KtCallExpression(975,994): 'contextOf<MyEnum>()'
 KtNameReferenceExpression(975,984): 'contextOf'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: MyEnum
@@ -968,6 +972,7 @@ KtValueArgumentList(992,994): '()'
 KtOperationReferenceExpression(995,997): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = contextOf<MyEnum>()

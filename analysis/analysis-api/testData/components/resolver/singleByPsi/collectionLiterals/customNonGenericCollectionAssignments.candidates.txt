@@ -1,6 +1,7 @@
 KtCollectionLiteralExpression(136,138): '[]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = []

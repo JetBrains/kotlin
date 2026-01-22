@@ -1,6 +1,7 @@
 KtPostfixExpression(24,27): 'a!!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

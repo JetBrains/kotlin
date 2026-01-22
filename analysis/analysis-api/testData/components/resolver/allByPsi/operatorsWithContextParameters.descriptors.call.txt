@@ -633,6 +633,7 @@ KtProperty(797,808): 'var a = A()'
 
 KtCallExpression(805,808): 'A()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -649,6 +650,7 @@ KtCallExpression(805,808): 'A()'
 KtNameReferenceExpression(805,806): 'A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -670,6 +672,7 @@ KtProperty(813,838): 'var b = SimpleOperators()'
 
 KtCallExpression(821,838): 'SimpleOperators()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -686,6 +689,7 @@ KtCallExpression(821,838): 'SimpleOperators()'
 KtNameReferenceExpression(821,836): 'SimpleOperators'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -704,6 +708,7 @@ KtValueArgumentList(836,838): '()'
 
 KtCallExpression(843,1229): 'with(A()){'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -757,7 +762,7 @@ KtCallExpression(843,1229): 'with(A()){'
               a += 1
               thisProp++
               a = a++
-
+      
               b + 1
               +b
               b[1]
@@ -777,6 +782,7 @@ KtCallExpression(843,1229): 'with(A()){'
 KtNameReferenceExpression(843,847): 'with'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -830,7 +836,7 @@ KtNameReferenceExpression(843,847): 'with'
                 a += 1
                 thisProp++
                 a = a++
-
+        
                 b + 1
                 +b
                 b[1]
@@ -855,6 +861,7 @@ KtValueArgument(848,851): 'A()'
 
 KtCallExpression(848,851): 'A()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -871,6 +878,7 @@ KtCallExpression(848,851): 'A()'
 KtNameReferenceExpression(848,849): 'A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -911,6 +919,7 @@ KtNameReferenceExpression(877,881): 'this'
 KtPrefixExpression(890,899): '+thisProp'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -930,6 +939,7 @@ KtPrefixExpression(890,899): '+thisProp'
 KtOperationReferenceExpression(890,891): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -966,6 +976,7 @@ KtNameReferenceExpression(891,899): 'thisProp'
 KtPrefixExpression(908,910): '+a'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -985,6 +996,7 @@ KtPrefixExpression(908,910): '+a'
 KtOperationReferenceExpression(908,909): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1021,6 +1033,7 @@ KtNameReferenceExpression(909,910): 'a'
 KtBinaryExpression(919,931): 'thisProp + 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1073,6 +1086,7 @@ KtNameReferenceExpression(919,927): 'thisProp'
 KtOperationReferenceExpression(928,929): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1111,6 +1125,7 @@ KtConstantExpression(930,931): '1'
 KtBinaryExpression(940,945): 'a + 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1163,6 +1178,7 @@ KtNameReferenceExpression(940,941): 'a'
 KtOperationReferenceExpression(942,943): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1200,6 +1216,7 @@ KtConstantExpression(944,945): '1'
 
 KtArrayAccessExpression(954,965): 'thisProp[1]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -1257,6 +1274,7 @@ KtConstantExpression(963,964): '1'
 
 KtArrayAccessExpression(974,978): 'a[1]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -1317,6 +1335,7 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
 
 KtArrayAccessExpression(987,998): 'thisProp[1]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -1391,6 +1410,7 @@ KtOperationReferenceExpression(999,1000): '='
 
 KtCallExpression(1001,1004): 'A()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1407,6 +1427,7 @@ KtCallExpression(1001,1004): 'A()'
 KtNameReferenceExpression(1001,1002): 'A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1428,6 +1449,7 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
 
 KtArrayAccessExpression(1013,1017): 'a[1]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -1502,6 +1524,7 @@ KtOperationReferenceExpression(1018,1019): '='
 
 KtCallExpression(1020,1023): 'A()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1518,6 +1541,7 @@ KtCallExpression(1020,1023): 'A()'
 KtNameReferenceExpression(1020,1021): 'A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1536,6 +1560,7 @@ KtValueArgumentList(1021,1023): '()'
 
 KtCallExpression(1032,1042): 'thisProp()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -1574,6 +1599,7 @@ KtValueArgumentList(1040,1042): '()'
 
 KtCallExpression(1051,1054): 'a()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -1613,6 +1639,7 @@ KtValueArgumentList(1052,1054): '()'
 KtBinaryExpression(1063,1076): 'thisProp += 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1665,6 +1692,7 @@ KtNameReferenceExpression(1063,1071): 'thisProp'
 KtOperationReferenceExpression(1072,1074): '+='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1703,6 +1731,7 @@ KtConstantExpression(1075,1076): '1'
 KtBinaryExpression(1085,1091): 'a += 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1755,6 +1784,7 @@ KtNameReferenceExpression(1085,1086): 'a'
 KtOperationReferenceExpression(1087,1089): '+='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1796,6 +1826,7 @@ KtPostfixExpression(1100,1110): 'thisProp++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
@@ -1850,6 +1881,7 @@ KtOperationReferenceExpression(1108,1110): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
@@ -1941,6 +1973,7 @@ KtPostfixExpression(1123,1126): 'a++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
@@ -1995,6 +2028,7 @@ KtOperationReferenceExpression(1124,1126): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
@@ -2029,6 +2063,7 @@ KtOperationReferenceExpression(1124,1126): '++'
 KtBinaryExpression(1136,1141): 'b + 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -2081,6 +2116,7 @@ KtNameReferenceExpression(1136,1137): 'b'
 KtOperationReferenceExpression(1138,1139): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -2119,6 +2155,7 @@ KtConstantExpression(1140,1141): '1'
 KtPrefixExpression(1150,1152): '+b'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -2138,6 +2175,7 @@ KtPrefixExpression(1150,1152): '+b'
 KtOperationReferenceExpression(1150,1151): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -2173,6 +2211,7 @@ KtNameReferenceExpression(1151,1152): 'b'
 
 KtArrayAccessExpression(1161,1165): 'b[1]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = b
@@ -2233,6 +2272,7 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
 
 KtArrayAccessExpression(1174,1178): 'b[1]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = b
@@ -2307,6 +2347,7 @@ KtOperationReferenceExpression(1179,1180): '='
 
 KtCallExpression(1181,1184): 'A()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -2323,6 +2364,7 @@ KtCallExpression(1181,1184): 'A()'
 KtNameReferenceExpression(1181,1182): 'A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2341,6 +2383,7 @@ KtValueArgumentList(1182,1184): '()'
 
 KtCallExpression(1193,1196): 'b()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = b
@@ -2380,6 +2423,7 @@ KtValueArgumentList(1194,1196): '()'
 KtBinaryExpression(1205,1211): 'b += 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -2432,6 +2476,7 @@ KtNameReferenceExpression(1205,1206): 'b'
 KtOperationReferenceExpression(1207,1209): '+='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -2473,6 +2518,7 @@ KtPostfixExpression(1220,1223): 'b++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = b
@@ -2527,6 +2573,7 @@ KtOperationReferenceExpression(1221,1223): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = b
@@ -2572,6 +2619,7 @@ KtProperty(1260,1271): 'var a = A()'
 
 KtCallExpression(1268,1271): 'A()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -2588,6 +2636,7 @@ KtCallExpression(1268,1271): 'A()'
 KtNameReferenceExpression(1268,1269): 'A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2609,6 +2658,7 @@ KtProperty(1276,1301): 'var b = SimpleOperators()'
 
 KtCallExpression(1284,1301): 'SimpleOperators()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -2625,6 +2675,7 @@ KtCallExpression(1284,1301): 'SimpleOperators()'
 KtNameReferenceExpression(1284,1299): 'SimpleOperators'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2644,6 +2695,7 @@ KtValueArgumentList(1299,1301): '()'
 KtPrefixExpression(1307,1309): '+a'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2663,6 +2715,7 @@ KtPrefixExpression(1307,1309): '+a'
 KtOperationReferenceExpression(1307,1308): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2699,6 +2752,7 @@ KtNameReferenceExpression(1308,1309): 'a'
 KtBinaryExpression(1314,1319): 'a + 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2751,6 +2805,7 @@ KtNameReferenceExpression(1314,1315): 'a'
 KtOperationReferenceExpression(1316,1317): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2788,6 +2843,7 @@ KtConstantExpression(1318,1319): '1'
 
 KtArrayAccessExpression(1324,1328): 'a[1]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -2848,6 +2904,7 @@ KtBinaryExpression(1333,1343): 'a[1] = A()'
 
 KtArrayAccessExpression(1333,1337): 'a[1]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -2922,6 +2979,7 @@ KtOperationReferenceExpression(1338,1339): '='
 
 KtCallExpression(1340,1343): 'A()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -2938,6 +2996,7 @@ KtCallExpression(1340,1343): 'A()'
 KtNameReferenceExpression(1340,1341): 'A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2956,6 +3015,7 @@ KtValueArgumentList(1341,1343): '()'
 
 KtCallExpression(1348,1351): 'a()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -2995,6 +3055,7 @@ KtValueArgumentList(1349,1351): '()'
 KtBinaryExpression(1356,1362): 'a += 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3047,6 +3108,7 @@ KtNameReferenceExpression(1356,1357): 'a'
 KtOperationReferenceExpression(1358,1360): '+='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3088,6 +3150,7 @@ KtPostfixExpression(1367,1370): 'a++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
@@ -3142,6 +3205,7 @@ KtOperationReferenceExpression(1368,1370): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
@@ -3176,6 +3240,7 @@ KtOperationReferenceExpression(1368,1370): '++'
 KtBinaryExpression(1376,1381): 'b + 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -3228,6 +3293,7 @@ KtNameReferenceExpression(1376,1377): 'b'
 KtOperationReferenceExpression(1378,1379): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -3266,6 +3332,7 @@ KtConstantExpression(1380,1381): '1'
 KtPrefixExpression(1386,1388): '+b'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -3285,6 +3352,7 @@ KtPrefixExpression(1386,1388): '+b'
 KtOperationReferenceExpression(1386,1387): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -3320,6 +3388,7 @@ KtNameReferenceExpression(1387,1388): 'b'
 
 KtArrayAccessExpression(1393,1397): 'b[1]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = b
@@ -3380,6 +3449,7 @@ KtBinaryExpression(1402,1412): 'b[1] = A()'
 
 KtArrayAccessExpression(1402,1406): 'b[1]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = b
@@ -3454,6 +3524,7 @@ KtOperationReferenceExpression(1407,1408): '='
 
 KtCallExpression(1409,1412): 'A()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -3470,6 +3541,7 @@ KtCallExpression(1409,1412): 'A()'
 KtNameReferenceExpression(1409,1410): 'A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3488,6 +3560,7 @@ KtValueArgumentList(1410,1412): '()'
 
 KtCallExpression(1417,1420): 'b()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = b
@@ -3527,6 +3600,7 @@ KtValueArgumentList(1418,1420): '()'
 KtBinaryExpression(1425,1431): 'b += 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -3579,6 +3653,7 @@ KtNameReferenceExpression(1425,1426): 'b'
 KtOperationReferenceExpression(1427,1429): '+='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -3620,6 +3695,7 @@ KtPostfixExpression(1436,1439): 'b++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = b
@@ -3674,6 +3750,7 @@ KtOperationReferenceExpression(1437,1439): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = b

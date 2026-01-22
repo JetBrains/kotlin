@@ -72,6 +72,7 @@ KtBlockExpression(134,170): '{'
 
 KtCallExpression(140,146): 'foo(X)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -104,6 +105,7 @@ KtCallExpression(140,146): 'foo(X)'
 KtNameReferenceExpression(140,143): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -171,12 +173,13 @@ KtNameReferenceExpression(144,145): 'X'
           callableId = a2/X
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     private val X: MyEnum defined in a1 in file other1.kt
     private val X: MyEnum defined in a2 in file other2.kt>
 
 KtCallExpression(151,157): 'foo(Y)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -209,6 +212,7 @@ KtCallExpression(151,157): 'foo(Y)'
 KtNameReferenceExpression(151,154): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -276,12 +280,13 @@ KtNameReferenceExpression(155,156): 'Y'
           callableId = a2/Y
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     private val Y: String defined in a1 in file other1.kt
     private val Y: String defined in a2 in file other2.kt>
 
 KtCallExpression(162,168): 'foo(Z)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -314,6 +319,7 @@ KtCallExpression(162,168): 'foo(Z)'
 KtNameReferenceExpression(162,165): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

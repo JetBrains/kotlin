@@ -1,6 +1,7 @@
 KtCallableReferenceExpression(141,150): 'list::add'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list

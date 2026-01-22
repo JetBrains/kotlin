@@ -2,6 +2,7 @@ module1 - main1.kt:
   KtNameReferenceExpression(121,124): 'foo'
     KaSuccessCallInfo:
       call = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = Common()
@@ -22,6 +23,7 @@ module2 - main2.kt:
   KtNameReferenceExpression(129,132): 'bar'
     KaSuccessCallInfo:
       call = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = Common()

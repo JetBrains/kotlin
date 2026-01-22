@@ -73,6 +73,7 @@ KtBlockExpression(161,253): '{'
 KtDotQualifiedExpression(167,185): 'MyAlias.function()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -93,6 +94,7 @@ KtDotQualifiedExpression(167,185): 'MyAlias.function()'
 KtNameReferenceExpression(167,174): 'MyAlias'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -111,6 +113,7 @@ KtNameReferenceExpression(167,174): 'MyAlias'
 KtCallExpression(175,185): 'function()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -131,6 +134,7 @@ KtCallExpression(175,185): 'function()'
 KtNameReferenceExpression(175,183): 'function'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -175,6 +179,7 @@ KtDotQualifiedExpression(190,206): 'MyAlias.property'
 KtNameReferenceExpression(190,197): 'MyAlias'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -214,6 +219,7 @@ KtNameReferenceExpression(198,206): 'property'
 KtCallableReferenceExpression(212,229): 'MyAlias::function'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -234,6 +240,7 @@ KtCallableReferenceExpression(212,229): 'MyAlias::function'
 KtNameReferenceExpression(212,219): 'MyAlias'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -276,6 +283,7 @@ KtCallableReferenceExpression(234,251): 'MyAlias::property'
 KtNameReferenceExpression(234,241): 'MyAlias'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

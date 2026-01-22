@@ -1,6 +1,7 @@
 KtNameReferenceExpression(7,8): 'S'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

@@ -127,6 +127,7 @@ KtProperty(139,190): 'val prop = take {'
 KtCallExpression(150,190): 'take {'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -165,6 +166,7 @@ KtCallExpression(150,190): 'take {'
 KtNameReferenceExpression(150,154): 'take'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

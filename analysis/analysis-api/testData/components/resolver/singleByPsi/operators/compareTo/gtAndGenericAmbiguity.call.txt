@@ -2,6 +2,7 @@ KtOperationReferenceExpression(97,98): '>'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -34,6 +35,7 @@ KtOperationReferenceExpression(97,98): '>'
             callableId = null)
         },
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:

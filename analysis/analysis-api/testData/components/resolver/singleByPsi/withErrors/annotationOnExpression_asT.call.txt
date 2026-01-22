@@ -1,5 +1,6 @@
 KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null

@@ -1,6 +1,7 @@
 KtSuperTypeCallEntry(93,106): 'Foo<String>()'
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

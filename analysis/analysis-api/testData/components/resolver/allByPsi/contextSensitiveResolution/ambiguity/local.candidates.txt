@@ -31,6 +31,7 @@ KtSuperTypeList(114,122): 'Sealed()'
 KtSuperTypeCallEntry(114,122): 'Sealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -49,6 +50,7 @@ KtSuperTypeCallEntry(114,122): 'Sealed()'
 KtConstructorCalleeExpression(114,120): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -106,6 +108,7 @@ KtSuperTypeList(154,162): 'Sealed()'
 KtSuperTypeCallEntry(154,162): 'Sealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -124,6 +127,7 @@ KtSuperTypeCallEntry(154,162): 'Sealed()'
 KtConstructorCalleeExpression(154,160): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -163,6 +167,7 @@ KtSuperTypeList(183,191): 'Sealed()'
 KtSuperTypeCallEntry(183,191): 'Sealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -181,6 +186,7 @@ KtSuperTypeCallEntry(183,191): 'Sealed()'
 KtConstructorCalleeExpression(183,189): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -238,6 +244,7 @@ KtSuperTypeList(223,231): 'Sealed()'
 KtSuperTypeCallEntry(223,231): 'Sealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -256,6 +263,7 @@ KtSuperTypeCallEntry(223,231): 'Sealed()'
 KtConstructorCalleeExpression(223,229): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -319,6 +327,7 @@ KtSuperTypeList(278,286): 'Sealed()'
 KtSuperTypeCallEntry(278,286): 'Sealed()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -337,6 +346,7 @@ KtSuperTypeCallEntry(278,286): 'Sealed()'
 KtConstructorCalleeExpression(278,284): 'Sealed'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -388,6 +398,7 @@ KtNameReferenceExpression(335,341): 'Sealed'
 KtDotQualifiedExpression(344,352): 'Sealed.A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -406,6 +417,7 @@ KtDotQualifiedExpression(344,352): 'Sealed.A'
 KtNameReferenceExpression(344,350): 'Sealed'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -424,6 +436,7 @@ KtNameReferenceExpression(344,350): 'Sealed'
 KtNameReferenceExpression(351,352): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -454,6 +467,7 @@ KtNameReferenceExpression(377,383): 'Sealed'
 KtDotQualifiedExpression(386,394): 'Sealed.A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -472,6 +486,7 @@ KtDotQualifiedExpression(386,394): 'Sealed.A'
 KtNameReferenceExpression(386,392): 'Sealed'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -490,6 +505,7 @@ KtNameReferenceExpression(386,392): 'Sealed'
 KtNameReferenceExpression(393,394): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -604,6 +620,7 @@ KtWhenConditionWithExpression(520,521): 'C'
 KtNameReferenceExpression(520,521): 'C'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -796,6 +813,7 @@ KtWhenConditionWithExpression(750,758): 'Sealed.C'
 KtDotQualifiedExpression(750,758): 'Sealed.C'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -814,6 +832,7 @@ KtDotQualifiedExpression(750,758): 'Sealed.C'
 KtNameReferenceExpression(750,756): 'Sealed'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -832,6 +851,7 @@ KtNameReferenceExpression(750,756): 'Sealed'
 KtNameReferenceExpression(757,758): 'C'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -928,6 +948,7 @@ KtDotQualifiedExpression(827,844): 'Sealed.CompanionB'
 KtNameReferenceExpression(827,833): 'Sealed'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1066,6 +1087,7 @@ KtWhenConditionWithExpression(1038,1039): 'A'
 KtNameReferenceExpression(1038,1039): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1111,6 +1133,7 @@ KtWhenConditionWithExpression(1079,1080): 'C'
 KtNameReferenceExpression(1079,1080): 'C'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1174,6 +1197,7 @@ KtWhenConditionWithExpression(1147,1157): 'CompanionA'
 KtNameReferenceExpression(1147,1157): 'CompanionA'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1290,6 +1314,7 @@ KtWhenConditionWithExpression(1306,1312): 'Test.A'
 KtDotQualifiedExpression(1306,1312): 'Test.A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1308,6 +1333,7 @@ KtDotQualifiedExpression(1306,1312): 'Test.A'
 KtNameReferenceExpression(1306,1310): 'Test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1326,6 +1352,7 @@ KtNameReferenceExpression(1306,1310): 'Test'
 KtNameReferenceExpression(1311,1312): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1377,6 +1404,7 @@ KtWhenConditionWithExpression(1357,1365): 'Sealed.C'
 KtDotQualifiedExpression(1357,1365): 'Sealed.C'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1395,6 +1423,7 @@ KtDotQualifiedExpression(1357,1365): 'Sealed.C'
 KtNameReferenceExpression(1357,1363): 'Sealed'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1413,6 +1442,7 @@ KtNameReferenceExpression(1357,1363): 'Sealed'
 KtNameReferenceExpression(1364,1365): 'C'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1488,6 +1518,7 @@ KtWhenConditionWithExpression(1446,1461): 'Test.CompanionA'
 KtDotQualifiedExpression(1446,1461): 'Test.CompanionA'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1506,6 +1537,7 @@ KtDotQualifiedExpression(1446,1461): 'Test.CompanionA'
 KtNameReferenceExpression(1446,1450): 'Test'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1524,6 +1556,7 @@ KtNameReferenceExpression(1446,1450): 'Test'
 KtNameReferenceExpression(1451,1461): 'CompanionA'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1668,6 +1701,7 @@ KtWhenConditionWithExpression(1616,1624): 'Sealed.A'
 KtDotQualifiedExpression(1616,1624): 'Sealed.A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1686,6 +1720,7 @@ KtDotQualifiedExpression(1616,1624): 'Sealed.A'
 KtNameReferenceExpression(1616,1622): 'Sealed'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1704,6 +1739,7 @@ KtNameReferenceExpression(1616,1622): 'Sealed'
 KtNameReferenceExpression(1623,1624): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1755,6 +1791,7 @@ KtWhenConditionWithExpression(1671,1679): 'Sealed.C'
 KtDotQualifiedExpression(1671,1679): 'Sealed.C'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1773,6 +1810,7 @@ KtDotQualifiedExpression(1671,1679): 'Sealed.C'
 KtNameReferenceExpression(1671,1677): 'Sealed'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1791,6 +1829,7 @@ KtNameReferenceExpression(1671,1677): 'Sealed'
 KtNameReferenceExpression(1678,1679): 'C'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1887,6 +1926,7 @@ KtDotQualifiedExpression(1760,1777): 'Sealed.CompanionA'
 KtNameReferenceExpression(1760,1766): 'Sealed'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1956,6 +1996,7 @@ KtDotQualifiedExpression(1795,1812): 'Sealed.CompanionB'
 KtNameReferenceExpression(1795,1801): 'Sealed'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

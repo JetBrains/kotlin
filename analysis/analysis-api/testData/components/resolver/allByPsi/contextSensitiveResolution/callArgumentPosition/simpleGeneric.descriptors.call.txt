@@ -78,6 +78,7 @@ KtNameReferenceExpression(151,152): 'X'
 
 KtCallExpression(155,161): 'TODO()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -94,6 +95,7 @@ KtCallExpression(155,161): 'TODO()'
 KtNameReferenceExpression(155,159): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -135,6 +137,7 @@ KtCallExpression(203,213): 'foo(id(X))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -170,6 +173,7 @@ KtNameReferenceExpression(203,206): 'foo'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -211,6 +215,7 @@ KtCallExpression(207,212): 'id(X)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -248,6 +253,7 @@ KtNameReferenceExpression(207,209): 'id'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -294,6 +300,7 @@ KtNameReferenceExpression(210,211): 'X'
 
 KtCallExpression(218,228): 'foo(id(L))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -326,6 +333,7 @@ KtCallExpression(218,228): 'foo(id(L))'
 KtNameReferenceExpression(218,221): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -363,6 +371,7 @@ KtValueArgument(222,227): 'id(L)'
 
 KtCallExpression(222,227): 'id(L)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -397,6 +406,7 @@ KtCallExpression(222,227): 'id(L)'
 KtNameReferenceExpression(222,224): 'id'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -455,6 +465,7 @@ KtCallExpression(233,252): 'foo(id(UNRESOLVED))'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -490,6 +501,7 @@ KtNameReferenceExpression(233,236): 'foo'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -531,6 +543,7 @@ KtCallExpression(237,251): 'id(UNRESOLVED)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -568,6 +581,7 @@ KtNameReferenceExpression(237,239): 'id'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

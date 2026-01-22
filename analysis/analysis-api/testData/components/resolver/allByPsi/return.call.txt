@@ -156,6 +156,7 @@ KtBlockExpression(174,763): '{'
 
 KtCallExpression(180,749): 'foo1 {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -186,7 +187,7 @@ KtCallExpression(180,749): 'foo1 {'
                               return@foo1
                           },
                       )
-
+      
                       foo2(label@ fun(s: String) {
                           return
                           return@label
@@ -194,7 +195,7 @@ KtCallExpression(180,749): 'foo1 {'
                           return@foo2
                           return@foo1
                       })
-
+      
                       return@foo3
                       return@foo2
                       return@foo1
@@ -212,6 +213,7 @@ KtCallExpression(180,749): 'foo1 {'
 KtNameReferenceExpression(180,184): 'foo1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -242,7 +244,7 @@ KtNameReferenceExpression(180,184): 'foo1'
                                 return@foo1
                             },
                         )
-
+        
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -250,7 +252,7 @@ KtNameReferenceExpression(180,184): 'foo1'
                             return@foo2
                             return@foo1
                         })
-
+        
                         return@foo3
                         return@foo2
                         return@foo1
@@ -279,6 +281,7 @@ KtBlockExpression(195,743): 'foo2 {'
 
 KtCallExpression(195,743): 'foo2 {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -308,7 +311,7 @@ KtCallExpression(195,743): 'foo2 {'
                               return@foo1
                           },
                       )
-
+      
                       foo2(label@ fun(s: String) {
                           return
                           return@label
@@ -316,7 +319,7 @@ KtCallExpression(195,743): 'foo2 {'
                           return@foo2
                           return@foo1
                       })
-
+      
                       return@foo3
                       return@foo2
                       return@foo1
@@ -333,6 +336,7 @@ KtCallExpression(195,743): 'foo2 {'
 KtNameReferenceExpression(195,199): 'foo2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -362,7 +366,7 @@ KtNameReferenceExpression(195,199): 'foo2'
                                 return@foo1
                             },
                         )
-
+        
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -370,7 +374,7 @@ KtNameReferenceExpression(195,199): 'foo2'
                             return@foo2
                             return@foo1
                         })
-
+        
                         return@foo3
                         return@foo2
                         return@foo1
@@ -398,6 +402,7 @@ KtBlockExpression(214,733): 'foo3 {'
 
 KtCallExpression(214,733): 'foo3 {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -426,7 +431,7 @@ KtCallExpression(214,733): 'foo3 {'
                               return@foo1
                           },
                       )
-
+      
                       foo2(label@ fun(s: String) {
                           return
                           return@label
@@ -434,7 +439,7 @@ KtCallExpression(214,733): 'foo3 {'
                           return@foo2
                           return@foo1
                       })
-
+      
                       return@foo3
                       return@foo2
                       return@foo1
@@ -450,6 +455,7 @@ KtCallExpression(214,733): 'foo3 {'
 KtNameReferenceExpression(214,218): 'foo3'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -478,7 +484,7 @@ KtNameReferenceExpression(214,218): 'foo3'
                                 return@foo1
                             },
                         )
-
+        
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -486,7 +492,7 @@ KtNameReferenceExpression(214,218): 'foo3'
                             return@foo2
                             return@foo1
                         })
-
+        
                         return@foo3
                         return@foo2
                         return@foo1
@@ -513,6 +519,7 @@ KtBlockExpression(237,719): 'foo1('
 
 KtCallExpression(237,413): 'foo1('
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -549,6 +556,7 @@ KtCallExpression(237,413): 'foo1('
 KtNameReferenceExpression(237,241): 'foo1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -626,6 +634,7 @@ KtLabelReferenceExpression(367,372): '@foo1'
 
 KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -664,6 +673,7 @@ KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
 KtNameReferenceExpression(431,435): 'foo2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

@@ -2,6 +2,7 @@ KtCallExpression(128,144): 'function<Int>(1)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -40,6 +41,7 @@ KtCallExpression(128,144): 'function<Int>(1)'
             callableId = null)
         },
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -78,6 +80,7 @@ KtCallExpression(128,144): 'function<Int>(1)'
             callableId = null)
         },
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

@@ -1,6 +1,7 @@
 KtNameReferenceExpression(44,54): 'Annotation'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

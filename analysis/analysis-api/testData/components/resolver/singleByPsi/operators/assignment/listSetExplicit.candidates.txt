@@ -1,6 +1,7 @@
 KtNameReferenceExpression(54,57): 'set'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = l

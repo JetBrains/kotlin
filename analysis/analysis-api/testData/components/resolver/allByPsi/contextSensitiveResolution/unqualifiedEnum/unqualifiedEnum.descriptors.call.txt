@@ -168,6 +168,7 @@ KtWhenConditionWithExpression(302,312): 's == FIRST'
 KtBinaryExpression(302,312): 's == FIRST'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -220,6 +221,7 @@ KtNameReferenceExpression(302,303): 's'
 KtOperationReferenceExpression(304,306): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -269,6 +271,7 @@ KtWhenConditionWithExpression(326,337): 's == SECOND'
 KtBinaryExpression(326,337): 's == SECOND'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -321,6 +324,7 @@ KtNameReferenceExpression(326,327): 's'
 KtOperationReferenceExpression(328,330): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -370,6 +374,7 @@ KtWhenConditionWithExpression(351,361): 's == THIRD'
 KtBinaryExpression(351,361): 's == THIRD'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -422,6 +427,7 @@ KtNameReferenceExpression(351,352): 's'
 KtOperationReferenceExpression(353,355): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s

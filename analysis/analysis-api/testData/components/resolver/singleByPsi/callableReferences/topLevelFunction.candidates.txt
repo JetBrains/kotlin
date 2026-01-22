@@ -1,6 +1,7 @@
 KtCallableReferenceExpression(45,50): '::foo'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

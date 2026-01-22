@@ -1,5 +1,6 @@
 KtEnumEntrySuperclassReferenceExpression(127,127): ''
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null

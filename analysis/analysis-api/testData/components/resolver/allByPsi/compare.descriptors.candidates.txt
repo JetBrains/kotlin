@@ -19,6 +19,7 @@ KtBlockExpression(12,162): '{'
 KtBinaryExpression(18,23): '1 > 2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -58,6 +59,7 @@ KtConstantExpression(18,19): '1'
 KtOperationReferenceExpression(20,21): '>'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -97,6 +99,7 @@ KtConstantExpression(22,23): '2'
 KtBinaryExpression(28,46): '1.compareTo(2) > 0'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1.compareTo(2)
@@ -133,6 +136,7 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
 KtDotQualifiedExpression(28,42): '1.compareTo(2)'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -169,6 +173,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -205,6 +210,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -241,6 +247,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -276,6 +283,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -312,6 +320,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -352,6 +361,7 @@ KtConstantExpression(28,29): '1'
 KtCallExpression(30,42): 'compareTo(2)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -388,6 +398,7 @@ KtCallExpression(30,42): 'compareTo(2)'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -424,6 +435,7 @@ KtCallExpression(30,42): 'compareTo(2)'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -460,6 +472,7 @@ KtCallExpression(30,42): 'compareTo(2)'
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -495,6 +508,7 @@ KtCallExpression(30,42): 'compareTo(2)'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -531,6 +545,7 @@ KtCallExpression(30,42): 'compareTo(2)'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -568,6 +583,7 @@ KtCallExpression(30,42): 'compareTo(2)'
 KtNameReferenceExpression(30,39): 'compareTo'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -604,6 +620,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -640,6 +657,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -676,6 +694,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -711,6 +730,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -747,6 +767,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -793,6 +814,7 @@ KtConstantExpression(40,41): '2'
 KtOperationReferenceExpression(43,44): '>'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1.compareTo(2)
@@ -832,6 +854,7 @@ KtConstantExpression(45,46): '0'
 KtBinaryExpression(52,61): '"3" < "4"'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "3"
@@ -874,6 +897,7 @@ KtLiteralStringTemplateEntry(53,54): '3'
 KtOperationReferenceExpression(56,57): '<'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "3"
@@ -925,6 +949,7 @@ KtProperty(85,108): 'val myClass = MyClass()'
 KtCallExpression(99,108): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -942,6 +967,7 @@ KtCallExpression(99,108): 'MyClass()'
 KtNameReferenceExpression(99,106): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -962,6 +988,7 @@ KtValueArgumentList(106,108): '()'
 KtBinaryExpression(113,130): 'myClass >= number'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -1016,6 +1043,7 @@ KtNameReferenceExpression(113,120): 'myClass'
 KtOperationReferenceExpression(121,123): '>='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -1070,6 +1098,7 @@ KtNameReferenceExpression(124,130): 'number'
 KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -1124,6 +1153,7 @@ KtNameReferenceExpression(135,142): 'myClass'
 KtCallExpression(143,160): 'compareTo(number)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
@@ -1160,6 +1190,7 @@ KtCallExpression(143,160): 'compareTo(number)'
 KtNameReferenceExpression(143,152): 'compareTo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass

@@ -169,6 +169,7 @@ KtParameterList(191,193): '()'
 KtBinaryExpression(196,224): 'current <= this@iterator.end'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = current
@@ -225,6 +226,7 @@ KtNameReferenceExpression(196,203): 'current'
 KtOperationReferenceExpression(204,206): '<='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = current
@@ -336,6 +338,7 @@ KtPostfixExpression(256,265): 'current++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = current
@@ -396,6 +399,7 @@ KtOperationReferenceExpression(263,265): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = current
@@ -451,6 +455,7 @@ KtContainerNode(297,318): 'IntProgression(1, 10)'
 KtCallExpression(297,318): 'IntProgression(1, 10)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -497,6 +502,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -552,6 +558,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
 KtNameReferenceExpression(297,311): 'IntProgression'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -598,6 +605,7 @@ KtNameReferenceExpression(297,311): 'IntProgression'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

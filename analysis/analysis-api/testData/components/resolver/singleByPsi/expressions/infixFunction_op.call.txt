@@ -1,6 +1,7 @@
 KtOperationReferenceExpression(58,65): 'infixOp'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:

@@ -1,6 +1,7 @@
 KtNameReferenceExpression(65,70): 'Inner'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

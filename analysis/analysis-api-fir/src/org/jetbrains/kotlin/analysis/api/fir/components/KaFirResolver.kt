@@ -730,7 +730,7 @@ internal class KaFirResolver(
 
         fun buildFunctionCall(
             partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-            argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
+            argumentMapping: Map<KtExpression, KaVariableSignature<KaParameterSymbol>>,
             typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
         ): KaFunctionCall<*> = if (isImplicitInvoke) {
             val functionSymbol = partiallyAppliedSymbol.symbol
@@ -982,7 +982,7 @@ internal class KaFirResolver(
                 val argumentMapping = if (candidate is Candidate) {
                     runIf(candidate.argumentMappingInitialized) { candidate.argumentMapping.unwrapAtoms() }
                 } else {
-                    fir.resolvedArgumentMapping
+                    fir.resolvedArgumentMappingIncludingContextArguments
                 }
 
                 val argumentMappingWithoutExtensionReceiver =
@@ -1792,22 +1792,27 @@ internal class KaFirResolver(
         return equalsSymbol ?: equalsSymbolInAny
     }
 
-    private fun FirCall.createArgumentMapping(signatureOfCallee: KaFunctionSignature<*>): Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
-        return resolvedArgumentMapping?.entries.createArgumentMapping(signatureOfCallee)
+    private fun FirCall.createArgumentMapping(signatureOfCallee: KaFunctionSignature<*>): Map<KtExpression, KaVariableSignature<KaParameterSymbol>> {
+        return resolvedArgumentMappingIncludingContextArguments?.entries.createArgumentMapping(signatureOfCallee)
     }
 
     private fun Collection<MutableMap.MutableEntry<FirExpression, FirValueParameter>>?.createArgumentMapping(
         signatureOfCallee: KaFunctionSignature<*>,
-    ): Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
+    ): Map<KtExpression, KaVariableSignature<KaParameterSymbol>> {
         if (isNullOrEmpty()) return emptyMap()
 
-        val paramSignatureByName = signatureOfCallee.valueParameters.associateBy {
-            // We intentionally use `symbol.name` instead of `name` here, since
-            // `FirValueParameter.name` is not affected by the `@ParameterName`
-            it.symbol.name
+        val paramSignatureByName = buildMap {
+            fun associate(parameters: List<KaVariableSignature<KaParameterSymbol>>) = parameters.forEach { parameter ->
+                // We intentionally use `symbol.name` instead of `name` here, since
+                // the '@ParameterName' does not affect 'FirValueParameter.name'
+                put(parameter.symbol.name, parameter)
+            }
+
+            associate(signatureOfCallee.valueParameters)
+            associate(signatureOfCallee.contextParameters)
         }
 
-        val argumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>(size)
+        val argumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaParameterSymbol>>(size)
         this.forEach { (firExpression, firValueParameter) ->
             val parameterSymbol = paramSignatureByName[firValueParameter.name] ?: return@forEach
             mapArgumentExpressionToParameter(firExpression, parameterSymbol, argumentMapping)
@@ -1819,11 +1824,11 @@ internal class KaFirResolver(
     private fun FirCollectionLiteral.createArgumentMapping(
         arrayOfSymbol: KaNamedFunctionSymbol,
         substitutor: KaSubstitutor,
-    ): Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
+    ): Map<KtExpression, KaVariableSignature<KaParameterSymbol>> {
         val arguments = argumentList.arguments
         if (arguments.isEmpty()) return emptyMap()
 
-        val argumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>(arguments.size)
+        val argumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaParameterSymbol>>(arguments.size)
         val parameterSymbol = arrayOfSymbol.valueParameters.single()
 
         for (firExpression in arguments) {
@@ -1839,8 +1844,8 @@ internal class KaFirResolver(
 
     private fun mapArgumentExpressionToParameter(
         argumentExpression: FirExpression,
-        parameterSymbol: KaVariableSignature<KaValueParameterSymbol>,
-        argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
+        parameterSymbol: KaVariableSignature<KaParameterSymbol>,
+        argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaParameterSymbol>>,
     ) {
         if (argumentExpression is FirVarargArgumentsExpression) {
             for (varargArgument in argumentExpression.arguments) {

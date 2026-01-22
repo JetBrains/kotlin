@@ -76,6 +76,7 @@ KtDotQualifiedExpression(134,146): 'Second.THREE'
 KtNameReferenceExpression(134,140): 'Second'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

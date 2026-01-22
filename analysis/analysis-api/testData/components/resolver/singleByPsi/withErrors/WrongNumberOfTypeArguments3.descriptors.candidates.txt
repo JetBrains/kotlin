@@ -1,6 +1,7 @@
 KtNameReferenceExpression(51,53): 'DD'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

@@ -1,6 +1,7 @@
 KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -38,6 +39,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:

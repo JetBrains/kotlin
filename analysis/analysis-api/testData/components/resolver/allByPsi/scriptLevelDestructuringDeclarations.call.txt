@@ -75,6 +75,7 @@ KtDeclarationModifierList(101,126): '@Anno("a type $constant")'
 
 KtAnnotationEntry(101,126): '@Anno("a type $constant")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -107,6 +108,7 @@ KtAnnotationEntry(101,126): '@Anno("a type $constant")'
 KtConstructorCalleeExpression(102,106): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -200,6 +202,7 @@ KtDeclarationModifierList(132,164): '@Anno("a nested type $constant")'
 
 KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -232,6 +235,7 @@ KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
 KtConstructorCalleeExpression(133,137): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -322,6 +326,7 @@ KtDeclarationModifierList(176,215): '@Anno("a nested nested type $constant")'
 
 KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -354,6 +359,7 @@ KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
 KtConstructorCalleeExpression(177,181): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -441,6 +447,7 @@ KtDeclarationModifierList(234,259): '@Anno("b type $constant")'
 
 KtAnnotationEntry(234,259): '@Anno("b type $constant")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -473,6 +480,7 @@ KtAnnotationEntry(234,259): '@Anno("b type $constant")'
 KtConstructorCalleeExpression(235,239): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -566,6 +574,7 @@ KtDeclarationModifierList(266,298): '@Anno("b nested type $constant")'
 
 KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -598,6 +607,7 @@ KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
 KtConstructorCalleeExpression(267,271): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -688,6 +698,7 @@ KtDeclarationModifierList(304,343): '@Anno("b nested nested type $constant")'
 
 KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -720,6 +731,7 @@ KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
 KtConstructorCalleeExpression(305,309): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -816,6 +828,7 @@ KtDeclarationModifierList(376,398): '@Anno("destr 1 $prop")'
 
 KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -848,6 +861,7 @@ KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
 KtConstructorCalleeExpression(377,381): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -926,6 +940,7 @@ KtDeclarationModifierList(404,420): '@Anno("a $prop")'
 
 KtAnnotationEntry(404,420): '@Anno("a $prop")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -958,6 +973,7 @@ KtAnnotationEntry(404,420): '@Anno("a $prop")'
 KtConstructorCalleeExpression(405,409): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1036,6 +1052,7 @@ KtDeclarationModifierList(424,440): '@Anno("b $prop")'
 
 KtAnnotationEntry(424,440): '@Anno("b $prop")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1068,6 +1085,7 @@ KtAnnotationEntry(424,440): '@Anno("b $prop")'
 KtConstructorCalleeExpression(425,429): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1140,6 +1158,7 @@ KtNameReferenceExpression(434,438): 'prop'
 
 KtCallExpression(446,462): 'Pair(null, null)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1186,6 +1205,7 @@ KtCallExpression(446,462): 'Pair(null, null)'
 KtNameReferenceExpression(446,450): 'Pair'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1252,6 +1272,7 @@ KtDeclarationModifierList(464,486): '@Anno("destr 1 $prop")'
 
 KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1284,6 +1305,7 @@ KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
 KtConstructorCalleeExpression(465,469): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1362,6 +1384,7 @@ KtDeclarationModifierList(492,508): '@Anno("c $prop")'
 
 KtAnnotationEntry(492,508): '@Anno("c $prop")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1394,6 +1417,7 @@ KtAnnotationEntry(492,508): '@Anno("c $prop")'
 KtConstructorCalleeExpression(493,497): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1472,6 +1496,7 @@ KtDeclarationModifierList(512,528): '@Anno("d $prop")'
 
 KtAnnotationEntry(512,528): '@Anno("d $prop")'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1504,6 +1529,7 @@ KtAnnotationEntry(512,528): '@Anno("d $prop")'
 KtConstructorCalleeExpression(513,517): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1576,6 +1602,7 @@ KtNameReferenceExpression(522,526): 'prop'
 
 KtCallExpression(534,550): 'Pair(null, null)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1622,6 +1649,7 @@ KtCallExpression(534,550): 'Pair(null, null)'
 KtNameReferenceExpression(534,538): 'Pair'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

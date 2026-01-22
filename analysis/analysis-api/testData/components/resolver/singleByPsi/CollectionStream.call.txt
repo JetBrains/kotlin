@@ -1,6 +1,7 @@
 KtNameReferenceExpression(174,180): 'stream'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = collection

@@ -1,6 +1,7 @@
 KtConstructorDelegationReferenceExpression(145,150): 'super'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -34,6 +35,7 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

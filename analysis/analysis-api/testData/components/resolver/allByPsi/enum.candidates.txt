@@ -43,6 +43,7 @@ KtInitializerList(54,57): '(1)'
 KtSuperTypeCallEntry(54,57): '(1)'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -77,6 +78,7 @@ KtSuperTypeCallEntry(54,57): '(1)'
 KtConstructorCalleeExpression(54,54): ''
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -117,6 +119,7 @@ KtUserType(54,54): ''
 KtEnumEntrySuperclassReferenceExpression(54,54): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -166,6 +169,7 @@ KtInitializerList(76,79): '(2)'
 KtSuperTypeCallEntry(76,79): '(2)'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -200,6 +204,7 @@ KtSuperTypeCallEntry(76,79): '(2)'
 KtConstructorCalleeExpression(76,76): ''
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -240,6 +245,7 @@ KtUserType(76,76): ''
 KtEnumEntrySuperclassReferenceExpression(76,76): ''
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -342,6 +348,7 @@ KtBlockExpression(220,254): '{'
 KtDotQualifiedExpression(234,244): 'this.baz()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -368,6 +375,7 @@ KtNameReferenceExpression(234,238): 'this'
 KtCallExpression(239,244): 'baz()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -388,6 +396,7 @@ KtCallExpression(239,244): 'baz()'
 KtNameReferenceExpression(239,242): 'baz'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -513,6 +522,7 @@ KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
 KtNameReferenceExpression(325,344): 'EnumWithConstructor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -602,6 +612,7 @@ KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
 KtNameReferenceExpression(355,374): 'EnumWithConstructor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -691,6 +702,7 @@ KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
 KtNameReferenceExpression(390,409): 'EnumWithConstructor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -780,6 +792,7 @@ KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
 KtNameReferenceExpression(428,447): 'EnumWithConstructor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -869,6 +882,7 @@ KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
 KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -929,6 +943,7 @@ KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
 KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -989,6 +1004,7 @@ KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
 KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

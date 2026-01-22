@@ -2,6 +2,7 @@ KtCollectionLiteralExpression(55,58): '[1]'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

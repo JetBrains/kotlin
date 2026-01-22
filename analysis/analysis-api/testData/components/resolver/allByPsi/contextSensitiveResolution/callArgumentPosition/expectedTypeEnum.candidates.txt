@@ -121,6 +121,7 @@ KtNameReferenceExpression(206,212): 'MyEnum'
 KtCallExpression(215,229): 'id(EnumValue1)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -156,6 +157,7 @@ KtCallExpression(215,229): 'id(EnumValue1)'
 KtNameReferenceExpression(215,217): 'id'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -218,6 +220,7 @@ KtNameReferenceExpression(218,228): 'EnumValue1'
 KtCallExpression(235,266): 'receive<MyEnum>(id(EnumValue1))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -253,6 +256,7 @@ KtCallExpression(235,266): 'receive<MyEnum>(id(EnumValue1))'
 KtNameReferenceExpression(235,242): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -309,6 +313,7 @@ KtValueArgument(251,265): 'id(EnumValue1)'
 KtCallExpression(251,265): 'id(EnumValue1)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -344,6 +349,7 @@ KtCallExpression(251,265): 'id(EnumValue1)'
 KtNameReferenceExpression(251,253): 'id'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

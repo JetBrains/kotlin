@@ -39,6 +39,7 @@ KtBlockExpression(28,44): '{'
 
 KtCallExpression(34,42): 'action()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = action
@@ -86,6 +87,7 @@ KtBlockExpression(58,163): '{'
 
 KtCallExpression(64,102): 'foo label@{'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -120,6 +122,7 @@ KtCallExpression(64,102): 'foo label@{'
 KtNameReferenceExpression(64,67): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -202,6 +205,7 @@ KtContainerNode(125,129): '0..1'
 KtBinaryExpression(125,129): '0..1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 0
@@ -240,6 +244,7 @@ KtConstantExpression(125,126): '0'
 KtOperationReferenceExpression(126,128): '..'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 0

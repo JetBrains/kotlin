@@ -36,6 +36,7 @@ KtSuperTypeList(189,199): 'MySealed()'
 
 KtSuperTypeCallEntry(189,199): 'MySealed()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -53,6 +54,7 @@ KtSuperTypeCallEntry(189,199): 'MySealed()'
 KtConstructorCalleeExpression(189,197): 'MySealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -147,6 +149,7 @@ KtBlockExpression(293,416): '{'
 
 KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -198,6 +201,7 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
 KtNameReferenceExpression(299,303): 'with'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -313,6 +317,7 @@ KtBlockExpression(339,344): 'foo()'
 
 KtCallExpression(339,344): 'foo()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = [
       KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -361,6 +366,7 @@ KtCallExpression(339,344): 'foo()'
 KtNameReferenceExpression(339,342): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -411,6 +417,7 @@ KtValueArgumentList(342,344): '()'
 
 KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -462,6 +469,7 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
 KtNameReferenceExpression(356,360): 'with'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -560,6 +568,7 @@ KtBlockExpression(403,408): 'foo()'
 
 KtCallExpression(403,408): 'foo()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = [
       KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -608,6 +617,7 @@ KtCallExpression(403,408): 'foo()'
 KtNameReferenceExpression(403,406): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -715,6 +725,7 @@ KtBlockExpression(501,560): '{'
 
 KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -766,6 +777,7 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
 KtNameReferenceExpression(507,511): 'with'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

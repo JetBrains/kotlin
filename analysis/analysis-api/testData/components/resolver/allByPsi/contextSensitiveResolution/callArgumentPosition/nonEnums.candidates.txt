@@ -40,6 +40,7 @@ KtNameReferenceExpression(91,98): 'MyClass'
 KtCallExpression(101,107): 'TODO()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -56,6 +57,7 @@ KtCallExpression(101,107): 'TODO()'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -82,6 +84,7 @@ KtCallExpression(101,107): 'TODO()'
 KtNameReferenceExpression(101,105): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -98,6 +101,7 @@ KtNameReferenceExpression(101,105): 'TODO'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -139,6 +143,7 @@ KtSuperTypeList(167,176): 'MyClass()'
 KtSuperTypeCallEntry(167,176): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -157,6 +162,7 @@ KtSuperTypeCallEntry(167,176): 'MyClass()'
 KtConstructorCalleeExpression(167,174): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -265,6 +271,7 @@ KtNameReferenceExpression(285,286): 'X'
 KtCallExpression(289,295): 'TODO()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -281,6 +288,7 @@ KtCallExpression(289,295): 'TODO()'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -307,6 +315,7 @@ KtCallExpression(289,295): 'TODO()'
 KtNameReferenceExpression(289,293): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -323,6 +332,7 @@ KtNameReferenceExpression(289,293): 'TODO'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -370,6 +380,7 @@ KtBlockExpression(315,640): '{'
 KtCallExpression(321,341): 'expectInt(MAX_VALUE)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -403,6 +414,7 @@ KtCallExpression(321,341): 'expectInt(MAX_VALUE)'
 KtNameReferenceExpression(321,330): 'expectInt'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -463,6 +475,7 @@ KtNameReferenceExpression(331,340): 'MAX_VALUE'
 KtCallExpression(347,365): 'expectMyClass(FOO)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -496,6 +509,7 @@ KtCallExpression(347,365): 'expectMyClass(FOO)'
 KtNameReferenceExpression(347,360): 'expectMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -556,6 +570,7 @@ KtNameReferenceExpression(361,364): 'FOO'
 KtCallExpression(370,392): 'expectMyClass(id(FOO))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -589,6 +604,7 @@ KtCallExpression(370,392): 'expectMyClass(id(FOO))'
 KtNameReferenceExpression(370,383): 'expectMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -628,6 +644,7 @@ KtValueArgument(384,391): 'id(FOO)'
 KtCallExpression(384,391): 'id(FOO)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -663,6 +680,7 @@ KtCallExpression(384,391): 'id(FOO)'
 KtNameReferenceExpression(384,386): 'id'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -725,6 +743,7 @@ KtNameReferenceExpression(387,390): 'FOO'
 KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -759,6 +778,7 @@ KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
 KtNameReferenceExpression(398,411): 'expectMyClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -820,6 +840,7 @@ KtNameReferenceExpression(412,429): 'FOR_TYPE_MISMATCH'
 KtCallExpression(435,471): 'expectMyClass(id(FOR_TYPE_MISMATCH))'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -854,6 +875,7 @@ KtCallExpression(435,471): 'expectMyClass(id(FOR_TYPE_MISMATCH))'
 KtNameReferenceExpression(435,448): 'expectMyClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -894,6 +916,7 @@ KtValueArgument(449,470): 'id(FOR_TYPE_MISMATCH)'
 KtCallExpression(449,470): 'id(FOR_TYPE_MISMATCH)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -929,6 +952,7 @@ KtCallExpression(449,470): 'id(FOR_TYPE_MISMATCH)'
 KtNameReferenceExpression(449,451): 'id'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -991,6 +1015,7 @@ KtNameReferenceExpression(452,469): 'FOR_TYPE_MISMATCH'
 KtCallExpression(477,495): 'expectMyClass(Bar)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1024,6 +1049,7 @@ KtCallExpression(477,495): 'expectMyClass(Bar)'
 KtNameReferenceExpression(477,490): 'expectMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1063,6 +1089,7 @@ KtValueArgument(491,494): 'Bar'
 KtNameReferenceExpression(491,494): 'Bar'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1081,6 +1108,7 @@ KtNameReferenceExpression(491,494): 'Bar'
 KtCallExpression(500,522): 'expectMyClass(id(Bar))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1114,6 +1142,7 @@ KtCallExpression(500,522): 'expectMyClass(id(Bar))'
 KtNameReferenceExpression(500,513): 'expectMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1153,6 +1182,7 @@ KtValueArgument(514,521): 'id(Bar)'
 KtCallExpression(514,521): 'id(Bar)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1188,6 +1218,7 @@ KtCallExpression(514,521): 'id(Bar)'
 KtNameReferenceExpression(514,516): 'id'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1229,6 +1260,7 @@ KtValueArgument(517,520): 'Bar'
 KtNameReferenceExpression(517,520): 'Bar'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1247,6 +1279,7 @@ KtNameReferenceExpression(517,520): 'Bar'
 KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1281,6 +1314,7 @@ KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
 KtNameReferenceExpression(528,541): 'expectMyClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1321,6 +1355,7 @@ KtValueArgument(542,557): 'ForTypeMismatch'
 KtNameReferenceExpression(542,557): 'ForTypeMismatch'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1339,6 +1374,7 @@ KtNameReferenceExpression(542,557): 'ForTypeMismatch'
 KtCallExpression(563,597): 'expectMyClass(id(ForTypeMismatch))'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1373,6 +1409,7 @@ KtCallExpression(563,597): 'expectMyClass(id(ForTypeMismatch))'
 KtNameReferenceExpression(563,576): 'expectMyClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1413,6 +1450,7 @@ KtValueArgument(577,596): 'id(ForTypeMismatch)'
 KtCallExpression(577,596): 'id(ForTypeMismatch)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1448,6 +1486,7 @@ KtCallExpression(577,596): 'id(ForTypeMismatch)'
 KtNameReferenceExpression(577,579): 'id'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1489,6 +1528,7 @@ KtValueArgument(580,595): 'ForTypeMismatch'
 KtNameReferenceExpression(580,595): 'ForTypeMismatch'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1507,6 +1547,7 @@ KtNameReferenceExpression(580,595): 'ForTypeMismatch'
 KtDotQualifiedExpression(603,638): 'JavaClass.expectJavaClass(INSTANCE)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = JavaClass
@@ -1543,6 +1584,7 @@ KtDotQualifiedExpression(603,638): 'JavaClass.expectJavaClass(INSTANCE)'
 KtNameReferenceExpression(603,612): 'JavaClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1561,6 +1603,7 @@ KtNameReferenceExpression(603,612): 'JavaClass'
 KtCallExpression(613,638): 'expectJavaClass(INSTANCE)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = JavaClass
@@ -1597,6 +1640,7 @@ KtCallExpression(613,638): 'expectJavaClass(INSTANCE)'
 KtNameReferenceExpression(613,628): 'expectJavaClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = JavaClass

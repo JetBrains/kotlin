@@ -1,6 +1,7 @@
 KtNameReferenceExpression(172,175): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = WithGeneratedCompanion

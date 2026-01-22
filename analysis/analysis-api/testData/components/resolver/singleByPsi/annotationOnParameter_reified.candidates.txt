@@ -1,6 +1,7 @@
 KtAnnotationEntry(51,65): '@Suppress("s")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

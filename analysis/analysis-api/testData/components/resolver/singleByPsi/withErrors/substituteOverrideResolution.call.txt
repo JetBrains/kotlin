@@ -1,6 +1,7 @@
 KtDotQualifiedExpression(162,171): 'b.clear()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
         original = KaExplicitReceiverValue:

@@ -108,6 +108,7 @@ KtNameReferenceExpression(224,234): 'EnumValue2'
 
 KtCallExpression(240,263): 'receiveEnum(EnumValue2)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -140,6 +141,7 @@ KtCallExpression(240,263): 'receiveEnum(EnumValue2)'
 KtNameReferenceExpression(240,251): 'receiveEnum'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -197,6 +199,7 @@ KtNameReferenceExpression(252,262): 'EnumValue2'
 
 KtCallExpression(268,285): 'receiveEnum(arg1)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -229,6 +232,7 @@ KtCallExpression(268,285): 'receiveEnum(arg1)'
 KtNameReferenceExpression(268,279): 'receiveEnum'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -283,6 +287,7 @@ KtNameReferenceExpression(280,284): 'arg1'
 
 KtCallExpression(290,307): 'receiveEnum(arg2)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -315,6 +320,7 @@ KtCallExpression(290,307): 'receiveEnum(arg2)'
 KtNameReferenceExpression(290,301): 'receiveEnum'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -369,6 +375,7 @@ KtNameReferenceExpression(302,306): 'arg2'
 
 KtCallExpression(312,329): 'receiveEnum(arg3)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -401,6 +408,7 @@ KtCallExpression(312,329): 'receiveEnum(arg3)'
 KtNameReferenceExpression(312,323): 'receiveEnum'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

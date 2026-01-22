@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -53,7 +50,6 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal object FirReferenceResolveHelper {
     fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KaSymbolByFirBuilder): KaSymbol? {
@@ -385,16 +381,12 @@ internal object FirReferenceResolveHelper {
         val ktCallExpression = ktValueArgumentList.parent as? KtCallElement ?: return emptyList()
 
         val firCall = ktCallExpression.getOrBuildFir(analysisSession.resolutionFacade)?.unwrapSafeCall() as? FirCall ?: return emptyList()
-        val parameter = firCall.findCorrespondingParameter(ktValueArgumentName.asName, analysisSession.firSession.languageVersionSettings)
-            ?: return emptyList()
-        return listOfNotNull(parameter.buildSymbol(symbolBuilder))
+        val parameter = firCall.findCorrespondingParameter(ktValueArgumentName.asName)
+        return listOfNotNull(parameter?.buildSymbol(symbolBuilder))
     }
 
-    private fun FirCall.findCorrespondingParameter(name: Name, languageVersionSettings: LanguageVersionSettings): FirValueParameter? {
-        return resolvedArgumentMapping?.values?.firstOrNull { it.name == name }
-            ?: runIf(languageVersionSettings.supportsFeature(LanguageFeature.ExplicitContextArguments)) {
-                (this as? FirResolvable)?.toResolvedCallableSymbol()?.contextParameterSymbols?.firstOrNull { it.name == name }?.fir
-            }
+    private fun FirCall.findCorrespondingParameter(name: Name): FirValueParameter? {
+        return resolvedArgumentMappingIncludingContextArguments?.values?.firstOrNull { it.name == name }
     }
 
     private fun handleErrorExpression(

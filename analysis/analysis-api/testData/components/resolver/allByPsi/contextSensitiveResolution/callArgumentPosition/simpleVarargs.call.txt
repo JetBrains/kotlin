@@ -57,6 +57,7 @@ KtBlockExpression(151,168): '{'
 
 KtCallExpression(157,166): 'foo(X, Y)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -96,6 +97,7 @@ KtCallExpression(157,166): 'foo(X, Y)'
 KtNameReferenceExpression(157,160): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

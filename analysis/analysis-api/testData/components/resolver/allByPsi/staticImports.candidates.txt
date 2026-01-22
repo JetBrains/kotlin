@@ -175,6 +175,7 @@ KtProperty(302,348): 'val explicitTopObject = one.two.TopLevelObject'
 KtDotQualifiedExpression(326,348): 'one.two.TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -202,6 +203,7 @@ KtNameReferenceExpression(330,333): 'two'
 KtNameReferenceExpression(334,348): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -223,6 +225,7 @@ KtProperty(353,391): 'val importedTopObject = TopLevelObject'
 KtNameReferenceExpression(377,391): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -244,6 +247,7 @@ KtProperty(397,435): 'val explicitFoo = TopLevelObject.foo()'
 KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject
@@ -264,6 +268,7 @@ KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
 KtNameReferenceExpression(415,429): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -282,6 +287,7 @@ KtNameReferenceExpression(415,429): 'TopLevelObject'
 KtCallExpression(430,435): 'foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject
@@ -302,6 +308,7 @@ KtCallExpression(430,435): 'foo()'
 KtNameReferenceExpression(430,433): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject
@@ -328,6 +335,7 @@ KtProperty(440,463): 'val importedFoo = foo()'
 KtCallExpression(458,463): 'foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/two/TopLevelObject
@@ -347,6 +355,7 @@ KtCallExpression(458,463): 'foo()'
 KtNameReferenceExpression(458,461): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/two/TopLevelObject
@@ -393,6 +402,7 @@ KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
 KtNameReferenceExpression(487,501): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -458,6 +468,7 @@ KtProperty(537,591): 'val explicitNestedObject = TopLevelObject.NestedObject'
 KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -476,6 +487,7 @@ KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
 KtNameReferenceExpression(564,578): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -494,6 +506,7 @@ KtNameReferenceExpression(564,578): 'TopLevelObject'
 KtNameReferenceExpression(579,591): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -515,6 +528,7 @@ KtProperty(596,635): 'val importedNestedObject = NestedObject'
 KtNameReferenceExpression(623,635): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -536,6 +550,7 @@ KtProperty(641,692): 'val explicitBaz = TopLevelObject.NestedObject.baz()'
 KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject.NestedObject
@@ -556,6 +571,7 @@ KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
 KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -574,6 +590,7 @@ KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
 KtNameReferenceExpression(659,673): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -592,6 +609,7 @@ KtNameReferenceExpression(659,673): 'TopLevelObject'
 KtNameReferenceExpression(674,686): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -610,6 +628,7 @@ KtNameReferenceExpression(674,686): 'NestedObject'
 KtCallExpression(687,692): 'baz()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject.NestedObject
@@ -630,6 +649,7 @@ KtCallExpression(687,692): 'baz()'
 KtNameReferenceExpression(687,690): 'baz'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject.NestedObject
@@ -656,6 +676,7 @@ KtProperty(697,739): 'val explicitNestedBaz = NestedObject.baz()'
 KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = NestedObject
@@ -676,6 +697,7 @@ KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
 KtNameReferenceExpression(721,733): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -694,6 +716,7 @@ KtNameReferenceExpression(721,733): 'NestedObject'
 KtCallExpression(734,739): 'baz()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = NestedObject
@@ -714,6 +737,7 @@ KtCallExpression(734,739): 'baz()'
 KtNameReferenceExpression(734,737): 'baz'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = NestedObject
@@ -740,6 +764,7 @@ KtProperty(744,767): 'val importedBaz = baz()'
 KtCallExpression(762,767): 'baz()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/two/TopLevelObject.NestedObject
@@ -759,6 +784,7 @@ KtCallExpression(762,767): 'baz()'
 KtNameReferenceExpression(762,765): 'baz'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/two/TopLevelObject.NestedObject
@@ -805,6 +831,7 @@ KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
 KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -823,6 +850,7 @@ KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
 KtNameReferenceExpression(791,805): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -841,6 +869,7 @@ KtNameReferenceExpression(791,805): 'TopLevelObject'
 KtNameReferenceExpression(806,818): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -904,6 +933,7 @@ KtDotQualifiedExpression(851,867): 'NestedObject.doo'
 KtNameReferenceExpression(851,863): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

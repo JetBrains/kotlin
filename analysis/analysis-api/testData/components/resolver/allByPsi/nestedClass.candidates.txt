@@ -67,6 +67,7 @@ KtSuperTypeList(74,81): 'Base(x)'
 KtSuperTypeCallEntry(74,81): 'Base(x)'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -101,6 +102,7 @@ KtSuperTypeCallEntry(74,81): 'Base(x)'
 KtConstructorCalleeExpression(74,78): 'Base'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

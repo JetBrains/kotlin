@@ -19,6 +19,7 @@ KtDeclarationModifierList(33,187): '@Target('
 KtAnnotationEntry(33,176): '@Target('
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -73,6 +74,7 @@ KtAnnotationEntry(33,176): '@Target('
 KtConstructorCalleeExpression(34,40): 'Target'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -133,6 +135,7 @@ KtUserType(34,40): 'Target'
 KtNameReferenceExpression(34,40): 'Target'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -193,6 +196,7 @@ KtValueArgument(46,77): 'AnnotationTarget.TYPE_PARAMETER'
 KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -234,6 +238,7 @@ KtValueArgument(83,108): 'AnnotationTarget.FUNCTION'
 KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -275,6 +280,7 @@ KtValueArgument(114,146): 'AnnotationTarget.VALUE_PARAMETER'
 KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -316,6 +322,7 @@ KtValueArgument(152,173): 'AnnotationTarget.TYPE'
 KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -393,6 +400,7 @@ KtDeclarationModifierList(259,282): '@Anno("function $prop")'
 KtAnnotationEntry(259,282): '@Anno("function $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -426,6 +434,7 @@ KtAnnotationEntry(259,282): '@Anno("function $prop")'
 KtConstructorCalleeExpression(260,264): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -465,6 +474,7 @@ KtUserType(260,264): 'Anno'
 KtNameReferenceExpression(260,264): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -540,6 +550,7 @@ KtDeclarationModifierList(288,317): '@Anno("type parameter $prop")'
 KtAnnotationEntry(288,317): '@Anno("type parameter $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -573,6 +584,7 @@ KtAnnotationEntry(288,317): '@Anno("type parameter $prop")'
 KtConstructorCalleeExpression(289,293): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -612,6 +624,7 @@ KtUserType(289,293): 'Anno'
 KtNameReferenceExpression(289,293): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -684,6 +697,7 @@ KtDeclarationModifierList(322,347): '@Anno("bound type $prop")'
 KtAnnotationEntry(322,347): '@Anno("bound type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -717,6 +731,7 @@ KtAnnotationEntry(322,347): '@Anno("bound type $prop")'
 KtConstructorCalleeExpression(323,327): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -756,6 +771,7 @@ KtUserType(323,327): 'Anno'
 KtNameReferenceExpression(323,327): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -840,6 +856,7 @@ KtDeclarationModifierList(353,385): '@Anno("nested bound type $prop")'
 KtAnnotationEntry(353,385): '@Anno("nested bound type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -873,6 +890,7 @@ KtAnnotationEntry(353,385): '@Anno("nested bound type $prop")'
 KtConstructorCalleeExpression(354,358): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -912,6 +930,7 @@ KtUserType(354,358): 'Anno'
 KtNameReferenceExpression(354,358): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -990,6 +1009,7 @@ KtDeclarationModifierList(395,456): '@receiver:Anno("receiver $prop") @Anno("rec
 KtAnnotationEntry(395,427): '@receiver:Anno("receiver $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1026,6 +1046,7 @@ KtAnnotationUseSiteTarget(396,404): 'receiver'
 KtConstructorCalleeExpression(405,409): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1065,6 +1086,7 @@ KtUserType(405,409): 'Anno'
 KtNameReferenceExpression(405,409): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1131,6 +1153,7 @@ KtNameReferenceExpression(421,425): 'prop'
 KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1164,6 +1187,7 @@ KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
 KtConstructorCalleeExpression(429,433): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1203,6 +1227,7 @@ KtUserType(429,433): 'Anno'
 KtNameReferenceExpression(429,433): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1287,6 +1312,7 @@ KtDeclarationModifierList(462,497): '@Anno("nested receiver type $prop")'
 KtAnnotationEntry(462,497): '@Anno("nested receiver type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1320,6 +1346,7 @@ KtAnnotationEntry(462,497): '@Anno("nested receiver type $prop")'
 KtConstructorCalleeExpression(463,467): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1359,6 +1386,7 @@ KtUserType(463,467): 'Anno'
 KtNameReferenceExpression(463,467): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1443,6 +1471,7 @@ KtDeclarationModifierList(503,545): '@Anno("nested nested receiver type $prop")'
 KtAnnotationEntry(503,545): '@Anno("nested nested receiver type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1476,6 +1505,7 @@ KtAnnotationEntry(503,545): '@Anno("nested nested receiver type $prop")'
 KtConstructorCalleeExpression(504,508): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1515,6 +1545,7 @@ KtUserType(504,508): 'Anno'
 KtNameReferenceExpression(504,508): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1596,6 +1627,7 @@ KtDeclarationModifierList(561,585): '@Anno("parameter $prop")'
 KtAnnotationEntry(561,585): '@Anno("parameter $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1629,6 +1661,7 @@ KtAnnotationEntry(561,585): '@Anno("parameter $prop")'
 KtConstructorCalleeExpression(562,566): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1668,6 +1701,7 @@ KtUserType(562,566): 'Anno'
 KtNameReferenceExpression(562,566): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1740,6 +1774,7 @@ KtDeclarationModifierList(593,622): '@Anno("parameter type $prop")'
 KtAnnotationEntry(593,622): '@Anno("parameter type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1773,6 +1808,7 @@ KtAnnotationEntry(593,622): '@Anno("parameter type $prop")'
 KtConstructorCalleeExpression(594,598): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1812,6 +1848,7 @@ KtUserType(594,598): 'Anno'
 KtNameReferenceExpression(594,598): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1896,6 +1933,7 @@ KtDeclarationModifierList(634,670): '@Anno("nested parameter type $prop")'
 KtAnnotationEntry(634,670): '@Anno("nested parameter type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1929,6 +1967,7 @@ KtAnnotationEntry(634,670): '@Anno("nested parameter type $prop")'
 KtConstructorCalleeExpression(635,639): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1968,6 +2007,7 @@ KtUserType(635,639): 'Anno'
 KtNameReferenceExpression(635,639): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2052,6 +2092,7 @@ KtDeclarationModifierList(676,719): '@Anno("nested nested parameter type $prop")
 KtAnnotationEntry(676,719): '@Anno("nested nested parameter type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2085,6 +2126,7 @@ KtAnnotationEntry(676,719): '@Anno("nested nested parameter type $prop")'
 KtConstructorCalleeExpression(677,681): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2124,6 +2166,7 @@ KtUserType(677,681): 'Anno'
 KtNameReferenceExpression(677,681): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2205,6 +2248,7 @@ KtDeclarationModifierList(735,761): '@Anno("return type $prop")'
 KtAnnotationEntry(735,761): '@Anno("return type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2238,6 +2282,7 @@ KtAnnotationEntry(735,761): '@Anno("return type $prop")'
 KtConstructorCalleeExpression(736,740): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2277,6 +2322,7 @@ KtUserType(736,740): 'Anno'
 KtNameReferenceExpression(736,740): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2361,6 +2407,7 @@ KtDeclarationModifierList(767,800): '@Anno("nested return type $prop")'
 KtAnnotationEntry(767,800): '@Anno("nested return type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2394,6 +2441,7 @@ KtAnnotationEntry(767,800): '@Anno("nested return type $prop")'
 KtConstructorCalleeExpression(768,772): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2433,6 +2481,7 @@ KtUserType(768,772): 'Anno'
 KtNameReferenceExpression(768,772): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2517,6 +2566,7 @@ KtDeclarationModifierList(806,846): '@Anno("nested nested return type $prop")'
 KtAnnotationEntry(806,846): '@Anno("nested nested return type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2550,6 +2600,7 @@ KtAnnotationEntry(806,846): '@Anno("nested nested return type $prop")'
 KtConstructorCalleeExpression(807,811): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2589,6 +2640,7 @@ KtUserType(807,811): 'Anno'
 KtNameReferenceExpression(807,811): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2676,6 +2728,7 @@ KtDeclarationModifierList(871,901): '@Anno("constraint type $prop")'
 KtAnnotationEntry(871,901): '@Anno("constraint type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2709,6 +2762,7 @@ KtAnnotationEntry(871,901): '@Anno("constraint type $prop")'
 KtConstructorCalleeExpression(872,876): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2748,6 +2802,7 @@ KtUserType(872,876): 'Anno'
 KtNameReferenceExpression(872,876): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2835,6 +2890,7 @@ KtDeclarationModifierList(913,950): '@Anno("nested constraint type $prop")'
 KtAnnotationEntry(913,950): '@Anno("nested constraint type $prop")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2868,6 +2924,7 @@ KtAnnotationEntry(913,950): '@Anno("nested constraint type $prop")'
 KtConstructorCalleeExpression(914,918): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2907,6 +2964,7 @@ KtUserType(914,918): 'Anno'
 KtNameReferenceExpression(914,918): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

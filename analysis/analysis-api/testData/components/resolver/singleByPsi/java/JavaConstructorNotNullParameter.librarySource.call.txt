@@ -1,6 +1,7 @@
 KtNameReferenceExpression(51,60): 'JavaClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

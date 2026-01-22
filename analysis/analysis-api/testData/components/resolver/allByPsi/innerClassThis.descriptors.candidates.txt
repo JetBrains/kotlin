@@ -52,6 +52,7 @@ KtParameterList(72,74): '()'
 KtConstructorDelegationCall(76,84): 'this(10)'
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = r/A
@@ -72,6 +73,7 @@ KtConstructorDelegationCall(76,84): 'this(10)'
 
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = r/A
@@ -108,6 +110,7 @@ KtConstructorDelegationCall(76,84): 'this(10)'
 KtConstructorDelegationReferenceExpression(76,80): 'this'
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = r/A
@@ -128,6 +131,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
 
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = r/A

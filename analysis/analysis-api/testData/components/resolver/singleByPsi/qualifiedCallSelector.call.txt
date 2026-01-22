@@ -1,5 +1,6 @@
 KtCallExpression(50,54): 'y(1)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = A

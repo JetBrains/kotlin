@@ -37,6 +37,7 @@ KtDeclarationModifierList(59,81): '@Repeatable'
 KtAnnotationEntry(59,70): '@Repeatable'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -54,6 +55,7 @@ KtAnnotationEntry(59,70): '@Repeatable'
 KtConstructorCalleeExpression(60,70): 'Repeatable'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -104,6 +106,7 @@ KtDeclarationModifierList(122,144): '@Repeatable'
 KtAnnotationEntry(122,133): '@Repeatable'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -121,6 +124,7 @@ KtAnnotationEntry(122,133): '@Repeatable'
 KtConstructorCalleeExpression(123,133): 'Repeatable'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -177,6 +181,7 @@ KtDeclarationModifierList(185,207): '@Repeatable'
 KtAnnotationEntry(185,196): '@Repeatable'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -194,6 +199,7 @@ KtAnnotationEntry(185,196): '@Repeatable'
 KtConstructorCalleeExpression(186,196): 'Repeatable'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -340,6 +346,7 @@ KtDeclarationModifierList(423,826): '@AnnoWithArray([1, 2, 3])'
 KtAnnotationEntry(423,448): '@AnnoWithArray([1, 2, 3])'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -373,6 +380,7 @@ KtAnnotationEntry(423,448): '@AnnoWithArray([1, 2, 3])'
 KtConstructorCalleeExpression(424,437): 'AnnoWithArray'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -421,6 +429,7 @@ KtValueArgument(438,447): '[1, 2, 3]'
 KtCollectionLiteralExpression(438,447): '[1, 2, 3]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -477,6 +486,7 @@ KtConstantExpression(445,446): '3'
 KtAnnotationEntry(449,480): '@AnnoWithArray(arr = [4, 5, 6])'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -510,6 +520,7 @@ KtAnnotationEntry(449,480): '@AnnoWithArray(arr = [4, 5, 6])'
 KtConstructorCalleeExpression(450,463): 'AnnoWithArray'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -564,6 +575,7 @@ KtNameReferenceExpression(464,467): 'arr'
 KtCollectionLiteralExpression(470,479): '[4, 5, 6]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -620,6 +632,7 @@ KtConstantExpression(477,478): '6'
 KtAnnotationEntry(481,516): '@AnnoWithArray(intArrayOf(7, 8, 9))'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -653,6 +666,7 @@ KtAnnotationEntry(481,516): '@AnnoWithArray(intArrayOf(7, 8, 9))'
 KtConstructorCalleeExpression(482,495): 'AnnoWithArray'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -701,6 +715,7 @@ KtValueArgument(496,515): 'intArrayOf(7, 8, 9)'
 KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -748,6 +763,7 @@ KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
 KtNameReferenceExpression(496,506): 'intArrayOf'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -816,6 +832,7 @@ KtConstantExpression(513,514): '9'
 KtAnnotationEntry(517,555): '@AnnoWithKClass(AnnoWithKClass::class)'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -849,6 +866,7 @@ KtAnnotationEntry(517,555): '@AnnoWithKClass(AnnoWithKClass::class)'
 KtConstructorCalleeExpression(518,532): 'AnnoWithKClass'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -900,6 +918,7 @@ KtClassLiteralExpression(533,554): 'AnnoWithKClass::class'
 KtNameReferenceExpression(533,547): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -929,6 +948,7 @@ KtAnnotation(556,600): '@[AnnoWithKClass(one.AnnoWithKClass::class)]'
 KtAnnotationEntry(558,599): 'AnnoWithKClass(one.AnnoWithKClass::class)'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -962,6 +982,7 @@ KtAnnotationEntry(558,599): 'AnnoWithKClass(one.AnnoWithKClass::class)'
 KtConstructorCalleeExpression(558,572): 'AnnoWithKClass'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1013,6 +1034,7 @@ KtClassLiteralExpression(573,598): 'one.AnnoWithKClass::class'
 KtDotQualifiedExpression(573,591): 'one.AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1039,6 +1061,7 @@ KtDotQualifiedExpression(573,591): 'one.AnnoWithKClass'
 KtNameReferenceExpression(573,576): 'one'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1065,6 +1088,7 @@ KtNameReferenceExpression(573,576): 'one'
 KtNameReferenceExpression(577,591): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1091,6 +1115,7 @@ KtNameReferenceExpression(577,591): 'AnnoWithKClass'
 KtAnnotationEntry(601,675): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.AnnoWithKClass::class])'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1124,6 +1149,7 @@ KtAnnotationEntry(601,675): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.
 KtConstructorCalleeExpression(602,623): 'AnnoWithArrayOfKClass'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1172,6 +1198,7 @@ KtValueArgument(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
 KtCollectionLiteralExpression(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1217,6 +1244,7 @@ KtClassLiteralExpression(625,646): 'AnnoWithKClass::class'
 KtNameReferenceExpression(625,639): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1246,6 +1274,7 @@ KtClassLiteralExpression(648,673): 'one.AnnoWithKClass::class'
 KtDotQualifiedExpression(648,666): 'one.AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1272,6 +1301,7 @@ KtDotQualifiedExpression(648,666): 'one.AnnoWithKClass'
 KtNameReferenceExpression(648,651): 'one'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1298,6 +1328,7 @@ KtNameReferenceExpression(648,651): 'one'
 KtNameReferenceExpression(652,666): 'AnnoWithKClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1324,6 +1355,7 @@ KtNameReferenceExpression(652,666): 'AnnoWithKClass'
 KtAnnotationEntry(676,783): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))))'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1357,6 +1389,7 @@ KtAnnotationEntry(676,783): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArra
 KtConstructorCalleeExpression(677,702): 'AnnoWithAnotherAnnotation'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1405,6 +1438,7 @@ KtValueArgument(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArra
 KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1447,6 +1481,7 @@ KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArr
 KtNameReferenceExpression(703,710): 'arrayOf'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1495,6 +1530,7 @@ KtValueArgument(711,742): 'one.AnnoWithArray([10, 11, 12])'
 KtDotQualifiedExpression(711,742): 'one.AnnoWithArray([10, 11, 12])'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1531,6 +1567,7 @@ KtNameReferenceExpression(711,714): 'one'
 KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1564,6 +1601,7 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
 KtNameReferenceExpression(715,728): 'AnnoWithArray'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1603,6 +1641,7 @@ KtValueArgument(729,741): '[10, 11, 12]'
 KtCollectionLiteralExpression(729,741): '[10, 11, 12]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1662,6 +1701,7 @@ KtValueArgument(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
 KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1695,6 +1735,7 @@ KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
 KtNameReferenceExpression(744,757): 'AnnoWithArray'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1734,6 +1775,7 @@ KtValueArgument(758,780): 'intArrayOf(13, 14, 15)'
 KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1781,6 +1823,7 @@ KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
 KtNameReferenceExpression(758,768): 'intArrayOf'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1849,6 +1892,7 @@ KtConstantExpression(777,779): '15'
 KtAnnotationEntry(784,826): '@AnnoWithString(stringConstant + " 1.2.3")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1882,6 +1926,7 @@ KtAnnotationEntry(784,826): '@AnnoWithString(stringConstant + " 1.2.3")'
 KtConstructorCalleeExpression(785,799): 'AnnoWithString'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1930,6 +1975,7 @@ KtValueArgument(800,825): 'stringConstant + " 1.2.3"'
 KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = stringConstant
@@ -1965,6 +2011,7 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2019,6 +2066,7 @@ KtNameReferenceExpression(800,814): 'stringConstant'
 KtOperationReferenceExpression(815,816): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = stringConstant
@@ -2054,6 +2102,7 @@ KtOperationReferenceExpression(815,816): '+'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:

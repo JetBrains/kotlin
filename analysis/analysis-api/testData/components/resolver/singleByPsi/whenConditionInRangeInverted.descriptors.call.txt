@@ -1,5 +1,6 @@
 KtWhenConditionInRange(177,190): '!in MyClass()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:

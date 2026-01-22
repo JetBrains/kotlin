@@ -1,5 +1,6 @@
 KtArrayAccessExpression(68,72): '1[2]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
