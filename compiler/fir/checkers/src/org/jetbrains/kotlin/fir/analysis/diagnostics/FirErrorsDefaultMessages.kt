@@ -1496,7 +1496,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DSL_MARKER_APPLIED_TO_WRONG_TARGET,
-            "Applying DSL marker annotation ''{0}'' to target ''{1}'' has no effect. DSL marker annotations must only be applied to types.",
+            "Applying DSL marker annotation ''{0}'' to target ''{1}'' has no effect. DSL marker annotations must only be applied to types. " +
+            "See https://youtrack.jetbrains.com/issue/KT-81567 for further information.",
             DECLARATION_NAME,
             TO_STRING,
         )
