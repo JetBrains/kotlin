@@ -49,8 +49,9 @@ fun outgoingConfiguration(name: String, configure: Action<Configuration> = Actio
     }
 
 fun KotlinCommonCompilerOptions.mainCompilationOptions() {
-    languageVersion = KotlinVersion.KOTLIN_2_3
-    apiVersion = KotlinVersion.KOTLIN_2_3
+    // Use this to override language and API versions for stdlib compared to the version used to build the whole Kotlin
+    // languageVersion = KotlinVersion.KOTLIN_...
+    // apiVersion = KotlinVersion.KOTLIN_...
     freeCompilerArgs.add("-Xstdlib-compilation")
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
     freeCompilerArgs.add("-Xcontext-parameters")
