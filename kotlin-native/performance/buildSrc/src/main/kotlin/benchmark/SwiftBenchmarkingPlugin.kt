@@ -1,123 +1,63 @@
 package org.jetbrains.kotlin.benchmark
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.create
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.withType
+import org.gradle.language.swift.tasks.SwiftCompile
+import org.gradle.nativeplatform.tasks.LinkExecutable
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.konan.target.*
-import java.io.File
-import javax.inject.Inject
-import java.nio.file.Paths
-import java.util.concurrent.TimeUnit
-import java.nio.file.Path
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 
-private const val EXTENSION_NAME = "swiftBenchmark"
-
-open class SwiftBenchmarkExtension @Inject constructor(project: Project) : BenchmarkExtension(project) {
-    var swiftSources: List<String> = emptyList()
-}
+private const val NATIVE_FRAMEWORK_NAME = "benchmark"
 
 /**
  * A plugin configuring a benchmark Kotlin/Native project.
  */
 open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
-    override val Project.benchmark: SwiftBenchmarkExtension
-        get() = extensions.getByName(EXTENSION_NAME) as SwiftBenchmarkExtension
+    private val Project.swiftLinkTaskProvider: TaskProvider<LinkExecutable>
+        get() = project.tasks.named("linkRelease", LinkExecutable::class) // Only interested in the optimized Swift
 
-    override fun Project.createExtension() = extensions.create<SwiftBenchmarkExtension>(EXTENSION_NAME, this)
-
-    private val Project.nativeLinkBinary: String
-        get() = File("${framework.outputFile.absolutePath}/$nativeFrameworkName").canonicalPath
-
-    private lateinit var framework: Framework
-    val nativeFrameworkName = "benchmark"
+    private val Project.kotlinLinkTaskProvider: TaskProvider<out KotlinNativeLink>
+        get() = hostKotlinNativeTarget.binaries.getFramework(NATIVE_FRAMEWORK_NAME, project.buildType).linkTaskProvider
 
     override fun Project.createNativeBinary(target: KotlinNativeTarget) {
-        target.binaries.framework(nativeFrameworkName, listOf(project.buildType)) {
+        target.binaries.framework(NATIVE_FRAMEWORK_NAME, listOf(project.buildType)) {
             export(dependencies.project(":benchmarksLauncher"))
         }
     }
 
-    override fun Project.createExtraTasks() {
-        val nativeTarget = hostKotlinNativeTarget
-        // Build executable from swift code.
-        framework = nativeTarget.binaries.getFramework(nativeFrameworkName, project.buildType)
-        tasks.create("buildSwift") {
-            dependsOn(framework.linkTaskName)
-            doLast {
-                val frameworkParentDirPath = framework.outputDirectory.absolutePath
-                val options = listOf("-O", "-wmo", "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath, "-F", frameworkParentDirPath)
-                compileSwift(project, nativeTarget.konanTarget, benchmark.swiftSources, options,
-                        Paths.get(layout.buildDirectory.get().asFile.absolutePath, benchmark.applicationName.get()))
-            }
+    override fun Project.configureExtraTasks() {
+        val framework = kotlinLinkTaskProvider.map { it.outputFile.get() }
+        tasks.withType(SwiftCompile::class).configureEach {
+            compilerArgs.add("-wmo")
+            compilerArgs.add("-F")
+            compilerArgs.add(framework.map { it.parentFile.absolutePath })
+        }
+        tasks.withType(LinkExecutable::class).configureEach {
+            linkerArgs.add("-wmo")
+            linkerArgs.add("-Xlinker")
+            linkerArgs.add("-rpath")
+            linkerArgs.add("-Xlinker")
+            linkerArgs.add(framework.map { it.parentFile.absolutePath })
+            linkerArgs.add("-F")
+            linkerArgs.add(framework.map { it.parentFile.absolutePath })
         }
     }
 
     override fun RunKotlinNativeTask.configureKonanRunTask() {
-        executable.set(project.layout.buildDirectory.file(project.benchmark.applicationName.get()))
-        dependsOn("buildSwift")
+        executable.set(project.swiftLinkTaskProvider.map { it.linkedFile.get() })
     }
 
     override fun JsonReportTask.configureKonanJsonReportTask() {
-        codeSizeBinary.set(project.file("${framework.outputFile.absolutePath}/$nativeFrameworkName"))
-        compilerFlags.addAll(framework.freeCompilerArgs.map { "\"$it\"" })
+        codeSizeBinary.fileProvider(project.kotlinLinkTaskProvider.map { it.outputFile.get().resolve(NATIVE_FRAMEWORK_NAME) })
+        compilerFlags.addAll(project.kotlinLinkTaskProvider.map { it.toolOptions.freeCompilerArgs.get() })
     }
 
-    fun Array<String>.runCommand(
-            workingDir: File = File("."),
-            timeoutAmount: Long = 60,
-            timeoutUnit: TimeUnit = TimeUnit.SECONDS,
-            env: Map<String, String>,
-    ): String {
-        return try {
-            val processBuilder = ProcessBuilder(*this)
-                    .directory(workingDir)
-                    .redirectErrorStream(true)
-                    .redirectOutput(ProcessBuilder.Redirect.PIPE)
-            env.forEach { key, value ->
-                processBuilder.environment().set(key, value)
-            }
-            val process = processBuilder.start()
-            val output = process.inputStream.bufferedReader().readText()
-            process.waitFor(timeoutAmount, timeoutUnit)
-            output
-        } catch (e: Exception) {
-            println("Couldn't run command ${this.joinToString(" ")}")
-            println(e.stackTrace.joinToString("\n"))
-            error(e.message!!)
-        }
-    }
-    fun compileSwift(
-            project: Project, target: KonanTarget, sources: List<String>, options: List<String>,
-            output: Path
-    ) {
-        val platform = project.platformManager.platform(target)
-        assert(platform.configurables is AppleConfigurables)
-        val configs = platform.configurables as AppleConfigurables
-        val compiler = configs.absoluteTargetToolchain + "/bin/swiftc"
-
-        val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
-
-        val args = listOf("-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget) +
-                options + "-o" + output.toString() + sources
-
-        val out = mutableListOf<String>().apply {
-            add(compiler)
-            addAll(args)
-        }.toTypedArray().runCommand(
-            timeoutAmount = 240,
-            env = mapOf("DYLD_FALLBACK_FRAMEWORK_PATH" to File(configs.absoluteTargetToolchain).parent + "/ExtraFrameworks"),
-        )
-
-        println(
-                """
-        |$compiler finished with:
-        |options: ${args.joinToString(separator = " ")}
-        |output: $out
-        """.trimMargin()
-        )
-        check(output.toFile().exists()) { "Compiler swiftc hasn't produced an output file: $output" }
+    override fun apply(target: Project) {
+        target.pluginManager.apply("swift-application")
+        super.apply(target)
     }
 }
