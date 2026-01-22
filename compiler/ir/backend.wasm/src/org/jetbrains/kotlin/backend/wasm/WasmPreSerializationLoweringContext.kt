@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationWasmSymbols
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
+import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 
@@ -25,4 +27,6 @@ class WasmPreSerializationLoweringContext(
     override val sharedVariablesManager: SharedVariablesManager = KlibSharedVariablesManager(symbols)
 
     override val irMangler: KotlinMangler.IrMangler = JsManglerIr
+
+    override val declarationTable: DeclarationTable.Default = DeclarationTable.Default(JsGlobalDeclarationTable(irBuiltIns))
 }
