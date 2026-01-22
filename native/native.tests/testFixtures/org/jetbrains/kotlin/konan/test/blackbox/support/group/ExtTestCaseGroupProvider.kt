@@ -811,13 +811,18 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         private val defaultModule by lazy { createModule(DEFAULT_MODULE_NAME, emptyList(), emptyList(), emptyList()) }
         private val supportModule by lazy { createModule(SUPPORT_MODULE_NAME, emptyList(), emptyList(), emptyList()) }
 
-        lateinit var directives: Directives
+        val directives = Directives()
 
         fun createFile(module: ExtTestModule, fileName: String, text: String): ExtTestFile =
             ExtTestFile(getSanitizedFileName(fileName), module, text)
 
         override fun createFile(module: ExtTestModule?, fileName: String, text: String, directives: Directives): ExtTestFile {
-            this.directives = directives
+            for ((key, list) in directives.allDirectives) {
+                for (value in list ?: listOf(null)) {
+                    this.directives.put(key, value)
+                }
+            }
+
             return createFile(
                 module = module ?: if (fileName == "CoroutineUtil.kt") supportModule else defaultModule,
                 fileName = fileName,
@@ -837,7 +842,8 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             /* testFileName = */ originalTestDataFile.name,
             /* expectedText = */ originalTestDataFile.readText(),
             /* factory = */ testFileFactory,
-            /* preserveLocations = */ true
+            /* preserveLocations = */ true,
+            /* parseDirectivesPerFile = */ true,
         )
 
         private val lazyData: Triple<Map<String, ExtTestModule>, Map<ExtTestFile, KtFile>, MutableList<ExtTestFile>> by lazy {
