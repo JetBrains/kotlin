@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.wasm.test.klib
 
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.js.testOld.klib.AbstractWebKlibVersionsTest
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
@@ -35,19 +35,19 @@ class WasmJsKlibVersionsTest : AbstractWebKlibVersionsTest() {
         ).joinToString(File.pathSeparator) { it.absolutePath }
 
         val args = arrayOf(
-            K2JSCompilerArguments::wasm.cliArgument,
-            K2JSCompilerArguments::wasmTarget.cliArgument("wasm-js"),
-            K2JSCompilerArguments::irProduceKlibDir.cliArgument,
-            K2JSCompilerArguments::libraries.cliArgument, libraries,
-            K2JSCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
-            K2JSCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
+            KotlinWasmCompilerArguments::wasm.cliArgument,
+            KotlinWasmCompilerArguments::wasmTarget.cliArgument("wasm-js"),
+            KotlinWasmCompilerArguments::irProduceKlibDir.cliArgument,
+            KotlinWasmCompilerArguments::libraries.cliArgument, libraries,
+            KotlinWasmCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
+            KotlinWasmCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
             *extraArgs,
             sourceFile.absolutePath
         )
 
         val compilerXmlOutput = ByteArrayOutputStream()
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
-            K2JSCompiler().execFullPathsInMessages(printStream, args)
+            KotlinWasmCompiler().execFullPathsInMessages(printStream, args)
         }
 
         return CompilationResult(exitCode, compilerXmlOutput.toString())
@@ -60,19 +60,19 @@ class WasmJsKlibVersionsTest : AbstractWebKlibVersionsTest() {
         ).joinToString(File.pathSeparator) { it.absolutePath }
 
         val args = arrayOf(
-            K2JSCompilerArguments::wasm.cliArgument,
-            K2JSCompilerArguments::wasmTarget.cliArgument("wasm-js"),
-            K2JSCompilerArguments::irProduceJs.cliArgument,
-            K2JSCompilerArguments::includes.cliArgument(entryModuleKlib.absolutePath),
-            K2JSCompilerArguments::libraries.cliArgument, libraries,
-            K2JSCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
-            K2JSCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
-            K2JSCompilerArguments::target.cliArgument, "es2015",
+            KotlinWasmCompilerArguments::wasm.cliArgument,
+            KotlinWasmCompilerArguments::wasmTarget.cliArgument("wasm-js"),
+            KotlinWasmCompilerArguments::irProduceJs.cliArgument,
+            KotlinWasmCompilerArguments::includes.cliArgument(entryModuleKlib.absolutePath),
+            KotlinWasmCompilerArguments::libraries.cliArgument, libraries,
+            KotlinWasmCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
+            KotlinWasmCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
+//            KotlinWasmCompilerArguments::target.cliArgument, "es2015",
         )
 
         val compilerXmlOutput = ByteArrayOutputStream()
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
-            K2JSCompiler().execFullPathsInMessages(printStream, args)
+            KotlinWasmCompiler().execFullPathsInMessages(printStream, args)
         }
 
         return CompilationResult(exitCode, compilerXmlOutput.toString())
