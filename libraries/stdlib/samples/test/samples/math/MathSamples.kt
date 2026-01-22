@@ -476,6 +476,9 @@ class MathSamples {
             // special cases
             assertPrints(min(Double.NaN, 0.0), "NaN")
             assertPrints(min(-9000.0, Double.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertPrints(min(Double.MIN_VALUE, 0.0), "0.0")
+            assertPrints(min(Double.POSITIVE_INFINITY, Double.MAX_VALUE), "1.7976931348623157E308")
         }
 
         @Sample
@@ -488,6 +491,9 @@ class MathSamples {
             // special cases
             assertPrints(max(Double.NaN, 0.0), "NaN")
             assertPrints(max(-9000.0, Double.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertPrints(max(Double.MIN_VALUE, 0.0), "4.9E-324")
+            assertPrints(max(Double.POSITIVE_INFINITY, Double.MAX_VALUE), "Infinity")
         }
     }
 
@@ -957,6 +963,9 @@ class MathSamples {
             // special cases
             assertPrints(min(Float.NaN, 0.0f), "NaN")
             assertPrints(min(-9000.0f, Float.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertPrints(min(Float.MIN_VALUE, 0.0f), "0.0")
+            assertPrints(min(Float.POSITIVE_INFINITY, Float.MAX_VALUE), "3.4028235E38")
         }
 
         @Sample
@@ -969,6 +978,9 @@ class MathSamples {
             // special cases
             assertPrints(max(Float.NaN, 0.0f), "NaN")
             assertPrints(max(-9000.0f, Float.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertPrints(max(Float.MIN_VALUE, 0.0f), "1.4E-45")
+            assertPrints(max(Float.POSITIVE_INFINITY, Float.MAX_VALUE), "Infinity")
         }
     }
 
