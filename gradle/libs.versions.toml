@@ -100,6 +100,7 @@ bytebuddy = "1.18.9"
 playwright = "1.61.0"
 fileLeakDetector = "1.21"
 jmh = "0.7.3"
+jacoco = "0.8.14"
 
 analysis-api-kotlin = "2.3.21"
 
@@ -247,6 +248,9 @@ analysis-api-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", 
 analysis-api-kotlin-metadata-jvm = { module = "org.jetbrains.kotlin:kotlin-metadata-jvm", version.ref = "analysis-api-kotlin" }
 
 fileLeakDetector = { module = "io.jenkins.tools:file-leak-detector", version.ref = "fileLeakDetector" }
+
+jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }
+jacoco-cli = { module = "org.jacoco:org.jacoco.cli", version.ref = "jacoco" }
 
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }
