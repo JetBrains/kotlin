@@ -752,6 +752,25 @@ private fun collectGradleJvmOptions(
     if (connectSubprocessVMToDebugger) {
         add("-agentlib:jdwp=transport=dt_socket,server=n,suspend=n,address=${EnableGradleDebug.LOOPBACK_IP}:${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS}")
     }
+
+    addJacocoAgentIfEnabled()
+}
+
+private fun MutableList<String>.addJacocoAgentIfEnabled() {
+    val testCoverageEnabled = System.getProperty("kgp.jacoco.enabled").toString().toBoolean()
+    if (!testCoverageEnabled) return
+
+    val jacocoRuntimeJar = System.getProperty("jacocoRuntimeJar") ?: return
+    val jacocoOutputDir = System.getProperty("jacocoOutputDir") ?: return
+
+    val reportFile = File(File(jacocoOutputDir), "integration-tests.exec")
+
+    // Offline instrumentation: probes are already embedded in bytecode.
+    // Add JaCoCo runtime to boot classpath so probes can reach it from any classloader.
+    add("-Xbootclasspath/a:$jacocoRuntimeJar")
+    add("-Djacoco-agent.destfile=${reportFile.absolutePath}")
+    add("-Djacoco-agent.append=true")
+    add("-Djacoco-agent.output=file")
 }
 
 private fun collectKotlinJvmArgs(
