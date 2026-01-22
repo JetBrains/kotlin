@@ -9,7 +9,7 @@ import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageParserCallback
 import jetbrains.buildServer.messages.serviceMessages.TestFailed
 import kotlin.test.Test
-import org.slf4j.event.EventRecodingLogger
+import org.slf4j.event.EventRecordingLogger
 import org.slf4j.event.SubstituteLoggingEvent
 import org.slf4j.helpers.SubstituteLogger
 import java.text.ParseException
@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
 class TCServiceMessageOutputStreamHandlerTest {
     private val client = Mock()
     private val logEvents = ArrayBlockingQueue<SubstituteLoggingEvent>(10)
-    private val log = EventRecodingLogger(SubstituteLogger("", logEvents, false), logEvents)
+    private val log = EventRecordingLogger(SubstituteLogger("", logEvents, false), logEvents)
     private val handler = TCServiceMessageOutputStreamHandler(client, {}, log, messageLimitBytes = 35)
 
     private val clientCalls get() = client.log.toString()
