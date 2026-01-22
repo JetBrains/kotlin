@@ -8,6 +8,7 @@ plugins {
     id("gradle-plugin-dependency-configuration")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("gradle-plugin-api-reference")
+    id("kgp-jacoco-instrumenter")
 }
 
 pluginApiReference {

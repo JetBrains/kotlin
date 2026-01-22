@@ -13,6 +13,7 @@ plugins {
     kotlin("plugin.serialization")
     id("android-sdk-provisioner")
     id("gradle-plugin-published-compiler-dependency-configuration") // the test compilation's output is injected into test project's build classpath for the buildscript injection
+    id("kgp-jacoco-testkit")
 }
 
 testsJar()
@@ -58,7 +59,10 @@ fun createConfigurationToBeConsumedInTests(name: String, dependencyProject: Stri
 
 createConfigurationToBeConsumedInTests("applePrivacyManifestPlugin", ":kotlin-privacy-manifests-plugin")
 createConfigurationToBeConsumedInTests("sandboxPlugin", ":plugins:plugin-sandbox")
-createConfigurationToBeConsumedInTests("composeCompilerRuntimeTestUtils", ":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils")
+createConfigurationToBeConsumedInTests(
+    "composeCompilerRuntimeTestUtils",
+    ":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils"
+)
 
 dependencies {
     testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
