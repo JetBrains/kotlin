@@ -99,9 +99,11 @@ bytebuddy = "1.18.9"
 playwright = "1.61.0"
 fileLeakDetector = "1.21"
 jmh = "0.7.3"
+jacoco = "0.8.14"
 
 analysis-api-kotlin = "2.3.21"
 analysis-api-kotlinx-coroutines = "1.10.2-intellij-1" # Should be synchronized with 'kotlinx-coroutines'
+
 
 [libraries]
 kotlin-compiler-arguments-release = { module = "org.jetbrains.kotlin:kotlin-compiler-arguments-description", version.ref = "kotlin-release" }
@@ -247,6 +249,9 @@ analysis-api-intellij-patched-kotlinx-coroutines-core-jvm = { module = "org.jetb
 analysis-api-intellij-patched-kotlinx-coroutines-debug = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-debug", version.ref = "analysis-api-kotlinx-coroutines" }
 
 fileLeakDetector = { module = "io.jenkins.tools:file-leak-detector", version.ref = "fileLeakDetector" }
+
+jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }
+jacoco-cli = { module = "org.jacoco:org.jacoco.cli", version.ref = "jacoco" }
 
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }
