@@ -58,6 +58,7 @@ KtSuperTypeList(218,227): 'MyClass()'
 KtSuperTypeCallEntry(218,227): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -76,6 +77,7 @@ KtSuperTypeCallEntry(218,227): 'MyClass()'
 KtConstructorCalleeExpression(218,225): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -100,6 +102,7 @@ KtUserType(218,225): 'MyClass'
 KtNameReferenceExpression(218,225): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -145,6 +148,7 @@ KtSuperTypeList(293,302): 'MyClass()'
 KtSuperTypeCallEntry(293,302): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -163,6 +167,7 @@ KtSuperTypeCallEntry(293,302): 'MyClass()'
 KtConstructorCalleeExpression(293,300): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -187,6 +192,7 @@ KtUserType(293,300): 'MyClass'
 KtNameReferenceExpression(293,300): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -238,6 +244,7 @@ KtSuperTypeList(389,396): 'Super()'
 KtSuperTypeCallEntry(389,396): 'Super()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -256,6 +263,7 @@ KtSuperTypeCallEntry(389,396): 'Super()'
 KtConstructorCalleeExpression(389,394): 'Super'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -280,6 +288,7 @@ KtUserType(389,394): 'Super'
 KtNameReferenceExpression(389,394): 'Super'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -316,6 +325,7 @@ KtNameReferenceExpression(424,431): 'MyClass'
 KtCallExpression(434,440): 'TODO()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -332,6 +342,7 @@ KtCallExpression(434,440): 'TODO()'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -358,6 +369,7 @@ KtCallExpression(434,440): 'TODO()'
 KtNameReferenceExpression(434,438): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -374,6 +386,7 @@ KtNameReferenceExpression(434,438): 'TODO'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -415,6 +428,7 @@ KtNameReferenceExpression(473,487): 'InheritorClass'
 KtCallExpression(490,506): 'InheritorClass()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -432,6 +446,7 @@ KtCallExpression(490,506): 'InheritorClass()'
 KtNameReferenceExpression(490,504): 'InheritorClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -515,6 +530,7 @@ KtPropertyDelegate(674,686): 'by lazy {""}'
 KtCallExpression(677,686): 'lazy {""}'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -557,6 +573,7 @@ KtCallExpression(677,686): 'lazy {""}'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -599,6 +616,7 @@ KtCallExpression(677,686): 'lazy {""}'
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -634,6 +652,7 @@ KtCallExpression(677,686): 'lazy {""}'
 KtNameReferenceExpression(677,681): 'lazy'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -676,6 +695,7 @@ KtNameReferenceExpression(677,681): 'lazy'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -718,6 +738,7 @@ KtNameReferenceExpression(677,681): 'lazy'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -783,6 +804,7 @@ KtNameReferenceExpression(707,714): 'MyClass'
 KtCallExpression(717,723): 'TODO()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -799,6 +821,7 @@ KtCallExpression(717,723): 'TODO()'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -825,6 +848,7 @@ KtCallExpression(717,723): 'TODO()'
 KtNameReferenceExpression(717,721): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -841,6 +865,7 @@ KtNameReferenceExpression(717,721): 'TODO'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -957,6 +982,7 @@ KtBlockExpression(862,1348): '{'
 KtCallExpression(868,908): 'receiverVarArg<MyClass>(InheritorObject)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -993,6 +1019,7 @@ KtCallExpression(868,908): 'receiverVarArg<MyClass>(InheritorObject)'
 KtNameReferenceExpression(868,882): 'receiverVarArg'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1053,6 +1080,7 @@ KtNameReferenceExpression(892,907): 'InheritorObject'
 KtCallExpression(913,939): 'receiverVarArg<MyClass>(i)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1088,6 +1116,7 @@ KtCallExpression(913,939): 'receiverVarArg<MyClass>(i)'
 KtNameReferenceExpression(913,927): 'receiverVarArg'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1162,6 +1191,7 @@ KtNameReferenceExpression(937,938): 'i'
 KtCallExpression(944,980): 'receiverVarArg<MyClass>(propMyClass)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1198,6 +1228,7 @@ KtCallExpression(944,980): 'receiverVarArg<MyClass>(propMyClass)'
 KtNameReferenceExpression(944,958): 'receiverVarArg'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1258,6 +1289,7 @@ KtNameReferenceExpression(968,979): 'propMyClass'
 KtCallExpression(985,1028): 'receiverVarArg<MyClass>(propInheritorClass)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1294,6 +1326,7 @@ KtCallExpression(985,1028): 'receiverVarArg<MyClass>(propInheritorClass)'
 KtNameReferenceExpression(985,999): 'receiverVarArg'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1354,6 +1387,7 @@ KtNameReferenceExpression(1009,1027): 'propInheritorClass'
 KtCallExpression(1033,1077): 'receiverVarArg<MyClass>(propInheritorObject)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1390,6 +1424,7 @@ KtCallExpression(1033,1077): 'receiverVarArg<MyClass>(propInheritorObject)'
 KtNameReferenceExpression(1033,1047): 'receiverVarArg'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1450,6 +1485,7 @@ KtNameReferenceExpression(1057,1076): 'propInheritorObject'
 KtCallExpression(1083,1112): 'receiverVarArg<MyClass>(prop)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1486,6 +1522,7 @@ KtCallExpression(1083,1112): 'receiverVarArg<MyClass>(prop)'
 KtNameReferenceExpression(1083,1097): 'receiverVarArg'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1546,6 +1583,7 @@ KtNameReferenceExpression(1107,1111): 'prop'
 KtCallExpression(1117,1151): 'receiverVarArg<MyClass>(constProp)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1582,6 +1620,7 @@ KtCallExpression(1117,1151): 'receiverVarArg<MyClass>(constProp)'
 KtNameReferenceExpression(1117,1131): 'receiverVarArg'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1642,6 +1681,7 @@ KtNameReferenceExpression(1141,1150): 'constProp'
 KtCallExpression(1156,1189): 'receiverVarArg<MyClass>(lazyProp)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1678,6 +1718,7 @@ KtCallExpression(1156,1189): 'receiverVarArg<MyClass>(lazyProp)'
 KtNameReferenceExpression(1156,1170): 'receiverVarArg'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1738,6 +1779,7 @@ KtNameReferenceExpression(1180,1188): 'lazyProp'
 KtCallExpression(1194,1229): 'receiverVarArg<MyClass>(lambdaProp)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1774,6 +1816,7 @@ KtCallExpression(1194,1229): 'receiverVarArg<MyClass>(lambdaProp)'
 KtNameReferenceExpression(1194,1208): 'receiverVarArg'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1834,6 +1877,7 @@ KtNameReferenceExpression(1218,1228): 'lambdaProp'
 KtCallExpression(1234,1268): 'receiverVarArg<MyClass>(superProp)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1870,6 +1914,7 @@ KtCallExpression(1234,1268): 'receiverVarArg<MyClass>(superProp)'
 KtNameReferenceExpression(1234,1248): 'receiverVarArg'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1930,6 +1975,7 @@ KtNameReferenceExpression(1258,1267): 'superProp'
 KtCallExpression(1274,1305): 'receiverVarArg<MyClass>(func())'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1966,6 +2012,7 @@ KtCallExpression(1274,1305): 'receiverVarArg<MyClass>(func())'
 KtNameReferenceExpression(1274,1288): 'receiverVarArg'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2032,6 +2079,7 @@ KtValueArgumentList(1302,1304): '()'
 KtCallExpression(1310,1346): 'receiverVarArg<MyClass>(superFunc())'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2068,6 +2116,7 @@ KtCallExpression(1310,1346): 'receiverVarArg<MyClass>(superFunc())'
 KtNameReferenceExpression(1310,1324): 'receiverVarArg'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

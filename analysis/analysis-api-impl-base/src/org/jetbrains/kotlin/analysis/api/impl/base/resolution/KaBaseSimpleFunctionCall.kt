@@ -13,16 +13,14 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSy
 import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 
 @KaImplementationDetail
 class KaBaseSimpleFunctionCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-    private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
+    private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaParameterSymbol>>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
 ) : @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall {
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
@@ -44,8 +42,6 @@ class KaBaseSimpleFunctionCall(
     override val contextArguments: List<KaReceiverValue>
         get() = withValidityAssertion { backingPartiallyAppliedSymbol.contextArguments }
 
-    override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingTypeArgumentsMapping }
-
     @Deprecated(
         "Check whether the call is instance of the 'KaImplicitInvokeCall' instead",
         replaceWith = ReplaceWith(
@@ -54,5 +50,14 @@ class KaBaseSimpleFunctionCall(
         )
     )
     override val isImplicitInvoke: Boolean get() = withValidityAssertion { false }
-    override val valueArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> get() = withValidityAssertion { backingArgumentMapping }
+
+    override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>
+        get() = withValidityAssertion { backingTypeArgumentsMapping }
+
+    override val valueArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
+        get() = withValidityAssertion { backingArgumentMapping.toValueArgumentMapping() }
+
+    @KaExperimentalApi
+    override val contextArgumentMapping: Map<KtExpression, KaVariableSignature<KaContextParameterSymbol>>
+        get() = withValidityAssertion { backingArgumentMapping.toContextArgumentMapping() }
 }

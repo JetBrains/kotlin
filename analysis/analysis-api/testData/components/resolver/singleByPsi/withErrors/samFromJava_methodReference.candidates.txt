@@ -1,6 +1,7 @@
 KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = handler

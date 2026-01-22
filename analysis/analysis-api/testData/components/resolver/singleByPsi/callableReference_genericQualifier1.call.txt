@@ -2,6 +2,7 @@ KtCallExpression(71,80): 'Test<Bar>'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

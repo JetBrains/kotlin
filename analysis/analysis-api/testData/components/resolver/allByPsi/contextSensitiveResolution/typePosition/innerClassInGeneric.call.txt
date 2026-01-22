@@ -33,6 +33,7 @@ KtSuperTypeList(119,130): 'A<String>()'
 
 KtSuperTypeCallEntry(119,130): 'A<String>()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -52,6 +53,7 @@ KtSuperTypeCallEntry(119,130): 'A<String>()'
 KtConstructorCalleeExpression(119,128): 'A<String>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -115,6 +117,7 @@ KtNameReferenceExpression(152,153): 'T'
 
 KtCallExpression(156,162): 'TODO()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -131,6 +134,7 @@ KtCallExpression(156,162): 'TODO()'
 KtNameReferenceExpression(156,160): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -158,6 +162,7 @@ KtSuperTypeList(191,202): 'A<String>()'
 
 KtSuperTypeCallEntry(191,202): 'A<String>()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -177,6 +182,7 @@ KtSuperTypeCallEntry(191,202): 'A<String>()'
 KtConstructorCalleeExpression(191,200): 'A<String>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -240,6 +246,7 @@ KtNameReferenceExpression(224,225): 'T'
 
 KtCallExpression(228,234): 'TODO()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -256,6 +263,7 @@ KtCallExpression(228,234): 'TODO()'
 KtNameReferenceExpression(228,232): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -280,6 +288,7 @@ KtSuperTypeList(255,263): 'A<Int>()'
 
 KtSuperTypeCallEntry(255,263): 'A<Int>()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -299,6 +308,7 @@ KtSuperTypeCallEntry(255,263): 'A<Int>()'
 KtConstructorCalleeExpression(255,261): 'A<Int>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

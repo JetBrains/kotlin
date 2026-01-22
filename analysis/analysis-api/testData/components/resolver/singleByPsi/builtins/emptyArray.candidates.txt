@@ -1,6 +1,7 @@
 KtNameReferenceExpression(31,41): 'emptyArray'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

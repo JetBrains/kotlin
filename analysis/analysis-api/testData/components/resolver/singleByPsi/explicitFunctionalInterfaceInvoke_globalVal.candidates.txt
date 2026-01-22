@@ -1,6 +1,7 @@
 KtNameReferenceExpression(94,100): 'invoke'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = globalA

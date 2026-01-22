@@ -2,6 +2,7 @@ KtNameReferenceExpression(218,221): 'inc'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = num

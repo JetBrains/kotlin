@@ -1,6 +1,7 @@
 KtAnnotationEntry(114,154): '@AnnotationInner(Annotation("v1", "v2"))'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

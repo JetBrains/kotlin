@@ -5,6 +5,7 @@ KtOperationReferenceExpression(250,252): '+='
         kind = PLUS_ASSIGN
         operand = MyClass()
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = variable[0]
@@ -29,6 +30,7 @@ KtOperationReferenceExpression(250,252): '+='
           typeArgumentsMapping = {}
           valueArgumentMapping = {}
       getterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
@@ -56,6 +58,7 @@ KtOperationReferenceExpression(250,252): '+='
         0
       ]
       setterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable

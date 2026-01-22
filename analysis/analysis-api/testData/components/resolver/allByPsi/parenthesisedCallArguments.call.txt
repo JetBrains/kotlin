@@ -156,6 +156,7 @@ KtConstantExpression(195,196): '1'
 
 KtCallExpression(202,208): 'foo(3)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -188,6 +189,7 @@ KtCallExpression(202,208): 'foo(3)'
 KtNameReferenceExpression(202,205): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -228,6 +230,7 @@ KtConstantExpression(206,207): '3'
 
 KtCallExpression(213,223): 'foo(((5)))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -260,6 +263,7 @@ KtCallExpression(213,223): 'foo(((5)))'
 KtNameReferenceExpression(213,216): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -306,6 +310,7 @@ KtConstantExpression(219,220): '5'
 
 KtCallExpression(228,242): 'foo(x = ((5)))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -338,6 +343,7 @@ KtCallExpression(228,242): 'foo(x = ((5)))'
 KtNameReferenceExpression(228,231): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -390,6 +396,7 @@ KtConstantExpression(238,239): '5'
 
 KtCallExpression(247,266): 'foo((((5 as Int))))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -422,6 +429,7 @@ KtCallExpression(247,266): 'foo((((5 as Int))))'
 KtNameReferenceExpression(247,250): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -486,6 +494,7 @@ KtNameReferenceExpression(259,262): 'Int'
 
 KtCallExpression(271,294): 'foo(x = (((5 as Int))))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -518,6 +527,7 @@ KtCallExpression(271,294): 'foo(x = (((5 as Int))))'
 KtNameReferenceExpression(271,274): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -588,6 +598,7 @@ KtNameReferenceExpression(287,290): 'Int'
 
 KtCallExpression(300,368): 'foo((((when (((value))) {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -623,6 +634,7 @@ KtCallExpression(300,368): 'foo((((when (((value))) {'
 KtNameReferenceExpression(300,303): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -716,6 +728,7 @@ KtConstantExpression(357,358): '2'
 
 KtCallExpression(374,394): 'foo(((((++value)))))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -748,6 +761,7 @@ KtCallExpression(374,394): 'foo(((((++value)))))'
 KtNameReferenceExpression(374,377): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -801,6 +815,7 @@ KtPrefixExpression(382,389): '++value'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = value
@@ -838,6 +853,7 @@ KtOperationReferenceExpression(382,384): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = value
@@ -888,6 +904,7 @@ KtNameReferenceExpression(384,389): 'value'
 
 KtCallExpression(400,426): 'fooVararg((5), (5 as Int))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -927,6 +944,7 @@ KtCallExpression(400,426): 'fooVararg((5), (5 as Int))'
 KtNameReferenceExpression(400,409): 'fooVararg'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1001,6 +1019,7 @@ KtNameReferenceExpression(421,424): 'Int'
 
 KtCallExpression(431,458): 'fooVararg(*(intArrayOf(5)))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1033,6 +1052,7 @@ KtCallExpression(431,458): 'fooVararg(*(intArrayOf(5)))'
 KtNameReferenceExpression(431,440): 'fooVararg'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1073,6 +1093,7 @@ KtParenthesizedExpression(442,457): '(intArrayOf(5))'
 
 KtCallExpression(443,456): 'intArrayOf(5)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1105,6 +1126,7 @@ KtCallExpression(443,456): 'intArrayOf(5)'
 KtNameReferenceExpression(443,453): 'intArrayOf'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1145,6 +1167,7 @@ KtConstantExpression(454,455): '5'
 
 KtCallExpression(463,493): 'fooVararg(x = (intArrayOf(5)))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1177,6 +1200,7 @@ KtCallExpression(463,493): 'fooVararg(x = (intArrayOf(5)))'
 KtNameReferenceExpression(463,472): 'fooVararg'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1223,6 +1247,7 @@ KtParenthesizedExpression(477,492): '(intArrayOf(5))'
 
 KtCallExpression(478,491): 'intArrayOf(5)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1255,6 +1280,7 @@ KtCallExpression(478,491): 'intArrayOf(5)'
 KtNameReferenceExpression(478,488): 'intArrayOf'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1295,6 +1321,7 @@ KtConstantExpression(489,490): '5'
 
 KtCallExpression(499,523): 'fooLambda((({ _ -> 5})))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1327,6 +1354,7 @@ KtCallExpression(499,523): 'fooLambda((({ _ -> 5})))'
 KtNameReferenceExpression(499,508): 'fooLambda'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1388,6 +1416,7 @@ KtConstantExpression(518,519): '5'
 
 KtCallExpression(529,554): 'fooSam((((MySam { 5 }))))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1420,6 +1449,7 @@ KtCallExpression(529,554): 'fooSam((((MySam { 5 }))))'
 KtNameReferenceExpression(529,535): 'fooSam'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1466,6 +1496,7 @@ KtParenthesizedExpression(538,551): '(MySam { 5 })'
 
 KtCallExpression(539,550): 'MySam { 5 }'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1498,6 +1529,7 @@ KtCallExpression(539,550): 'MySam { 5 }'
 KtNameReferenceExpression(539,544): 'MySam'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

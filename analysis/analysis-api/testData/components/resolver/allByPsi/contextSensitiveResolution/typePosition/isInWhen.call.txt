@@ -51,6 +51,7 @@ KtSuperTypeList(163,176): 'SealedClass()'
 
 KtSuperTypeCallEntry(163,176): 'SealedClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -68,6 +69,7 @@ KtSuperTypeCallEntry(163,176): 'SealedClass()'
 KtConstructorCalleeExpression(163,174): 'SealedClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -123,6 +125,7 @@ KtSuperTypeList(225,238): 'SealedClass()'
 
 KtSuperTypeCallEntry(225,238): 'SealedClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -140,6 +143,7 @@ KtSuperTypeCallEntry(225,238): 'SealedClass()'
 KtConstructorCalleeExpression(225,236): 'SealedClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -198,6 +202,7 @@ KtSuperTypeList(308,321): 'SealedClass()'
 
 KtSuperTypeCallEntry(308,321): 'SealedClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -215,6 +220,7 @@ KtSuperTypeCallEntry(308,321): 'SealedClass()'
 KtConstructorCalleeExpression(308,319): 'SealedClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -249,6 +255,7 @@ KtSuperTypeList(358,376): 'SealedInheritor1()'
 
 KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -274,6 +281,7 @@ KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
 KtConstructorCalleeExpression(358,374): 'SealedInheritor1'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -343,6 +351,7 @@ KtSuperTypeList(439,452): 'SealedClass()'
 
 KtSuperTypeCallEntry(439,452): 'SealedClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -360,6 +369,7 @@ KtSuperTypeCallEntry(439,452): 'SealedClass()'
 KtConstructorCalleeExpression(439,450): 'SealedClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

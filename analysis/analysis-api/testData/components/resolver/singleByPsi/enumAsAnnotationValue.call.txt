@@ -1,5 +1,6 @@
 KtAnnotationEntry(90,110): '@Annotation(Color.R)'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null

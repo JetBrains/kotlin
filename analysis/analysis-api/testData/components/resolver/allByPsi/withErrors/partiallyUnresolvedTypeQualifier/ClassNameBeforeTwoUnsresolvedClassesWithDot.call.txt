@@ -142,6 +142,7 @@ KtCallExpression(152,193): 'take {'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -181,6 +182,7 @@ KtNameReferenceExpression(152,156): 'take'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

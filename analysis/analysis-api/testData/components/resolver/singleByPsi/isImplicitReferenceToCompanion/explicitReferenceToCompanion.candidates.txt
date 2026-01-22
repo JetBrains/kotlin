@@ -1,6 +1,7 @@
 KtNameReferenceExpression(83,92): 'Companion'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

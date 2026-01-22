@@ -1,6 +1,7 @@
 KtConstructorCalleeExpression(40,41): 'A'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

@@ -49,6 +49,7 @@ KtNameReferenceExpression(31,34): 'Int'
 KtBinaryExpression(37,45): 'this - i'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -90,6 +91,7 @@ KtNameReferenceExpression(37,41): 'this'
 KtOperationReferenceExpression(42,43): '-'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -166,6 +168,7 @@ KtProperty(79,117): 'val newParameter = parameter myMinus 5'
 KtBinaryExpression(98,117): 'parameter myMinus 5'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -218,6 +221,7 @@ KtNameReferenceExpression(98,107): 'parameter'
 KtOperationReferenceExpression(108,115): 'myMinus'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -259,6 +263,7 @@ KtProperty(122,171): 'val oneMoreParameter = newParameter + 1 myMinus 4'
 KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -294,6 +299,7 @@ KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
 KtBinaryExpression(145,161): 'newParameter + 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -346,6 +352,7 @@ KtNameReferenceExpression(145,157): 'newParameter'
 KtOperationReferenceExpression(158,159): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -384,6 +391,7 @@ KtConstantExpression(160,161): '1'
 KtOperationReferenceExpression(162,169): 'myMinus'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -425,6 +433,7 @@ KtProperty(176,249): 'val explicitForm = newParameter.plus(parameter.myMinus(one
 KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreParameter))'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -476,6 +485,7 @@ KtNameReferenceExpression(195,207): 'newParameter'
 
 KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = newParameter
@@ -511,6 +521,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
 KtNameReferenceExpression(208,212): 'plus'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -552,6 +563,7 @@ KtValueArgument(213,248): 'parameter.myMinus(oneMoreParameter)'
 KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -603,6 +615,7 @@ KtNameReferenceExpression(213,222): 'parameter'
 
 KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -638,6 +651,7 @@ KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
 KtNameReferenceExpression(223,230): 'myMinus'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:

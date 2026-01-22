@@ -2,6 +2,7 @@ KtCallExpression(39,64): 'generic<String, String>()'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

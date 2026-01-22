@@ -175,6 +175,7 @@ KtDotQualifiedExpression(349,363): 'MyEnum.Option1'
 KtNameReferenceExpression(349,355): 'MyEnum'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -340,6 +341,7 @@ KtOperationReferenceExpression(491,493): '!!'
 KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -375,6 +377,7 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
 KtNameReferenceExpression(499,506): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -458,6 +461,7 @@ KtOperationReferenceExpression(522,524): '!!'
 KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -493,6 +497,7 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
 KtNameReferenceExpression(530,537): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -576,6 +581,7 @@ KtOperationReferenceExpression(554,556): '!!'
 KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -612,6 +618,7 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
 KtNameReferenceExpression(562,569): 'receive'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

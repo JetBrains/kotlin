@@ -1,5 +1,6 @@
 KtCallExpression(143,162): 'test { uiMethod() }'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = /Test

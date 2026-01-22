@@ -5,6 +5,7 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
         kind = PLUS_ASSIGN
         operand = MyClass()
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = variable[0]
@@ -37,6 +38,7 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
               callableId = null)
           }
       getterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
@@ -72,6 +74,7 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
         0
       ]
       setterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable

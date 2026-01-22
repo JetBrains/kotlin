@@ -1,6 +1,7 @@
 KtPrefixExpression(191,200): '-variable'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = variable

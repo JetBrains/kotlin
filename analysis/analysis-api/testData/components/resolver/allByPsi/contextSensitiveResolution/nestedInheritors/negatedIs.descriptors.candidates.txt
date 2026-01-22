@@ -121,6 +121,7 @@ KtWhenConditionWithExpression(230,230): ''
 KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = USELESS_IS_CHECK
@@ -161,6 +162,7 @@ KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
 KtOperationReferenceExpression(231,232): '!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = USELESS_IS_CHECK
@@ -252,6 +254,7 @@ KtWhenConditionWithExpression(284,284): ''
 KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = REDUNDANT_ELSE_IN_WHEN
@@ -292,6 +295,7 @@ KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
 KtOperationReferenceExpression(285,286): '!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = REDUNDANT_ELSE_IN_WHEN

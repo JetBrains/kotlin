@@ -1,5 +1,6 @@
 KtCallExpression(202,209): '(foo)()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = (foo)

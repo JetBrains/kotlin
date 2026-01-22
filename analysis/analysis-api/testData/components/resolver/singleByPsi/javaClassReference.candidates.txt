@@ -1,6 +1,7 @@
 KtCallExpression(31,44): 'Array<String>'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

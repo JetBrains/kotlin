@@ -100,6 +100,7 @@ KtBlockExpression(120,164): '{'
 KtDotQualifiedExpression(130,140): 'this.bar()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -126,6 +127,7 @@ KtNameReferenceExpression(130,134): 'this'
 KtCallExpression(135,140): 'bar()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -146,6 +148,7 @@ KtCallExpression(135,140): 'bar()'
 KtNameReferenceExpression(135,138): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -169,6 +172,7 @@ KtValueArgumentList(138,140): '()'
 KtDotQualifiedExpression(149,158): 'a.foo("")'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = a
@@ -223,6 +227,7 @@ KtNameReferenceExpression(149,150): 'a'
 KtCallExpression(151,158): 'foo("")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = a
@@ -259,6 +264,7 @@ KtCallExpression(151,158): 'foo("")'
 KtNameReferenceExpression(151,154): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = a
@@ -343,6 +349,7 @@ KtBlockExpression(229,292): '{'
 KtDotQualifiedExpression(243,253): 'this.bar()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -369,6 +376,7 @@ KtNameReferenceExpression(243,247): 'this'
 KtCallExpression(248,253): 'bar()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -389,6 +397,7 @@ KtCallExpression(248,253): 'bar()'
 KtNameReferenceExpression(248,251): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -415,6 +424,7 @@ KtReturnExpression(266,282): 'return a.foo("")'
 KtDotQualifiedExpression(273,282): 'a.foo("")'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = a
@@ -469,6 +479,7 @@ KtNameReferenceExpression(273,274): 'a'
 KtCallExpression(275,282): 'foo("")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = a
@@ -505,6 +516,7 @@ KtCallExpression(275,282): 'foo("")'
 KtNameReferenceExpression(275,278): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = a
@@ -577,6 +589,7 @@ KtBlockExpression(339,389): '{'
 KtCallExpression(349,360): 'funMember()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = a: A
@@ -608,6 +621,7 @@ KtCallExpression(349,360): 'funMember()'
 KtNameReferenceExpression(349,358): 'funMember'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = a: A
@@ -692,6 +706,7 @@ KtBlockExpression(435,544): '{'
 KtCallExpression(441,542): 'with(Base()) {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -747,6 +762,7 @@ KtCallExpression(441,542): 'with(Base()) {'
 KtNameReferenceExpression(441,445): 'with'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -808,6 +824,7 @@ KtValueArgument(446,452): 'Base()'
 KtCallExpression(446,452): 'Base()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -825,6 +842,7 @@ KtCallExpression(446,452): 'Base()'
 KtNameReferenceExpression(446,450): 'Base'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -857,6 +875,7 @@ KtBlockExpression(464,536): 'with(A()) {'
 KtCallExpression(464,536): 'with(A()) {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -910,6 +929,7 @@ KtCallExpression(464,536): 'with(A()) {'
 KtNameReferenceExpression(464,468): 'with'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -969,6 +989,7 @@ KtValueArgument(469,472): 'A()'
 KtCallExpression(469,472): 'A()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -986,6 +1007,7 @@ KtCallExpression(469,472): 'A()'
 KtNameReferenceExpression(469,470): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1018,6 +1040,7 @@ KtBlockExpression(488,526): 'funMember()'
 KtCallExpression(488,499): 'funMember()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1089,6 +1112,7 @@ KtCallExpression(488,499): 'funMember()'
 KtNameReferenceExpression(488,497): 'funMember'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1244,6 +1268,7 @@ KtBlockExpression(582,637): '{'
 KtCallExpression(588,635): 'with(Base()) {'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1296,6 +1321,7 @@ KtCallExpression(588,635): 'with(Base()) {'
 KtNameReferenceExpression(588,592): 'with'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1354,6 +1380,7 @@ KtValueArgument(593,599): 'Base()'
 KtCallExpression(593,599): 'Base()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1371,6 +1398,7 @@ KtCallExpression(593,599): 'Base()'
 KtNameReferenceExpression(593,597): 'Base'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1403,6 +1431,15 @@ KtBlockExpression(611,629): 'funMember(a = A())'
 KtCallExpression(611,629): 'funMember(a = A())'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        A() -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = A
+          symbol = a: A
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = [
         KaExplicitReceiverValue:
           expression = A()
@@ -1455,6 +1492,15 @@ KtCallExpression(611,629): 'funMember(a = A())'
 KtNameReferenceExpression(611,620): 'funMember'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {
+        A() -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = A
+          symbol = a: A
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = [
         KaExplicitReceiverValue:
           expression = A()
@@ -1519,6 +1565,7 @@ KtNameReferenceExpression(621,622): 'a'
 KtCallExpression(625,628): 'A()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1536,6 +1583,7 @@ KtCallExpression(625,628): 'A()'
 KtNameReferenceExpression(625,626): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

@@ -25,6 +25,7 @@ KtSuperTypeList(130,139): 'MyClass()'
 KtSuperTypeCallEntry(130,139): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -43,6 +44,7 @@ KtSuperTypeCallEntry(130,139): 'MyClass()'
 KtConstructorCalleeExpression(130,137): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -67,6 +69,7 @@ KtUserType(130,137): 'MyClass'
 KtNameReferenceExpression(130,137): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -142,6 +145,7 @@ KtBlockExpression(220,335): '{'
 KtCallExpression(226,333): 'receiveMyClass('
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -178,6 +182,7 @@ KtCallExpression(226,333): 'receiveMyClass('
 KtNameReferenceExpression(226,240): 'receiveMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -310,6 +315,7 @@ KtBlockExpression(396,512): '{'
 KtCallExpression(402,510): 'receiveMyClass('
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -346,6 +352,7 @@ KtCallExpression(402,510): 'receiveMyClass('
 KtNameReferenceExpression(402,416): 'receiveMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -490,6 +497,7 @@ KtBlockExpression(587,737): '{'
 KtCallExpression(593,735): 'receiveMyClass('
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -527,6 +535,7 @@ KtCallExpression(593,735): 'receiveMyClass('
 KtNameReferenceExpression(593,607): 'receiveMyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -666,6 +675,7 @@ KtSuperTypeList(791,803): 'OtherClass()'
 KtSuperTypeCallEntry(791,803): 'OtherClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -684,6 +694,7 @@ KtSuperTypeCallEntry(791,803): 'OtherClass()'
 KtConstructorCalleeExpression(791,801): 'OtherClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -708,6 +719,7 @@ KtUserType(791,801): 'OtherClass'
 KtNameReferenceExpression(791,801): 'OtherClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -735,6 +747,7 @@ KtSuperTypeList(819,825): 'Base()'
 KtSuperTypeCallEntry(819,825): 'Base()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -753,6 +766,7 @@ KtSuperTypeCallEntry(819,825): 'Base()'
 KtConstructorCalleeExpression(819,823): 'Base'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -777,6 +791,7 @@ KtUserType(819,823): 'Base'
 KtNameReferenceExpression(819,823): 'Base'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -804,6 +819,7 @@ KtSuperTypeList(840,846): 'Base()'
 KtSuperTypeCallEntry(840,846): 'Base()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -822,6 +838,7 @@ KtSuperTypeCallEntry(840,846): 'Base()'
 KtConstructorCalleeExpression(840,844): 'Base'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -846,6 +863,7 @@ KtUserType(840,844): 'Base'
 KtNameReferenceExpression(840,844): 'Base'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -873,6 +891,7 @@ KtSuperTypeList(863,875): 'OtherClass()'
 KtSuperTypeCallEntry(863,875): 'OtherClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -891,6 +910,7 @@ KtSuperTypeCallEntry(863,875): 'OtherClass()'
 KtConstructorCalleeExpression(863,873): 'OtherClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -915,6 +935,7 @@ KtUserType(863,873): 'OtherClass'
 KtNameReferenceExpression(863,873): 'OtherClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1026,6 +1047,7 @@ KtBlockExpression(1006,1141): '{'
 KtCallExpression(1012,1139): 'receiveOtherClass('
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1063,6 +1085,7 @@ KtCallExpression(1012,1139): 'receiveOtherClass('
 KtNameReferenceExpression(1012,1029): 'receiveOtherClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1214,6 +1237,7 @@ KtSuperTypeList(1206,1217): 'OpenClass()'
 KtSuperTypeCallEntry(1206,1217): 'OpenClass()'
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1232,6 +1256,7 @@ KtSuperTypeCallEntry(1206,1217): 'OpenClass()'
 KtConstructorCalleeExpression(1206,1215): 'OpenClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1256,6 +1281,7 @@ KtUserType(1206,1215): 'OpenClass'
 KtNameReferenceExpression(1206,1215): 'OpenClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1331,6 +1357,7 @@ KtBlockExpression(1304,1434): '{'
 KtCallExpression(1310,1432): 'receiveOpenClass('
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1367,6 +1394,7 @@ KtCallExpression(1310,1432): 'receiveOpenClass('
 KtNameReferenceExpression(1310,1326): 'receiveOpenClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1499,6 +1527,7 @@ KtBlockExpression(1506,1635): '{'
 KtCallExpression(1512,1633): 'receiveOpenClass('
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1535,6 +1564,7 @@ KtCallExpression(1512,1633): 'receiveOpenClass('
 KtNameReferenceExpression(1512,1528): 'receiveOpenClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

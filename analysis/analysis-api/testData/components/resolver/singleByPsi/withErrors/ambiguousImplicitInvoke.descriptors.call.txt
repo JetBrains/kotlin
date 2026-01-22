@@ -2,6 +2,7 @@ KtCallExpression(134,137): 'x()'
   KaCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -26,6 +27,7 @@ KtCallExpression(134,137): 'x()'
         typeArgumentsMapping = {}
         valueArgumentMapping = {},
       KaImplicitInvokeCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:

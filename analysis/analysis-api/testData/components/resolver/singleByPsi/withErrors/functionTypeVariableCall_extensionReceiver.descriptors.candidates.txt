@@ -1,6 +1,7 @@
 KtCallExpression(38,41): 'f()'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = f

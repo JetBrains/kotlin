@@ -72,6 +72,7 @@ KtNameReferenceExpression(51,57): 'String'
 
 KtConstructorDelegationCall(61,74): 'this((((i))))'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -104,6 +105,7 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
 
 KtConstructorDelegationReferenceExpression(61,65): 'this'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -198,6 +200,7 @@ KtNameReferenceExpression(104,107): 'Int'
 
 KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -230,6 +233,7 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
 
 KtConstructorDelegationReferenceExpression(111,115): 'this'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -342,6 +346,7 @@ KtParameterList(172,174): '()'
 
 KtConstructorDelegationCall(177,189): 'super(((1)))'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -374,6 +379,7 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
 
 KtConstructorDelegationReferenceExpression(177,182): 'super'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -439,6 +445,7 @@ KtNameReferenceExpression(214,217): 'Int'
 
 KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -471,6 +478,7 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
 
 KtConstructorDelegationReferenceExpression(221,226): 'super'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -556,6 +564,7 @@ KtNameReferenceExpression(266,272): 'String'
 
 KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -588,6 +597,7 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
 
 KtConstructorDelegationReferenceExpression(276,281): 'super'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null

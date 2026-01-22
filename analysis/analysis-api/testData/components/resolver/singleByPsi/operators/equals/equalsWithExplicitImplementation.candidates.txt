@@ -1,6 +1,7 @@
 KtOperationReferenceExpression(119,121): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m1

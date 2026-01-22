@@ -42,6 +42,7 @@ KtSuperTypeList(176,185): 'MyClass()'
 
 KtSuperTypeCallEntry(176,185): 'MyClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -59,6 +60,7 @@ KtSuperTypeCallEntry(176,185): 'MyClass()'
 KtConstructorCalleeExpression(176,183): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -82,6 +84,7 @@ KtUserType(176,183): 'MyClass'
 KtNameReferenceExpression(176,183): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -122,6 +125,7 @@ KtNameReferenceExpression(235,242): 'MyClass'
 
 KtCallExpression(245,254): 'MyClass()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -138,6 +142,7 @@ KtCallExpression(245,254): 'MyClass()'
 KtNameReferenceExpression(245,252): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -230,6 +235,7 @@ KtCallExpression(456,491): 'receive<MyClass>(NestedInheritor!!)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -267,6 +273,7 @@ KtNameReferenceExpression(456,463): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -325,6 +332,7 @@ KtPostfixExpression(473,490): 'NestedInheritor!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -367,6 +375,7 @@ KtOperationReferenceExpression(488,490): '!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -404,6 +413,7 @@ KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -441,6 +451,7 @@ KtNameReferenceExpression(496,503): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -499,6 +510,7 @@ KtPostfixExpression(513,526): 'myClassProp!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -541,6 +553,7 @@ KtOperationReferenceExpression(524,526): '!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -578,6 +591,7 @@ KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -615,6 +629,7 @@ KtNameReferenceExpression(532,539): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -673,6 +688,7 @@ KtPostfixExpression(549,561): 'stringProp!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -715,6 +731,7 @@ KtOperationReferenceExpression(559,561): '!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -752,6 +769,7 @@ KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -789,6 +807,7 @@ KtNameReferenceExpression(567,574): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -847,6 +866,7 @@ KtPostfixExpression(584,606): 'getNestedInheritor()!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -897,6 +917,7 @@ KtOperationReferenceExpression(604,606): '!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -958,6 +979,7 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1017,6 +1039,7 @@ KtNameReferenceExpression(655,660): 'mapOf'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1108,6 +1131,7 @@ KtValueArgument(675,699): 'MyClass.myClassProp to 1'
 KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1189,6 +1213,7 @@ KtNameReferenceExpression(683,694): 'myClassProp'
 KtOperationReferenceExpression(695,697): 'to'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1233,6 +1258,7 @@ KtValueArgument(702,725): 'MyClass.stringProp to 2'
 KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1314,6 +1340,7 @@ KtNameReferenceExpression(710,720): 'stringProp'
 KtOperationReferenceExpression(721,723): 'to'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1358,6 +1385,7 @@ KtValueArgument(727,755): 'MyClass.NestedInheritor to 3'
 KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1405,6 +1433,7 @@ KtNameReferenceExpression(735,750): 'NestedInheritor'
 KtOperationReferenceExpression(751,753): 'to'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1449,6 +1478,7 @@ KtValueArgument(757,790): 'MyClass.getNestedInheritor() to 4'
 KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1487,6 +1517,7 @@ KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
 KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass
@@ -1508,6 +1539,7 @@ KtNameReferenceExpression(757,764): 'MyClass'
 
 KtCallExpression(765,785): 'getNestedInheritor()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = MyClass
@@ -1527,6 +1559,7 @@ KtCallExpression(765,785): 'getNestedInheritor()'
 KtNameReferenceExpression(765,783): 'getNestedInheritor'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass
@@ -1549,6 +1582,7 @@ KtValueArgumentList(783,785): '()'
 KtOperationReferenceExpression(786,788): 'to'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1592,6 +1626,7 @@ KtReturnExpression(796,819): 'return map[myClassProp]'
 
 KtArrayAccessExpression(803,819): 'map[myClassProp]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = map
@@ -1654,6 +1689,7 @@ KtReturnExpression(824,846): 'return map[stringProp]'
 
 KtArrayAccessExpression(831,846): 'map[stringProp]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = map
@@ -1716,6 +1752,7 @@ KtReturnExpression(851,878): 'return map[NestedInheritor]'
 
 KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = map
@@ -1778,6 +1815,7 @@ KtReturnExpression(883,915): 'return map[getNestedInheritor()]'
 
 KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = map
@@ -1952,6 +1990,7 @@ KtReturnExpression(1086,1099): 'return null!!'
 KtPostfixExpression(1093,1099): 'null!!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1989,6 +2028,7 @@ KtConstantExpression(1093,1097): 'null'
 KtOperationReferenceExpression(1097,1099): '!!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2109,6 +2149,7 @@ KtNameReferenceExpression(1226,1237): 'myClassProp'
 KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass.myClassProp..NestedInheritor
@@ -2161,6 +2202,7 @@ KtNameReferenceExpression(1242,1243): 'a'
 KtOperationReferenceExpression(1244,1247): '!in'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass.myClassProp..NestedInheritor
@@ -2196,6 +2238,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
 KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2274,6 +2317,7 @@ KtNameReferenceExpression(1256,1267): 'myClassProp'
 KtOperationReferenceExpression(1267,1269): '..'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:

@@ -117,6 +117,7 @@ KtNameReferenceExpression(200,201): 'T'
 
 KtCallExpression(204,210): 'TODO()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -133,6 +134,7 @@ KtCallExpression(204,210): 'TODO()'
 KtNameReferenceExpression(204,208): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -184,6 +186,7 @@ KtNameReferenceExpression(230,231): 'X'
 
 KtCallExpression(234,240): 'TODO()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -200,6 +203,7 @@ KtCallExpression(234,240): 'TODO()'
 KtNameReferenceExpression(234,238): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -507,6 +511,7 @@ KtNameReferenceExpression(649,650): 'L'
 
 KtCallExpression(662,803): 'foo('
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -545,6 +550,7 @@ KtCallExpression(662,803): 'foo('
 KtNameReferenceExpression(662,665): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -663,6 +669,7 @@ KtNameReferenceExpression(786,787): 'L'
 
 KtCallExpression(809,963): 'myRunWithMyEnum {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -703,6 +710,7 @@ KtCallExpression(809,963): 'myRunWithMyEnum {'
 KtNameReferenceExpression(809,824): 'myRunWithMyEnum'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -829,6 +837,7 @@ KtNameReferenceExpression(946,947): 'L'
 
 KtCallExpression(969,1121): 'myRun<MyEnum> {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -871,6 +880,7 @@ KtCallExpression(969,1121): 'myRun<MyEnum> {'
 KtNameReferenceExpression(969,974): 'myRun'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

@@ -277,6 +277,7 @@ KtNameReferenceExpression(602,610): 'enumProp'
 KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -312,6 +313,7 @@ KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
 KtNameReferenceExpression(616,623): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -380,6 +382,7 @@ KtNameReferenceExpression(643,650): 'Option2'
 KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -415,6 +418,7 @@ KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
 KtNameReferenceExpression(656,663): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -483,6 +487,7 @@ KtNameReferenceExpression(684,694): 'stringProp'
 KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -518,6 +523,7 @@ KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
 KtNameReferenceExpression(700,707): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

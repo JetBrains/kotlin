@@ -1,6 +1,7 @@
 KtCallExpression(49,62): 'foo label@ {}'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

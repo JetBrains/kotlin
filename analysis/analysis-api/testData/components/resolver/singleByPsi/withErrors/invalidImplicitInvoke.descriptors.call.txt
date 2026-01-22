@@ -2,6 +2,7 @@ KtDotQualifiedExpression(53,61): 's.action'
   KaErrorCallInfo:
     candidateCalls = [
       KaImplicitInvokeCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action

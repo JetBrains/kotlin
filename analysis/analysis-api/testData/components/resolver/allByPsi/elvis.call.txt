@@ -58,6 +58,7 @@ KtBinaryExpression(79,107): 'other?.equals(this) ?: false'
 KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = other
@@ -109,6 +110,7 @@ KtNameReferenceExpression(79,84): 'other'
 
 KtCallExpression(86,98): 'equals(this)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = other
@@ -144,6 +146,7 @@ KtCallExpression(86,98): 'equals(this)'
 KtNameReferenceExpression(86,92): 'equals'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = other

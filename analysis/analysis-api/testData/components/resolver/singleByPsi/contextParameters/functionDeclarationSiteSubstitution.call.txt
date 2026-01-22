@@ -1,6 +1,7 @@
 KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:

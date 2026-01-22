@@ -1,6 +1,7 @@
 KtWhenConditionInRange(169,181): 'in MyClass()'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass()
@@ -37,6 +38,7 @@ KtWhenConditionInRange(169,181): 'in MyClass()'
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:

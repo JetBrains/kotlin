@@ -2,6 +2,7 @@ KtSuperTypeCallEntry(93,106): 'Foo<String>()'
   KaCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

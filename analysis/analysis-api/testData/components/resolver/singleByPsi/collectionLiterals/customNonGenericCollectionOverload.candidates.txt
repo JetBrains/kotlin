@@ -1,6 +1,7 @@
 KtCollectionLiteralExpression(213,223): '["1", "2"]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = ["1", "2"]
@@ -50,6 +51,7 @@ KtCollectionLiteralExpression(213,223): '["1", "2"]'
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = ["1", "2"]

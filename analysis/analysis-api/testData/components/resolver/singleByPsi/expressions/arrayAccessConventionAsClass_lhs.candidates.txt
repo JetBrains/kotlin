@@ -1,6 +1,7 @@
 KtArrayAccessExpression(238,249): 'variable[0]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = variable

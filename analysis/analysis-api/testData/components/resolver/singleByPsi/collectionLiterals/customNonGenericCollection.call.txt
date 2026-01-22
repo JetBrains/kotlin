@@ -1,5 +1,6 @@
 KtCollectionLiteralExpression(173,188): '["1", "2", "3"]'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = ["1", "2", "3"]

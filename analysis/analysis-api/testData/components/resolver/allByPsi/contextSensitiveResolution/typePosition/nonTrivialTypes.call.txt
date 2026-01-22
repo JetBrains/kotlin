@@ -304,6 +304,7 @@ KtProperty(393,418): 'val foo = JavaClass.foo()'
 KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = JavaClass
@@ -325,6 +326,7 @@ KtNameReferenceExpression(403,412): 'JavaClass'
 
 KtCallExpression(413,418): 'foo()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = JavaClass
@@ -344,6 +346,7 @@ KtCallExpression(413,418): 'foo()'
 KtNameReferenceExpression(413,416): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = JavaClass

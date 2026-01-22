@@ -1,6 +1,7 @@
 KtBinaryExpression(146,157): 'm["a"] += 1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m["a"]

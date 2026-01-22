@@ -147,6 +147,7 @@ KtReturnExpression(239,258): 'return MyDelegate()'
 
 KtCallExpression(246,258): 'MyDelegate()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -163,6 +164,7 @@ KtCallExpression(246,258): 'MyDelegate()'
 KtNameReferenceExpression(246,256): 'MyDelegate'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -319,6 +321,7 @@ KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
 
 KtCallExpression(446,463): 'ResourceID<Int>()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -335,6 +338,7 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
 KtNameReferenceExpression(446,456): 'ResourceID'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

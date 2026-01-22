@@ -405,6 +405,7 @@ KtBlockExpression(433,435): '{}'
 
 KtCallExpression(441,476): 'foo { [val first, val second,] -> }'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -437,6 +438,7 @@ KtCallExpression(441,476): 'foo { [val first, val second,] -> }'
 KtNameReferenceExpression(441,444): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -495,6 +497,7 @@ KtBlockExpression(475,475): ''
 
 KtCallExpression(481,503): 'foo { [val first] -> }'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -527,6 +530,7 @@ KtCallExpression(481,503): 'foo { [val first] -> }'
 KtNameReferenceExpression(481,484): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -582,6 +586,7 @@ KtBlockExpression(502,502): ''
 
 KtCallExpression(508,538): 'foo { [val first: String] -> }'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -614,6 +619,7 @@ KtCallExpression(508,538): 'foo { [val first: String] -> }'
 KtNameReferenceExpression(508,511): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

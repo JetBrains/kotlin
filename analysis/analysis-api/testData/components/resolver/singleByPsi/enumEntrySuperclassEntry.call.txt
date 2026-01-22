@@ -1,5 +1,6 @@
 KtSuperTypeCallEntry(107,110): '(1)'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null

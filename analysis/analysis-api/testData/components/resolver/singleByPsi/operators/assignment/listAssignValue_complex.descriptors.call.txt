@@ -2,6 +2,7 @@ KtOperationReferenceExpression(68,70): '+='
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = l
@@ -26,6 +27,7 @@ KtOperationReferenceExpression(68,70): '+='
         typeArgumentsMapping = {}
         valueArgumentMapping = {},
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = l
@@ -57,6 +59,7 @@ KtOperationReferenceExpression(68,70): '+='
         typeArgumentsMapping = {}
         valueArgumentMapping = {},
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:

@@ -1,6 +1,7 @@
 KtNameReferenceExpression(82,86): 'copy'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = d

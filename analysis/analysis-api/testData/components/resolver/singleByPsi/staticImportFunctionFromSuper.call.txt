@@ -1,5 +1,6 @@
 KtCallExpression(97,102): 'foo()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = one/two/TopLevelObject

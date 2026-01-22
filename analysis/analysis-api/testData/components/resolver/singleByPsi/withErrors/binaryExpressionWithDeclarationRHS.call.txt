@@ -1,6 +1,7 @@
 KtBinaryExpression(17,32): '"dsd" + class A'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "dsd"

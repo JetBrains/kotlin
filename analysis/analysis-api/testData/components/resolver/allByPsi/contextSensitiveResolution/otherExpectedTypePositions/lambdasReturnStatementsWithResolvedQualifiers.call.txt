@@ -27,6 +27,7 @@ KtSuperTypeList(122,132): 'MySealed()'
 
 KtSuperTypeCallEntry(122,132): 'MySealed()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -44,6 +45,7 @@ KtSuperTypeCallEntry(122,132): 'MySealed()'
 KtConstructorCalleeExpression(122,130): 'MySealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -81,6 +83,7 @@ KtSuperTypeList(153,163): 'MySealed()'
 
 KtSuperTypeCallEntry(153,163): 'MySealed()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -98,6 +101,7 @@ KtSuperTypeCallEntry(153,163): 'MySealed()'
 KtConstructorCalleeExpression(153,161): 'MySealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -219,6 +223,7 @@ KtNameReferenceExpression(263,264): 'T'
 
 KtCallExpression(267,273): 'TODO()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -235,6 +240,7 @@ KtCallExpression(267,273): 'TODO()'
 KtNameReferenceExpression(267,271): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -286,6 +292,7 @@ KtNameReferenceExpression(293,294): 'X'
 
 KtCallExpression(297,303): 'TODO()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -302,6 +309,7 @@ KtCallExpression(297,303): 'TODO()'
 KtNameReferenceExpression(297,301): 'TODO'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -353,6 +361,7 @@ KtNameReferenceExpression(349,350): 'X'
 
 KtCallExpression(356,433): 'myRunWithMySealed {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -388,6 +397,7 @@ KtCallExpression(356,433): 'myRunWithMySealed {'
 KtNameReferenceExpression(356,373): 'myRunWithMySealed'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -475,6 +485,7 @@ KtNameReferenceExpression(426,427): 'Y'
 
 KtCallExpression(439,524): 'myRunWithMySealed {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -510,6 +521,7 @@ KtCallExpression(439,524): 'myRunWithMySealed {'
 KtNameReferenceExpression(439,456): 'myRunWithMySealed'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -591,6 +603,7 @@ KtLabelReferenceExpression(480,498): '@myRunWithMySealed'
 
 KtCallExpression(499,504): 'id(X)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -625,6 +638,7 @@ KtCallExpression(499,504): 'id(X)'
 KtNameReferenceExpression(499,501): 'id'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -667,6 +681,7 @@ KtNameReferenceExpression(502,503): 'X'
 
 KtCallExpression(513,518): 'id(Y)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -701,6 +716,7 @@ KtCallExpression(513,518): 'id(Y)'
 KtNameReferenceExpression(513,515): 'id'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -743,6 +759,7 @@ KtNameReferenceExpression(516,517): 'Y'
 
 KtCallExpression(530,593): 'myRun<MySealed> {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -780,6 +797,7 @@ KtCallExpression(530,593): 'myRun<MySealed> {'
 KtNameReferenceExpression(530,535): 'myRun'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -884,6 +902,7 @@ KtNameReferenceExpression(586,587): 'Y'
 
 KtCallExpression(598,682): 'foo('
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -919,6 +938,7 @@ KtCallExpression(598,682): 'foo('
 KtNameReferenceExpression(598,601): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -959,6 +979,7 @@ KtValueArgument(611,676): 'myRun {'
 
 KtCallExpression(611,676): 'myRun {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -996,6 +1017,7 @@ KtCallExpression(611,676): 'myRun {'
 KtNameReferenceExpression(611,616): 'myRun'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1097,6 +1119,7 @@ KtNameReferenceExpression(695,703): 'MySealed'
 
 KtCallExpression(706,759): 'myRun {'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -1134,6 +1157,7 @@ KtCallExpression(706,759): 'myRun {'
 KtNameReferenceExpression(706,711): 'myRun'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1225,6 +1249,7 @@ KtCallExpression(765,818): 'myRun {'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1265,6 +1290,7 @@ KtNameReferenceExpression(765,770): 'myRun'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1362,6 +1388,7 @@ KtCallExpression(823,885): 'myRun {'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -1402,6 +1429,7 @@ KtNameReferenceExpression(823,828): 'myRun'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

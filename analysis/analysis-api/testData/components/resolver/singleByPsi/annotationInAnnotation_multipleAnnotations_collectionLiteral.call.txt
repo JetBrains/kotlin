@@ -1,5 +1,6 @@
 KtAnnotationEntry(121,198): '@AnnotationArray(annos = [Annotation("v1", "v2"), Annotation(*["v3", "v4"])])'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null

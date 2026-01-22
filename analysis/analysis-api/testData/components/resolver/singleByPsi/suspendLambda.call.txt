@@ -1,6 +1,7 @@
 KtNameReferenceExpression(78,85): 'suspend'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

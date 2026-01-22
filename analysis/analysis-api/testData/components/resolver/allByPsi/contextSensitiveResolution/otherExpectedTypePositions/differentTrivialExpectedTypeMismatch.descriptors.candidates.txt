@@ -37,6 +37,7 @@ KtNameReferenceExpression(132,139): 'MyClass'
 KtCallExpression(142,151): 'MyClass()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -54,6 +55,7 @@ KtCallExpression(142,151): 'MyClass()'
 KtNameReferenceExpression(142,149): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

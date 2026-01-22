@@ -430,6 +430,7 @@ KtBlockExpression(387,415): '{'
 KtDotQualifiedExpression(397,409): 's.hashCode()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -465,6 +466,7 @@ KtNameReferenceExpression(397,398): 's'
 
 KtCallExpression(399,409): 'hashCode()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = s
@@ -484,6 +486,7 @@ KtCallExpression(399,409): 'hashCode()'
 KtNameReferenceExpression(399,407): 'hashCode'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = s
@@ -512,6 +515,7 @@ KtContainerNode(425,443): '1 == "".hashCode()'
 KtBinaryExpression(425,443): '1 == "".hashCode()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -550,6 +554,7 @@ KtConstantExpression(425,426): '1'
 KtOperationReferenceExpression(427,429): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -585,6 +590,7 @@ KtOperationReferenceExpression(427,429): '=='
 KtDotQualifiedExpression(430,443): '"".hashCode()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = ""
@@ -606,6 +612,7 @@ KtStringTemplateExpression(430,432): '""'
 
 KtCallExpression(433,443): 'hashCode()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = ""
@@ -625,6 +632,7 @@ KtCallExpression(433,443): 'hashCode()'
 KtNameReferenceExpression(433,441): 'hashCode'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = ""

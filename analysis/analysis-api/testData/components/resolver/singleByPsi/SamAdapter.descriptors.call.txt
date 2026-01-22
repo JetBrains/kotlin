@@ -1,6 +1,7 @@
 KtNameReferenceExpression(35,46): 'invokeLater'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

@@ -132,6 +132,7 @@ KtSuperTypeList(291,304): 'SealedClass()'
 
 KtSuperTypeCallEntry(291,304): 'SealedClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -149,6 +150,7 @@ KtSuperTypeCallEntry(291,304): 'SealedClass()'
 KtConstructorCalleeExpression(291,302): 'SealedClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -204,6 +206,7 @@ KtSuperTypeList(353,366): 'SealedClass()'
 
 KtSuperTypeCallEntry(353,366): 'SealedClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -221,6 +224,7 @@ KtSuperTypeCallEntry(353,366): 'SealedClass()'
 KtConstructorCalleeExpression(353,364): 'SealedClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -294,6 +298,7 @@ KtSuperTypeList(442,460): 'SealedGeneric<T>()'
 
 KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -313,6 +318,7 @@ KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
 KtConstructorCalleeExpression(442,458): 'SealedGeneric<T>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -388,6 +394,7 @@ KtSuperTypeList(501,519): 'SealedGeneric<T>()'
 
 KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -407,6 +414,7 @@ KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
 KtConstructorCalleeExpression(501,517): 'SealedGeneric<T>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -641,6 +649,7 @@ KtNameReferenceExpression(680,696): 'SealedInheritor2'
 KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -720,6 +729,7 @@ KtNameReferenceExpression(709,714): 'prop2'
 
 KtCallExpression(715,725): 'toString()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = instance.prop2
@@ -739,6 +749,7 @@ KtCallExpression(715,725): 'toString()'
 KtNameReferenceExpression(715,723): 'toString'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -957,6 +968,7 @@ KtNameReferenceExpression(944,960): 'SealedInheritor2'
 KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1002,6 +1014,7 @@ KtNameReferenceExpression(973,978): 'prop2'
 
 KtCallExpression(979,989): 'toString()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = KaExplicitReceiverValue:
@@ -1021,6 +1034,7 @@ KtCallExpression(979,989): 'toString()'
 KtNameReferenceExpression(979,987): 'toString'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1193,6 +1207,7 @@ KtNameReferenceExpression(1128,1144): 'SealedInheritor2'
 KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1272,6 +1287,7 @@ KtNameReferenceExpression(1157,1162): 'prop2'
 
 KtCallExpression(1163,1173): 'toString()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = instance.prop2
@@ -1291,6 +1307,7 @@ KtCallExpression(1163,1173): 'toString()'
 KtNameReferenceExpression(1163,1171): 'toString'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1669,6 +1686,7 @@ KtNameReferenceExpression(1619,1635): 'SealedInheritor2'
 KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -1748,6 +1766,7 @@ KtNameReferenceExpression(1648,1653): 'prop2'
 
 KtCallExpression(1654,1664): 'toString()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = instance.prop2
@@ -1767,6 +1786,7 @@ KtCallExpression(1654,1664): 'toString()'
 KtNameReferenceExpression(1654,1662): 'toString'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = instance.prop2
@@ -2719,6 +2739,7 @@ KtDeclarationModifierList(2751,2766): '@UnsafeVariance'
 
 KtAnnotationEntry(2751,2766): '@UnsafeVariance'
   KaAnnotationCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -2735,6 +2756,7 @@ KtAnnotationEntry(2751,2766): '@UnsafeVariance'
 KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

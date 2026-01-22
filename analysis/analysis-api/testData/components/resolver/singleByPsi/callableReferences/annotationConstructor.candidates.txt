@@ -1,6 +1,7 @@
 KtCallableReferenceExpression(114,120): '::Anno'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

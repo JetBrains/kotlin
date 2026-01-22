@@ -36,6 +36,7 @@ KtSuperTypeList(189,199): 'MySealed()'
 
 KtSuperTypeCallEntry(189,199): 'MySealed()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -53,6 +54,7 @@ KtSuperTypeCallEntry(189,199): 'MySealed()'
 KtConstructorCalleeExpression(189,197): 'MySealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -76,6 +78,7 @@ KtUserType(189,197): 'MySealed'
 KtNameReferenceExpression(189,197): 'MySealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -163,6 +166,7 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -217,6 +221,7 @@ KtNameReferenceExpression(299,303): 'with'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -321,6 +326,7 @@ KtCallExpression(339,344): 'foo()'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -334,6 +340,7 @@ KtCallExpression(339,344): 'foo()'
         typeArgumentsMapping = {}
         valueArgumentMapping = {},
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -347,7 +354,7 @@ KtCallExpression(339,344): 'foo()'
         typeArgumentsMapping = {}
         valueArgumentMapping = {}
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public fun foo(): Unit defined in root package in file contextParameters.kt
     public fun foo(): Unit defined in root package in file contextParameters.kt>
 
@@ -355,6 +362,7 @@ KtNameReferenceExpression(339,342): 'foo'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -368,6 +376,7 @@ KtNameReferenceExpression(339,342): 'foo'
         typeArgumentsMapping = {}
         valueArgumentMapping = {},
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -381,7 +390,7 @@ KtNameReferenceExpression(339,342): 'foo'
         typeArgumentsMapping = {}
         valueArgumentMapping = {}
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public fun foo(): Unit defined in root package in file contextParameters.kt
     public fun foo(): Unit defined in root package in file contextParameters.kt>
 
@@ -392,6 +401,7 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -446,6 +456,7 @@ KtNameReferenceExpression(356,360): 'with'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -550,6 +561,7 @@ KtCallExpression(403,408): 'foo()'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -563,6 +575,7 @@ KtCallExpression(403,408): 'foo()'
         typeArgumentsMapping = {}
         valueArgumentMapping = {},
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -576,7 +589,7 @@ KtCallExpression(403,408): 'foo()'
         typeArgumentsMapping = {}
         valueArgumentMapping = {}
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public fun foo(): Unit defined in root package in file contextParameters.kt
     public fun foo(): Unit defined in root package in file contextParameters.kt>
 
@@ -584,6 +597,7 @@ KtNameReferenceExpression(403,406): 'foo'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -597,6 +611,7 @@ KtNameReferenceExpression(403,406): 'foo'
         typeArgumentsMapping = {}
         valueArgumentMapping = {},
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -610,7 +625,7 @@ KtNameReferenceExpression(403,406): 'foo'
         typeArgumentsMapping = {}
         valueArgumentMapping = {}
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public fun foo(): Unit defined in root package in file contextParameters.kt
     public fun foo(): Unit defined in root package in file contextParameters.kt>
 
@@ -678,6 +693,7 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -732,6 +748,7 @@ KtNameReferenceExpression(507,511): 'with'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

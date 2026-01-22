@@ -1,6 +1,7 @@
 KtDotQualifiedExpression(107,113): 'a.x(1)'
   KaSuccessCallInfo:
     call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:

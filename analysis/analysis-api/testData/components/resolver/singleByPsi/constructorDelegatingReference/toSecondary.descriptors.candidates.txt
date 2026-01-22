@@ -1,6 +1,7 @@
 KtConstructorDelegationReferenceExpression(76,80): 'this'
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -19,6 +20,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -53,6 +55,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
 
   KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

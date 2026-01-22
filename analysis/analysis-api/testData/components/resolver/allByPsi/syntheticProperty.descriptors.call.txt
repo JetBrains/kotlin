@@ -39,6 +39,7 @@ KtBlockExpression(72,300): '{'
 
 KtCallExpression(78,104): 'print(javaClass.something)'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -71,6 +72,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
 KtNameReferenceExpression(78,83): 'print'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -274,6 +276,7 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
         kind = PLUS_ASSIGN
         operand = 1
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -379,6 +382,7 @@ KtOperationReferenceExpression(157,159): '+='
         kind = PLUS_ASSIGN
         operand = 1
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -429,6 +433,7 @@ KtPostfixExpression(166,187): 'javaClass.something++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -526,6 +531,7 @@ KtOperationReferenceExpression(185,187): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -566,6 +572,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -606,6 +613,7 @@ KtOperationReferenceExpression(192,194): '--'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = javaClass.something
@@ -703,6 +711,7 @@ KtPostfixExpression(219,230): 'something++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
@@ -801,6 +810,7 @@ KtOperationReferenceExpression(228,230): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = something
@@ -860,6 +870,7 @@ KtPostfixExpression(235,248): '(something)++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = (something)
@@ -961,6 +972,7 @@ KtOperationReferenceExpression(246,248): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = (something)

@@ -42,6 +42,7 @@ KtInitializerList(54,57): '(1)'
 
 KtSuperTypeCallEntry(54,57): '(1)'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -75,6 +76,7 @@ KtSuperTypeCallEntry(54,57): '(1)'
 KtConstructorCalleeExpression(54,54): ''
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -113,6 +115,7 @@ KtUserType(54,54): ''
 
 KtEnumEntrySuperclassReferenceExpression(54,54): ''
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -160,6 +163,7 @@ KtInitializerList(76,79): '(2)'
 
 KtSuperTypeCallEntry(76,79): '(2)'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -193,6 +197,7 @@ KtSuperTypeCallEntry(76,79): '(2)'
 KtConstructorCalleeExpression(76,76): ''
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -231,6 +236,7 @@ KtUserType(76,76): ''
 
 KtEnumEntrySuperclassReferenceExpression(76,76): ''
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -331,6 +337,7 @@ KtBlockExpression(220,254): '{'
 KtDotQualifiedExpression(234,244): 'this.baz()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -355,6 +362,7 @@ KtNameReferenceExpression(234,238): 'this'
 
 KtCallExpression(239,244): 'baz()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = this
@@ -374,6 +382,7 @@ KtCallExpression(239,244): 'baz()'
 KtNameReferenceExpression(239,242): 'baz'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this

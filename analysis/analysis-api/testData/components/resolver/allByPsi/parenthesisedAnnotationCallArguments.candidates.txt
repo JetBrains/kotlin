@@ -109,6 +109,7 @@ KtDeclarationModifierList(167,183): '@MyAnno((("A")))'
 KtAnnotationEntry(167,183): '@MyAnno((("A")))'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -142,6 +143,7 @@ KtAnnotationEntry(167,183): '@MyAnno((("A")))'
 KtConstructorCalleeExpression(168,174): 'MyAnno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -214,6 +216,7 @@ KtDeclarationModifierList(199,223): '@MyAnno(value = (("A")))'
 KtAnnotationEntry(199,223): '@MyAnno(value = (("A")))'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -247,6 +250,7 @@ KtAnnotationEntry(199,223): '@MyAnno(value = (("A")))'
 KtConstructorCalleeExpression(200,206): 'MyAnno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -325,6 +329,7 @@ KtDeclarationModifierList(239,269): '@MyAnno((((("A")) as String)))'
 KtAnnotationEntry(239,269): '@MyAnno((((("A")) as String)))'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -358,6 +363,7 @@ KtAnnotationEntry(239,269): '@MyAnno((((("A")) as String)))'
 KtConstructorCalleeExpression(240,246): 'MyAnno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -451,6 +457,7 @@ KtDeclarationModifierList(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A",
 KtAnnotationEntry(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A", "B", "C"))))'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -498,6 +505,7 @@ KtAnnotationEntry(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A", "B", "C
 KtConstructorCalleeExpression(286,298): 'MyAnnoVararg'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -590,6 +598,7 @@ KtParenthesizedExpression(315,339): '(arrayOf("A", "B", "C"))'
 KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -639,6 +648,7 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
 KtNameReferenceExpression(316,323): 'arrayOf'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -730,6 +740,7 @@ KtDeclarationModifierList(357,403): '@MyAnnoVararg(value = ((arrayOf(("A"), "B")
 KtAnnotationEntry(357,403): '@MyAnnoVararg(value = ((arrayOf(("A"), "B"))))'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -763,6 +774,7 @@ KtAnnotationEntry(357,403): '@MyAnnoVararg(value = ((arrayOf(("A"), "B"))))'
 KtConstructorCalleeExpression(358,370): 'MyAnnoVararg'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -823,6 +835,7 @@ KtParenthesizedExpression(380,401): '(arrayOf(("A"), "B"))'
 KtCallExpression(381,400): 'arrayOf(("A"), "B")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -865,6 +878,7 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
 KtNameReferenceExpression(381,388): 'arrayOf'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -943,6 +957,7 @@ KtDeclarationModifierList(419,453): '@MyAnnoKClass((((String::class))))'
 KtAnnotationEntry(419,453): '@MyAnnoKClass((((String::class))))'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -976,6 +991,7 @@ KtAnnotationEntry(419,453): '@MyAnnoKClass((((String::class))))'
 KtConstructorCalleeExpression(420,432): 'MyAnnoKClass'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1036,6 +1052,7 @@ KtClassLiteralExpression(436,449): 'String::class'
 KtNameReferenceExpression(436,442): 'String'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

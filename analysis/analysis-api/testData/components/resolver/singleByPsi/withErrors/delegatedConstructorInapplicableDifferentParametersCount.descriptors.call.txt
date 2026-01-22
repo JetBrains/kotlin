@@ -2,6 +2,7 @@ KtConstructorCalleeExpression(31,32): 'A'
   KaErrorCallInfo:
     candidateCalls = [
       KaDelegatedConstructorCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

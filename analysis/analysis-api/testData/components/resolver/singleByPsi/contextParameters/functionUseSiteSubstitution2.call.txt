@@ -1,6 +1,7 @@
 KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = <unused var>: kotlin.Int

@@ -4,6 +4,7 @@ KtPrefixExpression(80,83): '++f'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:

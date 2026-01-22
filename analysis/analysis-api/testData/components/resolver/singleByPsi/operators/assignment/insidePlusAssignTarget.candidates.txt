@@ -1,6 +1,7 @@
 KtNameReferenceExpression(87,100): 'mutableListOf'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -19,6 +20,7 @@ KtNameReferenceExpression(87,100): 'mutableListOf'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

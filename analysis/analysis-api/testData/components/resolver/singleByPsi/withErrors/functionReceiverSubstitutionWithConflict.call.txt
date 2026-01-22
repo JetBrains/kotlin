@@ -2,6 +2,7 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -26,6 +27,7 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
         typeArgumentsMapping = {}
         valueArgumentMapping = {},
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:

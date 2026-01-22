@@ -1,6 +1,7 @@
 KtNameReferenceExpression(84,90): 'Nested'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

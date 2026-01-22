@@ -46,6 +46,7 @@ KtBlockExpression(34,193): '{'
 KtBinaryExpression(40,49): 'list += 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -102,6 +103,7 @@ KtNameReferenceExpression(40,44): 'list'
 KtOperationReferenceExpression(45,47): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -146,6 +148,7 @@ KtProperty(54,81): 'val implicitIndex = list[0]'
 KtArrayAccessExpression(74,81): 'list[0]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -181,6 +184,7 @@ KtArrayAccessExpression(74,81): 'list[0]'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -220,6 +224,7 @@ KtArrayAccessExpression(74,81): 'list[0]'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -284,6 +289,7 @@ KtProperty(86,129): 'val explicitIndex = list.get(implicitIndex)'
 KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -319,6 +325,7 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -358,6 +365,7 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -413,6 +421,7 @@ KtNameReferenceExpression(106,110): 'list'
 KtCallExpression(111,129): 'get(implicitIndex)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -448,6 +457,7 @@ KtCallExpression(111,129): 'get(implicitIndex)'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -487,6 +497,7 @@ KtCallExpression(111,129): 'get(implicitIndex)'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -524,6 +535,7 @@ KtCallExpression(111,129): 'get(implicitIndex)'
 KtNameReferenceExpression(111,114): 'get'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -559,6 +571,7 @@ KtNameReferenceExpression(111,114): 'get'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -598,6 +611,7 @@ KtNameReferenceExpression(111,114): 'get'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -659,6 +673,7 @@ KtNameReferenceExpression(115,128): 'implicitIndex'
 KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list[1]
@@ -701,6 +716,7 @@ KtAnnotatedExpression(135,166): '@Suppress("SOME_ERROR") list[1]'
 KtAnnotationEntry(135,158): '@Suppress("SOME_ERROR")'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -734,6 +750,7 @@ KtAnnotationEntry(135,158): '@Suppress("SOME_ERROR")'
 KtConstructorCalleeExpression(136,144): 'Suppress'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -773,6 +790,7 @@ KtUserType(136,144): 'Suppress'
 KtNameReferenceExpression(136,144): 'Suppress'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -818,6 +836,7 @@ KtLiteralStringTemplateEntry(146,156): 'SOME_ERROR'
 KtArrayAccessExpression(159,166): 'list[1]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -853,6 +872,7 @@ KtArrayAccessExpression(159,166): 'list[1]'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -892,6 +912,7 @@ KtArrayAccessExpression(159,166): 'list[1]'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -953,6 +974,7 @@ KtConstantExpression(164,165): '1'
 KtOperationReferenceExpression(168,170): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list[1]
@@ -992,6 +1014,7 @@ KtConstantExpression(171,172): '2'
 KtBinaryExpression(177,191): '(list[2]) += 3'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list[2]
@@ -1031,6 +1054,7 @@ KtParenthesizedExpression(177,186): '(list[2])'
 KtArrayAccessExpression(178,185): 'list[2]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -1066,6 +1090,7 @@ KtArrayAccessExpression(178,185): 'list[2]'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1105,6 +1130,7 @@ KtArrayAccessExpression(178,185): 'list[2]'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1166,6 +1192,7 @@ KtConstantExpression(183,184): '2'
 KtOperationReferenceExpression(187,189): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list[2]
@@ -1253,6 +1280,7 @@ KtBlockExpression(235,279): '{'
 KtCallExpression(241,261): 'foo(--list[i], list)'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1300,6 +1328,7 @@ KtCallExpression(241,261): 'foo(--list[i], list)'
 KtNameReferenceExpression(241,244): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1356,6 +1385,7 @@ KtPrefixExpression(245,254): '--list[i]'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = list[i]
@@ -1373,6 +1403,7 @@ KtPrefixExpression(245,254): '--list[i]'
           valueArgumentMapping = {}
         precedence = PREFIX
       getterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
@@ -1400,6 +1431,7 @@ KtPrefixExpression(245,254): '--list[i]'
         i
       ]
       setterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
@@ -1438,6 +1470,7 @@ KtOperationReferenceExpression(245,247): '--'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = list[i]
@@ -1455,6 +1488,7 @@ KtOperationReferenceExpression(245,247): '--'
           valueArgumentMapping = {}
         precedence = PREFIX
       getterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
@@ -1482,6 +1516,7 @@ KtOperationReferenceExpression(245,247): '--'
         i
       ]
       setterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
@@ -1517,6 +1552,7 @@ KtOperationReferenceExpression(245,247): '--'
 KtArrayAccessExpression(247,254): 'list[i]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -1552,6 +1588,7 @@ KtArrayAccessExpression(247,254): 'list[i]'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1591,6 +1628,7 @@ KtArrayAccessExpression(247,254): 'list[i]'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1688,6 +1726,7 @@ KtNameReferenceExpression(256,260): 'list'
 KtPrefixExpression(266,277): '++(list[2])'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = (list[2])
@@ -1708,6 +1747,7 @@ KtPrefixExpression(266,277): '++(list[2])'
 KtOperationReferenceExpression(266,268): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = (list[2])
@@ -1731,6 +1771,7 @@ KtParenthesizedExpression(268,277): '(list[2])'
 KtArrayAccessExpression(269,276): 'list[2]'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -1766,6 +1807,7 @@ KtArrayAccessExpression(269,276): 'list[2]'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1805,6 +1847,7 @@ KtArrayAccessExpression(269,276): 'list[2]'
 
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:

@@ -1,5 +1,6 @@
 KtCallExpression(53,68): 'function(1, "")'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null

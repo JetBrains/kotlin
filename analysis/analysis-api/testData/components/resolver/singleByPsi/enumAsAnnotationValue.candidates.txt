@@ -1,6 +1,7 @@
 KtAnnotationEntry(90,110): '@Annotation(Color.R)'
   KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

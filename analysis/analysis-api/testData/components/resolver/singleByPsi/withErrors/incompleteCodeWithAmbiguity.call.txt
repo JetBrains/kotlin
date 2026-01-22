@@ -2,6 +2,7 @@ KtCallExpression(89,100): 'Foo<String>'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -25,6 +26,7 @@ KtCallExpression(89,100): 'Foo<String>'
         }
         valueArgumentMapping = {},
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

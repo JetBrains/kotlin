@@ -1,5 +1,6 @@
 KtCallableReferenceExpression(230,238): 'Bar::foo'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaImplicitReceiverValue:
       symbol = KaReceiverParameterSymbol:

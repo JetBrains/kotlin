@@ -5,6 +5,7 @@ KtOperationReferenceExpression(151,153): '+='
         kind = PLUS_ASSIGN
         operand = "value"
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = list[10]
@@ -37,6 +38,7 @@ KtOperationReferenceExpression(151,153): '+='
               callableId = null)
           }
       getterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
@@ -72,6 +74,7 @@ KtOperationReferenceExpression(151,153): '+='
         10
       ]
       setterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list

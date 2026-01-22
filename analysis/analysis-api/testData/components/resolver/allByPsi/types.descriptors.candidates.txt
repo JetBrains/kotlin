@@ -121,6 +121,7 @@ KtNameReferenceExpression(238,248): 'InnerAlias'
 KtCallExpression(251,263): 'InnerClass()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -160,6 +161,7 @@ KtCallExpression(251,263): 'InnerClass()'
 KtNameReferenceExpression(251,261): 'InnerClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:

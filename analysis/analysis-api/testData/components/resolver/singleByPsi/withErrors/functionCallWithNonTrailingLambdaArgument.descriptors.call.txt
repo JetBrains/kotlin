@@ -2,6 +2,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -59,6 +60,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
             callableId = null)
         },
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

@@ -75,6 +75,7 @@ KtNameReferenceExpression(114,121): 'MyClass'
 
 KtCallExpression(124,133): 'MyClass()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -91,6 +92,7 @@ KtCallExpression(124,133): 'MyClass()'
 KtNameReferenceExpression(124,131): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -118,6 +120,7 @@ KtParameterList(151,153): '()'
 
 KtCallExpression(156,165): 'MyClass()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -134,6 +137,7 @@ KtCallExpression(156,165): 'MyClass()'
 KtNameReferenceExpression(156,163): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -161,6 +165,7 @@ KtBlockExpression(180,260): '{'
 
 KtCallExpression(186,191): 'foo()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -177,6 +182,7 @@ KtCallExpression(186,191): 'foo()'
 KtNameReferenceExpression(186,189): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -213,6 +219,7 @@ KtNameReferenceExpression(196,199): 'foo'
 KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = ((foo)())()
@@ -234,6 +241,7 @@ KtParenthesizedExpression(204,217): '(((foo)())())'
 
 KtCallExpression(205,216): '((foo)())()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = ((foo)())
@@ -255,6 +263,7 @@ KtParenthesizedExpression(205,214): '((foo)())'
 
 KtCallExpression(206,213): '(foo)()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = (foo)
@@ -299,6 +308,7 @@ KtValueArgumentList(214,216): '()'
 
 KtCallExpression(218,226): 'invoke()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = ((foo)())()
@@ -318,6 +328,7 @@ KtCallExpression(218,226): 'invoke()'
 KtNameReferenceExpression(218,224): 'invoke'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = ((foo)())()
@@ -340,6 +351,7 @@ KtValueArgumentList(224,226): '()'
 KtDotQualifiedExpression(231,243): 'foo.invoke()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = foo
@@ -375,6 +387,7 @@ KtNameReferenceExpression(231,234): 'foo'
 
 KtCallExpression(235,243): 'invoke()'
   KaSimpleFunctionCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = foo
@@ -394,6 +407,7 @@ KtCallExpression(235,243): 'invoke()'
 KtNameReferenceExpression(235,241): 'invoke'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = foo
@@ -415,6 +429,7 @@ KtValueArgumentList(241,243): '()'
 
 KtCallExpression(248,258): 'property()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = property

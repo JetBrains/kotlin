@@ -82,6 +82,7 @@ KtCallExpression(185,208): 'boundHolder(EnumValue1)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -119,6 +120,7 @@ KtNameReferenceExpression(185,196): 'boundHolder'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -176,6 +178,7 @@ KtCallExpression(238,269): 'boundHolder<MyEnum>(EnumValue1)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -213,6 +216,7 @@ KtNameReferenceExpression(238,249): 'boundHolder'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -314,6 +318,7 @@ KtBlockExpression(325,352): '{'
 KtBinaryExpression(331,350): 'value == EnumValue1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = value
@@ -366,6 +371,7 @@ KtNameReferenceExpression(331,336): 'value'
 KtOperationReferenceExpression(337,339): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = value
@@ -442,6 +448,7 @@ KtBlockExpression(393,420): '{'
 KtBinaryExpression(399,418): 'value == EnumValue1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = value
@@ -494,6 +501,7 @@ KtNameReferenceExpression(399,404): 'value'
 KtOperationReferenceExpression(405,407): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = value

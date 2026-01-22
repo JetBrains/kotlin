@@ -1,6 +1,7 @@
 KtNameReferenceExpression(152,157): 'Local'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

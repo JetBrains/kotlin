@@ -112,6 +112,7 @@ KtBlockExpression(270,317): '{'
 KtCallExpression(276,293): 'lEnum(EnumValue1)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lEnum
@@ -193,6 +194,7 @@ KtNameReferenceExpression(282,292): 'EnumValue1'
 KtCallExpression(298,315): 'lEnum(EnumValue2)'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lEnum
@@ -319,6 +321,7 @@ KtBlockExpression(381,501): '{'
 KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -354,6 +357,7 @@ KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
 KtNameReferenceExpression(387,400): 'receiveLambda'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -437,6 +441,7 @@ KtNameReferenceExpression(411,421): 'EnumValue1'
 KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -472,6 +477,7 @@ KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
 KtNameReferenceExpression(428,441): 'receiveLambda'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -555,6 +561,7 @@ KtNameReferenceExpression(452,462): 'EnumValue3'
 KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -591,6 +598,7 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
 KtNameReferenceExpression(469,482): 'receiveLambda'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null

@@ -5,6 +5,7 @@ KtOperationReferenceExpression(33,35): '+='
         kind = PLUS_ASSIGN
         operand = 1
         operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = i

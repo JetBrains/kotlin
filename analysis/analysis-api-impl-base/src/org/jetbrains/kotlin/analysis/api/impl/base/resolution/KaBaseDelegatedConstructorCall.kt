@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSy
 import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 
@@ -24,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 class KaBaseDelegatedConstructorCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
     private val backingKind: KaDelegatedConstructorCall.Kind,
-    private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
+    private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaParameterSymbol>>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
 ) : KaDelegatedConstructorCall {
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
@@ -46,7 +44,15 @@ class KaBaseDelegatedConstructorCall(
     override val contextArguments: List<KaReceiverValue>
         get() = withValidityAssertion { backingPartiallyAppliedSymbol.contextArguments }
 
-    override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingTypeArgumentsMapping }
     override val kind: KaDelegatedConstructorCall.Kind get() = withValidityAssertion { backingKind }
-    override val valueArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> get() = withValidityAssertion { backingArgumentMapping }
+
+    override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>
+        get() = withValidityAssertion { backingTypeArgumentsMapping }
+
+    override val valueArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
+        get() = withValidityAssertion { backingArgumentMapping.toValueArgumentMapping() }
+
+    @KaExperimentalApi
+    override val contextArgumentMapping: Map<KtExpression, KaVariableSignature<KaContextParameterSymbol>>
+        get() = withValidityAssertion { backingArgumentMapping.toContextArgumentMapping() }
 }

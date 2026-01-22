@@ -91,6 +91,7 @@ KtConstantExpression(74,75): '1'
 KtDotQualifiedExpression(80,94): 'prop.action1()'
   KaSuccessCallInfo:
     call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = action1
@@ -137,6 +138,7 @@ KtNameReferenceExpression(80,84): 'prop'
 
 KtCallExpression(85,94): 'action1()'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = action1
@@ -186,6 +188,7 @@ KtValueArgumentList(92,94): '()'
 
 KtCallExpression(99,112): 'action1(prop)'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = action1
@@ -290,6 +293,7 @@ KtValueArgumentList(130,132): '()'
 
 KtCallExpression(151,164): 'action2(prop)'
   KaImplicitInvokeCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
       expression = action2

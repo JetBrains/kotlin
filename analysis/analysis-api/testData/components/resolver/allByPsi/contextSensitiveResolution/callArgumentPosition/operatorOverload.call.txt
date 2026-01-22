@@ -36,6 +36,7 @@ KtSuperTypeList(166,175): 'MyClass()'
 
 KtSuperTypeCallEntry(166,175): 'MyClass()'
   KaDelegatedConstructorCall:
+    contextArgumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
@@ -53,6 +54,7 @@ KtSuperTypeCallEntry(166,175): 'MyClass()'
 KtConstructorCalleeExpression(166,173): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -166,6 +168,7 @@ KtBlockExpression(333,403): '{'
 KtBinaryExpression(339,353): 'i + EnumValue1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -218,6 +221,7 @@ KtNameReferenceExpression(339,340): 'i'
 KtOperationReferenceExpression(341,342): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -273,6 +277,7 @@ KtNameReferenceExpression(343,353): 'EnumValue1'
 KtBinaryExpression(358,377): 'i + InheritorObject'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -325,6 +330,7 @@ KtNameReferenceExpression(358,359): 'i'
 KtOperationReferenceExpression(360,361): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -365,6 +371,7 @@ KtNameReferenceExpression(362,377): 'InheritorObject'
 KtBinaryExpression(382,401): 'i - InheritorObject'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -417,6 +424,7 @@ KtNameReferenceExpression(382,383): 'i'
 KtOperationReferenceExpression(384,385): '-'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i

@@ -1,6 +1,7 @@
 KtNameReferenceExpression(100,109): 'asDynamic'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:

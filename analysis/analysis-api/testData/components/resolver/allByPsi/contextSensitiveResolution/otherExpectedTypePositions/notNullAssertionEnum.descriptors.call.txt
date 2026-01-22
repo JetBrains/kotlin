@@ -154,6 +154,7 @@ KtNameReferenceExpression(407,413): 'MyEnum'
 KtPostfixExpression(416,425): 'Option1!!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -193,6 +194,7 @@ KtNameReferenceExpression(416,423): 'Option1'
 KtOperationReferenceExpression(423,425): '!!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -239,6 +241,7 @@ KtNameReferenceExpression(439,445): 'MyEnum'
 KtPostfixExpression(448,458): 'enumProp!!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -278,6 +281,7 @@ KtNameReferenceExpression(448,456): 'enumProp'
 KtOperationReferenceExpression(456,458): '!!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -324,6 +328,7 @@ KtNameReferenceExpression(472,478): 'MyEnum'
 KtPostfixExpression(481,493): 'stringProp!!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -363,6 +368,7 @@ KtNameReferenceExpression(481,491): 'stringProp'
 KtOperationReferenceExpression(491,493): '!!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -398,6 +404,7 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -435,6 +442,7 @@ KtNameReferenceExpression(499,506): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -493,6 +501,7 @@ KtPostfixExpression(515,524): 'Option1!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -535,6 +544,7 @@ KtOperationReferenceExpression(522,524): '!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -572,6 +582,7 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -609,6 +620,7 @@ KtNameReferenceExpression(530,537): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -667,6 +679,7 @@ KtPostfixExpression(546,556): 'enumProp!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -709,6 +722,7 @@ KtOperationReferenceExpression(554,556): '!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -746,6 +760,7 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -783,6 +798,7 @@ KtNameReferenceExpression(562,569): 'receive'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -841,6 +857,7 @@ KtPostfixExpression(578,590): 'stringProp!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -883,6 +900,7 @@ KtOperationReferenceExpression(588,590): '!!'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null

@@ -1,6 +1,7 @@
 KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:

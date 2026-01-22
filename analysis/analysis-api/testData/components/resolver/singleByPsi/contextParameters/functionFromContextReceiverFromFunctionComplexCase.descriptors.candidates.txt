@@ -1,6 +1,7 @@
 KtCallExpression(119,122): 'c()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = /bar(): kotlin.Unit

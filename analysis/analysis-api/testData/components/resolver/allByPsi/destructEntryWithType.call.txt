@@ -143,6 +143,7 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
   KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -178,6 +179,7 @@ KtConstructorCalleeExpression(160,164): 'Anno'
   KaErrorCallInfo:
     candidateCalls = [
       KaAnnotationCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -229,6 +231,7 @@ KtValueArgument(165,177): '0 + constant'
 KtBinaryExpression(165,177): '0 + constant'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 0
@@ -267,6 +270,7 @@ KtConstantExpression(165,166): '0'
 KtOperationReferenceExpression(167,168): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 0
@@ -338,6 +342,7 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
   KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -373,6 +378,7 @@ KtConstructorCalleeExpression(185,189): 'Anno'
   KaErrorCallInfo:
     candidateCalls = [
       KaAnnotationCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -424,6 +430,7 @@ KtValueArgument(190,202): '1 + constant'
 KtBinaryExpression(190,202): '1 + constant'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -462,6 +469,7 @@ KtConstantExpression(190,191): '1'
 KtOperationReferenceExpression(192,193): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -533,6 +541,7 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
   KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -568,6 +577,7 @@ KtConstructorCalleeExpression(210,214): 'Anno'
   KaErrorCallInfo:
     candidateCalls = [
       KaAnnotationCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -619,6 +629,7 @@ KtValueArgument(215,227): '2 + constant'
 KtBinaryExpression(215,227): '2 + constant'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 2
@@ -657,6 +668,7 @@ KtConstantExpression(215,216): '2'
 KtOperationReferenceExpression(217,218): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 2

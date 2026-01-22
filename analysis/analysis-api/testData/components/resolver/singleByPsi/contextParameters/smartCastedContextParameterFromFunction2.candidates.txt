@@ -1,6 +1,7 @@
 KtCallExpression(97,102): 'foo()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaSmartCastedReceiverValue:
           original = KaImplicitReceiverValue:
