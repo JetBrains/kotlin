@@ -210,7 +210,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
     1. `TypeVariable(R) <: kotlin/Comparable<TypeVariable(R)!>?`
 17. `(TypeVariable(T)) -> kotlin/collections/Iterable<TypeVariable(R)> <: (TypeVariable(T)) -> kotlin/collections/Iterable<TypeVariable(R)>` _from Argument <L> = flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
 
-#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() @SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
+#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol kotlin/collections/flatMapTo`s parameter 0
@@ -376,7 +376,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
        )`
 2. `TypeVariable(T) == MergeFragment` _from Fix variable T_
 
-#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() @SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
+#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
 ##### Call Completion:
 
 1. Choose `TypeVariable(T)` with `Readiness(
@@ -453,7 +453,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
 2. `(MergeFragment) -> TypeVariable(_R) <: (MergeFragment) -> kotlin/collections/Iterable<TypeVariable(R)>` _from Argument flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
     1. `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
 
-#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() @SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
+#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
 ##### Continue Call Completion:
 
 1. New `TypeVariable(_R)` for lambda return type
@@ -507,7 +507,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
 22. Combine `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>!` with `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
     1. `TypeVariable(_R) <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>`
 
-#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() @SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
+#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
 ##### Continue Continue Call Completion:
 
 1. `kotlin/collections/MutableSet<kotlin/Int> <: TypeVariable(_R)` _from LambdaArgument_
