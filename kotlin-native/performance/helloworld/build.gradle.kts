@@ -38,7 +38,7 @@ compileBenchmark {
     compilerOpts = buildOpts
     buildSteps {
         step("runKonanc") {
-            command("$dist/bin/konanc$toolSuffix", "$projectDir/src/main/kotlin/main.kt", "-o",
+            command("$dist/bin/konanc$toolSuffix", "$projectDir/testData/helloworld.kt", "-o",
                     "$buildDir/program$binarySuffix", *(buildOpts.toTypedArray()))
         }
     }
