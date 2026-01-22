@@ -58,6 +58,9 @@ public interface KaFunctionCall<S : KaFunctionSymbol> : KaSingleCall<S, KaFuncti
     /**
      * A mapping from the call's argument expressions to their associated parameter symbols in a stable order. In case of `vararg`
      * parameters, multiple arguments may be mapped to the same [KaValueParameterSymbol].
+     *
+     * @see contextArgumentMapping
+     * @see combinedArgumentMapping
      */
     public val valueArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
 
@@ -82,15 +85,27 @@ public interface KaFunctionCall<S : KaFunctionSymbol> : KaSingleCall<S, KaFuncti
      * to the context parameter `b: B`.
      *
      * @see valueArgumentMapping
+     * @see combinedArgumentMapping
      */
     @KaExperimentalApi
     public val contextArgumentMapping: Map<KtExpression, KaVariableSignature<KaContextParameterSymbol>>
 
     /**
+     * A combined mapping from the call's argument expressions to their associated parameter symbols in a stable order.
+     * This includes both [value arguments][valueArgumentMapping] and [context arguments][contextArgumentMapping].
+     *
+     * In case of `vararg` parameters, multiple arguments may be mapped to the same [KaValueParameterSymbol].
+     *
+     * @see valueArgumentMapping
+     * @see contextArgumentMapping
+     */
+    public val combinedArgumentMapping: Map<KtExpression, KaVariableSignature<KaParameterSymbol>>
+
+    /**
      * A mapping from the call's argument expressions to their associated parameter symbols in a stable order. In case of `vararg`
      * parameters, multiple arguments may be mapped to the same [KaValueParameterSymbol].
      */
-    @Deprecated("Use 'valueArgumentMapping' instead", ReplaceWith("valueArgumentMapping"))
+    @Deprecated("Use 'valueArgumentMapping' or 'combinedArgumentMapping' instead", ReplaceWith("valueArgumentMapping"))
     public val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
         get() = valueArgumentMapping
 

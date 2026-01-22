@@ -731,6 +731,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaE
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSingleCall {
 	public fun getArgumentMapping ()Ljava/util/Map;
+	public abstract fun getCombinedArgumentMapping ()Ljava/util/Map;
 	public abstract fun getPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 	public abstract fun getValueArgumentMapping ()Ljava/util/Map;
 }
