@@ -1,0 +1,1 @@
+open fun setFoo(foo: kotlin.Int)
