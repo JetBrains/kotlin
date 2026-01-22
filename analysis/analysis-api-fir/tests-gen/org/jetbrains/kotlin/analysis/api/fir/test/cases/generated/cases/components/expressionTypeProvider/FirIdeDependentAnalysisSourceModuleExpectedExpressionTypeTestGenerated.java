@@ -358,6 +358,12 @@ public class FirIdeDependentAnalysisSourceModuleExpectedExpressionTypeTestGenera
   }
 
   @Test
+  @TestMetadata("overrideFunctionWithoutExplicitTypeGeneric.kt")
+  public void testOverrideFunctionWithoutExplicitTypeGeneric() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/overrideFunctionWithoutExplicitTypeGeneric.kt");
+  }
+
+  @Test
   @TestMetadata("overridePropertyGetterWithoutExplicitType.kt")
   public void testOverridePropertyGetterWithoutExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/overridePropertyGetterWithoutExplicitType.kt");
