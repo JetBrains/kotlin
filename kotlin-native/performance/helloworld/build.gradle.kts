@@ -3,43 +3,70 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.PlatformInfo
-import org.jetbrains.kotlin.getNativeProgramExtension
-import org.jetbrains.kotlin.getCompileOnlyBenchmarksOpts
+import org.jetbrains.kotlin.benchmark.buildType
+import org.jetbrains.kotlin.benchmarkingTargets
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.kotlinNativeDist
+import kotlin.io.writeText
+import kotlin.text.replace
 
 plugins {
-    id("compile-benchmarking")
+    id("benchmarking")
 }
 
-fun getCompileOnlyBenchmarksOpts(project: Project, defaultCompilerOpts: List<String>): List<String> {
-    val dist = project.file(project.findProperty("kotlin.native.home") ?: "dist")
-    val useCache = !project.hasProperty("disableCompilerCaches")
-    val cacheOption = "-Xcache-directory=$dist/klib/cache/${HostManager.host.name}-gSTATIC-system"
-            .takeIf { useCache && !PlatformInfo.isWindows() } // TODO: remove target condition when we have cache support for other targets.
-    return (project.findProperty("nativeBuildType") as String?)?.let {
-        if (it.equals("RELEASE", true))
-            listOf("-opt")
-        else if (it.equals("DEBUG", true))
-            listOfNotNull("-g", cacheOption)
-        else listOf()
-    } ?: defaultCompilerOpts + listOfNotNull(cacheOption?.takeIf { !defaultCompilerOpts.contains("-opt") })
+kotlin {
+    benchmarkingTargets()
 }
 
-val dist = file(findProperty("kotlin.native.home") ?: "dist")
-val toolSuffix = if (System.getProperty("os.name").startsWith("Windows")) ".bat" else ""
-val binarySuffix = getNativeProgramExtension()
-val defaultCompilerOpts =  listOf("-g")
-val buildOpts = getCompileOnlyBenchmarksOpts(project, defaultCompilerOpts)
-
-compileBenchmark {
+benchmark {
     applicationName = "HelloWorld"
-    repeatNumber = 10
-    compilerOpts = buildOpts
-    buildSteps {
-        step("runKonanc") {
-            command("$dist/bin/konanc$toolSuffix", "$projectDir/testData/helloworld.kt", "-o",
-                    "$buildDir/program$binarySuffix", *(buildOpts.toTypedArray()))
+    prefixBenchmarksWithApplicationName = false
+}
+
+val outputBinary = layout.buildDirectory.file("program${if (HostManager.hostIsMingw) ".exe" else ".kexe"}")
+
+val flags = buildList {
+    when (project.buildType) {
+        NativeBuildType.RELEASE -> add("-opt")
+        NativeBuildType.DEBUG -> {
+            add("-g")
+            add("-Xauto-cache-from=${kotlinNativeDist}/klib/common")
+            // Due to caches possibly being built on the first run, don't forget to have at least a single warmup round.
         }
     }
+}
+
+benchmark.konanRun.configure {
+    reportFile.set(layout.buildDirectory.file("nativeBenchResults.unprocessed.json"))
+    inputs.dir(kotlinNativeDist) // Make the entire used distribution an input
+    environment.put("NATIVE_COMPILER", "${kotlinNativeDist}/bin/kotlinc-native${if (HostManager.hostIsMingw) ".bat" else ""}")
+    inputs.property("compilerFlags", flags)
+    environment.put("COMPILER_FLAGS", flags.joinToString(separator="\n"))
+    val source = layout.projectDirectory.dir("testData").file("helloworld.kt")
+    inputs.file(source)
+    environment.put("SOURCE_FILE", source.asFile.absolutePath)
+    outputs.file(outputBinary)
+    environment.put("OUTPUT_BINARY", outputBinary.map { it.asFile.absolutePath })
+}
+
+val processBenchResults by tasks.registering {
+    val unprocessedReportFile = benchmark.konanRun.map { it.reportFile.get() }
+    inputs.file(unprocessedReportFile).withPathSensitivity(PathSensitivity.NONE) // just the contents of the report matters
+    val reportFile = layout.buildDirectory.file("nativeBenchResults.json")
+    outputs.file(reportFile)
+
+    doFirst {
+        val report = unprocessedReportFile.get().asFile.readText()
+        // Let's not parse JSON and just do the simple substitution.
+        reportFile.get().asFile.writeText(report.replace("EXECUTION_TIME", "COMPILE_TIME"))
+    }
+}
+
+benchmark.konanJsonReport.configure {
+    codeSizeBinary.set(outputBinary)
+    dependsOn(benchmark.konanRun) // make sure there's a dependency information attached to the input above
+
+    benchmarksReportFile.fileProvider(processBenchResults.map { it.outputs.files.singleFile })
+    compilerFlags.set(flags)
 }

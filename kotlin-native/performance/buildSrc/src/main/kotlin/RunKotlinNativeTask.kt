@@ -10,6 +10,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.benchmark.Logger
 import org.jetbrains.kotlin.benchmark.LogLevel
@@ -86,6 +87,9 @@ open class RunKotlinNativeTask @Inject constructor(
     @get:Input
     val useCSet: Property<Boolean> = objectFactory.property(Boolean::class.java)
 
+    @get:Input
+    val environment: MapProperty<String, String> = objectFactory.mapProperty(String::class.java, String::class.java)
+
     private fun execBenchmarkOnce(
             benchmark: String,
             warmupCount: Int,
@@ -106,6 +110,7 @@ open class RunKotlinNativeTask @Inject constructor(
             }
             args("-w", warmupCount.toString())
             args("-r", repeatCount.toString())
+            environment.putAll(this@RunKotlinNativeTask.environment.get())
         }
         return output.substringAfter("[").removeSuffix("]")
     }

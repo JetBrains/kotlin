@@ -15,13 +15,6 @@ import java.io.File
  * This file includes short-cuts that may potentially be implemented in Kotlin MPP Gradle plugin in the future.
  */
 
-fun getNativeProgramExtension(): String = when {
-    PlatformInfo.isMac() -> ".kexe"
-    PlatformInfo.isLinux() -> ".kexe"
-    PlatformInfo.isWindows() -> ".exe"
-    else -> error("Unknown host")
-}
-
 fun mergeReports(reports: List<File>): String {
     val reportsToMerge = reports.filter { it.exists() }.map {
         val json = it.inputStream().bufferedReader().use { it.readText() }
