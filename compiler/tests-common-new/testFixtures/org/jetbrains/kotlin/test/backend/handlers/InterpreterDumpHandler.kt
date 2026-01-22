@@ -226,8 +226,8 @@ class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler
                 visitedElements.add(annotationCall)
 
                 super.visitAnnotationCall(annotationCall, data)
-                FirExpressionEvaluator.evaluateAnnotationArguments(annotationCall, session)?.values?.forEach { evaluated ->
-                    evaluated.unwrapOr<FirExpression> { }?.accept(this, data.copy(renderLiterals = true))
+                annotationCall.argumentMapping.mapping.values.forEach { evaluated ->
+                    evaluated.accept(this, data.copy(renderLiterals = true))
                 }
             }
 

@@ -118,16 +118,9 @@ private fun FirElement.toConstantValueImpl(): ConstantValue<*>? {
 
 context(c: SessionAndScopeSessionHolder)
 private fun FirAnnotation.evaluateToAnnotationValue(): AnnotationValue {
-    val mappingFromFrontend = FirExpressionEvaluator.evaluateAnnotationArguments(this, c.session)
-        ?: errorWithAttachment("Can't compute constant annotation argument mapping") {
-            withFirEntry("annotation", this@evaluateToAnnotationValue)
-        }
     val result = buildMap {
-        for (name in argumentMapping.mapping.keys) {
-            val constValue = mappingFromFrontend[name]?.let {
-                val evaluatedValue = (it as? FirEvaluatorResult.Evaluated)?.result
-                evaluatedValue?.toConstantValueImpl()
-            } ?: continue
+        for ((name, value) in argumentMapping.mapping) {
+            val constValue = value.toConstantValueImpl() ?: continue
             put(name, constValue)
         }
     }

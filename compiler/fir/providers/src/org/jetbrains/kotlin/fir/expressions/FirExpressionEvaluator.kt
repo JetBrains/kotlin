@@ -112,7 +112,7 @@ object FirExpressionEvaluator {
         return initializer.evaluate(session)
     }
 
-    fun evaluateAnnotationArguments(annotation: FirAnnotation, session: FirSession): Map<Name, FirEvaluatorResult>? {
+    fun evaluateAnnotationArguments(annotation: FirAnnotation, session: FirSession): Map<Name, FirEvaluatorResult> {
         val argumentMapping = annotation.argumentMapping.mapping
 
         return argumentMapping.mapValues { (_, expression) -> expression.evaluate(session) }
