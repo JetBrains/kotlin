@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableEagerUnresolvedDependenciesDiagnostic
 import org.jetbrains.kotlin.gradle.util.enableUnresolvedDependenciesDiagnostic
 import org.jetbrains.kotlin.gradle.util.kotlin
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KmpPartiallyResolvedDependenciesCheckerTests {
@@ -36,7 +37,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
         )
     }
 
-    @org.junit.Test
+    @Test
     fun `partially resolved kmp dependencies checker - emits diagnostic when direct project dependency is missing a target`() {
         val root = buildProject {
             repositories.mavenLocal()
@@ -146,7 +147,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
         )
     }
 
-    @org.junit.Test
+    @Test
     fun `partially resolved kmp dependencies checker - metadata only resolution produces diagnostic`() {
         val root = buildProject { repositories.mavenLocal() }
         val directProducer = buildProjectWithMPP(projectBuilder = {
@@ -210,7 +211,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
         )
     }
 
-    @org.junit.Test
+    @Test
     fun `partially resolved kmp dependencies checker - non eager implementation produces diagnostic only when metadata tasks are materialized`() {
         val root = buildProject { repositories.mavenLocal() }
         val directProducer = buildProjectWithMPP(projectBuilder = {
@@ -258,7 +259,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
         )
     }
 
-    @org.junit.Test
+    @Test
     fun `partially resolved kmp dependencies checker - is disableable`() {
         val root = buildProject { repositories.mavenLocal() }
         val directProducer = buildProjectWithMPP(projectBuilder = {
@@ -304,7 +305,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
         consumer.assertNoDiagnostics()
     }
 
-    @org.junit.Test
+    @Test
     fun `partially resolved kmp dependencies checker - single target consumption produces no diagnostic`() {
         val root = buildProject { repositories.mavenLocal() }
         val directProducer = buildProjectWithMPP(projectBuilder = {
@@ -339,7 +340,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
         consumer.assertNoDiagnostics()
     }
 
-    @org.junit.Test
+    @Test
     fun `partially resolved kmp dependencies checker - doesn't emit diagnostic for non completely unresolvable dependencies`() {
         val consumer = buildProjectWithMPP {
             repositories.mavenLocal()

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.set
-import org.junit.Test
+import kotlin.test.Test
 
 class DiagnosticsReportingFunctionalTest {
 

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CompilerPluginOptionsTest {

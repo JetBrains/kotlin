@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.util.setAndroidSdkDirProperty
 import org.jetbrains.kotlin.gradle.utils.named
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class AndroidClasspathOrderingTest {

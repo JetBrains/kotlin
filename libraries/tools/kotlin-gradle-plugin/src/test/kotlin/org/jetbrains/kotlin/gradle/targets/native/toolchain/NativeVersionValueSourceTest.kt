@@ -5,32 +5,33 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.toolchain
 
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.jetbrains.kotlin.gradle.testing.WithTemporaryFolder
+import org.jetbrains.kotlin.gradle.testing.newTempDirectory
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class NativeVersionValueSourceTest {
+class NativeVersionValueSourceTest: WithTemporaryFolder {
 
-    @Rule
-    @JvmField
-    var tmp = TemporaryFolder()
+    @field:TempDir
+    override lateinit var temporaryFolder: Path
 
     @Test
     fun testMoveToNonEmptyDir() {
-        val fromDir = tmp.newFolder()
+        val fromDir = newTempDirectory().toFile()
         fromDir.resolve("A.kt").also {
             it.createNewFile()
             it.writeText("class A {}")
         }
         fromDir.resolve("B.kt").createNewFile()
 
-        val toDir = tmp.newFolder()
+        val toDir = newTempDirectory().toFile()
         toDir.resolve("A.kt").createNewFile()
         toDir.resolve("C.kt").createNewFile()
 
-        NativeVersionValueSource.Companion.copyNativeBundleDistribution(fromDir, toDir)
+        NativeVersionValueSource.copyNativeBundleDistribution(fromDir, toDir)
         assertEquals("class A {}", toDir.resolve("A.kt").readText())
         assertTrue("File B.kt should be copied from directory") { toDir.resolve("B.kt").exists() }
         assertTrue("C.kt file should not be removed") { toDir.resolve("C.kt").exists() }

@@ -223,8 +223,9 @@ dependencies {
     testImplementation(testFixtures(project(":kotlin-build-common")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(project(":kotlin-compiler-runner"))
-    testImplementation(kotlin("test-junit", coreDepsVersion))
+    testImplementation(kotlin("test-junit5", coreDepsVersion))
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
 
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
@@ -439,7 +440,7 @@ tasks.named("validatePlugins") {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         workingDir = rootDir
     }
 }
@@ -541,6 +542,7 @@ sourceSets.getByName("testFixtures") {
     dependencies {
         add(implementationConfigurationName, commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
         add(implementationConfigurationName, gradleApi())
+        add(implementationConfigurationName, libs.junit.jupiter.api)
     }
 }
 
@@ -577,6 +579,7 @@ functionalTestCompilation.associateWith(testFixturesCompilation)
 tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("konanProperties", rootDir.resolve("kotlin-native/konan/konan.properties"))
+    useJUnitPlatform()
 }
 
 tasks.register<Test>("functionalUnitTest") {
@@ -654,6 +657,7 @@ dependencies {
     implementation(project(":compose-compiler-gradle-plugin"))
     implementation(libs.kotlinx.serialization.json)
     implementation(intellijPlatformUtil())
+    implementation(libs.junit.jupiter.engine)
 }
 
 tasks.named("check") {

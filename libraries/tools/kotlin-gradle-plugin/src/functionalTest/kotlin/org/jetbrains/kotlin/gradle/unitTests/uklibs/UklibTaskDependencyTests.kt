@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.util.setUklibResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.setUklibPublicationStrategy
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UklibTaskDependencyTests {

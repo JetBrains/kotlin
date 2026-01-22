@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.util.assertThrows
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions
 import java.io.File
 import kotlin.test.*
 
@@ -25,7 +25,7 @@ class XCFrameworkTaskTest {
 
     @BeforeTest
     fun runOnMacOSOnly() {
-        Assume.assumeTrue(HostManager.hostIsMac)
+        Assumptions.assumeTrue(HostManager.hostIsMac)
     }
 
     @Test

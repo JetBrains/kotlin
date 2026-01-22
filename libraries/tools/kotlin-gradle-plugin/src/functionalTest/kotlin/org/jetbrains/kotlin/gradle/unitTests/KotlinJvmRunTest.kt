@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions
 import kotlin.test.*
 
 class KotlinJvmRunTest {
@@ -166,7 +166,7 @@ class KotlinJvmRunTest {
 
     @Test
     fun `test - jvmRun task is using kotlin configured toolchain - jvm 11`() = buildProjectWithMPP().runLifecycleAwareTest {
-        Assume.assumeFalse("https://github.com/gradle/native-platform/issues/274", HostManager.hostIsMingw)
+        Assumptions.assumeFalse(HostManager.hostIsMingw, "https://github.com/gradle/native-platform/issues/274")
         val kotlin = multiplatformExtension
         kotlin.jvmToolchain(11)
         kotlin.jvm()
@@ -176,7 +176,7 @@ class KotlinJvmRunTest {
 
     @Test
     fun `test - jvmRun task is using kotlin configured toolchain - jvm 17`() = buildProjectWithMPP().runLifecycleAwareTest {
-        Assume.assumeFalse("https://github.com/gradle/native-platform/issues/274", HostManager.hostIsMingw)
+        Assumptions.assumeFalse(HostManager.hostIsMingw, "https://github.com/gradle/native-platform/issues/274")
         val kotlin = multiplatformExtension
         kotlin.jvmToolchain(17)
         kotlin.jvm()
@@ -184,4 +184,3 @@ class KotlinJvmRunTest {
         assertEquals(JavaVersion.VERSION_17, assertNotNull(kotlin.jvm().mainRun.await()).task.get().javaVersion)
     }
 }
-

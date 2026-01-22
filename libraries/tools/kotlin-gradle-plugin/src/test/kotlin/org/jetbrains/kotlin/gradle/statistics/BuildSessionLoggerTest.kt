@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
-import org.junit.After
-import org.junit.Before
 import java.io.File
 import java.nio.file.Files
 import java.util.*
@@ -25,12 +23,12 @@ class BuildSessionLoggerTest {
 
     private fun statFilesCount() = statsFolder.listFiles()?.size ?: 0
 
-    @Before
+    @BeforeTest
     fun prepareFolder() {
         statsFolder = Files.createTempDirectory("kotlin-stats").toFile()
     }
 
-    @After
+    @AfterTest
     fun cleanFolder() {
         statsFolder.deleteRecursively()
     }

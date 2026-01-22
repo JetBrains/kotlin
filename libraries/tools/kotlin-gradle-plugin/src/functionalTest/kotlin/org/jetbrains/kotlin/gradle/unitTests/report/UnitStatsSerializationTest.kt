@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests.report
 
 import com.google.gson.GsonBuilder
 import org.jetbrains.kotlin.util.*
-import org.junit.Test
+import kotlin.test.Test
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import kotlin.test.assertEquals

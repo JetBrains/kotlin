@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.createConsumable
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.fail
 
 class KotlinPublishingAdhocSoftwareComponentTest {

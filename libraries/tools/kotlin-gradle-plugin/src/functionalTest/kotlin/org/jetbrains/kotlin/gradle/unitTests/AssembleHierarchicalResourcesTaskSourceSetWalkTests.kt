@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.AssembleHierarchicalResourcesTask
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
-import org.junit.Test
+import kotlin.test.Test
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths

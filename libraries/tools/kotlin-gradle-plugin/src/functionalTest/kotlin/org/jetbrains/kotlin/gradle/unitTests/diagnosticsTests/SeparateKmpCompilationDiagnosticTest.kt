@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.checkDiagnosticsWithMppProject
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.named
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  * Verifies we report that the separate KMP compilation scheme is reported as experimental.

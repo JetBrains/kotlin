@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
-import org.junit.Assert.assertEquals
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.jetbrains.kotlin.gradle.testing.WithTemporaryFolder
+import org.jetbrains.kotlin.gradle.testing.newTempDirectory
+import org.jetbrains.kotlin.gradle.testing.newTempFile
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Path
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-class ClasspathSnapshotTest {
-    @Rule
-    @JvmField
-    var tmp = TemporaryFolder()
+class ClasspathSnapshotTest : WithTemporaryFolder {
+
+    @field:TempDir
+    override lateinit var temporaryFolder: Path
 
     @Test
     fun testSerialization() {
@@ -22,7 +25,7 @@ class ClasspathSnapshotTest {
             ClassData("first/A"), ClassData("first/B")
         )
 
-        val snapshotDir = tmp.newFolder()
+        val snapshotDir = newTempDirectory().toFile()
         val currentSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(snapshotDir, listOf(), listOf(), setOf(data))
         assertEquals(KaptClasspathChanges.Unknown, currentSnapshot.diff(UnknownSnapshot, setOf(data)))
         currentSnapshot.writeToCache()
@@ -61,7 +64,9 @@ class ClasspathSnapshotTest {
             ClassData("first/A"),
             ClassData("first/B").also { it.withAbiDependencies("first/A") }
         )
-        val firstSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(tmp.newFolder(), listOf(), listOf(), setOf(dataFile))
+        val firstSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
+            newTempDirectory().toFile(), listOf(), listOf(), setOf(dataFile)
+        )
         firstSnapshot.writeToCache()
 
         generateStructureData(
@@ -69,7 +74,9 @@ class ClasspathSnapshotTest {
             ClassData("first/B").also { it.withAbiDependencies("first/A") },
             outputFile = dataFile
         )
-        val changedSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(tmp.newFolder(), listOf(), listOf(), setOf(dataFile))
+        val changedSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
+            newTempDirectory().toFile(), listOf(), listOf(), setOf(dataFile)
+        )
 
         val diff = changedSnapshot.diff(firstSnapshot, setOf(dataFile)) as KaptClasspathChanges.Known
         assertEquals(setOf("first/A", "first/B"), diff.names)
@@ -84,9 +91,8 @@ class ClasspathSnapshotTest {
 
         val libraryDataFile = generateStructureData(ClassData("library/C"))
 
-        val cacheDir = tmp.newFolder()
-        val firstSnapshot =
-            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(cacheDir, listOf(), listOf(), setOf(dataFile, libraryDataFile))
+        val cacheDir = newTempDirectory().toFile()
+        val firstSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(cacheDir, listOf(), listOf(), setOf(dataFile, libraryDataFile))
         firstSnapshot.writeToCache()
 
         generateStructureData(ClassData("library/C", ByteArray(1)), outputFile = libraryDataFile)
@@ -103,18 +109,21 @@ class ClasspathSnapshotTest {
             ClassData("first/A"),
             ClassData("first/B").also { it.withAbiDependencies("first/A") }
         )
-        val firstSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(tmp.newFolder(), listOf(), listOf(), setOf(dataFile))
+        val firstSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
+            newTempDirectory().toFile(), listOf(), listOf(), setOf(dataFile)
+        )
         firstSnapshot.writeToCache()
 
-        val copyOfDataFile = dataFile.copyTo(tmp.newFile(), overwrite = true)
-        val secondSnapshot =
-            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(tmp.newFolder(), listOf(), listOf(), setOf(copyOfDataFile))
+        val copyOfDataFile = dataFile.copyTo(newTempFile().toFile(), overwrite = true)
+        val secondSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
+            newTempDirectory().toFile(), listOf(), listOf(), setOf(copyOfDataFile)
+        )
 
         val diff = secondSnapshot.diff(firstSnapshot, setOf()) as KaptClasspathChanges.Known
         assertEquals(emptySet<String>(), diff.names)
     }
 
-    private fun generateStructureData(vararg classData: ClassData, outputFile: File = tmp.newFile()): File {
+    private fun generateStructureData(vararg classData: ClassData, outputFile: File = newTempFile().toFile()): File {
         val data = ClasspathEntryData()
         classData.forEach {
             data.classAbiHash[it.internalName] = it.hash
@@ -127,7 +136,7 @@ class ClasspathSnapshotTest {
 
     private class ClassData(
         val internalName: String,
-        val hash: ByteArray = ByteArray(0)
+        val hash: ByteArray = ByteArray(0),
     ) {
         val abiDeps = mutableSetOf<String>()
         val privateDeps = mutableSetOf<String>()
