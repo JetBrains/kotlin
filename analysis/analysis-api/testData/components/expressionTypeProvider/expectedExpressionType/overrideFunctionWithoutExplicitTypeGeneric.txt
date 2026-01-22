@@ -1,4 +1,5 @@
 expression: foo
-expected type: KaTypeParameterType:
+expected type: KaUsualClassType:
   annotations: []
-  type: T
+  typeArguments: []
+  type: kotlin/String

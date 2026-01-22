@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider
+import org.jetbrains.kotlin.analysis.api.components.containingSymbol
+import org.jetbrains.kotlin.analysis.api.components.createInheritanceTypeSubstitutor
 import org.jetbrains.kotlin.analysis.api.components.directlyOverriddenSymbols
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -473,8 +476,16 @@ internal class KaFirExpressionTypeProvider(
     }
 
     context(_: KaFirSession)
-    private fun KaCallableSymbol.returnTypeFromOverride(): KaType? =
-        directlyOverriddenSymbols.firstOrNull()?.returnType?.nonErrorTypeOrNull()
+    private fun KaCallableSymbol.returnTypeFromOverride(): KaType? {
+        val overriddenSymbol = directlyOverriddenSymbols.firstOrNull() ?: return null
+        val overriddenReturnType = overriddenSymbol.returnType.nonErrorTypeOrNull() ?: return null
+
+        val subClass = containingSymbol as? KaClassSymbol ?: return overriddenReturnType
+        val superClass = overriddenSymbol.containingSymbol as? KaClassSymbol ?: return overriddenReturnType
+
+        val substitutor = createInheritanceTypeSubstitutor(subClass, superClass) ?: return overriddenReturnType
+        return substitutor.substitute(overriddenReturnType).nonErrorTypeOrNull() ?: overriddenReturnType
+    }
 
     private fun getExpectedTypeOfLastStatementInBlock(expression: PsiElement): KaType? {
         val blockExpression = expression.unwrapQualified<KtBlockExpression> { blockExpression, currentExpression ->
