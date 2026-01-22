@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -64,6 +66,19 @@ class JvmInlineCallableReferenceToLambdaPhase(
         }
 
         return expression
+    }
+
+    override fun visitValueParameter(declaration: IrValueParameter, data: IrDeclarationParent?): IrStatement {
+        if (declaration.isInlineParameter()) {
+            when (val defaultExpression = declaration.defaultValue?.expression) {
+                is IrCallableReference<*> -> { defaultExpression.origin = JvmLoweredStatementOrigin.DEFAULT_VALUE_OF_INLINABLE_PARAMETER }
+                is IrBlock if defaultExpression.origin.isReferenceAdapter -> defaultExpression.apply {
+                    val reference = statements.last() as IrFunctionReference
+                    reference.origin = JvmLoweredStatementOrigin.DEFAULT_VALUE_OF_INLINABLE_PARAMETER
+                }
+            }
+        }
+        return super.visitValueParameter(declaration, data)
     }
 
     protected fun IrExpression.transformToLambda(scope: IrDeclarationParent?) = when {
@@ -202,8 +217,11 @@ class JvmInlineCallableReferenceToLambdaPhase(
         }
 }
 
+private val IrStatementOrigin?.isReferenceAdapter: Boolean
+    get() = this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
+
 private val IrStatementOrigin?.isInlinable: Boolean
-    get() = isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
+    get() = isLambda || isReferenceAdapter
 
 private fun IrType.convertToFunctionIfNeeded(irBuiltIns: IrBuiltIns): IrType {
     return when {
