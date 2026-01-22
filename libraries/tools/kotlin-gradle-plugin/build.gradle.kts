@@ -18,13 +18,13 @@ plugins {
     id("gradle-plugin-common-configuration")
     id("kotlin-git.gradle-build-conventions.binary-compatibility-extended")
     id("kotlin-git.gradle-build-conventions.kgp-npm-tooling-helper")
+    id("kgp-jacoco-target")
     id("android-sdk-provisioner")
     id("asm-deprecating-transformer")
     id("project-tests-convention")
     id("native-bootstrap-distribution-provisioner")
     `java-test-fixtures`
     `jvm-test-suite`
-    jacoco
 }
 
 kotlin {
@@ -826,16 +826,4 @@ kotlin.sourceSets.common {
 node {
     version = nodejsVersion
     distBaseUrl.set(null as String?)
-}
-
-jacoco {
-    toolVersion = libs.versions.jacoco.get()
-}
-
-val testCoverageEnabled = project.providers.gradleProperty("kgp.jacoco.enabled").orNull?.toBoolean() ?: false
-tasks.withType<Test>().configureEach {
-    ignoreFailures = testCoverageEnabled
-    extensions.configure<JacocoTaskExtension> {
-        isEnabled = testCoverageEnabled
-    }
 }

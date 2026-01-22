@@ -70,6 +70,7 @@ include(":binary-compatibility-extended")
 include(":gradle-plugins-documentation")
 include(":gradle-plugins-common")
 include(":kgp-npm-tooling-helper")
+include(":kgp-jacoco-plugins")
 include(":d8-configuration")
 // TODO: uncomment after bootstrap
 // include(":swc-configuration")
