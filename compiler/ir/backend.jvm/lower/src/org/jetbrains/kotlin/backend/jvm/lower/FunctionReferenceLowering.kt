@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.declarationsAtFunctionReferenceLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.indy.*
 import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
@@ -477,6 +478,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 isOperator = superFunction.isOperator
                 isSuspend = superFunction.isSuspend
             }.apply {
+                if (irFunctionReference.origin == JvmLoweredStatementOrigin.DEFAULT_VALUE_OF_INLINABLE_PARAMETER) {
+                    origin = JvmLoweredDeclarationOrigin.INVOKE_OF_DEFAULT_VALUE_OF_INLINABLE_PARAMETER
+                }
                 annotations = invokeFunction.annotations
                 metadata = functionReferenceClass.metadata
 

@@ -16,4 +16,6 @@ object JvmLoweredStatementOrigin {
     val FOLDED_ELVIS by IrStatementOriginImpl
 
     val WHEN_AS_TYPE_SWITCH by IrStatementOriginImpl
+
+    val DEFAULT_VALUE_OF_INLINABLE_PARAMETER by IrStatementOriginImpl
 }
