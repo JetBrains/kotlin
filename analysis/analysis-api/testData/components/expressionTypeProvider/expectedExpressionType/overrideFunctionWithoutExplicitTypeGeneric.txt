@@ -1,0 +1,4 @@
+expression: foo
+expected type: KaTypeParameterType:
+  annotations: []
+  type: T
