@@ -1,0 +1,70 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.kotlin.dsl.withType
+
+val versionCatalog = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
+val jacocoCliDependency = versionCatalog.findLibrary("jacoco-cli").get()
+
+val jacocoCliClasspath = configurations.dependencyScope("jacocoCliClasspath")
+
+dependencies {
+    jacocoCliClasspath(jacocoCliDependency.get())
+}
+
+val jacocoCliClasspathResolver = configurations.resolvable(jacocoCliClasspath.name + "Resolver") {
+    extendsFrom(jacocoCliClasspath)
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+    }
+}
+
+// Final published jars: 'jar'/'embeddableJar' (main variant in kgp-api/kgp) plus the per-Gradle-version
+// variant jars ('gradle96Jar', 'embeddableGradle96Jar', ...).
+// Intentionally excludes intermediate ShadowJar tasks ('embeddableBaselineJar', 'embeddable*JarSpecific')
+// to avoid instrumenting the same classes twice.
+val instrumentedJarName = Regex("^(jar|embeddableJar|(embeddableG|g)radle\\d+Jar)$")
+
+if (kotlinBuildProperties.kgpTestCoverageEnabled.get()) {
+    tasks.withType<Jar>()
+        .matching { it.name.matches(instrumentedJarName) }
+        .configureEach {
+            val jacocoCli = jacocoCliClasspathResolver.map { it.incoming.files }
+            inputs.files(jacocoCli)
+                .withNormalizer(ClasspathNormalizer::class)
+
+            val execOps = serviceOf<ExecOperations>()
+            val fs = serviceOf<FileSystemOperations>()
+
+            val jacocoInstrumentOutputDir = temporaryDir.resolve("jacoco-instrument")
+
+            doLast {
+                val archiveFileName = archiveFileName.get()
+                val actualOutputFile = archiveFile.get().asFile
+
+                fs.delete { delete(jacocoInstrumentOutputDir) }
+                jacocoInstrumentOutputDir.mkdirs()
+
+                execOps.javaexec {
+                    mainClass.set("org.jacoco.cli.internal.Main")
+                    classpath(jacocoCli)
+                    args(
+                        "instrument",
+                        actualOutputFile.absolutePath,
+                        "--dest",
+                        jacocoInstrumentOutputDir,
+                    )
+                }
+
+                fs.copy {
+                    from(jacocoInstrumentOutputDir.resolve(archiveFileName))
+                    into(destinationDirectory)
+                }
+            }
+        }
+}
