@@ -19,6 +19,7 @@ import kotlin.test.fail
 val customJsCompilerSettings: CustomWebCompilerSettings by lazy {
     createCustomWebCompilerSettings(
         compilerClasspathPropertyName = "kotlin.internal.js.test.compat.customCompilerClasspath",
+        compilerClass = "org.jetbrains.kotlin.cli.js.K2JSCompiler",
         runtimeDependenciesPropertyName = "kotlin.internal.js.test.compat.runtimeDependencies",
         versionPropertyName = "kotlin.internal.js.test.compat.customCompilerVersion",
         stdlibArtifactName = "kotlin-stdlib-js",
@@ -33,6 +34,7 @@ val customJsCompilerSettings: CustomWebCompilerSettings by lazy {
 val customWasmJsCompilerSettings: CustomWebCompilerSettings by lazy {
     createCustomWebCompilerSettings(
         compilerClasspathPropertyName = "kotlin.internal.wasm.test.compat.customCompilerClasspath",
+        compilerClass = "org.jetbrains.kotlin.cli.js.KotlinWasmCompiler",
         runtimeDependenciesPropertyName = "kotlin.internal.wasm.test.compat.runtimeDependencies",
         versionPropertyName = "kotlin.internal.wasm.test.compat.customCompilerVersion",
         stdlibArtifactName = "kotlin-stdlib-wasm-js",
@@ -57,6 +59,7 @@ val CustomWebCompilerSettings.defaultLanguageVersion: LanguageVersion
 
 private fun createCustomWebCompilerSettings(
     compilerClasspathPropertyName: String,
+    compilerClass: String,
     runtimeDependenciesPropertyName: String,
     versionPropertyName: String,
     stdlibArtifactName: String,
@@ -74,6 +77,6 @@ private fun createCustomWebCompilerSettings(
     }
 
     override val customKlibCompiler: CustomKlibCompiler by lazy {
-        CustomKlibCompiler(artifacts.compilerClassPath, "org.jetbrains.kotlin.cli.js.K2JSCompiler", "execFullPathsInMessages")
+        CustomKlibCompiler(artifacts.compilerClassPath, compilerClass, "execFullPathsInMessages")
     }
 }

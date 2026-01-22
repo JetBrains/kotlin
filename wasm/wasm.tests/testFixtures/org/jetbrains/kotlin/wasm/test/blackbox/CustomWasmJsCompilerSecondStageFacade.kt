@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.wasm.test.blackbox
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.js.test.klib.collectDependencies
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
@@ -56,25 +56,24 @@ class CustomWasmJsCompilerSecondStageFacade(
             customWasmJsCompilerSettings.customKlibCompiler.callCompiler(
                 output = printStream,
                 listOfNotNull(
-                    K2JSCompilerArguments::irProduceJs.cliArgument,
-                    K2WasmCompilerArguments::wasm.cliArgument,
-                    K2JSCompilerArguments::includes.cliArgument(mainLibrary),
-                    K2JSCompilerArguments::outputDir.cliArgument, wasmArtifactFile.parentFile.path,
-                    K2JSCompilerArguments::moduleName.cliArgument, WASM_BASE_FILE_NAME,
-                    K2WasmCompilerArguments::wasmEnableArrayRangeChecks.cliArgument,
+                    CommonJsAndWasmCompilerArguments::irProduceJs.cliArgument,
+                    CommonJsAndWasmCompilerArguments::includes.cliArgument(mainLibrary),
+                    CommonJsAndWasmCompilerArguments::outputDir.cliArgument, wasmArtifactFile.parentFile.path,
+                    CommonJsAndWasmCompilerArguments::moduleName.cliArgument, WASM_BASE_FILE_NAME,
+                    KotlinWasmCompilerArguments::wasmEnableArrayRangeChecks.cliArgument,
                     CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
                 ),
                 runIf(regularAndFriendDependencies.isNotEmpty()) {
                     listOf(
-                        K2JSCompilerArguments::libraries.cliArgument,
+                        CommonJsAndWasmCompilerArguments::libraries.cliArgument,
                         regularAndFriendDependencies.joinToString(File.pathSeparator),
                     )
                 },
                 runIf(friendDependencies.isNotEmpty()) {
-                    listOf(K2JSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
+                    listOf(CommonJsAndWasmCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
                 },
                 runIf(USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives) {
-                    listOf(K2WasmCompilerArguments::wasmUseNewExceptionProposal.cliArgument)
+                    listOf(KotlinWasmCompilerArguments::wasmUseNewExceptionProposal.cliArgument)
                 },
                 customArgs,
             )

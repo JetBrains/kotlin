@@ -5,6 +5,8 @@
 package org.jetbrains.kotlin.test.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.KtAssert.fail
 import java.io.File
@@ -43,7 +45,20 @@ class CustomKlibCompiler(
     fun callCompiler(output: PrintStream, vararg args: String): ExitCode {
         val isolatedClassLoader = getIsolatedClassLoader()
 
-        val compilerClass = Class.forName(className, true, isolatedClassLoader)
+        val (compilerClass, fixedArgs) = try {
+            Class.forName(className, true, isolatedClassLoader) to args
+        } catch (e: ClassNotFoundException) {
+            // older compiler versions didn't have KotlinWasmCompiler and used JS compiler for Wasm
+            if (className == "org.jetbrains.kotlin.cli.js.KotlinWasmCompiler") {
+                Class.forName(
+                    "org.jetbrains.kotlin.cli.js.K2JSCompiler",
+                    true,
+                    isolatedClassLoader
+                ) to (arrayOf(K2JSCompilerArguments::wasm.cliArgument) + args)
+            } else {
+                throw e
+            }
+        }
         val entryPoint = compilerClass.getMethod(
             methodName,
             PrintStream::class.java,
@@ -51,11 +66,12 @@ class CustomKlibCompiler(
         )
 
         val compilerInstance = compilerClass.getDeclaredConstructor().newInstance()
-        val result = entryPoint.invoke(compilerInstance, output, args)
+        val result = entryPoint.invoke(compilerInstance, output, fixedArgs)
 
         return ExitCode.valueOf(result.toString())
     }
 }
+
 sealed interface CustomKlibCompilerArtifacts {
     val version: String
 
