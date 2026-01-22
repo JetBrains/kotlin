@@ -93,8 +93,7 @@ sealed class TestModule {
         val directRegularDependencySymbols: Set<String>,
         val directFriendDependencySymbols: Set<String>,
         val directDependsOnDependencySymbols: Set<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
-        val directives: MutableList<RegisteredDirectivesParser.ParsedDirective> = mutableListOf(),
-        var registeredDirectives: RegisteredDirectives = RegisteredDirectives.Empty,
+        var directives: RegisteredDirectives = RegisteredDirectives.Empty,
     ) : TestModule() {
         init {
             val intersection = buildSet {

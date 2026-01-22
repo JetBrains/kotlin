@@ -478,14 +478,10 @@ internal fun parseOutputRegex(registeredDirectives: RegisteredDirectives): TestR
 }
 
 fun TestModule.shouldBeExportedToSwift(): Boolean = (this as? TestModule.Exclusive)?.shouldBeExportedToSwift() ?: false
-fun TestModule.Exclusive.shouldBeExportedToSwift(): Boolean = markedExportedToSwift() || swiftExportConfigMap() != null
+fun TestModule.Exclusive.shouldBeExportedToSwift(): Boolean =
+    TestDirectives.EXPORT_TO_SWIFT in directives || TestDirectives.SWIFT_EXPORT_CONFIG in directives
 
-fun TestModule.Exclusive.swiftExportConfigMap(): Map<String, String>? = @Suppress("UNCHECKED_CAST") (directives
-    .firstOrNull { it.directive.name == TestDirectives.SWIFT_EXPORT_CONFIG.name }
-    ?.values as? List<Pair<String, String>>)
-    ?.toMap()
-
-private fun TestModule.Exclusive.markedExportedToSwift(): Boolean = directives
-    .any { it.directive.name == TestDirectives.EXPORT_TO_SWIFT.name }
+fun TestModule.Exclusive.swiftExportConfigMap(): Map<String, String> =
+    directives[TestDirectives.SWIFT_EXPORT_CONFIG].toMap()
 
 private fun String.splitByEqualitySymbolIntoPairs(): Pair<String, String> = split("=").let { Pair(it.first(), it.last()) }
