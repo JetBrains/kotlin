@@ -3,11 +3,27 @@
  * that can be found in the LICENSE file.
  */
 
+import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.getNativeProgramExtension
 import org.jetbrains.kotlin.getCompileOnlyBenchmarksOpts
+import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("compile-benchmarking")
+}
+
+fun getCompileOnlyBenchmarksOpts(project: Project, defaultCompilerOpts: List<String>): List<String> {
+    val dist = project.file(project.findProperty("kotlin.native.home") ?: "dist")
+    val useCache = !project.hasProperty("disableCompilerCaches")
+    val cacheOption = "-Xcache-directory=$dist/klib/cache/${HostManager.host.name}-gSTATIC-system"
+            .takeIf { useCache && !PlatformInfo.isWindows() } // TODO: remove target condition when we have cache support for other targets.
+    return (project.findProperty("nativeBuildType") as String?)?.let {
+        if (it.equals("RELEASE", true))
+            listOf("-opt")
+        else if (it.equals("DEBUG", true))
+            listOfNotNull("-g", cacheOption)
+        else listOf()
+    } ?: defaultCompilerOpts + listOfNotNull(cacheOption?.takeIf { !defaultCompilerOpts.contains("-opt") })
 }
 
 val dist = file(findProperty("kotlin.native.home") ?: "dist")
