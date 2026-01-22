@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.test
 
 class Directives {
-
     private val directives = mutableMapOf<String, MutableList<String>?>()
+
+    val allDirectives: Map<String, List<String>?>
+        get() = directives
 
     operator fun contains(key: String): Boolean {
         return key in directives
