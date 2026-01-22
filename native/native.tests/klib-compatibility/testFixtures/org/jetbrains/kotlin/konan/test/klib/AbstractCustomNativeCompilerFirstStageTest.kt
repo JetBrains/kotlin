@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCoreTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
-import org.jetbrains.kotlin.konan.test.handlers.NativeRunner
+import org.jetbrains.kotlin.konan.test.handlers.NativeRunnerHandler
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -62,7 +62,7 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
         useDirectives(TestDirectives)
         facadeStep(::NativeCompilerSecondStageFacade.bind(currentCustomNativeCompilerSettings))
         nativeArtifactsHandlersStep {
-            useHandlers(::NativeRunner)
+            useHandlers(::NativeRunnerHandler)
         }
     }
 }

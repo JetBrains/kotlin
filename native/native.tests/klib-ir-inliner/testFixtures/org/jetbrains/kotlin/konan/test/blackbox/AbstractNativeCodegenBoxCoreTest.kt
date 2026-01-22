@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
-import org.jetbrains.kotlin.konan.test.handlers.NativeRunner
+import org.jetbrains.kotlin.konan.test.handlers.NativeRunnerHandler
 import org.jetbrains.kotlin.konan.test.klib.NativeCompilerSecondStageFacade
 import org.jetbrains.kotlin.konan.test.klib.currentCustomNativeCompilerSettings
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
@@ -70,7 +70,7 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
         // 2nd stage (klibs -> executable)
         facadeStep(::NativeCompilerSecondStageFacade.bind(currentCustomNativeCompilerSettings))
         nativeArtifactsHandlersStep {
-            useHandlers(::NativeRunner)
+            useHandlers(::NativeRunnerHandler)
         }
 
         defaultDirectives {

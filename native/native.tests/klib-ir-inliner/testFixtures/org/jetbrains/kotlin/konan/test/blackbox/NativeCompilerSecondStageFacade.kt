@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
@@ -46,6 +47,7 @@ class NativeCompilerSecondStageFacade(
     else
         K2NativeCompilerArguments::debug
     val nativeHome = customNativeCompilerSettings.nativeHome
+    val kotlinNativeTargets = testRunSettings.get<KotlinNativeTargets>()
 
     override val outputKind get() = ArtifactKinds.Native
     override fun isMainModule(module: TestModule) = NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)
@@ -87,6 +89,7 @@ class NativeCompilerSecondStageFacade(
                     K2NativeCompilerArguments::enableAssertions.cliArgument.takeIf {
                         AssertionsMode.ALWAYS_DISABLE !in module.directives[ASSERTIONS_MODE]
                     },
+                    K2NativeCompilerArguments::target.cliArgument, kotlinNativeTargets.testTarget.name,
                 ),
                 regularAndFriendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
