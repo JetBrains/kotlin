@@ -7,11 +7,6 @@
 
 package org.jetbrains.kotlin
 
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskState
-import org.gradle.api.execution.TaskExecutionListener
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.report.*
 import org.jetbrains.report.json.*
 import java.io.File
@@ -43,62 +38,4 @@ fun mergeReports(reports: List<File>): String {
         1 -> jsons[0]
         else -> jsons.joinToString(prefix = "[", postfix = "]")
     }
-}
-
-fun getCompileOnlyBenchmarksOpts(project: Project, defaultCompilerOpts: List<String>): List<String> {
-    val dist = project.file(project.findProperty("kotlin.native.home") ?: "dist")
-    val useCache = !project.hasProperty("disableCompilerCaches")
-    val cacheOption = "-Xcache-directory=$dist/klib/cache/${HostManager.host.name}-gSTATIC-system"
-            .takeIf { useCache && !PlatformInfo.isWindows() } // TODO: remove target condition when we have cache support for other targets.
-    return (project.findProperty("nativeBuildType") as String?)?.let {
-        if (it.equals("RELEASE", true))
-            listOf("-opt")
-        else if (it.equals("DEBUG", true))
-            listOfNotNull("-g", cacheOption)
-        else listOf()
-    } ?: defaultCompilerOpts + listOfNotNull(cacheOption?.takeIf { !defaultCompilerOpts.contains("-opt") })
-}
-
-fun getCompileBenchmarkTime(subproject: Project,
-                            programName: String, tasksNames: Iterable<String>,
-                            repeats: Int, exitCodes: Map<String, Int>) =
-    (1..repeats).map { number ->
-        var time = 0.0
-        var status = BenchmarkResult.Status.PASSED
-        tasksNames.forEach {
-            time += TaskTimerListener.getTimerListenerOfSubproject(subproject).getTime("$it$number")
-            status = if (exitCodes["$it$number"] != 0) BenchmarkResult.Status.FAILED else status
-        }
-
-        BenchmarkResult(programName, status, time, BenchmarkResult.Metric.COMPILE_TIME, time, number, 0)
-    }.toList()
-
-// Class time tracker for all tasks.
-class TaskTimerListener: TaskExecutionListener {
-    companion object {
-        internal val timerListeners = mutableMapOf<String, TaskTimerListener>()
-
-        internal fun getTimerListenerOfSubproject(subproject: Project) =
-                timerListeners[subproject.name] ?: error("TimeListener for project ${subproject.name} wasn't set")
-    }
-
-    val tasksTimes = mutableMapOf<String, Double>()
-
-    fun getTime(taskName: String) = tasksTimes[taskName] ?: 0.0
-
-    private var startTime = System.nanoTime()
-
-    override fun beforeExecute(task: Task) {
-        startTime = System.nanoTime()
-    }
-
-     override fun afterExecute(task: Task, taskState: TaskState) {
-         tasksTimes[task.name] = (System.nanoTime() - startTime) / 1000.0
-     }
-}
-
-fun addTimeListener(subproject: Project) {
-    val listener = TaskTimerListener()
-    TaskTimerListener.timerListeners.put(subproject.name, listener)
-    subproject.gradle.addListener(listener)
 }
