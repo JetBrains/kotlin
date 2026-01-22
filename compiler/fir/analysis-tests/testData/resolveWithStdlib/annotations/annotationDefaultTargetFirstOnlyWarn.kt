@@ -86,12 +86,25 @@ annotation class Your(
     @ParamOnly
     @PropertyOnly
     <!WRONG_ANNOTATION_TARGET_WARNING!>@FieldOnly<!>
-    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD!>@ParamProperty<!>
+    <!ANNOTATION_IN_ANNOTATION_PARAMETER_REQUIRES_TARGET, ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD!>@ParamProperty<!>
     @ParamField
     @PropertyField
-    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD!>@ParamPropertyField<!>
+    <!ANNOTATION_IN_ANNOTATION_PARAMETER_REQUIRES_TARGET, ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD!>@ParamPropertyField<!>
     <!WRONG_ANNOTATION_TARGET!>@Inapplicable<!>
-    @JavaAnn
+    <!ANNOTATION_IN_ANNOTATION_PARAMETER_REQUIRES_TARGET!>@JavaAnn<!>
+    val s: String
+)
+
+annotation class YourUseSite(
+    @ParamOnly
+    @PropertyOnly
+    <!WRONG_ANNOTATION_TARGET_WARNING!>@FieldOnly<!>
+    @param:ParamProperty
+    @param:ParamField
+    @property:PropertyField
+    @property:ParamPropertyField
+    <!WRONG_ANNOTATION_TARGET!>@Inapplicable<!>
+    @get:JavaAnn
     val s: String
 )
 

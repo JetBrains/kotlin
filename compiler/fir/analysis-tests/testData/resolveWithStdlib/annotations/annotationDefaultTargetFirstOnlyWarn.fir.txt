@@ -76,3 +76,12 @@ FILE: test.kt
             public get(): R|kotlin/String|
 
     }
+    public final annotation class YourUseSite : R|kotlin/Annotation| {
+        public constructor(@R|ParamOnly|() @CONSTRUCTOR_PARAMETER:R|ParamProperty|() @CONSTRUCTOR_PARAMETER:R|ParamField|() s: R|kotlin/String|): R|YourUseSite| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|PropertyOnly|() @PROPERTY:R|PropertyField|() @PROPERTY:R|ParamPropertyField|() @R|Inapplicable|() field:@R|FieldOnly|() public final val s: R|kotlin/String| = R|<local>/s|
+            @PROPERTY_GETTER:R|JavaAnn|() public get(): R|kotlin/String|
+
+    }

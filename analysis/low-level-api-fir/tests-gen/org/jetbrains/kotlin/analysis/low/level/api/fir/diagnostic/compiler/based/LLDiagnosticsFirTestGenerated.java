@@ -10176,6 +10176,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("annotationsInAnnotations.kt")
+      public void testAnnotationsInAnnotations() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationsInAnnotations.kt");
+      }
+
+      @Test
       @TestMetadata("combinationOfAllNotAllAndDefaultTarget.kt")
       public void testCombinationOfAllNotAllAndDefaultTarget() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/combinationOfAllNotAllAndDefaultTarget.kt");

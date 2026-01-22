@@ -5941,6 +5941,12 @@ internal class AnnotationTargetsOnlyInJavaImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationTargetsOnlyInJava
 
+internal class AnnotationInAnnotationParameterRequiresTargetImpl(
+    override val potentialApplicableTargets: List<String>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationInAnnotationParameterRequiresTarget
+
 internal class LocalJvmRecordImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

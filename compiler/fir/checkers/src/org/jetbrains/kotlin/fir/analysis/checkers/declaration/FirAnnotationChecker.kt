@@ -469,7 +469,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
 
     private val JAVA_LANG_PACKAGE = FqName("java.lang")
 
-    private val STANDARD_ANNOTATION_IDS_WITHOUT_NECESSARY_MIGRATION: Set<ClassId> = hashSetOf(
+    val STANDARD_ANNOTATION_IDS_WITHOUT_NECESSARY_MIGRATION: Set<ClassId> = hashSetOf(
         OPT_IN_CLASS_ID,
         StandardClassIds.Annotations.Deprecated,
         StandardClassIds.Annotations.DeprecatedSinceKotlin,

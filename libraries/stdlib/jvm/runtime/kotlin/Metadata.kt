@@ -63,7 +63,7 @@ public annotation class Metadata(
      * does not differ from the JVM's package FQ name. These names can be different in case the [JvmPackageName] annotation is used.
      * Note that this information is also stored in the corresponding module's `.kotlin_module` file.
      */
-    @SinceKotlin("1.2")
+    @property:SinceKotlin("1.2")
     @get:JvmName("pn")
     val packageName: String = "",
     /**
@@ -82,7 +82,7 @@ public annotation class Metadata(
      * * 7 - this class is used in the scope of an inline function and implicitly part of the public ABI. Only valid from
      *   metadata version 1.6.0.
      */
-    @SinceKotlin("1.1")
+    @property:SinceKotlin("1.1")
     @get:JvmName("xi")
     val extraInt: Int = 0
 )

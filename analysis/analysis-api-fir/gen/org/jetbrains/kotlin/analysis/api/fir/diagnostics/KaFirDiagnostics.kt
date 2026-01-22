@@ -4943,6 +4943,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AnnotationTargetsOnlyInJava::class
     }
 
+    interface AnnotationInAnnotationParameterRequiresTarget : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = AnnotationInAnnotationParameterRequiresTarget::class
+        val potentialApplicableTargets: List<String>
+    }
+
     interface LocalJvmRecord : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = LocalJvmRecord::class
     }

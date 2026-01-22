@@ -116,6 +116,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS", ForbidJvmSerializableLambdaOnInlinedFunctionLiterals, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val INCOMPATIBLE_ANNOTATION_TARGETS: KtDiagnosticFactory2<Collection<String>, Collection<String>> = KtDiagnosticFactory2("INCOMPATIBLE_ANNOTATION_TARGETS", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val ANNOTATION_TARGETS_ONLY_IN_JAVA: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_TARGETS_ONLY_IN_JAVA", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
+    val ANNOTATION_IN_ANNOTATION_PARAMETER_REQUIRES_TARGET: KtDiagnosticFactory1<Collection<String>> = KtDiagnosticFactory1("ANNOTATION_IN_ANNOTATION_PARAMETER_REQUIRES_TARGET", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
 
     // Super
     val INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER: KtDiagnosticFactory0 = KtDiagnosticFactory0("INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())

@@ -35,6 +35,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirImplementationByDelegationWithDifferentGenericSignatureChecker,
             FirPropertyHidesJavaFieldChecker,
             FirIncompatibleAnnotationsChecker,
+            FirJvmAnnotationClassChecker
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>

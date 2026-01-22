@@ -28,7 +28,7 @@ internal annotation class DebugMetadata(
     val methodName: String = "",
     @get:JvmName("c")
     val className: String = "",
-    @SinceKotlin("2.2")
+    @property:SinceKotlin("2.2")
     @get:JvmName("nl")
     val nextLineNumbers: IntArray = [],
 )

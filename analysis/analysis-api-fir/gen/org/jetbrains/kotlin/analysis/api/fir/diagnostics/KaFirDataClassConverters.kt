@@ -7060,6 +7060,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.ANNOTATION_IN_ANNOTATION_PARAMETER_REQUIRES_TARGET) { firDiagnostic ->
+        AnnotationInAnnotationParameterRequiresTargetImpl(
+            firDiagnostic.a.map { string ->
+                string
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.LOCAL_JVM_RECORD) { firDiagnostic ->
         LocalJvmRecordImpl(
             firDiagnostic as KtPsiDiagnostic,

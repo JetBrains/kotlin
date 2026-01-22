@@ -151,6 +151,9 @@ class AnnotationTargetList(
         return super.equals(other)
     }
 
+    val allPotentialTargets: List<KotlinTarget>
+        get() = defaultTargets + canBeSubstituted + onlyWithUseSiteTarget
+
     override fun hashCode(): Int {
         return super.hashCode()
     }
