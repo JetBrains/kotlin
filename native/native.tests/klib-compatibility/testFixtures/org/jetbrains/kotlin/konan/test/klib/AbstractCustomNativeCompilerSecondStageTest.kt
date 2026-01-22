@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCoreTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
-import org.jetbrains.kotlin.konan.test.handlers.NativeRunner
+import org.jetbrains.kotlin.konan.test.handlers.NativeHostRunnerHandler
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
@@ -82,7 +82,7 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
         facadeStep(::NativeCompilerSecondStageFacade.bind(customNativeCompilerSettings))
 
         nativeArtifactsHandlersStep {
-            useHandlers(::NativeRunner)
+            useHandlers(::NativeHostRunnerHandler)
         }
 
         useAfterAnalysisCheckers(

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.moduleStructure
 import kotlin.time.Duration.Companion.seconds
 
-class NativeRunner(testServices: TestServices) : NativeBinaryArtifactHandler(testServices) {
+class NativeHostRunnerHandler(testServices: TestServices) : NativeBinaryArtifactHandler(testServices) {
     private var artifact: BinaryArtifacts.Native? = null
     override fun processModule(module: TestModule, info: BinaryArtifacts.Native) {
         if (NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)) {
