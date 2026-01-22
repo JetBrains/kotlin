@@ -1664,8 +1664,10 @@ private fun saveJsonBackIntoPbxproj(
                     fatalError("Specify path to output pbxproj in \(outputEnv) environment variable")
                 }
 
-                let selectedXcode = URL(fileURLWithPath: "/var/db/xcode_select_link")
-                let devToolsCore = selectedXcode.resolvingSymlinksInPath().deletingLastPathComponent().appending(path: "Frameworks/DevToolsCore.framework/DevToolsCore")
+                guard let developerPath = ProcessInfo.processInfo.environment["XCODE_DEVELOPER_PATH"] else {
+                    fatalError("XCODE_DEVELOPER_PATH environment variable not set")
+                }
+                let devToolsCore = URL(fileURLWithPath: developerPath).deletingLastPathComponent().appending(path: "Frameworks/DevToolsCore.framework/DevToolsCore")
 
                 print("Loading DevToolsCore from \(devToolsCore)")
 
@@ -1714,10 +1716,22 @@ private fun saveJsonBackIntoPbxproj(
     }
     val outputsPath = File(output.toString().lineSequence().first()).resolve(binName)
 
+    // Get Xcode developer path dynamically using xcode-select -p
+    val xcodeSelectOutput = ByteArrayOutputStream()
+    execOps.exec {
+        it.commandLine("xcode-select", "-p")
+        it.standardOutput = xcodeSelectOutput
+    }
+    val developerPath = xcodeSelectOutput.toString().trim()
+    // developerPath is typically /Applications/Xcode.app/Contents/Developer
+    // SharedFrameworks is at /Applications/Xcode.app/Contents/SharedFrameworks (sibling of Developer)
+    val sharedFrameworksPath = File(developerPath).parentFile.resolve("SharedFrameworks").path
+
     execOps.exec {
         it.workingDir(xcodeprojTemporaries)
         it.commandLine(outputsPath.path)
-        it.environment("DYLD_FALLBACK_FRAMEWORK_PATH", "/var/db/xcode_select_link/../SharedFrameworks:/Applications/Xcode.app/Contents/SharedFrameworks")
+        it.environment("DYLD_FALLBACK_FRAMEWORK_PATH", "$sharedFrameworksPath:/Applications/Xcode.app/Contents/SharedFrameworks")
+        it.environment("XCODE_DEVELOPER_PATH", developerPath)
         it.environment(INPUT_PBXPROJ_JSON_PATH_ENV, jsonPbxprojPath.path)
         it.environment(OUTPUT_PBXPROJ_PATH_ENV, outputPbxprojPath)
     }
