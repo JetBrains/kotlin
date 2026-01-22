@@ -7,12 +7,10 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.util.androidApplication
-import org.jetbrains.kotlin.gradle.util.androidLibrary
-import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.checkDiagnostics
+import org.jetbrains.kotlin.gradle.util.*
+import org.junit.jupiter.api.Assumptions
 import kotlin.test.Test
 import kotlin.test.assertFails
 
@@ -20,6 +18,7 @@ class JvmWithJavaIsIncompatibleWithAndroidDiagnosticTest {
 
     @Test
     fun `test - withJava and android library`() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
         val project = buildProjectWithMPP()
         project.androidLibrary { compileSdk = 33 }
         @Suppress("DEPRECATION")
@@ -33,6 +32,7 @@ class JvmWithJavaIsIncompatibleWithAndroidDiagnosticTest {
 
     @Test
     fun `test - withJava and android application`() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
         val project = buildProjectWithMPP()
         project.androidApplication { compileSdk = 33 }
         @Suppress("DEPRECATION")
