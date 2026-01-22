@@ -23,6 +23,7 @@ plugins {
     id("project-tests-convention")
     id("native-bootstrap-distribution-provisioner")
     `java-test-fixtures`
+    jacoco
 }
 
 kotlin {
@@ -805,5 +806,17 @@ tasks.test {
         .normalizeLineEndings()
     jvmArgumentProviders.add {
         listOf("-DkgpNpmToolingPackageJson=${kgpNpmToolingPackageJson.orNull?.asFile?.invariantSeparatorsPath}")
+    }
+}
+
+val testCoverageEnabled = project.providers.gradleProperty("kgp.jacoco.enabled").orNull?.toBoolean() ?: false
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
+}
+
+tasks.withType<Test>().configureEach {
+    extensions.configure<JacocoTaskExtension> {
+        isEnabled = testCoverageEnabled
     }
 }
