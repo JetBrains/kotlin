@@ -39,6 +39,7 @@ internal val Project.useCSet: Boolean
     get() = (findProperty("useCSet") as String?).toBoolean()
 
 internal const val BENCHMARKING_GROUP = "benchmarking"
+private const val EXTENSION_NAME = "benchmark"
 
 open class BenchmarkExtension @Inject constructor(project: Project) {
     val applicationName: Property<String> = project.objects.property(String::class.java).convention(project.name)
@@ -50,19 +51,19 @@ open class BenchmarkExtension @Inject constructor(project: Project) {
  * A plugin configuring a benchmark Kotlin/Native project.
  */
 abstract class BenchmarkingPlugin: Plugin<Project> {
-    protected abstract val Project.benchmark: BenchmarkExtension
-    protected abstract fun Project.createExtension(): BenchmarkExtension
+    private val Project.benchmark: BenchmarkExtension
+        get() = extensions.getByName(EXTENSION_NAME) as BenchmarkExtension
 
     protected abstract fun Project.createNativeBinary(target: KotlinNativeTarget)
     protected abstract fun RunKotlinNativeTask.configureKonanRunTask()
     protected abstract fun JsonReportTask.configureKonanJsonReportTask()
 
-    protected open fun Project.createExtraTasks() {}
+    protected open fun Project.configureExtraTasks() {}
 
     override fun apply(target: Project) = with(target) {
         pluginManager.apply("kotlin-multiplatform")
 
-        createExtension()
+        extensions.create<BenchmarkExtension>(EXTENSION_NAME, this)
 
         kotlin.apply {
             sourceSets.commonMain.dependencies {
@@ -79,7 +80,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             }
         }
 
-        createExtraTasks()
+        configureExtraTasks()
 
         val konanRun by tasks.registering(RunKotlinNativeTask::class) {
             group = BENCHMARKING_GROUP
