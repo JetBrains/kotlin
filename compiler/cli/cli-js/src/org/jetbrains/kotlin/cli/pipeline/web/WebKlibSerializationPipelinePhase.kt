@@ -53,6 +53,7 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsInliningPipelineArtif
             builtInsPlatform = if (configuration.wasmCompilation) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
             wasmTarget = configuration.wasmTarget,
             performanceManager = moduleStructure.compilerConfiguration.perfManager,
+            declarationTable = declarationTable,
         )
 
         loadSizeInfo(File(outputKlibPath))?.flatten()?.let { stats ->

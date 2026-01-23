@@ -507,7 +507,8 @@ fun serializeModuleIntoKlib(
     jsOutputName: String?,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     wasmTarget: WasmTarget? = null,
-    performanceManager: PerformanceManager? = null
+    performanceManager: PerformanceManager? = null,
+    declarationTable: DeclarationTable.Default? = null,
 ) {
     val moduleJsExportNames = moduleFragment.collectJsExportNames()
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
@@ -525,6 +526,7 @@ fun serializeModuleIntoKlib(
                     settings = IrSerializationSettings(configuration),
                     irDiagnosticReporter,
                     irBuiltIns,
+                    declarationTable,
                 ) { JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: emptyList()) }
             },
             metadataSerializer = metadataSerializer,

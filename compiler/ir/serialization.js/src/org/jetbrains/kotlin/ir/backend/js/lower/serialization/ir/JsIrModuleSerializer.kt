@@ -15,11 +15,12 @@ class JsIrModuleSerializer(
     settings: IrSerializationSettings,
     diagnosticReporter: IrDiagnosticReporter,
     irBuiltIns: IrBuiltIns,
+    private val declarationTable: DeclarationTable.Default?,
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory = JsIrFileEmptyMetadataFactory,
 ) : IrModuleSerializer<JsIrFileSerializer>(settings, diagnosticReporter) {
 
-    override val globalDeclarationTable = JsGlobalDeclarationTable(irBuiltIns)
+    override val globalDeclarationTable = declarationTable?.globalDeclarationTable ?: JsGlobalDeclarationTable(irBuiltIns)
 
     override fun createFileSerializer(settings: IrSerializationSettings): JsIrFileSerializer =
-        JsIrFileSerializer(settings, DeclarationTable.Default(globalDeclarationTable), jsIrFileMetadataFactory)
+        JsIrFileSerializer(settings, declarationTable ?: DeclarationTable.Default(globalDeclarationTable), jsIrFileMetadataFactory)
 }
