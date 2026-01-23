@@ -349,9 +349,10 @@ internal class KaFe10Resolver(
             )
 
             is KaCallResolutionError -> candidateCalls.map {
+                val candidate = it.asKaCall()
                 KaBaseInapplicableCallCandidateInfo(
-                    backingCandidate = it.asKaCall(),
-                    isInBestCandidates = it.isInBestCandidates(),
+                    backingCandidate = candidate,
+                    isInBestCandidates = candidate.isInBestCandidates(),
                     diagnostic = diagnostic,
                 )
             }
@@ -731,7 +732,7 @@ internal class KaFe10Resolver(
 
         return KaBaseCallResolutionError(
             backedDiagnostic = diagnostic,
-            backingCandidateCalls = kaCall.calls
+            backingCandidateCalls = listOf(kaCall),
         )
     }
 

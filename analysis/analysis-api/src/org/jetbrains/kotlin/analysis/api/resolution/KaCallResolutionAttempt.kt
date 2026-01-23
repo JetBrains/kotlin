@@ -58,7 +58,7 @@ public interface KaCallResolutionError : KaCallResolutionAttempt {
     /**
      * The list of candidate calls that were considered during the resolution. Can be empty
      */
-    public val candidateCalls: List<KaSingleCall<*, *>>
+    public val candidateCalls: List<KaSingleOrMultiCall>
 }
 
 /**
