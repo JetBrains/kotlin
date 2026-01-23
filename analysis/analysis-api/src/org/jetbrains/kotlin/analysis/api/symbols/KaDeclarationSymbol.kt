@@ -27,8 +27,29 @@ public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
     public val modality: KaSymbolModality
 
     /**
-     * The declaration's *effective* [KaSymbolVisibility] (e.g. `public`). Effective visibility is the symbol's visibility after all
-     * language rules and compiler plugins have been taken into account, in contrast to the syntactic visibility.
+     * The declaration's *own* [KaSymbolVisibility] (e.g. `public`).
+     *
+     * This is the visibility declared directly on the symbol itself, after applying all language rules and compiler plugins,
+     * **but not** taking into account the visibility of any containing declarations.
+     *
+     * For example, a `public` function declared inside an `internal` class will still have [KaSymbolVisibility.PUBLIC] as its own visibility,
+     * even though it is not accessible from outside the module due to its containing class being `internal`.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * internal class InternalClass {
+     *     fun implicitlyPublicFun() {}
+     *     public fun explicitlyPublicFun() {}
+     * }
+     * ```
+     *
+     * In this example, both `implicitlyPublicFun` and `explicitlyPublicFun` have [KaSymbolVisibility.PUBLIC] as their own visibility
+     * (the default visibility in Kotlin), even though they are effectively only accessible within the same module
+     * because their containing class is `internal`.
+     *
+     * To check whether a declaration is actually visible from a specific use-site (taking into account the visibility of all containing declarations),
+     * see [KaUseSiteVisibilityChecker.isVisible][org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker.isVisible].
      */
     public val visibility: KaSymbolVisibility
         @OptIn(KaExperimentalApi::class)
