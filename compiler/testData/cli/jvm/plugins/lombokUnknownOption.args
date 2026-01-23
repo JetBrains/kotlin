@@ -1,0 +1,6 @@
+-d
+$TEMP_DIR$
+-Xplugin=dist/kotlinc/lib/lombok-compiler-plugin.jar
+-P
+plugin\:org.jetbrains.kotlin.lombok\:unknownOption=blablabla
+$TESTDATA_DIR$/lombok.kt
