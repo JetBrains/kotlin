@@ -2,8 +2,8 @@
 // WITH_PLATFORM_LIBS
 // FREE_COMPILER_ARGS: -opt-in=kotlin.ExperimentalStdlibApi,kotlinx.cinterop.ExperimentalForeignApi
 
-// FILE: lib.kt
 import kotlinx.cinterop.*
+import kotlin.test.*
 
 value class Vector3(val data: Vector128) {
     constructor(x: Float, y: Float, z: Float) : this(vectorOf(x, y, z, 0f))
@@ -28,13 +28,10 @@ value class Vector4(val data: Vector128) {
     override fun toString(): String = "Vector4(${x}, ${y}, ${z}, ${w})"
 }
 
-// FILE: main.kt
-import kotlinx.cinterop.*
-
-@OptIn(ExperimentalForeignApi::class)
 fun box(): String {
     val v3 = Vector3(1f, 2f, 3f) + Vector3(10f, 20f, 30f)
     val v4 = Vector4(1f, 2f, 3f, 4f) + Vector4(10f, 20f, 30f, 40f)
+
     val sumVecV3 = v3.toString()
     val sumVecV4 = v4.toString()
 
