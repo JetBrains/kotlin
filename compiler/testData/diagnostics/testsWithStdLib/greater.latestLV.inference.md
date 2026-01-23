@@ -6,18 +6,18 @@
 Expression#(R|<local>/other|)
 ```
 
-#### Candidate 1: `FirConstructorSymbol /Expression.Expression` --- `constructor<T>(x: T): Expression<T>`
+#### Candidate 1: `FirConstructorSymbol /Expression.Expression` --- `constructor<M>(x: M): Expression<M>`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
-1. New `TypeVariable(T)` for `FirRegularClassSymbol Expression`s parameter 0
+1. New `TypeVariable(M)` for `FirRegularClassSymbol Expression`s parameter 0
 
 ##### Resolution Stages > CheckArguments:
 
-1. `T <: TypeVariable(T)` _from Argument R|<local>/other|_
+1. `T <: TypeVariable(M)` _from Argument R|<local>/other|_
 
 ##### Call Completion:
 
-1. Choose `TypeVariable(T)` with `Readiness(
+1. Choose `TypeVariable(M)` with `Readiness(
    	false ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -41,7 +41,7 @@ GreaterOp#(this@R|/greater|, R?C|/Expression.Expression|(R|<local>/other|))
 ##### Resolution Stages > CheckArguments:
 
 1. `Expression<CapturedType(in S)> <: Expression<*>` _from Argument this|/greater|_
-2. `Expression<TypeVariable(T)> <: Expression<*>` _from Argument R?C|/Expression.Expression|(R|<local>/other|)_
+2. `Expression<TypeVariable(M)> <: Expression<*>` _from Argument R?C|/Expression.Expression|(R|<local>/other|)_
 
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
@@ -49,7 +49,7 @@ GreaterOp#(this@R|/greater|, R?C|/Expression.Expression|(R|<local>/other|))
 
 ##### Call Completion:
 
-1. Choose `TypeVariable(T)` with `Readiness(
+1. Choose `TypeVariable(M)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -62,7 +62,7 @@ GreaterOp#(this@R|/greater|, R?C|/Expression.Expression|(R|<local>/other|))
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
-2. `TypeVariable(T) == T` _from Fix variable T_
+2. `TypeVariable(M) == T` _from Fix variable M_
 
 ### Call 3
 
