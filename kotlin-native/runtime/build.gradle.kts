@@ -277,6 +277,14 @@ bitcode {
             }
         }
 
+        module("hot_reload_launcher") {
+            srcRoot.set(layout.projectDirectory.dir("src/hot_reload_launcher"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/hot_reload/cpp"))
+            sourceSets {
+                main {}
+            }
+        }
+
         module("debug") {
             headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
