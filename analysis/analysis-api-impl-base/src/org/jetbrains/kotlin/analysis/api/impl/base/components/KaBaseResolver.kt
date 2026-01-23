@@ -174,7 +174,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> = withValidityAssertion {
         if (this is KtElement) {
             checkValidity()
-            collectCallCandidatesImpl().flatMap(KaCallCandidateInfo::asKaCallCandidates)
+            collectCallCandidatesImpl().map(KaCallCandidateInfo::asKaCallCandidate)
         } else {
             emptyList()
         }
@@ -249,22 +249,20 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     }
 }
 
-internal fun KaCallCandidateInfo.asKaCallCandidates(): List<KaCallCandidate> {
-    val candidateBuilder: (KaSingleCall<*, *>) -> KaCallCandidate = when (this) {
-        is KaApplicableCallCandidateInfo -> fun(singleCall): KaCallCandidate = KaBaseApplicableCallCandidate(
-            backingCandidate = singleCall,
+internal fun KaCallCandidateInfo.asKaCallCandidate(): KaCallCandidate {
+    val call = candidate as KaSingleOrMultiCall
+    return when (this) {
+        is KaApplicableCallCandidateInfo -> KaBaseApplicableCallCandidate(
+            backingCandidate = call,
             backingIsInBestCandidates = isInBestCandidates,
         )
 
-        is KaInapplicableCallCandidateInfo -> fun(singleCall): KaCallCandidate = KaBaseInapplicableCallCandidate(
-            backingCandidate = singleCall,
+        is KaInapplicableCallCandidateInfo -> KaBaseInapplicableCallCandidate(
+            backingCandidate = call,
             backingIsInBestCandidates = isInBestCandidates,
             backingDiagnostic = diagnostic,
         )
     }
-
-    val singleCalls = (candidate as KaSingleOrMultiCall).calls
-    return singleCalls.map(candidateBuilder)
 }
 
 @OptIn(KtExperimentalApi::class)

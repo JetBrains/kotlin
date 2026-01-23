@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolv
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.collectCallCandidates
 import org.jetbrains.kotlin.analysis.api.components.resolveToCallCandidates
-import org.jetbrains.kotlin.analysis.api.impl.base.components.asKaCallCandidates
+import org.jetbrains.kotlin.analysis.api.impl.base.components.asKaCallCandidate
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableSymbolResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compareCalls
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
@@ -59,7 +59,7 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
             val resolvedSymbol = stringRepresentation(resolvedCall.symbol)
             val candidatesRepresentation = candidates.mapNotNull {
                 if (it.isInBestCandidates) {
-                    stringRepresentation(it.candidate.signature.symbol)
+                    stringRepresentation((it.candidate as KaCallableMemberCall<*, *>).symbol)
                 } else {
                     null
                 }
@@ -89,7 +89,7 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     private fun List<*>.asKaCallCandidates(): List<KaCallCandidate> = when (val first = firstOrNull()) {
         null -> emptyList()
         is KaCallCandidate -> this as List<KaCallCandidate>
-        is KaCallCandidateInfo -> (this as List<KaCallCandidateInfo>).flatMap(KaCallCandidateInfo::asKaCallCandidates)
+        is KaCallCandidateInfo -> (this as List<KaCallCandidateInfo>).map(KaCallCandidateInfo::asKaCallCandidate)
         else -> error("Unknown type: ${first::class.simpleName}")
     }
 
