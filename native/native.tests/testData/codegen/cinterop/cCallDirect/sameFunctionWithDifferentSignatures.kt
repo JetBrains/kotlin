@@ -21,7 +21,7 @@ headers = lib2.h
 // FILE: lib2.h
 unsigned sameFun(unsigned);
 
-// MODULE: main(cinterop1,cinterop2)
+// MODULE: main(cinterop1, cinterop2)
 // FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 

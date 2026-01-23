@@ -34,6 +34,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/ir")
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":native:native.tests").isolated, "testData/codegen")
     testData(project(":native:native.tests").isolated, "testData/klib")
     testData(project(":native:native.tests").isolated, "testData/irProvidersMismatch")
     testData(project(":native:native.tests").isolated, "testData/oneStageCompilation")
@@ -55,10 +56,12 @@ projectTests {
         val distFolder = rootProject.projectDir.resolve("kotlin-native/dist")
         systemProperty("kotlin.internal.native.test.compat.currentCompilerDist", distFolder)
 
-        // add file permission for running native compiler backend from kotlin-native-compiler-embeddable.jar on CI
         extensions.configure<TestInputsCheckExtension> {
+            // add file permission for running native compiler backend from kotlin-native-compiler-embeddable.jar on CI
             val embeddableCompiler = "$distFolder/konan/lib/kotlin-native-compiler-embeddable.jar"
             extraPermissions.add("""permission java.io.FilePermission "$embeddableCompiler", "read";""")
+            // add link permission to load `libcallbacks.dylib`, via possible invocation of `JvmUtilsKt.createTempDirWithLibrary()` which invokes `Files.createLink()`
+            extraPermissions.add("""permission java.nio.file.LinkPermission "hard";""")
         }
     }
 

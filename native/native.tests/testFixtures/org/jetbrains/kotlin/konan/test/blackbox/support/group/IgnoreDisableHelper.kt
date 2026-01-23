@@ -61,7 +61,7 @@ fun Settings.isDisabledNative(registeredDirectives: RegisteredDirectives) =
 // Any null element makes whole result as `true`.
 internal fun Settings.evaluate(registeredDirectives: RegisteredDirectives, directive: StringDirective): Boolean {
     val directiveValues = registeredDirectives[directive]
-    if (directiveValues.isEmpty() && directive in registeredDirectives) {
+    if ((directiveValues.isEmpty() || directiveValues == listOf("")) && directive in registeredDirectives) {
         return true  // Directive without value is treated as unconditional
     }
 
