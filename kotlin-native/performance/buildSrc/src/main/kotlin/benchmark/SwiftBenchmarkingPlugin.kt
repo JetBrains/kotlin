@@ -53,6 +53,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             linkerArgs.add(framework.map { it.parentFile.absolutePath })
             linkerArgs.add("-F")
             linkerArgs.add(framework.map { it.parentFile.absolutePath })
+            linkerArgs.add("-v")
             finalizedBy(debugLinkerFailure)
         }
     }
