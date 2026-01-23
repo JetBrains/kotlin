@@ -1211,6 +1211,21 @@ Warning: this flag is not intended for production use. If you want to configure 
     }
 
     compilerArgument {
+        name = "Xheader-mode-target"
+        description = """
+                Generates output based on the downstream target it is used for:
+-Xheader-mode-target=compilation: Skips the IR generation for modules that don't have inline functions.
+-Xheader-mode-target=any: Can be used for any downstream target which doesn't require linking.
+                """.trimIndent().asReleaseDependent()
+        valueType = StringType(ReleaseDependent(false), ReleaseDependent("any"))
+        valueDescription = "{any|compilation}".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_20
+        )
+    }
+
+    compilerArgument {
         name = "Xdont-sort-source-files"
         description = """
             Disable automatic sorting of source files.
