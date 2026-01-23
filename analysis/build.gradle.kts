@@ -13,6 +13,7 @@ tasks.register("analysisAllTests") {
         ":analysis:decompiled:decompiler-to-psi:test",
         ":analysis:low-level-api-fir:test",
         ":analysis:low-level-api-fir:tests-jdk11:test",
+        ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests:test",
         ":analysis:stubs:test",
         ":analysis:symbol-light-classes:test",
         ":analysis:test-data-manager:test",
