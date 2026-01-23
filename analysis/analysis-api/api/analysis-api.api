@@ -684,6 +684,11 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaC
 	public abstract fun getTypeArgumentsMapping ()Ljava/util/Map;
 }
 
+public final class org/jetbrains/kotlin/analysis/api/resolution/KaCalls {
+	public static final fun getCalls (Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallResolutionAttempt;)Ljava/util/List;
+	public static final fun getCalls (Lorg/jetbrains/kotlin/analysis/api/resolution/KaSingleOrMultiCall;)Ljava/util/List;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCompoundAccessCall {
 	public abstract fun getCompoundOperation ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaCompoundOperation;
 	public fun getOperationCall ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
