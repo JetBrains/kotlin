@@ -18,6 +18,8 @@ open class KonanIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: KonanDeclarationTable,
 ) : IrFileSerializer(settings, declarationTable) {
+    override val computeSignatures = false
+
     private val fakeOverrideClassFilter =
         if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
             K1LazyFakeOverrideClassFilter

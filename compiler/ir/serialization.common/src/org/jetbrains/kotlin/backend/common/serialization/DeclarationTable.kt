@@ -49,6 +49,10 @@ abstract class GlobalDeclarationTable(val mangler: IrMangler) {
             }
         }
     }
+
+    fun getComputedSignature(symbolOwner: IrSymbolOwner): IdSignature =
+        table[symbolOwner]
+            ?: error("Signature of $symbolOwner is expected to be computed at this stage")
 }
 
 abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarationTable: GDT) {
@@ -81,6 +85,20 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
 
     fun signatureByReturnableBlock(returnableBlock: IrReturnableBlock): IdSignature =
         table.getOrPut(returnableBlock) { fileLocalIdSignatureComputer.generateScopeLocalSignature() }
+
+    fun getComputedSignature(symbolOwner: IrSymbolOwner, compatibleMode: Boolean): IdSignature {
+        if (symbolOwner is IrDeclaration) {
+            tryComputeBackendSpecificSignature(symbolOwner)?.let { return it }
+            if (symbolOwner.shouldHaveLocalSignature(compatibleMode))
+                return table[symbolOwner]
+                    ?: error("Signature of $symbolOwner is expected to be computed at this stage")
+        }
+        if (symbolOwner is IrReturnableBlock) {
+            return table[symbolOwner]
+                ?: error("Signature of $symbolOwner is expected to be computed at this stage")
+        }
+        return globalDeclarationTable.getComputedSignature(symbolOwner)
+    }
 }
 
 // This is what we pre-populate tables with
