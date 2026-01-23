@@ -173,7 +173,7 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "FirNativeStandaloneTestGenerated",
                 annotations = listOf(
-                    *standalone(),
+                    *standaloneNoTR(),
                     provider<UseStandardTestCaseGroupProvider>(),
                 )
             ) {
@@ -182,7 +182,7 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "FirNativeStandaloneTestWithInlinedFunInKlibGenerated",
                 annotations = listOf(
-                    *standalone(),
+                    *standaloneNoTR(),
                     provider<UseStandardTestCaseGroupProvider>(),
                     klibIrInliner(),
                 )
@@ -261,7 +261,7 @@ private fun TestGroup.disabledInOneStageMode(vararg unexpandedPaths: String): An
 
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
-fun standalone() = arrayOf(
+fun standaloneNoTR() = arrayOf(
     annotation(Tag::class.java, "standalone"),
     annotation(
         EnforcedProperty::class.java,
