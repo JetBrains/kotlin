@@ -51,7 +51,7 @@ private fun sanitizeManifest(
 
             KLIB_PROPERTY_NATIVE_TARGETS -> {
                 val singleTargetPresentInManifest = value.split(" ").singleOrNull()
-                if (singleTargetPresentInManifest != null && singleTargetInManifestToBeReplacedByTheAlias != null) {
+                if (!singleTargetPresentInManifest.isNullOrEmpty() && singleTargetInManifestToBeReplacedByTheAlias != null) {
                     SANITIZED_TEST_RUN_TARGET
                 } else {
                     value

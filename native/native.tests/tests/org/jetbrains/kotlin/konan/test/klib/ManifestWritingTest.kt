@@ -71,6 +71,36 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    @TestMetadata("metadata_compilation")
+    fun `Manifest of metadata compilation`(testInfo: TestInfo) {
+        doManifestTest(
+            testInfo,
+            "-Xmetadata-klib",
+        )
+    }
+
+    @Test
+    @TestMetadata("metadata_compilation_overridden_targets")
+    fun `Manifest of metadata compilation (overridden targets)`(testInfo: TestInfo) {
+        doManifestTest(
+            testInfo,
+            "-Xmetadata-klib",
+            // note some leading and trailing spaces
+            "-Xmanifest-native-targets=ios_arm64, ios_x64,linux_x64 ,mingw_x64,macos_x64,macos_arm64",
+        )
+    }
+
+    @Test
+    @TestMetadata("metadata_compilation_overridden_unknown_target")
+    fun `Manifest of metadata compilation (overridden unknown target)`(testInfo: TestInfo) {
+        doManifestTest(
+            testInfo,
+            "-Xmetadata-klib",
+            "-Xmanifest-native-targets=ios_arm64,ios_x64, unknown_target"
+        )
+    }
+
+    @Test
     fun testEnableAndDisableLanguageFeatures() {
         val poisoningFeature = LanguageFeature.entries.first { it.forcesPreReleaseBinariesIfEnabled() }
         val enabledLanguageFeature = LanguageFeature.entries.first { it.sinceVersion == LanguageVersion.FIRST_SUPPORTED }
