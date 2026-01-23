@@ -39,8 +39,6 @@ fun PhaseContext.writeKlib(input: KlibWriterInput, klibOutputFileName: String, s
 
     addLanguageFeaturesToManifest(manifestProperties, configuration.languageVersionSettings)
 
-    val nativeTargetsForManifest = config.nativeTargetsForManifest?.map { it.visibleName } ?: listOf(target.visibleName)
-
     if (!nopack) {
         if (!klibOutputFileName.endsWith(suffix)) {
             error("please specify correct output: packed: ${!nopack}, $klibOutputFileName$suffix")
@@ -61,6 +59,9 @@ fun PhaseContext.writeKlib(input: KlibWriterInput, klibOutputFileName: String, s
         // as that can make it difficult to map the dependencies back to the command line arguments.
         usedDependenciesFile.writeLines(linkDependencies.map { it.libraryFile.absolutePath })
     }
+
+    val nativeTargetsForManifest = config.nativeTargetsForManifest?.map { it.visibleName }
+        ?: if (this.config.metadataKlib) emptyList() else listOf(target.visibleName)
 
     buildLibrary(
         natives = config.nativeLibraries,
