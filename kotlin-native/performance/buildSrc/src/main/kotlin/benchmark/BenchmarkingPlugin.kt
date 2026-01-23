@@ -26,7 +26,7 @@ internal val Project.kotlinVersion: String
 internal val Project.konanVersion: String?
     get() = findProperty("konanVersion") as String?
 
-internal val Project.nativeJson: String
+val Project.nativeJson: String
     get() = project.property("nativeJson") as String
 
 val Project.buildType: NativeBuildType

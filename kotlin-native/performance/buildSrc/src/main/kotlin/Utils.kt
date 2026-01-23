@@ -18,7 +18,7 @@ val Project.platformManager
 val Project.kotlinNativeDist
     get() = rootProject.file(property("kotlin.native.home") as String)
 
-internal val Project.hostKotlinNativeTarget: KotlinNativeTarget
+val Project.hostKotlinNativeTarget: KotlinNativeTarget
     get() = when(HostManager.host) {
         KonanTarget.LINUX_X64 -> project.kotlin.linuxX64()
         KonanTarget.MACOS_ARM64 -> project.kotlin.macosArm64()
