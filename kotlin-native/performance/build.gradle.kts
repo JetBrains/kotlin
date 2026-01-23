@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.benchmark.nativeJson
 
 buildscript {
     java.util.Properties().apply {

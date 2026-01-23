@@ -3,8 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.benchmark.buildType
 import org.jetbrains.kotlin.benchmarkingTargets
+import org.jetbrains.kotlin.buildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.kotlinNativeDist
