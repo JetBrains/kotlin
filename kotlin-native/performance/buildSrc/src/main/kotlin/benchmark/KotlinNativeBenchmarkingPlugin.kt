@@ -10,11 +10,17 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.hostKotlinNativeTarget
 
 private const val NATIVE_EXECUTABLE_NAME = "benchmark"
+private const val EXTENSION_NAME = "benchmark"
 
 /**
  * A plugin configuring a benchmark Kotlin/Native project.
  */
 open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
+    override val Project.benchmark: BenchmarkExtension
+        get() = extensions.getByName(EXTENSION_NAME) as BenchmarkExtension
+
+    override fun Project.createExtension() = extensions.create<BenchmarkExtension>(EXTENSION_NAME, this)
+
     private val Project.linkTaskProvider: TaskProvider<out KotlinNativeLink>
         get() = hostKotlinNativeTarget.binaries.getExecutable(NATIVE_EXECUTABLE_NAME, project.buildType).linkTaskProvider
 
