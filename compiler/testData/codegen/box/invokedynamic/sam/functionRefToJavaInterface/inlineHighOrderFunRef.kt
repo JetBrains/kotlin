@@ -5,7 +5,7 @@
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
-// 2 java/lang/invoke/LambdaMetafactory
+// 1 java/lang/invoke/LambdaMetafactory
 
 // FILE: inlineHighOrderFunRef.kt
 
