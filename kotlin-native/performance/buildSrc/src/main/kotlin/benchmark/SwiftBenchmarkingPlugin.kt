@@ -4,6 +4,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.swift.tasks.SwiftCompile
 import org.gradle.nativeplatform.tasks.LinkExecutable
@@ -36,6 +37,14 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             compilerArgs.add("-F")
             compilerArgs.add(framework.map { it.parentFile.absolutePath })
         }
+        val debugLinkerFailure by tasks.registering {
+            val file = projectDir.resolve("build/tmp/linkRelease/output.txt")
+            doFirst {
+                if (file.exists()) {
+                    logger.error("LINKER FAILURE DETAILS:\n${file.readText()}")
+                }
+            }
+        }
         tasks.withType(LinkExecutable::class).configureEach {
             linkerArgs.add("-wmo")
             linkerArgs.add("-Xlinker")
@@ -44,6 +53,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             linkerArgs.add(framework.map { it.parentFile.absolutePath })
             linkerArgs.add("-F")
             linkerArgs.add(framework.map { it.parentFile.absolutePath })
+            finalizedBy(debugLinkerFailure)
         }
     }
 
