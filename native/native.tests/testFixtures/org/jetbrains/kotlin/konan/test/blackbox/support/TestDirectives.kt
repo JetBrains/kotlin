@@ -169,7 +169,8 @@ object TestDirectives : SimpleDirectivesContainer() {
         """
             Usage: // IGNORE_NATIVE: property1=value1[ && property2=value2][ && property3=value3]
             Declares this test is expected to fail in described run configuration
-        """.trimIndent()
+        """.trimIndent(),
+        multiLine = true // spaces within directive's value should result in one directive value with spaces, not several space-delimited values.
     )
 
     val PROGRAM_ARGS by stringDirective(
