@@ -16,9 +16,6 @@ internal val Project.nativeWarmup: Int
 internal val Project.attempts: Int
     get() = (property("attempts") as String).toInt()
 
-internal val Project.nativeBenchResults: String
-    get() = property("nativeBenchResults") as String
-
 // Gradle property to add flags to benchmarks run from command line.
 internal val Project.compilerArgs: List<String>
     get() = (findProperty("compilerArgs") as String?)?.split("\\s".toRegex()).orEmpty()
@@ -89,7 +86,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             group = BENCHMARKING_GROUP
             description = "Runs the benchmark for Kotlin/Native."
 
-            reportFile.set(layout.buildDirectory.file(nativeBenchResults))
+            reportFile.set(layout.buildDirectory.file("nativeBenchResults.json"))
             verbose.convention(logger.isInfoEnabled)
             baseOnly.convention(false)
             warmupCount.convention(nativeWarmup)
