@@ -182,6 +182,8 @@ class GradlePluginTests {
             it.withProjectDir(workingDir)
         }.build()
         root.extraProperties.set("buildNumber", "1.0")
+        root.extraProperties.set("projectsUsedInIntelliJKotlinPlugin", emptyArray<String>())
+        root.extraProperties.set("kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin", emptyArray<String>())
         root.tasks.register("mvnInstall")
 
         createKotlinSubproject("kotlin-gradle-plugin-api", root).also {
