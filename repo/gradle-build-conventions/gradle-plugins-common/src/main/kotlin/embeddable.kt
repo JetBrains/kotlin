@@ -30,6 +30,7 @@ val packagesToRelocate =
         "org.codehaus",
         "io.opentelemetry",
         "io.vavr",
+        "org.antlr"
     )
 
 fun ShadowJar.configureEmbeddableCompilerRelocation(withJavaxInject: Boolean = true) {
