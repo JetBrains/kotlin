@@ -77,10 +77,10 @@ class WithMemberFunctions {
         val personAlice = MutablePerson("Alice")
 
         barRegular {
-            baz(<!CV_DIAGNOSTIC!>memberVar<!>)
-            baz(<!CV_DIAGNOSTIC!><!CV_DIAGNOSTIC!>person<!>.name<!>)
-            baz(<!CV_DIAGNOSTIC!>person<!>.age)
-            baz(<!CV_DIAGNOSTIC!>this.memberVar<!>)
+            baz(memberVar)
+            baz(person.name)
+            baz(person.age)
+            baz(this.memberVar)
             baz(<!CV_DIAGNOSTIC!>personAlice.name<!>)
             baz(personAlice.age)
             baz(<!CV_DIAGNOSTIC!>personAlice.child<!>.age)
@@ -144,7 +144,7 @@ fun foo() {
 
 
     barRegular {
-        baz(<!CV_DIAGNOSTIC!>hi<!>)
+        baz(hi)
     }
 
     var sum = 0
@@ -157,7 +157,7 @@ fun foo() {
     barRegular {
         val localObj = MutableObject()
 
-        println(<!CV_DIAGNOSTIC!>localObj.mutableField<!>)
+        println(localObj.mutableField)
     }
 
     var localObj = MutableObject()
@@ -173,7 +173,7 @@ fun foo() {
 
     barRegular {
         val root = RootObject()
-        baz(<!CV_DIAGNOSTIC!>root.next!!.next!!.theProblematicVar<!>)
+        baz(root.next!!.next!!.theProblematicVar)
     }
 
 
@@ -212,6 +212,12 @@ fun foo() {
         }
         val s = <!CV_DIAGNOSTIC!>obj<!> as String
         val res = <!CV_DIAGNOSTIC!>nullableStr<!> ?: "default"
+    }
+
+    var girl = MutablePerson(name = "Alice")
+    barRegular {
+        var boy = <!CV_DIAGNOSTIC!>girl<!>
+        boy.name = "bob" // shoud be exception here
     }
 
 }
