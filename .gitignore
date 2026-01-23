@@ -62,3 +62,5 @@ kotlin-ide/
 .teamcity/
 .npmrc
 /.idea/AndroidProjectSystem.xml
+bins/
+benchmark_comparison.ipynb
