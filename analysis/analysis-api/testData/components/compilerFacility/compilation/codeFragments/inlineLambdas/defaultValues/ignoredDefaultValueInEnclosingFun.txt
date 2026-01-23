@@ -21,13 +21,8 @@ public final class CodeFragment {
   public final static run()I
    L0
     LINENUMBER 20 L0
-    BIPUSH 42
-    ISTORE 0
-   L1
     ICONST_M1
-   L2
     IRETURN
-    LOCALVARIABLE it I L1 L2 0
     MAXSTACK = 1
-    MAXLOCALS = 1
+    MAXLOCALS = 0
 }

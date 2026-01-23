@@ -20,17 +20,11 @@ public final class CodeFragment {
   // access flags 0x19
   public final static run()I
    L0
-    LINENUMBER 28 L0
+    LINENUMBER 29 L0
     BIPUSH 42
-    ISTORE 0
-   L1
-    LINENUMBER 29 L1
-    ILOAD 0
     ICONST_1
     IADD
-   L2
     IRETURN
-    LOCALVARIABLE it I L1 L2 0
     MAXSTACK = 2
-    MAXLOCALS = 1
+    MAXLOCALS = 0
 }

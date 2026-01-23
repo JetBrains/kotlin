@@ -61,39 +61,35 @@ public final class CodeFragment {
   // access flags 0x19
   public final static run()I
    L0
-    LINENUMBER 27 L0
+    LINENUMBER 28 L0
     ICONST_1
-    ISTORE 0
-   L1
-    LINENUMBER 28 L1
-    ILOAD 0
     INVOKESTATIC CodeFragment.run$localInsideLambda (I)I
     LDC LContextKt;.class
     LDC "main$localOutsideLambda"
     ICONST_1
     ANEWARRAY java/lang/Class
-    ASTORE 2
-    ALOAD 2
+    ASTORE 1
+    ALOAD 1
     ICONST_0
     GETSTATIC java/lang/Integer.TYPE : Ljava/lang/Class;
     AASTORE
-    ALOAD 2
-    INVOKEVIRTUAL java/lang/Class.getDeclaredMethod (Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
-    ASTORE 1
     ALOAD 1
+    INVOKEVIRTUAL java/lang/Class.getDeclaredMethod (Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+    ASTORE 0
+    ALOAD 0
     ICONST_1
     INVOKEVIRTUAL java/lang/reflect/Method.setAccessible (Z)V
-    ALOAD 1
+    ALOAD 0
     ACONST_NULL
     ICONST_1
     ANEWARRAY java/lang/Object
-    ASTORE 2
-    ALOAD 2
+    ASTORE 1
+    ALOAD 1
     ICONST_0
-    ILOAD 0
+    ICONST_1
     INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;
     AASTORE
-    ALOAD 2
+    ALOAD 1
     INVOKEVIRTUAL java/lang/reflect/Method.invoke (Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
     CHECKCAST java/lang/Integer
     INVOKEVIRTUAL java/lang/Integer.intValue ()I
@@ -101,14 +97,12 @@ public final class CodeFragment {
     NEW CodeFragment$run$1$X
     DUP
     INVOKESPECIAL CodeFragment$run$1$X.<init> ()V
-    ILOAD 0
+    ICONST_1
     INVOKEVIRTUAL CodeFragment$run$1$X.memberInLocalClass (I)I
     IADD
-   L2
     IRETURN
-    LOCALVARIABLE it I L1 L2 0
     MAXSTACK = 6
-    MAXLOCALS = 3
+    MAXLOCALS = 2
 
   // access flags 0x1A
   private final static run$localInsideLambda(I)I

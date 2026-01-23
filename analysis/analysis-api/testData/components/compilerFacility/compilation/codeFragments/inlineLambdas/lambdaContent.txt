@@ -442,29 +442,24 @@ public final class CodeFragment {
   // access flags 0x19
   public final static run()I
    L0
-    LINENUMBER 52 L0
-    LDC 100000
-    ISTORE 0
-   L1
-    LINENUMBER 53 L1
+    LINENUMBER 53 L0
     NEW CodeFragment$run$1$complexLambda$1
     DUP
     INVOKESPECIAL CodeFragment$run$1$complexLambda$1.<init> ()V
     INVOKEVIRTUAL CodeFragment$run$1$complexLambda$1.getProp ()Lkotlin/jvm/functions/Function0;
-    ASTORE 1
-   L2
-    ALOAD 1
+    ASTORE 0
+   L1
+    ALOAD 0
     INVOKEINTERFACE kotlin/jvm/functions/Function0.invoke ()Ljava/lang/Object; (itf)
     CHECKCAST java/lang/Number
     INVOKEVIRTUAL java/lang/Number.intValue ()I
-    ILOAD 0
+    LDC 100000
     IADD
-   L3
+   L2
     IRETURN
-    LOCALVARIABLE complexLambda Lkotlin/jvm/functions/Function0; L2 L3 1
-    LOCALVARIABLE it I L1 L3 0
+    LOCALVARIABLE complexLambda Lkotlin/jvm/functions/Function0; L1 L2 0
     MAXSTACK = 2
-    MAXLOCALS = 2
+    MAXLOCALS = 1
 
   // access flags 0x1A
   private final static run$localFunWithLocalClass(I)I
