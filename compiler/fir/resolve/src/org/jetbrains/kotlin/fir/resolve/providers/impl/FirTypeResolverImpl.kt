@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.processAllClassifiers
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -127,7 +129,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return collector.getResult()
     }
 
-    private fun resolveLocalClassChain(outermostClassLikeSymbol: FirClassLikeSymbol<*>, remainingQualifier: List<FirQualifierPart>): FirClassLikeSymbol<*>? {
+    private fun resolveLocalClassChain(
+        outermostClassLikeSymbol: FirClassLikeSymbol<*>,
+        remainingQualifier: List<FirQualifierPart>,
+    ): FirClassLikeSymbol<*>? {
         if (outermostClassLikeSymbol !is FirRegularClassSymbol || !outermostClassLikeSymbol.isLocal) {
             return null
         }
@@ -140,12 +145,15 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             if (classLikeSymbol !is FirRegularClassSymbol) return null
 
             val qualifierName = remainingQualifier[qualifierIndex].name
-            for (declarationSymbol in classLikeSymbol.declarationSymbols) {
-                if (declarationSymbol is FirClassLikeSymbol<*>) {
-                    if (declarationSymbol.toLookupTag().name == qualifierName) {
-                        return resolveLocalClassChain(declarationSymbol, qualifierIndex + 1)
-                    }
+
+            var matchingNestedClassLike: FirClassLikeSymbol<*>? = null
+            classLikeSymbol.declaredMemberScope(session, memberRequiredPhase = null).processAllClassifiers {
+                if (it is FirClassLikeSymbol<*> && it.name == qualifierName) {
+                    matchingNestedClassLike = it
                 }
+            }
+            if (matchingNestedClassLike != null) {
+                return resolveLocalClassChain(matchingNestedClassLike, qualifierIndex + 1)
             }
 
             return null
