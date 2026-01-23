@@ -42,9 +42,11 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.validation.IrValidationError
 import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
 import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrAnnotationArgumentsChecker
 import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldConstValueChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallTypeArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallValueArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
@@ -508,6 +510,8 @@ private class Fir2IrPipeline(
                     IrCallValueArgumentCountChecker,
                     IrCrossFileFieldUsageChecker,
                     IrValueAccessScopeChecker,
+                    IrAnnotationArgumentsChecker,
+                    IrFieldConstValueChecker,
                     //IrTypeParameterScopeChecker // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305),
                 )
                 .applyIf(fir2IrConfiguration.irVerificationSettings.enableIrVisibilityChecks) { // KT-80071

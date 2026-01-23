@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
@@ -57,8 +56,7 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
 
             configureIrHandlersStep {
                 useHandlers(
-                    ::IrDiagnosticsHandler,
-                    ::IrConstCheckerHandler
+                    ::IrDiagnosticsHandler
                 )
             }
 

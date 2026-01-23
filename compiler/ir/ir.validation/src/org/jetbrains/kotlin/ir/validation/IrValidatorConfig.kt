@@ -67,4 +67,6 @@ fun IrValidatorConfig.withAllChecks() = withBasicChecks()
         IrFieldVisibilityChecker,
         IrExpressionBodyInFunctionChecker,
         IrNestedOffsetRangeChecker,
+        IrAnnotationArgumentsChecker,
+        IrFieldConstValueChecker,
     )
