@@ -164,24 +164,24 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     protected inline val KaCallResolutionSuccess.kaCall: KaCall
         get() = call.asKaCall()
 
-    private fun KtElement.collectCallCandidatesImpl(): List<KaCallCandidateInfo> {
+    private fun KtElement.collectCallCandidatesImpl(): List<KaCallCandidate> {
         val unwrappedElement = unwrapResolvableCall()
         return unwrappedElement?.let(::performCallCandidatesCollection).orEmpty()
     }
 
-    protected abstract fun performCallCandidatesCollection(psi: KtElement): List<KaCallCandidateInfo>
+    protected abstract fun performCallCandidatesCollection(psi: KtElement): List<KaCallCandidate>
 
     final override fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> = withValidityAssertion {
         if (this is KtElement) {
             checkValidity()
-            collectCallCandidatesImpl().map(KaCallCandidateInfo::asKaCallCandidate)
+            collectCallCandidatesImpl()
         } else {
             emptyList()
         }
     }
 
     final override fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> = withPsiValidityAssertion {
-        collectCallCandidatesImpl()
+        collectCallCandidatesImpl().map(KaCallCandidate::asKaCallCandidateInfo)
     }
 
     // TODO: remove this workaround after KT-68499
@@ -261,6 +261,22 @@ internal fun KaCallCandidateInfo.asKaCallCandidate(): KaCallCandidate {
             backingCandidate = call,
             backingIsInBestCandidates = isInBestCandidates,
             backingDiagnostic = diagnostic,
+        )
+    }
+}
+
+internal fun KaCallCandidate.asKaCallCandidateInfo(): KaCallCandidateInfo {
+    val call = candidate as KaCall
+    return when (this) {
+        is KaApplicableCallCandidate -> KaBaseApplicableCallCandidateInfo(
+            backingCandidate = call,
+            isInBestCandidates = isInBestCandidates,
+        )
+
+        is KaInapplicableCallCandidate -> KaBaseInapplicableCallCandidateInfo(
+            backingCandidate = call,
+            isInBestCandidates = isInBestCandidates,
+            diagnostic = diagnostic,
         )
     }
 }
