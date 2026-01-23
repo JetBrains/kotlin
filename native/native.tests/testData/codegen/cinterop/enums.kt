@@ -5,6 +5,7 @@
 // TARGET_BACKEND: NATIVE
 // IGNORE_BACKEND_K1: NATIVE
 // ^ K1 does not support coercing assigment to Any?
+// LANGUAGE: +EnumEntries
 // MODULE: cinterop
 // FILE: cenums.def
 ---
@@ -15,7 +16,6 @@ enum E {
 // MODULE: main(cinterop)
 // FILE: main.kt
 
-// LANGUAGE: +EnumEntries
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import cenums.*

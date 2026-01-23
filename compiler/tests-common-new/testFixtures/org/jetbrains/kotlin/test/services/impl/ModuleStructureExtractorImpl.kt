@@ -39,7 +39,9 @@ class ModuleStructureExtractorImpl(
     private val environmentConfigurators: List<AbstractEnvironmentConfigurator>
 ) : ModuleStructureExtractor(testServices, additionalSourceProviders, moduleStructureTransformers) {
     companion object {
-        private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java", ".js", ".mjs", ".config", ".xml")
+        private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java", ".js", ".mjs", ".config", ".xml",
+            ".def", ".h", ".modulemap"  // native cinterop file extensions
+        ) + CINTEROP_SOURCE_EXTENSIONS
 
         /*
          * ([^()\n]+) module name

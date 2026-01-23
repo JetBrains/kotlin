@@ -223,8 +223,6 @@ enum class TestRunnerType {
     NO_EXIT
 }
 
-internal val CINTEROP_SOURCE_EXTENSIONS = setOf("c", "cpp", "m", "mm")
-
 internal class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs(emptyList(), cinteropArgs) {
     constructor(vararg cinteropArgs: String) : this(cinteropArgs.asList())
 }

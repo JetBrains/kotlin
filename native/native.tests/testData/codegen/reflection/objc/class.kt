@@ -125,7 +125,7 @@ fun box(): String {
 
     assertEquals("KotlinMyClass0", kotlinKClass.simpleName)
     assertNull(kotlinKClass.qualifiedName)
-    assertTrue(kotlinKClass.toString().matches("class .*\\.mypackage\\.KotlinMyClass0".toRegex()))
+    assertTrue(kotlinKClass.toString().matches("class .*mypackage\\.KotlinMyClass0".toRegex()))
 
     return "OK"
 }

@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.services.ModuleStructureExtractor.Companion.CINTEROP_SOURCE_EXTENSIONS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 

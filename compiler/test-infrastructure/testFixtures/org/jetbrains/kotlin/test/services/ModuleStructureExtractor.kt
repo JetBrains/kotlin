@@ -20,5 +20,6 @@ abstract class ModuleStructureExtractor @OptIn(TestInfrastructureInternals::clas
 
     companion object {
         const val DEFAULT_MODULE_NAME = "main"
+        val CINTEROP_SOURCE_EXTENSIONS = setOf("c", "cpp", "m", "mm")
     }
 }

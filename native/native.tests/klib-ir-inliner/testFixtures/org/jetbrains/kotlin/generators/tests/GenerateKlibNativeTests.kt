@@ -156,6 +156,17 @@ fun main(args: Array<String>) {
                 model("boxInline")
             }
         }
+        // Native-specific codegen/box tests based on Compiler Core testinfra
+        testGroup(testsRoot, "native/native.tests/testData/codegen") {
+            testClass<AbstractNativeCodegenBoxCoreTest>(
+                suiteTestClassName = "NativeSpecificCodegenBoxTestGenerated",
+                annotations = listOf(
+                    provider<UseDummyTestCaseGroupProvider>(),
+                )
+            ) {
+                model(excludeDirs = listOf("fileCheck")) // TODO KT-83769: implement FileCheck testing
+            }
+        }
 
         // Codegen/box tests for synthetic accessor tests
         testGroup(testsRoot, "compiler/testData/klib/syntheticAccessors") {

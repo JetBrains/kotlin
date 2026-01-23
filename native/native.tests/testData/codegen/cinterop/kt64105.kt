@@ -34,7 +34,7 @@ struct Baz* createBaz() {
     return 0;
 }
 
-// MODULE: main(lib1,lib2)
+// MODULE: main(lib1, lib2)
 // FILE: main.kt
 import kotlinx.cinterop.CPointer
 import lib1.*
