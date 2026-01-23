@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import kotlin.reflect.full.memberProperties
 
@@ -44,20 +45,73 @@ object FirCapturedMutableVariablesAnalyzer : AbstractFirPropertyInitializationCh
             if (variableSymbol.isVal) continue
 
             if (variableSymbol.resolvedReturnType is ConeDynamicType) continue
+            val accessExpression = when (expression) {
+                is FirQualifiedAccessExpression -> expression
+                is FirVariableAssignment -> {
+                    expression.lValue as? FirQualifiedAccessExpression
+                }
+                else -> {
+                    val report = IEReporter(source, context, reporter, FirErrors.CV_DIAGNOSTIC)
+                    report(
+                        IEData(
+                            info = "Unexpected expression type for variable capture",
+                            containingLambda = containingLambda.symbol.name.toString(),
+                            variableName = variableSymbol.name.toString(),
+                            leftmostReceiverName = "no receiver",
+                        )
+                    )
+                    return
+                }
+            }
 
+            val leftmostReceiverSymbol = leftmostReceiverVariableSymbol(accessExpression)
             // Logic:
             // 1. If symbol is in data.properties, it is declared inside this lambda (local).
             // 2. If symbol is NOT in data.properties, but isLocal == true, it is captured from outer scope.
-            if (variableSymbol in data.properties) continue
+            if (leftmostReceiverSymbol != null) {
+                if (!leftmostReceiverSymbol.isLocal) continue
+                if (leftmostReceiverSymbol in data.properties) continue
+            } else {
+                if (!variableSymbol.isLocal) continue
+                if (variableSymbol in data.properties) continue
+            }
+
             val report = IEReporter(source, context, reporter, FirErrors.CV_DIAGNOSTIC)
             report(
                 IEData(
+                    info = "Variable is captured from outer scope",
                     containingLambda = containingLambda.symbol.name.toString(),
-                    callName = "unknown",
                     variableName = variableSymbol.name.toString(),
-                    leftmostReceiverName = "no receiver",
+                    leftmostReceiverName = leftmostReceiverSymbol?.name.toString(),
                 )
             )
+        }
+    }
+
+    private fun leftmostReceiverVariableSymbol(expression: FirQualifiedAccessExpression?): FirVariableSymbol<*>? {
+        if (expression == null) {
+            return null
+        }
+        var current: FirExpression =
+            expression.explicitReceiver?.unwrapErrorExpression()?.unwrapArgument() ?: return null
+        while (true) {
+            when (val e = current) {
+                is FirQualifiedAccessExpression -> {
+                    val next = e.explicitReceiver?.unwrapErrorExpression()?.unwrapArgument()
+                    if (next != null) {
+                        current = next
+                        continue
+                    }
+                    return e.calleeReference.toResolvedVariableSymbol()
+                }
+                is FirSafeCallExpression -> {
+                    current = e.receiver.unwrapErrorExpression().unwrapArgument()
+                }
+                is FirCheckNotNullCall -> {
+                    current = e.argument.unwrapErrorExpression().unwrapArgument()
+                }
+                else -> return null
+            }
         }
     }
 }
@@ -86,8 +140,8 @@ class IEReporter(
 }
 
 data class IEData(
+    val info: String? = null,
     val containingLambda: String? = null,
-    val callName: String? = null,
     val variableName: String? = null,
     val leftmostReceiverName: String? = null,
 )
