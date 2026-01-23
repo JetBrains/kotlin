@@ -224,9 +224,9 @@ TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     >: it(B & TypeVariable(X) & Any)
      >: A
-     >: it(B & A)
-     = A (inferred during fixation)
+     >: it(B & A) (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -319,6 +319,7 @@ TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     >: it(B & TypeVariable(X) & Any)
 ********************************
 CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	 true ALLOWED
@@ -348,6 +349,7 @@ TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     >: it(B & TypeVariable(X) & Any)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED

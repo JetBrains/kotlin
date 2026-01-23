@@ -80,9 +80,9 @@ TypeVariable(T) --- Readiness(
      <: kotlin/Any
      <: Result?
      >: TypeVariable(K) & Any
+     >: TypeVariable(P) & Any
      >: kotlin/Nothing
-     >: Result
-     = Result (inferred during fixation)
+     >: Result (inferred during fixation)
 TypeVariable(K) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -96,11 +96,12 @@ TypeVariable(K) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     >: TypeVariable(P)
      >: kotlin/Nothing?
+     <: TypeVariable(T)?
      <: kotlin/Any?
      <: Result?
-     >: Result
-     = Result?
+     >: Result (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -136,10 +137,10 @@ TypeVariable(K) --- Readiness(
     	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: kotlin/Nothing?
+     <: TypeVariable(T)?
      <: kotlin/Any?
      <: Result?
      >: Result
-     = Result?
 ********************************
 CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true ALLOWED

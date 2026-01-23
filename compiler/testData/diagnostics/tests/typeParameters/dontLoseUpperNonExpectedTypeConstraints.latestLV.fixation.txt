@@ -110,11 +110,12 @@ TypeVariable(R) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     <: TypeVariable(K)?
      <: M
+     <: TypeVariable(S)?
      <: kotlin/Number?
+     <: TypeVariable(K)?
      <: Z?
-     <: Z?
-     = it(M & Z?)
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true ALLOWED
@@ -166,11 +167,13 @@ TypeVariable(R) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     <: TypeVariable(K)?
      <: M
+     <: TypeVariable(S)?
      <: kotlin/Number?
+     <: TypeVariable(K)?
      <: Z?
-     <: Z?
-     = it(M & Z?)
+     <: Z? (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true ALLOWED
@@ -203,11 +206,12 @@ TypeVariable(R) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     <: TypeVariable(K)?
      <: M
      <: kotlin/Number?
+     <: TypeVariable(K)?
      <: Z?
      <: Z?
-     = it(M & Z?)
 ********************************
 CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	 true ALLOWED

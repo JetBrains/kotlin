@@ -43,9 +43,9 @@ TypeVariable(K) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     >: TypeVariable(T)
      >: Path
-     >: CapturedType(*)
-     = Traversable (inferred during fixation)
+     >: CapturedType(*) (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true ALLOWED
