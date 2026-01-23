@@ -1,6 +1,3 @@
-// See KT-62849
-// IGNORE_BACKEND_K1: JVM_IR
-
 // LANGUAGE: +ReferencesToSyntheticJavaProperties
 
 // FILE: J.java
