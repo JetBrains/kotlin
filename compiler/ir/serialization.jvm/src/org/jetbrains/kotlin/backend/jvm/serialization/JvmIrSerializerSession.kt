@@ -33,6 +33,8 @@ class JvmIrSerializerSession(
         assert(mode != JvmSerializeIrMode.NONE)
     }
 
+    override val computeSignatures = true
+
     // Usage protocol: construct an instance, call only one of `serializeIrFile()` and `serializeTopLevelClass()` only once.
 
     fun serializeJvmIrFile(irFile: IrFile): JvmIr.ClassOrFile? {

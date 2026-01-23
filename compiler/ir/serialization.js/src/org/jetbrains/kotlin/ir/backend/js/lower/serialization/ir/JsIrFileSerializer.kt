@@ -24,6 +24,7 @@ class JsIrFileSerializer(
     declarationTable: DeclarationTable.Default,
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory
 ) : IrFileSerializer(settings, declarationTable) {
+    override val computeSignatures = false
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isJsExportDeclaration()
     override fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer) = node.isJsExportIgnoreDeclaration()
     override fun backendSpecificMetadata(irFile: IrFile) = jsIrFileMetadataFactory.createJsIrFileMetadata(irFile)
