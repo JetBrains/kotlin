@@ -27,6 +27,7 @@ object ExtraDeclarationCheckers : DeclarationCheckers() {
     override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker> = setOf(
         CanBeValChecker,
         UnusedVariableAssignmentChecker,
+        FirCapturedVariableStabilityFunctionChecker
     )
 
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
