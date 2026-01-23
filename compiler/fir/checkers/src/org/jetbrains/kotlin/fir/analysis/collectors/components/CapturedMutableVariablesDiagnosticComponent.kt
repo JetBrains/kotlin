@@ -9,34 +9,22 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.FirCapturedMutableVariablesAnalyzer
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 
-class ControlFlowAnalysisDiagnosticComponentCopy(
+class CapturedMutableVariablesDiagnosticComponent(
     session: FirSession,
     reporter: DiagnosticReporter,
-    declarationCheckers: DeclarationCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
-    constructor(session: FirSession, reporter: DiagnosticReporter, mppKind: MppCheckerKind) : this(
-        session,
-        reporter,
-        when (mppKind) {
-            MppCheckerKind.Common -> session.checkersComponent.commonDeclarationCheckers
-            MppCheckerKind.Platform -> session.checkersComponent.platformDeclarationCheckers
-        }
-    )
     private fun analyze(declaration: FirControlFlowGraphOwner, context: CheckerContext) {
         context(context, reporter) {
             val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
 
             val collector = ControlFlowAnalysisDiagnosticComponent.LocalPropertyCollector().apply { declaration.acceptChildren(this, graph.subGraphs.toSet()) }
-            val properties = collector.properties
 
-            val data = PropertyInitializationInfoData(properties, collector.conditionallyInitializedProperties, receiver = null, graph)
+            val data =
+                PropertyInitializationInfoData(collector.properties, collector.conditionallyInitializedProperties, receiver = null, graph)
             FirCapturedMutableVariablesAnalyzer.analyze(data)
         }
     }

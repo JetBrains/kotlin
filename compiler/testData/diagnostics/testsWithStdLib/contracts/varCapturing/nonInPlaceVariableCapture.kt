@@ -189,4 +189,10 @@ fun foo() {
         val res = nullableStr ?: "default"
     }
 
+    var girl = MutablePerson(name = "Alice")
+    barRegular {
+        var boy = girl
+        boy.name = "bob" // shoud be exception here
+    }
+
 }
