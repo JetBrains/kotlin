@@ -60,7 +60,7 @@ object ComposeConfiguration {
         CompilerConfigurationKey<Boolean>(
             "Enabled optimization to remove groups around non-skipping functions"
         )
-    val SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK = CompilerConfigurationKey<String?>(
+    val SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK = CompilerConfigurationKey<String>(
         "Deprecated. Version of Kotlin for which version compatibility check should be suppressed"
     )
     val DECOYS_ENABLED_KEY =
