@@ -106,6 +106,11 @@ projectTests {
         dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
         workingDir = rootDir
 
+        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
+            // Ensure golden tests run first since some LL tests are complementary for the surface tests
+            mustRunAfter(":analysis:analysis-api-fir:test")
+        }
+
         val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
         doFirst {
             systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
