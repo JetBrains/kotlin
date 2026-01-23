@@ -525,12 +525,11 @@ class FusStatisticsIT : KGPBaseTest() {
         project(
             "simpleProject", gradleVersion,
         ) {
-            // lines about atomicfu should be uncommented after fix of https://github.com/Kotlin/kotlinx-atomicfu/issues/556
             buildGradle.replaceText(
                 "plugins {",
                 """
                     plugins {
-                        // id("org.jetbrains.kotlinx.atomicfu") version "${TestVersions.ThirdPartyDependencies.KOTLINX_ATOMICFU}"
+                        id("org.jetbrains.kotlinx.atomicfu") version "${TestVersions.ThirdPartyDependencies.KOTLINX_ATOMICFU}"
                         id("org.jetbrains.kotlinx.kover") version "${TestVersions.ThirdPartyDependencies.KOTLINX_KOVER}"
                         id("org.jetbrains.kotlinx.binary-compatibility-validator") version "${TestVersions.ThirdPartyDependencies.KOTLINX_BINARY_COMPATIBILITY_VALIDATOR}"
                         id("org.jetbrains.kotlin.plugin.serialization") version "${'$'}kotlin_version"
@@ -542,7 +541,7 @@ class FusStatisticsIT : KGPBaseTest() {
                     fusStatisticsDirectory.assertFusReportContains(
                         "KOTLINX_KOVER_GRADLE_PLUGIN_ENABLED=true",
                         "KOTLINX_SERIALIZATION_GRADLE_PLUGIN_ENABLED=true",
-                        // "KOTLINX_ATOMICFU_GRADLE_PLUGIN_ENABLED=true",
+                        "KOTLINX_ATOMICFU_GRADLE_PLUGIN_ENABLED=true",
                         "KOTLINX_BINARY_COMPATIBILITY_GRADLE_PLUGIN_ENABLED=true",
                     )
                 }
