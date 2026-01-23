@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.codegen.addCompiledPartsAndSort
 import org.jetbrains.kotlin.codegen.loadCompiledModule
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
@@ -152,7 +152,7 @@ class JvmIrCodegenFactory(
     }
 
     private val CompilerConfiguration.filteredExtensions: List<IrGenerationExtension>
-        get() = this.getCompilerExtension(IrGenerationExtension)
+        get() = this.getCompilerExtensions(IrGenerationExtension)
             .filter { !ideCodegenSettings.doNotLoadDependencyModuleHeaders || it is IrGeneratorExtensionMarkerForExpressionEvaluation }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)

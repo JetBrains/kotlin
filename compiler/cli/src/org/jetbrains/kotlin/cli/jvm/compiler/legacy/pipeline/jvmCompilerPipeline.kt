@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
@@ -73,7 +73,7 @@ fun convertAnalyzedFirToIr(
     val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
         frontendOutput.convertToIrAndActualizeForJvm(
             extensions, configuration, environment.diagnosticsReporter,
-            configuration.getCompilerExtension(IrGenerationExtension),
+            configuration.getCompilerExtensions(IrGenerationExtension),
         )
 
     return ModuleCompilerIrBackendInput(

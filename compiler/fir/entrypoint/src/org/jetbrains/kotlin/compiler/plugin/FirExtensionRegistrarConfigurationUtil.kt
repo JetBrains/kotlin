@@ -12,20 +12,20 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 /*
  * The purpose of this function is to write
  *
- *   val extensions = configuration.getCompilerExtension(FirExtensionRegistrar)
+ *   val extensions = configuration.getCompilerExtensions(FirExtensionRegistrar)
  *
  * instead of
  *
  *   @Suppress("UNCHECKED_CAST")
- *   val extensions = configuration.getCompilerExtension(FirExtensionRegistrarAdapter) as List<FirExtensionRegistrar>
+ *   val extensions = configuration.getCompilerExtensions(FirExtensionRegistrarAdapter) as List<FirExtensionRegistrar>
  *
  * An unused ` descriptor ` parameter is needed to keep the shape of the function the same as
  * in the overload with generic extension point descriptor. So when the `FirExtensionRegistrarAdapter` will be removed,
- * all call sites will call the generic-one `getCompilerExtension` function without any modification.
+ * all call sites will call the generic-one `getCompilerExtensions` function without any modification.
  */
 @Suppress("unused")
-fun CompilerConfiguration.getCompilerExtension(descriptor: FirExtensionRegistrar.Companion): List<FirExtensionRegistrar> {
-    val extensions = getCompilerExtension(FirExtensionRegistrarAdapter)
+fun CompilerConfiguration.getCompilerExtensions(descriptor: FirExtensionRegistrar.Companion): List<FirExtensionRegistrar> {
+    val extensions = getCompilerExtensions(FirExtensionRegistrarAdapter)
     @Suppress("UNCHECKED_CAST")
     return extensions as List<FirExtensionRegistrar>
 }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationEx
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -103,7 +103,7 @@ abstract class AbstractFir2IrResultsConverter(
         val fir2irResult = firResult.convertToIrAndActualize(
             fir2IrExtensions,
             fir2IrConfiguration,
-            compilerConfiguration.getCompilerExtension(IrGenerationExtension),
+            compilerConfiguration.getCompilerExtensions(IrGenerationExtension),
             irMangler,
             createFir2IrVisibilityConverter(),
             builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,

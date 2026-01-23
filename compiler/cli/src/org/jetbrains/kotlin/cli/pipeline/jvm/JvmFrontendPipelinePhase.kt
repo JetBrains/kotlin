@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createEnvironmentAndSources
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -318,7 +318,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         fileBelongsToModule: (F, String) -> Boolean,
         createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
     ): List<SessionWithSources<F>> {
-        val extensionRegistrars = configuration.getCompilerExtension(FirExtensionRegistrar)
+        val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
 
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
@@ -494,7 +494,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
      */
 
     fun runAnalysisHandlerExtensions(project: Project, configuration: CompilerConfiguration): Boolean? {
-        val extensions = configuration.getCompilerExtension(FirAnalysisHandlerExtension)
+        val extensions = configuration.getCompilerExtensions(FirAnalysisHandlerExtension)
             .filter { it.isApplicable(configuration) }
             .takeIf { it.isNotEmpty() }
             ?: return null
