@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassGeneratorExtensionAdapter
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -30,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.RecordComponentVisitor
 internal object ClassBuilderExtensionAdapter {
     @JvmStatic
     fun getExtensions(configuration: CompilerConfiguration): List<ClassGeneratorExtensionAdapter> {
-        return configuration.getCompilerExtension(ClassGeneratorExtension)
+        return configuration.getCompilerExtensions(ClassGeneratorExtension)
             .map(::ClassGeneratorExtensionAdapterImpl)
     }
 }

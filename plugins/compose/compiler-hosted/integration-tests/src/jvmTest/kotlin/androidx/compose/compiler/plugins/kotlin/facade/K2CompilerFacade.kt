@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -98,7 +98,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
                 )
             ),
             createIncrementalCompilationSymbolProviders = { null },
-            configuration.getCompilerExtension(FirExtensionRegistrar),
+            configuration.getCompilerExtensions(FirExtensionRegistrar),
             configuration,
             context,
             needRegisterJavaElementFinder = true,
@@ -134,7 +134,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             Name.identifier(rootModuleName),
-            configuration.getCompilerExtension(FirExtensionRegistrar),
+            configuration.getCompilerExtensions(FirExtensionRegistrar),
             configuration.languageVersionSettings,
             context,
         )
@@ -142,7 +142,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val librarySession = FirJvmSessionFactory.createLibrarySession(
             sharedLibrarySession,
             dependencyList.moduleDataProvider,
-            configuration.getCompilerExtension(FirExtensionRegistrar),
+            configuration.getCompilerExtensions(FirExtensionRegistrar),
             configuration.languageVersionSettings,
             context,
         )
@@ -202,7 +202,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             fir2IrExtensions,
             configuration,
             analysisResult.reporter,
-            configuration.getCompilerExtension(IrGenerationExtension),
+            configuration.getCompilerExtensions(IrGenerationExtension),
         )
 
         return FirFrontendResult(fir2IrResult, fir2IrExtensions)

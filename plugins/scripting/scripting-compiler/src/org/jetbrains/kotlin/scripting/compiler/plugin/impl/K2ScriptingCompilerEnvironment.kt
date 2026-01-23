@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -179,7 +179,7 @@ fun createCompilerState(
     }
     compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
     val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
-    val extensionRegistrars = compilerConfiguration.getCompilerExtension(FirExtensionRegistrar)
+    val extensionRegistrars = compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar)
     val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
     val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
     val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
