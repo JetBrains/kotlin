@@ -140,7 +140,7 @@ internal class RTTIGenerator(
     )
 
     private fun kotlinStringLiteral(string: String?): ConstPointer = if (string == null) {
-        NullPointer(runtime.objHeaderType)
+        llvm.nullPointer
     } else {
         staticData.kotlinStringLiteral(string)
     }
@@ -150,13 +150,13 @@ internal class RTTIGenerator(
         if (annotation != null) {
             val name = annotation.getAnnotationStringValue()!!
             // TODO: use LLVMAddAlias.
-            val global = addGlobal(name, pointerType(runtime.typeInfoType), isExported = true)
+            val global = addGlobal(name, llvm.pointerType, isExported = true)
             LLVMSetInitializer(global, typeInfoGlobal)
         }
     }
 
     private val arrayClasses = mapOf(
-            IdSignatureValues.array to llvm.kObjHeaderPtr,
+            IdSignatureValues.array to llvm.pointerType,
             primitiveArrayTypesSignatures[PrimitiveType.BYTE] to llvm.int8Type,
             primitiveArrayTypesSignatures[PrimitiveType.CHAR] to llvm.int16Type,
             primitiveArrayTypesSignatures[PrimitiveType.SHORT] to llvm.int16Type,
@@ -167,7 +167,7 @@ internal class RTTIGenerator(
             primitiveArrayTypesSignatures[PrimitiveType.BOOLEAN] to llvm.int8Type,
             IdSignatureValues.string to llvm.int16Type,
             getPublicSignature(KonanFqNames.packageName, "ImmutableBlob") to llvm.int8Type,
-            getPublicSignature(KonanFqNames.internalPackageName, "NativePtrArray") to llvm.int8PtrType
+            getPublicSignature(KonanFqNames.internalPackageName, "NativePtrArray") to llvm.pointerType
     )
 
     // Keep in sync with Konan_RuntimeType.
@@ -179,7 +179,7 @@ internal class RTTIGenerator(
             llvm.int64Type to 5,
             llvm.floatType to 6,
             llvm.doubleType to 7,
-            llvm.int8PtrType to 8,
+            llvm.pointerType to 8,
             llvm.int1Type to 9,
             llvm.vector128Type to 10
     )
@@ -207,7 +207,7 @@ internal class RTTIGenerator(
         val instanceSize = getInstanceSize(bodyType, irClass)
 
         val superType = when {
-            irClass.isAny() -> NullPointer(runtime.typeInfoType)
+            irClass.isAny() -> llvm.nullPointer
             irClass.isKotlinObjCClass() -> context.irBuiltIns.anyClass.owner.typeInfoPtr
             else -> {
                 val superTypeOrAny = irClass.getSuperClassNotAny() ?: context.irBuiltIns.anyClass.owner
@@ -219,7 +219,7 @@ internal class RTTIGenerator(
 
         val interfaces = implementedInterfaces.map { it.typeInfoPtr }
         val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",
-                pointerType(runtime.typeInfoType), interfaces)
+                llvm.pointerType, interfaces)
 
         val objOffsets = getObjOffsets(llvmDeclarations.bodyType)
 
@@ -286,12 +286,12 @@ internal class RTTIGenerator(
         val vtableEntries = context.getLayoutBuilder(irClass).vtableEntries.map {
             val implementation = it.implementation
             if (implementation == null || implementation.isExternalObjCClassMethod() || referencedFunctions?.contains(implementation) == false) {
-                NullPointer(llvm.int8Type)
+                llvm.nullPointer
             } else {
                 implementation.entryPointAddress
             }
         }
-        return ConstArray(llvm.int8PtrType, vtableEntries)
+        return ConstArray(llvm.pointerType, vtableEntries)
     }
 
     fun interfaceTableRecords(irClass: IrClass): Pair<List<InterfaceTableRecord>, Int> {
@@ -362,17 +362,17 @@ internal class RTTIGenerator(
                     llvm.constInt32(interfaceId),
                     llvm.constInt32(iface?.interfaceVTableEntries?.size ?: 0),
                     if (iface == null)
-                        NullPointer(llvm.int8PtrType)
+                        llvm.nullPointer
                     else {
                         val vtableEntries = iface.interfaceVTableEntries.map { ifaceFunction ->
                             val impl = layoutBuilder.overridingOf(ifaceFunction)
                             if (impl == null || referencedFunctions?.contains(impl) == false)
-                                NullPointer(llvm.int8Type)
+                                llvm.nullPointer
                             else impl.entryPointAddress
                         }
 
                         staticData.placeGlobalConstArray("kifacevtable:${className}_$interfaceId",
-                                llvm.int8PtrType, vtableEntries
+                                llvm.pointerType, vtableEntries
                         )
                     }
             )
@@ -381,7 +381,7 @@ internal class RTTIGenerator(
 
     private fun mapRuntimeType(type: LLVMTypeRef, isObjectType: Boolean): Int {
         if (isObjectType) {
-            require(type == llvm.kObjHeaderPtr) { "Expected object type, got ${llvmtype2string(type)}" }
+            require(type == llvm.pointerType) { "Expected object type, got ${llvmtype2string(type)}" }
             return RT_OBJECT
         }
 
@@ -401,9 +401,9 @@ internal class RTTIGenerator(
         if (debugRuntimeOrNull != null) {
             val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
             val local = LLVMAddGlobal(llvm.module, LLVMGlobalGetValueType(external),"Konan_debugOperationsList")!!
-            constPointer(LLVMConstBitCast(local, llvm.int8PtrPtrType)!!)
+            constPointer(LLVMConstBitCast(local, llvm.pointerType)!!)
         } else {
-            Zero(llvm.int8PtrPtrType)
+            llvm.nullPointer
         }
     }
 
@@ -418,7 +418,7 @@ internal class RTTIGenerator(
     private fun makeExtendedInfo(irClass: IrClass): ConstPointer {
         // TODO: shall we actually do that?
         if (context.shouldOptimize())
-            return NullPointer(runtime.extendedTypeInfoType)
+            return llvm.nullPointer
 
         val className = irClass.fqNameForIrSerialization.toString()
         val llvmDeclarations = generationState.llvmDeclarations.forClass(irClass)
@@ -431,7 +431,7 @@ internal class RTTIGenerator(
             val runtimeElementType = mapRuntimeType(elementType, isElementTypeObject)
             Struct(runtime.extendedTypeInfoType,
                     llvm.constInt32(-runtimeElementType),
-                    NullPointer(llvm.int32Type), NullPointer(llvm.int8Type), NullPointer(llvm.int8PtrType),
+                    llvm.nullPointer, llvm.nullPointer, llvm.nullPointer,
                     debugOperationsSize, debugOperations)
         } else {
             class FieldRecord(val offset: Int, val type: Int, val name: String)
@@ -450,7 +450,7 @@ internal class RTTIGenerator(
                     fields.map { llvm.constInt32(it.offset) })
             val typesPtr = staticData.placeGlobalConstArray("kexttype:$className", llvm.int8Type,
                     fields.map { llvm.constInt8(it.type.toByte()) })
-            val namesPtr = staticData.placeGlobalConstArray("kextname:$className", llvm.int8PtrType,
+            val namesPtr = staticData.placeGlobalConstArray("kextname:$className", llvm.pointerType,
                     fields.map { staticData.placeCStringLiteral(it.name) })
 
             Struct(runtime.extendedTypeInfoType, llvm.constInt32(fields.size), offsetsPtr, typesPtr, namesPtr,
@@ -511,7 +511,7 @@ internal class RTTIGenerator(
         assert(superClass.implementedInterfaces.isEmpty())
         val interfaces = (listOf(irClass) + irClass.implementedInterfaces)
         val interfacesPtr = staticData.placeGlobalConstArray("",
-                pointerType(runtime.typeInfoType), interfaces.map { it.typeInfoPtr })
+                llvm.pointerType, interfaces.map { it.typeInfoPtr })
 
         assert(superClass.declarations.all { it !is IrProperty && it !is IrField })
 
@@ -536,9 +536,9 @@ internal class RTTIGenerator(
             if (layoutBuilder == null) {
                 InterfaceTableRecord(llvm.constInt32(0), llvm.constInt32(0), null)
             } else {
-                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!!.bitcast(llvm.int8PtrType) }
-                val interfaceVTable = staticData.placeGlobalArray("", llvm.int8PtrType, vtableEntries)
-                val interfaceVTableType = LLVMArrayType(llvm.int8PtrType, vtableEntries.size)!!
+                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!!.bitcast(llvm.pointerType) }
+                val interfaceVTable = staticData.placeGlobalArray("", llvm.pointerType, vtableEntries)
+                val interfaceVTableType = LLVMArrayType(llvm.pointerType, vtableEntries.size)!!
                 InterfaceTableRecord(
                         llvm.constInt32(layoutBuilder.classId),
                         llvm.constInt32(layoutBuilder.interfaceVTableEntries.size),
@@ -550,7 +550,7 @@ internal class RTTIGenerator(
 
         val typeInfoWithVtable = llvm.struct(TypeInfo(
                 selfPtr = result,
-                extendedInfo = NullPointer(runtime.extendedTypeInfoType),
+                extendedInfo = llvm.nullPointer,
                 size = size,
                 superType = superClass.typeInfoPtr,
                 objOffsets = objOffsetsPtr, objOffsetsCount = objOffsetsCount,

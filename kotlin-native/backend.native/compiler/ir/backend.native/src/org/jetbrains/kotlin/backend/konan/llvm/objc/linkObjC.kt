@@ -208,7 +208,7 @@ private fun patchLiteral(
         val newGlobal = generator.generate(module, state.llvm, newValue).llvm
         LLVMReplaceAllUsesWith(global, newGlobal)
     } else {
-        val newFirstCharPtr = generator.generate(module, llvm, newValue).bitcast(llvm.int8PtrType).llvm
+        val newFirstCharPtr = generator.generate(module, llvm, newValue).bitcast(llvm.pointerType).llvm
         generateSequence(LLVMGetFirstUse(global), { LLVMGetNextUse(it) }).forEach { use ->
             val firstCharPtr = LLVMGetUser(use)!!.also {
                 require(it.isFirstCharPtr(llvm, global)) {
@@ -221,7 +221,7 @@ private fun patchLiteral(
 }
 
 private fun LLVMValueRef.isFirstCharPtr(llvm: CodegenLlvmHelpers, global: LLVMValueRef): Boolean =
-        this.type == llvm.int8PtrType &&
+    this.type == llvm.pointerType &&
                 LLVMIsConstant(this) != 0 && LLVMGetConstOpcode(this) == LLVMOpcode.LLVMGetElementPtr
                 && LLVMGetNumOperands(this) == 3
                 && LLVMGetOperand(this, 0) == global

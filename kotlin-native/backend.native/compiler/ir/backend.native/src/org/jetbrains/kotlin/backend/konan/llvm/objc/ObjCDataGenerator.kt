@@ -54,7 +54,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
         llvm.compilerUsedGlobals += global.pointer.llvm
 
-        global.pointer.bitcast(pointerType(llvm.int8PtrType))
+        global.pointer.bitcast(llvm.pointerType)
     }
 
     private val classObjectType = codegen.runtime.objCClassObjectType
@@ -95,18 +95,14 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
         val classRoType = runtime.objCClassRoType
         val methodType = runtime.objCMethodType
-        val methodListType = runtime.objCMethodListType
-        val protocolListType = runtime.objCProtocolListType
-        val ivarListType = runtime.objCIVarListType
-        val propListType = runtime.objCPropListType
 
         val classNameLiteral = classNames.get(name)
 
         fun emitInstanceMethodList(): ConstPointer {
-            if (instanceMethods.isEmpty()) return NullPointer(methodListType)
+            if (instanceMethods.isEmpty()) return llvm.nullPointer
 
             val methodStructs = instanceMethods.map {
-                Struct(methodType, selectors.get(it.selector), encodings.get(it.encoding), it.imp.bitcast(llvm.int8PtrType))
+                Struct(methodType, selectors.get(it.selector), encodings.get(it.encoding), it.imp.bitcast(llvm.pointerType))
             }
 
             val methodList = llvm.struct(
@@ -124,7 +120,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
             llvm.compilerUsedGlobals += global.llvmGlobal
 
-            return global.pointer.bitcast(pointerType(methodListType))
+            return global.pointer.bitcast(llvm.pointerType)
         }
 
         fun buildClassRo(isMetaclass: Boolean): ConstPointer {
@@ -149,13 +145,13 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             fields += llvm.constInt32(flags)
             fields += llvm.constInt32(start)
             fields += llvm.constInt32(size)
-            fields += NullPointer(llvm.int8Type) // ivar layout name
+            fields += llvm.nullPointer // ivar layout name
             fields += classNameLiteral
-            fields += if (isMetaclass) NullPointer(methodListType) else emitInstanceMethodList()
-            fields += NullPointer(protocolListType)
-            fields += NullPointer(ivarListType)
-            fields += NullPointer(llvm.int8Type) // ivar layout
-            fields += NullPointer(propListType)
+            fields += if (isMetaclass) llvm.nullPointer else emitInstanceMethodList()
+            fields += llvm.nullPointer // protocol list
+            fields += llvm.nullPointer // ivar list
+            fields += llvm.nullPointer // ivar layout
+            fields += llvm.nullPointer // prop list
 
             val roValue = Struct(classRoType, fields)
 
@@ -185,8 +181,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             fields += isa
             fields += superClass
             fields += emptyCache
-            val vtableEntryType = pointerType(functionType(llvm.int8PtrType, false, llvm.int8PtrType, llvm.int8PtrType))
-            fields += NullPointer(vtableEntryType) // empty vtable
+            fields += llvm.nullPointer // empty vtable
             fields += classRo
 
             val classObjectValue = Struct(classObjectType, fields)
@@ -225,8 +220,8 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
         val global = codegen.staticData.placeGlobalArray(
                 name,
-                llvm.int8PtrType,
-                elements.map { it.bitcast(llvm.int8PtrType) }
+                llvm.pointerType,
+                elements.map { it.bitcast(llvm.pointerType) }
         )
 
         global.setAlignment(
@@ -254,7 +249,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         fun get(value: String) = literals.getOrPut(value) {
             val globalPointer = generator.generate(llvm.module, llvm, value)
             llvm.compilerUsedGlobals += globalPointer.llvm
-            globalPointer.bitcast(llvm.int8PtrType)
+            globalPointer.bitcast(llvm.pointerType)
         }
     }
 

@@ -292,7 +292,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
             val typeInfoWithVtableType = llvm.structType(
                     runtime.typeInfoType,
-                    LLVMArrayType(llvm.int8PtrType, context.getLayoutBuilder(declaration).vtableEntries.size)!!
+                    LLVMArrayType(llvm.pointerType, context.getLayoutBuilder(declaration).vtableEntries.size)!!
             )
 
             typeInfoGlobal = staticData.createGlobal(

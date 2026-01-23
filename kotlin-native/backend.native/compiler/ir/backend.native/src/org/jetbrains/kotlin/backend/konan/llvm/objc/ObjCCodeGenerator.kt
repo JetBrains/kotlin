@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm.objc
 
 import kotlinx.cinterop.signExtend
-import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.getARCRetainAutoreleasedReturnValueMarker
 import org.jetbrains.kotlin.backend.konan.llvm.*
@@ -22,40 +21,40 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
 
     fun FunctionGenerationContext.genGetLinkedClass(name: String): LLVMValueRef {
         val classRef = dataGenerator.genClassRef(name)
-        return load(llvm.int8PtrType, classRef.llvm)
+        return load(llvm.pointerType, classRef.llvm)
     }
 
     private val objcMsgSend = llvm.externalNativeRuntimeFunction(
             "objc_msgSend",
-            LlvmRetType(llvm.int8PtrType, isObjectType = false),
-            listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType)),
+            LlvmRetType(llvm.pointerType, isObjectType = false),
+            listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)),
             isVararg = true
     ).toConstPointer()
 
     val objcRelease = llvm.externalNativeRuntimeFunction(
             "llvm.objc.release",
             LlvmRetType(llvm.voidType, isObjectType = false),
-            listOf(LlvmParamType(llvm.int8PtrType)),
+            listOf(LlvmParamType(llvm.pointerType)),
             listOf(LlvmFunctionAttribute.NoUnwind)
     )
 
     val objcAlloc = llvm.externalNativeRuntimeFunction(
             "objc_alloc",
-            LlvmRetType(llvm.int8PtrType, isObjectType = false),
-            listOf(LlvmParamType(llvm.int8PtrType))
+            LlvmRetType(llvm.pointerType, isObjectType = false),
+            listOf(LlvmParamType(llvm.pointerType))
     )
 
     val objcAutoreleaseReturnValue = llvm.externalNativeRuntimeFunction(
             "llvm.objc.autoreleaseReturnValue",
-            LlvmRetType(llvm.int8PtrType, isObjectType = false),
-            listOf(LlvmParamType(llvm.int8PtrType)),
+            LlvmRetType(llvm.pointerType, isObjectType = false),
+            listOf(LlvmParamType(llvm.pointerType)),
             listOf(LlvmFunctionAttribute.NoUnwind)
     )
 
     val objcRetainAutoreleasedReturnValue = llvm.externalNativeRuntimeFunction(
             "llvm.objc.retainAutoreleasedReturnValue",
-            LlvmRetType(llvm.int8PtrType, isObjectType = false),
-            listOf(LlvmParamType(llvm.int8PtrType)),
+            LlvmRetType(llvm.pointerType, isObjectType = false),
+            listOf(LlvmParamType(llvm.pointerType)),
             listOf(LlvmFunctionAttribute.NoUnwind)
     )
 
@@ -79,7 +78,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     fun msgSender(functionType: LlvmFunctionSignature): LlvmCallable {
         val llvmType = functionType.llvmFunctionType
         return LlvmCallable(
-                objcMsgSend.bitcast(pointerType(llvmType)).llvm,
+                objcMsgSend.bitcast(llvm.pointerType).llvm,
                 functionType)
     }
 }

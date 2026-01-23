@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrConst
 
 private fun ConstPointer.addBits(llvm: CodegenLlvmHelpers, type: LLVMTypeRef, bits: Int): ConstPointer {
-    val rawPtr = LLVMConstBitCast(this.llvm, llvm.int8PtrType)
+    val rawPtr = LLVMConstBitCast(this.llvm, llvm.pointerType)
     // Only pointer arithmetic via GEP works on constant pointers in LLVM.
     val withBits = LLVMConstGEP2(llvm.int8Type, rawPtr, cValuesOf(llvm.int32(bits)), 1)!!
     val withType = LLVMConstBitCast(withBits, type)!!
@@ -24,7 +24,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
 
     // Must match OBJECT_TAG_PERMANENT in C++.
     private fun permanentTag(typeInfo: ConstPointer): ConstPointer {
-        return typeInfo.addBits(llvm, kTypeInfoPtr, 1)
+        return typeInfo.addBits(llvm, llvm.pointerType, 1)
     }
 
 
@@ -42,7 +42,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         global.setUnnamedAddr(true)
         global.setConstant(true)
         // value should be of struct type with first element having the object/array header layout
-        return global.pointer.getElementPtr(llvm, global.type, 0).bitcast(kObjHeaderPtr)
+        return global.pointer.getElementPtr(llvm, global.type, 0).bitcast(llvm.pointerType)
     }
 
     private fun createKotlinStringLiteral(value: String): ConstPointer {
