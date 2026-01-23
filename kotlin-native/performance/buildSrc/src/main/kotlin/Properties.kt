@@ -14,7 +14,12 @@ internal val Project.compilerArgs: List<String>
     get() = (findProperty("compilerArgs") as String?)?.split("\\s".toRegex()).orEmpty()
 
 internal val Project.kotlinVersion: String
-    get() = property("kotlinVersion") as String
+    get() {
+        val prop = findProperty("deployVersion")?.let {
+            if (it == "default.snapshot") property("defaultSnapshotVersion") else it
+        } ?: findProperty("build.number") ?: property("defaultSnapshotVersion")
+        return prop as String
+    }
 
 internal val Project.konanVersion: String?
     get() = findProperty("konanVersion") as String?

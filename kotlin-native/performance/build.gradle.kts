@@ -10,10 +10,6 @@ buildscript {
 
 allprojects {
     extra["kotlin.native.home"] = kotlinNativeDist.absolutePath
-    extra["buildNumber"] = findProperty("build.number") ?: property("defaultSnapshotVersion")
-    extra["kotlinVersion"] = findProperty("deployVersion")?.let {
-        if (it == "default.snapshot") property("defaultSnapshotVersion") else it
-    } ?: extra["buildNumber"]
 
     repositories {
         mavenCentral()
@@ -26,12 +22,12 @@ plugins {
 
 // CI calls this in Performance Tests to check that benchmarksAnalyzer successfully builds.
 val buildAnalyzer by tasks.registering {
-    dependsOn(":benchmarksAnalyzer:${hostKotlinNativeTarget.name}Binaries")
+    dependsOn(":benchmarksAnalyzer:${hostKotlinNativeTargetName}Binaries")
 }
 
 // CI calls this task to check that compilation is not broken in Aggregate
 val compileKotlinNative by tasks.registering {
-    dependsOn(getTasksByName("compileKotlin${hostKotlinNativeTarget.name.replaceFirstChar { it.uppercaseChar() }}", true))
+    dependsOn(getTasksByName("compileKotlin${hostKotlinNativeTargetName.replaceFirstChar { it.uppercaseChar() }}", true))
 }
 
 val benchmarkSubprojects = subprojects.filter {
