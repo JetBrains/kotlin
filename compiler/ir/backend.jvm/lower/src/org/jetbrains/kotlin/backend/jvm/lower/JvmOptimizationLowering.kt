@@ -187,88 +187,6 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             return expression
         }
 
-        private fun getInlineableValueForTemporaryVal(statement: IrStatement): IrExpression? {
-            val variable = statement as? IrVariable ?: return null
-            if (variable.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE || variable.isVar) return null
-            if (variable in dontTouchTemporaryVals) return null
-
-            when (val initializer = variable.initializer) {
-                is IrConst ->
-                    return initializer
-                is IrGetValue ->
-                    when (val initializerValue = initializer.symbol.owner) {
-                        is IrVariable ->
-                            return when {
-                                initializerValue.isVar ->
-                                    null
-                                initializerValue.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE ->
-                                    getInlineableValueForTemporaryVal(initializerValue)
-                                        ?: initializer
-                                else ->
-                                    initializer
-                            }
-                        is IrValueParameter ->
-                            return if (initializerValue.isAssignable)
-                                null
-                            else
-                                initializer
-                    }
-            }
-
-            return null
-        }
-
-        private fun removeUnnecessaryTemporaryVariables(statements: MutableList<IrStatement>) {
-            // Remove declarations of immutable temporary variables that can be inlined.
-            statements.removeIf {
-                getInlineableValueForTemporaryVal(it) != null
-            }
-
-            // Remove a block that contains only two statements: the declaration of a temporary
-            // variable and a load of the value of that temporary variable with just the initializer
-            // for the temporary variable. We only perform this transformation for compiler generated
-            // temporary variables. Local variables can be changed at runtime and therefore eliminating
-            // an actual local variable changes debugging behavior.
-            //
-            // This helps avoid temporary variables even for side-effecting expressions when they are
-            // not needed. Having a temporary variable leads to local loads and stores in the
-            // generated java bytecode which are not necessary. For example
-            //
-            //     42.toLong()!!
-            //
-            // introduces a temporary variable for the toLong() call and a null check
-            //    block
-            //      temp = 42.toLong()
-            //      when (eq(temp, null))
-            //        (true) -> throwNep()
-            //        (false) -> temp
-            //
-            // the when is simplified because long is a primitive type, which leaves us with
-            //
-            //    block
-            //      temp = 42.toLong()
-            //      temp
-            //
-            // which can be simplified to simply
-            //
-            //    block
-            //      42.toLong()
-            //
-            // Doing so we avoid local loads and stores.
-            if (statements.size == 2) {
-                val first = statements[0]
-                val second = statements[1]
-                if (first is IrVariable
-                    && first.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
-                    && second is IrGetValue
-                    && first.symbol == second.symbol
-                ) {
-                    statements.clear()
-                    first.initializer?.let { statements.add(it) }
-                }
-            }
-        }
-
         // Remove unnecessary GETSTATIC when @JvmStatic functions call each other
         private fun removeUnnecessaryIrTypeOperatorCall(statements: MutableList<IrStatement>, data: IrDeclaration?) {
             val typeOperatorCalls = statements.filter {
@@ -288,7 +206,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
 
         override fun visitBlockBody(body: IrBlockBody, data: IrDeclaration?): IrBody {
             body.transformChildren(this, data)
-            removeUnnecessaryTemporaryVariables(body.statements)
+            removeUnnecessaryTemporaryVariables(body.statements, dontTouchTemporaryVals::contains)
             return body
         }
 
@@ -311,7 +229,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             }
 
             expression.transformChildren(this, data)
-            removeUnnecessaryTemporaryVariables(expression.statements)
+            removeUnnecessaryTemporaryVariables(expression.statements, dontTouchTemporaryVals::contains)
             removeUnnecessaryIrTypeOperatorCall(expression.statements, data)
             return expression
         }
@@ -410,29 +328,8 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             }
         }
 
-        override fun visitGetValue(expression: IrGetValue, data: IrDeclaration?): IrExpression {
-            // Replace IrGetValue of an immutable temporary variable with a constant
-            // initializer with the constant initializer.
-            val variable = expression.symbol.owner
-            return when (val replacement = getInlineableValueForTemporaryVal(variable)) {
-                is IrConst -> IrConstImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    replacement.type,
-                    replacement.kind,
-                    replacement.value
-                )
-                is IrGetValue -> IrGetValueImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    replacement.type,
-                    replacement.symbol,
-                    replacement.origin
-                )
-                else ->
-                    expression
-            }
-        }
+        override fun visitGetValue(expression: IrGetValue, data: IrDeclaration?) =
+            optimizeGetValue(expression, dontTouchTemporaryVals::contains)
 
         override fun visitSetValue(expression: IrSetValue, data: IrDeclaration?): IrExpression {
             expression.transformChildren(this, data)
@@ -508,5 +405,111 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
 
         private fun getLineNumberForOffset(offset: Int): Int =
             fileEntry.getLineNumber(offset) + 1
+    }
+}
+
+private fun getInlineableValueForTemporaryVal(statement: IrStatement, isEliminationForbidden: (IrVariable) -> Boolean): IrExpression? {
+    val variable = statement as? IrVariable ?: return null
+    if (variable.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE || variable.isVar) return null
+    if (isEliminationForbidden(variable)) return null
+
+    when (val initializer = variable.initializer) {
+        is IrConst ->
+            return initializer
+        is IrGetValue ->
+            when (val initializerValue = initializer.symbol.owner) {
+                is IrVariable ->
+                    return when {
+                        initializerValue.isVar ->
+                            null
+                        initializerValue.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE ->
+                            getInlineableValueForTemporaryVal(initializerValue, isEliminationForbidden)
+                                ?: initializer
+                        else ->
+                            initializer
+                    }
+                is IrValueParameter ->
+                    return if (initializerValue.isAssignable)
+                        null
+                    else
+                        initializer
+            }
+    }
+
+    return null
+}
+
+fun optimizeGetValue(expression: IrGetValue, isEliminationForbidden: (IrVariable) -> Boolean): IrExpression {
+    // Replace IrGetValue of an immutable temporary variable with a constant
+    // initializer with the constant initializer.
+    val variable = expression.symbol.owner
+    return when (val replacement = getInlineableValueForTemporaryVal(variable, isEliminationForbidden)) {
+        is IrConst -> IrConstImpl(
+            expression.startOffset,
+            expression.endOffset,
+            replacement.type,
+            replacement.kind,
+            replacement.value
+        )
+        is IrGetValue -> IrGetValueImpl(
+            expression.startOffset,
+            expression.endOffset,
+            replacement.type,
+            replacement.symbol,
+            replacement.origin
+        )
+        else ->
+            expression
+    }
+}
+
+fun removeUnnecessaryTemporaryVariables(statements: MutableList<IrStatement>, isEliminationForbidden: (IrVariable) -> Boolean) {
+    // Remove declarations of immutable temporary variables that can be inlined.
+    statements.removeIf {
+        getInlineableValueForTemporaryVal(it, isEliminationForbidden) != null
+    }
+
+    // Remove a block that contains only two statements: the declaration of a temporary
+    // variable and a load of the value of that temporary variable with just the initializer
+    // for the temporary variable. We only perform this transformation for compiler generated
+    // temporary variables. Local variables can be changed at runtime and therefore eliminating
+    // an actual local variable changes debugging behavior.
+    //
+    // This helps avoid temporary variables even for side-effecting expressions when they are
+    // not needed. Having a temporary variable leads to local loads and stores in the
+    // generated java bytecode which are not necessary. For example
+    //
+    //     42.toLong()!!
+    //
+    // introduces a temporary variable for the toLong() call and a null check
+    //    block
+    //      temp = 42.toLong()
+    //      when (eq(temp, null))
+    //        (true) -> throwNep()
+    //        (false) -> temp
+    //
+    // the when is simplified because long is a primitive type, which leaves us with
+    //
+    //    block
+    //      temp = 42.toLong()
+    //      temp
+    //
+    // which can be simplified to simply
+    //
+    //    block
+    //      42.toLong()
+    //
+    // Doing so we avoid local loads and stores.
+    if (statements.size == 2) {
+        val first = statements[0]
+        val second = statements[1]
+        if (first is IrVariable
+            && first.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+            && second is IrGetValue
+            && first.symbol == second.symbol
+        ) {
+            statements.clear()
+            first.initializer?.let { statements.add(it) }
+        }
     }
 }

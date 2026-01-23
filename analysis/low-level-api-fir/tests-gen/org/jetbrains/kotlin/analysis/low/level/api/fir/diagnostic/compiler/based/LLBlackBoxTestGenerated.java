@@ -20784,6 +20784,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("samConversion.kt")
+    public void testSamConversion() {
+      runTest("compiler/testData/codegen/box/directInvokeOptimization/samConversion.kt");
+    }
+
+    @Test
     @TestMetadata("simpleAnonymousFun.kt")
     public void testSimpleAnonymousFun() {
       runTest("compiler/testData/codegen/box/directInvokeOptimization/simpleAnonymousFun.kt");
