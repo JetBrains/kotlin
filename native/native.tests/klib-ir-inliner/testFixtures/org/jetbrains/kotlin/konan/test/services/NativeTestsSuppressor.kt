@@ -37,9 +37,16 @@ class NativeTestsSuppressor(
 }
 
 private fun TestServices.processException(wrappedException: WrappedException): List<WrappedException> {
-    return if (testRunSettings.isIgnoredTarget(moduleStructure.allDirectives))
-        emptyList()
-    else listOf(wrappedException)
+    if (testRunSettings.isIgnoredTarget(moduleStructure.allDirectives))
+        return emptyList()
+
+    // TODO Remove this workaround for KT-73621, when tests having `EVALUATED{IR}` will be dropped and KT-73621 will become obsolete.
+    if (wrappedException is WrappedException.FromMetaInfoHandler &&
+        wrappedException.message?.startsWith("org.opentest4j.AssertionFailedError: Actual data differs from file content:") == true &&
+        moduleStructure.modules.any {it.files.any { it.originalContent.contains("<!EVALUATED{IR}(")} }
+    ) return emptyList()
+
+    return listOf(wrappedException)
 }
 
 private fun TestServices.createUnmutingErrorIfNeeded(): List<Throwable> {
