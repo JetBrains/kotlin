@@ -99,6 +99,10 @@ tasks.named("check") {
     dependsOn(testing.suites.named("functionalTest"))
 }
 
+tasks.withType<Test>().configureEach {
+    javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_21_0)).disallowChanges()
+}
+
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.apache.commons" && requested.name == "commons-lang3") {
