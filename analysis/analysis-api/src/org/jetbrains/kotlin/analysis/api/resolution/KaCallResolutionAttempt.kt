@@ -193,6 +193,7 @@ public sealed interface KaMultiCall : KaSingleOrMultiCall {
  *
  * The usual way to work with compound calls is to get them using a special [KaResolver.resolveCall] overload
  */
+@Suppress("unused")
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 private interface KaMultiUnknownCall : KaMultiCall
