@@ -68,12 +68,3 @@ public final class org/jetbrains/kotlin/abi/tools/KlibTargetKt {
 	public static final fun KlibTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/abi/tools/KlibTarget;
 }
 
-public final class org/jetbrains/kotlin/abi/tools/impl/jvm/AsmMetadataLoadingKt {
-	public static final fun getEffectiveAccess (Lorg/jetbrains/kotlin/abi/tools/org/objectweb/asm/tree/ClassNode;)I
-	public static final fun getOuterClassName (Lorg/jetbrains/kotlin/abi/tools/org/objectweb/asm/tree/ClassNode;)Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/abi/tools/impl/jvm/KotlinMetadataVisibilitiesKt {
-	public static final fun getKotlinMetadata (Lorg/jetbrains/kotlin/abi/tools/org/objectweb/asm/tree/ClassNode;)Lorg/jetbrains/kotlin/abi/tools/kotlin/metadata/jvm/KotlinClassMetadata;
-}
-
