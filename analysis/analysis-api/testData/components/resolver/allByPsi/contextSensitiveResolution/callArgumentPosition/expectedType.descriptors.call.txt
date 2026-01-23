@@ -86,21 +86,22 @@ KtSuperTypeList(269,278): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(269,278): 'MyClass()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(269,276): 'MyClass'
   KaSuccessCallInfo:
@@ -267,20 +268,21 @@ KtNameReferenceExpression(377,383): 'String'
   null
 
 KtCallExpression(386,392): 'TODO()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Nothing
-      symbol = kotlin/TODO(): kotlin.Nothing
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(386,390): 'TODO'
   KaSuccessCallInfo:
@@ -372,20 +374,21 @@ KtNameReferenceExpression(494,500): 'OtherI'
   null
 
 KtCallExpression(503,509): 'TODO()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Nothing
-      symbol = kotlin/TODO(): kotlin.Nothing
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(503,507): 'TODO'
   KaSuccessCallInfo:
@@ -438,20 +441,21 @@ KtNameReferenceExpression(549,555): 'String'
   null
 
 KtCallExpression(558,564): 'TODO()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Nothing
-      symbol = kotlin/TODO(): kotlin.Nothing
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(558,562): 'TODO'
   KaSuccessCallInfo:
@@ -534,20 +538,21 @@ KtNameReferenceExpression(637,643): 'String'
   null
 
 KtCallExpression(646,652): 'TODO()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Nothing
-      symbol = kotlin/TODO(): kotlin.Nothing
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(646,650): 'TODO'
   KaSuccessCallInfo:
@@ -642,20 +647,21 @@ KtNameReferenceExpression(750,765): 'NestedInheritor'
   null
 
 KtCallExpression(768,774): 'TODO()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Nothing
-      symbol = kotlin/TODO(): kotlin.Nothing
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(768,772): 'TODO'
   KaSuccessCallInfo:
@@ -750,20 +756,21 @@ KtNameReferenceExpression(879,894): 'SealedInterface'
   null
 
 KtCallExpression(897,903): 'TODO()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Nothing
-      symbol = kotlin/TODO(): kotlin.Nothing
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(897,901): 'TODO'
   KaSuccessCallInfo:
@@ -852,20 +859,21 @@ KtNameReferenceExpression(988,995): 'MyClass'
   null
 
 KtCallExpression(998,1004): 'TODO()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Nothing
-      symbol = kotlin/TODO(): kotlin.Nothing
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(998,1002): 'TODO'
   KaSuccessCallInfo:
@@ -1463,36 +1471,37 @@ KtNameReferenceExpression(1170,1185): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1193,1222): 'testNullable(InheritorObject)'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.String
-      symbol = /testNullable(instance: MyClass?): kotlin.String
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testNullable(instance: MyClass?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = MyClass?
+            symbol = instance: MyClass?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testNullable
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
           name = instance
           receiverType = null
           returnType = MyClass?
           symbol = instance: MyClass?
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /testNullable
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      InheritorObject -> (KaVariableSignature:
-        name = instance
-        receiverType = null
-        returnType = MyClass?
-        symbol = instance: MyClass?
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1193,1205): 'testNullable'
   KaSuccessCallInfo:

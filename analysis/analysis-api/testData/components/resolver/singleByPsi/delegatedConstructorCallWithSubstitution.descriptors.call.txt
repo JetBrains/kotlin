@@ -1,32 +1,33 @@
 KtSuperTypeCallEntry(93,111): 'Foo<String>("str")'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = Foo<kotlin.String>
-      symbol = <constructor>(x: T): Foo<T>
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Foo<kotlin.String>
+        symbol = <constructor>(x: T): Foo<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str" -> (KaVariableSignature:
           name = x
           receiverType = null
           returnType = kotlin.String
           symbol = x: T
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      "str" -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = kotlin.String
-        symbol = x: T
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }

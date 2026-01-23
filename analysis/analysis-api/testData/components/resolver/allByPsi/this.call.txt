@@ -32,22 +32,23 @@ KtBlockExpression(56,123): '{'
   null
 
 KtCallExpression(66,71): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = one/MyClass
-      type = one.MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = one/MyClass
+        type = one.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(66,69): 'foo'
   KaSuccessCallInfo:
@@ -98,23 +99,24 @@ KtNameReferenceExpression(80,84): 'this'
   null
 
 KtCallExpression(85,90): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this
-      isSafeNavigation = false
-      type = one.MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = one.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(85,88): 'foo'
   KaSuccessCallInfo:
@@ -172,23 +174,24 @@ KtLabelReferenceExpression(103,111): '@MyClass'
   null
 
 KtCallExpression(112,117): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@MyClass
-      isSafeNavigation = false
-      type = one.MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@MyClass
+        isSafeNavigation = false
+        type = one.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(112,115): 'foo'
   KaSuccessCallInfo:
@@ -238,22 +241,23 @@ KtBlockExpression(189,306): '{'
   null
 
 KtCallExpression(203,208): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = one/MyClass.InnerOuter
-      type = one.MyClass.InnerOuter
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = one/MyClass.InnerOuter
+        type = one.MyClass.InnerOuter
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(203,206): 'foo'
   KaSuccessCallInfo:
@@ -304,23 +308,24 @@ KtNameReferenceExpression(221,225): 'this'
   null
 
 KtCallExpression(226,231): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(226,229): 'foo'
   KaSuccessCallInfo:
@@ -378,23 +383,24 @@ KtLabelReferenceExpression(248,259): '@InnerOuter'
   null
 
 KtCallExpression(260,265): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@InnerOuter
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@InnerOuter
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(260,263): 'foo'
   KaSuccessCallInfo:
@@ -452,23 +458,24 @@ KtLabelReferenceExpression(282,290): '@MyClass'
   null
 
 KtCallExpression(291,296): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@MyClass
-      isSafeNavigation = false
-      type = one.MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@MyClass
+        isSafeNavigation = false
+        type = one.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(291,294): 'foo'
   KaSuccessCallInfo:
@@ -518,22 +525,23 @@ KtBlockExpression(385,1208): '{'
   null
 
 KtCallExpression(403,408): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = one/MyClass.InnerOuter.InnerNested
-      type = one.MyClass.InnerOuter.InnerNested
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.InnerNested.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = one/MyClass.InnerOuter.InnerNested
+        type = one.MyClass.InnerOuter.InnerNested
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.InnerNested.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(403,406): 'foo'
   KaSuccessCallInfo:
@@ -584,23 +592,24 @@ KtNameReferenceExpression(425,429): 'this'
   null
 
 KtCallExpression(430,435): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter.InnerNested
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.InnerNested.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter.InnerNested
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.InnerNested.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(430,433): 'foo'
   KaSuccessCallInfo:
@@ -658,23 +667,24 @@ KtLabelReferenceExpression(456,468): '@InnerNested'
   null
 
 KtCallExpression(469,474): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@InnerNested
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter.InnerNested
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.InnerNested.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@InnerNested
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter.InnerNested
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.InnerNested.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(469,472): 'foo'
   KaSuccessCallInfo:
@@ -732,23 +742,24 @@ KtLabelReferenceExpression(495,506): '@InnerOuter'
   null
 
 KtCallExpression(507,512): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@InnerOuter
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@InnerOuter
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(507,510): 'foo'
   KaSuccessCallInfo:
@@ -806,23 +817,24 @@ KtLabelReferenceExpression(533,541): '@MyClass'
   null
 
 KtCallExpression(542,547): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@MyClass
-      isSafeNavigation = false
-      type = one.MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@MyClass
+        isSafeNavigation = false
+        type = one.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(542,545): 'foo'
   KaSuccessCallInfo:
@@ -890,42 +902,43 @@ KtBlockExpression(603,839): '{'
   null
 
 KtCallExpression(625,630): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = KaReceiverParameterSymbol:
-        annotations: []
-        callableId: null
-        compilerVisibility: Public
-        contextReceivers: []
-        isActual: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isVal: true
-        location: LOCAL
-        modality: FINAL
-        name: <receiver>
-        origin: SOURCE
-        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-        receiverParameter: null
-        returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
           annotations: []
-          typeArguments: []
-          type: one/MyClass
-        visibility: PUBLIC
-      type = one.MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: one/MyClass
+          visibility: PUBLIC
+        type = one.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(625,628): 'foo'
   KaSuccessCallInfo:
@@ -996,23 +1009,24 @@ KtNameReferenceExpression(651,655): 'this'
   null
 
 KtCallExpression(656,661): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this
-      isSafeNavigation = false
-      type = one.MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = one.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(656,659): 'foo'
   KaSuccessCallInfo:
@@ -1070,23 +1084,24 @@ KtLabelReferenceExpression(686,691): '@anon'
   null
 
 KtCallExpression(692,697): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@anon
-      isSafeNavigation = false
-      type = one.MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@anon
+        isSafeNavigation = false
+        type = one.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(692,695): 'foo'
   KaSuccessCallInfo:
@@ -1144,23 +1159,24 @@ KtLabelReferenceExpression(722,734): '@InnerNested'
   null
 
 KtCallExpression(735,740): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@InnerNested
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter.InnerNested
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.InnerNested.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@InnerNested
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter.InnerNested
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.InnerNested.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(735,738): 'foo'
   KaSuccessCallInfo:
@@ -1218,23 +1234,24 @@ KtLabelReferenceExpression(765,776): '@InnerOuter'
   null
 
 KtCallExpression(777,782): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@InnerOuter
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@InnerOuter
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(777,780): 'foo'
   KaSuccessCallInfo:
@@ -1292,23 +1309,24 @@ KtLabelReferenceExpression(807,815): '@MyClass'
   null
 
 KtCallExpression(816,821): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@MyClass
-      isSafeNavigation = false
-      type = one.MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@MyClass
+        isSafeNavigation = false
+        type = one.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(816,819): 'foo'
   KaSuccessCallInfo:
@@ -1334,47 +1352,48 @@ KtValueArgumentList(819,821): '()'
   null
 
 KtCallExpression(857,1107): 'myWith { t ->'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = KaImplicitReceiverValue:
-      symbol = one/MyClass.InnerOuter.InnerNested
-      type = one.MyClass.InnerOuter.InnerNested
-    signature = KaFunctionSignature:
-      receiverType = one.MyClass.InnerOuter.InnerNested
-      returnType = kotlin.Unit
-      symbol = one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaImplicitReceiverValue:
+        symbol = one/MyClass.InnerOuter.InnerNested
+        type = one.MyClass.InnerOuter.InnerNested
+      signature = KaFunctionSignature:
+        receiverType = one.MyClass.InnerOuter.InnerNested
+        returnType = kotlin.Unit
+        symbol = one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = body
+            receiverType = null
+            returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+            symbol = body: T.(T) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = one/myWith
+      typeArgumentsMapping = {
+        T -> (one.MyClass.InnerOuter.InnerNested)
+      }
+      valueArgumentMapping = {
+        { t ->
+                            foo()
+                            this.foo()
+                            this@myWith.foo()
+                            this@InnerNested.foo()
+                            this@InnerOuter.foo()
+                            this@MyClass.foo()
+                        } -> (KaVariableSignature:
           name = body
           receiverType = null
           returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
           symbol = body: T.(T) -> kotlin.Unit
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = one/myWith
-    typeArgumentsMapping = {
-      T -> (one.MyClass.InnerOuter.InnerNested)
-    }
-    valueArgumentMapping = {
-      { t ->
-                          foo()
-                          this.foo()
-                          this@myWith.foo()
-                          this@InnerNested.foo()
-                          this@InnerOuter.foo()
-                          this@MyClass.foo()
-                      } -> (KaVariableSignature:
-        name = body
-        receiverType = null
-        returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
-        symbol = body: T.(T) -> kotlin.Unit
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(857,863): 'myWith'
   KaSuccessCallInfo:
@@ -1439,42 +1458,43 @@ KtBlockExpression(891,1089): 'foo()'
   null
 
 KtCallExpression(891,896): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = KaReceiverParameterSymbol:
-        annotations: []
-        callableId: null
-        compilerVisibility: Public
-        contextReceivers: []
-        isActual: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isVal: true
-        location: LOCAL
-        modality: FINAL
-        name: <receiver>
-        origin: SOURCE
-        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-        receiverParameter: null
-        returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
           annotations: []
-          typeArguments: []
-          type: one/MyClass.InnerOuter.InnerNested
-        visibility: PUBLIC
-      type = one.MyClass.InnerOuter.InnerNested
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.InnerNested.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: one/MyClass.InnerOuter.InnerNested
+          visibility: PUBLIC
+        type = one.MyClass.InnerOuter.InnerNested
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.InnerNested.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(891,894): 'foo'
   KaSuccessCallInfo:
@@ -1545,23 +1565,24 @@ KtNameReferenceExpression(917,921): 'this'
   null
 
 KtCallExpression(922,927): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter.InnerNested
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.InnerNested.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter.InnerNested
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.InnerNested.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(922,925): 'foo'
   KaSuccessCallInfo:
@@ -1619,23 +1640,24 @@ KtLabelReferenceExpression(952,959): '@myWith'
   null
 
 KtCallExpression(960,965): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@myWith
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter.InnerNested
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.InnerNested.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@myWith
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter.InnerNested
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.InnerNested.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(960,963): 'foo'
   KaSuccessCallInfo:
@@ -1693,23 +1715,24 @@ KtLabelReferenceExpression(990,1002): '@InnerNested'
   null
 
 KtCallExpression(1003,1008): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@InnerNested
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter.InnerNested
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.InnerNested.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@InnerNested
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter.InnerNested
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.InnerNested.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1003,1006): 'foo'
   KaSuccessCallInfo:
@@ -1767,23 +1790,24 @@ KtLabelReferenceExpression(1033,1044): '@InnerOuter'
   null
 
 KtCallExpression(1045,1050): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@InnerOuter
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@InnerOuter
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1045,1048): 'foo'
   KaSuccessCallInfo:
@@ -1841,23 +1865,24 @@ KtLabelReferenceExpression(1075,1083): '@MyClass'
   null
 
 KtCallExpression(1084,1089): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@MyClass
-      isSafeNavigation = false
-      type = one.MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@MyClass
+        isSafeNavigation = false
+        type = one.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1084,1087): 'foo'
   KaSuccessCallInfo:
@@ -1883,42 +1908,43 @@ KtValueArgumentList(1087,1089): '()'
   null
 
 KtCallExpression(1125,1194): 'myWith label@{'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = KaImplicitReceiverValue:
-      symbol = one/MyClass.InnerOuter.InnerNested
-      type = one.MyClass.InnerOuter.InnerNested
-    signature = KaFunctionSignature:
-      receiverType = one.MyClass.InnerOuter.InnerNested
-      returnType = kotlin.Unit
-      symbol = one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaImplicitReceiverValue:
+        symbol = one/MyClass.InnerOuter.InnerNested
+        type = one.MyClass.InnerOuter.InnerNested
+      signature = KaFunctionSignature:
+        receiverType = one.MyClass.InnerOuter.InnerNested
+        returnType = kotlin.Unit
+        symbol = one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = body
+            receiverType = null
+            returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+            symbol = body: T.(T) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = one/myWith
+      typeArgumentsMapping = {
+        T -> (one.MyClass.InnerOuter.InnerNested)
+      }
+      valueArgumentMapping = {
+        label@{
+                            this@label.foo()
+                        } -> (KaVariableSignature:
           name = body
           receiverType = null
           returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
           symbol = body: T.(T) -> kotlin.Unit
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = one/myWith
-    typeArgumentsMapping = {
-      T -> (one.MyClass.InnerOuter.InnerNested)
-    }
-    valueArgumentMapping = {
-      label@{
-                          this@label.foo()
-                      } -> (KaVariableSignature:
-        name = body
-        receiverType = null
-        returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
-        symbol = body: T.(T) -> kotlin.Unit
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1125,1131): 'myWith'
   KaSuccessCallInfo:
@@ -2013,23 +2039,24 @@ KtLabelReferenceExpression(1164,1170): '@label'
   null
 
 KtCallExpression(1171,1176): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = this@label
-      isSafeNavigation = false
-      type = one.MyClass.InnerOuter.InnerNested
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/MyClass.InnerOuter.InnerNested.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this@label
+        isSafeNavigation = false
+        type = one.MyClass.InnerOuter.InnerNested
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/MyClass.InnerOuter.InnerNested.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1171,1174): 'foo'
   KaSuccessCallInfo:
@@ -2124,67 +2151,68 @@ KtBlockExpression(1266,1284): '{'
   null
 
 KtCallExpression(1272,1282): 'body(this)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = body
-      isSafeNavigation = false
-      type = T.(T) -> kotlin.Unit
-    extensionReceiver = KaImplicitReceiverValue:
-      symbol = KaReceiverParameterSymbol:
-        annotations: []
-        callableId: null
-        compilerVisibility: Public
-        contextReceivers: []
-        isActual: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isVal: true
-        location: LOCAL
-        modality: FINAL
-        name: <receiver>
-        origin: SOURCE
-        owningCallableSymbol: KaNamedFunctionSymbol(one/myWith)
-        receiverParameter: null
-        returnType: KaTypeParameterType:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = body
+        isSafeNavigation = false
+        type = T.(T) -> kotlin.Unit
+      extensionReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
           annotations: []
-          type: T
-        visibility: PUBLIC
-      type = T
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
-      valueParameters = [
-        KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = T
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null,
-        KaVariableSignature:
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaNamedFunctionSymbol(one/myWith)
+          receiverParameter: null
+          returnType: KaTypeParameterType:
+            annotations: []
+            type: T
+          visibility: PUBLIC
+        type = T
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = T
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = p2
+            receiverType = null
+            returnType = T
+            symbol = p2: P2
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function2.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        this -> (KaVariableSignature:
           name = p2
           receiverType = null
           returnType = T
           symbol = p2: P2
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function2.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      this -> (KaVariableSignature:
-        name = p2
-        receiverType = null
-        returnType = T
-        symbol = p2: P2
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1272,1276): 'body'
   KaSuccessCallInfo:

@@ -29,21 +29,22 @@ KtSuperTypeList(114,122): 'Sealed()'
   null
 
 KtSuperTypeCallEntry(114,122): 'Sealed()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = foo.Sealed
-      symbol = <constructor>(): foo.Sealed
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(114,120): 'Sealed'
   KaSuccessCallInfo:
@@ -118,21 +119,22 @@ KtSuperTypeList(154,162): 'Sealed()'
   null
 
 KtSuperTypeCallEntry(154,162): 'Sealed()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = foo.Sealed
-      symbol = <constructor>(): foo.Sealed
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(154,160): 'Sealed'
   KaSuccessCallInfo:
@@ -189,21 +191,22 @@ KtSuperTypeList(183,191): 'Sealed()'
   null
 
 KtSuperTypeCallEntry(183,191): 'Sealed()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = foo.Sealed
-      symbol = <constructor>(): foo.Sealed
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(183,189): 'Sealed'
   KaSuccessCallInfo:
@@ -278,21 +281,22 @@ KtSuperTypeList(223,231): 'Sealed()'
   null
 
 KtSuperTypeCallEntry(223,231): 'Sealed()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = foo.Sealed
-      symbol = <constructor>(): foo.Sealed
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(223,229): 'Sealed'
   KaSuccessCallInfo:
@@ -373,21 +377,22 @@ KtSuperTypeList(278,286): 'Sealed()'
   null
 
 KtSuperTypeCallEntry(278,286): 'Sealed()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = foo.Sealed
-      symbol = <constructor>(): foo.Sealed
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(278,284): 'Sealed'
   KaSuccessCallInfo:

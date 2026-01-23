@@ -146,20 +146,21 @@ KtReturnExpression(239,258): 'return MyDelegate()'
   null
 
 KtCallExpression(246,258): 'MyDelegate()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = myPack.MyDelegate<T>
-      symbol = <constructor>(): myPack.MyDelegate<T>
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = myPack.MyDelegate<T>
+        symbol = <constructor>(): myPack.MyDelegate<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(246,256): 'MyDelegate'
   KaSuccessCallInfo:
@@ -320,20 +321,21 @@ KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
   null
 
 KtCallExpression(446,463): 'ResourceID<Int>()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = myPack.ResourceID<kotlin.Int>
-      symbol = <constructor>(): myPack.ResourceID<T>
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = myPack.ResourceID<kotlin.Int>
+        symbol = <constructor>(): myPack.ResourceID<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(446,456): 'ResourceID'
   KaSuccessCallInfo:

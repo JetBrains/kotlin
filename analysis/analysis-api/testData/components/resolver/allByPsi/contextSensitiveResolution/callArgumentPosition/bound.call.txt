@@ -175,38 +175,39 @@ KtBlockExpression(232,271): '{'
   null
 
 KtCallExpression(238,269): 'boundHolder<MyEnum>(EnumValue1)'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyEnum
-      symbol = /boundHolder(arg: T): T
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /boundHolder(arg: T): T
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyEnum
+            symbol = arg: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /boundHolder
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
           name = arg
           receiverType = null
           returnType = MyEnum
           symbol = arg: T
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /boundHolder
-    typeArgumentsMapping = {
-      T -> (MyEnum)
-    }
-    valueArgumentMapping = {
-      EnumValue1 -> (KaVariableSignature:
-        name = arg
-        receiverType = null
-        returnType = MyEnum
-        symbol = arg: T
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(238,249): 'boundHolder'
   KaSuccessCallInfo:

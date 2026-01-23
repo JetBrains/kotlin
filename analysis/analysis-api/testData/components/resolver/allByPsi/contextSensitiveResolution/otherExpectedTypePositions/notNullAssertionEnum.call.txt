@@ -320,38 +320,39 @@ KtOperationReferenceExpression(491,493): '!!'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum?' was expected.>
 
 KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /receive(e: T): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        Option1!! -> (KaVariableSignature:
           name = e
           receiverType = null
           returnType = MyEnum
           symbol = e: T
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /receive
-    typeArgumentsMapping = {
-      T -> (MyEnum)
-    }
-    valueArgumentMapping = {
-      Option1!! -> (KaVariableSignature:
-        name = e
-        receiverType = null
-        returnType = MyEnum
-        symbol = e: T
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(499,506): 'receive'
   KaSuccessCallInfo:
@@ -436,38 +437,39 @@ KtOperationReferenceExpression(522,524): '!!'
   null
 
 KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /receive(e: T): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        enumProp!! -> (KaVariableSignature:
           name = e
           receiverType = null
           returnType = MyEnum
           symbol = e: T
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /receive
-    typeArgumentsMapping = {
-      T -> (MyEnum)
-    }
-    valueArgumentMapping = {
-      enumProp!! -> (KaVariableSignature:
-        name = e
-        receiverType = null
-        returnType = MyEnum
-        symbol = e: T
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(530,537): 'receive'
   KaSuccessCallInfo:

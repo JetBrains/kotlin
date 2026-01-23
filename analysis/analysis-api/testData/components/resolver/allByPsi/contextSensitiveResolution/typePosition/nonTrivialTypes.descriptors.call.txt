@@ -322,20 +322,21 @@ KtNameReferenceExpression(403,412): 'JavaClass'
   null
 
 KtCallExpression(413,418): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MySealed!
-      symbol = /JavaClass.foo(): MySealed!
-      valueParameters = []
-      contextParameters = []
-      callableId = /JavaClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed!
+        symbol = /JavaClass.foo(): MySealed!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(413,416): 'foo'
   KaSuccessCallInfo:

@@ -1,47 +1,48 @@
 KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.sequences.Sequence<kotlin.String>
-      symbol = kotlin/sequences/sequenceOf(vararg elements: T): kotlin.sequences.Sequence<T>
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.sequences.Sequence<kotlin.String>
+        symbol = kotlin/sequences/sequenceOf(vararg elements: T): kotlin.sequences.Sequence<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/sequences/sequenceOf
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "1" -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.String
           symbol = vararg elements: T
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/sequences/sequenceOf
-    typeArgumentsMapping = {
-      T -> (kotlin.String)
-    }
-    valueArgumentMapping = {
-      "1" -> (KaVariableSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg elements: T
-        contextParameters = []
-        callableId = null),
-      "2" -> (KaVariableSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg elements: T
-        contextParameters = []
-        callableId = null),
-      "3" -> (KaVariableSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg elements: T
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null),
+        "2" -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg elements: T
+          contextParameters = []
+          callableId = null),
+        "3" -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg elements: T
+          contextParameters = []
+          callableId = null)
+      }

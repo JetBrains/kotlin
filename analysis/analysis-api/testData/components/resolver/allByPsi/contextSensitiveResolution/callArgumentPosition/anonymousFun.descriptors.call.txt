@@ -68,21 +68,22 @@ KtSuperTypeList(257,266): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(257,266): 'MyClass()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(257,264): 'MyClass'
   KaSuccessCallInfo:
@@ -154,21 +155,22 @@ KtSuperTypeList(332,341): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(332,341): 'MyClass()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(332,339): 'MyClass'
   KaSuccessCallInfo:
@@ -246,21 +248,22 @@ KtSuperTypeList(428,435): 'Super()'
   null
 
 KtSuperTypeCallEntry(428,435): 'Super()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = Super
-      symbol = <constructor>(): Super
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Super
+        symbol = <constructor>(): Super
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(428,433): 'Super'
   KaSuccessCallInfo:
@@ -323,20 +326,21 @@ KtNameReferenceExpression(463,470): 'MyClass'
   null
 
 KtCallExpression(473,479): 'TODO()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Nothing
-      symbol = kotlin/TODO(): kotlin.Nothing
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(473,477): 'TODO'
   KaSuccessCallInfo:
@@ -371,20 +375,21 @@ KtNameReferenceExpression(512,526): 'InheritorClass'
   null
 
 KtCallExpression(529,545): 'InheritorClass()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass.InheritorClass
-      symbol = <constructor>(): MyClass.InheritorClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.InheritorClass
+        symbol = <constructor>(): MyClass.InheritorClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(529,543): 'InheritorClass'
   KaSuccessCallInfo:
@@ -470,38 +475,39 @@ KtPropertyDelegate(713,725): 'by lazy {""}'
   null
 
 KtCallExpression(716,725): 'lazy {""}'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Lazy<kotlin.String>
-      symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Lazy<kotlin.String>
+        symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = initializer
+            receiverType = null
+            returnType = kotlin.Function0<kotlin.String>
+            symbol = initializer: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/lazy
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
           returnType = kotlin.Function0<kotlin.String>
           symbol = initializer: kotlin.Function0<T>
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/lazy
-    typeArgumentsMapping = {
-      T -> (kotlin.String)
-    }
-    valueArgumentMapping = {
-      {""} -> (KaVariableSignature:
-        name = initializer
-        receiverType = null
-        returnType = kotlin.Function0<kotlin.String>
-        symbol = initializer: kotlin.Function0<T>
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(716,720): 'lazy'
   KaSuccessCallInfo:
@@ -584,20 +590,21 @@ KtNameReferenceExpression(789,796): 'MyClass'
   null
 
 KtCallExpression(799,805): 'TODO()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Nothing
-      symbol = kotlin/TODO(): kotlin.Nothing
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(799,803): 'TODO'
   KaSuccessCallInfo:
@@ -677,39 +684,40 @@ KtBlockExpression(927,1304): '{'
   null
 
 KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = anonymousEnumConsumer
-      isSafeNavigation = false
-      type = kotlin.Function1<MyEnum, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = anonymousEnumConsumer
+        isSafeNavigation = false
+        type = kotlin.Function1<MyEnum, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = MyEnum
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = MyEnum
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      EnumValue1 -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyEnum
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
   KaSuccessCallInfo:
@@ -740,39 +748,40 @@ KtNameReferenceExpression(955,965): 'EnumValue1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = anonymousConsumer
-      isSafeNavigation = false
-      type = kotlin.Function1<MyClass, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = anonymousConsumer
+        isSafeNavigation = false
+        type = kotlin.Function1<MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = MyClass
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      InheritorObject -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(972,989): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -803,39 +812,40 @@ KtNameReferenceExpression(990,1005): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = anonymousConsumer
-      isSafeNavigation = false
-      type = kotlin.Function1<MyClass, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = anonymousConsumer
+        isSafeNavigation = false
+        type = kotlin.Function1<MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        propMyClass -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = MyClass
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      propMyClass -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -866,39 +876,40 @@ KtNameReferenceExpression(1029,1040): 'propMyClass'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propMyClass>
 
 KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = anonymousConsumer
-      isSafeNavigation = false
-      type = kotlin.Function1<MyClass, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = anonymousConsumer
+        isSafeNavigation = false
+        type = kotlin.Function1<MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        prop -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = MyClass
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      prop -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -929,39 +940,40 @@ KtNameReferenceExpression(1065,1069): 'prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = anonymousConsumer
-      isSafeNavigation = false
-      type = kotlin.Function1<MyClass, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = anonymousConsumer
+        isSafeNavigation = false
+        type = kotlin.Function1<MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        constProp -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = MyClass
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      constProp -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -992,39 +1004,40 @@ KtNameReferenceExpression(1093,1102): 'constProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: constProp>
 
 KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = anonymousConsumer
-      isSafeNavigation = false
-      type = kotlin.Function1<MyClass, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = anonymousConsumer
+        isSafeNavigation = false
+        type = kotlin.Function1<MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        lazyProp -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = MyClass
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      lazyProp -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -1055,39 +1068,40 @@ KtNameReferenceExpression(1126,1134): 'lazyProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lazyProp>
 
 KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = anonymousConsumer
-      isSafeNavigation = false
-      type = kotlin.Function1<MyClass, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = anonymousConsumer
+        isSafeNavigation = false
+        type = kotlin.Function1<MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        lambdaProp -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = MyClass
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      lambdaProp -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -1118,39 +1132,40 @@ KtNameReferenceExpression(1158,1168): 'lambdaProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lambdaProp>
 
 KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = anonymousConsumer
-      isSafeNavigation = false
-      type = kotlin.Function1<MyClass, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = anonymousConsumer
+        isSafeNavigation = false
+        type = kotlin.Function1<MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        superProp -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = MyClass
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      superProp -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -1181,39 +1196,40 @@ KtNameReferenceExpression(1192,1201): 'superProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superProp>
 
 KtCallExpression(1208,1233): 'anonymousConsumer(func())'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = anonymousConsumer
-      isSafeNavigation = false
-      type = kotlin.Function1<MyClass, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = anonymousConsumer
+        isSafeNavigation = false
+        type = kotlin.Function1<MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        func() -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = MyClass
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      func() -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -1252,39 +1268,40 @@ KtValueArgumentList(1230,1232): '()'
   null
 
 KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = anonymousConsumer
-      isSafeNavigation = false
-      type = kotlin.Function1<MyClass, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = anonymousConsumer
+        isSafeNavigation = false
+        type = kotlin.Function1<MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        superFunc() -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = MyClass
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      superFunc() -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
   KaSuccessCallInfo:
@@ -1323,39 +1340,40 @@ KtValueArgumentList(1265,1267): '()'
   null
 
 KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = anonymousConsumer
-      isSafeNavigation = false
-      type = kotlin.Function1<MyClass, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = anonymousConsumer
+        isSafeNavigation = false
+        type = kotlin.Function1<MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        lambdaProp -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = MyClass
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      lambdaProp -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = MyClass
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
   KaSuccessCallInfo:

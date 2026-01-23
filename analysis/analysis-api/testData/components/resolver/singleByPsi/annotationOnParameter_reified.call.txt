@@ -1,31 +1,32 @@
 KtAnnotationEntry(51,65): '@Suppress("s")'
-  KaAnnotationCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Suppress
-      symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Suppress
+        symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
+        valueParameters = [
+          KaVariableSignature:
+            name = names
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg names: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "s" -> (KaVariableSignature:
           name = names
           receiverType = null
           returnType = kotlin.String
           symbol = vararg names: kotlin.String
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      "s" -> (KaVariableSignature:
-        name = names
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg names: kotlin.String
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }

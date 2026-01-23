@@ -1,33 +1,34 @@
 KtCallExpression(143,162): 'test { uiMethod() }'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = /Test
-      type = Test
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /Test.test(<dispatch receiver>: Test, foo: Test.Foo): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = /Test
+        type = Test
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /Test.test(<dispatch receiver>: Test, foo: Test.Foo): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = Test.Foo
+            symbol = foo: Test.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /Test.test
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { uiMethod() } -> (KaVariableSignature:
           name = foo
           receiverType = null
           returnType = Test.Foo
           symbol = foo: Test.Foo
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /Test.test
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      { uiMethod() } -> (KaVariableSignature:
-        name = foo
-        receiverType = null
-        returnType = Test.Foo
-        symbol = foo: Test.Foo
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }

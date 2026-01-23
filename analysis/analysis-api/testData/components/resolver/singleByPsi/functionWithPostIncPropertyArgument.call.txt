@@ -1,31 +1,32 @@
 KtCallExpression(44,64): 'foo(localProperty++)'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /foo(i: kotlin.Int): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(i: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        localProperty++ -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      localProperty++ -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }

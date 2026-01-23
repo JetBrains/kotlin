@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -293,7 +293,7 @@ internal class KaFe10Resolver(
             candidateKtCallInfo.toKaCallCandidateInfos(bestCandidateDescriptors)
         }
 
-        return if (resolvedCall is KaCall) {
+        return if (resolvedCall is KaCallResolutionSuccess) {
             resolvedCall.toKaCallCandidateInfos() + candidateInfos.filterNot(KaCallCandidateInfo::isInBestCandidates)
         } else {
             candidateInfos
@@ -310,21 +310,20 @@ internal class KaFe10Resolver(
     private fun KaCallResolutionAttempt?.toKaCallCandidateInfos(): List<KaCallCandidateInfo> = when (this) {
         null -> emptyList()
 
-        is KaCall, is KaSingleCall<*, *>, is KaMultiCall -> listOf(
+        is KaCallResolutionSuccess -> listOf(
             KaBaseApplicableCallCandidateInfo(
-                backingCandidate = this as KaCall,
+                backingCandidate = kaCall,
                 isInBestCandidates = true,
             )
         )
 
         is KaCallResolutionError -> candidateCalls.map {
             KaBaseInapplicableCallCandidateInfo(
-                backingCandidate = it as KaCall,
+                backingCandidate = it.asKaCall(),
                 isInBestCandidates = true,
                 diagnostic = diagnostic,
             )
         }
-
     }
 
     private fun KaCallResolutionAttempt?.toKaCallCandidateInfos(bestCandidateDescriptors: Set<CallableDescriptor>): List<KaCallCandidateInfo> {
@@ -342,16 +341,16 @@ internal class KaFe10Resolver(
         }
 
         return when (this) {
-            is KaCall, is KaSingleCall<*, *>, is KaMultiCall -> listOf(
+            is KaCallResolutionSuccess -> listOf(
                 KaBaseApplicableCallCandidateInfo(
-                    backingCandidate = this as KaCall,
-                    isInBestCandidates = this.isInBestCandidates(),
+                    backingCandidate = kaCall,
+                    isInBestCandidates = kaCall.isInBestCandidates(),
                 ),
             )
 
             is KaCallResolutionError -> candidateCalls.map {
                 KaBaseInapplicableCallCandidateInfo(
-                    backingCandidate = it as KaCall,
+                    backingCandidate = it.asKaCall(),
                     isInBestCandidates = it.isInBestCandidates(),
                     diagnostic = diagnostic,
                 )
@@ -724,10 +723,10 @@ internal class KaFe10Resolver(
         resolvedCalls: List<ResolvedCall<*>>,
         diagnostics: Diagnostics = context.diagnostics,
     ): KaCallResolutionAttempt {
-        kaCall as KaCallResolutionAttempt
-        val failedResolveCall = resolvedCalls.firstOrNull { !it.status.isSuccess } ?: return kaCall
+        kaCall as KaSingleOrMultiCall
+        val failedResolveCall = resolvedCalls.firstOrNull { !it.status.isSuccess } ?: return KaBaseCallResolutionSuccess(kaCall)
 
-        val diagnostic = getDiagnosticToReport(context, psi, kaCall, diagnostics)?.let { KaFe10Diagnostic(it, token) }
+        val diagnostic = getDiagnosticToReport(context, psi, kaCall as KaCall, diagnostics)?.let { KaFe10Diagnostic(it, token) }
             ?: failedResolveCall.nonBoundErrorDiagnostic
 
         return KaBaseCallResolutionError(

@@ -32,23 +32,24 @@ KtSuperTypeList(119,130): 'A<String>()'
   null
 
 KtSuperTypeCallEntry(119,130): 'A<String>()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = A<kotlin.String>
-      symbol = <constructor>(): A<T>
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {
-      T -> (kotlin.String)
-    }
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.String>
+        symbol = <constructor>(): A<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(119,128): 'A<String>'
   KaSuccessCallInfo:
@@ -116,20 +117,21 @@ KtNameReferenceExpression(152,153): 'T'
   null
 
 KtCallExpression(156,162): 'TODO()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Nothing
-      symbol = kotlin/TODO(): kotlin.Nothing
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(156,160): 'TODO'
   KaSuccessCallInfo:
@@ -161,23 +163,24 @@ KtSuperTypeList(191,202): 'A<String>()'
   null
 
 KtSuperTypeCallEntry(191,202): 'A<String>()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = A<kotlin.String>
-      symbol = <constructor>(): A<T>
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {
-      T -> (kotlin.String)
-    }
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.String>
+        symbol = <constructor>(): A<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(191,200): 'A<String>'
   KaSuccessCallInfo:
@@ -245,20 +248,21 @@ KtNameReferenceExpression(224,225): 'T'
   null
 
 KtCallExpression(228,234): 'TODO()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Nothing
-      symbol = kotlin/TODO(): kotlin.Nothing
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(228,232): 'TODO'
   KaSuccessCallInfo:
@@ -287,23 +291,24 @@ KtSuperTypeList(255,263): 'A<Int>()'
   null
 
 KtSuperTypeCallEntry(255,263): 'A<Int>()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = A<kotlin.Int>
-      symbol = <constructor>(): A<T>
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {
-      T -> (kotlin.Int)
-    }
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(): A<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(255,261): 'A<Int>'
   KaSuccessCallInfo:

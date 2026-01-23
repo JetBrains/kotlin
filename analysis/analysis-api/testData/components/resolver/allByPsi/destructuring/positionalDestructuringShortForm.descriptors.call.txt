@@ -404,36 +404,37 @@ KtBlockExpression(412,414): '{}'
   null
 
 KtCallExpression(420,447): 'foo { [first, second,] -> }'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = f
+            receiverType = null
+            returnType = kotlin.Function1<Tuple, kotlin.Unit>
+            symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { [first, second,] -> } -> (KaVariableSignature:
           name = f
           receiverType = null
           returnType = kotlin.Function1<Tuple, kotlin.Unit>
           symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      { [first, second,] -> } -> (KaVariableSignature:
-        name = f
-        receiverType = null
-        returnType = kotlin.Function1<Tuple, kotlin.Unit>
-        symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(420,423): 'foo'
   KaSuccessCallInfo:
@@ -496,36 +497,37 @@ KtBlockExpression(446,446): ''
   null
 
 KtCallExpression(452,470): 'foo { [first] -> }'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = f
+            receiverType = null
+            returnType = kotlin.Function1<Tuple, kotlin.Unit>
+            symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { [first] -> } -> (KaVariableSignature:
           name = f
           receiverType = null
           returnType = kotlin.Function1<Tuple, kotlin.Unit>
           symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      { [first] -> } -> (KaVariableSignature:
-        name = f
-        receiverType = null
-        returnType = kotlin.Function1<Tuple, kotlin.Unit>
-        symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(452,455): 'foo'
   KaSuccessCallInfo:
@@ -585,36 +587,37 @@ KtBlockExpression(469,469): ''
   null
 
 KtCallExpression(475,501): 'foo { [first: String] -> }'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = f
+            receiverType = null
+            returnType = kotlin.Function1<Tuple, kotlin.Unit>
+            symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { [first: String] -> } -> (KaVariableSignature:
           name = f
           receiverType = null
           returnType = kotlin.Function1<Tuple, kotlin.Unit>
           symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      { [first: String] -> } -> (KaVariableSignature:
-        name = f
-        receiverType = null
-        returnType = kotlin.Function1<Tuple, kotlin.Unit>
-        symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(475,478): 'foo'
   KaSuccessCallInfo:

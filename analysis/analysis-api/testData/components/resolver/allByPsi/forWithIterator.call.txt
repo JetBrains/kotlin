@@ -443,50 +443,51 @@ KtContainerNode(297,318): 'IntProgression(1, 10)'
   null
 
 KtCallExpression(297,318): 'IntProgression(1, 10)'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = f.IntProgression
-      symbol = <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = f.IntProgression
+        symbol = <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+        valueParameters = [
+          KaVariableSignature:
+            name = start
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = start: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = end
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = end: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = start
           receiverType = null
           returnType = kotlin.Int
           symbol = start: kotlin.Int
           contextParameters = []
-          callableId = null,
-        KaVariableSignature:
+          callableId = null),
+        10 -> (KaVariableSignature:
           name = end
           receiverType = null
           returnType = kotlin.Int
           symbol = end: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      1 -> (KaVariableSignature:
-        name = start
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = start: kotlin.Int
-        contextParameters = []
-        callableId = null),
-      10 -> (KaVariableSignature:
-        name = end
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = end: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(297,311): 'IntProgression'
   KaSuccessCallInfo:

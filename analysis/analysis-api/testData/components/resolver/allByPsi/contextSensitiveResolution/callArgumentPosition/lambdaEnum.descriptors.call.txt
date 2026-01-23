@@ -103,39 +103,40 @@ KtBlockExpression(270,317): '{'
   null
 
 KtCallExpression(276,293): 'lEnum(EnumValue1)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = lEnum
-      isSafeNavigation = false
-      type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lEnum
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
           name = arg
           receiverType = null
           returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      EnumValue1 -> (KaVariableSignature:
-        name = arg
-        receiverType = null
-        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(276,281): 'lEnum'
   KaSuccessCallInfo:
@@ -166,39 +167,40 @@ KtNameReferenceExpression(282,292): 'EnumValue1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtCallExpression(298,315): 'lEnum(EnumValue2)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = lEnum
-      isSafeNavigation = false
-      type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lEnum
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue2 -> (KaVariableSignature:
           name = arg
           receiverType = null
           returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      EnumValue2 -> (KaVariableSignature:
-        name = arg
-        receiverType = null
-        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(298,303): 'lEnum'
   KaSuccessCallInfo:

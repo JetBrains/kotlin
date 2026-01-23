@@ -1,17 +1,18 @@
 KtCallExpression(97,102): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = one/two/TopLevelObject
-      type = one.two.TopLevelObject
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/two/BaseClass.foo(<dispatch receiver>: one.two.BaseClass): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/two/BaseClass.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = one/two/TopLevelObject
+        type = one.two.TopLevelObject
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/BaseClass.foo(<dispatch receiver>: one.two.BaseClass): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/two/BaseClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

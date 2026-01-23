@@ -129,26 +129,27 @@ KtNameReferenceExpression(80,84): 'prop'
       typeArgumentsMapping = {}
 
 KtCallExpression(85,94): 'action1()'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = action1
-      isSafeNavigation = false
-      type = kotlin.Function1<kotlin.Int, kotlin.Unit>
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = prop
-      isSafeNavigation = false
-      type = kotlin.Int
-    signature = KaFunctionSignature:
-      receiverType = kotlin.Int
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<extension receiver>: P1<dispatch receiver>: kotlin.Function1<P1, R>): R
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = action1
+        isSafeNavigation = false
+        type = kotlin.Function1<kotlin.Int, kotlin.Unit>
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = prop
+        isSafeNavigation = false
+        type = kotlin.Int
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<extension receiver>: P1<dispatch receiver>: kotlin.Function1<P1, R>): R
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(85,92): 'action1'
   KaSuccessCallInfo:
@@ -171,39 +172,40 @@ KtValueArgumentList(92,94): '()'
   null
 
 KtCallExpression(99,112): 'action1(prop)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = action1
-      isSafeNavigation = false
-      type = kotlin.Function1<kotlin.Int, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = action1
+        isSafeNavigation = false
+        type = kotlin.Function1<kotlin.Int, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        prop -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = kotlin.Int
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      prop -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(99,106): 'action1'
   KaSuccessCallInfo:
@@ -279,39 +281,40 @@ KtValueArgumentList(130,132): '()'
   null
 
 KtCallExpression(151,164): 'action2(prop)'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = action2
-      isSafeNavigation = false
-      type = kotlin.Function1<kotlin.Int, kotlin.Unit>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = action2
+        isSafeNavigation = false
+        type = kotlin.Function1<kotlin.Int, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        prop -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = kotlin.Int
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      prop -> (KaVariableSignature:
-        name = p1
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = p1: P1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(151,158): 'action2'
   KaSuccessCallInfo:

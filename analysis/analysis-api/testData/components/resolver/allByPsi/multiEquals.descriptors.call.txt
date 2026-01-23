@@ -227,21 +227,22 @@ KtSuperTypeList(388,405): 'ItemCallback<T>()'
   null
 
 KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = ItemCallback<T>
-      symbol = <constructor>(): ItemCallback<T>
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(388,403): 'ItemCallback<T>'
   KaSuccessCallInfo:
@@ -536,21 +537,22 @@ KtSuperTypeList(615,632): 'ItemCallback<T>()'
   null
 
 KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = ItemCallback<T>
-      symbol = <constructor>(): ItemCallback<T>
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(615,630): 'ItemCallback<T>'
   KaSuccessCallInfo:
@@ -797,21 +799,22 @@ KtSuperTypeList(784,801): 'ItemCallback<T>()'
   null
 
 KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = ItemCallback<T>
-      symbol = <constructor>(): ItemCallback<T>
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(784,799): 'ItemCallback<T>'
   KaSuccessCallInfo:
@@ -1535,39 +1538,40 @@ KtNameReferenceExpression(1002,1003): 'i'
       typeArgumentsMapping = {}
 
 KtCallExpression(1004,1013): 'equals(m)'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = i
-      isSafeNavigation = false
-      type = InterfaceWithEquals
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Boolean
-      symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = InterfaceWithEquals
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /InterfaceWithEquals.equals
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /InterfaceWithEquals.equals
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      m -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1004,1010): 'equals'
   KaSuccessCallInfo:
@@ -1682,39 +1686,40 @@ KtNameReferenceExpression(1018,1019): 'm'
       typeArgumentsMapping = {}
 
 KtCallExpression(1020,1029): 'equals(i)'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = m
-      isSafeNavigation = false
-      type = MessagePreview
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Boolean
-      symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MessagePreview
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /MessagePreview.equals
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      i -> (KaVariableSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1020,1026): 'equals'
   KaSuccessCallInfo:

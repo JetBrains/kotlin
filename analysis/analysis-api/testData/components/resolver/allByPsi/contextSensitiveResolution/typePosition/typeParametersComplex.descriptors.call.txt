@@ -53,21 +53,22 @@ KtSuperTypeList(150,168): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = SealedGeneric<T>
-      symbol = <constructor>(): SealedGeneric<T>
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedGeneric<T>
+        symbol = <constructor>(): SealedGeneric<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
   KaSuccessCallInfo:
@@ -160,21 +161,22 @@ KtSuperTypeList(209,227): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = SealedGeneric<T>
-      symbol = <constructor>(): SealedGeneric<T>
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedGeneric<T>
+        symbol = <constructor>(): SealedGeneric<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
   KaSuccessCallInfo:

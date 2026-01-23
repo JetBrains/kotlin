@@ -38,38 +38,40 @@ KtNameReferenceExpression(37,40): 'Int'
   null
 
 KtConstructorDelegationCall(43,49): 'this()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = THIS_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorDelegationReferenceExpression(43,47): 'this'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = THIS_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(47,49): '()'
   null
@@ -211,20 +213,21 @@ KtOperationReferenceExpression(128,130): 'in'
       }
 
 KtCallExpression(131,140): 'MyClass()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(131,138): 'MyClass'
   KaSuccessCallInfo:
@@ -285,20 +288,21 @@ KtDotQualifiedExpression(145,166): 'MyClass().contains(2)'
       }
 
 KtCallExpression(145,154): 'MyClass()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(145,152): 'MyClass'
   KaSuccessCallInfo:
@@ -321,41 +325,42 @@ KtValueArgumentList(152,154): '()'
   null
 
 KtCallExpression(155,166): 'contains(2)'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = MyClass()
-      isSafeNavigation = false
-      type = MyClass
-    signature = KaFunctionSignature:
-      receiverType = MyClass
-      returnType = kotlin.Boolean
-      symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = MyClass()
+        isSafeNavigation = false
+        type = MyClass
+      signature = KaFunctionSignature:
+        receiverType = MyClass
+        returnType = kotlin.Boolean
+        symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = int
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = int: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
           name = int
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /contains
-    typeArgumentsMapping = {
-      T -> (MyClass)
-    }
-    valueArgumentMapping = {
-      2 -> (KaVariableSignature:
-        name = int
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = int: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(155,163): 'contains'
   KaSuccessCallInfo:
@@ -484,20 +489,21 @@ KtOperationReferenceExpression(173,176): '!in'
       }
 
 KtCallExpression(177,186): 'MyClass()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(177,184): 'MyClass'
   KaSuccessCallInfo:
@@ -529,41 +535,42 @@ KtWhenEntry(211,231): 'in MyClass() -> true'
   null
 
 KtWhenConditionInRange(211,223): 'in MyClass()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = MyClass()
-      isSafeNavigation = false
-      type = MyClass
-    signature = KaFunctionSignature:
-      receiverType = MyClass
-      returnType = kotlin.Boolean
-      symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = MyClass()
+        isSafeNavigation = false
+        type = MyClass
+      signature = KaFunctionSignature:
+        receiverType = MyClass
+        returnType = kotlin.Boolean
+        symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = int
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = int: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = int
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /contains
-    typeArgumentsMapping = {
-      T -> (MyClass)
-    }
-    valueArgumentMapping = {
-      1 -> (KaVariableSignature:
-        name = int
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = int: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtOperationReferenceExpression(211,213): 'in'
   KaSuccessCallInfo:
@@ -604,20 +611,21 @@ KtOperationReferenceExpression(211,213): 'in'
       }
 
 KtCallExpression(214,223): 'MyClass()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(214,221): 'MyClass'
   KaSuccessCallInfo:
@@ -655,41 +663,42 @@ KtWhenEntry(270,292): '!in MyClass() -> false'
   null
 
 KtWhenConditionInRange(270,283): '!in MyClass()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = MyClass()
-      isSafeNavigation = false
-      type = MyClass
-    signature = KaFunctionSignature:
-      receiverType = MyClass
-      returnType = kotlin.Boolean
-      symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = MyClass()
+        isSafeNavigation = false
+        type = MyClass
+      signature = KaFunctionSignature:
+        receiverType = MyClass
+        returnType = kotlin.Boolean
+        symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = int
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = int: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
           name = int
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /contains
-    typeArgumentsMapping = {
-      T -> (MyClass)
-    }
-    valueArgumentMapping = {
-      3 -> (KaVariableSignature:
-        name = int
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = int: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtOperationReferenceExpression(270,273): '!in'
   KaSuccessCallInfo:
@@ -730,20 +739,21 @@ KtOperationReferenceExpression(270,273): '!in'
       }
 
 KtCallExpression(274,283): 'MyClass()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(274,281): 'MyClass'
   KaSuccessCallInfo:
