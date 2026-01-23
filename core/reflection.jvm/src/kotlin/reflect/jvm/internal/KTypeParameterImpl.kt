@@ -58,8 +58,8 @@ internal class KTypeParameterImpl private constructor(
         descriptor.variance.toKVariance(),
         descriptor.isReified,
     ) {
-        upperBounds = descriptor.upperBounds.map { kotlinType ->
-            val type = DescriptorKType(container, kotlinType)
+        upperBounds = descriptor.upperBounds.map {
+            val type = DescriptorKType(it)
             typeSubstitutor.substitute(type).type ?: starProjectionInTopLevelTypeIsNotPossible(containerForDebug = container)
         }
     }

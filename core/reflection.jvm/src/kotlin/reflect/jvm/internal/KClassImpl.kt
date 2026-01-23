@@ -327,7 +327,7 @@ internal class KClassImpl<T : Any>(
             val kotlinTypes = descriptor.typeConstructor.supertypes
             val result = ArrayList<KType>(kotlinTypes.size)
             kotlinTypes.mapTo(result) { kotlinType ->
-                DescriptorKType(this@KClassImpl, kotlinType) {
+                DescriptorKType(kotlinType) {
                     val superClass = kotlinType.constructor.declarationDescriptor
                     if (superClass !is ClassDescriptor) throw KotlinReflectionInternalError("Supertype not a class: $superClass")
 

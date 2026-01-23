@@ -21,9 +21,8 @@ import kotlin.reflect.jvm.internal.useK1Implementation
 internal fun createPlatformKType(lowerBound: KType, upperBound: KType): KType =
     if (useK1Implementation)
         DescriptorKType(
-            (lowerBound as DescriptorKType).container,
             KotlinTypeFactory.flexibleType(
-                lowerBound.type as SimpleType,
+                (lowerBound as DescriptorKType).type as SimpleType,
                 (upperBound as DescriptorKType).type as SimpleType,
             )
         )
@@ -42,7 +41,6 @@ internal fun createMutableCollectionKType(type: KType): KType {
         val classifier = kotlinType.constructor.declarationDescriptor as? ClassDescriptor
             ?: throw IllegalArgumentException("Non-class type cannot be a mutable collection type: $type")
         return DescriptorKType(
-            type.container,
             KotlinTypeFactory.simpleType(kotlinType, constructor = classifier.readOnlyToMutable().typeConstructor)
         )
     }

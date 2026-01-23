@@ -18,14 +18,11 @@
 
 package kotlin.reflect.full
 
-import kotlin.jvm.internal.KTypeParameterBase
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.jvm.internal.KClassImpl
-import kotlin.reflect.jvm.internal.KTypeParameterOwnerImpl
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.allTypeParameters
 import kotlin.reflect.jvm.internal.useK1Implementation
@@ -47,20 +44,17 @@ fun KClassifier.createType(
     nullable: Boolean = false,
     annotations: List<Annotation> = emptyList(),
 ): KType {
-    @Suppress("INVISIBLE_REFERENCE")
-    val container = (this as? KTypeParameterBase)?.container as? KTypeParameterOwnerImpl
-    return createTypeImpl(container, arguments, nullable, annotations)
+    return createTypeImpl(arguments, nullable, annotations)
 }
 
 internal fun KClassifier.createTypeImpl(
-    container: KTypeParameterOwnerImpl?,
     arguments: List<KTypeProjection> = emptyList(),
     nullable: Boolean = false,
     annotations: List<Annotation> = emptyList(),
     mutableCollectionClass: KClass<*>? = null,
 ): KType {
     if (useK1Implementation) {
-        return createK1KType(arguments, container, nullable)
+        return createK1KType(arguments, nullable)
     }
 
     val parameters = (this as? KClass<*>)?.allTypeParameters().orEmpty()

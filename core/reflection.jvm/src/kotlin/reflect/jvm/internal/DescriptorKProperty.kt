@@ -106,7 +106,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     override val defaultCaller: Caller<*>? get() = getter.defaultCaller
 
     override fun computeReturnType(): DescriptorKType =
-        DescriptorKType(this, descriptor.returnType!!, if (isLocalDelegated) null else fun(): Type {
+        DescriptorKType(descriptor.returnType!!, if (isLocalDelegated) null else fun(): Type {
             return caller.returnType
         })
 
@@ -197,7 +197,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         }
 
         override fun computeReturnType(): DescriptorKType =
-            DescriptorKType(this, descriptor.builtIns.unitType) { Void.TYPE }
+            DescriptorKType(descriptor.builtIns.unitType) { Void.TYPE }
 
         override fun toString(): String = "setter of $property"
 

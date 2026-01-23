@@ -48,7 +48,6 @@ internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KT
             when {
                 type.arguments.isEmpty() -> type
                 else -> classifier.createTypeImpl(
-                    (type as? DescriptorKType)?.container,
                     type.arguments.map { argumentProjection ->
                         val argumentVariance = argumentProjection.variance
                         val argumentType = argumentProjection.type

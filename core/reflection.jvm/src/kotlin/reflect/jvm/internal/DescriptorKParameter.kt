@@ -42,7 +42,7 @@ internal class DescriptorKParameter(
 
     override val type: KType
         get() {
-            val type = DescriptorKType(callable, descriptor.type) {
+            val type = DescriptorKType(descriptor.type) {
                 val descriptor = descriptor
 
                 if (descriptor is ReceiverParameterDescriptor &&
