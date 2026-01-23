@@ -43,7 +43,7 @@ class Derived1<T : Any?> : Base<T> {
     return <this>.<get-x>()
   }
 
-  override var <Z : Any?> Z.exn: T
+  override var <S : Any?> S.exn: T
     override get(): T {
       return <this>.<get-x>()
     }

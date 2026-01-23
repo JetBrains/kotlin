@@ -128,20 +128,20 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
       overridden:
         public abstract exn: T of <root>.Base declared in <root>.Base
       FUN name:<get-exn> visibility:public modality:OPEN returnType:T of <root>.Derived1
-        TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?] reified:false
+        TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Derived1<T of <root>.Derived1>
-        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:Z of <root>.Derived1.<get-exn>
+        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:S of <root>.Derived1.<get-exn>
         correspondingProperty: PROPERTY name:exn visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <get-exn> <Z> (<this>: Z of <root>.Base.<get-exn>): T of <root>.Base declared in <root>.Base
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun <get-exn> <Z> (<this>: Z of <root>.Derived1.<get-exn>): T of <root>.Derived1 declared in <root>.Derived1'
+          RETURN type=kotlin.Nothing from='public open fun <get-exn> <S> (<this>: S of <root>.Derived1.<get-exn>): T of <root>.Derived1 declared in <root>.Derived1'
             CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Derived1' type=T of <root>.Derived1 origin=GET_PROPERTY
               ARG <this>: GET_VAR '<this>(index:0): <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<get-exn>' type=<root>.Derived1<T of <root>.Derived1> origin=IMPLICIT_ARGUMENT
       FUN name:<set-exn> visibility:public modality:OPEN returnType:kotlin.Unit
-        TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?] reified:false
+        TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Derived1<T of <root>.Derived1>
-        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:Z of <root>.Derived1.<set-exn>
+        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:S of <root>.Derived1.<set-exn>
         VALUE_PARAMETER kind:Regular name:value index:2 type:T of <root>.Derived1
         correspondingProperty: PROPERTY name:exn visibility:public modality:OPEN [var]
         overridden:

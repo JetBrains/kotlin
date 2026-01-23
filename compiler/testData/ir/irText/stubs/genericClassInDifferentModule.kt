@@ -20,7 +20,7 @@ class Derived1<T>(x: T) : Base<T>(x) {
 
     override var bar: T = x
 
-    override var <Z> Z.exn: T
+    override var <S> S.exn: T
         get() = x
         set(value) {}
 }
