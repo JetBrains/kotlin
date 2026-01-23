@@ -241,7 +241,7 @@ internal class KaFirResolver(
         }
     }
 
-    override fun performCallCandidatesCollection(psi: KtElement): List<KaCallCandidateInfo> = wrapError(psi) {
+    override fun performCallCandidatesCollection(psi: KtElement): List<KaCallCandidate> = wrapError(psi) {
         resolveCall(
             psi,
             onError = { emptyList() },
@@ -1448,7 +1448,7 @@ internal class KaFirResolver(
         psi: KtElement,
         resolveCalleeExpressionOfFunctionCall: Boolean,
         resolveFragmentOfCall: Boolean,
-    ): List<KaCallCandidateInfo> {
+    ): List<KaCallCandidate> {
         if (resolveCalleeExpressionOfFunctionCall && this is FirImplicitInvokeCall) {
             // For implicit invoke, we resolve the calleeExpression of the CallExpression to the call that creates the receiver of this
             // implicit invoke call. For example,
@@ -1479,18 +1479,18 @@ internal class KaFirResolver(
                 resolveFragmentOfCall = resolveFragmentOfCall,
             )
 
-            is FirResolvedQualifier -> toKtCallCandidateInfos()
+            is FirResolvedQualifier -> toKaCallCandidates()
             is FirDelegatedConstructorCall -> collectCallCandidatesForDelegatedConstructorCall(psi, resolveFragmentOfCall)
-            else -> toKaResolutionAttempt(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
+            else -> toKaResolutionAttempt(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKaCallCandidates()
         }
     }
 
-    private fun FirResolvedQualifier.toKtCallCandidateInfos(): List<KaCallCandidateInfo> {
+    private fun FirResolvedQualifier.toKaCallCandidates(): List<KaCallCandidate> {
         return toKaCalls(findQualifierConstructors()).map {
-            KaBaseInapplicableCallCandidateInfo(
-                it,
-                isInBestCandidates = false,
-                diagnostic = inapplicableCandidateDiagnostic()
+            KaBaseInapplicableCallCandidate(
+                backingCandidate = it,
+                backingIsInBestCandidates = false,
+                backingDiagnostic = inapplicableCandidateDiagnostic()
             )
         }
     }
@@ -1533,7 +1533,7 @@ internal class KaFirResolver(
     private fun FirQualifiedAccessExpression.collectCallCandidates(
         psi: KtElement,
         resolveFragmentOfCall: Boolean,
-    ): List<KaCallCandidateInfo> {
+    ): List<KaCallCandidate> {
         // If a function call is resolved to an implicit invoke call, the FirImplicitInvokeCall will have the `invoke()` function as the
         // callee and the variable as the explicit receiver. To correctly get all candidates, we need to get the original function
         // call's explicit receiver (if there is any) and callee (i.e., the variable).
@@ -1566,7 +1566,7 @@ internal class KaFirResolver(
         )
 
         return candidates.mapNotNull {
-            convertToKaCallCandidateInfo(
+            convertToKaCallCandidate(
                 resolvable = originalFunctionCall,
                 element = psi,
                 candidate = it.candidate,
@@ -1580,7 +1580,7 @@ internal class KaFirResolver(
     private fun FirDelegatedConstructorCall.collectCallCandidatesForDelegatedConstructorCall(
         psi: KtElement,
         resolveFragmentOfCall: Boolean,
-    ): List<KaCallCandidateInfo> {
+    ): List<KaCallCandidate> {
         fun findDerivedClass(psi: KtElement): KtClassOrObject? {
             val parent = psi.parent
             return when (psi) {
@@ -1601,7 +1601,7 @@ internal class KaFirResolver(
             .getAllCandidatesForDelegatedConstructor(analysisSession.resolutionFacade, this, derivedClass.toLookupTag(), psi)
 
         return candidates.mapNotNull {
-            convertToKaCallCandidateInfo(
+            convertToKaCallCandidate(
                 resolvable = this,
                 element = psi,
                 candidate = it.candidate,
@@ -1612,33 +1612,33 @@ internal class KaFirResolver(
         }
     }
 
-    private fun KaCallResolutionAttempt?.toKtCallCandidateInfos(): List<KaCallCandidateInfo> = when (this) {
-        is KaCallResolutionSuccess -> listOf(KaBaseApplicableCallCandidateInfo(this.kaCall, isInBestCandidates = true))
+    private fun KaCallResolutionAttempt?.toKaCallCandidates(): List<KaCallCandidate> = when (this) {
+        is KaCallResolutionSuccess -> listOf(KaBaseApplicableCallCandidate(backingCandidate = call, backingIsInBestCandidates = true))
         is KaCallResolutionError -> candidateCalls.map {
-            KaBaseInapplicableCallCandidateInfo(
-                backingCandidate = it.asKaCall(),
-                isInBestCandidates = true,
-                diagnostic = diagnostic,
+            KaBaseInapplicableCallCandidate(
+                backingCandidate = it,
+                backingIsInBestCandidates = true,
+                backingDiagnostic = diagnostic,
             )
         }
 
         null -> emptyList()
     }
 
-    private fun convertToKaCallCandidateInfo(
+    private fun convertToKaCallCandidate(
         resolvable: FirResolvable,
         element: KtElement,
         candidate: Candidate,
         isInBestCandidates: Boolean,
         resolveFragmentOfCall: Boolean,
         isUnwrappedImplicitInvokeCall: Boolean,
-    ): KaCallCandidateInfo? {
+    ): KaCallCandidate? {
         val call = createKaCall(element, resolvable, candidate, resolveFragmentOfCall) ?: return null
 
         if (candidate.isSuccessful) {
-            return KaBaseApplicableCallCandidateInfo(
-                call as KaCall,
-                isInBestCandidates = if (isUnwrappedImplicitInvokeCall) {
+            return KaBaseApplicableCallCandidate(
+                backingCandidate = call,
+                backingIsInBestCandidates = if (isUnwrappedImplicitInvokeCall) {
                     call is KaImplicitInvokeCall
                 } else {
                     isInBestCandidates
@@ -1651,10 +1651,10 @@ internal class KaFirResolver(
         val kaDiagnostic = resolvable.source?.let { diagnostic.asKaDiagnostic(it, element.toKtPsiSourceElement()) }
             ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, token)
 
-        return KaBaseInapplicableCallCandidateInfo(
-            backingCandidate = call as KaCall,
-            isInBestCandidates = isInBestCandidates,
-            diagnostic = kaDiagnostic,
+        return KaBaseInapplicableCallCandidate(
+            backingCandidate = call,
+            backingIsInBestCandidates = isInBestCandidates,
+            backingDiagnostic = kaDiagnostic,
         )
     }
 
