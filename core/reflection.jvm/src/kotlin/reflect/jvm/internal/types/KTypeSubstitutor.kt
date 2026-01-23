@@ -14,13 +14,9 @@ import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.withNullabilit
 
 internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjection>) {
     fun substitute(type: KType, variance: KVariance = KVariance.INVARIANT): KTypeProjection {
-        if (useK1Implementation) {
-            if (substitution.isEmpty()) return KTypeProjection(variance, type)
-        } else {
-            val isDescriptorTypeParameter =
-                type is DescriptorKType && type.type.constructor.declarationDescriptor is TypeParameterDescriptor
-            if (substitution.isEmpty() && !isDescriptorTypeParameter) return KTypeProjection(variance, type)
-        }
+        val isForceRecreateTheType =
+            !useK1Implementation && type is DescriptorKType && type.type.constructor.declarationDescriptor is TypeParameterDescriptor
+        if (substitution.isEmpty() && !isForceRecreateTheType) return KTypeProjection(variance, type)
 
         val lowerBound = (type as? AbstractKType)?.lowerBoundIfFlexible()
         val upperBound = (type as? AbstractKType)?.upperBoundIfFlexible()
@@ -53,7 +49,7 @@ internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KT
         val result = KTypeProjection(
             variance,
             when {
-                type.arguments.isEmpty() -> type
+                !isForceRecreateTheType && type.arguments.isEmpty() -> type
                 else -> classifier.createTypeImpl(
                     type.arguments.map { argumentProjection ->
                         val argumentVariance = argumentProjection.variance
