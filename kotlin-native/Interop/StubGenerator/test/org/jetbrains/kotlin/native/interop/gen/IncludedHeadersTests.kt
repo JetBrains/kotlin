@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.native.interop.indexer.headerContentsHash
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import java.io.File
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
 class IncludedHeadersTests : IndexerTestsBase() {
 
@@ -49,12 +49,7 @@ class IncludedHeadersTests : IndexerTestsBase() {
         val index = buildNativeIndex(library, verbose = false).index
         val actual = index.includedHeaders.toSet()
 
-        // TODO KT-83814: includedHeaders contains the "main file".
-        // It is tricky to predict the `HeaderId` of it, so here we just expect a single extra value.
-        assertTrue(
-                (expected - actual).isEmpty() && (actual - expected).size == 1,
-                "expected: <$expected + something> but was: <$actual>"
-        )
+        assertEquals(expected, actual)
     }
 
     private fun headerId(header: File) = HeaderId(headerContentsHash(header.absolutePath))
