@@ -125,13 +125,12 @@ TypeVariable(S) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     <: TypeVariable(T)?
+     <: kotlin/Comparable<TypeVariable(T)>?
      <: kotlin/Comparable<TypeVariable(S) & Any>?
      <: kotlin/Long
      <: kotlin/String?
      <: kotlin/Comparable<kotlin/String>?
-     = it(kotlin/Long & kotlin/String)
-     <: kotlin/Comparable<it(kotlin/Long & kotlin/String)>?
-     <: kotlin/Long? (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true ALLOWED
@@ -191,6 +190,8 @@ TypeVariable(T) --- Readiness(
     	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: kotlin/Comparable<TypeVariable(T)>
+     >: TypeVariable(S) & Any
+     <: kotlin/Comparable<TypeVariable(S) & Any>
      = kotlin/String
      <: kotlin/Comparable<kotlin/String>
      >: kotlin/Nothing

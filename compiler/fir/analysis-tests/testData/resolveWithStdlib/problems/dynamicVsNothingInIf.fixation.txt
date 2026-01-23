@@ -44,6 +44,7 @@ TypeVariable(K) --- Readiness(
     	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: kotlin/Nothing
+     >: TypeVariable(T)
      = dynamic
 ********************************
 CHOSEN for fixation: TypeVariable(K) --- Readiness(

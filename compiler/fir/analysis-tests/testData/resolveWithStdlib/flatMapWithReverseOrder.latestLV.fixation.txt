@@ -101,14 +101,6 @@ TypeVariable(R) --- Readiness(
      <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
      <: kotlin/Comparable<TypeVariable(R)!>!
      <: kotlin/Comparable<TypeVariable(R)!>?
-     >: kotlin/Int (inferred during fixation)
-     <: kotlin/Int? (inferred during fixation)
-     <: kotlin/Int! (inferred during fixation)
-     <: kotlin/Comparable<kotlin/Int!>! (inferred during fixation)
-     <: kotlin/Comparable<kotlin/Int!>? (inferred during fixation)
-     <: kotlin/Comparable<in kotlin/Int!>? (inferred during fixation)
-     <: kotlin/Comparable<in kotlin/Int!>! (inferred during fixation)
-     = kotlin/Int (inferred during fixation)
 TypeVariable(C) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
@@ -122,9 +114,8 @@ TypeVariable(C) --- Readiness(
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
-     <: kotlin/collections/MutableCollection<in kotlin/Int>
-     >: java/util/TreeSet<kotlin/Int>
-     = java/util/TreeSet<kotlin/Int> (inferred during fixation)
+     <: kotlin/collections/MutableCollection<in TypeVariable(R)>
+     >: java/util/TreeSet<TypeVariable(E)>
 TypeVariable(E) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
@@ -141,12 +132,9 @@ TypeVariable(E) --- Readiness(
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
      <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
-     >: kotlin/Int
-     <: kotlin/Int?
-     <: kotlin/Comparable<kotlin/Int!>?
-     <: kotlin/Int! (inferred during fixation)
-     <: kotlin/Comparable<in kotlin/Int!>? (inferred during fixation)
-     = kotlin/Int (inferred during fixation)
+     >: TypeVariable(R)
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
+     <: kotlin/Comparable<TypeVariable(R)!>?
 TypeVariable(W) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
@@ -161,10 +149,11 @@ TypeVariable(W) --- Readiness(
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: kotlin/Comparable<in TypeVariable(W)!>!
-     >: kotlin/Int!
-     = kotlin/Int!
-     <: kotlin/Comparable<kotlin/Int!>!
-     <: kotlin/Comparable<in kotlin/Int!>!
+     >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
+     >: TypeVariable(R)!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
+     <: kotlin/Comparable<TypeVariable(R)!>!
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -181,6 +170,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     )
      >: MergeFragment
      = MergeFragment (inferred during fixation)
+    FIXED TO: MergeFragment
 TypeVariable(R) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
@@ -303,9 +293,9 @@ TypeVariable(C) --- Readiness(
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
-     <: kotlin/collections/MutableCollection<in kotlin/Int>
-     >: java/util/TreeSet<kotlin/Int>
-     = java/util/TreeSet<kotlin/Int> (inferred during fixation)
+     <: kotlin/collections/MutableCollection<in TypeVariable(R)>
+     >: java/util/TreeSet<TypeVariable(E)>
+     <: kotlin/collections/MutableCollection<in kotlin/Int> (inferred during fixation)
 TypeVariable(E) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -322,12 +312,14 @@ TypeVariable(E) --- Readiness(
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
      <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     >: TypeVariable(R)
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
+     <: kotlin/Comparable<TypeVariable(R)!>?
      >: kotlin/Int
      <: kotlin/Int?
      <: kotlin/Comparable<kotlin/Int!>?
      <: kotlin/Int!
      <: kotlin/Comparable<in kotlin/Int!>?
-     = kotlin/Int
 TypeVariable(W) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -363,13 +355,13 @@ TypeVariable(_R) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     <: kotlin/collections/Iterable<TypeVariable(R)>
      >: kotlin/collections/MutableSet<kotlin/Int>
      <: kotlin/collections/Iterable<kotlin/Int?>
      <: kotlin/collections/Iterable<kotlin/Int!>
      <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
      <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
-     <: kotlin/collections/Iterable<kotlin/Int>
-     = kotlin/collections/MutableSet<kotlin/Int> (inferred during fixation)
+     <: kotlin/collections/Iterable<kotlin/Int> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(_R) --- Readiness(
     	 true ALLOWED
@@ -405,9 +397,8 @@ TypeVariable(C) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     >: java/util/TreeSet<TypeVariable(E)>
      <: kotlin/collections/MutableCollection<in kotlin/Int>
-     >: java/util/TreeSet<kotlin/Int>
-     = java/util/TreeSet<kotlin/Int> (inferred during fixation)
 TypeVariable(E) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -429,7 +420,6 @@ TypeVariable(E) --- Readiness(
      <: kotlin/Comparable<kotlin/Int!>?
      <: kotlin/Int!
      <: kotlin/Comparable<in kotlin/Int!>?
-     = kotlin/Int (inferred during fixation)
 TypeVariable(W) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -486,9 +476,9 @@ TypeVariable(C) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
+     >: java/util/TreeSet<TypeVariable(E)>
      <: kotlin/collections/MutableCollection<in kotlin/Int>
-     >: java/util/TreeSet<kotlin/Int>
-     = java/util/TreeSet<kotlin/Int> (inferred during fixation)
+     >: java/util/TreeSet<kotlin/Int> (inferred during fixation)
 TypeVariable(W) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS

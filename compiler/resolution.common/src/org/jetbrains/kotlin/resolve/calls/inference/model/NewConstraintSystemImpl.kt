@@ -698,6 +698,7 @@ class NewConstraintSystemImpl(
         }
 
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
+        inferenceLogger?.logFixVariable(variable, resultType, this@NewConstraintSystemImpl)
 
         postponeOnlyInputTypesCheck(variableWithConstraints, resultType)
 
