@@ -54,15 +54,11 @@ clean.configure {
     }
 }
 
-val mergeNativeReports by tasks.registering {
-    val outputFile = layout.buildDirectory.file(nativeJson)
-    outputs.file(outputFile)
-    doLast {
-        val reports = benchmarkSubprojects.mapNotNull { p ->
-            p.layout.buildDirectory.file(nativeJson).get().asFile.takeIf { it.exists() }
-        }
-        outputFile.get().asFile.writeText(mergeReports(reports))
-    }
+val mergeNativeReports by tasks.registering(MergeJsonReportsTask::class) {
+    outputFile.set(layout.buildDirectory.file(nativeJson))
+    reports.from(benchmarkSubprojects.mapNotNull { p ->
+        p.layout.buildDirectory.file(nativeJson).get().asFile.takeIf { it.exists() }
+    })
 }
 
 benchmarkSubprojects.forEach {
