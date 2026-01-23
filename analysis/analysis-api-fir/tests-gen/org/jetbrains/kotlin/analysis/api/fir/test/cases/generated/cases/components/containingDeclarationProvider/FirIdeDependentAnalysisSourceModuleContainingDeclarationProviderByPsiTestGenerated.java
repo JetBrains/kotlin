@@ -136,6 +136,12 @@ public class FirIdeDependentAnalysisSourceModuleContainingDeclarationProviderByP
   }
 
   @Test
+  @TestMetadata("enumEntryFunction.kt")
+  public void testEnumEntryFunction() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/enumEntryFunction.kt");
+  }
+
+  @Test
   @TestMetadata("enums.kt")
   public void testEnums() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/enums.kt");
