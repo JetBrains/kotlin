@@ -1258,7 +1258,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
 
                 val unitsToProcess = (ownTranslationUnits + setOf(translationUnit)).toList()
 
-                nativeIndex.includedHeaders = ownHeaders.map {
+                nativeIndex.includedHeaders = (ownHeaders - headers.mainFile).map {
                     nativeIndex.getHeaderId(it)
                 }
 
