@@ -29,7 +29,7 @@ public class TestJava {
 // FILE: testKotlin.kt
 
 fun test() {
-    val builder: Method.MethodBuilder<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Any><!> = Method.builder()
-    val builder2: Method.MethodBuilder<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Any><!> = builder.<!UNRESOLVED_REFERENCE!>m<!>("s")
-    val obj: Any = builder2.<!UNRESOLVED_REFERENCE!>build<!>()
+    val builder: Method.MethodBuilder<Any> = Method.builder()
+    val builder2: Method.MethodBuilder<Any> = builder.m("s")
+    val obj: Any = builder2.build()
 }
