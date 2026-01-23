@@ -186,7 +186,7 @@ class PowerAssertCallTransformer(
         val values = function.parameters
         if (values.isEmpty()) return emptyList()
 
-        val finder = context.finderForSource(currentFile)
+        val finder = context.finderForSource(sourceFile.irFile)
         // Java static functions require searching by class
         val parentClassFunctions = (
                 function.parentClassId
