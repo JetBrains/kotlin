@@ -38,14 +38,14 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
         val exportedClassName = selectExportedClassName(irClass)
         val className = exportedClassName ?: selectInternalClassName(irClass)
 
-        val classNameLiteral = className?.let { staticData.cStringLiteral(it) } ?: NullPointer(llvm.int8Type)
+        val classNameLiteral = className?.let { staticData.cStringLiteral(it) } ?: llvm.nullPointer
         val info = Struct(runtime.kotlinObjCClassInfo,
                           classNameLiteral,
                           llvm.constInt32(if (exportedClassName != null) 1 else 0),
 
                           staticData.cStringLiteral(superclassName),
-                          staticData.placeGlobalConstArray("", llvm.int8PtrType,
-                        protocolNames.map { staticData.cStringLiteral(it) } + NullPointer(llvm.int8Type)),
+                          staticData.placeGlobalConstArray("", llvm.pointerType,
+                        protocolNames.map { staticData.cStringLiteral(it) } + llvm.nullPointer),
 
                           staticData.placeGlobalConstArray("", runtime.objCMethodDescription, instanceMethods),
                           llvm.constInt32(instanceMethods.size),
@@ -56,11 +56,11 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                           objCLLvmDeclarations.bodyOffsetGlobal.pointer,
 
                           irClass.typeInfoPtr,
-                          companionObject?.typeInfoPtr ?: NullPointer(runtime.typeInfoType),
+                          companionObject?.typeInfoPtr ?: llvm.nullPointer,
 
                           staticData.placeGlobal(
                         "kobjcclassptr:${irClass.fqNameForIrSerialization}#internal",
-                        NullPointer(llvm.int8Type)
+                        llvm.nullPointer,
                 ).pointer,
 
                           generateClassDataImp(irClass, objCLLvmDeclarations)
@@ -104,7 +104,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
         null // Generate as anonymous.
     }
 
-    private val impType = pointerType(functionType(llvm.int8PtrType, true, llvm.int8PtrType, llvm.int8PtrType))
+    private val impType = llvm.pointerType
 
     private inner class ObjCMethodDesc(
             val selector: String, val encoding: String, val impFunction: ConstPointer
@@ -134,16 +134,16 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                 "kobjcclassdata:${irClass.fqNameForIrSerialization}#internal",
                 Struct(
                         runtime.kotlinObjCClassData,
-                        NullPointer(llvm.kTypeInfo),
+                        llvm.nullPointer,
                         objCLLvmDeclarations.classInfoGlobal.pointer,
-                        NullPointer(llvm.int8Type),
+                        llvm.nullPointer,
                         ConstInt32(llvm, 0)
                 )
         ).pointer
 
         val functionProto = LlvmFunctionSignature(
                 returnType = LlvmRetType(classDataPointer.llvmType, isObjectType = false),
-                parameterTypes = listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType)),
+                parameterTypes = listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)),
         ).toProto(
                 name = "kobjcclassdataimp:${irClass.fqNameForIrSerialization}#internal",
                 origin = null,

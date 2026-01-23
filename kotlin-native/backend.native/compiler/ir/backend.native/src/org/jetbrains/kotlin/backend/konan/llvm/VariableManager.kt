@@ -108,7 +108,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
     // Creates anonymous mutable variable.
     // Think of slot reuse.
     fun createAnonymousSlot(isObjectType: Boolean, value: LLVMValueRef? = null) : LLVMValueRef {
-        val index = createAnonymousMutable(functionGenerationContext.kObjHeaderPtr, isObjectType, value)
+        val index = createAnonymousMutable(functionGenerationContext.llvm.pointerType, isObjectType, value)
         return addressOf(index)
     }
 

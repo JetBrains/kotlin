@@ -15,11 +15,8 @@ import org.jetbrains.kotlin.backend.konan.llvm.ContextUtils
 import org.jetbrains.kotlin.backend.konan.llvm.StaticData
 import org.jetbrains.kotlin.backend.konan.llvm.Struct
 import org.jetbrains.kotlin.backend.konan.llvm.bitcast
-import org.jetbrains.kotlin.backend.konan.llvm.functionType
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
-import org.jetbrains.kotlin.backend.konan.llvm.kObjHeaderPtr
 import org.jetbrains.kotlin.backend.konan.llvm.llvmType
-import org.jetbrains.kotlin.backend.konan.llvm.pointerType
 import org.jetbrains.kotlin.backend.konan.llvm.replaceExternalWeakOrCommonGlobal
 import org.jetbrains.kotlin.backend.konan.llvm.writableTypeInfoSymbolName
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -139,7 +136,7 @@ private fun CodeGenerator.buildWritableTypeInfoValue(
         typeAdapter: ConstPointer?
 ): Struct {
     if (convertToRetained != null) {
-        val expectedType = pointerType(functionType(llvm.int8PtrType, false, kObjHeaderPtr))
+        val expectedType = llvm.pointerType
         assert(convertToRetained.llvmType == expectedType) {
             "Expected: ${LLVMPrintTypeToString(expectedType)!!.toKString()} " +
                     "found: ${LLVMPrintTypeToString(convertToRetained.llvmType)!!.toKString()}"
@@ -148,7 +145,7 @@ private fun CodeGenerator.buildWritableTypeInfoValue(
 
     val objCExportAddition = Struct(
             runtime.typeInfoObjCExportAddition,
-            convertToRetained?.bitcast(llvm.int8PtrType),
+            convertToRetained?.bitcast(llvm.pointerType),
             objCClass,
             swiftClass,
             typeAdapter

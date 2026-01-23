@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 
@@ -212,7 +211,7 @@ internal interface ContextUtils : RuntimeAware {
      */
     val IrSimpleFunction.entryPointAddress: ConstPointer
         get() {
-            return llvmFunction.toConstPointer().bitcast(llvm.int8PtrType)
+            return llvmFunction.toConstPointer().bitcast(llvm.pointerType)
         }
 
     val IrClass.typeInfoPtr: ConstPointer
@@ -356,7 +355,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     }
 
     private fun importMemset(): LlvmCallable {
-        val functionType = functionType(voidType, false, int8PtrType, int8Type, int32Type, int1Type)
+        val functionType = functionType(voidType, false, pointerType, int8Type, int32Type, int1Type)
         return llvmIntrinsic(
                 if (context.config.useLlvmOpaquePointers) "llvm.memset.p0.i32"
                 else "llvm.memset.p0i8.i32",
@@ -529,12 +528,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val doubleType = LLVMDoubleTypeInContext(llvmContext)!!
     val vector128Type = LLVMVectorType(floatType, 4)!!
     val voidType = LLVMVoidTypeInContext(llvmContext)!!
-    val int8PtrType = pointerType(int8Type)
-    val int8PtrPtrType = pointerType(int8PtrType)
-    val int32PtrType = pointerType(int32Type)
-    val int32PtrPtrType = pointerType(int32PtrType)
-    val voidPtrType = pointerType(voidType)
-    val voidPtrPtrType = pointerType(voidPtrType)
+    val pointerType = runtime.pointerType
 
     fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
 
@@ -573,11 +567,13 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     fun float32(value: Float): LLVMValueRef = constFloat32(value).llvm
     fun float64(value: Double): LLVMValueRef = constFloat64(value).llvm
 
-    val kNullInt8Ptr by lazy { LLVMConstNull(int8PtrType)!! }
-    val kNullInt32Ptr by lazy { LLVMConstNull(pointerType(int32Type))!! }
-    val kNullIntptrPtr by lazy { LLVMConstNull(pointerType(intptrType))!! }
+    val kNull = LLVMConstNull(pointerType)!!
     val kImmInt32Zero by lazy { int32(0) }
     val kImmInt32One by lazy { int32(1) }
+
+    val nullPointer = object : ConstPointer {
+        override val llvm = kNull
+    }
 
     val memsetFunction = importMemset()
 
@@ -589,7 +585,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     val llvmEhTypeidFor = llvmIntrinsic(
             "llvm.eh.typeid.for.p0",
-            functionType(int32Type, false, int8PtrType),
+            functionType(int32Type, false, pointerType),
             *listOfNotNull(
                     "nounwind",
             ).toTypedArray()
@@ -598,9 +594,9 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     var tlsCount = 0
 
     val tlsKey by lazy {
-        val global = LLVMAddGlobal(module, int8PtrType, "__KonanTlsKey")!!
+        val global = LLVMAddGlobal(module, pointerType, "__KonanTlsKey")!!
         LLVMSetLinkage(global, LLVMLinkage.LLVMInternalLinkage)
-        LLVMSetInitializer(global, LLVMConstNull(int8PtrType))
+        LLVMSetInitializer(global, kNull)
         global
     }
 
@@ -624,9 +620,9 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     val cxaBeginCatchFunction = externalNativeRuntimeFunction(
             "__cxa_begin_catch",
-            returnType = LlvmRetType(int8PtrType, isObjectType = false),
+            returnType = LlvmRetType(pointerType, isObjectType = false),
             functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind),
-            parameterTypes = listOf(LlvmParamType(int8PtrType))
+            parameterTypes = listOf(LlvmParamType(pointerType))
     )
 
     val cxaEndCatchFunction = externalNativeRuntimeFunction(
