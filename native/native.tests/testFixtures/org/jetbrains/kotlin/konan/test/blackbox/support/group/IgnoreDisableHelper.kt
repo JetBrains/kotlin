@@ -107,11 +107,12 @@ internal fun Settings.isSelectedWithTARGET_BACKEND(registeredDirectives: Registe
     registeredDirectives[ConfigurationDirectives.TARGET_BACKEND].let { it.isEmpty() || it.containsNativeOrAny }
 
 // Evaluation of conjunction of boolean expressions like `property1=value1 && property2=value2`.
-// Any null element makes whole result as `true`.
-internal fun Settings.evaluate(directiveValues: List<String?>): Boolean {
+// Absent directive makes a `false` result.
+// Directive without value makes `true` result.
+internal fun Settings.evaluate(directiveValues: List<String>?): Boolean {
+    if (directiveValues == null) return false
+    if (directiveValues.isEmpty()) return true
     directiveValues.forEach {
-        if (it == null)
-            return true  // Directive without value is treated as unconditional
         val split = it.split("&&")
         val booleanList = split.map {
             val matchResult = "(.+)=(.+)".toRegex().find(it.trim())
@@ -155,7 +156,6 @@ internal fun Settings.getDirectiveValues(
     directive: StringDirective,
     isSpecified: (StringDirective) -> Boolean,
     listValues: (StringDirective) -> List<String>?,
-): List<String?> = buildList {
-    if (isSpecified(directive))
-        listValues(directive)?.let { addAll(it) } ?: add(null)
-}
+): List<String>? = if (isSpecified(directive)) {
+    listValues(directive)?.mapNotNull { if (it != "") it else null } ?: emptyList()
+} else null

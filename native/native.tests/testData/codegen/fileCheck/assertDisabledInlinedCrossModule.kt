@@ -9,7 +9,7 @@
 
 inline fun foo(x: Boolean) = assert(x)
 
-// MODULE: main
+// MODULE: main(lib)
 // FILE: main.kt
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 // CHECK-NOT: call void @"kfun:kotlin.AssertionError#<init>(kotlin.Any?){}"

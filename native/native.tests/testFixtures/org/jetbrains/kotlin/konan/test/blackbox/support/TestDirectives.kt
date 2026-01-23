@@ -225,7 +225,7 @@ enum class TestRunnerType {
     NO_EXIT
 }
 
-internal val CINTEROP_SOURCE_EXTENSIONS = setOf("c", "cpp", "m", "mm")
+val CINTEROP_SOURCE_EXTENSIONS = setOf("c", "cpp", "m", "mm")
 internal val CINTEROP_DEFINITION_EXTENSIONS = setOf("def", "h")
 internal val KNOWN_EXTENSIONS = setOf("kt") + CINTEROP_DEFINITION_EXTENSIONS + CINTEROP_SOURCE_EXTENSIONS
 

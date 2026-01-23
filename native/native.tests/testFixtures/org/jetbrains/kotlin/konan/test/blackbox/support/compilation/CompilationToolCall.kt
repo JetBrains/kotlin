@@ -122,7 +122,7 @@ fun callCompilerWithoutOutputInterceptor(
 }
 
 @OptIn(ExperimentalTime::class)
-internal fun invokeCInterop(
+fun invokeCInterop(
     kotlinNativeClassLoader: ClassLoader,
     outputLib: File,
     args: Array<String>
