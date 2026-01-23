@@ -2,7 +2,6 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-import gradle.GradlePluginVariant
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import plugins.signLibraryPublication
 
@@ -19,6 +18,7 @@ val signPublication = !version.toString().contains("-SNAPSHOT") &&
 
 configureBuildToolsApiVersionForGradleCompatibility()
 configureCommonPublicationSettingsForGradle(signPublication)
+limitLanguageAndApiVersions(KotlinVersion.KOTLIN_2_1)
 addBomCheckTask()
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 
@@ -73,4 +73,3 @@ createGradlePluginVariants(
 )
 
 disableCoroutinesStacktraceRecoveryInTestsIfGradleEmbeddedStdlibIsInRuntimeClasspath()
-limitLanguageAndApiVersions(KotlinVersion.KOTLIN_2_1)
