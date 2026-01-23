@@ -133,7 +133,7 @@ projectTests {
         systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
         systemProperty("compose.compiler.test.js.classpath", testJsRuntime.asPath)
         workingDir = rootDir
-        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
 
     testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)

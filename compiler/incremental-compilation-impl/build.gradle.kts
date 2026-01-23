@@ -55,13 +55,13 @@ projectTests {
     testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
         dependsOn(":dist")
         workingDir = rootDir
-        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
 
     testTask("testJvmICWithJdk11", parallel = true, jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = false) {
         dependsOn(":dist")
         workingDir = rootDir
-        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
         filter {
             includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK1JvmCompilerRunnerTestGenerated*")
             includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK2JvmCompilerRunnerTestGenerated*")
@@ -70,6 +70,8 @@ projectTests {
     }
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForICTestsKt")
+    testData(isolated, "testData")
+    withJsRuntime()
 }
 
 testsJar()
