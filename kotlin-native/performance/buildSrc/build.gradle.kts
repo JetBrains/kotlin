@@ -32,6 +32,8 @@ dependencies {
     implementation(kotlin("gradle-plugin", project.bootstrapKotlinVersion))
 }
 
+subprojects {  }
+
 gradlePlugin {
     plugins {
         create("benchmarkPlugin") {
