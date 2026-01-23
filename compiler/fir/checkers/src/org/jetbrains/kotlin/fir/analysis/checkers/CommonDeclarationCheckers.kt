@@ -193,6 +193,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker> = setOf(
         FirPropertyInitializationAnalyzer,
+        FirCapturedVariableStabilityFunctionChecker,
     )
 
     override val typeParameterCheckers: Set<FirTypeParameterChecker> = setOf(
