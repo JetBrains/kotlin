@@ -112,7 +112,7 @@ interface TestVersions {
         const val GOOGLE_DAGGER = "2.24"
         const val GRADLE_ENTERPRISE_PLUGIN_VERSION = "3.13.4"
         const val GRADLE_DEVELOCITY_PLUGIN_VERSION = "3.18"
-        const val KOTLINX_ATOMICFU = "0.29.0"
+        const val KOTLINX_ATOMICFU = "0.31.0"
         const val KOTLINX_KOVER = "0.9.1"
         const val KOTLINX_BINARY_COMPATIBILITY_VALIDATOR = "0.17.0"
         const val DOKKA = "1.8.10"
