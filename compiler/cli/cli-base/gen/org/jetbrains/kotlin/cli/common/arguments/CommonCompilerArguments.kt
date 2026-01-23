@@ -516,13 +516,13 @@ with bodies.""",
         }
 
     @Argument(
-        value = "-Xheader-mode-target",
+        value = "-Xheader-mode-type",
         valueDescription = "{any|compilation}",
-        description = """                Generates output based on the downstream target it is used for:
--Xheader-mode-target=compilation: Skips the IR generation for modules that don't have inline functions.
--Xheader-mode-target=any: Can be used for any downstream target which doesn't require linking.""",
+        description = """Generates output based on what it is used for:
+-Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
+-Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.""",
     )
-    var headerModeTarget: String = "any"
+    var headerModeType: String = "any"
         set(value) {
             checkFrozen()
             field = value

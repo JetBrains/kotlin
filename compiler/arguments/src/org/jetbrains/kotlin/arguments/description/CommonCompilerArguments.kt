@@ -1211,14 +1211,15 @@ Warning: this flag is not intended for production use. If you want to configure 
     }
 
     compilerArgument {
-        name = "Xheader-mode-target"
-        description = """
-                Generates output based on the downstream target it is used for:
--Xheader-mode-target=compilation: Skips the IR generation for modules that don't have inline functions.
--Xheader-mode-target=any: Can be used for any downstream target which doesn't require linking.
+        name = "Xheader-mode-type"
+        description = """Generates output based on what it is used for:
+-Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
+-Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.
                 """.trimIndent().asReleaseDependent()
-        valueType = StringType(ReleaseDependent(false), ReleaseDependent("any"))
-        valueDescription = "{any|compilation}".asReleaseDependent()
+        valueType = KotlinHeaderModeType()
+        valueDescription = ReleaseDependent(
+            current = HeaderMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}")
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_20

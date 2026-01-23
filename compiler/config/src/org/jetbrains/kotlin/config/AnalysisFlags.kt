@@ -98,5 +98,5 @@ object AnalysisFlags {
 
     val headerMode by AnalysisFlag.Delegates.Boolean
 
-    val headerModeTarget by AnalysisFlag.Delegates.String
+    val headerModeType by AnalysisFlag.Delegates.HeaderModeTypeAnyByDefault
 }

@@ -2346,16 +2346,16 @@
                         }
                     },
                     {
-                        "name": "Xheader-mode-target",
+                        "name": "Xheader-mode-type",
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "                Generates output based on the downstream target it is used for:\n-Xheader-mode-target=compilation: Skips the IR generation for modules that don't have inline functions.\n-Xheader-mode-target=any: Can be used for any downstream target which doesn't require linking.",
+                            "current": "Generates output based on what it is used for:\n-Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.\n-Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.",
                             "valueInVersions": []
                         },
                         "delimiter": null,
                         "valueType": {
-                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinHeaderModeType",
                             "isNullable": {
                                 "current": false,
                                 "valueInVersions": []
