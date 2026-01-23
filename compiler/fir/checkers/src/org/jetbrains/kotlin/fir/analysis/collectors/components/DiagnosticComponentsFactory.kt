@@ -26,6 +26,7 @@ object DiagnosticComponentsFactory {
             add(ExpressionCheckersDiagnosticComponent(session, reporter, mppKind))
             add(TypeCheckersDiagnosticComponent(session, reporter, mppKind))
             add(ControlFlowAnalysisDiagnosticComponent(session, reporter, mppKind))
+            add(ControlFlowAnalysisDiagnosticComponentCopy(session, reporter, mppKind))
             if (mppKind == MppCheckerKind.Common) {
                 add(ErrorNodeDiagnosticCollectorComponent(session, reporter))
                 add(LanguageVersionSettingsDiagnosticComponent(session, reporter))

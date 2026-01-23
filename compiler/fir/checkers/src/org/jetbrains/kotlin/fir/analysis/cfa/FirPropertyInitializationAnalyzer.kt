@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -73,9 +73,9 @@ fun ControlFlowGraph.nearestNonInPlaceGraph(): ControlFlowGraph =
 @OptIn(SymbolInternals::class)
 fun FirPropertySymbol.requiresInitialization(isForInitialization: Boolean): Boolean {
     return when {
-        this is FirSyntheticPropertySymbol -> false
-        isForInitialization -> hasDelegate || hasBackingField
-        else -> hasBackingField && !hasInitializer && backingFieldSymbol?.resolvedInitializer == null && fir.isCatchParameter != true
+        this is FirSyntheticPropertySymbol -> false // для синтетическиз не нужна инициализация
+        isForInitialization -> hasDelegate || hasBackingField // внутри инициализации
+        else -> hasBackingField && !hasInitializer && backingFieldSymbol?.resolvedInitializer == null && fir.isCatchParameter != true // нет инициализации
     }
 }
 

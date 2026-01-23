@@ -119,6 +119,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val error: String
     }
 
+    interface CvDiagnostic : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = CvDiagnostic::class
+        val info: String
+    }
+
     interface OtherError : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OtherError::class
     }

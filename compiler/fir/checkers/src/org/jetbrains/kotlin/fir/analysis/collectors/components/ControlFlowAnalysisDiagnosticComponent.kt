@@ -113,7 +113,7 @@ class ControlFlowAnalysisDiagnosticComponent(
      * LocalPropertyCollector().apply { element.acceptChildren(this, graph.subGraphs.toSet()) }
      * ```
      */
-    private class LocalPropertyCollector : FirDefaultVisitor<Unit, Set<ControlFlowGraph>>() {
+    internal class LocalPropertyCollector : FirDefaultVisitor<Unit, Set<ControlFlowGraph>>() {
         val properties = mutableSetOf<FirPropertySymbol>()
 
         // Properties which may not be initialized when accessed, even if they have an initializer.
