@@ -122,21 +122,22 @@ KtSuperTypeList(186,195): 'Base<C>()'
   null
 
 KtSuperTypeCallEntry(186,195): 'Base<C>()'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = one.two.Base<C>
-      symbol = <constructor>(): one.two.Base<B>
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.two.Base<C>
+        symbol = <constructor>(): one.two.Base<B>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(186,193): 'Base<C>'
   KaSuccessCallInfo:
@@ -349,20 +350,21 @@ KtNameReferenceExpression(378,389): 'NestedClass'
   null
 
 KtCallExpression(392,405): 'NestedClass()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = one.two.Base.NestedClass
-      symbol = <constructor>(): one.two.Base.NestedClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.two.Base.NestedClass
+        symbol = <constructor>(): one.two.Base.NestedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(392,403): 'NestedClass'
   KaSuccessCallInfo:
@@ -425,23 +427,24 @@ KtNameReferenceExpression(422,424): 'c1'
       typeArgumentsMapping = {}
 
 KtCallExpression(425,432): 'Inner()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = c1
-      isSafeNavigation = false
-      type = one.two.Child<one.two.Base.NestedClass>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = one.two.Base<one.two.Base.NestedClass>.one.two.Base.Inner
-      symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base<B>.one.two.Base.Inner
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = c1
+        isSafeNavigation = false
+        type = one.two.Child<one.two.Base.NestedClass>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.two.Base<one.two.Base.NestedClass>.one.two.Base.Inner
+        symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base<B>.one.two.Base.Inner
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(425,430): 'Inner'
   KaSuccessCallInfo:

@@ -1,48 +1,49 @@
 KtCollectionLiteralExpression(173,188): '["1", "2", "3"]'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = ["1", "2", "3"]
-      isSafeNavigation = false
-      type = MyList.Companion
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyList
-      symbol = /MyList.Companion.of(<dispatch receiver>: MyList.Companion, vararg vals: kotlin.String): MyList
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ["1", "2", "3"]
+        isSafeNavigation = false
+        type = MyList.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyList
+        symbol = /MyList.Companion.of(<dispatch receiver>: MyList.Companion, vararg vals: kotlin.String): MyList
+        valueParameters = [
+          KaVariableSignature:
+            name = vals
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg vals: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyList.Companion.of
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" -> (KaVariableSignature:
           name = vals
           receiverType = null
           returnType = kotlin.String
           symbol = vararg vals: kotlin.String
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /MyList.Companion.of
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      "1" -> (KaVariableSignature:
-        name = vals
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg vals: kotlin.String
-        contextParameters = []
-        callableId = null),
-      "2" -> (KaVariableSignature:
-        name = vals
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg vals: kotlin.String
-        contextParameters = []
-        callableId = null),
-      "3" -> (KaVariableSignature:
-        name = vals
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg vals: kotlin.String
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null),
+        "2" -> (KaVariableSignature:
+          name = vals
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg vals: kotlin.String
+          contextParameters = []
+          callableId = null),
+        "3" -> (KaVariableSignature:
+          name = vals
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg vals: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }

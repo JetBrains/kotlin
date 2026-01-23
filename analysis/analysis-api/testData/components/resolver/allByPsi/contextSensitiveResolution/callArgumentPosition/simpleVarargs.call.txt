@@ -56,43 +56,44 @@ KtBlockExpression(151,168): '{'
   null
 
 KtCallExpression(157,166): 'foo(X, Y)'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /foo(vararg a: MyEnum): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(vararg a: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = MyEnum
+            symbol = vararg a: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = MyEnum
           symbol = vararg a: MyEnum
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      X -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = MyEnum
-        symbol = vararg a: MyEnum
-        contextParameters = []
-        callableId = null),
-      Y -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = MyEnum
-        symbol = vararg a: MyEnum
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null),
+        Y -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = vararg a: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(157,160): 'foo'
   KaSuccessCallInfo:

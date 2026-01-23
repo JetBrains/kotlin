@@ -64,6 +64,23 @@ public interface KaCallResolutionError : KaCallResolutionAttempt {
 /**
  * Represents a successful resolution of a [KtResolvableCall].
  *
+ * Use the [call] property to access the resolved [KaSingleOrMultiCall].
+ *
+ * @see KaResolver.tryResolveCall
+ * @see KaResolver.resolveCall
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaCallResolutionSuccess : KaCallResolutionAttempt {
+    /**
+     * The resolved call, which can be either a [KaSingleCall] or a [KaMultiCall].
+     */
+    public val call: KaSingleOrMultiCall
+}
+
+/**
+ * Represents a resolved call that can be either a single call or a compound (multi) call.
+ *
  * It can be either a [KaSingleCall] or a [KaMultiCall].
  *
  * ### Example
@@ -82,11 +99,11 @@ public interface KaCallResolutionError : KaCallResolutionAttempt {
  * `function()` call will be represented as a [KaSingleCall] (the target is the function),
  * and `int++` call as a [KaMultiCall] (with two targets: the `int` property and the `++` operator function)
  *
- * @see KaResolver.tryResolveCall
- * @see KaResolver.resolveCall
+ * @see KaSingleCall
+ * @see KaMultiCall
  */
 @KaExperimentalApi
-public sealed interface KaCallResolutionSuccess : KaCallResolutionAttempt
+public sealed interface KaSingleOrMultiCall : KaLifetimeOwner
 
 /**
  * Represents a successful resolution resulting in a single call.
@@ -109,7 +126,7 @@ public sealed interface KaCallResolutionSuccess : KaCallResolutionAttempt
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaCallResolutionSuccess {
+public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaSingleOrMultiCall {
     /**
      * The function or variable declaration.
      */
@@ -162,7 +179,7 @@ public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> 
  * @see KaResolver.resolveCall
  */
 @KaExperimentalApi
-public sealed interface KaMultiCall : KaCallResolutionSuccess {
+public sealed interface KaMultiCall : KaSingleOrMultiCall {
     /**
      * The non-empty list of [KaSingleCall]s that were discovered during resolution of [KtResolvableCall]
      */
@@ -181,16 +198,27 @@ public sealed interface KaMultiCall : KaCallResolutionSuccess {
 private interface KaMultiUnknownCall : KaMultiCall
 
 /**
- * The list of [KaCall].
+ * The flattened list of [KaSingleCall]s.
  *
  * - If [this] is an instance of [KaSingleCall], the list will contain only [this] call
- * - If [this] is an instance of [KaMultiUnknownCall], the list will contain [KaMultiUnknownCall.calls]
- * - If [this] is an instance of [KaCallResolutionError], the list will contain [KaCallResolutionError.candidateCalls]
+ * - If [this] is an instance of [KaMultiCall], the list will contain [KaMultiCall.calls]
  */
 @KaExperimentalApi
-public val KaCallResolutionAttempt.calls: List<KaSingleCall<*, *>>
+public val KaSingleOrMultiCall.calls: List<KaSingleCall<*, *>>
     get() = when (this) {
         is KaSingleCall<*, *> -> listOf(this)
         is KaMultiCall -> calls
+    }
+
+/**
+ * The list of [KaSingleOrMultiCall]s.
+ *
+ * - If [this] is an instance of [KaCallResolutionSuccess], the list will contain only [KaCallResolutionSuccess.call]
+ * - If [this] is an instance of [KaCallResolutionError], the list will contain [KaCallResolutionError.candidateCalls]
+ */
+@KaExperimentalApi
+public val KaCallResolutionAttempt.calls: List<KaSingleOrMultiCall>
+    get() = when (this) {
+        is KaCallResolutionSuccess -> listOf(call)
         is KaCallResolutionError -> candidateCalls
     }

@@ -1,33 +1,34 @@
 KtCallExpression(8,40): 'Comparator {x: Int, y: Int -> 1}'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = {kotlin.Comparator<kotlin.Int!>=} java.util.Comparator<kotlin.Int!>
-      symbol = kotlin/Comparator(function: (T!, T!) -> kotlin.Int): {kotlin.Comparator<T>=} java.util.Comparator<T>
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = {kotlin.Comparator<kotlin.Int!>=} java.util.Comparator<kotlin.Int!>
+        symbol = kotlin/Comparator(function: (T!, T!) -> kotlin.Int): {kotlin.Comparator<T>=} java.util.Comparator<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = function
+            receiverType = null
+            returnType = (kotlin.Int!, kotlin.Int!) -> kotlin.Int
+            symbol = function: (T!, T!) -> kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Comparator
+      typeArgumentsMapping = {
+        T -> (kotlin.Int!)
+      }
+      valueArgumentMapping = {
+        {x: Int, y: Int -> 1} -> (KaVariableSignature:
           name = function
           receiverType = null
           returnType = (kotlin.Int!, kotlin.Int!) -> kotlin.Int
           symbol = function: (T!, T!) -> kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Comparator
-    typeArgumentsMapping = {
-      T -> (kotlin.Int!)
-    }
-    valueArgumentMapping = {
-      {x: Int, y: Int -> 1} -> (KaVariableSignature:
-        name = function
-        receiverType = null
-        returnType = (kotlin.Int!, kotlin.Int!) -> kotlin.Int
-        symbol = function: (T!, T!) -> kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }

@@ -1,15 +1,16 @@
 KtCallableReferenceExpression(87,92): '::foo'
-  KaSimpleVariableAccessCall:
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    isContextSensitive = false
-    kind = Read
-    signature = KaVariableSignature:
-      name = foo
-      receiverType = null
-      returnType = kotlin.Boolean
-      symbol = val foo: kotlin.Boolean
-      contextParameters = []
-      callableId = /foo
-    typeArgumentsMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = val foo: kotlin.Boolean
+        contextParameters = []
+        callableId = /foo
+      typeArgumentsMapping = {}

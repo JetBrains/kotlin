@@ -632,20 +632,21 @@ KtProperty(797,808): 'var a = A()'
   null
 
 KtCallExpression(805,808): 'A()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = A
-      symbol = <constructor>(): A
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(805,806): 'A'
   KaSuccessCallInfo:
@@ -671,20 +672,21 @@ KtProperty(813,838): 'var b = SimpleOperators()'
   null
 
 KtCallExpression(821,838): 'SimpleOperators()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = SimpleOperators
-      symbol = <constructor>(): SimpleOperators
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SimpleOperators
+        symbol = <constructor>(): SimpleOperators
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(821,836): 'SimpleOperators'
   KaSuccessCallInfo:
@@ -707,77 +709,78 @@ KtValueArgumentList(836,838): '()'
   null
 
 KtCallExpression(843,1229): 'with(A()){'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = SimpleOperators
-      symbol = kotlin/with(receiver: T, block: T.() -> R): R
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SimpleOperators
+        symbol = kotlin/with(receiver: T, block: T.() -> R): R
+        valueParameters = [
+          KaVariableSignature:
+            name = receiver
+            receiverType = null
+            returnType = A
+            symbol = receiver: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = A.() -> SimpleOperators
+            symbol = block: T.() -> R
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/with
+      typeArgumentsMapping = {
+        T -> (A),
+        R -> (SimpleOperators)
+      }
+      valueArgumentMapping = {
+        A() -> (KaVariableSignature:
           name = receiver
           receiverType = null
           returnType = A
           symbol = receiver: T
           contextParameters = []
-          callableId = null,
-        KaVariableSignature:
+          callableId = null),
+        {
+                var thisProp = this
+                +thisProp
+                +a
+                thisProp + 1
+                a + 1
+                thisProp[1]
+                a[1]
+                thisProp[1] = A()
+                a[1] = A()
+                thisProp()
+                a()
+                thisProp += 1
+                a += 1
+                thisProp++
+                a = a++
+        
+                b + 1
+                +b
+                b[1]
+                b[1] = A()
+                b()
+                b += 1
+                b++
+            } -> (KaVariableSignature:
           name = block
           receiverType = null
           returnType = A.() -> SimpleOperators
           symbol = block: T.() -> R
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/with
-    typeArgumentsMapping = {
-      T -> (A),
-      R -> (SimpleOperators)
-    }
-    valueArgumentMapping = {
-      A() -> (KaVariableSignature:
-        name = receiver
-        receiverType = null
-        returnType = A
-        symbol = receiver: T
-        contextParameters = []
-        callableId = null),
-      {
-              var thisProp = this
-              +thisProp
-              +a
-              thisProp + 1
-              a + 1
-              thisProp[1]
-              a[1]
-              thisProp[1] = A()
-              a[1] = A()
-              thisProp()
-              a()
-              thisProp += 1
-              a += 1
-              thisProp++
-              a = a++
-      
-              b + 1
-              +b
-              b[1]
-              b[1] = A()
-              b()
-              b += 1
-              b++
-          } -> (KaVariableSignature:
-        name = block
-        receiverType = null
-        returnType = A.() -> SimpleOperators
-        symbol = block: T.() -> R
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(843,847): 'with'
   KaSuccessCallInfo:
@@ -860,20 +863,21 @@ KtValueArgument(848,851): 'A()'
   null
 
 KtCallExpression(848,851): 'A()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = A
-      symbol = <constructor>(): A
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(848,849): 'A'
   KaSuccessCallInfo:
@@ -1471,71 +1475,72 @@ KtConstantExpression(944,945): '1'
   null
 
 KtArrayAccessExpression(954,965): 'thisProp[1]'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = [
-      KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Public
-          contextReceivers: []
-          isActual: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isVal: true
-          location: LOCAL
-          modality: FINAL
-          name: <receiver>
-          origin: SOURCE
-          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          receiverParameter: null
-          returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotations: []
-            typeArguments: []
-            type: A
-          visibility: PUBLIC
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: A
+            visibility: PUBLIC
+          type = A
+      ]
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = thisProp
+        isSafeNavigation = false
         type = A
-    ]
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = thisProp
-      isSafeNavigation = false
-      type = A
-    signature = KaFunctionSignature:
-      receiverType = A
-      returnType = kotlin.Unit
-      symbol = /get(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+      signature = KaFunctionSignature:
+        receiverType = A
+        returnType = kotlin.Unit
+        symbol = /get(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = b: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
+            symbol = a: A
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = a: A
-          contextParameters = []
-          callableId = null
-      ]
-      callableId = /get
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      1 -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = b: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(954,962): 'thisProp'
   KaSuccessCallInfo:
@@ -1561,71 +1566,72 @@ KtConstantExpression(963,964): '1'
   null
 
 KtArrayAccessExpression(974,978): 'a[1]'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = [
-      KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Public
-          contextReceivers: []
-          isActual: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isVal: true
-          location: LOCAL
-          modality: FINAL
-          name: <receiver>
-          origin: SOURCE
-          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          receiverParameter: null
-          returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotations: []
-            typeArguments: []
-            type: A
-          visibility: PUBLIC
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: A
+            visibility: PUBLIC
+          type = A
+      ]
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
         type = A
-    ]
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = a
-      isSafeNavigation = false
-      type = A
-    signature = KaFunctionSignature:
-      receiverType = A
-      returnType = kotlin.Unit
-      symbol = /get(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+      signature = KaFunctionSignature:
+        receiverType = A
+        returnType = kotlin.Unit
+        symbol = /get(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = b: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
+            symbol = a: A
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = a: A
-          contextParameters = []
-          callableId = null
-      ]
-      callableId = /get
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      1 -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = b: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(974,975): 'a'
   KaSuccessCallInfo:
@@ -1733,85 +1739,86 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
       }
 
 KtArrayAccessExpression(987,998): 'thisProp[1]'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = [
-      KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Public
-          contextReceivers: []
-          isActual: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isVal: true
-          location: LOCAL
-          modality: FINAL
-          name: <receiver>
-          origin: SOURCE
-          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          receiverParameter: null
-          returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotations: []
-            typeArguments: []
-            type: A
-          visibility: PUBLIC
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: A
+            visibility: PUBLIC
+          type = A
+      ]
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = thisProp
+        isSafeNavigation = false
         type = A
-    ]
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = thisProp
-      isSafeNavigation = false
-      type = A
-    signature = KaFunctionSignature:
-      receiverType = A
-      returnType = kotlin.Unit
-      symbol = /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+      signature = KaFunctionSignature:
+        receiverType = A
+        returnType = kotlin.Unit
+        symbol = /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = b: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = A
+            symbol = x: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
+            symbol = a: A
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /set
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
           contextParameters = []
-          callableId = null,
-        KaVariableSignature:
+          callableId = null),
+        A() -> (KaVariableSignature:
           name = x
           receiverType = null
           returnType = A
           symbol = x: A
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = a: A
-          contextParameters = []
-          callableId = null
-      ]
-      callableId = /set
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      1 -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = b: kotlin.Int
-        contextParameters = []
-        callableId = null),
-      A() -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = A
-        symbol = x: A
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(987,995): 'thisProp'
   KaSuccessCallInfo:
@@ -1919,20 +1926,21 @@ KtOperationReferenceExpression(999,1000): '='
       }
 
 KtCallExpression(1001,1004): 'A()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = A
-      symbol = <constructor>(): A
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1001,1002): 'A'
   KaSuccessCallInfo:
@@ -2037,85 +2045,86 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
       }
 
 KtArrayAccessExpression(1013,1017): 'a[1]'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = [
-      KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Public
-          contextReceivers: []
-          isActual: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isVal: true
-          location: LOCAL
-          modality: FINAL
-          name: <receiver>
-          origin: SOURCE
-          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          receiverParameter: null
-          returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotations: []
-            typeArguments: []
-            type: A
-          visibility: PUBLIC
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: A
+            visibility: PUBLIC
+          type = A
+      ]
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
         type = A
-    ]
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = a
-      isSafeNavigation = false
-      type = A
-    signature = KaFunctionSignature:
-      receiverType = A
-      returnType = kotlin.Unit
-      symbol = /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+      signature = KaFunctionSignature:
+        receiverType = A
+        returnType = kotlin.Unit
+        symbol = /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = b: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = A
+            symbol = x: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
+            symbol = a: A
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /set
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
           contextParameters = []
-          callableId = null,
-        KaVariableSignature:
+          callableId = null),
+        A() -> (KaVariableSignature:
           name = x
           receiverType = null
           returnType = A
           symbol = x: A
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = a: A
-          contextParameters = []
-          callableId = null
-      ]
-      callableId = /set
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      1 -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = b: kotlin.Int
-        contextParameters = []
-        callableId = null),
-      A() -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = A
-        symbol = x: A
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1013,1014): 'a'
   KaSuccessCallInfo:
@@ -2223,20 +2232,21 @@ KtOperationReferenceExpression(1018,1019): '='
       }
 
 KtCallExpression(1020,1023): 'A()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = A
-      symbol = <constructor>(): A
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1020,1021): 'A'
   KaSuccessCallInfo:
@@ -2259,55 +2269,56 @@ KtValueArgumentList(1021,1023): '()'
   null
 
 KtCallExpression(1032,1042): 'thisProp()'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = [
-      KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Public
-          contextReceivers: []
-          isActual: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isVal: true
-          location: LOCAL
-          modality: FINAL
-          name: <receiver>
-          origin: SOURCE
-          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          receiverParameter: null
-          returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotations: []
-            typeArguments: []
-            type: A
-          visibility: PUBLIC
-        type = A
-    ]
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = thisProp
-      isSafeNavigation = false
-      type = A
-    signature = KaFunctionSignature:
-      receiverType = A
-      returnType = kotlin.Unit
-      symbol = /invoke(<extension receiver>: A): kotlin.Unit
-      valueParameters = []
-      contextParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = a: A
-          contextParameters = []
-          callableId = null
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: A
+            visibility: PUBLIC
+          type = A
       ]
-      callableId = /invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = thisProp
+        isSafeNavigation = false
+        type = A
+      signature = KaFunctionSignature:
+        receiverType = A
+        returnType = kotlin.Unit
+        symbol = /invoke(<extension receiver>: A): kotlin.Unit
+        valueParameters = []
+        contextParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
+            symbol = a: A
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1032,1040): 'thisProp'
   KaSuccessCallInfo:
@@ -2330,55 +2341,56 @@ KtValueArgumentList(1040,1042): '()'
   null
 
 KtCallExpression(1051,1054): 'a()'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = [
-      KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Public
-          contextReceivers: []
-          isActual: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isVal: true
-          location: LOCAL
-          modality: FINAL
-          name: <receiver>
-          origin: SOURCE
-          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          receiverParameter: null
-          returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotations: []
-            typeArguments: []
-            type: A
-          visibility: PUBLIC
-        type = A
-    ]
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = a
-      isSafeNavigation = false
-      type = A
-    signature = KaFunctionSignature:
-      receiverType = A
-      returnType = kotlin.Unit
-      symbol = /invoke(<extension receiver>: A): kotlin.Unit
-      valueParameters = []
-      contextParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = a: A
-          contextParameters = []
-          callableId = null
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: A
+            visibility: PUBLIC
+          type = A
       ]
-      callableId = /invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      signature = KaFunctionSignature:
+        receiverType = A
+        returnType = kotlin.Unit
+        symbol = /invoke(<extension receiver>: A): kotlin.Unit
+        valueParameters = []
+        contextParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
+            symbol = a: A
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1051,1052): 'a'
   KaSuccessCallInfo:
@@ -3358,71 +3370,72 @@ KtNameReferenceExpression(1151,1152): 'b'
       typeArgumentsMapping = {}
 
 KtArrayAccessExpression(1161,1165): 'b[1]'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = [
-      KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Public
-          contextReceivers: []
-          isActual: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isVal: true
-          location: LOCAL
-          modality: FINAL
-          name: <receiver>
-          origin: SOURCE
-          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          receiverParameter: null
-          returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotations: []
-            typeArguments: []
-            type: A
-          visibility: PUBLIC
-        type = A
-    ]
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = b
-      isSafeNavigation = false
-      type = SimpleOperators
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /SimpleOperators.get(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: A
+            visibility: PUBLIC
+          type = A
+      ]
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = b
+        isSafeNavigation = false
+        type = SimpleOperators
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /SimpleOperators.get(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = b: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
+            symbol = a: A
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /SimpleOperators.get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = a: A
-          contextParameters = []
-          callableId = null
-      ]
-      callableId = /SimpleOperators.get
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      1 -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = b: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1161,1162): 'b'
   KaSuccessCallInfo:
@@ -3530,85 +3543,86 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
       }
 
 KtArrayAccessExpression(1174,1178): 'b[1]'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = [
-      KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Public
-          contextReceivers: []
-          isActual: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isVal: true
-          location: LOCAL
-          modality: FINAL
-          name: <receiver>
-          origin: SOURCE
-          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          receiverParameter: null
-          returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotations: []
-            typeArguments: []
-            type: A
-          visibility: PUBLIC
-        type = A
-    ]
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = b
-      isSafeNavigation = false
-      type = SimpleOperators
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /SimpleOperators.set(<dispatch receiver>: SimpleOperators, b: kotlin.Int, x: A): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: A
+            visibility: PUBLIC
+          type = A
+      ]
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = b
+        isSafeNavigation = false
+        type = SimpleOperators
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /SimpleOperators.set(<dispatch receiver>: SimpleOperators, b: kotlin.Int, x: A): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = b: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = A
+            symbol = x: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
+            symbol = a: A
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /SimpleOperators.set
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Int
           symbol = b: kotlin.Int
           contextParameters = []
-          callableId = null,
-        KaVariableSignature:
+          callableId = null),
+        A() -> (KaVariableSignature:
           name = x
           receiverType = null
           returnType = A
           symbol = x: A
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = a: A
-          contextParameters = []
-          callableId = null
-      ]
-      callableId = /SimpleOperators.set
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      1 -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = b: kotlin.Int
-        contextParameters = []
-        callableId = null),
-      A() -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = A
-        symbol = x: A
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(1174,1175): 'b'
   KaSuccessCallInfo:
@@ -3716,20 +3730,21 @@ KtOperationReferenceExpression(1179,1180): '='
       }
 
 KtCallExpression(1181,1184): 'A()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = A
-      symbol = <constructor>(): A
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1181,1182): 'A'
   KaSuccessCallInfo:
@@ -3752,55 +3767,56 @@ KtValueArgumentList(1182,1184): '()'
   null
 
 KtCallExpression(1193,1196): 'b()'
-  KaImplicitInvokeCall:
-    contextArgumentMapping = {}
-    contextArguments = [
-      KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Public
-          contextReceivers: []
-          isActual: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isVal: true
-          location: LOCAL
-          modality: FINAL
-          name: <receiver>
-          origin: SOURCE
-          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          receiverParameter: null
-          returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotations: []
-            typeArguments: []
-            type: A
-          visibility: PUBLIC
-        type = A
-    ]
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = b
-      isSafeNavigation = false
-      type = SimpleOperators
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /SimpleOperators.invoke(<dispatch receiver>: SimpleOperators): kotlin.Unit
-      valueParameters = []
-      contextParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = a: A
-          contextParameters = []
-          callableId = null
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: A
+            visibility: PUBLIC
+          type = A
       ]
-      callableId = /SimpleOperators.invoke
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = b
+        isSafeNavigation = false
+        type = SimpleOperators
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /SimpleOperators.invoke(<dispatch receiver>: SimpleOperators): kotlin.Unit
+        valueParameters = []
+        contextParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
+            symbol = a: A
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /SimpleOperators.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1193,1194): 'b'
   KaSuccessCallInfo:
@@ -4148,20 +4164,21 @@ KtProperty(1260,1271): 'var a = A()'
   null
 
 KtCallExpression(1268,1271): 'A()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = A
-      symbol = <constructor>(): A
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1268,1269): 'A'
   KaSuccessCallInfo:
@@ -4187,20 +4204,21 @@ KtProperty(1276,1301): 'var b = SimpleOperators()'
   null
 
 KtCallExpression(1284,1301): 'SimpleOperators()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = SimpleOperators
-      symbol = <constructor>(): SimpleOperators
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SimpleOperators
+        symbol = <constructor>(): SimpleOperators
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1284,1299): 'SimpleOperators'
   KaSuccessCallInfo:
@@ -4692,20 +4710,21 @@ KtOperationReferenceExpression(1338,1339): '='
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtCallExpression(1340,1343): 'A()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = A
-      symbol = <constructor>(): A
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1340,1341): 'A'
   KaSuccessCallInfo:
@@ -5471,20 +5490,21 @@ KtOperationReferenceExpression(1407,1408): '='
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtCallExpression(1409,1412): 'A()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = A
-      symbol = <constructor>(): A
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(1409,1410): 'A'
   KaSuccessCallInfo:

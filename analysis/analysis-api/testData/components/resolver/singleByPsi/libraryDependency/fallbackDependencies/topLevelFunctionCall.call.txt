@@ -1,45 +1,46 @@
 KtCallExpression(113,126): 'foo(1, "foo")'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /foo(a: kotlin.Int, b: kotlin.String): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(a: kotlin.Int, b: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
           contextParameters = []
-          callableId = null,
-        KaVariableSignature:
+          callableId = null),
+        "foo" -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.String
           symbol = b: kotlin.String
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      1 -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = a: kotlin.Int
-        contextParameters = []
-        callableId = null),
-      "foo" -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.String
-        symbol = b: kotlin.String
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }

@@ -47,70 +47,72 @@ KtParameterList(66,68): '()'
   null
 
 KtConstructorDelegationCall(70,78): 'this(10)'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = THIS_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = r.A.B
-      symbol = <constructor>(x: kotlin.Int): r.A.B
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.A.B
+        symbol = <constructor>(x: kotlin.Int): r.A.B
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        10 -> (KaVariableSignature:
           name = x
           receiverType = null
           returnType = kotlin.Int
           symbol = x: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      10 -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = x: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtConstructorDelegationReferenceExpression(70,74): 'this'
-  KaDelegatedConstructorCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = THIS_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = r.A.B
-      symbol = <constructor>(x: kotlin.Int): r.A.B
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.A.B
+        symbol = <constructor>(x: kotlin.Int): r.A.B
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        10 -> (KaVariableSignature:
           name = x
           receiverType = null
           returnType = kotlin.Int
           symbol = x: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      10 -> (KaVariableSignature:
-        name = x
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = x: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtValueArgumentList(74,78): '(10)'
   null

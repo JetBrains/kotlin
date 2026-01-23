@@ -38,36 +38,37 @@ KtBlockExpression(72,300): '{'
   null
 
 KtCallExpression(78,104): 'print(javaClass.something)'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/io/print(message: kotlin.Int): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/io/print(message: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = message: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        javaClass.something -> (KaVariableSignature:
           name = message
           receiverType = null
           returnType = kotlin.Int
           symbol = message: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/io/print
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      javaClass.something -> (KaVariableSignature:
-        name = message
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = message: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }
 
 KtNameReferenceExpression(78,83): 'print'
   KaSuccessCallInfo:

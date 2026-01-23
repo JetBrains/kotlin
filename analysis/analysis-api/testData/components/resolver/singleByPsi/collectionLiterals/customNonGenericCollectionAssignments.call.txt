@@ -1,26 +1,27 @@
 KtCollectionLiteralExpression(136,138): '[]'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = []
-      isSafeNavigation = false
-      type = MyList.Companion
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyList
-      symbol = /MyList.Companion.of(<dispatch receiver>: MyList.Companion, vararg vals: kotlin.String): MyList
-      valueParameters = [
-        KaVariableSignature:
-          name = vals
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg vals: kotlin.String
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /MyList.Companion.of
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = []
+        isSafeNavigation = false
+        type = MyList.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyList
+        symbol = /MyList.Companion.of(<dispatch receiver>: MyList.Companion, vararg vals: kotlin.String): MyList
+        valueParameters = [
+          KaVariableSignature:
+            name = vals
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg vals: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyList.Companion.of
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

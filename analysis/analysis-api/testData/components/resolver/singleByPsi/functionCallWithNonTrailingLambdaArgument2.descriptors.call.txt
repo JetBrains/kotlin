@@ -1,62 +1,63 @@
 KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /function(a: O1, b: kotlin.Function1<kotlin.Int, kotlin.Boolean>, c: T1): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(a: O1, b: kotlin.Function1<kotlin.Int, kotlin.Boolean>, c: T1): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: O1
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
+            symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = kotlin.String
+            symbol = c: T1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /function
+      typeArgumentsMapping = {
+        T1 -> (kotlin.String),
+        O1 -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Int
           symbol = a: O1
           contextParameters = []
-          callableId = null,
-        KaVariableSignature:
+          callableId = null),
+        { s -> true } -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
           symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
           contextParameters = []
-          callableId = null,
-        KaVariableSignature:
+          callableId = null),
+        "str" -> (KaVariableSignature:
           name = c
           receiverType = null
           returnType = kotlin.String
           symbol = c: T1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /function
-    typeArgumentsMapping = {
-      T1 -> (kotlin.String),
-      O1 -> (kotlin.Int)
-    }
-    valueArgumentMapping = {
-      1 -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = a: O1
-        contextParameters = []
-        callableId = null),
-      { s -> true } -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
-        symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
-        contextParameters = []
-        callableId = null),
-      "str" -> (KaVariableSignature:
-        name = c
-        receiverType = null
-        returnType = kotlin.String
-        symbol = c: T1
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }

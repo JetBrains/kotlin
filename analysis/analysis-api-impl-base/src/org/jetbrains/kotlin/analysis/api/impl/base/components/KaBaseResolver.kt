@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 @KaImplementationDetail
 @OptIn(KtExperimentalApi::class)
@@ -89,9 +91,9 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         }
     }
 
-    final override fun KtResolvableCall.resolveCall(): KaCallResolutionSuccess? = tryResolveCall() as? KaCallResolutionSuccess
+    final override fun KtResolvableCall.resolveCall(): KaSingleOrMultiCall? = (tryResolveCall() as? KaCallResolutionSuccess)?.call
 
-    private inline fun <reified R : KaCallResolutionSuccess> KtResolvableCall.resolveCallSafe(): R? = resolveCall() as? R
+    private inline fun <reified R : KaSingleOrMultiCall> KtResolvableCall.resolveCallSafe(): R? = resolveCall() as? R
 
     private inline fun <reified S : KaCallableSymbol, C : KaCallableSignature<S>, reified R : KaSingleCall<S, C>> KtResolvableCall.resolveSingleCallSafe(): R? {
         val call = resolveCall() ?: return null
@@ -141,15 +143,26 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
 
     final override fun KtElement.resolveToCall(): KaCallInfo? = withPsiValidityAssertion {
         when (val attempt = tryResolveCallImpl()) {
-            is KaCallResolutionError -> KaBaseErrorCallInfo(attempt.candidateCalls.map { it.asKaCall }, attempt.diagnostic)
-            is KaCallResolutionSuccess -> KaBaseSuccessCallInfo(attempt.asKaCall)
+            is KaCallResolutionError -> KaBaseErrorCallInfo(attempt.candidateCalls.map { it.asKaCall() }, attempt.diagnostic)
+            is KaCallResolutionSuccess -> KaBaseSuccessCallInfo(attempt.kaCall)
             null -> null
         }
     }
 
-    private val KaCallResolutionSuccess.asKaCall: KaCall
-        // All implementations are the same, just the top of the hierarchy is different
-        get() = this as KaCall
+    /**
+     * All implementations of KaSingleOrMultiCall are also KaCall
+     * */
+    @OptIn(ExperimentalContracts::class)
+    protected fun KaSingleOrMultiCall.asKaCall(): KaCall {
+        contract {
+            returns() implies (this@asKaCall is KaCall)
+        }
+
+        return this as KaCall
+    }
+
+    protected inline val KaCallResolutionSuccess.kaCall: KaCall
+        get() = call.asKaCall()
 
     private fun KtElement.collectCallCandidatesImpl(): List<KaCallCandidateInfo> {
         val unwrappedElement = unwrapResolvableCall()
@@ -250,7 +263,7 @@ internal fun KaCallCandidateInfo.asKaCallCandidates(): List<KaCallCandidate> {
         )
     }
 
-    val singleCalls = (candidate as KaCallResolutionAttempt).calls
+    val singleCalls = (candidate as KaSingleOrMultiCall).calls
     return singleCalls.map(candidateBuilder)
 }
 

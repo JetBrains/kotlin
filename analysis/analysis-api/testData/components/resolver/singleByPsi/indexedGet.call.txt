@@ -1,48 +1,49 @@
 KtArrayAccessExpression(100,111): 'c[1, "foo"]'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = c
-      isSafeNavigation = false
-      type = C
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Boolean
-      symbol = /C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = c
+        isSafeNavigation = false
+        type = C
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /C.get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
           contextParameters = []
-          callableId = null,
-        KaVariableSignature:
+          callableId = null),
+        "foo" -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.String
           symbol = b: kotlin.String
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /C.get
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      1 -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = a: kotlin.Int
-        contextParameters = []
-        callableId = null),
-      "foo" -> (KaVariableSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.String
-        symbol = b: kotlin.String
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }

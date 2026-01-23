@@ -85,23 +85,24 @@ KtNameReferenceExpression(133,140): 'MyAlias'
   null
 
 KtCallExpression(141,151): 'function()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = MyAlias
-      isSafeNavigation = false
-      type = test.MyObject
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = test/MyObject.function(<dispatch receiver>: test.MyObject): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = test/MyObject.function
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyAlias
+        isSafeNavigation = false
+        type = test.MyObject
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/MyObject.function(<dispatch receiver>: test.MyObject): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/MyObject.function
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(141,149): 'function'
   KaSuccessCallInfo:
@@ -170,23 +171,24 @@ KtNameReferenceExpression(164,172): 'property'
       typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(178,195): 'MyAlias::function'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = MyAlias
-      isSafeNavigation = false
-      type = test.MyObject
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = test/MyObject.function(<dispatch receiver>: test.MyObject): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = test/MyObject.function
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyAlias
+        isSafeNavigation = false
+        type = test.MyObject
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/MyObject.function(<dispatch receiver>: test.MyObject): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/MyObject.function
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(178,185): 'MyAlias'
   null
@@ -195,23 +197,24 @@ KtNameReferenceExpression(187,195): 'function'
   null
 
 KtCallableReferenceExpression(200,217): 'MyAlias::property'
-  KaSimpleVariableAccessCall:
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = MyAlias
-      isSafeNavigation = false
-      type = test.MyObject
-    extensionReceiver = null
-    isContextSensitive = false
-    kind = Read
-    signature = KaVariableSignature:
-      name = property
-      receiverType = null
-      returnType = kotlin.Int
-      symbol = val property: kotlin.Int
-      contextParameters = []
-      callableId = test/MyObject.property
-    typeArgumentsMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyAlias
+        isSafeNavigation = false
+        type = test.MyObject
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = property
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val property: kotlin.Int
+        contextParameters = []
+        callableId = test/MyObject.property
+      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(200,207): 'MyAlias'
   null

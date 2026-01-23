@@ -1,31 +1,32 @@
 KtAnnotationEntry(121,198): '@AnnotationArray(annos = [Annotation("v1", "v2"), Annotation(*["v3", "v4"])])'
-  KaAnnotationCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = AnnotationArray
-      symbol = <constructor>(vararg annos: Annotation): AnnotationArray
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = AnnotationArray
+        symbol = <constructor>(vararg annos: Annotation): AnnotationArray
+        valueParameters = [
+          KaVariableSignature:
+            name = annos
+            receiverType = null
+            returnType = Annotation
+            symbol = vararg annos: Annotation
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        [Annotation("v1", "v2"), Annotation(*["v3", "v4"])] -> (KaVariableSignature:
           name = annos
           receiverType = null
           returnType = Annotation
           symbol = vararg annos: Annotation
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      [Annotation("v1", "v2"), Annotation(*["v3", "v4"])] -> (KaVariableSignature:
-        name = annos
-        receiverType = null
-        returnType = Annotation
-        symbol = vararg annos: Annotation
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }

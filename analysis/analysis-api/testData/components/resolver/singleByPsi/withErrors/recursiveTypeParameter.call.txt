@@ -1,33 +1,34 @@
 KtCallExpression(96,130): 'install(CoroutineModule.builder())'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = /RunnerModule
-      type = RunnerModule
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /AbstractModule.install(<dispatch receiver>: AbstractModule, builder: AbstractModule.Builder<*>!): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = /RunnerModule
+        type = RunnerModule
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /AbstractModule.install(<dispatch receiver>: AbstractModule, builder: AbstractModule.Builder<*>!): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = builder
+            receiverType = null
+            returnType = AbstractModule.Builder<*>!
+            symbol = builder: AbstractModule.Builder<*>!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /AbstractModule.install
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        CoroutineModule.builder() -> (KaVariableSignature:
           name = builder
           receiverType = null
           returnType = AbstractModule.Builder<*>!
           symbol = builder: AbstractModule.Builder<*>!
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /AbstractModule.install
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {
-      CoroutineModule.builder() -> (KaVariableSignature:
-        name = builder
-        receiverType = null
-        returnType = AbstractModule.Builder<*>!
-        symbol = builder: AbstractModule.Builder<*>!
-        contextParameters = []
-        callableId = null)
-    }
+          callableId = null)
+      }

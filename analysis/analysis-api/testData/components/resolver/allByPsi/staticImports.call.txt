@@ -220,23 +220,24 @@ KtNameReferenceExpression(415,429): 'TopLevelObject'
   null
 
 KtCallExpression(430,435): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = TopLevelObject
-      isSafeNavigation = false
-      type = one.two.TopLevelObject
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/two/TopLevelObject.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = TopLevelObject
+        isSafeNavigation = false
+        type = one.two.TopLevelObject
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/two/TopLevelObject.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(430,433): 'foo'
   KaSuccessCallInfo:
@@ -265,22 +266,23 @@ KtProperty(440,463): 'val importedFoo = foo()'
   null
 
 KtCallExpression(458,463): 'foo()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = one/two/TopLevelObject
-      type = one.two.TopLevelObject
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/two/TopLevelObject.foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = one/two/TopLevelObject
+        type = one.two.TopLevelObject
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/two/TopLevelObject.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(458,461): 'foo'
   KaSuccessCallInfo:
@@ -423,23 +425,24 @@ KtNameReferenceExpression(674,686): 'NestedObject'
   null
 
 KtCallExpression(687,692): 'baz()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = TopLevelObject.NestedObject
-      isSafeNavigation = false
-      type = one.two.TopLevelObject.NestedObject
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/two/TopLevelObject.NestedObject.baz
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = TopLevelObject.NestedObject
+        isSafeNavigation = false
+        type = one.two.TopLevelObject.NestedObject
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/two/TopLevelObject.NestedObject.baz
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(687,690): 'baz'
   KaSuccessCallInfo:
@@ -491,23 +494,24 @@ KtNameReferenceExpression(721,733): 'NestedObject'
   null
 
 KtCallExpression(734,739): 'baz()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = NestedObject
-      isSafeNavigation = false
-      type = one.two.TopLevelObject.NestedObject
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/two/TopLevelObject.NestedObject.baz
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = NestedObject
+        isSafeNavigation = false
+        type = one.two.TopLevelObject.NestedObject
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/two/TopLevelObject.NestedObject.baz
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(734,737): 'baz'
   KaSuccessCallInfo:
@@ -536,22 +540,23 @@ KtProperty(744,767): 'val importedBaz = baz()'
   null
 
 KtCallExpression(762,767): 'baz()'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = one/two/TopLevelObject.NestedObject
-      type = one.two.TopLevelObject.NestedObject
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = one/two/TopLevelObject.NestedObject.baz
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = one/two/TopLevelObject.NestedObject
+        type = one.two.TopLevelObject.NestedObject
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = one/two/TopLevelObject.NestedObject.baz
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(762,765): 'baz'
   KaSuccessCallInfo:

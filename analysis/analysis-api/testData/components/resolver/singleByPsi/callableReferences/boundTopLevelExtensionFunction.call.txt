@@ -1,26 +1,27 @@
 KtCallableReferenceExpression(72,80): 'obj::foo'
-  KaSimpleFunctionCall:
-    contextArgumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = obj
-      isSafeNavigation = false
-      type = Foo
-    signature = KaFunctionSignature:
-      receiverType = Foo
-      returnType = kotlin.Unit
-      symbol = /foo(<extension receiver>: Foo, a: kotlin.Int): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /foo
-    typeArgumentsMapping = {}
-    valueArgumentMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = obj
+        isSafeNavigation = false
+        type = Foo
+      signature = KaFunctionSignature:
+        receiverType = Foo
+        returnType = kotlin.Unit
+        symbol = /foo(<extension receiver>: Foo, a: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
