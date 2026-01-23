@@ -55,16 +55,22 @@ projectTests {
 
 optInToK1Deprecation()
 
+interface InjectedFsOps {
+    @get:Inject
+    val fs: FileSystemOperations
+}
 tasks.register<Exec>("downloadJspecifyTests") {
     val tmpDirPath = createTempDirectory().toAbsolutePath().toString()
+    val rootDir = project.rootDir
+    val injected = project.objects.newInstance<InjectedFsOps>()
     doFirst {
         executable("git")
         args("clone", "https://github.com/jspecify/jspecify/", tmpDirPath)
     }
     doLast {
-        copy {
+        injected.fs.copy {
             from("$tmpDirPath/samples")
-            into("${project.rootDir}/compiler/testData/foreignAnnotationsJava8/tests/jspecify/java")
+            into("$rootDir/compiler/testData/foreignAnnotationsJava8/tests/jspecify/java")
         }
     }
 }
