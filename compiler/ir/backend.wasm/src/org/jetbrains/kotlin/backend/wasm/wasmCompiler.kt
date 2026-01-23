@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.wasm.ir.ByteWriterWithOffsetWrite
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.writeTo
 import org.jetbrains.kotlin.wasm.ir.WasmExport
+import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationGeneratorImpl
@@ -196,11 +197,26 @@ class WasmIrModuleConfiguration(
     val multimoduleOptions: MultimoduleCompileOptions?,
 )
 
+data class WasmCompilerResultWithLinkedModule(
+    val linkedModule: WasmModule,
+    val compilerResult: WasmCompilerResult,
+)
+
+fun linkAndCompileWasmIrToBinaryWithLinkedModule(moduleConfiguration: WasmIrModuleConfiguration): WasmCompilerResultWithLinkedModule {
+    val linkedModule = linkWasmModule(moduleConfiguration)
+    val compilerResult = compileWasmIrToBinary(linkedModule, moduleConfiguration)
+    return WasmCompilerResultWithLinkedModule(linkedModule, compilerResult)
+}
+
 fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration): WasmCompilerResult {
+    val linkedModule = linkWasmModule(moduleConfiguration)
+    return compileWasmIrToBinary(linkedModule, moduleConfiguration)
+}
+
+fun linkWasmModule(moduleConfiguration: WasmIrModuleConfiguration): WasmModule {
     val wasmCompiledFileFragments = moduleConfiguration.wasmCompiledFileFragments
 
     val configuration = moduleConfiguration.configuration
-    val baseFileName = moduleConfiguration.baseFileName
 
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
 
@@ -217,11 +233,22 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
 
     val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
 
-    val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(
+    return wasmCompiledModuleFragment.linkWasmCompiledFragments(
         multimoduleOptions = multimoduleParameters,
         exceptionTagType = exceptionTagType,
         wasmCommandModuleInitialization = wasmCommandModuleInitialization,
     )
+}
+
+fun compileWasmIrToBinary(linkedModule: WasmModule, moduleConfiguration: WasmIrModuleConfiguration): WasmCompilerResult {
+    val wasmCompiledFileFragments = moduleConfiguration.wasmCompiledFileFragments
+
+    val configuration = moduleConfiguration.configuration
+    val baseFileName = moduleConfiguration.baseFileName
+
+    val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
+
+    val multimoduleParameters = moduleConfiguration.multimoduleOptions
 
     val wasmStartFunctionDefined = linkedModule.exports.any { it.name == wasmStartExportName }
     val wasmInitializeFunctionDefined = linkedModule.exports.any { it.name == wasmInitializeExportName }
@@ -339,7 +366,7 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
 
     } else {
         jsWrapper =
-            wasmCompiledModuleFragment.generateAsyncWasiWrapper(
+            generateAsyncWasiWrapper(
                 wasmFilePath = "./$baseFileName.wasm",
                 exports = linkedModule.exports,
                 useDebuggerCustomFormatters = debuggerParameters.useDebuggerCustomFormatters,
@@ -364,7 +391,7 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
 }
 
 //language=js
-fun WasmCompiledModuleFragment.generateAsyncWasiWrapper(
+fun generateAsyncWasiWrapper(
     wasmFilePath: String,
     exports: List<WasmExport<*>>,
     useDebuggerCustomFormatters: Boolean,

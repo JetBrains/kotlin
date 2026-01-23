@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
-import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
+import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinaryWithLinkedModule
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileWasmLoweredFragmentsForSingleModule
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.test.PrecompileSetup
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestOutputName
@@ -115,13 +116,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             generateDwarf = generateDwarf,
         )
 
-        val compileResult = linkAndCompileWasmIrToBinary(wasmIrToCompile)
-
-        val linkedModule = getLinkedModule(
-            wasmIrToCompile,
-            wasmIrToCompile.wasmCompiledFileFragments,
-            configuration
-        )
+        val (linkedModule, compileResult) = linkAndCompileWasmIrToBinaryWithLinkedModule(wasmIrToCompile)
 
         return BinaryArtifacts.Wasm(
             linkedModule,
