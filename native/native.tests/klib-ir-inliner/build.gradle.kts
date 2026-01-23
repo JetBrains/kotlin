@@ -52,10 +52,14 @@ projectTests {
         workingDir = projectDir
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
         // Specify K/N compiler to invoke in NativeCompilerSecondStageFacade in AbstractNativeCodegenBoxCoreTest
-        systemProperty(
-            "kotlin.internal.native.test.compat.currentCompilerDist",
-            rootProject.projectDir.resolve("kotlin-native/dist")
-        )
+        val distFolder = rootProject.projectDir.resolve("kotlin-native/dist")
+        systemProperty("kotlin.internal.native.test.compat.currentCompilerDist", distFolder)
+
+        // add file permission for running native compiler backend from kotlin-native-compiler-embeddable.jar on CI
+        extensions.configure<TestInputsCheckExtension> {
+            val embeddableCompiler = "$distFolder/konan/lib/kotlin-native-compiler-embeddable.jar"
+            extraPermissions.add("""permission java.io.FilePermission "$embeddableCompiler", "read";""")
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt", generateTestsInBuildDirectory = true) {
