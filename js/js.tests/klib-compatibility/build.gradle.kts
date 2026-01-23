@@ -149,8 +149,7 @@ customFirstStageTest("2.3.0")
 // TODO: Add a new task for the "custom-first-stage" test here.
 
 /* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
-// TODO: Keep updating two following compiler versions to be the previous and latest ones.
-customSecondStageTest("2.2.0")
+// TODO: Keep updating the following compiler versions to be the previous one and latest one(as as soon it's released).
 customSecondStageTest("2.3.0")
 
 tasks.test {
