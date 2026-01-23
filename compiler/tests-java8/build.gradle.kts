@@ -55,18 +55,4 @@ projectTests {
 
 optInToK1Deprecation()
 
-tasks.register<Exec>("downloadJspecifyTests") {
-    val tmpDirPath = createTempDirectory().toAbsolutePath().toString()
-    doFirst {
-        executable("git")
-        args("clone", "https://github.com/jspecify/jspecify/", tmpDirPath)
-    }
-    doLast {
-        copy {
-            from("$tmpDirPath/samples")
-            into("${project.rootDir}/compiler/testData/foreignAnnotationsJava8/tests/jspecify/java")
-        }
-    }
-}
-
 testsJar()
