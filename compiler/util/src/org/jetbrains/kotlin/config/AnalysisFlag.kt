@@ -45,6 +45,10 @@ class AnalysisFlag<out T> internal constructor(
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, ReturnValueCheckerMode.DISABLED)
         }
 
+        object HeaderModeTypeAnyByDefault {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, HeaderMode.ANY)
+        }
+
         object ListOfStrings {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, emptyList<kotlin.String>())
         }

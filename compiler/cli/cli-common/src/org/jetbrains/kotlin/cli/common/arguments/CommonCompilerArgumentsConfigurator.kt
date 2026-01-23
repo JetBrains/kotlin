@@ -40,7 +40,7 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
             putAnalysisFlag(AnalysisFlags.lenientMode, lenientMode)
             putAnalysisFlag(AnalysisFlags.headerMode, headerMode)
-            putAnalysisFlag(AnalysisFlags.headerModeTarget, headerModeTarget)
+            putAnalysisFlag(AnalysisFlags.headerModeType, headerModeType)
             putAnalysisFlag(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
             fillWarningLevelMap(arguments, collector)
             ReturnValueCheckerMode.fromString(returnValueChecker)?.also { putAnalysisFlag(AnalysisFlags.returnValueCheckerMode, it) }

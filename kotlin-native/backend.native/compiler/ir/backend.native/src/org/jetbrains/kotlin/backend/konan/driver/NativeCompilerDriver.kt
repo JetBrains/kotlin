@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.HeaderMode
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
@@ -119,6 +120,18 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         }
     }
 
+    /**
+     * Skips IR generation if either generating using -Xmetadata-klib or running header mode with
+     * -Xheader-mode and -Xheader-mode-type=compilation.
+     */
+    private fun skipIrGeneration(config: NativeKlibCompilationConfig, frontendOutput: FirOutput.Full): Boolean {
+        if (config.metadataKlib) return true
+        val skipInHeaderMode = config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
+                config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerModeType) == HeaderMode.COMPILATION &&
+                !containsInlineFunctions(frontendOutput)
+        return skipInHeaderMode
+    }
+
     private fun <T : PhaseContext> serializeKLibK2(
             engine: PhaseEngine<T>,
             config: NativeKlibCompilationConfig,
@@ -128,10 +141,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         if (frontendOutput is FirOutput.ShouldNotGenerateCode) return null
         require(frontendOutput is FirOutput.Full)
 
-        return if (config.metadataKlib || (config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
-                        config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerModeTarget) == "compilation" &&
-                        !containsInlineFunctions(frontendOutput))
-        ) {
+        return if (skipIrGeneration(config, frontendOutput)) {
             performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
                 engine.runFirSerializer(frontendOutput)
             }
