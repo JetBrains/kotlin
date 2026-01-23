@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckersDiagnosticCom
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.analysis.collectors.components.ControlFlowAnalysisDiagnosticComponent
+import org.jetbrains.kotlin.fir.analysis.collectors.components.ControlFlowAnalysisDiagnosticComponentCopy
 import org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.components.ReportCommitterDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
@@ -88,6 +89,7 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
             add(ExpressionCheckersDiagnosticComponent(session, reporter, expressionCheckers))
             add(TypeCheckersDiagnosticComponent(session, reporter, typeCheckers))
             add(ControlFlowAnalysisDiagnosticComponent(session, reporter, declarationCheckers))
+            add(ControlFlowAnalysisDiagnosticComponentCopy(session, reporter, declarationCheckers))
         }.toTypedArray()
 
         return DiagnosticCollectorComponents(regularComponents, ReportCommitterDiagnosticComponent(session, reporter))
