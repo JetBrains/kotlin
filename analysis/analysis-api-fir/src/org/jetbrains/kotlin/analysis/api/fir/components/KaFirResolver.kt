@@ -505,18 +505,17 @@ internal class KaFirResolver(
                 )
             }
 
-            val candidateCalls = mutableListOf<KaSingleCall<*, *>>()
-            if (diagnostic is ConeDiagnosticWithCandidates) {
-                diagnostic.candidates.flatMapTo(candidateCalls) {
+            val candidateCalls = if (diagnostic is ConeDiagnosticWithCandidates) {
+                diagnostic.candidates.mapNotNull {
                     if (it is Candidate) {
-                        createKaCall(psi, call, calleeReference, it, resolveFragmentOfCall)?.calls.orEmpty()
+                        createKaCall(psi, call, calleeReference, it, resolveFragmentOfCall)
                     } else {
-                        emptyList()
+                        null
                     }
                 }
             } else {
-                val resolvedCall = createKaCall(psi, call, calleeReference, null, resolveFragmentOfCall)
-                candidateCalls += resolvedCall?.calls.orEmpty()
+                val call = createKaCall(psi, call, calleeReference, null, resolveFragmentOfCall)
+                listOfNotNull(call)
             }
 
             return KaBaseCallResolutionError(
