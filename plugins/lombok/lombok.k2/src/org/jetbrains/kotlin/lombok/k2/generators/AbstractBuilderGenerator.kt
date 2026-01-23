@@ -19,11 +19,12 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
-import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -34,21 +35,24 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
+import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -65,6 +69,7 @@ import org.jetbrains.kotlin.lombok.utils.capitalize
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import kotlin.collections.set
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -94,7 +99,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     protected abstract fun getBuilder(symbol: FirBasedSymbol<*>): T?
 
-    protected abstract fun constructBuilderType(builderClassId: ClassId): ConeClassLikeType
+    protected abstract fun getExtraTypeArguments(): List<ConeTypeProjection>
 
     protected abstract fun getBuilderType(builderSymbol: FirClassSymbol<*>): ConeKotlinType?
 
@@ -178,35 +183,75 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             val builderClassName = builder.getBuilderClassShortName(builderDeclaration)
             val builderClassId = entityClassId.createNestedClassId(Name.identifier(builderClassName))
 
-            val builderTypeRef = constructBuilderType(builderClassId).toFirResolvedTypeRef()
             val visibility = builder.visibility.toVisibility()
             val existingFunctionNames = entitySymbol.getExistingFunctionNames()
 
-            addIfNonClashing(Name.identifier(builder.builderMethodName), existingFunctionNames) {
+            addIfNonClashing(Name.identifier(builder.builderMethodName), existingFunctionNames) { name ->
                 val isStatic = builderDeclaration.isStaticDeclaration
+                val (builderTypeRef, methodSymbol, methodTypeParameters) = constructReturnBuilderTypeAndMethodSymbol(
+                    entitySymbol,
+                    name,
+                    builderDeclaration,
+                    builderClassId
+                )
                 entitySymbol.createJavaMethod(
-                    it,
+                    name,
                     valueParameters = emptyList(),
                     returnTypeRef = builderTypeRef,
                     visibility = visibility,
                     modality = Modality.FINAL,
                     dispatchReceiverType = if (isStatic) null else builderDeclaration.dispatchReceiverType,
                     isStatic = isStatic,
+                    methodSymbol = methodSymbol,
+                    methodTypeParameters = methodTypeParameters,
                 )
             }
 
             if (builder.requiresToBuilder) {
-                addIfNonClashing(Name.identifier(TO_BUILDER), existingFunctionNames) {
+                addIfNonClashing(Name.identifier(TO_BUILDER), existingFunctionNames) { name ->
+                    val (builderTypeRef, methodSymbol, methodTypeParameters) = constructReturnBuilderTypeAndMethodSymbol(
+                        entitySymbol,
+                        name,
+                        builderDeclaration,
+                        builderClassId,
+                    )
                     entitySymbol.createJavaMethod(
-                        it,
+                        name,
                         valueParameters = emptyList(),
                         returnTypeRef = builderTypeRef,
                         visibility = visibility,
                         modality = Modality.FINAL,
+                        methodSymbol = methodSymbol,
+                        methodTypeParameters = methodTypeParameters,
                     )
                 }
             }
         }
+    }
+
+    private data class ReturnBuilderInfo(
+        val builderTypeRef: FirResolvedTypeRef,
+        val methodSymbol: FirNamedFunctionSymbol,
+        val methodTypeParameters: Collection<FirTypeParameter>,
+    )
+
+    @OptIn(SymbolInternals::class)
+    private fun constructReturnBuilderTypeAndMethodSymbol(
+        entitySymbol: FirClassSymbol<*>,
+        methodName: Name,
+        builderDeclaration: FirDeclaration,
+        builderClassId: ClassId,
+    ): ReturnBuilderInfo {
+        val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, methodName))
+        val methodTypeParameters = builderDeclaration.initializeTypeParametersMapping(methodSymbol).values
+
+        return ReturnBuilderInfo(
+            builderClassId
+                .constructClassLikeType((methodTypeParameters.map { it.toConeType() } + getExtraTypeArguments()).toTypedArray())
+                .toFirResolvedTypeRef(),
+            methodSymbol,
+            methodTypeParameters,
+        )
     }
 
     private fun FirClassSymbol<*>.getExistingFunctionNames(): Set<Name> =
@@ -478,7 +523,16 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             this.modality = builderModality
             this.isStatic = builderDeclaration.isStaticDeclaration
             classKind = ClassKind.CLASS
-            javaTypeParameterStack = containingClass.classJavaTypeParameterStack
+
+            val typeParametersMapping = builderDeclaration.initializeTypeParametersMapping(builderSymbol)
+            typeParametersMapping.mapTo(typeParameters) { it.value }
+            // Remap Java type parameters to the newly created type parameters to make the Java resolve work.
+            javaTypeParameterStack = MutableJavaTypeParameterStack().apply {
+                for (javaTypeParam in containingClass.classJavaTypeParameterStack) {
+                    addParameter(javaTypeParam.key, typeParametersMapping[javaTypeParam.value]?.symbol ?: javaTypeParam.value)
+                }
+            }
+
             scopeProvider = JavaScopeProvider
             this.superTypeRefs += superTypeRefs
             val effectiveVisibility = containingClass.effectiveVisibility.lowerBound(
@@ -491,16 +545,118 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 builderModality,
                 effectiveVisibility
             ).apply {
-                this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
+                this.isInner = false // Builders are always nested classes
                 isCompanion = false
                 isData = false
                 isInline = false
                 isFun = classKind == ClassKind.INTERFACE
             }
 
-            declarationList = declarationListProvider(symbol)
-
             completeBuilder(this@createEmptyBuilderClass, builderSymbol)
+
+            declarationList = declarationListProvider(symbol)
+        }
+    }
+
+    /**
+     * Given the following generic class with `@Builder`:
+     *
+     * ```kt
+     * @lombok.Builder
+     * public class C<T> {
+     *     private final T value;
+     * }
+     * ```
+     *
+     * That has the following generated builder:
+     *
+     * ```kt
+     * import lombok.Generated;
+     *
+     * public class C<T> {
+     *     private final T value;
+     *
+     *     @Generated
+     *     C(T value) {
+     *         this.value = value;
+     *     }
+     *
+     *     @Generated
+     *     public static <T> CBuilder<T> builder() {
+     *         return new CBuilder<T>();
+     *     }
+     *
+     *     @Generated
+     *     public static class CBuilder<T> {
+     *         @Generated
+     *         private T value;
+     *
+     *         @Generated
+     *         CBuilder() {
+     *         }
+     *
+     *         @Generated
+     *         public CBuilder<T> value(T value) {
+     *             this.value = value;
+     *             return this;
+     *         }
+     *
+     *         @Generated
+     *         public C<T> build() {
+     *             return new C<T>(this.value);
+     *         }
+     *
+     *         @Generated
+     *         public String toString() {
+     *             return "C.CBuilder(value=" + String.valueOf(this.value) + ")";
+     *         }
+     *     }
+     * }
+     * ```
+     *
+     * We have to initialize the new type parameters for static `builder` (T -> T2) to make Java resolve robust:
+     *
+     * ```kt
+     * public static <T2> CBuilder<T2> builder() {
+     *     return new CBuilder<T2>();
+     * }
+     * ```
+     *
+     * And new type parameters for `CBuilder<T>` with its `build` method (T -> T3);
+     *
+     * ```kt
+     * public static class CBuilder<T3> {
+     *     ...
+     *     @Generated
+     *     public CBuilder<T3> value(T3 value) {
+     *         this.value = value;
+     *         return this;
+     *     }
+     *     @Generated
+     *     public C<T3> build() {
+     *         return new C<T3>(this.value);
+     *     }
+     *     ...
+     * }
+     * ```
+     *
+     * @return a map used for remapping type parameters on a Java stack
+     */
+    @OptIn(SymbolInternals::class)
+    private fun FirDeclaration.initializeTypeParametersMapping(newContainingDeclarationSymbol: FirBasedSymbol<*>): Map<FirTypeParameterSymbol, FirTypeParameter> {
+        val typeParameters: List<FirTypeParameter> = when (this) {
+            is FirJavaClass -> typeParameters.map { it.symbol.fir }
+            is FirJavaMethod -> typeParameters
+            is FirJavaConstructor -> typeParameters.map { it.symbol.fir }
+            else -> emptyList() // Use the fallback just in case, although it's normally unreachable
+        }
+        return buildMap {
+            for (typeParameter in typeParameters) {
+                this[typeParameter.symbol] = buildTypeParameterCopy(typeParameter.symbol.fir) {
+                    symbol = FirTypeParameterSymbol()
+                    containingDeclarationSymbol = newContainingDeclarationSymbol
+                }
+            }
         }
     }
 
