@@ -6,20 +6,21 @@
 package org.jetbrains.kotlin.analysis.api.fir.test
 
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.analyzeCopy
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPrimaryConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.junit.jupiter.api.Test
 import kotlin.reflect.full.isSubclassOf
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("analysis/analysis-api-fir/testData/surface") {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
@@ -84,6 +85,31 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("analysis/analys
 
             // Elements from the original fragment should be analyzable in the context of copy
             assertions.assertTrue(codeFragmentExpression.canBeAnalysed())
+        }
+    }
+
+    @Test
+    fun enumEntryWithBodyConstructorPointerInIgnoreSelfMode(mainFile: KtFile) {
+        // Create a file copy to set up resolution in IGNORE_SELF mode
+        val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = true)
+        val fileCopy = ktPsiFactory.createFile("copy.kt", mainFile.text)
+        fileCopy.originalFile = mainFile
+
+        val enumClass = fileCopy.declarations.filterIsInstance<KtClass>().first()
+        analyzeCopy(enumClass, KaDanglingFileResolutionMode.IGNORE_SELF) {
+            val enumSymbol = enumClass.classSymbol as KaNamedClassSymbol
+            val enumEntrySymbol = enumSymbol.staticMemberScope.callables
+                .filterIsInstance<KaEnumEntrySymbol>()
+                .single()
+
+            // Get the implicit primary constructor
+            val constructor = enumEntrySymbol.enumEntryInitializer!!.memberScope.constructors.toList().single()
+
+            val pointer = constructor.createPointer()
+            assertIs<KaFirPrimaryConstructorSymbolPointer>(pointer, "Expected primary constructor pointer")
+
+            val restored = pointer.restoreSymbol()
+            assertEquals(constructor, restored, "Constructor pointer should be restored to original constructor")
         }
     }
 }

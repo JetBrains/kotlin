@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirEnumEntryInitializerSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
@@ -196,7 +198,15 @@ internal class KaFirSymbolRelationProvider(
 
     private fun getContainingDeclarationByPsi(symbol: KaSymbol): KaDeclarationSymbol? {
         val containingDeclaration = getContainingPsi(symbol) ?: return null
-        return with(analysisSession) { containingDeclaration.symbol }
+        val declarationSymbol = with(analysisSession) { containingDeclaration.symbol }
+
+        if (declarationSymbol is KaFirEnumEntrySymbol && symbol !is KaFirEnumEntryInitializerSymbol) {
+            // From the FIR point of view, the real containing declaration of enum entry functions or implicit constructor
+            // is not the enum entry itself, but its `KaFirEnumEntryInitializerSymbol`.
+            return declarationSymbol.enumEntryInitializer
+        }
+
+        return declarationSymbol
     }
 
     private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): KaDeclarationSymbol? = when (symbol) {
