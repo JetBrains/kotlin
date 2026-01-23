@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.unregisterFinders
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature.MultiPlatformProjects
@@ -86,7 +86,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
 
         val project = testServices.compilerConfigurationProvider.getProject(module)
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val extensionRegistrars = configuration.getCompilerExtension(FirExtensionRegistrar)
+        val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val targetPlatform = module.targetPlatform(testServices)
         val jvmSessionFactoryContext = runIf(targetPlatform.isCommon() || targetPlatform.isJvm()) {
             val packagePartProviderFactory = testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)

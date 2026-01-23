@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 
 @OptIn(ExperimentalCompilerApi::class)
-fun <T : Any> CompilerConfiguration.getCompilerExtension(descriptor: ExtensionPointDescriptor<T>): List<T> {
+fun <T : Any> CompilerConfiguration.getCompilerExtensions(descriptor: ExtensionPointDescriptor<T>): List<T> {
     val extensionStorage = this.extensionsStorage ?: error("Extensions storage is not registered")
     return extensionStorage[descriptor]
 }

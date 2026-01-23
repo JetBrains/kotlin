@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.runAnalysisHandlerExtensions
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -108,7 +108,7 @@ object GenerationUtils {
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
         firAnalyzerFacade.runResolution()
-        val irGenerationExtensions = configuration.getCompilerExtension(IrGenerationExtension)
+        val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)
         val (moduleFragment, components, pluginContext, _, _, symbolTable) = firAnalyzerFacade.frontendOutput.convertToIrAndActualizeForJvm(
             fir2IrExtensions,
             configuration,

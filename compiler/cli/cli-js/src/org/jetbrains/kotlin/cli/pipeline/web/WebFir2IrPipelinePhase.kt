@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
@@ -94,7 +94,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
         return firResult.convertToIrAndActualize(
             fir2IrExtensions,
             Fir2IrConfiguration.forKlibCompilation(moduleStructure.compilerConfiguration, diagnosticsReporter),
-            moduleStructure.compilerConfiguration.getCompilerExtension(IrGenerationExtension),
+            moduleStructure.compilerConfiguration.getCompilerExtensions(IrGenerationExtension),
             irMangler = JsManglerIr,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
