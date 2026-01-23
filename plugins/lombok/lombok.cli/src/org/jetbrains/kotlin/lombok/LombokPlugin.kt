@@ -68,11 +68,18 @@ class LombokCommandLineProcessor : CommandLineProcessor {
             CONFIG_FILE_OPTION -> {
                 val file = File(value)
                 if (!file.exists()) {
-                    throw IllegalArgumentException("Config file not found ${file.absolutePath}")
+                    configuration.reportDiagnostic(
+                        LombokDiagnostics.LOMBOK_CONFIG_IS_MISSING,
+                        "lombok.config file not found: ${file.absolutePath}"
+                    )
+                    return
                 }
                 configuration.put(LOMBOK_CONFIG_FILE, file)
             }
-            else -> throw IllegalArgumentException("Unknown option $option")
+            else -> configuration.reportDiagnostic(
+                LombokDiagnostics.UNKNOWN_PLUGIN_OPTION,
+                "Unknown lombok plugin option: '${option.optionName}=$value'"
+            )
         }
     }
 }
