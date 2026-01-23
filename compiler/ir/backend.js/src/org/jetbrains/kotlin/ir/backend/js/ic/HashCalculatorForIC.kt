@@ -133,7 +133,7 @@ private class HashCalculatorForIC(private val checkForClassStructuralChanges: Bo
         collection.forEach { f(it) }
     }
 
-    fun <T> updateConfigKeys(config: CompilerConfiguration, keys: List<CompilerConfigurationKey<out T>>, valueUpdater: (T) -> Unit) {
+    fun <T : Any> updateConfigKeys(config: CompilerConfiguration, keys: List<CompilerConfigurationKey<T>>, valueUpdater: (T) -> Unit) {
         updateForEach(keys) { key ->
             update(key.toString())
             val value = config.get(key)

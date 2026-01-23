@@ -102,8 +102,7 @@ class DirectiveToConfigurationKeyExtractor {
         }
         for ((directive, key) in valueDirectivesMap) {
             val value = registeredDirectives.singleOrZeroValue(directive) ?: continue
-            @Suppress("UNCHECKED_CAST")
-            configuration.put(key as CompilerConfigurationKey<Any>, value)
+            configuration.put(key, value)
         }
     }
 }

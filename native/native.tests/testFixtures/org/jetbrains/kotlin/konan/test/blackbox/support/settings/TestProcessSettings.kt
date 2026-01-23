@@ -182,7 +182,7 @@ class ExplicitBinaryOptions(private val rawOptions: List<String>) {
         parseBinaryOptions(rawOptions.toTypedArray(), { println(it) }, { error(it) })
     }
 
-    inline fun <reified T> getOrNull(key: CompilerConfigurationKey<T>): T? =
+    inline fun <reified T : Any> getOrNull(key: CompilerConfigurationKey<T>): T? =
         options.singleOrNull { it.compilerConfigurationKey == key }?.value as? T
 }
 
