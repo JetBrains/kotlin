@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.plugin.sandbox
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.provider
-import org.jetbrains.kotlin.generators.tests.standalone
+import org.jetbrains.kotlin.generators.tests.standaloneNoTR
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
@@ -53,7 +53,7 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "PluginSandboxNativeTestGenerated",
                 annotations = listOf(
-                    *standalone(),
+                    *standaloneNoTR(),
                     annotation(Tag::class.java, "sandbox-native"),
                     provider<UseExtTestCaseGroupProvider>(),
                     provider<EnforcedHostTarget>(),
