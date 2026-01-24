@@ -1,3 +1,6 @@
+// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND_K2: ANY
+
 // FILE: FluentTest.java
 
 import lombok.AccessLevel;
