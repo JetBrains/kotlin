@@ -56,10 +56,9 @@ fun Project.customCompilerTest(
     // Cannot use exactly `DependencyDirectories.localKonanDir`, since it's wrong to declare whole `~/.konan/` as an output of `unarchiveCustomCompiler_` task
     // Should it be so, Gradle fails on implicit dependency: task `:kotlin-native:llvmInterop:genInteropStubs` uses files in `~/.konan/dependencies/llvm-19-aarch64*`
     // So, a subfolder within `~/.konan/` is needed for output of `unarchiveCustomCompiler_` task
-    val customCompilersCollectionDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-prebuilt-releases")
     val unarchiveCustomCompiler = tasks.register("unarchiveCustomCompiler_${taskName}", Copy::class) {
-        from(tarTree(customCompiler.singleFile))
-        into(customCompilersCollectionDir)
+        from(customCompiler.map { file -> tarTree(file) }.single())
+        into(DependencyDirectories.localKonanDir.resolve("kotlin-native-prebuilt-releases"))
     }
     return projectTests.nativeTestTask(
         taskName,
@@ -69,31 +68,35 @@ fun Project.customCompilerTest(
         useJUnitPlatform { includeTags(tag) }
         extensions.configure<TestInputsCheckExtension> {
             isNative.set(true)
+            // Permissions for older compiler, for unnecessarily performed access to root dir, already fixed in 2.2.20, commit dbd8ac94
+            extraPermissions.add("""permission java.io.FilePermission "${rootDir.resolve("stdlib")}", "read";""")
+            extraPermissions.add("""permission java.io.FilePermission "${rootDir.resolve("stdlib.klib")}", "read";""")
         }
+        val rawVersion = version.rawVersion
 
-        inputs.files(unarchiveCustomCompiler.map { it.outputs })
+        val unarchiveCustomCompilerFiles: File = unarchiveCustomCompiler.get().outputs.files.singleFile
+        inputs.files(unarchiveCustomCompiler)
+            .withPropertyName("unarchiveCustomCompiler")
+            .withNormalizer(ClasspathNormalizer::class.java)
 
-        val customCompilerDir = customCompilersCollectionDir.listFiles()?.filter {
-            it.isDirectory && it.name.toString().endsWith(version.rawVersion)
-        }?.first()
-        if (customCompilerDir == null || !customCompilerDir.exists())
-            error ("Folder `$customCompilersCollectionDir` must have a subfolder with version ${version.rawVersion} of K/N prebuilt compiler")
-
-        jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
-            classpath.from(customCompilerDir.absolutePath)
-            property.set("kotlin.internal.native.test.compat.customCompilerDist")
-        }
-        jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
-            val konanLibDir = customCompilerDir.resolve("konan/lib")
+        doFirst {
+            val customCompilerDirProvider: File? = unarchiveCustomCompilerFiles.listFiles()?.first {
+                it.isDirectory && it.name.toString().endsWith(rawVersion)
+            }
+            check(customCompilerDirProvider != null && customCompilerDirProvider.exists()) { "Folder `${customCompilerDirProvider}` must have a subfolder with version $rawVersion of K/N prebuilt compiler" }
+            systemProperty("kotlin.internal.native.test.compat.customCompilerDist", customCompilerDirProvider.absolutePath)
+            val konanLibDir = customCompilerDirProvider.resolve("konan/lib")
             val runtimeJars = listOf("kotlin-native-compiler-embeddable.jar", "trove4j.jar")
-            classpath.from(runtimeJars.map { konanLibDir.resolve(it).absolutePath })
-            property.set("kotlin.internal.native.test.compat.customCompilerClasspath")
+            systemProperty(
+                "kotlin.internal.native.test.compat.customCompilerClasspath",
+                runtimeJars.map { jar -> konanLibDir.resolve(jar) }.joinToString(File.pathSeparator)
+            )
+        }
+        doLast {
+            systemProperties.remove("kotlin.internal.native.test.compat.customCompilerDist")
+            systemProperties.remove("kotlin.internal.native.test.compat.customCompilerClasspath")
         }
         systemProperty("kotlin.internal.native.test.compat.customCompilerVersion", version.rawVersion)
-        jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
-            classpath.from(rootProject.projectDir.resolve("kotlin-native/dist"))
-            property.set("kotlin.internal.native.test.compat.currentCompilerDist")
-        }
         body()
     }
 }
@@ -140,8 +143,4 @@ projectTests {
     testData(project(":compiler").isolated, "testData/codegen/box")
     testData(project(":compiler").isolated, "testData/codegen/boxInline")
     testData(project(":compiler").isolated, "testData/klib/klib-compatibility/sanity")
-
-    // Permissions for older compiler, for unnecessarily performed access to root dir, already fixed in 2.2.20, commit dbd8ac94
-    testData(rootProject.isolated, "stdlib")
-    testData(rootProject.isolated, "stdlib.klib")
 }
