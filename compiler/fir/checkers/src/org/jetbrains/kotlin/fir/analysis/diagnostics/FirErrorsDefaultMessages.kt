@@ -203,6 +203,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_RECEIVERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTRACT_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CV_DIAGNOSTIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTOR_DELEGATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_GENERIC_UPPER_BOUND
@@ -950,6 +951,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(UNSUPPORTED_FEATURE, "{0}", LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED))
         map.put(UNSUPPORTED_SUSPEND_TEST, "'suspend' functions annotated with '@kotlin.test.Test' are unsupported.")
         map.put(NEW_INFERENCE_ERROR, "New inference error [{0}].", STRING)
+        map.put(CV_DIAGNOSTIC, "{0}", STRING)
 
         // Miscellaneous
         map.put(OTHER_ERROR, "Unknown error.")
