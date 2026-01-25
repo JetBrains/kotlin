@@ -26,9 +26,5 @@ fun mergeReports(reports: List<File>): String {
         structuredReports.getOrPut(it.first) { mutableListOf<BenchmarksReport>() }.add(it.second)
     }
     val jsons = structuredReports.map { (_, value) -> value.reduce { result, it -> result + it }.toJson() }
-    return when(jsons.size) {
-        0 -> ""
-        1 -> jsons[0]
-        else -> jsons.joinToString(prefix = "[", postfix = "]")
-    }
+    return jsons.joinToString(prefix = "[", postfix = "]")
 }
