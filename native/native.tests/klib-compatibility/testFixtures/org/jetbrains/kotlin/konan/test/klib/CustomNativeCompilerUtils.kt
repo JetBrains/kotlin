@@ -61,7 +61,7 @@ val customNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
 
 val currentCustomNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
     CustomNativeCompilerSettingsImpl {
-        val propertyName = "kotlin.internal.native.test.compat.currentCompilerDist"
+        val propertyName = "kotlin.internal.native.test.nativeHome"
         readProperty(propertyName)?.let {
             val compilerDist = File(it)
             CustomKlibCompilerArtifacts.create(
