@@ -88,16 +88,13 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
 
         val compiledIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
             compiler.compileIr(loweredIr)
-        }
+        }.single()
 
         val linkedModule = linkWasmIr(compiledIr)
         val compileResult = compileWasmIrToBinary(compiledIr, linkedModule)
 
         return BinaryArtifacts.Wasm(
-            linkedModule,
-            compileResult,
-            compileResult,
-            null,
+            BinaryArtifacts.WasmCompilationSet(linkedModule, compileResult)
         )
     }
 }

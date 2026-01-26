@@ -59,11 +59,16 @@ object BinaryArtifacts {
             get() = ArtifactKinds.Native
     }
 
-    class Wasm(
+    class WasmCompilationSet(
         val compiledModule: WasmModule,
         val compilerResult: WasmCompilerResult,
-        val compilerResultWithDCE: WasmCompilerResult,
-        val compilerResultWithOptimizer: WasmCompilerResult?,
+        val compilationDependencies: List<WasmCompilationSet> = emptyList(),
+    )
+
+    class Wasm(
+        val compilation: WasmCompilationSet,
+        val dceCompilation: WasmCompilationSet? = null,
+        val optimisedCompilation: WasmCompilationSet? = null,
     ) : ResultingArtifact.Binary<Wasm>() {
         override val kind: ArtifactKind<Wasm>
             get() = ArtifactKinds.Wasm

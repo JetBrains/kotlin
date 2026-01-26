@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
-import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
@@ -66,18 +65,13 @@ class WasiBoxRunner(
             val dir = File(outputDirBase, mode)
             dir.mkdirs()
 
-            writeCompilationResult(res, dir, baseFileName)
+            res.writeTo(dir, baseFileName, debugMode)
 
             File(dir, "test.mjs").writeText(testWasi)
             val collectedJsArtifacts = collectJsArtifacts(originalFile, mode)
             val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(dir)
-
             if (debugMode >= DebugMode.DEBUG) {
-                val path = dir.absolutePath
-                println(" ------ $mode Wat  file://$path/index.wat")
-                println(" ------ $mode Wasm file://$path/index.wasm")
-                println(" ------ $mode JS   file://$path/index.mjs")
-                println(" ------ $mode Test file://$path/test.mjs")
+                println(" ------ $mode Test file://${dir.absolutePath}/test.mjs")
             }
 
             val testFileText = originalFile.readText()
@@ -107,8 +101,12 @@ class WasiBoxRunner(
             }
         }
 
-        writeToFilesAndRunTest("dev", artifacts.compilerResult)
-        writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE)
-        artifacts.compilerResultWithOptimizer?.let { writeToFilesAndRunTest("optimized", it) }
+        writeToFilesAndRunTest("dev", artifacts.compilation.compilerResult)
+        artifacts.dceCompilation?.let {
+            writeToFilesAndRunTest("dce", it.compilerResult)
+        }
+        artifacts.optimisedCompilation?.let {
+            writeToFilesAndRunTest("optimized", it.compilerResult)
+        }
     }
 }

@@ -22,7 +22,7 @@ class WasmIrHandler(testServices: TestServices) : WasmBinaryArtifactHandler(test
 
         ktFiles.forEach {
             DirectiveTestUtils.processDirectives(
-                info.compiledModule,
+                info.compilation.compiledModule,
                 it.value,
                 testServices.defaultsProvider.targetBackend!!,
             )
