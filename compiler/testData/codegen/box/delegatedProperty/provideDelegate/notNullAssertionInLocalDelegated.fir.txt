@@ -32,8 +32,16 @@ FILE: notNullAssertionInLocalDelegated.kt
     }
     @R|kotlin/Suppress|(names = vararg(String(UNNECESSARY_NOT_NULL_ASSERTION))) public final fun test(list: R|kotlin/collections/List<Ref<*>>|): R|kotlin/Unit| {
         lval data: R|kotlin/String|by R|<local>/list|.R|/getElement|<R|kotlin/String|>(Int(0))!!.R|/provideDelegate|<R|kotlin/String|>(Null(null), ::R|<local>/data|)
+            local get(): R|kotlin/String| {
+                ^ D|<local>/data|.R|/getValue|<R|kotlin/String|>(Null(null), ::R|<local>/data|)
+            }
+
         R|kotlin/require|(==(R|<local>/data|, R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.get: R|Ref<*>|>|(Int(0)).R|SubstitutionOverride</Ref.t: R|CapturedType(*)|>|))
         lval data2: R|kotlin/String|by R|<local>/list|.R|/getElement|<R|kotlin/String|>(Int(0)).R|/provideDelegate|<R|kotlin/String|>(Null(null), ::R|<local>/data2|)
+            local get(): R|kotlin/String| {
+                ^ D|<local>/data2|.R|/getValue|<R|kotlin/String|>(Null(null), ::R|<local>/data2|)
+            }
+
         R|kotlin/require|(==(R|<local>/data2|, R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.get: R|Ref<*>|>|(Int(0)).R|SubstitutionOverride</Ref.t: R|CapturedType(*)|>|))
     }
     public final fun box(): R|kotlin/String| {

@@ -32,5 +32,13 @@ FILE: notNullAssertionInLocalDelegated.fir.kt
     }
     public final fun test(list: R|kotlin/collections/List<Ref<*>>|): R|kotlin/Unit| {
         lval data: R|kotlin/String|by R|<local>/list|.R|/getElement|<R|kotlin/String|>(Int(0))!!.R|/provideDelegate|<R|kotlin/String|>(Null(null), ::R|<local>/data|)
+            local get(): R|kotlin/String| {
+                ^ D|<local>/data|.R|/getValue|<R|kotlin/String|>(Null(null), ::R|<local>/data|)
+            }
+
         lval data2: R|kotlin/String|by R|<local>/list|.R|/getElement|<R|kotlin/String|>(Int(0)).R|/provideDelegate|<R|kotlin/String|>(Null(null), ::R|<local>/data2|)
+            local get(): R|kotlin/String| {
+                ^ D|<local>/data2|.R|/getValue|<R|kotlin/String|>(Null(null), ::R|<local>/data2|)
+            }
+
     }

@@ -11,7 +11,15 @@ FILE: implicitNothingInDelegate.fir.kt
     public final fun foo(): R|kotlin/Unit| {
         lval m1: R|kotlin/collections/Map<kotlin/String, kotlin/Any>| = R|kotlin/collections/mapOf|<R|kotlin/String|, R|kotlin/String|>(String(foo).R|kotlin/to|<R|kotlin/String|, R|kotlin/String|>(String(bar)))
         lval foo: R|kotlin/String|by R|<local>/m1|
+            local get(): R|kotlin/String| {
+                ^ D|<local>/foo|.R|/getValue|<R|kotlin/Any|, R|kotlin/String|>(Null(null), ::R|<local>/foo|)
+            }
+
         lval baz: R|kotlin/String|by R|/m2|
+            local get(): R|kotlin/String| {
+                ^ D|<local>/baz|.R|/getValue|<R|kotlin/Any?|, R|kotlin/String|>(Null(null), ::R|<local>/baz|)
+            }
+
         R|kotlin/io/println|(R|<local>/foo|)
         R|kotlin/io/println|(R|<local>/baz|)
         R|kotlin/io/println|(R|/bar|)

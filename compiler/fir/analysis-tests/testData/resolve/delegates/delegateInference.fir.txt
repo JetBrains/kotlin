@@ -59,5 +59,19 @@ FILE: delegateInference.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lvar x: R|kotlin/Boolean|by R|/LocalFreezableVar.LocalFreezableVar|<R|kotlin/Boolean|>(Boolean(true))
+            local get(): R|kotlin/Boolean| {
+                ^ D|<local>/x|.R|SubstitutionOverride</LocalFreezableVar.getValue: R|kotlin/Boolean|>|(Null(null), ::R|<local>/x|)
+            }
+            local set(<set-?>: R|kotlin/Boolean|): R|kotlin/Unit| {
+                ^ D|<local>/x|.R|SubstitutionOverride</LocalFreezableVar.setValue: R|kotlin/Unit|>|(Null(null), ::R|<local>/x|, R|<local>/<set-?>|)
+            }
+
         lvar y: R|kotlin/String|by R|/LocalFreezableVar.LocalFreezableVar|<R|kotlin/String|>(String())
+            local get(): R|kotlin/String| {
+                ^ D|<local>/y|.R|SubstitutionOverride</LocalFreezableVar.getValue: R|kotlin/String|>|(Null(null), ::R|<local>/y|)
+            }
+            local set(<set-?>: R|kotlin/String|): R|kotlin/Unit| {
+                ^ D|<local>/y|.R|SubstitutionOverride</LocalFreezableVar.setValue: R|kotlin/Unit|>|(Null(null), ::R|<local>/y|, R|<local>/<set-?>|)
+            }
+
     }
