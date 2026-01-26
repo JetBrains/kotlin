@@ -17,12 +17,15 @@ import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.js.config.dce
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
+import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.config.*
 import java.net.URLEncoder
 
@@ -41,7 +44,7 @@ abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
     abstract fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): List<WasmIrModuleConfiguration>
 }
 
-class WholeWorldCompiler(configuration: CompilerConfiguration, override val irFactory: IrFactoryImplForWasmIC) : WasmCompilerBase(configuration) {
+abstract class WholeWorldCompilerBase(configuration: CompilerConfiguration, private val noCrossFileOptimisations: Boolean) : WasmCompilerBase(configuration) {
     override fun loadIr(modulesStructure: ModulesStructure): IrModuleInfo {
         return loadIr(
             modulesStructure = modulesStructure,
@@ -51,7 +54,7 @@ class WholeWorldCompiler(configuration: CompilerConfiguration, override val irFa
     }
 
     override fun lowerIr(irModuleInfo: IrModuleInfo, mainModule: MainModule, exportedDeclarations: Set<FqName>): LoweredIrWithExtraArtifacts {
-        configuration.wasmDisableCrossFileOptimisations = false
+        configuration.wasmDisableCrossFileOptimisations = noCrossFileOptimisations
         return compileToLoweredIr(
             irModuleInfo = irModuleInfo,
             mainModule = mainModule,
@@ -59,7 +62,9 @@ class WholeWorldCompiler(configuration: CompilerConfiguration, override val irFa
             exportedDeclarations = exportedDeclarations,
         )
     }
+}
 
+class WholeWorldCompiler(configuration: CompilerConfiguration, override val irFactory: IrFactoryImplForWasmIC) : WholeWorldCompilerBase(configuration, noCrossFileOptimisations = false) {
     override fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): List<WasmIrModuleConfiguration> {
         val dceDumpNameCache = DceDumpNameCache()
         if (configuration.dce) {
@@ -71,10 +76,34 @@ class WholeWorldCompiler(configuration: CompilerConfiguration, override val irFa
             configuration = configuration,
             idSignatureRetriever = irFactory,
             loweredIr = loweredIr,
-            allowIncompleteImplementations = configuration.dce
         )
 
         return listOf(configuration)
+    }
+}
+
+class WholeWorldMultiModuleCompiler(configuration: CompilerConfiguration, override val irFactory: IrFactoryImplForWasmIC) : WholeWorldCompilerBase(configuration, noCrossFileOptimisations = true) {
+    override fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): List<WasmIrModuleConfiguration> {
+        val allModules = loweredIr.loweredIr
+
+        val dceDumpNameCache = DceDumpNameCache()
+        if (configuration.dce) {
+            eliminateDeadDeclarations(loweredIr.loweredIr, loweredIr.backendContext, dceDumpNameCache)
+        }
+        dumpDeclarationIrSizesIfNeed(configuration.dceDumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
+
+        val lastModule = allModules.last()
+        return allModules.map { currentModule ->
+            compileSingleModuleToWasmIr(
+                configuration = configuration,
+                loweredIr = loweredIr,
+                signatureRetriever = irFactory,
+                stdlibIsMainModule = currentModule.kotlinLibrary?.isWasmStdlib == true,
+                outputFileNameBase = configuration.outputName?.takeIf { currentModule == lastModule },
+                mainModuleFragment = currentModule,
+                typeTracking = true,
+            )
+        }
     }
 }
 
@@ -102,7 +131,9 @@ class SingleModuleCompiler(configuration: CompilerConfiguration, override val ir
             loweredIr = loweredIr,
             signatureRetriever = irFactory,
             stdlibIsMainModule = isWasmStdlib,
+            outputFileNameBase = configuration.outputName,
             mainModuleFragment = loweredIr.backendContext.irModuleFragment,
+            typeTracking = false,
         )
         return listOf(configuration)
     }
@@ -112,7 +143,6 @@ private fun compileWholeProgramModeToWasmIr(
     configuration: CompilerConfiguration,
     idSignatureRetriever: IdSignatureRetriever,
     loweredIr: LoweredIrWithExtraArtifacts,
-    allowIncompleteImplementations: Boolean,
 ): WasmIrModuleConfiguration {
     val (allModules, backendContext, typeScriptFragment) = loweredIr
 
@@ -121,7 +151,7 @@ private fun compileWholeProgramModeToWasmIr(
         backendContext,
         wasmModuleMetadataCache,
         idSignatureRetriever,
-        allowIncompleteImplementations = allowIncompleteImplementations,
+        allowIncompleteImplementations = configuration.dce,
         skipCommentInstructions = !configuration.wasmGenerateWat,
         skipLocations = !configuration.wasmGenerateDwarf && !configuration.sourceMap,
     )
@@ -143,7 +173,9 @@ private fun compileSingleModuleToWasmIr(
     loweredIr: LoweredIrWithExtraArtifacts,
     signatureRetriever: IdSignatureRetriever,
     stdlibIsMainModule: Boolean,
+    outputFileNameBase: String? = null,
     mainModuleFragment: IrModuleFragment,
+    typeTracking: Boolean,
 ): WasmIrModuleConfiguration {
 
     val backendContext = loweredIr.backendContext
@@ -154,7 +186,7 @@ private fun compileSingleModuleToWasmIr(
         backendContext,
         wasmModuleMetadataCache,
         signatureRetriever,
-        allowIncompleteImplementations = false,
+        allowIncompleteImplementations = configuration.dce,
         skipCommentInstructions = !configuration.wasmGenerateWat,
         skipLocations = !configuration.wasmGenerateDwarf && !configuration.sourceMap,
     )
@@ -163,23 +195,29 @@ private fun compileSingleModuleToWasmIr(
     val dependencyImports = mutableSetOf<WasmModuleDependencyImport>()
 
     val referencedDeclarations = ModuleReferencedDeclarations()
+    val referencedTypes = typeTracking.ifTrue { ModuleReferencedTypes(signatureRetriever) }
+    fun referenceFunction(functionSymbol: IrFunctionSymbol) {
+        val signature = signatureRetriever.declarationSignature(functionSymbol.owner)!!
+        referencedDeclarations.referencedFunction.add(signature)
+        referencedTypes?.addFunctionTypeToReferenced(functionSymbol)
+    }
 
     val mainModuleFileFragment = codeGenerator.generateModuleAsSingleFileFragmentWithModuleExport(
         irModuleFragment = mainModuleFragment,
         referencedDeclarations = referencedDeclarations,
+        referencedTypes = referencedTypes,
     )
 
     // This signature needed to dynamically load module services
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     if (!stdlibIsMainModule) {
-        referencedDeclarations.referencedFunction.add(signatureRetriever.declarationSignature(backendContext.wasmSymbols.registerModuleDescriptor.owner)!!)
-        referencedDeclarations.referencedFunction.add(signatureRetriever.declarationSignature(backendContext.wasmSymbols.createString.owner)!!)
-        referencedDeclarations.referencedFunction.add(signatureRetriever.declarationSignature(backendContext.wasmSymbols.tryGetAssociatedObject.owner)!!)
+        referenceFunction(backendContext.wasmSymbols.registerModuleDescriptor)
+        referenceFunction(backendContext.wasmSymbols.createString)
+        referenceFunction(backendContext.wasmSymbols.tryGetAssociatedObject)
         backendContext.wasmSymbols.runRootSuites?.owner?.let { runRootSuites ->
-            referencedDeclarations.referencedFunction.add(signatureRetriever.declarationSignature(runRootSuites)!!)
+            referenceFunction(runRootSuites.symbol)
         }
         if (backendContext.isWasmJsTarget) {
-            referencedDeclarations.referencedFunction.add(signatureRetriever.declarationSignature(backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinStringAdapter.owner)!!)
+            referenceFunction(backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinStringAdapter)
         }
     }
 
@@ -189,7 +227,7 @@ private fun compileSingleModuleToWasmIr(
         val dependencyName = irFragment.name.asString()
 
         val (wasmFragment, isImported) =
-            codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(irFragment, dependencyName, referencedDeclarations)
+            codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(irFragment, dependencyName, referencedDeclarations, referencedTypes)
 
         if (isImported) {
             dependencyImports.add(
@@ -221,7 +259,7 @@ private fun compileSingleModuleToWasmIr(
         moduleName = moduleName,
         configuration = configuration,
         typeScriptFragment = loweredIr.typeScriptFragment,
-        baseFileName = mainModuleFragment.outputFileName,
+        baseFileName = outputFileNameBase ?: mainModuleFragment.outputFileName,
         multimoduleOptions = multimoduleOptions,
     )
 }

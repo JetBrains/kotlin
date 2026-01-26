@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.wasm.ir.WasmExport
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
 import org.jetbrains.kotlin.wasm.ir.WasmGlobal
 
-class WasmFileCodegenContextWithExport(
+open class WasmFileCodegenContextWithExport(
     wasmFileFragment: WasmCompiledFileFragment,
     idSignatureRetriever: IdSignatureRetriever,
     private val moduleReferencedDeclarations: ModuleReferencedDeclarations,

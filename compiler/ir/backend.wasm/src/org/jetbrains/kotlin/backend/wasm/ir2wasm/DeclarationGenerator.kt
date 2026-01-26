@@ -81,6 +81,8 @@ class DeclarationGenerator(
         if (declaration.isFakeOverride)
             return
 
+        if (!wasmFileCodegenContext.needToBeDefinedFunctionType(declaration.symbol)) return
+
         // Generate function type
         val watName = declaration.fqNameWhenAvailable.toString()
         val irParameters = declaration.getEffectiveValueParameters()
@@ -513,6 +515,8 @@ class DeclarationGenerator(
     override fun visitClass(declaration: IrClass) {
         if (declaration.isExternal) return
         val symbol = declaration.symbol
+
+        if (!wasmFileCodegenContext.needToBeDefinedGcType(symbol)) return
 
         // Handle arrays
         declaration.getWasmArrayAnnotation()?.let { wasmArrayAnnotation ->

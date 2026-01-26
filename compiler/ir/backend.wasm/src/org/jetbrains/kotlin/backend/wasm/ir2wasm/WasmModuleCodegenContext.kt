@@ -36,6 +36,9 @@ open class WasmFileCodegenContext(
     open fun handleRTTIWithImport(declaration: IrClassSymbol, superType: IrClassSymbol?): Boolean = false
     open fun handleGlobalField(declaration: IrFieldSymbol): Boolean = false
 
+    open fun needToBeDefinedGcType(declaration: IrClassSymbol): Boolean = true
+    open fun needToBeDefinedFunctionType(declaration: IrFunctionSymbol): Boolean = true
+
     protected fun IrSymbol.getReferenceKey(): IdSignature =
         idSignatureRetriever.declarationSignature(this.owner as IrDeclaration)!!
 
@@ -116,9 +119,6 @@ open class WasmFileCodegenContext(
     open fun referenceRttiGlobal(irClass: IrClassSymbol): RttiGlobalSymbol =
         RttiGlobalSymbol(irClass.getReferenceKey())
 
-    fun referenceGcType(irClass: IrClassSymbol): GcTypeSymbol =
-        GcTypeSymbol(irClass.getReferenceKey())
-
     fun referenceGlobalStringGlobal(value: String): LiteralGlobalSymbol {
         return LiteralGlobalSymbol(value).also {
             wasmFileFragment.globalLiterals.add(it)
@@ -131,19 +131,22 @@ open class WasmFileCodegenContext(
     fun referenceStringLiteralId(string: String): WasmSymbol<Int> =
         wasmFileFragment.stringLiteralId.getOrPut(string) { WasmSymbol() }
 
-    fun referenceHeapType(irClass: IrClassSymbol): GcHeapTypeSymbol =
+    open fun referenceGcType(irClass: IrClassSymbol): GcTypeSymbol =
+        GcTypeSymbol(irClass.getReferenceKey())
+
+    open fun referenceHeapType(irClass: IrClassSymbol): GcHeapTypeSymbol =
         GcHeapTypeSymbol(irClass.getReferenceKey())
 
-    fun referenceVTableGcType(irClass: IrClassSymbol): VTableTypeSymbol =
+    open fun referenceVTableGcType(irClass: IrClassSymbol): VTableTypeSymbol =
         VTableTypeSymbol(irClass.getReferenceKey())
 
-    fun referenceVTableHeapType(irClass: IrClassSymbol): VTableHeapTypeSymbol =
+    open fun referenceVTableHeapType(irClass: IrClassSymbol): VTableHeapTypeSymbol =
         VTableHeapTypeSymbol(irClass.getReferenceKey())
 
-    fun referenceFunctionType(irClass: IrFunctionSymbol): FunctionTypeSymbol =
+    open fun referenceFunctionType(irClass: IrFunctionSymbol): FunctionTypeSymbol =
         FunctionTypeSymbol(irClass.getReferenceKey())
 
-    fun referenceFunctionHeapType(irClass: IrFunctionSymbol): FunctionHeapTypeSymbol =
+    open fun referenceFunctionHeapType(irClass: IrFunctionSymbol): FunctionHeapTypeSymbol =
         FunctionHeapTypeSymbol(irClass.getReferenceKey())
 
     fun referenceTypeId(irClass: IrClassSymbol): Long =
