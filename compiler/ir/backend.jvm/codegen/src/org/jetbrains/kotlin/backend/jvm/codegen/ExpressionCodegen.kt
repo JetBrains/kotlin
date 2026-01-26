@@ -1551,7 +1551,12 @@ class ExpressionCodegen(
         }
 
         if (element.origin == JvmLoweredStatementOrigin.DEFAULT_STUB_CALL_TO_IMPLEMENTATION) {
-            return IrInlineDefaultCodegen
+            // IrInlineDefaultCodegen verbatim-copies impl bytecode assuming caller and callee
+            // parameters share JVM types. Value class default args can break this: the $default
+            // stub keeps boxed IC while impl is unboxed (KT-78051). Fall through to general inliner.
+            if (canVerbatimCopyDefaultStubBody(element)) {
+                return IrInlineDefaultCodegen
+            }
         }
 
         val callee = element.symbol.owner
@@ -1590,6 +1595,15 @@ class ExpressionCodegen(
             reifiedTypeInliner,
             markInlinedSuspensionPointAsUnitReturning
         )
+    }
+
+    private fun canVerbatimCopyDefaultStubBody(call: IrFunctionAccessExpression): Boolean {
+        val callee = call.symbol.owner
+        callee.parameters.forEachIndexed { index, calleeParam ->
+            val callerParam = irFunction.parameters.getOrNull(index) ?: return false
+            if (typeMapper.mapType(callerParam.type) != typeMapper.mapType(calleeParam.type)) return false
+        }
+        return true
     }
 
     private fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
