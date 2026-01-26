@@ -38,7 +38,7 @@ internal val AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilat
         val params = parameters
         val snapshotFiles = ClasspathSnapshotFiles(params.newClasspathSnapshotFiles, params.shrunkClasspathSnapshot.parentFile)
         return when {
-            !params.shrunkClasspathSnapshot.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
+            !snapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
                 snapshotFiles
             )
             options.forcedNonIncrementalMode -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(
@@ -71,7 +71,7 @@ internal val JvmSnapshotBasedIncrementalCompilationConfiguration.classpathChange
         val snapshotFiles =
             ClasspathSnapshotFiles(dependenciesSnapshotFiles.map { it.toFile() }, shrunkClasspathSnapshot.toFile().parentFile)
         return when {
-            !shrunkClasspathSnapshot.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
+            !snapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
                 snapshotFiles
             )
             options[FORCE_RECOMPILATION] -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(
