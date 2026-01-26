@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.load.java.structure.JavaType
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AbstractBuilder
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Singular
 import org.jetbrains.kotlin.lombok.k2.config.LombokService
@@ -526,10 +527,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             val typeParametersMapping = builderDeclaration.initializeTypeParametersMapping(builderSymbol)
             typeParametersMapping.mapTo(typeParameters) { it.value }
-            // Remap Java type parameters to the newly created type parameters to make the Java resolve work.
+            // Remap Java type parameters from the containing declaration to the newly created type parameters to make the Java resolve work.
+            // Don't care about outer type parameters because builder classes are always static (nested).
             javaTypeParameterStack = MutableJavaTypeParameterStack().apply {
-                for (javaTypeParam in containingClass.classJavaTypeParameterStack) {
-                    addParameter(javaTypeParam.key, typeParametersMapping[javaTypeParam.value]?.symbol ?: javaTypeParam.value)
+                for ((key, value) in typeParametersMapping) {
+                    addParameter(key, value.symbol)
                 }
             }
 
@@ -643,7 +645,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * @return a map used for remapping type parameters on a Java stack
      */
     @OptIn(SymbolInternals::class)
-    private fun FirDeclaration.initializeTypeParametersMapping(newContainingDeclarationSymbol: FirBasedSymbol<*>): Map<FirTypeParameterSymbol, FirTypeParameter> {
+    private fun FirDeclaration.initializeTypeParametersMapping(newContainingDeclarationSymbol: FirBasedSymbol<*>): Map<JavaTypeParameter, FirTypeParameter> {
         val typeParameters: List<FirTypeParameter> = when (this) {
             is FirJavaClass -> typeParameters.map { it.symbol.fir }
             is FirJavaMethod -> typeParameters
@@ -652,7 +654,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
         return buildMap {
             for (typeParameter in typeParameters) {
-                this[typeParameter.symbol] = buildTypeParameterCopy(typeParameter.symbol.fir) {
+                // Normally it's always `FirJavaTypeParameter` but check just in case to avoid potential exceptions.
+                if (typeParameter !is FirJavaTypeParameter) continue
+
+                this[typeParameter.javaTypeParameter] = buildTypeParameterCopy(typeParameter.symbol.fir) {
                     symbol = FirTypeParameterSymbol()
                     containingDeclarationSymbol = newContainingDeclarationSymbol
                 }
