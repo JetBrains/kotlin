@@ -20,7 +20,7 @@ fun test() {
     assertEquals(PrefixJava().<!UNRESOLVED_REFERENCE!>propA<!>, "A")
     //not generated because doesn't have prefix from config
     assertEquals(PrefixJava().<!UNRESOLVED_REFERENCE!>propC<!>, "C")
-    assertEquals(PrefixJava().propD, "D")
+    assertEquals(PrefixJava().<!FUNCTION_CALL_EXPECTED!>propD<!>, "D")
 }
 
 // FILE: lombok.config

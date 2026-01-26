@@ -83,30 +83,29 @@ abstract class ConeAnnotationAndConfigCompanion<T>(val annotationName: ClassId) 
 @OptIn(DirectDeclarationsAccess::class)
 object ConeLombokAnnotations {
     class Accessors(
-        val fluent: Boolean = false,
-        val chain: Boolean = false,
+        val fluent: Boolean? = null,
+        val chain: Boolean? = null,
+        val prefix: List<String>? = null,
         val noIsPrefix: Boolean = false,
-        val prefix: List<String> = emptyList()
     ) {
         companion object : ConeAnnotationAndConfigCompanion<Accessors>(LombokNames.ACCESSORS_ID) {
             override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): Accessors {
                 val fluent = annotation?.getBooleanArgument(FLUENT)
                     ?: config.getBoolean(FLUENT_CONFIG)
-                    ?: false
                 val chain = annotation?.getBooleanArgument(CHAIN)
                     ?: config.getBoolean(CHAIN_CONFIG)
-                    ?: fluent
-                val noIsPrefix = config.getBoolean(NO_IS_PREFIX_CONFIG) ?: false
                 val prefix = annotation?.getStringArrayArgument(PREFIX)
                     ?: config.getMultiString(PREFIX_CONFIG)
-                    ?: emptyList()
+                val noIsPrefix = config.getBoolean(NO_IS_PREFIX_CONFIG) ?: false
 
-                return Accessors(fluent, chain, noIsPrefix, prefix)
+                return Accessors(fluent, chain, prefix, noIsPrefix)
             }
         }
     }
 
-    class Getter(val visibility: AccessLevel = AccessLevel.PUBLIC) {
+    sealed class AbstractAccessor(val visibility: AccessLevel)
+
+    class Getter(visibility: AccessLevel = AccessLevel.PUBLIC) : AbstractAccessor(visibility) {
         companion object : ConeAnnotationCompanion<Getter>(LombokNames.GETTER_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): Getter = Getter(
                 visibility = annotation.getAccessLevel()
@@ -114,7 +113,7 @@ object ConeLombokAnnotations {
         }
     }
 
-    class Setter(val visibility: AccessLevel = AccessLevel.PUBLIC) {
+    class Setter(visibility: AccessLevel = AccessLevel.PUBLIC) : AbstractAccessor(visibility) {
         companion object : ConeAnnotationCompanion<Setter>(LombokNames.SETTER_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): Setter = Setter(
                 visibility = annotation.getAccessLevel()
