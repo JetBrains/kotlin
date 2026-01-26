@@ -58,10 +58,7 @@ abstract class AbstractLiveLiteralTransformTests(
                             pluginContext: IrPluginContext,
                         ) {
                             val keyVisitor = DurableKeyVisitor(builtKeys)
-                            val stabilityInferencer = StabilityInferencer(
-                                pluginContext.moduleDescriptor,
-                                emptySet()
-                            )
+                            val stabilityInferencer = StabilityInferencer(emptySet())
                             val featureFlags = FeatureFlags()
                             val transformer = object : LiveLiteralTransformer(
                                 liveLiteralsEnabled || liveLiteralsV2Enabled,
