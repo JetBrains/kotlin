@@ -140,6 +140,9 @@ class TestFixturesIT : KGPBaseTest() {
                 assertOutputContains("src/testFixtures OK!")
                 assertOutputContains("src/functionalTest OK!")
             }
+
+            // Workaround for Junit 'Failed to delete temp directory' on Windows OS
+            build("clean")
         }
     }
 
@@ -158,6 +161,9 @@ class TestFixturesIT : KGPBaseTest() {
                 assertOutputContains("src/testFixtures OK!")
                 assertOutputContains("src/functionalTest OK!")
             }
+
+            // Workaround for Junit 'Failed to delete temp directory' on Windows OS
+            build("clean")
         }
     }
 
