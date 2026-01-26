@@ -59,7 +59,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
 
         // Check if we should use the new phased CLI for klib compilation
-        if (arguments.useNativePhasedCli && arguments.produce == "library") {
+        if (arguments.produce == "library") {
             return doExecutePhased(arguments, configuration)
         }
 
