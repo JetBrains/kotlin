@@ -1,5 +1,4 @@
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-83330
 // JDK_KIND: FULL_JDK_17
 // WITH_STDLIB
@@ -27,6 +26,6 @@ public class TestJavaUsage {
 fun box(): String {
     TestJavaUsage.test()
     TestJava.builder().jobs(mutableListOf("A", "B")).build()
-    TestJava.builder().<!UNRESOLVED_REFERENCE!>job<!>("A").build()
+    TestJava.builder().job("A").build()
     return "OK"
 }

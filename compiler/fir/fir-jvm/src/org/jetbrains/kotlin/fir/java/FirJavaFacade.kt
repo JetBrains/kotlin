@@ -482,6 +482,7 @@ private fun createDeclarationsForJavaRecord(
                     returnTypeRef = component.type.toFirJavaTypeRef(session, source)
                     name = component.name
                     isVararg = component.isVararg
+                    annotationList = FirLazyJavaAnnotationList(component, moduleData)
                 }
             }
         }.apply {
