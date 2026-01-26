@@ -19,6 +19,7 @@ object TestCompilePaths {
     const val KOTLIN_JS_REDUCED_STDLIB_PATH: String = "kotlin.js.reduced.stdlib.path"
     const val KOTLIN_JS_KOTLIN_TEST_KLIB_PATH: String = "kotlin.js.kotlin.test.klib.path"
     const val KOTLIN_SCRIPTING_PLUGIN_CLASSPATH = "kotlin.scriptingPlugin.classpath"
+    const val KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH = "kotlin.script.test.script.definition.classpath"
     const val KOTLIN_DIST_PATH = "kotlin.dist.path"
     const val KOTLIN_MOCKJDK_RUNTIME_PATH = "kotlin.mockJDK.runtime.path"
     const val KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH = "kotlin.mockJDKModified.runtime.path"

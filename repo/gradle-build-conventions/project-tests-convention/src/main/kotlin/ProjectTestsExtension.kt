@@ -61,6 +61,9 @@ abstract class ProjectTestsExtension(val project: Project) {
     val scriptingPluginForTests: Configuration = project.configurations.create("scriptingPluginForTests") {
         isTransitive = false
     }
+    var testScriptDefinitionForTests: Configuration = project.configurations.create("testScriptDefinitionForTests") {
+        isTransitive = false
+    }
     val stdlibWebRuntimeForTests: Configuration = project.configurations.create("stdlibWebRuntimeForTests") {
         isTransitive = false
     }
@@ -165,6 +168,10 @@ abstract class ProjectTestsExtension(val project: Project) {
         KOTLIN_SCRIPTING_COMMON_JAR
         KOTLIN_SCRIPTING_JVM_JAR
         */
+    }
+
+    fun withTestScriptDefinition() {
+        add(testScriptDefinitionForTests) { project(":plugins:scripting:test-script-definition", "testFixturesApiElements") }
     }
 
     fun withDist() {

@@ -95,6 +95,25 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static List<File> testScriptDefinitionClasspathForTests() {
+        String classpathString = getProperty(KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH, null);
+        if (classpathString == null) {
+            return Collections.emptyList();
+        }
+
+        List<File> list = new ArrayList<>();
+        for (String classpathEntryString : classpathString.split(File.pathSeparator)) {
+            File file = new File(classpathEntryString);
+            if (!file.exists()) {
+                throw new IllegalStateException("The file required for custom test script definition not found: " + classpathEntryString);
+            }
+            list.add(file);
+        }
+
+        return list;
+    }
+
+    @NotNull
     public static File runtimeSourcesJarForTests() {
         return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-sources.jar"));
     }
