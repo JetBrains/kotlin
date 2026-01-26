@@ -271,10 +271,7 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
                 when {
                     typeArgument.isStarProjection() -> appendSignature(MangleConstant.STAR_MARK)
                     else -> {
-                        // FIXME: Use effective variance here according to the klib spec: `org.jetbrains.kotlin.types.AbstractTypeChecker.effectiveVariance(typeParameter.getVariance(), typeArgument.getVariance())`
-                        // NOTE: If we start using effective variance instead of declared variance, we must take into account
-                        // binary compatibility implications.
-                        val variance = typeArgument.getVariance()
+                        val variance = getVariance(typeArgument, typeParameter, this@with)
                         if (variance != TypeVariance.INV) {
                             appendSignature(variance.presentation)
                             appendSignature(MangleConstant.VARIANCE_SEPARATOR)
@@ -286,4 +283,17 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
                 }
             }
         }
+
+    protected open fun getVariance(
+        typeArgument: TypeArgumentMarker,
+        typeParameter: TypeParameterMarker,
+        c: TypeSystemContext,
+    ): TypeVariance {
+        // FIXME: Use effective variance here according to the klib spec: `org.jetbrains.kotlin.types.AbstractTypeChecker.effectiveVariance(typeParameter.getVariance(), typeArgument.getVariance())`
+        // NOTE: If we start using effective variance instead of declared variance, we must take into account
+        // binary compatibility implications.
+        with(c) {
+            return typeArgument.getVariance()
+        }
+    }
 }

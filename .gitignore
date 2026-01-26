@@ -65,3 +65,7 @@ kotlin-ide/
 **/.junie/memory/
 .claude/local.md
 .claude/CLAUDE.md
+libraries/stdlib/jvm-ir-for-test/
+libraries/stdlib/jvm-ir-for-test/*
+!libraries/stdlib/jvm-ir-for-test/build.gradle.kts
+!libraries/stdlib/jvm-ir-for-test/src/

@@ -1282,11 +1282,14 @@ open class IrFileSerializer(
                     (field.initializer?.expression !is IrConst))
         ) {
             val initializer = field.initializer?.expression
-            if (field.correspondingPropertySymbol?.owner?.isConst == true)
+            if (field.correspondingPropertySymbol?.owner?.isConst == true) {
+                if (initializer !is IrConst) {
+                    println("l")
+                }
                 require(initializer is IrConst) {
                     "This is a compiler bug, please report it to https://kotl.in/issue : const val property must have a const initializer:\n${field.render()}"
                 }
-
+            }
             if (initializer != null) {
                 proto.initializer = serializeIrExpressionBody(initializer)
             }
