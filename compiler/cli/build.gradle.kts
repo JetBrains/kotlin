@@ -12,7 +12,6 @@ dependencies {
     api(project(":compiler:backend"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
     api(project(":compiler:serialization"))
-    api(project(":compiler:plugin-api"))
     api(commonDependency("org.fusesource.jansi", "jansi"))
     api(project(":compiler:fir:raw-fir:psi2fir"))
     api(project(":compiler:fir:resolve"))
