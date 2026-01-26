@@ -112,7 +112,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Test kotlin native prebuilt should not override `kotlin.native.version property`")
+    @DisplayName("Test kotlin native prebuilt should not override `kotlin.native.version` property")
     @GradleTest
     fun kotlinNativePrebuiltShouldNotOverrideNativeVersion(gradleVersion: GradleVersion) {
         nativeProject("native-simple-project", gradleVersion) {

@@ -5403,14 +5403,6 @@ public final class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/Kot
 	public fun registerAssembleTask (Lorg/gradle/api/Project;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/native/toolchain/UnzipTransformationAction : org/gradle/api/artifacts/transform/TransformAction {
-	public fun <init> ()V
-	public abstract fun getArchiveOperations ()Lorg/gradle/api/file/ArchiveOperations;
-	public abstract fun getFileSystemOperations ()Lorg/gradle/api/file/FileSystemOperations;
-	public abstract fun getInputArtifact ()Lorg/gradle/api/provider/Provider;
-	public fun transform (Lorg/gradle/api/artifacts/transform/TransformOutputs;)V
-}
-
 public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
 	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)V
 	public final fun component1 ()Z

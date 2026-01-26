@@ -34,7 +34,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
     private val nativeHostTargetName = HostManager.host.presetName
 
     private val UNPUCK_KONAN_FINISHED_LOG =
-        "Moving Kotlin/Native bundle from tmp directory"
+        "Moving Kotlin/Native bundle from"
 
     private val STABLE_VERSION_DIR_NAME = "kotlin-native-prebuilt-$currentPlatform-$STABLE_RELEASE"
 

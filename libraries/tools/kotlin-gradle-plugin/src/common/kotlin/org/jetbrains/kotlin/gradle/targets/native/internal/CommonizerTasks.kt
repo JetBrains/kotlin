@@ -189,7 +189,6 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
             if (projectIsolationEnabled) this else rootProject
         if (projectForAddingKotlinNativeBundleResolvableConfiguration.nativeProperties.isToolchainEnabled.get()) {
             KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(projectForAddingKotlinNativeBundleResolvableConfiguration.dependencies.attributesSchema)
-            KotlinNativeBundleArtifactFormat.setupTransform(projectForAddingKotlinNativeBundleResolvableConfiguration)
             addKotlinNativeBundleConfiguration(projectForAddingKotlinNativeBundleResolvableConfiguration)
             KotlinNativeBundleBuildService.registerIfAbsent(projectForAddingKotlinNativeBundleResolvableConfiguration)
         }
