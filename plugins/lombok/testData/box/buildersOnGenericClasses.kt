@@ -1,12 +1,15 @@
 // IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-83334
+// WITH_STDLIB
 
 // FILE: GenericBuilder.java
 import lombok.Builder;
+import java.util.List;
 
 @Builder
 public class GenericBuilder<T> {
     private final T value;
+    private final List<T> list;
 }
 
 // FILE: GenericSuperBuilder.java
@@ -21,12 +24,13 @@ class GenericSuperBuilder2 extends GenericSuperBuilder<Integer> {
     private final String value2;
 }
 
-// FILE: TestBuidlers.java
-public class TestBuidlers {
-    public static void main(String[] args) {
-        GenericBuilder.<String>builder().value("x").build(); //OK
-        GenericSuperBuilder.<String>builder().value("str").build();  //OK
-        GenericSuperBuilder2.builder().value(10).value2("str").build();  //OK
+// FILE: Outer.java
+import lombok.Builder;
+
+public class Outer<K> {
+    @Builder
+    public static class Nested<T> {
+        private final T value;
     }
 }
 
@@ -42,12 +46,28 @@ public class Ctor<T> {
     }
 }
 
+// FILE: TestBuilders.java
+import java.util.Arrays;
+
+public class TestBuilders {
+    public static void main(String[] args) {
+        GenericBuilder.<String>builder().value("x").list(Arrays.asList("s1", "s2", "s3")).build(); //OK
+        GenericSuperBuilder.<String>builder().value("str").build();  //OK
+        GenericSuperBuilder2.builder().value(10).value2("str").build();  //OK
+        Outer.Nested.<String>builder().value("x").build(); // OK
+        Ctor.<String>builder().value("x").build(); // OK
+    }
+}
+
 // FILE: test.kt
 fun testBuilder() {
-    val builderObj1 = GenericBuilder.builder<String>().value("x").build()
+    val builderObj1 = GenericBuilder.builder<String>()
+        .value("x")
+        .list(listOf("s1", "s2", "s3"))
+        .build()
 
     val builder: GenericBuilder.GenericBuilderBuilder<String> = GenericBuilder.builder<String>()
-    val builder2: GenericBuilder.GenericBuilderBuilder<String> = builder.value("x")
+    val builder2: GenericBuilder.GenericBuilderBuilder<String> = builder.value("y").list(listOf("s11", "s22", "s33"))
     val builderObj2: GenericBuilder<String> = builder2.build();
 }
 
@@ -79,10 +99,17 @@ fun testCtor() {
     Ctor.builder<String>().value("x").build()
 }
 
+fun testNested() {
+    val builder: Outer.Nested.NestedBuilder<String> = Outer.Nested.builder<String>()
+    val builder2: Outer.Nested.NestedBuilder<String> = builder.value("x")
+    val obj: Outer.Nested<String> = builder2.build()
+}
+
 fun box(): String {
     testBuilder()
     testSuperBuilder()
     testSuperBuilder2()
     testCtor()
+    testNested()
     return "OK"
 }
