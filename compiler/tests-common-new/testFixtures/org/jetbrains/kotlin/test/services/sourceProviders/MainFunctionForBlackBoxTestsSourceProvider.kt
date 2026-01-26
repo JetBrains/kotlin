@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 
 open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
-        private val PACKAGE_REGEX = """(^|\n)package ([\w.]+)""".toRegex()
-        private val BOX_METHOD_REGEX = """(^|\n)fun box\(\)""".toRegex()
-        private val SUSPEND_BOX_METHOD_REGEX = """(^|\n)suspend fun box\(\)""".toRegex()
+        private val PACKAGE_REGEX = """(^|\n)package\s+([\w.]+)""".toRegex()
+        private val BOX_METHOD_REGEX = """(^|\n)fun\s+box\(\)""".toRegex()
+        private val SUSPEND_BOX_METHOD_REGEX = """(^|\n)suspend\s+fun\s+box\(\)""".toRegex()
 
         const val BOX_MAIN_FILE_NAME = "Generated_Box_Main.kt"
 
