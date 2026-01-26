@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests
 
-import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.OperationCancelledException
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.MODULE_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_REFLECT
@@ -35,13 +31,7 @@ import java.nio.file.Path
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.thread
-import kotlin.io.path.createFile
-import kotlin.io.path.createTempDirectory
-import kotlin.io.path.deleteExisting
-import kotlin.io.path.deleteIfExists
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.pathString
-import kotlin.io.path.walk
+import kotlin.io.path.*
 
 class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
 
@@ -193,7 +183,6 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
                     icCachesDir,
                     SourcesChanges.Unknown,
                     emptyList(),
-                    icWorkingDir.resolve("shrunk-classpath-snapshot.bin"),
                 )
                 compilationOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = snapshotIcConfig.build()
 

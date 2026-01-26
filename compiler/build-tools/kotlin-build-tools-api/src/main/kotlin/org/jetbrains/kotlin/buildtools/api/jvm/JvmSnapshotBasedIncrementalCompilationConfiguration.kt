@@ -43,10 +43,26 @@ public open class JvmSnapshotBasedIncrementalCompilationConfiguration
     public val workingDirectory: Path,
     public val sourcesChanges: SourcesChanges,
     public val dependenciesSnapshotFiles: List<Path>,
+    @Deprecated("This property is no longer required and will be removed in a future release.")
     public val shrunkClasspathSnapshot: Path,
     @Deprecated("Use `get` directly instead or a `Builder` instance to set options. This property will be removed in a future release.") // Hide in 2.4, remove in 2.7
     public open val options: JvmSnapshotBasedIncrementalCompilationOptions,
 ) : JvmIncrementalCompilationConfiguration {
+
+    @Deprecated("Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
+    public constructor(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        options: JvmSnapshotBasedIncrementalCompilationOptions,
+    ) : this(
+        workingDirectory,
+        sourcesChanges,
+        dependenciesSnapshotFiles,
+        workingDirectory.resolve("classpath-snapshot"),
+        options,
+    )
+
     /**
      * A builder for [JvmIncrementalCompilationConfiguration].
      *
@@ -76,9 +92,11 @@ public open class JvmSnapshotBasedIncrementalCompilationConfiguration
 
         /**
          * The path to the shrunk classpath snapshot file from a previous compilation.
+         * @deprecated The property is no longer required. Will be promoted to an error in KT-83937.
          *
          * @since 2.3.20
          */
+        @Deprecated("This property is no longer required and will be removed in a future release.")
         public val shrunkClasspathSnapshot: Path
 
         /**

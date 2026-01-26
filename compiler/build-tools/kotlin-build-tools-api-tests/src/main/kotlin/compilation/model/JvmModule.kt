@@ -126,8 +126,7 @@ class JvmModule(
             val snapshotIcConfig = compilationOperation.snapshotBasedIcConfiguration(
                 icCachesDir,
                 sourcesChanges,
-                snapshots.map { it.toPath() },
-                icWorkingDir.resolve("shrunk-classpath-snapshot.bin"),
+                snapshots.map { it.toPath() }
             ) {
                 this[MODULE_BUILD_DIR] = buildDirectory
                 this[ROOT_PROJECT_DIR] = project.projectDirectory

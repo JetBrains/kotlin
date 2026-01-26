@@ -174,7 +174,26 @@ internal class Kotlin230AndBelowWrapper(
                 workingDirectory: Path,
                 sourcesChanges: SourcesChanges,
                 dependenciesSnapshotFiles: List<Path>,
-                shrunkClasspathSnapshot: Path
+            ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
+                val options = createSnapshotBasedIcOptions()
+                return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
+                    workingDirectory,
+                    sourcesChanges,
+                    dependenciesSnapshotFiles,
+                    options
+                )
+            }
+
+            @Deprecated(
+                "The shrunkClasspathSnapshot parameter is no longer required",
+                replaceWith = ReplaceWith("snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles)"),
+                level = DeprecationLevel.WARNING
+            )
+            override fun snapshotBasedIcConfigurationBuilder(
+                workingDirectory: Path,
+                sourcesChanges: SourcesChanges,
+                dependenciesSnapshotFiles: List<Path>,
+                shrunkClasspathSnapshot: Path,
             ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
                 val options = createSnapshotBasedIcOptions()
                 return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
@@ -199,6 +218,20 @@ internal class Kotlin230AndBelowWrapper(
                 shrunkClasspathSnapshot,
                 options
             ), JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
+
+                constructor(
+                    workingDirectory: Path,
+                    sourcesChanges: SourcesChanges,
+                    dependenciesSnapshotFiles: List<Path>,
+                    options: JvmSnapshotBasedIncrementalCompilationOptions,
+                ) : this(
+                    workingDirectory,
+                    sourcesChanges,
+                    dependenciesSnapshotFiles,
+                    workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
+                    options
+                )
+
                 override fun toBuilder(): Builder = deepCopy()
 
                 override fun <V> get(key: Option<V>): V {
