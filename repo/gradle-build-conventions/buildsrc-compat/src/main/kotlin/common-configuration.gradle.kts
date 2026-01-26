@@ -296,7 +296,6 @@ fun Project.configureTests() {
     tasks.withType<Test>().configureEach {
         val notCacheableTestProjects: List<String> = listOf(
             ":analysis:analysis-api",
-            ":analysis:analysis-api-fe10",
             ":analysis:analysis-api-fir",
             ":analysis:analysis-api-standalone:analysis-api-standalone-native",
             ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
