@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.nativeDistribution.nativeBootstrapDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import org.jetbrains.kotlin.testing.native.GitDownloadTask
 import java.net.URI
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
 val kotlinVersion: String by rootProject.extra
@@ -22,6 +23,11 @@ plugins {
     id("compile-to-bitcode")
     id("runtime-testing")
 }
+
+// LLVM path for hot reload JIT support (must be after plugins are applied)
+val nativeDeps = extensions.getByType<NativeDependenciesExtension>()
+// Use Homebrew LLVM for JIT headers (K/N bundled LLVM may not include JIT components)
+val llvmIncludePath = "/opt/homebrew/opt/llvm/include"
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
     project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
@@ -280,6 +286,8 @@ bitcode {
         module("hot_reload_launcher") {
             srcRoot.set(layout.projectDirectory.dir("src/hot_reload_launcher"))
             headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/hot_reload/cpp"))
+            // Add LLVM headers for JITLink/ORC support
+            headersDirs.from(llvmIncludePath)
             sourceSets {
                 main {}
             }
@@ -295,6 +303,8 @@ bitcode {
         module("hot_reload") {
             srcRoot.set(layout.projectDirectory.dir("src/hot_reload"))
             headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp")
+            // Add LLVM headers for JITLink/ORC support
+            headersDirs.from(llvmIncludePath)
             sourceSets {
                 main {}
             }
