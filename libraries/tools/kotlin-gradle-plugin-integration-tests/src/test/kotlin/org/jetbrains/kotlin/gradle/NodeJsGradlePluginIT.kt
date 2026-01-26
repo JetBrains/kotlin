@@ -106,7 +106,7 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
             "subprojects-nodejs-setup",
             gradleVersion
         ) {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION", "UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS")
             buildScriptInjection {
                 project.rootProject.plugins.withType(NodeJsPlugin::class.java, Action {
                     project.rootProject.extensions.getByType(NodeJsEnvSpec::class.java).version.set("22.3.0")

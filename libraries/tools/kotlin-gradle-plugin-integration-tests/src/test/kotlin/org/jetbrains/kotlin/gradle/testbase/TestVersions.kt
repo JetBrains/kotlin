@@ -108,7 +108,7 @@ interface TestVersions {
     }
 
     object ThirdPartyDependencies {
-        const val SHADOW_PLUGIN_VERSION = "8.3.0"
+        const val SHADOW_PLUGIN_VERSION = "8.3.9"
         const val GOOGLE_DAGGER = "2.24"
         const val GRADLE_ENTERPRISE_PLUGIN_VERSION = "3.13.4"
         const val GRADLE_DEVELOCITY_PLUGIN_VERSION = "3.18"
