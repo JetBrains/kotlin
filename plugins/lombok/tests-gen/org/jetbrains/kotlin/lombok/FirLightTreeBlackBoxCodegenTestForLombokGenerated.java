@@ -234,6 +234,12 @@ public class FirLightTreeBlackBoxCodegenTestForLombokGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("overriddenAccessors.kt")
+  public void testOverriddenAccessors() {
+    runTest("plugins/lombok/testData/box/overriddenAccessors.kt");
+  }
+
+  @Test
   @TestMetadata("propertyFromSuper.kt")
   public void testPropertyFromSuper() {
     runTest("plugins/lombok/testData/box/propertyFromSuper.kt");

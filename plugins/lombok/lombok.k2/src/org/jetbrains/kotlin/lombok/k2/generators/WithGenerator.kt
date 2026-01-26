@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.With
 import org.jetbrains.kotlin.lombok.k2.config.LombokService
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.utils.collectWithNotNull
-import org.jetbrains.kotlin.lombok.utils.toPropertyNameCapitalized
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
@@ -83,13 +82,7 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
 
     private fun computeWithName(field: FirJavaField, withInfo: With): Name? {
         if (withInfo.visibility == AccessLevel.NONE) return null
-        val rawPropertyName = field.name.identifier
-        val propertyName = if (field.returnTypeRef.isPrimitiveBoolean() && rawPropertyName.startsWith("is")) {
-            rawPropertyName.removePrefix("is")
-        } else {
-            rawPropertyName
-        }
-        val functionName = "with" + toPropertyNameCapitalized(propertyName)
+        val functionName = "with" + field.name.identifier.normalizeAndCapitalize(field.returnTypeRef.isPrimitiveBoolean())
         return Name.identifier(functionName)
     }
 }

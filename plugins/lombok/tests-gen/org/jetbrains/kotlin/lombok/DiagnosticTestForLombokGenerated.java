@@ -78,6 +78,12 @@ public class DiagnosticTestForLombokGenerated extends AbstractDiagnosticTestForL
   }
 
   @Test
+  @TestMetadata("prefixes.kt")
+  public void testPrefixes() {
+    runTest("plugins/lombok/testData/diagnostics/k1+k2/prefixes.kt");
+  }
+
+  @Test
   @TestMetadata("setters.kt")
   public void testSetters() {
     runTest("plugins/lombok/testData/diagnostics/k1+k2/setters.kt");
