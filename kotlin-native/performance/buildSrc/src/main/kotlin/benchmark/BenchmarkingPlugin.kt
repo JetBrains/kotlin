@@ -6,8 +6,8 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import java.util.Properties
 import javax.inject.Inject
 
 internal val Project.nativeWarmup: Int
@@ -16,20 +16,21 @@ internal val Project.nativeWarmup: Int
 internal val Project.attempts: Int
     get() = (property("attempts") as String).toInt()
 
-internal val Project.nativeBenchResults: String
-    get() = property("nativeBenchResults") as String
-
 // Gradle property to add flags to benchmarks run from command line.
 internal val Project.compilerArgs: List<String>
     get() = (findProperty("compilerArgs") as String?)?.split("\\s".toRegex()).orEmpty()
 
 internal val Project.kotlinVersion: String
-    get() = property("kotlinVersion") as String
+    get() = (findProperty("build.number") as String?) ?: kotlinNativeDist.resolve("konan/konan.properties").let {
+        Properties().apply {
+            load(it.reader())
+        }["compilerVersion"] as String
+    }
 
 internal val Project.konanVersion: String?
     get() = findProperty("konanVersion") as String?
 
-internal val Project.nativeJson: String
+val Project.nativeJson: String
     get() = project.property("nativeJson") as String
 
 val Project.buildType: NativeBuildType
@@ -80,7 +81,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             group = BENCHMARKING_GROUP
             description = "Runs the benchmark for Kotlin/Native."
 
-            reportFile.set(layout.buildDirectory.file(nativeBenchResults))
+            reportFile.set(layout.buildDirectory.file("nativeBenchResults.json"))
             verbose.convention(logger.isInfoEnabled)
             baseOnly.convention(false)
             warmupCount.convention(nativeWarmup)

@@ -443,7 +443,6 @@
 /kotlin-native/backend.native/tests/**.gradle @JetBrains/kotlin-native
 /kotlin-native/backend.native/tests/**/*.gradle.kts @JetBrains/kotlin-native
 /kotlin-native/tools/**/*.gradle.kts @JetBrains/kotlin-native
-/kotlin-native/performance/**/*.gradle @JetBrains/kotlin-native
 /kotlin-native/performance/**/*.gradle.kts @JetBrains/kotlin-native
 /native/native.tests/*.gradle.kts @JetBrains/kotlin-native
 /native/swift/**/*.gradle.kts @JetBrains/kotlin-native

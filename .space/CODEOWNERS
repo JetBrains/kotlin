@@ -487,7 +487,6 @@
 /kotlin-native/backend.native/tests/**.gradle "Kotlin Native"
 /kotlin-native/backend.native/tests/**/*.gradle.kts "Kotlin Native"
 /kotlin-native/tools/**/*.gradle.kts "Kotlin Native"
-/kotlin-native/performance/**/*.gradle "Kotlin Native"
 /kotlin-native/performance/**/*.gradle.kts "Kotlin Native"
 /native/native.tests/*.gradle.kts "Kotlin Native"
 /native/swift/**/*.gradle.kts "Kotlin Native"
