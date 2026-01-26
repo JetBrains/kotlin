@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 class DeclarationIrBuilder(
     generatorContext: IrGeneratorContext,
@@ -46,7 +45,7 @@ abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
         } ?: expression
 
     override fun visitSetValue(expression: IrSetValue): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         return remapVariable(expression.symbol.owner)?.let {
             IrSetValueImpl(expression.startOffset, expression.endOffset, expression.type, it.symbol, expression.value, expression.origin)
         } ?: expression

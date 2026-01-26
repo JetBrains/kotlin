@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal class AnnotationGenerator(context: GeneratorContext) : IrVisitorVoid() {
     private val typeTranslator = context.typeTranslator

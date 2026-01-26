@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.script]
@@ -65,6 +67,9 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitScript(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitScript(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
         thisReceiver?.accept(visitor, data)
@@ -74,6 +79,15 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
         earlierScriptsParameter?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        statements.forEach { it.acceptVoid(visitor) }
+        thisReceiver?.acceptVoid(visitor)
+        explicitCallParameters.forEach { it.acceptVoid(visitor) }
+        implicitReceiversParameters.forEach { it.acceptVoid(visitor) }
+        providedPropertiesParameters.forEach { it.acceptVoid(visitor) }
+        earlierScriptsParameter?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         statements.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)
@@ -81,5 +95,14 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
         implicitReceiversParameters = implicitReceiversParameters.transformIfNeeded(transformer, data)
         providedPropertiesParameters = providedPropertiesParameters.transformIfNeeded(transformer, data)
         earlierScriptsParameter = earlierScriptsParameter?.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        statements.transformInPlace(transformer, null)
+        thisReceiver = thisReceiver?.transformVoid(transformer)
+        explicitCallParameters = explicitCallParameters.transformIfNeeded(transformer, null)
+        implicitReceiversParameters = implicitReceiversParameters.transformIfNeeded(transformer, null)
+        providedPropertiesParameters = providedPropertiesParameters.transformIfNeeded(transformer, null)
+        earlierScriptsParameter = earlierScriptsParameter?.transformVoid(transformer)
     }
 }

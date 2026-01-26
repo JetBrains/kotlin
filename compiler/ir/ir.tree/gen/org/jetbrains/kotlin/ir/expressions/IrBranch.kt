@@ -10,8 +10,10 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.branch]
@@ -24,16 +26,32 @@ abstract class IrBranch : IrElementBase(), IrElement {
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitBranch(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitBranch(this)
+
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrBranch =
         accept(transformer, data) as IrBranch
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrBranch =
+        accept(transformer, null) as IrBranch
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         condition.accept(visitor, data)
         result.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        condition.acceptVoid(visitor)
+        result.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         condition = condition.transform(transformer, data)
         result = result.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        condition = condition.transformVoid(transformer)
+        result = result.transformVoid(transformer)
     }
 }

@@ -176,7 +176,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     // unboxed arguments. We remove the original constructor.
     // Primary constructors' case is handled at the start of transformFunctionFlat
     override fun transformSecondaryConstructorFlat(constructor: IrConstructor, replacement: IrSimpleFunction): List<IrDeclaration> {
-        replacement.parameters.forEach { it.transformChildrenVoid() }
+        replacement.parameters.forEach { it.transformChildrenVoid(this) }
         replacement.body = context.createIrBuilder(replacement.symbol, replacement.startOffset, replacement.endOffset).irBlockBody(
             replacement
         ) {
@@ -196,7 +196,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
                         // Within the constructor we replace references to "this" with references to "thisVar".
                         // This is safe, since the delegating constructor call precedes all references to "this".
                         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                            expression.transformChildrenVoid()
+                            expression.transformChildrenVoid(this)
                             return irSet(thisVar.symbol, expression)
                         }
 
@@ -213,7 +213,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
                         //       }
                         //     }
                         override fun visitReturn(expression: IrReturn): IrExpression {
-                            expression.transformChildrenVoid()
+                            expression.transformChildrenVoid(this)
                             if (expression.returnTargetSymbol != constructor.symbol)
                                 return expression
 
@@ -403,7 +403,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             }
             // Specialize calls to equals when the left argument is a value of inline class type.
             expression.isEqEqCallOnInlineClass || expression.isEqualsMethodCallOnInlineClass -> {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
                 context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
                     .specializeEqualsCall(left = expression.arguments[0]!!, right = expression.arguments[1]!!)
                     ?: expression
@@ -510,7 +510,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         val initBlocks = valueClass.declarations.filterIsInstance<IrAnonymousInitializer>()
             .filterNot { it.isStatic }
 
-        function.parameters.forEach { it.transformChildrenVoid() }
+        function.parameters.forEach { it.transformChildrenVoid(this) }
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             val argument = function.parameters[0]
             val thisValue = irTemporary(coerceInlineClasses(irGet(argument), argument.type, function.returnType, skipCast = true))

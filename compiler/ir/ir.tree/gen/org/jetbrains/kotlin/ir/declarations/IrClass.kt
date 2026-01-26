@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.class]
@@ -71,15 +73,30 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitClass(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
         thisReceiver?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        typeParameters.forEach { it.acceptVoid(visitor) }
+        declarations.forEach { it.acceptVoid(visitor) }
+        thisReceiver?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         declarations.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        typeParameters = typeParameters.transformIfNeeded(transformer, null)
+        declarations.transformInPlace(transformer, null)
+        thisReceiver = thisReceiver?.transformVoid(transformer)
     }
 }

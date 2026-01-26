@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
@@ -157,7 +156,7 @@ private fun JsCommonBackendContext.fixReferencesToConstructorParameters(irClass:
         }
 
         override fun visitSetValue(expression: IrSetValue): IrExpression {
-            expression.transformChildrenVoid()
+            expression.transformChildrenVoid(this)
             return expression.symbol.owner.valueParameterForOldEnumConstructor?.let {
                 builder.irSet(it.symbol, expression.value)
             } ?: expression

@@ -19,13 +19,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 abstract class IrElementTransformerVoid : IrTransformer<Nothing?>() {
 
     protected inline fun <T : IrElement> T.transformPostfix(body: T.() -> Unit): T {
-        transformChildrenVoid()
+        transformChildrenVoid(this@IrElementTransformerVoid)
         this.body()
         return this
-    }
-
-    protected fun IrElement.transformChildrenVoid() {
-        transformChildrenVoid(this@IrElementTransformerVoid)
     }
 
     open fun visitElement(element: IrElement): IrElement {
@@ -583,8 +579,4 @@ abstract class IrElementTransformerVoid : IrTransformer<Nothing?>() {
 
     final override fun visitElseBranch(branch: IrElseBranch, data: Nothing?): IrElseBranch =
         visitElseBranch(branch)
-}
-
-fun IrElement.transformChildrenVoid(transformer: IrElementTransformerVoid) {
-    transformChildren(transformer, null)
 }

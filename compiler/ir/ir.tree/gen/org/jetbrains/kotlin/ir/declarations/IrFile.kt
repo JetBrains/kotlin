@@ -10,8 +10,10 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.file]
@@ -26,6 +28,12 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitFile(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitFile(this)
+
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrFile =
         accept(transformer, data) as IrFile
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrFile =
+        accept(transformer, null) as IrFile
 }

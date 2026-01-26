@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 @PhasePrerequisites(
     // JvmReturnableBlockLowering may produce references to the `Unit` object.

@@ -8,8 +8,10 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * The root interface of the IR tree. Each IR node implements this interface.
@@ -53,6 +55,13 @@ interface IrElement {
     fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R
 
     /**
+     * Runs the provided [visitor] on the IR subtree with the root at this node.
+     *
+     * @param visitor The visitor to accept.
+     */
+    fun acceptVoid(visitor: IrVisitorVoid)
+
+    /**
      * Runs the provided [transformer] on the IR subtree with the root at this node.
      *
      * @param transformer The transformer to use.
@@ -60,6 +69,13 @@ interface IrElement {
      * @return The transformed node.
      */
     fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement
+
+    /**
+     * Runs the provided [transformer] on the IR subtree with the root at this node.
+     *
+     * @param transformer The visitor to accept.
+     */
+    fun transformVoid(transformer: IrElementTransformerVoid): IrElement
 
     /**
      * Runs the provided [visitor] on subtrees with roots in this node's children.
@@ -74,6 +90,17 @@ interface IrElement {
     fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D)
 
     /**
+     * Runs the provided [visitor] on subtrees with roots in this node's children.
+     *
+     * Basically, calls `accept(visitor)` on each child of this node.
+     *
+     * Does **not** run [visitor] on this node itself.
+     *
+     * @param visitor The visitor for children to accept.
+     */
+    fun acceptChildrenVoid(visitor: IrVisitorVoid)
+
+    /**
      * Recursively transforms this node's children *in place* using [transformer].
      *
      * Basically, executes `this.child = this.child.transform(transformer, data)` for each child of this node.
@@ -84,4 +111,15 @@ interface IrElement {
      * @param data An arbitrary context to pass to each invocation of [transformer]'s methods.
      */
     fun <D> transformChildren(transformer: IrTransformer<D>, data: D)
+
+    /**
+     * Recursively transforms this node's children *in place* using [transformer].
+     *
+     * Basically, executes `this.child = this.child.transform(transformer)` for each child of this node.
+     *
+     * Does **not** run [transformer] on this node itself.
+     *
+     * @param transformer The transformer to use for transforming the children.
+     */
+    fun transformChildrenVoid(transformer: IrElementTransformerVoid)
 }

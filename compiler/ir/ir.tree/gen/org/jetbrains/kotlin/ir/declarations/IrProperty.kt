@@ -11,8 +11,10 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.property]
@@ -44,15 +46,30 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitProperty(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitProperty(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         backingField?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        backingField?.acceptVoid(visitor)
+        getter?.acceptVoid(visitor)
+        setter?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         backingField = backingField?.transform(transformer, data) as IrField?
         getter = getter?.transform(transformer, data) as IrSimpleFunction?
         setter = setter?.transform(transformer, data) as IrSimpleFunction?
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        backingField = backingField?.transformVoid(transformer) as IrField?
+        getter = getter?.transformVoid(transformer) as IrSimpleFunction?
+        setter = setter?.transformVoid(transformer) as IrSimpleFunction?
     }
 }

@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -784,7 +783,7 @@ class ComposableFunctionBodyTransformer(
                 !declaration.isComposableReferenceAdapter
 
         transformed = transformed.apply {
-            transformChildrenVoid()
+            transformChildrenVoid(this@ComposableFunctionBodyTransformer)
         }
 
         // If we get an early return from this function then the function itself acts like
@@ -952,7 +951,7 @@ class ComposableFunctionBodyTransformer(
         // we must transform the body first, since that will allow us to see whether or not we
         // are using the dispatchReceiverParameter or the extensionReceiverParameter
         val transformed = nonReturningBody.apply {
-            transformChildrenVoid()
+            transformChildrenVoid(this@ComposableFunctionBodyTransformer)
         }.let {
             // Ensure that all group children of composable inline lambda are realized, since the inline
             // lambda doesn't require a group on its own.
@@ -1130,7 +1129,7 @@ class ComposableFunctionBodyTransformer(
         // we must transform the body first, since that will allow us to see whether or not we
         // are using the dispatchReceiverParameter or the extensionReceiverParameter
         val transformed = nonReturningBody.apply {
-            transformChildrenVoid()
+            transformChildrenVoid(this@ComposableFunctionBodyTransformer)
         }
 
         val canSkipExecution = buildPreambleStatementsAndReturnIfSkippingPossible(
@@ -1287,7 +1286,7 @@ class ComposableFunctionBodyTransformer(
         scope.dirty = scope.changedParameter
         scope.preserveIrShape = true
 
-        declaration.transformChildrenVoid()
+        declaration.transformChildrenVoid(this)
 
         return declaration
     }
@@ -2942,7 +2941,7 @@ class ComposableFunctionBodyTransformer(
             // Transform it the same way as the one above.
             val getterCall = expression.associatedComposableSingletonStub
             val property = getterCall?.symbol?.owner?.correspondingPropertySymbol?.owner
-            property?.transformChildrenVoid()
+            property?.transformChildrenVoid(this)
         }
 
         if (expression is IrCall && (expression.isComposableCall() || expression.isSyntheticComposableCall())) {
@@ -2983,7 +2982,7 @@ class ComposableFunctionBodyTransformer(
                 // preserved.
                 val getter = expression.symbol.owner
                 val property = getter.correspondingPropertySymbol?.owner
-                property?.transformChildrenVoid()
+                property?.transformChildrenVoid(this)
                 return super.visitFunctionAccess(expression)
             }
             else -> return super.visitFunctionAccess(expression)
@@ -3010,7 +3009,7 @@ class ComposableFunctionBodyTransformer(
         // it's important that we transform all of the parameters here since this will cause the
         // IrGetValue's of remapped default parameters to point to the right variable.
         inScope(callScope) {
-            expression.transformChildrenVoid()
+            expression.transformChildrenVoid(this)
         }
 
         encounteredComposableCall(
@@ -3704,7 +3703,7 @@ class ComposableFunctionBodyTransformer(
         if (!isInComposableScope || currentFunctionScope.preserveIrShape) return super.visitReturn(expression)
         val scope = Scope.ReturnScope(expression)
         withScope(scope) {
-            expression.transformChildrenVoid()
+            expression.transformChildrenVoid(this)
         }
         val endBlock = mutableStatementContainer()
         encounteredReturn(expression.returnTargetSymbol) { endBlock.statements.add(it) }

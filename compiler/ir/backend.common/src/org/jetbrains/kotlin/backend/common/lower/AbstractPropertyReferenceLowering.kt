@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.selectSAMOverriddenFunction
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 abstract class AbstractPropertyReferenceLowering<C : CommonBackendContext>(val context: C) : FileLoweringPass {

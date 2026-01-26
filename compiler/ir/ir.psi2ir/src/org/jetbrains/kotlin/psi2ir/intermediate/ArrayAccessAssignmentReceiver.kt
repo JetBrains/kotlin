@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.inlineStatement
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
@@ -174,7 +172,7 @@ internal class ArrayAccessAssignmentReceiver(
         private val replacementVars: Map<IrVariable, IrVariable>
     ) : IrElementTransformerVoid() {
         override fun visitElement(element: IrElement): IrElement {
-            return element.apply { transformChildrenVoid() }
+            return element.apply { transformChildrenVoid(this@SamConversionsRewriter) }
         }
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
@@ -187,7 +185,7 @@ internal class ArrayAccessAssignmentReceiver(
                 }
             }
 
-            return expression.apply { transformChildrenVoid() }
+            return expression.apply { transformChildrenVoid(this@SamConversionsRewriter) }
         }
 
         override fun visitGetValue(expression: IrGetValue): IrExpression {

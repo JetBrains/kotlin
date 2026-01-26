@@ -9,8 +9,10 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.dynamicOperatorExpression]
@@ -25,13 +27,26 @@ abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitDynamicOperatorExpression(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitDynamicOperatorExpression(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         receiver.accept(visitor, data)
         arguments.forEach { it.accept(visitor, data) }
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        receiver.acceptVoid(visitor)
+        arguments.forEach { it.acceptVoid(visitor) }
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         receiver = receiver.transform(transformer, data)
         arguments.transformInPlace(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        receiver = receiver.transformVoid(transformer)
+        arguments.transformInPlace(transformer, null)
     }
 }

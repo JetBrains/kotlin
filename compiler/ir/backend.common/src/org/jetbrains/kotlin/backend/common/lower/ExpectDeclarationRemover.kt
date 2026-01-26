@@ -160,7 +160,7 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
             .deepCopyWithSymbols(actualFunction) { IrTypeParameterRemapper(expectActualTypeParametersMap) }
             .transform(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
-                    expression.transformChildrenVoid()
+                    expression.transformChildrenVoid(this)
                     return expression.remapSymbolParent(
                         classRemapper = { symbolTable.descriptorExtension.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
                         functionRemapper = { symbolTable.referenceFunction(it.descriptor.findActualForExpect() as FunctionDescriptor).owner }

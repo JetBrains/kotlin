@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.atMostOne
 
 open class LateinitLowering(
@@ -65,12 +64,12 @@ open class LateinitLowering(
             }
         }
 
-        declaration.transformChildrenVoid()
+        declaration.transformChildrenVoid(this)
         return declaration
     }
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
-        declaration.transformChildrenVoid()
+        declaration.transformChildrenVoid(this)
 
         if (declaration.isLateinit && !declaration.type.isMarkedNullable()) {
             visitedLateinitVariables += declaration
@@ -84,7 +83,7 @@ open class LateinitLowering(
     }
 
     override fun visitGetValue(expression: IrGetValue): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         val irValue = expression.symbol.owner
         if (irValue !is IrVariable || irValue !in visitedLateinitVariables) {
@@ -106,7 +105,7 @@ open class LateinitLowering(
     }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         val irField = expression.symbol.owner
         if (irField.isLateinitBackingField()) {
@@ -124,7 +123,7 @@ open class LateinitLowering(
         isLateinit && !isFakeOverride
 
     override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         if (!isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
 

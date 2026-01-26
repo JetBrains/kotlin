@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -462,7 +461,7 @@ class BlockDecomposerTransformer(
 
     private inner class ExpressionTransformer : IrElementTransformerVoid() {
 
-        override fun visitExpression(expression: IrExpression) = expression.apply { transformChildrenVoid() }
+        override fun visitExpression(expression: IrExpression) = expression.apply { transformChildrenVoid(this@ExpressionTransformer) }
 
         override fun visitGetField(expression: IrGetField): IrExpression {
             expression.transformChildrenVoid(expressionTransformer)

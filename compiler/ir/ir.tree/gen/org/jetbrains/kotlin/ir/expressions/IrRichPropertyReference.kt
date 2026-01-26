@@ -11,8 +11,10 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrDeclarationWithAccessorsSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * This node is intended to unify different ways of handling property reference-like objects in IR.
@@ -41,15 +43,30 @@ abstract class IrRichPropertyReference : IrRichCallableReference<IrDeclarationWi
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitRichPropertyReference(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitRichPropertyReference(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         boundValues.forEach { it.accept(visitor, data) }
         getterFunction.accept(visitor, data)
         setterFunction?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        boundValues.forEach { it.acceptVoid(visitor) }
+        getterFunction.acceptVoid(visitor)
+        setterFunction?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         boundValues.transformInPlace(transformer, data)
         getterFunction = getterFunction.transform(transformer, data) as IrSimpleFunction
         setterFunction = setterFunction?.transform(transformer, data) as IrSimpleFunction?
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        boundValues.transformInPlace(transformer, null)
+        getterFunction = getterFunction.transformVoid(transformer) as IrSimpleFunction
+        setterFunction = setterFunction?.transformVoid(transformer) as IrSimpleFunction?
     }
 }

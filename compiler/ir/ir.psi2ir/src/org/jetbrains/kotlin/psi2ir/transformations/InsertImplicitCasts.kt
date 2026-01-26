@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi2ir.containsNull
@@ -301,7 +299,7 @@ internal class InsertImplicitCasts(
                 // Replace IrTypeOperatorCall(IMPLICIT_CAST, ...) with an argument cast to the required type
                 // (possibly generating another IrTypeOperatorCall(IMPLICIT_CAST, ...), if required).
 
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
                 expression.argument.cast(expression.typeOperand)
             }
 

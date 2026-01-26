@@ -350,6 +350,35 @@ fun ImportCollectingPrinter.printAcceptMethod(
     println()
 }
 
+fun ImportCollectingPrinter.printAcceptVoidMethod(
+    element: AbstractElement<*, *, *>,
+    visitorClass: ClassRef<PositionTypeParameterRef>,
+    hasImplementation: Boolean,
+    treeName: String,
+) {
+    if (!element.hasAcceptMethod) return
+    println()
+
+    val visitorParameter = FunctionParameter("visitor", visitorClass)
+    if (element.isRootElement) {
+        printKDoc(acceptMethodKDoc(visitorParameter, null, StandardTypes.unit, treeName))
+    }
+
+    printFunctionDeclaration(
+        name = "acceptVoid",
+        parameters = listOf(visitorParameter),
+        returnType = StandardTypes.unit,
+        override = !element.isRootElement,
+    )
+    if (hasImplementation) {
+        println(" =")
+        withIndent {
+            print(visitorParameter.name, ".", element.visitFunctionName, "(this)")
+        }
+    }
+    println()
+}
+
 private fun transformMethodKDoc(
     transformerParameter: FunctionParameter,
     dataParameter: FunctionParameter?,
@@ -403,6 +432,36 @@ fun ImportCollectingPrinter.printTransformMethod(
     println()
 }
 
+fun ImportCollectingPrinter.printTransformVoidMethod(
+    element: AbstractElement<*, *, *>,
+    transformerType: ClassRef<*>,
+    hasImplementation: Boolean,
+    treeName: String,
+) {
+    if (!element.hasTransformMethod) return
+    println()
+
+    val visitorParameter = FunctionParameter("transformer", transformerType)
+    if (element.isRootElement) {
+        printKDoc(acceptMethodKDoc(visitorParameter, null, StandardTypes.unit, treeName))
+    }
+
+    printFunctionDeclaration(
+        name = "transformVoid",
+        parameters = listOf(visitorParameter),
+        returnType = StandardTypes.unit,
+        override = !element.isRootElement,
+    )
+    print(": ${element.typeName}")
+    if (hasImplementation) {
+        println(" =")
+        withIndent {
+            print("accept(transformer, null) as ${element.typeName}")
+        }
+    }
+    println()
+}
+
 private fun acceptChildrenKDoc(visitorParameter: FunctionParameter, dataParameter: FunctionParameter?) = buildString {
     append("Runs the provided [")
     append(visitorParameter.name)
@@ -447,6 +506,27 @@ fun ImportCollectingPrinter.printAcceptChildrenMethod(
         parameters = listOf(visitorParameter, dataParameter),
         returnType = StandardTypes.unit,
         typeParameters = listOfNotNull(visitorResultType as? TypeVariable, dataTP),
+        modality = modality,
+        override = override,
+    )
+}
+
+fun ImportCollectingPrinter.printAcceptChildrenVoidMethod(
+    element: FieldContainer<*>,
+    visitorClass: ClassRef<PositionTypeParameterRef>,
+    modality: Modality? = null,
+    override: Boolean = false,
+) {
+    if (!element.hasAcceptChildrenMethod) return
+    println()
+    val visitorParameter = FunctionParameter("visitor", visitorClass)
+    if (!override) {
+        printKDoc(acceptChildrenKDoc(visitorParameter, null))
+    }
+    printFunctionDeclaration(
+        name = "acceptChildrenVoid",
+        parameters = listOf(visitorParameter),
+        returnType = StandardTypes.unit,
         modality = modality,
         override = override,
     )
@@ -505,6 +585,27 @@ fun ImportCollectingPrinter.printTransformChildrenMethod(
     )
 }
 
+fun ImportCollectingPrinter.printTransformChildrenVoidMethod(
+    element: FieldContainer<*>,
+    transformerClass: ClassRef<PositionTypeParameterRef>,
+    modality: Modality? = null,
+    override: Boolean = false,
+) {
+    if (!element.hasTransformChildrenMethod) return
+    println()
+    val transformerParameter = FunctionParameter("transformer", transformerClass)
+    if (!override) {
+        printKDoc(transformChildrenMethodKDoc(transformerParameter, null, StandardTypes.unit))
+    }
+    printFunctionDeclaration(
+        name = "transformChildrenVoid",
+        parameters = listOf(transformerParameter),
+        returnType = StandardTypes.unit,
+        modality = modality,
+        override = override,
+    )
+}
+
 fun ImportCollectingPrinter.printAcceptVoidMethod(visitorType: ClassRef<*>, treeName: String) {
     val visitorParameter = FunctionParameter("visitor", visitorType)
     val returnType = StandardTypes.unit
@@ -521,23 +622,6 @@ fun ImportCollectingPrinter.printAcceptChildrenVoidMethod(visitorType: ClassRef<
     printFunctionDeclaration("acceptChildren", listOf(visitorParameter), StandardTypes.unit)
     printBlock {
         println("acceptChildren(", visitorParameter.name, ", null)")
-    }
-}
-
-fun ImportCollectingPrinter.printTransformVoidMethod(element: AbstractElement<*, *, *>, transformerType: ClassRef<*>, treeName: String) {
-    assert(element.isRootElement) { "Expected root element" }
-    val transformerParameter = FunctionParameter("transformer", transformerType)
-    val elementTP = TypeVariable("E", listOf(element))
-    printKDoc(transformMethodKDoc(transformerParameter, null, treeName))
-    printFunctionDeclaration(
-        name = "transform",
-        parameters = listOf(transformerParameter),
-        returnType = elementTP,
-        typeParameters = listOf(elementTP)
-    )
-    println(" =")
-    withIndent {
-        println("transform(", transformerParameter.name, ", null)")
     }
 }
 

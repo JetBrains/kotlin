@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignatureComputer {
 

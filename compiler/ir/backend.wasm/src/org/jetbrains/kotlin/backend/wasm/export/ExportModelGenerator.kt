@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf

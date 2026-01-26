@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * Extracts local classes from inline lambdas.

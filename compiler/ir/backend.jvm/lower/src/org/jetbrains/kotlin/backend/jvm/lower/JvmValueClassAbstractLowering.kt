@@ -27,7 +27,7 @@ internal abstract class JvmValueClassAbstractLowering(
     abstract val replacements: MemoizedValueClassAbstractReplacements
 
     override fun lower(irFile: IrFile) = withinScope(irFile) {
-        irFile.transformChildrenVoid()
+        irFile.transformChildrenVoid(this)
     }
 
     abstract fun IrClass.isSpecificLoweringLogicApplicable(): Boolean
@@ -55,11 +55,11 @@ internal abstract class JvmValueClassAbstractLowering(
                     } else {
                         function
                     }
-                    constructorWithPotentialMarker.transformChildrenVoid()
+                    constructorWithPotentialMarker.transformChildrenVoid(this)
                     return listOfNotNull(constructorWithPotentialMarker, createExposedConstructor(constructorWithPotentialMarker))
                 }
             }
-            function.transformChildrenVoid()
+            function.transformChildrenVoid(this)
             // Non-mangled functions can override mangled functions under some conditions, e.g., a function
             // `fun f(): Nothing` can override a function `fun f(): UInt`. The former is not mangled, while
             // the latter is.
@@ -77,7 +77,7 @@ internal abstract class JvmValueClassAbstractLowering(
             // If fun interface methods are already mangled, do not mangle them twice.
             val suffix = function.hashSuffix()
             if (suffix != null && function.name.asString().endsWith(suffix)) {
-                function.transformChildrenVoid()
+                function.transformChildrenVoid(this)
                 return null
             }
         }
@@ -126,7 +126,7 @@ internal abstract class JvmValueClassAbstractLowering(
     protected abstract fun transformSecondaryConstructorFlat(constructor: IrConstructor, replacement: IrSimpleFunction): List<IrDeclaration>
 
     open fun visitParameter(parameter: IrValueParameter) {
-        parameter.transformChildrenVoid()
+        parameter.transformChildrenVoid(this)
     }
 
     final override fun visitValueParameterNew(declaration: IrValueParameter): IrStatement {

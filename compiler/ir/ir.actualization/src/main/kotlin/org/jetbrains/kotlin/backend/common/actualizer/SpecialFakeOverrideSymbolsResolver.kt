@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 /**
@@ -214,7 +212,7 @@ class SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(
     private val propertyAccessorsActualizedByFields: Map<IrSimpleFunctionSymbol, IrPropertySymbol>
 ) : IrElementTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         val fakeOverrideAccessorSymbol = expression.symbol as? IrFunctionFakeOverrideSymbol ?: return expression
         val originalAccessorSymbol = fakeOverrideAccessorSymbol.originalSymbol

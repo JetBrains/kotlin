@@ -139,13 +139,13 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
             override fun visitClass(declaration: IrClass): IrStatement {
-                declaration.transformChildrenVoid()
+                declaration.transformChildrenVoid(this)
                 processDeclarationList(declaration.declarations)
                 return declaration
             }
 
             override fun visitFile(declaration: IrFile): IrFile {
-                declaration.transformChildrenVoid()
+                declaration.transformChildrenVoid(this)
                 processDeclarationList(declaration.declarations)
                 return declaration
             }

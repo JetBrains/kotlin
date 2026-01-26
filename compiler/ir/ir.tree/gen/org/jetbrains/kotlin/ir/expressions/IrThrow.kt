@@ -8,8 +8,10 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.throw]
@@ -20,11 +22,22 @@ abstract class IrThrow : IrExpression() {
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitThrow(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitThrow(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         value.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        value.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         value = value.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        value = value.transformVoid(transformer)
     }
 }

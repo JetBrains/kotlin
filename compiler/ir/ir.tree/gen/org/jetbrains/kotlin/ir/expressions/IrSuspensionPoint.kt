@@ -9,8 +9,10 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.suspensionPoint]
@@ -25,15 +27,30 @@ abstract class IrSuspensionPoint : IrExpression() {
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitSuspensionPoint(this, data)
 
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitSuspensionPoint(this)
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         suspensionPointIdParameter.accept(visitor, data)
         result.accept(visitor, data)
         resumeResult.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        suspensionPointIdParameter.acceptVoid(visitor)
+        result.acceptVoid(visitor)
+        resumeResult.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         suspensionPointIdParameter = suspensionPointIdParameter.transform(transformer, data) as IrVariable
         result = result.transform(transformer, data)
         resumeResult = resumeResult.transform(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        suspensionPointIdParameter = suspensionPointIdParameter.transformVoid(transformer) as IrVariable
+        result = result.transformVoid(transformer)
+        resumeResult = resumeResult.transformVoid(transformer)
     }
 }
