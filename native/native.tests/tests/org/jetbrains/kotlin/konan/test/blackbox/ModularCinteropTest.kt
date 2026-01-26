@@ -6,17 +6,12 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
 
 class ModularCinteropTest : AbstractNativeCInteropBaseTest() {
 
@@ -27,12 +22,12 @@ class ModularCinteropTest : AbstractNativeCInteropBaseTest() {
         val testPathFull = getAbsoluteFile(TEST_DATA_DIR)
         val modulemap = testPathFull.resolve("foo.modulemap")
         val defFile = testPathFull.resolve("foo.def")
+        val goldenFile = testPathFull.resolve("output.txt")
 
         val modulemapArgs = TestCInteropArgs("-compiler-option", "-fmodule-map-file=${modulemap}", "-compiler-option", "-fmodules")
-        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs)
-        assertIs<TestCompilationResult.CompilationToolFailure>(result)
-        val actualFailure = result.loggedData.toString()
-        assertContains(actualFailure, "fatal error: module 'foo' not found")
+        val klib = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess().resultingArtifact
+        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+        assertEqualsToFile(goldenFile, metadata)
     }
 
     companion object {

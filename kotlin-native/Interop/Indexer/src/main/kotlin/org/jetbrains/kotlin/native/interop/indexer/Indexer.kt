@@ -1234,9 +1234,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
     // Below, declarations from PCH should be excluded to restrict `visitChildren` to visit local declarations only
     withIndex(excludeDeclarationsFromPCH = true) { index ->
         val errors = mutableListOf<Diagnostic>()
-        val translationUnit = nativeIndex.library.let {
-            if (allowPrecompiledHeaders) it.copyWithArgsForPCH() else it
-        }.parse(
+        val translationUnit = nativeIndex.library.parse(
                 index,
                 options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization,
                 diagnosticHandler = { if (it.isError()) errors.add(it) }

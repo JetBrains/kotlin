@@ -419,11 +419,6 @@ fun Compilation.copy(
         language = language
 )
 
-// Clang-8 crashes when consuming a precompiled header built with -fmodule-map-file argument (see KT-34467).
-// We ignore this argument when building a pch to workaround this crash.
-fun Compilation.copyWithArgsForPCH(): Compilation =
-        copy(compilerArgs = compilerArgs.filterNot { it.startsWith("-fmodule-map-file") })
-
 data class CompilationImpl(
         override val includes: List<IncludeInfo>,
         override val additionalPreambleLines: List<String>,
@@ -438,7 +433,7 @@ data class CompilationImpl(
  */
 fun Compilation.precompileHeaders(): CompilationWithPCH = withIndex(excludeDeclarationsFromPCH = false) { index ->
     val options = CXTranslationUnit_ForSerialization or CXTranslationUnit_DetailedPreprocessingRecord
-    val translationUnit = copyWithArgsForPCH().parse(index, options)
+    val translationUnit = parse(index, options)
     try {
         translationUnit.ensureNoCompileErrors()
         withPrecompiledHeader(translationUnit)
