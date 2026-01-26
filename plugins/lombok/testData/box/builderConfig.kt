@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: User.java
 
 import lombok.Builder;
@@ -12,8 +11,9 @@ public class User {
 
 
 // FILE: test.kt
-fun test() {
+fun box(): String {
     val userBuilder: User.SpecialUserBuilder = User.builder()
+    return "OK"
 }
 
 // FILE: lombok.config

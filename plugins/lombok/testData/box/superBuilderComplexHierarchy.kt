@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// IGNORE_BACKEND_K1: ANY
 
 // FILE: A.java
 
@@ -41,7 +41,7 @@ public class C extends B implements I {
 
 // FILE: test.kt
 
-fun test() {
+fun box(): String {
     val aSuperBuilder: A.ABuilder<*, *> = A.builder()
     val bSuperBuilder: B.BBuilder<*, *> = B.builder()
     val cSuperBuilder: C.CBuilder<*, *> = C.builder()
@@ -52,4 +52,6 @@ fun test() {
     val b: C.CBuilder<*, *> = a.b(2)
     val c: C.CBuilder<*, *> = b.c(3)
     val result: C = c.build()
+
+    return "OK"
 }

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: ClassLevelGetterTest.java
 
 import lombok.AccessLevel;
@@ -21,10 +20,9 @@ public class ClassLevelGetterTest {
 
 }
 
-
 // FILE: test.kt
 
-fun test() {
+fun box(): String {
     val obj = ClassLevelGetterTest()
     val getter = obj.getAge()
     val property = obj.age
@@ -37,6 +35,8 @@ fun test() {
     obj.getName()
 
     OverridenGetterTest().usage()
+
+    return "OK"
 }
 
 class OverridenGetterTest : ClassLevelGetterTest() {
