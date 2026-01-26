@@ -12,6 +12,8 @@ object CompilerArgumentsLevelNames {
     const val commonKlibBasedArguments = "commonKlibBasedArguments"
     const val wasmArguments = "wasmArguments"
     const val jsArguments = "jsArguments"
+    const val commonNativeArguments = "commonNativeArguments"
     const val nativeArguments = "nativeArguments"
+    const val nativeKlibArguments = "nativeKlibArguments"
     const val metadataArguments = "metadataArguments"
 }

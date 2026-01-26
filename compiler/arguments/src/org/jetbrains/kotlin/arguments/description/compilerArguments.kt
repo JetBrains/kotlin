@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedCommonKlibBasedCompilerArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedCommonNativeArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedCommonToolsArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedJsArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedMetadataArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedNativeArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedNativeKlibArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedWasmArguments
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArguments
 
@@ -42,9 +44,18 @@ val kotlinCompilerArguments = compilerArguments {
                     ) {}
                 }
                 subLevel(
-                    name = CompilerArgumentsLevelNames.nativeArguments,
-                    mergeWith = setOf(actualNativeArguments, removedNativeArguments)
-                ) {}
+                    name = CompilerArgumentsLevelNames.commonNativeArguments,
+                    mergeWith = setOf(actualCommonNativeArguments, removedCommonNativeArguments)
+                ) {
+                    subLevel(
+                        name = CompilerArgumentsLevelNames.nativeArguments,
+                        mergeWith = setOf(actualNativeArguments, removedNativeArguments)
+                    ) {}
+                    subLevel(
+                        name = CompilerArgumentsLevelNames.nativeKlibArguments,
+                        mergeWith = setOf(actualNativeKlibArguments, removedNativeKlibArguments)
+                    ) {}
+                }
             }
             subLevel(
                 name = CompilerArgumentsLevelNames.metadataArguments,

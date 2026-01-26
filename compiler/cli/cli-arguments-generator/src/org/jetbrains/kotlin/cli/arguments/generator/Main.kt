@@ -100,10 +100,22 @@ val levelToClassNameMap = listOf(
         originFileName = "JsCompilerArguments",
     ),
     ArgumentsInfo(
+        levelName = CompilerArgumentsLevelNames.commonNativeArguments,
+        className = "CommonNativeCompilerArguments",
+        levelIsFinal = false,
+        originFileName = "CommonNativeArguments",
+    ),
+    ArgumentsInfo(
         levelName = CompilerArgumentsLevelNames.nativeArguments,
         className = "K2NativeCompilerArguments",
         levelIsFinal = true,
         originFileName = "NativeCompilerArguments",
+    ),
+    ArgumentsInfo(
+        levelName = CompilerArgumentsLevelNames.nativeKlibArguments,
+        className = "K2NativeKlibCompilerArguments",
+        levelIsFinal = true,
+        originFileName = "NativeKlibCompilerArguments",
     ),
     ArgumentsInfo(
         levelName = CompilerArgumentsLevelNames.metadataArguments,

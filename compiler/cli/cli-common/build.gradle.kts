@@ -46,7 +46,9 @@ generatedSourcesTask(
             "commonKlibBasedArguments",
             "wasmArguments",
             "jsArguments",
+            "commonNativeArguments",
             "nativeArguments",
+            "nativeKlibArguments",
             "metadataArguments",
         )
     }

@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageCo
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.pipeline.native.NativeKlibCliPipeline
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
@@ -26,6 +28,9 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.ir.validation.IrValidationException
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
+import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -33,6 +38,7 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.profile
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
@@ -50,6 +56,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         if (arguments.version) {
             println("Kotlin/Native: ${KotlinCompilerVersion.getVersion() ?: "SNAPSHOT"}")
             return ExitCode.OK
+        }
+
+        // Check if we should use the new phased CLI for klib compilation
+        if (arguments.useNativePhasedCli && arguments.produce == "library") {
+            return doExecutePhased(arguments, configuration)
         }
 
         val pluginLoadResult = PluginCliParser.loadPluginsSafe(
@@ -95,6 +106,68 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
 
         return ExitCode.OK
+    }
+
+    /**
+     * Execute compilation using the new phased CLI for klib compilation.
+     * This method is called when -Xuse-native-phased-cli and -p library are both specified.
+     */
+    private fun doExecutePhased(
+        arguments: K2NativeCompilerArguments,
+        configuration: CompilerConfiguration,
+    ): ExitCode {
+        // Create Distribution to extract stdlib and platform library paths
+        val konanHome = arguments.kotlinHome ?: KotlinNativePaths.homePath.absolutePath
+        val distribution = Distribution(konanHome, konanDataDir = arguments.konanDataDir)
+
+        // Resolve target to get platform libraries path
+        val targetName = arguments.target ?: HostManager.host.name
+        val target = KonanTarget.predefinedTargets[targetName]
+            ?: run {
+                configuration.messageCollector.report(ERROR, "Unknown target: $targetName")
+                return ExitCode.COMPILATION_ERROR
+            }
+
+        val klibArguments = K2NativeKlibCompilerArguments().apply {
+            // Copy common tool arguments
+            verbose = arguments.verbose
+            suppressWarnings = arguments.suppressWarnings
+            allWarningsAsErrors = arguments.allWarningsAsErrors
+            extraWarnings = arguments.extraWarnings
+            progressiveMode = arguments.progressiveMode
+            languageVersion = arguments.languageVersion
+            apiVersion = arguments.apiVersion
+            kotlinHome = arguments.kotlinHome
+            pluginClasspaths = arguments.pluginClasspaths
+            pluginOptions = arguments.pluginOptions
+
+            // Copy common native arguments (now inherited from CommonNativeCompilerArguments)
+            this.target = arguments.target
+            moduleName = arguments.moduleName
+            libraries = arguments.libraries
+            nostdlib = arguments.nostdlib
+            nodefaultlibs = arguments.nodefaultlibs
+            friendModules = arguments.friendModules
+            refinesPaths = arguments.refinesPaths
+            includeBinaries = arguments.includeBinaries
+            manifestFile = arguments.manifestFile
+            nopack = arguments.nopack
+            outputName = arguments.outputName
+            includes = arguments.includes
+            shortModuleName = arguments.shortModuleName
+            freeArgs = arguments.freeArgs
+
+            // Set explicit paths from Distribution
+            nativeStdlibPath = distribution.stdlib
+            nativePlatformLibrariesPath = distribution.platformLibs(target)
+        }
+
+        val pipeline = NativeKlibCliPipeline(PerformanceManagerImpl(platform, "native-klib"))
+        return pipeline.execute(
+            klibArguments,
+            Services.EMPTY,
+            configuration.messageCollector,
+        )
     }
 
     private fun prepareEnvironment(

@@ -35,44 +35,41 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         addKotlinSourceRoot(it, isCommon = it.absoluteNormalizedFile() in commonSources, hmppModuleStructure?.getModuleNameForSource(it))
     }
 
+    // Set up arguments common to all native compilation modes (full compilation and klib-only).
+    // NOSTDLIB, NODEFAULTLIBS, NOENDORSEDLIBS are forced when adding to cache.
+    val forceNoLibs = !arguments.libraryToAddToCache.isNullOrEmpty()
+    @Suppress("DEPRECATION")
+    setupCommonNativeArguments(
+            arguments,
+            nostdlib = arguments.nostdlib || forceNoLibs,
+            nodefaultlibs = arguments.nodefaultlibs || forceNoLibs,
+            noendorsedlibs = arguments.noendorsedlibs || forceNoLibs,
+            kotlinHome = arguments.kotlinHome,
+    )
+
     // Can be overwritten by explicit arguments below.
     parseBinaryOptions(arguments, this@setupFromArguments).forEach { optionWithValue ->
         put(optionWithValue)
     }
 
-    arguments.kotlinHome?.let { put(KONAN_HOME, it) }
-
-    put(NODEFAULTLIBS, arguments.nodefaultlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
-    @Suppress("DEPRECATION")
-    put(NOENDORSEDLIBS, arguments.noendorsedlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
-    put(NOSTDLIB, arguments.nostdlib || !arguments.libraryToAddToCache.isNullOrEmpty())
-    put(NOPACK, arguments.nopack)
     put(NOMAIN, arguments.nomain)
-    put(LIBRARY_FILES, arguments.libraries.toNonNullList())
     put(LINKER_ARGS, arguments.linkerArguments.toNonNullList() +
             arguments.singleLinkerArguments.toNonNullList())
-    arguments.moduleName?.let { put(MODULE_NAME, it) }
 
     // TODO: allow overriding the prefix directly.
     // With Swift Export, exported prefix must be Kotlin.
     ("Kotlin".takeIf { get(BinaryOptions.swiftExport) == true } ?: arguments.moduleName)?.let { put(FULL_EXPORTED_NAME_PREFIX, it) }
 
-    arguments.target?.let { put(TARGET, it) }
-
-    put(INCLUDED_BINARY_FILES, arguments.includeBinaries.toNonNullList())
     put(NATIVE_LIBRARY_FILES, arguments.nativeLibraries.toNonNullList())
 
     // TODO: Collect all the explicit file names into an object
     // and teach the compiler to work with temporaries and -save-temps.
 
-    arguments.outputName?.let { put(OUTPUT, it) }
     val outputKind = CompilerOutputKind.valueOf(
             (arguments.produce ?: "program").uppercase())
     put(PRODUCE, outputKind)
-    putIfNotNull(HEADER_KLIB, arguments.headerKlibPath)
 
     arguments.mainPackage?.let { put(ENTRY, it) }
-    arguments.manifestFile?.let { put(MANIFEST_FILE, it) }
     arguments.runtimeFile?.let { put(RUNTIME_FILE, it) }
     arguments.temporaryFilesDir?.let { put(TEMPORARY_FILES_DIR, it) }
     put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.orEmpty().toList())
@@ -112,15 +109,11 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(STATIC_FRAMEWORK, selectFrameworkType(this@setupFromArguments, arguments, outputKind))
     put(OVERRIDE_CLANG_OPTIONS, arguments.clangOptions.toNonNullList())
 
-    put(EXPORT_KDOC, arguments.exportKDoc)
-
     put(PRINT_IR, arguments.printIr)
     put(PRINT_BITCODE, arguments.printBitCode)
     put(PRINT_FILES, arguments.printFiles)
 
     put(PURGE_USER_LIBS, arguments.purgeUserLibs)
-
-    putIfNotNull(WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO, arguments.writeDependenciesOfProducedKlibTo)
 
     if (arguments.verifyCompiler != null)
         put(VERIFY_COMPILER, arguments.verifyCompiler == "true")
@@ -178,11 +171,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
                     || outputKind.isCache
                     || arguments.checkDependencies
     )
-    if (arguments.friendModules != null)
-        put(FRIEND_MODULES, arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty))
-
-    if (arguments.refinesPaths != null)
-        put(REFINES_MODULES, arguments.refinesPaths!!.filterNot(String::isEmpty))
 
     put(EXPORTED_LIBRARIES, selectExportedLibraries(this@setupFromArguments, arguments, outputKind))
     put(INCLUDED_LIBRARIES, selectIncludes(this@setupFromArguments, arguments, outputKind))

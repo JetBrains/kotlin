@@ -10,7 +10,7 @@ import com.intellij.util.xmlb.annotations.Transient
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/NativeCompilerArguments.kt
 // DO NOT MODIFY IT MANUALLY.
 
-class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
+class K2NativeCompilerArguments : CommonNativeCompilerArguments() {
     @Argument(
         value = "-Xadd-cache",
         valueDescription = "<path>",
@@ -217,16 +217,6 @@ The default value is 1.""",
         }
 
     @Argument(
-        value = "-Xexport-kdoc",
-        description = "Export KDoc entries in the framework header.",
-    )
-    var exportKDoc: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xexport-library",
         valueDescription = "<path>",
         description = """A library to be included in the produced framework API.
@@ -319,16 +309,6 @@ but they do not affect compilation at all.""",
         }
 
     @Argument(
-        value = "-Xheader-klib-path",
-        description = "Save a klib that only contains the public ABI to the given path.",
-    )
-    var headerKlibPath: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xic-cache-dir",
         valueDescription = "<path>",
         description = "Path to the directory where incremental build caches should be put.",
@@ -338,17 +318,6 @@ but they do not affect compilation at all.""",
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
-        value = "-Xinclude",
-        valueDescription = "<path>",
-        description = "A path to an intermediate library that should be processed in the same manner as source files.",
-    )
-    var includes: Array<String>? = null
-        set(value) {
-            checkFrozen()
-            field = value
         }
 
     @Argument(
@@ -408,16 +377,6 @@ but they do not affect compilation at all.""",
         description = "Force the compiler to produce per-file caches.",
     )
     var makePerFileCache: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xmanifest-native-targets",
-        description = "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.",
-    )
-    var manifestNativeTargets: Array<String>? = null
         set(value) {
             checkFrozen()
             field = value
@@ -532,17 +491,6 @@ but they do not affect compilation at all.""",
         }
 
     @Argument(
-        value = "-Xrefines-paths",
-        valueDescription = "<path>",
-        description = "Paths to output directories for refined modules (modules whose 'expect' declarations this module can actualize).",
-    )
-    var refinesPaths: Array<String>? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xruntime",
         deprecatedName = "--runtime",
         valueDescription = "<path>",
@@ -586,17 +534,6 @@ but they do not affect compilation at all.""",
         }
 
     @Argument(
-        value = "-Xshort-module-name",
-        valueDescription = "<name>",
-        description = "A short name used to denote this library in the IDE and in a generated Objective-C header.",
-    )
-    var shortModuleName: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xstatic-framework",
         description = "Create a framework with a static library instead of a dynamic one.",
     )
@@ -616,6 +553,16 @@ but they do not affect compilation at all.""",
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-Xuse-native-phased-cli",
+        description = "Use the new phased CLI for klib compilation.",
+    )
+    var useNativePhasedCli: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
         }
 
     @Argument(
@@ -651,17 +598,6 @@ but they do not affect compilation at all.""",
         }
 
     @Argument(
-        value = "-Xwrite-dependencies-of-produced-klib-to",
-        valueDescription = "<path>",
-        description = "Write file containing the paths of dependencies used during klib compilation to the provided path",
-    )
-    var writeDependenciesOfProducedKlibTo: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xwrite-dependencies-to",
         description = "Path for writing backend dependencies.",
     )
@@ -690,17 +626,6 @@ but they do not affect compilation at all.""",
         description = "Qualified entry point name.",
     )
     var mainPackage: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
-        value = "-friend-modules",
-        valueDescription = "<path>",
-        description = "Paths to friend modules.",
-    )
-    var friendModules: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
@@ -745,32 +670,6 @@ but they do not affect compilation at all.""",
         description = "Produce a worker runner for unit tests.",
     )
     var generateWorkerTestRunner: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-include-binary",
-        shortName = "-ib",
-        deprecatedName = "-includeBinary",
-        valueDescription = "<path>",
-        description = "Pack the given external binary into the klib.",
-    )
-    var includeBinaries: Array<String>? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-library",
-        shortName = "-l",
-        valueDescription = "<path>",
-        description = "Link with the given library.",
-        delimiter = Argument.Delimiters.none,
-    )
-    var libraries: Array<String>? = null
         set(value) {
             checkFrozen()
             field = value
@@ -827,34 +726,11 @@ Note: This option is deprecated and will be removed in one of the future release
         }
 
     @Argument(
-        value = "-manifest",
-        valueDescription = "<path>",
-        description = "Provide a manifest addend file.",
-    )
-    var manifestFile: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-memory-model",
         valueDescription = "<model>",
         description = "Choose the memory model to be used – 'strict' and 'experimental' are currently supported.",
     )
     var memoryModel: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
-        value = "-module-name",
-        deprecatedName = "-module_name",
-        valueDescription = "<name>",
-        description = "Specify a name for the compilation module.",
-    )
-    var moduleName: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
@@ -869,17 +745,6 @@ Note: This option is deprecated and will be removed in one of the future release
         delimiter = Argument.Delimiters.none,
     )
     var nativeLibraries: Array<String>? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-no-default-libs",
-        deprecatedName = "-nodefaultlibs",
-        description = "Don't link the libraries from dist/klib automatically.",
-    )
-    var nodefaultlibs: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -907,26 +772,6 @@ Note: This option is deprecated and will be removed in one of the future release
         }
 
     @Argument(
-        value = "-nopack",
-        description = "Don't pack the library into a klib file.",
-    )
-    var nopack: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-nostdlib",
-        description = "Don't link with the stdlib.",
-    )
-    var nostdlib: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-opt",
         description = "Enable optimizations during compilation.",
     )
@@ -937,35 +782,12 @@ Note: This option is deprecated and will be removed in one of the future release
         }
 
     @Argument(
-        value = "-output",
-        shortName = "-o",
-        valueDescription = "<name>",
-        description = "Output name.",
-    )
-    var outputName: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-produce",
         shortName = "-p",
         valueDescription = "{program|static|dynamic|framework|library|bitcode}",
         description = "Specify the output file kind.",
     )
     var produce: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
-        value = "-target",
-        valueDescription = "<target>",
-        description = "Set the hardware target.",
-    )
-    var target: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
