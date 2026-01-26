@@ -46,3 +46,6 @@ fun KotlinMultiplatformExtension.benchmarkingTargets() {
     macosArm64()
     mingwX64()
 }
+
+val String.capitalized: String
+    get() = replaceFirstChar { it.uppercaseChar() }
