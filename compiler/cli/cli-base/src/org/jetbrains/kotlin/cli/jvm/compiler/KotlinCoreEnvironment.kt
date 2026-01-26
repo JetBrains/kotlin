@@ -53,9 +53,7 @@ import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.extensionsStorage
-import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.resetApplicationManager
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
@@ -647,14 +645,6 @@ class KotlinCoreEnvironment private constructor(
             PersistentFSConstants::class.java.getDeclaredField("ourMaxIntellisenseFileSize")
                 .apply { isAccessible = true }
                 .setInt(null, FileUtilRt.LARGE_FOR_CONTENT_LOADING)
-
-            if (configuration.diagnosticFactoriesStorage == null) {
-                configuration.initializeDiagnosticFactoriesStorageForCli()
-            }
-
-            if (configuration.extensionsStorage == null) {
-                configuration.extensionsStorage = CompilerPluginRegistrar.ExtensionStorage()
-            }
 
             registerExtensionsFromPlugins(configuration)
             // otherwise consider that project environment is properly configured before passing to the environment

@@ -123,8 +123,6 @@ public class KotlinTestUtils {
     @NotNull
     public static CompilerConfiguration newConfiguration() {
         CompilerConfiguration configuration = CompilerConfigurationCreationKt.create(CompilerConfiguration.Companion);;
-        CompilerConfigurationCreationKt.initializeDiagnosticFactoriesStorageForCli(configuration);
-        CompilerConfigurationCreationKt.registerExtensionStorage(configuration);
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME);
         configuration.put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, new MessageCollector() {
             @Override
