@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.konan.target.*
-
 plugins {
     id("swift-benchmarking")
 }
@@ -13,13 +11,9 @@ kotlin {
     macosArm64()
 }
 
-val konanDataDir = if (project.hasProperty("konan.data.dir")) project.property("konan.data.dir").toString() else null
-project.extra["platformManager"] = PlatformManager(buildDistribution(projectDir.parentFile.parentFile.absolutePath, konanDataDir), false)
 swiftBenchmark {
+    // NOTE: these properties should be kept in sync with Package.swift
     applicationName = "swiftInterop"
-    swiftSources = listOf(
-        "$projectDir/swiftSrc/benchmarks.swift",
-        "$projectDir/swiftSrc/main.swift",
-        "$projectDir/swiftSrc/weakRefBenchmarks.swift",
-    )
+    swiftToolsVersion = "5.8"
+    packageDirectory = layout.buildDirectory.dir("swiftpkg/benchmark")
 }
