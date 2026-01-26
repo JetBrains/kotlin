@@ -44,11 +44,9 @@ import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun main(args: Array<String>) {
+    val generatedTestRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup(
-            "analysis/low-level-api-fir/low-level-api-fir-compiler-tests/tests-gen",
-            "compiler/fir/raw-fir/psi2fir/testData"
-        ) {
+        testGroup(generatedTestRoot, "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractFirSourceLazyBodiesCalculatorTest> {
                 model("rawBuilder", pattern = TestGeneratorUtil.KT)
             }
@@ -74,10 +72,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(
-            "analysis/low-level-api-fir/low-level-api-fir-compiler-tests/tests-gen",
-            "compiler/fir/analysis-tests/testData",
-        ) {
+        testGroup(generatedTestRoot, "compiler/fir/analysis-tests/testData") {
             fun TestGroup.TestClass.modelInit() {
                 model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE, excludeDirs = listOf("headerMode"))
                 model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE)
@@ -96,10 +91,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(
-            "analysis/low-level-api-fir/low-level-api-fir-compiler-tests/tests-gen",
-            "plugins/scripting/scripting-tests/testData",
-        ) {
+        testGroup(generatedTestRoot, "plugins/scripting/scripting-tests/testData") {
             this.run {
                 fun TestGroup.TestClass.scriptDiagnosticsInit() {
                     model(
@@ -137,10 +129,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(
-            "analysis/low-level-api-fir/low-level-api-fir-compiler-tests/tests-gen",
-            "compiler/testData/diagnostics",
-        ) {
+        testGroup(generatedTestRoot, "compiler/testData/diagnostics") {
             fun TestGroup.TestClass.modelInitWasmJs() {
                 model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
@@ -166,10 +155,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(
-            "analysis/low-level-api-fir/low-level-api-fir-compiler-tests/tests-gen",
-            "compiler/testData",
-        ) {
+        testGroup(generatedTestRoot, "compiler/testData") {
             fun TestGroup.TestClass.modelInit() {
                 model(
                     "diagnostics/testsWithJsStdLib",
@@ -187,10 +173,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(
-            "analysis/low-level-api-fir/low-level-api-fir-compiler-tests/tests-gen",
-            "compiler/testData",
-        ) {
+        testGroup(generatedTestRoot, "compiler/testData") {
             fun TestGroup.TestClass.modelInit() {
                 model(
                     "diagnostics/tests",
@@ -261,7 +244,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup(
-            "analysis/low-level-api-fir/low-level-api-fir-compiler-tests/tests-gen",
+            testsRoot = generatedTestRoot,
             testDataRoot = GeneralConfiguration.SPEC_TESTDATA_PATH
         ) {
             fun TestGroup.TestClass.modelInit() {
@@ -282,7 +265,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup(
-            "analysis/low-level-api-fir/low-level-api-fir-compiler-tests/tests-gen",
+            testsRoot = generatedTestRoot,
             testDataRoot = "plugins/plugin-sandbox/testData"
         ) {
             testClass<AbstractLLSandboxBackBoxTest> {
