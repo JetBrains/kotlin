@@ -69,7 +69,7 @@ internal class DokkaPsiParser(
         val dri = DRI(packageName = packageName)
         val packageInfo = psiFiles.singleOrNull { it.name == "package-info.java" }
         val documentation = packageInfo?.let {
-            javadocParser.parseDocumentation(it).toSourceSetDependent()
+            javadocParser.parseDocumentation(it, sourceSetData).toSourceSetDependent()
         }.orEmpty()
         val annotations = packageInfo?.packageStatement?.annotationList?.annotations
 
@@ -208,7 +208,7 @@ internal class DokkaPsiParser(
             }
 
             val overridden = regularFunctions.flatMap { it.findSuperMethods().toList() }
-            val documentation = javadocParser.parseDocumentation(this).toSourceSetDependent()
+            val documentation = javadocParser.parseDocumentation(this, sourceSetData).toSourceSetDependent()
             val allFunctions = async {
                 val parsedRegularFunctions = regularFunctions.parallelMapNotNull {
                     if (!it.isConstructor) parseFunction(
@@ -297,7 +297,7 @@ internal class DokkaPsiParser(
                         DEnumEntry(
                             dri = dri.withClass(entry.name).withEnumEntryExtra(),
                             name = entry.name,
-                            documentation = javadocParser.parseDocumentation(entry).toSourceSetDependent(),
+                            documentation = javadocParser.parseDocumentation(entry, sourceSetData).toSourceSetDependent(),
                             expectPresentInSet = null,
                             functions = emptyList(),
                             properties = emptyList(),
@@ -485,8 +485,8 @@ internal class DokkaPsiParser(
     }
 
     private fun PsiMethod.getDocumentation(): DocumentationNode =
-        this.takeIf { it is SyntheticElement }?.let { syntheticDocProvider.getDocumentation(it) }
-            ?: javadocParser.parseDocumentation(this)
+        this.takeIf { it is SyntheticElement }?.let { syntheticDocProvider.getDocumentation(it, sourceSetData) }
+            ?: javadocParser.parseDocumentation(this, sourceSetData)
 
     private fun PsiMethod.isObvious(inheritedFrom: DRI? = null): Boolean {
         return (this is SyntheticElement && !syntheticDocProvider.isDocumented(this))
@@ -643,7 +643,7 @@ internal class DokkaPsiParser(
                 dri = dri.copy(target = dri.target.nextTarget()),
                 name = type.name.orEmpty(),
                 presentableName = null,
-                documentation = javadocParser.parseDocumentation(type).toSourceSetDependent(),
+                documentation = javadocParser.parseDocumentation(type, sourceSetData).toSourceSetDependent(),
                 expectPresentInSet = null,
                 bounds = mapBounds(type.bounds),
                 sourceSets = setOf(sourceSetData),
@@ -698,7 +698,7 @@ internal class DokkaPsiParser(
         return DProperty(
             dri = dri,
             name = psi.name,
-            documentation = javadocParser.parseDocumentation(psi).toSourceSetDependent(),
+            documentation = javadocParser.parseDocumentation(psi, sourceSetData).toSourceSetDependent(),
             expectPresentInSet = null,
             sources = psi.parseSources(),
             visibility = psi.getVisibility(getter).toSourceSetDependent(),

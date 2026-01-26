@@ -75,20 +75,17 @@ public class JavaAnalysisPlugin : DokkaPlugin() {
         docCommentCreators providing { JavaDocCommentCreator() }
     }
 
-    private val psiDocTagParser by lazy {
-        PsiDocTagParser(
-            inheritDocTagResolver = InheritDocTagResolver(
-                docCommentFactory = docCommentFactory,
-                docCommentFinder = docCommentFinder,
-                contentProviders = query { inheritDocTagContentProviders }
-            )
-        )
-    }
-
     internal val javaDocCommentParser by extending {
-        docCommentParsers providing {
+        docCommentParsers providing { ctx ->
             JavaPsiDocCommentParser(
-                psiDocTagParser
+                PsiDocTagParser(
+                    context = ctx,
+                    inheritDocTagResolver = InheritDocTagResolver(
+                        docCommentFactory = docCommentFactory,
+                        docCommentFinder = docCommentFinder,
+                        contentProviders = query { inheritDocTagContentProviders }
+                    )
+                )
             )
         }
     }
