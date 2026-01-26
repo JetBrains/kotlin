@@ -132,6 +132,21 @@ class ModuleTests : IndexerTests() {
     }
 
     @Test
+    fun testModulesImportWithExplicitModuleReference() {
+        val files = TempFiles("testModulesImportWithExplicitModuleReference")
+        val bar = files.file("bar.h", "")
+        val fooModule = files.file("foo.modulemap", """
+            module foo {
+              header "bar.h"
+            }
+        """.trimIndent())
+
+        val modulesInfo = getModulesInfo(compilation("-fmodule-map-file=${fooModule.absolutePath}", "-fmodules"), listOf("foo"))
+        assertEquals(setOf(bar.absolutePath), modulesInfo.ownHeaders)
+        assertEquals(listOf(bar.absolutePath), modulesInfo.topLevelHeaders.canonicalize())
+    }
+
+    @Test
     fun testMissingModule() {
         val files = TempFiles("testMissingModule")
 
