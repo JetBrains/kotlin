@@ -44,15 +44,16 @@ buildCache {
         }
     }
     if (develocity.server.isPresent) {
+        val remoteBuildCacheUrl = buildProperties.buildCacheUrl.get()?.trim()
         if (System.getenv("TC_K8S_CLOUD_PROFILE_ID") == "kotlindev-kotlin-k8s") {
             remote(develocity.buildCache) {
                 isPush = buildProperties.pushToBuildCache.get()
+                isEnabled = remoteBuildCacheUrl != "" // explicit "" disables it
                 server = "https://kotlin-cache.eqx.k8s.intellij.net"
             }
         } else {
             remote(develocity.buildCache) {
                 isPush = buildProperties.pushToBuildCache.get()
-                val remoteBuildCacheUrl = buildProperties.buildCacheUrl.orNull?.trim()
                 isEnabled = remoteBuildCacheUrl != "" // explicit "" disables it
                 if (!remoteBuildCacheUrl.isNullOrEmpty()) {
                     server = remoteBuildCacheUrl.removeSuffix("/cache/")
