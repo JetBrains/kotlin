@@ -72,6 +72,7 @@ Key points (not exhaustive):
 | K1 (legacy frontend) |                        | compiler/frontend/                                        | —                                      |
 | Kotlin Gradle Plugin |                        | libraries/tools/kotlin-gradle-plugin/                     | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin/AGENTS.md) |
 | Kotlin Gradle Plugin API |                        | libraries/tools/kotlin-gradle-plugin-api/                 | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin-api/AGENTS.md) |
+| KGP Integration Tests |                        | libraries/tools/kotlin-gradle-plugin-integration-tests/   | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin-integration-tests/AGENTS.md) |
 | PSI                  | `Kt*`                  | compiler/psi/                                             | [AGENTS.md](../compiler/psi/AGENTS.md) |
 | Standard library     |                        | libraries/stdlib/                                         | —                                      |
 | Test infrastructure  |                        | compiler/test-infrastructure/, compiler/tests-common-new/ | [testing.md](testing.md)               |
