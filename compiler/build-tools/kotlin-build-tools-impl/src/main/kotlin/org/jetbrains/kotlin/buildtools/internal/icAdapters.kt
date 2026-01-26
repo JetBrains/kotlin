@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
-import kotlin.io.path.exists
 
 internal val SourcesChanges.asChangedFiles
     get() = when (this) {
@@ -65,6 +64,7 @@ internal fun JvmSnapshotBasedIncrementalCompilationConfiguration.extractIncremen
     )
 }
 
+@Suppress("DEPRECATION")
 internal val JvmSnapshotBasedIncrementalCompilationConfiguration.classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled
     get() {
         val options = toOptions()

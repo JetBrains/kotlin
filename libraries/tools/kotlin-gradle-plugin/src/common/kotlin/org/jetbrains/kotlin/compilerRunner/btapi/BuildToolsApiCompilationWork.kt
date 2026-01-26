@@ -40,11 +40,7 @@ import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
-import org.jetbrains.kotlin.gradle.logging.CapturingDelegatingKotlinLogger
-import org.jetbrains.kotlin.gradle.logging.CompositeKotlinLogger
-import org.jetbrains.kotlin.gradle.logging.ExceptionReportingKotlinLogger
-import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.logging.reportToIde
+import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
@@ -123,6 +119,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 val icEnv = workArguments.incrementalCompilationEnvironment
                 val classpathChanges = icEnv?.classpathChanges
                 if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+                    @Suppress("DEPRECATION")
                     val classpathSnapshotsOptions = compilationOperationBuilder.snapshotBasedIcConfigurationBuilder(
                         icEnv.workingDir.toPath(),
                         icEnv.changedFiles,

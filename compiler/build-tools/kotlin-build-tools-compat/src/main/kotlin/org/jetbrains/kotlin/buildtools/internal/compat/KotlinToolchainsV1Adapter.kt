@@ -192,6 +192,22 @@ private class JvmCompilationOperationV1Adapter private constructor(
         workingDirectory: Path,
         sourcesChanges: SourcesChanges,
         dependenciesSnapshotFiles: List<Path>,
+    ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
+        return JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter(
+            workingDirectory, sourcesChanges, dependenciesSnapshotFiles,
+            JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(options.deepCopy())
+        )
+    }
+
+    @Deprecated(
+        "The shrunkClasspathSnapshot parameter is no longer required",
+        replaceWith = ReplaceWith("snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles)"),
+        level = DeprecationLevel.WARNING
+    )
+    override fun snapshotBasedIcConfigurationBuilder(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
         shrunkClasspathSnapshot: Path,
     ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
         @Suppress("DEPRECATION")
@@ -297,7 +313,15 @@ private class JvmCompilationOperationV1Adapter private constructor(
         dependenciesSnapshotFiles,
         shrunkClasspathSnapshot,
         options
-    ), JvmSnapshotBasedIncrementalCompilationConfiguration.Builder, DeepCopyable<JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter> {
+    ), JvmSnapshotBasedIncrementalCompilationConfiguration.Builder,
+        DeepCopyable<JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter> {
+
+        constructor(
+            workingDirectory: Path,
+            sourcesChanges: SourcesChanges,
+            dependenciesSnapshotFiles: List<Path>,
+            option: JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter,
+        ) : this(workingDirectory, sourcesChanges, dependenciesSnapshotFiles, workingDirectory.resolve("shrunk-classpath-snapshot.bin"), option)
 
         override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V {
             return options.options[key]
@@ -332,7 +356,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
     private class JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(
         val options: Options = Options(
             JvmSnapshotBasedIncrementalCompilationOptions::class
-        )
+        ),
     ) : JvmSnapshotBasedIncrementalCompilationOptions, DeepCopyable<JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter> {
 
         operator fun <V> get(key: Option<V>): V = options[key]

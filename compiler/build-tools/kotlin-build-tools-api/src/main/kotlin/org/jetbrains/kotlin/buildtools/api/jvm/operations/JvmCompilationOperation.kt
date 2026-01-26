@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.jvm.operations
 
-import org.jetbrains.kotlin.buildtools.api.BuildOperation
-import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
@@ -110,10 +106,10 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
          * Creates the configuration object for snapshot-based incremental compilation (IC) in JVM projects.
          * May be used to configure incremental compilation as follows:
          * ```
-         * val icConfig = compilation.snapshotBasedIcConfigurationBuilder(workingDirectory = Paths.get("build/kotlin"),
+         * val icConfig = compilation.snapshotBasedIcConfigurationBuilder(
+         *     workingDirectory = Paths.get("build/kotlin"),
          *     sourcesChanges = SourcesChanges.ToBeCalculated,
          *     dependenciesSnapshotFiles = snapshots,
-         *     shrunkClasspathSnapshot = shrunkSnapshot,
          * )
          *
          * icConfig[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = true
@@ -122,8 +118,27 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
          * ```
          *
          * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+         * @since 2.4.0
+         */
+        public fun snapshotBasedIcConfigurationBuilder(
+            workingDirectory: Path,
+            sourcesChanges: SourcesChanges,
+            dependenciesSnapshotFiles: List<Path>,
+        ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder
+
+        /**
+         * Creates the configuration object for snapshot-based incremental compilation (IC) in JVM projects.
+         *
+         * @deprecated The shrunkClasspathSnapshot parameter is no longer used. Use the 3-parameter overload instead.
+         * Will be promoted to an error in KT-83937.
+         * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
          * @since 2.3.20
          */
+        @Deprecated(
+            message = "The shrunkClasspathSnapshot parameter is no longer required",
+            replaceWith = ReplaceWith("snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles)"),
+            level = DeprecationLevel.WARNING
+        )
         public fun snapshotBasedIcConfigurationBuilder(
             workingDirectory: Path,
             sourcesChanges: SourcesChanges,
@@ -243,7 +258,38 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
  *
  * @return an immutable `JvmSnapshotBasedIncrementalCompilationConfiguration`.
  * @see JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder
+ * @since 2.4.0
  */
+@OptIn(ExperimentalContracts::class)
+@ExperimentalBuildToolsApi
+public inline fun JvmCompilationOperation.Builder.snapshotBasedIcConfiguration(
+    workingDirectory: Path,
+    sourcesChanges: SourcesChanges,
+    dependenciesSnapshotFiles: List<Path>,
+    builderAction: JvmSnapshotBasedIncrementalCompilationConfiguration.Builder.() -> Unit,
+): JvmSnapshotBasedIncrementalCompilationConfiguration {
+    contract {
+        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
+    }
+    return snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles).apply(
+        builderAction
+    ).build()
+}
+
+/**
+ * Convenience function for creating a [JvmSnapshotBasedIncrementalCompilationConfiguration] with options configured by [builderAction].
+ *
+ * @deprecated The shrunkClasspathSnapshot parameter is no longer required. Use the 3-parameter overload instead.
+ * Will be promoted to an error in KT-83937.
+ * @return an immutable `JvmSnapshotBasedIncrementalCompilationConfiguration`.
+ * @see JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder
+ * @since 2.3.20
+ */
+@Deprecated(
+    message = "The shrunkClasspathSnapshot parameter is no longer required",
+    replaceWith = ReplaceWith("snapshotBasedIcConfiguration(workingDirectory, sourcesChanges, dependenciesSnapshotFiles, builderAction)"),
+    level = DeprecationLevel.WARNING
+)
 @OptIn(ExperimentalContracts::class)
 @ExperimentalBuildToolsApi
 public inline fun JvmCompilationOperation.Builder.snapshotBasedIcConfiguration(
@@ -256,6 +302,7 @@ public inline fun JvmCompilationOperation.Builder.snapshotBasedIcConfiguration(
     contract {
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
     }
+    @Suppress("DEPRECATION")
     return snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot).apply(
         builderAction
     ).build()
