@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// IGNORE_BACKEND_K1: ANY
 
 // FILE: Base.java
 
@@ -34,7 +34,7 @@ public class Impl extends Base {
 
 // FILE: test.kt
 
-fun test() {
+fun box(): String {
     val base = Base.createBuilderBase().setBaseX("base").execute()
     val impl = Impl.createBuilderImpl().setBaseX("impl").setImplY(1).execute()
     val baseBuilder: Base.BaseBuilder<*, *> = base.toBuilder()
@@ -43,4 +43,6 @@ fun test() {
     val baseBuilder2: Base.BaseBuilder<*, *> = baseBuilder.setBaseX("base2")
     val implBuilder2: Impl.ImplBuilder<*, *> = implBuilder.setBaseX("base3")
     val implBuilder3: Impl.ImplBuilder<*, *> = implBuilder2.setImplY(2)
+
+    return "OK"
 }

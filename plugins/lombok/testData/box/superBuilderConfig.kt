@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// IGNORE_BACKEND_K1: ANY
 
 // FILE: Vehicle.java
 
@@ -25,13 +25,15 @@ public class Car extends Vehicle {
 
 // FILE: test.kt
 
-fun test() {
+fun box(): String {
     val vehicleBuilder: Vehicle.SpecialVehicleSuperBuilder<*, *> = Vehicle.builder()
     val carSuperBuilder: Car.SpecialCarSuperBuilder<*, *> = Car.builder()
 
     val vehicle: Vehicle = vehicleBuilder.make("Fiesta").model("Ford").build()
     val carSuperBuilder2: Car.SpecialCarSuperBuilder<*, *> = carSuperBuilder.numberOfDoors(4).make("Fiesta").model("Ford")
     val car: Car = carSuperBuilder2.build()
+
+    return "OK"
 }
 
 // FILE: lombok.config

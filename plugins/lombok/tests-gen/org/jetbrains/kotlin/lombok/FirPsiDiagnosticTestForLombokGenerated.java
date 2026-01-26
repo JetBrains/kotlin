@@ -55,18 +55,6 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
   }
 
   @Test
-  @TestMetadata("builderWithGenerics.kt")
-  public void testBuilderWithGenerics() {
-    runTest("plugins/lombok/testData/diagnostics/builderWithGenerics.kt");
-  }
-
-  @Test
-  @TestMetadata("bulderOnRecord.kt")
-  public void testBulderOnRecord() {
-    runTest("plugins/lombok/testData/diagnostics/bulderOnRecord.kt");
-  }
-
-  @Test
   @TestMetadata("classWithValueAnnIsNotFinal.kt")
   public void testClassWithValueAnnIsNotFinal() {
     runTest("plugins/lombok/testData/diagnostics/classWithValueAnnIsNotFinal.kt");
@@ -103,33 +91,9 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
   }
 
   @Test
-  @TestMetadata("superBuilderAnnotationArguments.kt")
-  public void testSuperBuilderAnnotationArguments() {
-    runTest("plugins/lombok/testData/diagnostics/superBuilderAnnotationArguments.kt");
-  }
-
-  @Test
-  @TestMetadata("superBuilderComplexHierarchy.kt")
-  public void testSuperBuilderComplexHierarchy() {
-    runTest("plugins/lombok/testData/diagnostics/superBuilderComplexHierarchy.kt");
-  }
-
-  @Test
-  @TestMetadata("superBuilderConfig.kt")
-  public void testSuperBuilderConfig() {
-    runTest("plugins/lombok/testData/diagnostics/superBuilderConfig.kt");
-  }
-
-  @Test
   @TestMetadata("superBuilderOnConstructor.kt")
   public void testSuperBuilderOnConstructor() {
     runTest("plugins/lombok/testData/diagnostics/superBuilderOnConstructor.kt");
-  }
-
-  @Test
-  @TestMetadata("superBuilderSingular.kt")
-  public void testSuperBuilderSingular() {
-    runTest("plugins/lombok/testData/diagnostics/superBuilderSingular.kt");
   }
 
   @Test
@@ -166,18 +130,6 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
     }
 
     @Test
-    @TestMetadata("builderAnnotationArguments.kt")
-    public void testBuilderAnnotationArguments() {
-      runTest("plugins/lombok/testData/diagnostics/k1+k2/builderAnnotationArguments.kt");
-    }
-
-    @Test
-    @TestMetadata("builderConfig.kt")
-    public void testBuilderConfig() {
-      runTest("plugins/lombok/testData/diagnostics/k1+k2/builderConfig.kt");
-    }
-
-    @Test
     @TestMetadata("builderSingularNullability.kt")
     public void testBuilderSingularNullability() {
       runTest("plugins/lombok/testData/diagnostics/k1+k2/builderSingularNullability.kt");
@@ -199,12 +151,6 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
     @TestMetadata("getters.kt")
     public void testGetters() {
       runTest("plugins/lombok/testData/diagnostics/k1+k2/getters.kt");
-    }
-
-    @Test
-    @TestMetadata("gettersClassLevel.kt")
-    public void testGettersClassLevel() {
-      runTest("plugins/lombok/testData/diagnostics/k1+k2/gettersClassLevel.kt");
     }
 
     @Test

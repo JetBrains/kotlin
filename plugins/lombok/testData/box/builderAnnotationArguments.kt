@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
 // FILE: User.java
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 
@@ -22,13 +22,14 @@ public class User {
 
 // FILE: test.kt
 
-fun test() {
+fun box(): String {
     val userBuilder: User.SpecialUserBuilder = User.createBuilder()
     val user = userBuilder
         .setCreated(10)
         .setName("John")
         .setAge(42)
         .execute()
+    return "OK"
 }
 
 fun testToBuilder(user: User) {
