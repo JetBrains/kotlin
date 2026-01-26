@@ -11,6 +11,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.util.getChildren
 class LightTreeTestParser(disposable: Disposable) : AbstractTestParser<LighterASTNode>(ParseMode.NoKDoc) {
     init {
         @OptIn(K1Deprecation::class)
-        KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.EMPTY, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.create(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     private val builderFactoryInstance: PsiBuilderFactory = PsiBuilderFactory.getInstance()

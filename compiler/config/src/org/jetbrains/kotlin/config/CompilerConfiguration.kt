@@ -10,11 +10,6 @@ import java.util.*
 
 class CompilerConfiguration {
     companion object {
-//    Uncomment when Compose tests migrate to `CompilerConfiguration.create()`
-//        @OptIn(Internals::class)
-        @JvmField
-        val EMPTY = CompilerConfiguration().apply { isReadOnly = true }
-
         private fun <T> T.unmodifiable(): T {
             @Suppress("UNCHECKED_CAST")
             return when (this) {
