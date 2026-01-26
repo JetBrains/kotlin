@@ -7,16 +7,18 @@ package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
+import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
+import org.jetbrains.kotlin.js.config.dce
 import org.jetbrains.kotlin.js.config.generateDts
+import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.js.config.propertyLazyInitialization
 import org.jetbrains.kotlin.js.config.sourceMap
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.wasmDebug
 import org.jetbrains.kotlin.wasm.config.wasmForceDebugFriendlyCompilation
@@ -79,8 +82,8 @@ class WasmLoweringFacade(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val moduleInfo = inputArtifact.moduleInfo
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
+        val outputDirBase = testServices.getWasmTestOutputDirectory()
         val phaseConfigToConfigure = if (debugMode >= DebugMode.SUPER_DEBUG) {
-            val outputDirBase = testServices.getWasmTestOutputDirectory()
             val dumpOutputDir = File(outputDirBase, "irdump")
             println("\n ------ Dumping phases to file://${dumpOutputDir.absolutePath}")
             PhaseConfig(
@@ -95,6 +98,7 @@ class WasmLoweringFacade(
         with(configuration) {
             phaseConfig = phaseConfigToConfigure
             outputName = "index"
+            outputDir = outputDirBase
             configureWith(testServices.moduleStructure.allDirectives)
         }
 
@@ -103,19 +107,26 @@ class WasmLoweringFacade(
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
 
-        val (noDceParameters, withDceParameters) = WasmBackendPipelinePhase.compileWholeProgramModeToWasmIrWithAndWithoutDCE(
-            configuration = configuration,
-            irModuleInfo = moduleInfo,
-            mainModule = mainModule,
-            idSignatureRetriever = moduleInfo.symbolTable.irFactory as IdSignatureRetriever,
-            exportedDeclarations = exportedBoxDeclaration,
-        )
+        val irFactory = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC
 
-        val linkedModule = linkWasmIr(noDceParameters)
-        val linkedModuleDce = linkWasmIr(withDceParameters)
+        val compiler = WholeWorldCompiler(configuration, irFactory)
+        val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
+            compiler.lowerIr(moduleInfo, mainModule, exportedBoxDeclaration)
+        }
 
-        val compilerResult = compileWasmIrToBinary(noDceParameters, linkedModule)
-        val dceCompilerResult = compileWasmIrToBinary(withDceParameters, linkedModuleDce)
+        val parameters = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
+            configuration.dce = false
+            compiler.compileIr(loweredIr)
+        }
+
+        configuration.dce = true
+        val dceParameters = compiler.compileIr(loweredIr)
+
+        val linkedModule = linkWasmIr(parameters)
+        val linkedModuleDce = linkWasmIr(dceParameters)
+
+        val compilerResult = compileWasmIrToBinary(parameters, linkedModule)
+        val dceCompilerResult = compileWasmIrToBinary(dceParameters, linkedModuleDce)
 
         return BinaryArtifacts.Wasm(
             compiledModule = linkedModule,
