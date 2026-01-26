@@ -11,10 +11,8 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.registerExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -39,8 +37,6 @@ object FirTestSessionFactoryHelper {
     ): FirSession {
         val configuration = CompilerConfiguration.create().apply {
             this.languageVersionSettings = languageVersionSettings
-            initializeDiagnosticFactoriesStorageForCli()
-            registerExtensionStorage()
         }
         return FirSessionFactoryHelper.createSessionWithDependencies(
             Name.identifier(moduleName),
