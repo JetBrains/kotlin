@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.lombok.k2.config.LombokService
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.utils.AccessorNames
 import org.jetbrains.kotlin.lombok.utils.LombokNames
-import org.jetbrains.kotlin.lombok.utils.capitalize
+import org.jetbrains.kotlin.lombok.utils.decapitalize
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -69,8 +69,9 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         return buildMap {
             fieldsWithAccessor.forEach { (field, getter, setter) ->
                 val dispatchReceiverType = runIf(!field.isStatic) { classSymbol.defaultType() }
+                val localAccessors = lombokService.getAccessorsIfAnnotated(field.symbol)
 
-                val getterName = getter?.let { computeGetterName(field, it, globalAccessors) }
+                val getterName = getter?.let { computeAccessorName(field, it, localAccessors, globalAccessors) }
 
                 if (getterName != null && explicitlyDeclaredFunctions[getterName]?.valueParameterSymbols?.isEmpty() != true) {
                     val function = classSymbol.createJavaMethod(
@@ -86,10 +87,13 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                     getOrPut(getterName) { mutableListOf() }.add(function)
                 }
 
-                val accessors = lombokService.getAccessorsIfAnnotated(field.symbol) ?: globalAccessors
-                val setterName = setter?.let { computeSetterName(field, it, accessors) }
+                val setterName = setter?.let { computeAccessorName(field, it, localAccessors, globalAccessors) }
+
                 if (setterName != null && explicitlyDeclaredFunctions[setterName].let { it?.valueParameterSymbols?.size != 1 }) {
-                    val returnTypeRef = if (accessors.chain) {
+                    val returnTypeRef = if (
+                        localAccessors?.chain ?: globalAccessors.chain ?: false ||
+                        localAccessors?.fluent ?: globalAccessors.fluent ?: false
+                    ) {
                         buildResolvedTypeRef { coneType = classSymbol.defaultType() }
                     } else {
                         session.builtinTypes.unitType
@@ -157,27 +161,53 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         }.takeIf { it.isNotEmpty() }
     }
 
-    private fun computeGetterName(field: FirJavaField, getterInfo: Getter, globalAccessors: Accessors): Name? {
-        if (getterInfo.visibility == AccessLevel.NONE) return null
-        val accessors = lombokService.getAccessorsIfAnnotated(field.symbol) ?: globalAccessors
-        val propertyName = field.toAccessorBaseName(accessors) ?: return null
-        val functionName = if (accessors.fluent) {
+    private fun computeAccessorName(
+        field: FirJavaField,
+        accessorInfo: ConeLombokAnnotations.AbstractAccessor,
+        localAccessors: Accessors?,
+        globalAccessors: Accessors,
+    ): Name? {
+        if (accessorInfo.visibility == AccessLevel.NONE) return null
+
+        val prefixes = localAccessors?.prefix ?: globalAccessors.prefix ?: emptyList()
+        // Don't generate the accessor if the field doesn't match any provided prefix
+        val propertyName = field.extractPropertyNameOrNull(prefixes) ?: return null
+
+        val isPrimitiveBoolean = field.returnTypeRef.isPrimitiveBoolean()
+        val functionName = if (localAccessors?.fluent ?: globalAccessors.fluent ?: false) {
             propertyName
         } else {
-            val prefix = if (field.returnTypeRef.isPrimitiveBoolean() && !accessors.noIsPrefix) AccessorNames.IS else AccessorNames.GET
-            prefix + propertyName.capitalize()
+            val prefix = when (accessorInfo) {
+                is Getter -> {
+                    if (isPrimitiveBoolean && !globalAccessors.noIsPrefix)
+                        AccessorNames.IS
+                    else
+                        AccessorNames.GET
+                }
+                is Setter -> {
+                    AccessorNames.SET
+                }
+            }
+
+            prefix + propertyName.normalizeAndCapitalize(isPrimitiveBoolean)
         }
         return Name.identifier(functionName)
     }
 
-    private fun computeSetterName(field: FirJavaField, setterInfo: Setter, accessors: Accessors): Name? {
-        if (setterInfo.visibility == AccessLevel.NONE) return null
-        val propertyName = field.toAccessorBaseName(accessors) ?: return null
-        val functionName = if (accessors.fluent) {
-            propertyName
-        } else {
-            AccessorNames.SET + propertyName.capitalize()
+    private fun FirJavaField.extractPropertyNameOrNull(prefixes: List<String>): String? {
+        val fieldId = name.identifier
+        if (prefixes.isEmpty()) {
+            return fieldId
         }
-        return Name.identifier(functionName)
+
+        return prefixes.firstNotNullOfOrNull {
+            if (it.isEmpty()) {
+                return@firstNotNullOfOrNull fieldId
+            }
+            if (fieldId.isPrefixed(it))
+                fieldId.removePrefix(it).decapitalize()
+            else
+                null
+        }
     }
 }

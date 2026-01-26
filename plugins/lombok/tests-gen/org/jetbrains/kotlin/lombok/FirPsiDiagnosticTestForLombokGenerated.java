@@ -149,6 +149,12 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
     }
 
     @Test
+    @TestMetadata("accessorsStripPrefixCombined.fir.kt")
+    public void testAccessorsStripPrefixCombined_fir() {
+      runTest("plugins/lombok/testData/diagnostics/k1+k2/accessorsStripPrefixCombined.fir.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInK1_k2() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/lombok/testData/diagnostics/k1+k2"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
@@ -211,6 +217,18 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
     @TestMetadata("incorrectAnnotationArguments.kt")
     public void testIncorrectAnnotationArguments() {
       runTest("plugins/lombok/testData/diagnostics/k1+k2/incorrectAnnotationArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixes.kt")
+    public void testPrefixes() {
+      runTest("plugins/lombok/testData/diagnostics/k1+k2/prefixes.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixes.fir.kt")
+    public void testPrefixes_fir() {
+      runTest("plugins/lombok/testData/diagnostics/k1+k2/prefixes.fir.kt");
     }
 
     @Test

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
@@ -24,9 +23,8 @@ import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
-import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.utils.AccessorNames
-import org.jetbrains.kotlin.lombok.utils.toPropertyName
+import org.jetbrains.kotlin.lombok.utils.capitalize
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
@@ -37,16 +35,16 @@ import kotlin.contracts.contract
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-fun FirJavaField.toAccessorBaseName(config: ConeLombokAnnotations.Accessors): String? {
-    val isPrimitiveBoolean = returnTypeRef.isPrimitiveBoolean()
-    return if (config.prefix.isEmpty()) {
-        val prefixes = if (isPrimitiveBoolean) listOf(AccessorNames.IS) else emptyList()
-        toPropertyName(name.identifier, prefixes)
+fun String.normalizeAndCapitalize(isPrimitiveBoolean: Boolean): String {
+    return (if (isPrimitiveBoolean && isPrefixed(AccessorNames.IS)) {
+        this.removePrefix(AccessorNames.IS)
     } else {
-        val id = name.identifier
-        val name = toPropertyName(id, config.prefix)
-        name.takeIf { it.length != id.length}
-    }
+        this
+    }).capitalize()
+}
+
+fun String.isPrefixed(prefix: String): Boolean {
+    return startsWith(prefix) && length > prefix.length && this[prefix.length].isUpperCase()
 }
 
 fun FirTypeRef.isPrimitiveBoolean(): Boolean {
