@@ -33,7 +33,6 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     override fun Project.configureExtraTasks() {
         val framework = kotlinLinkTaskProvider.map { it.outputFile.get() }
         tasks.withType(SwiftCompile::class).configureEach {
-            compilerArgs.add("-wmo")
             compilerArgs.add("-F")
             compilerArgs.add(framework.map { it.parentFile.absolutePath })
         }
@@ -46,7 +45,6 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             }
         }
         tasks.withType(LinkExecutable::class).configureEach {
-            linkerArgs.add("-wmo")
             linkerArgs.add("-Xlinker")
             linkerArgs.add("-rpath")
             linkerArgs.add("-Xlinker")
