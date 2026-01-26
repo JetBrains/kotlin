@@ -5,9 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.toolchain
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
+import org.jetbrains.kotlin.incremental.createDirectory
 import org.junit.Rule
-import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.io.BufferedOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.util.zip.GZIPOutputStream
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -19,21 +26,35 @@ class NativeVersionValueSourceTest {
 
     @Test
     fun testMoveToNonEmptyDir() {
-        val fromDir = tmp.newFolder()
-        fromDir.resolve("A.kt").also {
-            it.createNewFile()
-            it.writeText("class A {}")
+        val nativeDir = tmp.newFolder("native_dir").also { it.mkdir() }
+        val versionDir = nativeDir.resolve("version").also { it.createDirectory() }
+        versionDir.resolve("A.kt").createNewFile()
+        versionDir.resolve("C.kt").createNewFile()
+
+        NativeVersionValueSource.copyNativeBundleDistribution(createTarGz(), versionDir)
+        assertEquals("class A {}", versionDir.resolve("A.kt").readText())
+        assertTrue("File B.kt should be copied from directory") { versionDir.resolve("B.kt").exists() }
+        assertTrue("Marker file should be created") { versionDir.resolve(NativeVersionValueSource.Companion.MARKER_FILE).exists() }
+    }
+
+    private fun createTarGz(): File {
+        val tarFile = tmp.newFile("version.tar.gz").also { it.createNewFile() }
+        TarArchiveOutputStream(
+            GZIPOutputStream(
+                BufferedOutputStream(
+                    FileOutputStream(tarFile)
+                )
+            )
+        ).use {
+            val fileContents = "class A {}".toByteArray()
+            val entry = TarArchiveEntry("version/A.kt")
+            entry.size = fileContents.size.toLong()
+            it.putArchiveEntry(entry)
+            it.write(fileContents)
+            it.closeArchiveEntry()
+            it.putArchiveEntry(TarArchiveEntry("version/B.kt"))
+            it.closeArchiveEntry()
         }
-        fromDir.resolve("B.kt").createNewFile()
-
-        val toDir = tmp.newFolder()
-        toDir.resolve("A.kt").createNewFile()
-        toDir.resolve("C.kt").createNewFile()
-
-        NativeVersionValueSource.Companion.copyNativeBundleDistribution(fromDir, toDir)
-        assertEquals("class A {}", toDir.resolve("A.kt").readText())
-        assertTrue("File B.kt should be copied from directory") { toDir.resolve("B.kt").exists() }
-        assertTrue("C.kt file should not be removed") { toDir.resolve("C.kt").exists() }
-        assertTrue("Marker file should be created") { toDir.resolve(NativeVersionValueSource.Companion.MARKER_FILE).exists() }
+        return tarFile
     }
 }
