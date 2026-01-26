@@ -9,3 +9,5 @@ import org.jetbrains.kotlin.name.FqName
 
 val JAVA_LANG_RECORD_FQ_NAME = FqName("java.lang.Record")
 val JAVA_POLYMORPHIC_SIGNATURE_NAME = FqName("java.lang.invoke.MethodHandle.PolymorphicSignature")
+val JAVA_METHOD_HANDLE_FQ_NAME = FqName("java.lang.invoke.MethodHandle")
+val JAVA_VAR_HANDLE_FQ_NAME = FqName("java.lang.invoke.VarHandle")

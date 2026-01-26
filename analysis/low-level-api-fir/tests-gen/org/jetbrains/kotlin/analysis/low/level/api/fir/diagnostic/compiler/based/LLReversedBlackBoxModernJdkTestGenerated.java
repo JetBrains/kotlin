@@ -499,6 +499,12 @@ public class LLReversedBlackBoxModernJdkTestGenerated extends AbstractLLReversed
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
+      @Test
+      @TestMetadata("polymorphicSignature.kt")
+      public void testPolymorphicSignature() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/polymorphicSignature.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer")
       @TestDataPath("$PROJECT_ROOT")

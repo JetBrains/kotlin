@@ -27825,9 +27825,15 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
-        @TestMetadata("spreadOperator_after.kt")
-        public void testSpreadOperator_after() {
-          runTest("compiler/testData/diagnostics/tests/j+k/polymorphicSignature/spreadOperator_after.kt");
+        @TestMetadata("spreadOperator.kt")
+        public void testSpreadOperator() {
+          runTest("compiler/testData/diagnostics/tests/j+k/polymorphicSignature/spreadOperator.kt");
+        }
+
+        @Test
+        @TestMetadata("spreadOperator_jdkRelease.kt")
+        public void testSpreadOperator_jdkRelease() {
+          runTest("compiler/testData/diagnostics/tests/j+k/polymorphicSignature/spreadOperator_jdkRelease.kt");
         }
       }
 
