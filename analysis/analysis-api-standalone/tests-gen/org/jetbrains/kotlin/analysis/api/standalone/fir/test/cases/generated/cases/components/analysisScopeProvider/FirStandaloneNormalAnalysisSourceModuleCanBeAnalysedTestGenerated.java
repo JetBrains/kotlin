@@ -58,6 +58,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCanBeAnalysedTestGenerated e
   }
 
   @Test
+  @TestMetadata("appSourceElement_ownModule.kt")
+  public void testAppSourceElement_ownModule() {
+    runTest("analysis/analysis-api/testData/components/analysisScopeProvider/canBeAnalysed/appSourceElement_ownModule.kt");
+  }
+
+  @Test
   @TestMetadata("appSourceElement_transitiveDependencyLibraryModule.kt")
   public void testAppSourceElement_transitiveDependencyLibraryModule() {
     runTest("analysis/analysis-api/testData/components/analysisScopeProvider/canBeAnalysed/appSourceElement_transitiveDependencyLibraryModule.kt");
