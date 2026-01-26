@@ -38,7 +38,7 @@ abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
     abstract val irFactory: IrFactoryImplForWasmIC
     abstract fun loadIr(modulesStructure: ModulesStructure): IrModuleInfo
     abstract fun lowerIr(irModuleInfo: IrModuleInfo, mainModule: MainModule, exportedDeclarations: Set<FqName>): LoweredIrWithExtraArtifacts
-    abstract fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): WasmIrModuleConfiguration
+    abstract fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): List<WasmIrModuleConfiguration>
 }
 
 class WholeWorldCompiler(configuration: CompilerConfiguration, override val irFactory: IrFactoryImplForWasmIC) : WasmCompilerBase(configuration) {
@@ -60,19 +60,21 @@ class WholeWorldCompiler(configuration: CompilerConfiguration, override val irFa
         )
     }
 
-    override fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): WasmIrModuleConfiguration {
+    override fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): List<WasmIrModuleConfiguration> {
         val dceDumpNameCache = DceDumpNameCache()
         if (configuration.dce) {
             eliminateDeadDeclarations(loweredIr.loweredIr, loweredIr.backendContext, dceDumpNameCache)
         }
         dumpDeclarationIrSizesIfNeed(configuration.dceDumpDeclarationIrSizesToFile, loweredIr.loweredIr, dceDumpNameCache)
 
-        return compileWholeProgramModeToWasmIr(
+        val configuration = compileWholeProgramModeToWasmIr(
             configuration = configuration,
             idSignatureRetriever = irFactory,
             loweredIr = loweredIr,
             allowIncompleteImplementations = configuration.dce
         )
+
+        return listOf(configuration)
     }
 }
 
@@ -94,14 +96,16 @@ class SingleModuleCompiler(configuration: CompilerConfiguration, override val ir
         )
     }
 
-    override fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): WasmIrModuleConfiguration =
-        compileSingleModuleToWasmIr(
+    override fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): List<WasmIrModuleConfiguration> {
+        val configuration = compileSingleModuleToWasmIr(
             configuration = configuration,
             loweredIr = loweredIr,
             signatureRetriever = irFactory,
             stdlibIsMainModule = isWasmStdlib,
             mainModuleFragment = loweredIr.backendContext.irModuleFragment,
         )
+        return listOf(configuration)
+    }
 }
 
 private fun compileWholeProgramModeToWasmIr(

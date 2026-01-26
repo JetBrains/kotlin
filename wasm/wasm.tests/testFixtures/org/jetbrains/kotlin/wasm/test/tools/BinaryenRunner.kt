@@ -13,15 +13,36 @@ import java.io.File
 import kotlin.test.fail
 
 sealed interface WasmOptimizer {
-    fun run(wasmInput: WasmBinaryData, withText: Boolean = false): OptimizationResult
+    fun run(wasmInput: WasmBinaryData, withText: Boolean = false, closedWorld: Boolean = true): OptimizationResult
 
     data class OptimizationResult(val wasm: WasmBinaryData, val wat: String?)
 
     object Binaryen : WasmOptimizer {
         private val binaryenPath = System.getProperty("binaryen.path")
 
-        override fun run(wasmInput: WasmBinaryData, withText: Boolean): OptimizationResult {
-            val command = arrayOf(binaryenPath, *BinaryenConfig.binaryenArgs.toTypedArray())
+        //TODO: Replace it to separate arguments property in org.jetbrains.kotlin.platform.wasm.BinaryenConfig
+        private val binaryenArgsClosedWorld = listOf(
+            "--enable-gc",
+            "--enable-reference-types",
+            "--enable-exception-handling",
+            "--enable-bulk-memory",
+            "--enable-nontrapping-float-to-int",
+            "--no-inline=kotlin.wasm.internal.throwValue",
+            "--no-inline=kotlin.wasm.internal.getKotlinException",
+            "--no-inline=kotlin.wasm.internal.jsToKotlinStringAdapter",
+            "--inline-functions-with-loops",
+            "--traps-never-happen",
+            "--fast-math",
+            "--type-ssa",
+            "-O3",
+            "-O3",
+            "-O3",
+        )
+
+        override fun run(wasmInput: WasmBinaryData, withText: Boolean, closedWorld: Boolean): OptimizationResult {
+            val args = if (closedWorld) BinaryenConfig.binaryenArgs else binaryenArgsClosedWorld
+
+            val command = arrayOf(binaryenPath, *args.toTypedArray())
             return OptimizationResult(
                 exec(command, wasmInput).let { WasmBinaryData(it, it.size) },
                 runIf(withText) { exec(command + "-S", wasmInput).toString(Charsets.UTF_8) }

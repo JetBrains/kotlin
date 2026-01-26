@@ -63,7 +63,7 @@ data class JsBackendPipelineArtifact(
 ) : WebBackendPipelineArtifact()
 
 data class WasmBackendPipelineArtifact(
-    val result: WasmCompilerResult,
+    val result: List<WasmCompilerResult>,
     val outputDir: File,
     val configuration: CompilerConfiguration
 ) : WebBackendPipelineArtifact()

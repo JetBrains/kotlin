@@ -33,8 +33,8 @@ class WasmTypeScriptCompilationHandler(testServices: TestServices) : AbstractWas
             testServices,
             modulesToArtifact,
             { artifact ->
-                File(outputDir, artifact.compilerResult.baseFileName + ".d.mts").also { tsFile ->
-                    artifact.compilerResult.dts?.let {
+                File(outputDir, artifact.compilation.compilerResult.baseFileName + ".d.mts").also { tsFile ->
+                    artifact.compilation.compilerResult.dts?.let {
                         tsFile.parentFile.mkdirs()
                         tsFile.writeText(it)
                     }

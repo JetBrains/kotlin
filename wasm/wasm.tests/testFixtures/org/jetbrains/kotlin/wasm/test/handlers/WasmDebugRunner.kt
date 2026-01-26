@@ -5,25 +5,36 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
-import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
+import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMap
+import org.jetbrains.kotlin.test.model.BinaryArtifacts.WasmCompilationSet
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
 class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServices) {
+    private fun processCompilationSet(compilationSet: WasmCompilationSet, mode: String) {
+        val outputDirBase = testServices.getWasmTestOutputDirectory()
+        val devDir = File(outputDirBase, mode)
+        devDir.mkdirs()
+
+        val sourceMaps = mutableListOf<SourceMap>()
+
+        compilationSet.compilerResult.writeTo(devDir, "index", debugMode, mode)
+        sourceMaps.add(compilationSet.compilerResult.parsedSourceMaps)
+
+        compilationSet.compilationDependencies.forEach {
+            it.compilerResult.writeTo(devDir, it.compilerResult.baseFileName, debugMode, mode)
+            sourceMaps.add(it.compilerResult.parsedSourceMaps)
+        }
+        writeToFilesAndRunTest(outputDir = devDir, sourceMaps = sourceMaps, "index.wasm")
+    }
+
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
             val artifacts = modulesToArtifact.values.single()
-            val outputDirBase = testServices.getWasmTestOutputDirectory()
-
-            val devDir = File(outputDirBase, "dev")
-            devDir.mkdirs()
-            writeCompilationResult(artifacts.compilerResult, devDir, "index")
-            writeToFilesAndRunTest(outputDir = devDir, sourceMaps = listOf(artifacts.compilerResult.parsedSourceMaps), "index.wasm")
-
-            val dceDir = File(outputDirBase, "dce")
-            dceDir.mkdirs()
-            writeCompilationResult(artifacts.compilerResultWithDCE, dceDir, "index")
-            writeToFilesAndRunTest(outputDir = dceDir, sourceMaps = listOf(artifacts.compilerResultWithDCE.parsedSourceMaps), "index.wasm")
+            processCompilationSet(artifacts.compilation, "dev")
+            artifacts.dceCompilation?.let {
+                processCompilationSet(it, "dce")
+            }
         }
     }
 }

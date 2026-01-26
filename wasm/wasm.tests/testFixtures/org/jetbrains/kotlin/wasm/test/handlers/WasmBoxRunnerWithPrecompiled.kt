@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
-import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
@@ -18,15 +17,10 @@ class WasmBoxRunnerWithPrecompiled(
     override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
         super.processModule(module, info)
         val outputDir = testServices.getWasmTestOutputDirectory()
-        writeCompilationResult(info.compilerResult, outputDir, info.compilerResult.baseFileName, null)
+        outputDir.mkdirs()
+
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
-        if (debugMode >= DebugMode.DEBUG) {
-            val path = outputDir.absolutePath
-            val baseFileName = info.compilerResult.baseFileName
-            println(" ------ Wat  file://$path/$baseFileName.wat")
-            println(" ------ Wasm file://$path/$baseFileName.wasm")
-            println(" ------ JS   file://$path/$baseFileName.uninstantiated.mjs")
-        }
+        info.compilation.compilerResult.writeTo(outputDir, info.compilation.compilerResult.baseFileName, debugMode)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {

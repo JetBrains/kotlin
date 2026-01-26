@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
+import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
@@ -118,28 +119,54 @@ class WasmLoweringFacade(
             configuration.dce = false
             compiler.compileIr(loweredIr)
         }
+        val compilationSet = makeCompilationSet(parameters)
 
         configuration.dce = true
         val dceParameters = compiler.compileIr(loweredIr)
+        val dceCompilationSet = makeCompilationSet(dceParameters)
 
-        val linkedModule = linkWasmIr(parameters)
-        val linkedModuleDce = linkWasmIr(dceParameters)
-
-        val compilerResult = compileWasmIrToBinary(parameters, linkedModule)
-        val dceCompilerResult = compileWasmIrToBinary(dceParameters, linkedModuleDce)
+        val runOptimiser = WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER in testServices.moduleStructure.allDirectives
+        val optimised = runIf(runOptimiser) {
+            val optimisedResult = dceCompilationSet.compilerResult.runThirdPartyOptimizer(closedWorld = false)
+            val optimisedDependencies = dceCompilationSet.compilationDependencies.map {
+                BinaryArtifacts.WasmCompilationSet(
+                    compiledModule = it.compiledModule,
+                    compilerResult = it.compilerResult.runThirdPartyOptimizer(closedWorld = false)
+                )
+            }
+            BinaryArtifacts.WasmCompilationSet(
+                compiledModule = dceCompilationSet.compiledModule,
+                compilerResult = optimisedResult,
+                compilationDependencies = optimisedDependencies
+            )
+        }
 
         return BinaryArtifacts.Wasm(
-            compiledModule = linkedModule,
-            compilerResult = compilerResult,
-            compilerResultWithDCE = dceCompilerResult,
-            compilerResultWithOptimizer = runIf(WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER in testServices.moduleStructure.allDirectives) {
-                dceCompilerResult.runThirdPartyOptimizer()
-            }
+            compilation = compilationSet,
+            dceCompilation = dceCompilationSet,
+            optimisedCompilation = optimised,
         )
     }
 
-    private fun WasmCompilerResult.runThirdPartyOptimizer(): WasmCompilerResult {
-        val (newWasm, newWat) = supportedOptimizer.run(wasm, withText = wat != null)
+    fun makeCompilationSet(parameters: List<WasmIrModuleConfiguration>): BinaryArtifacts.WasmCompilationSet {
+        val compilationSets = parameters.map { current ->
+            val linkedModule = linkWasmIr(current)
+            val compilerResult = compileWasmIrToBinary(current, linkedModule)
+            BinaryArtifacts.WasmCompilationSet(linkedModule, compilerResult)
+        }
+
+        val main = compilationSets.last()
+        val dependencies = compilationSets.dropLast(1)
+
+        return BinaryArtifacts.WasmCompilationSet(
+            main.compiledModule,
+            main.compilerResult,
+            dependencies
+        )
+    }
+
+    private fun WasmCompilerResult.runThirdPartyOptimizer(closedWorld: Boolean): WasmCompilerResult {
+        val (newWasm, newWat) = supportedOptimizer.run(wasm, withText = wat != null, closedWorld = closedWorld)
         return WasmCompilerResult(
             wat = newWat,
             jsWrapper = jsWrapper,

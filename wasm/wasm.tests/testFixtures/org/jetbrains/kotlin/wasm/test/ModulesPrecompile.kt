@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.wasm.test
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
-import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
 import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmUseNewExceptionProposal
+import org.jetbrains.kotlin.wasm.test.handlers.writeTo
 import java.io.File
 
 private val outputDir: File
@@ -133,22 +133,11 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
             configuration = configuration,
             module = module,
             mainCallArguments = null
-        )
+        ).first()
 
         val linkedModule = linkWasmIr(parametersForCompile)
         val compileResult = compileWasmIrToBinary(parametersForCompile, linkedModule)
-
-        writeCompilationResult(
-            result = compileResult,
-            dir = outputDir,
-            fileNameBase = outputName,
-        )
-
-        if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ Wat  file://${outputDir.canonicalPath}/$outputName.wat")
-            println(" ------ Wasm file://${outputDir.canonicalPath}/$outputName.wasm")
-            println(" ------ JS   file://${outputDir.canonicalPath}/$outputName.uninstantiated.mjs")
-        }
+        compileResult.writeTo(outputDir, outputName, debugMode)
     }
 
     compileWasmModule(

@@ -30,31 +30,35 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
 
-object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, WasmIrModuleConfiguration>("WasmBackendPipelinePhase") {
+object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, List<WasmIrModuleConfiguration>>("WasmBackendPipelinePhase") {
     override val configFiles: EnvironmentConfigFiles
         get() = EnvironmentConfigFiles.WASM_CONFIG_FILES
 
     override fun compileIntermediate(
-        intermediateResult: WasmIrModuleConfiguration,
+        intermediateResult: List<WasmIrModuleConfiguration>,
         configuration: CompilerConfiguration,
     ): WasmBackendPipelineArtifact = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
-        val linkedModule = linkWasmIr(intermediateResult)
-        val compileResult = compileWasmIrToBinary(intermediateResult, linkedModule)
         val outputDir = configuration.outputDir!!
-        writeCompilationResult(
-            result = compileResult,
-            dir = outputDir,
-            fileNameBase = intermediateResult.baseFileName,
-        )
-        WasmBackendPipelineArtifact(compileResult, outputDir, configuration)
+        val results = intermediateResult.map { result ->
+            val linkedModule = linkWasmIr(result)
+            val compileResult = compileWasmIrToBinary(result, linkedModule)
+            writeCompilationResult(
+                result = compileResult,
+                dir = outputDir,
+                fileNameBase = result.baseFileName,
+            )
+            compileResult
+        }
+        WasmBackendPipelineArtifact(results, outputDir, configuration)
     }
 
     override fun compileIncrementally(
         icCaches: IcCachesArtifacts,
         configuration: CompilerConfiguration,
-    ): WasmIrModuleConfiguration? {
+    ): List<WasmIrModuleConfiguration>? {
         if (configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)) {
             configuration.messageCollector.report(
                 CompilerMessageSeverity.ERROR,
@@ -69,7 +73,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             .mapNotNull { it.loadIrFragments()?.mainFragment }
             .let { fragments -> if (configuration.preserveIcOrder) fragments.sortedBy { it.fragmentTag } else fragments }
 
-        return WasmIrModuleConfiguration(
+        val configuration = WasmIrModuleConfiguration(
             wasmCompiledFileFragments = wasmArtifacts,
             moduleName = configuration.moduleName!!,
             configuration = configuration,
@@ -77,13 +81,14 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             baseFileName = configuration.outputName!!,
             multimoduleOptions = null,
         )
+        return listOf(configuration)
     }
 
     override fun compileNonIncrementally(
         configuration: CompilerConfiguration,
         module: ModulesStructure,
         mainCallArguments: List<String>?,
-    ): WasmIrModuleConfiguration {
+    ): List<WasmIrModuleConfiguration> {
         val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
         val compiler = if (configuration.wasmIncludedModuleOnly) {
             SingleModuleCompiler(configuration, irFactory, isWasmStdlib = module.klibs.included?.isWasmStdlib == true)
@@ -104,4 +109,3 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         }
     }
 }
-
