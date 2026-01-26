@@ -10,7 +10,7 @@ import java.io.File
  * A task that copies samples and replaces direct repository URLs with ones provided by the cache-redirector service.
  * This task also adds kotlin compiler repository from the project's gradle.properties file.
  */
-open class CopySamples : Copy() {
+abstract class CopySamples : Copy() {
     @InputDirectory
     var samplesDir: File = project.file("backend.native/tests/samples")
 

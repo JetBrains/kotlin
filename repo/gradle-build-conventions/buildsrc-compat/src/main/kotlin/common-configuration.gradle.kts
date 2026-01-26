@@ -290,7 +290,7 @@ fun Project.configureTests() {
         "concurrencyLimitService",
         ConcurrencyLimitService::class
     ) {
-        maxParallelUsages = 1
+        maxParallelUsages.set(1)
     }
 
     tasks.withType<Test>().configureEach {

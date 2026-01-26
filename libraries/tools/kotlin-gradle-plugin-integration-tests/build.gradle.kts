@@ -185,7 +185,7 @@ fun Test.applyKotlinNativeConfiguration() {
     }
 
     val kotlinNativeVersionForTestRuns = project.kotlinBuildProperties.stringProperty("kotlinNativeVersionForGradleIT").orNull
-        // FIXME: Remove reading system property once the TC build script starts passing the gradle property
+    // FIXME: Remove reading system property once the TC build script starts passing the gradle property
         ?: System.getProperty("kotlinNativeVersionForGradleIT")
     // This version is passed by TC build for runs with snapshot KN
     kotlinNativeVersionForTestRuns?.let {
@@ -383,6 +383,9 @@ tasks.withType<Test>().configureEach {
 
     val noTestProperty = project.providers.gradleProperty("noTest")
     onlyIf { !noTestProperty.isPresent }
+
+    classpath = sourceSets["test"].runtimeClasspath
+    testClassesDirs = sourceSets["test"].output.classesDirs
 
     /**
      * Gradle needs these opens to serialize CC and adds them implicitly:
