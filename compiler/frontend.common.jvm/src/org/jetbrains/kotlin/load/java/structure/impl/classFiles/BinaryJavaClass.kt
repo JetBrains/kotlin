@@ -210,9 +210,11 @@ class BinaryJavaClass(
         val type = signatureParser.parseTypeString(StringCharacterIterator(signature ?: descriptor), context)
         // TODO: Read isVararg properly
         val isVararg = false
-        recordComponents.add(BinaryJavaRecordComponent(Name.identifier(name), this, type, isVararg))
+        val recordComponent = BinaryJavaRecordComponent(Name.identifier(name), this, type, isVararg).also {
+            recordComponents.add(it)
+        }
 
-        return null
+        return AnnotationsCollectorRecordComponentVisitor(recordComponent, context, signatureParser)
     }
 
     /**
