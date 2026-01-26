@@ -2,6 +2,8 @@
 
 // IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-60274
+// WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS
+// ISSUE: KT-84107
 
 import kotlin.reflect.KProperty
 

@@ -1,3 +1,5 @@
+// WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS
+// ISSUE: KT-84107
 fun box(): String {
     testExplicitReturn()
     return "OK"

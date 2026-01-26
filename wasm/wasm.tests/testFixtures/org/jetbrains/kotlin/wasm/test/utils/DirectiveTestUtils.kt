@@ -7,6 +7,14 @@ package org.jetbrains.kotlin.wasm.test.utils
 
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.WrappedException
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirective
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.ir.WasmOp
 import org.junit.Assert.*
@@ -298,4 +306,23 @@ object DirectiveTestUtils {
 
         fun findNamedArgument(name: String): String? = namedArguments[name]
     }
+}
+
+private class IgnoredTestSuppressor(testServices: TestServices, private val directive: SimpleDirective) : AfterAnalysisChecker(testServices) {
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(WasmEnvironmentConfigurationDirectives)
+
+    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
+        val suppressed = testServices.moduleStructure.modules.any { directive in it.directives }
+        if (!suppressed) return failedAssertions
+        if (failedAssertions.isNotEmpty()) return emptyList()
+
+        return listOf(AssertionError("Looks like this test can be unmuted. Remove ${directive::class.simpleName} directive").wrap())
+    }
+}
+
+fun TestConfigurationBuilder.configureIgnoredTestSuppressor(directive: SimpleDirective) {
+    useAfterAnalysisCheckers(
+        { IgnoredTestSuppressor(it, directive) },
+    )
 }

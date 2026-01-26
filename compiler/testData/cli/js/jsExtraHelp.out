@@ -56,7 +56,7 @@ where advanced options include:
                              Turn on range checks for array access functions.
   -Xwasm-enable-asserts      Turn on asserts.
   -Xwasm-generate-closed-world-multimodule
-                             Compile a module passed using `-include` option in multi-module closed-world mode.
+                             Compile modules in multi-module closed-world mode using module passed in `-include` argument as main module
   -Xwasm-generate-dwarf      Generate DWARF debug information.
   -Xwasm-generate-wat        Generate a .wat file.
   -Xwasm-ic-cache-readonly   Do not commit IC cache updates.

@@ -93,7 +93,7 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
 
     @Argument(
         value = "-Xwasm-generate-closed-world-multimodule",
-        description = "Compile a module passed using `-include` option in multi-module closed-world mode.",
+        description = "Compile modules in multi-module closed-world mode using module passed in `-include` argument as main module",
     )
     var wasmGenerateClosedWorldMultimodule: Boolean = false
         set(value) {

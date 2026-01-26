@@ -7065,7 +7065,7 @@
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Compile a module passed using `-include` option in multi-module closed-world mode.",
+                                            "current": "Compile modules in multi-module closed-world mode using module passed in `-include` argument as main module",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
@@ -7085,7 +7085,7 @@
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.3.20",
+                                            "introducedVersion": "2.4.0",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
                                             "removedVersion": null

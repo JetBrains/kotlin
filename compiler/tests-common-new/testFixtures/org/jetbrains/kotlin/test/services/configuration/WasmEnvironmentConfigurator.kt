@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.INFER_MAIN_MODULE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
@@ -24,13 +23,11 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_DISABLE_FQNAME_IN_KCLASS
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 abstract class WasmEnvironmentConfigurator(
@@ -162,11 +159,18 @@ open class WasmSecondStageEnvironmentConfigurator(
     }
 }
 
-class WasmJsSingleModuleOnlyConfigurator(
+private class WasmJsCompilerConfigurationKeyEnablerConfigurator(
     testServices: TestServices,
+    private val wasmConfigurationKey: CompilerConfigurationKey<Boolean>
 ) : WasmSecondStageEnvironmentConfigurator(testServices, WasmTarget.JS) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         super.configureCompilerConfiguration(configuration, module)
-        configuration.put(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY, true)
+        configuration.put(wasmConfigurationKey, true)
     }
+}
+
+fun TestConfigurationBuilder.enableByConfigurationKey(key: CompilerConfigurationKey<Boolean>) {
+    useConfigurators(
+        { WasmJsCompilerConfigurationKeyEnablerConfigurator(it, key) }
+    )
 }

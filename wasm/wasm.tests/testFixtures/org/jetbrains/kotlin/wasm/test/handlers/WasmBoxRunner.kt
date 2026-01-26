@@ -20,7 +20,7 @@ internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: Str
         val outputPath = outputDir.absolutePath
         println(" ------ $mode Wat  file://$outputPath/$outputFilenameBase.wat")
         println(" ------ $mode Wasm file://$outputPath/$outputFilenameBase.wasm")
-        println(" ------ $mode JS   file://$outputPath/$outputFilenameBase.uninstantiated.mjs")
+        println(" ------ $mode JS   file://$outputPath/$outputFilenameBase.import-object.mjs")
         println(" ------ $mode JS   file://$outputPath/$outputFilenameBase.mjs")
     }
 }

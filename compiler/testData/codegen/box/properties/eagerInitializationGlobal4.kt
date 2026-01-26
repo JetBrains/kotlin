@@ -2,7 +2,7 @@
 // ^EagerInitialization is not supported
 // PROPERTY_LAZY_INITIALIZATION
 // WASM_FAILS_IN_SINGLE_MODULE_MODE
-
+// WASM_FAILS_IN_MULTI_MODULE_MODE
 // MODULE: lib1
 // FILE: lib.kt
 var z1 = false

@@ -322,10 +322,10 @@ open class AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest : AbstractFirWa
     }
 }
 
-open class AbstractFirWasmTypeScriptExportTest : AbstractFirWasmJsTest(
-    "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/wasm/",
-    "typescript-export/"
-) {
+open class AbstractFirWasmTypeScriptExportTest(
+    pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/wasm/",
+    testGroupOutputDirPrefix: String = "typescript-export/"
+) : AbstractFirWasmJsTest(pathToTestDir, testGroupOutputDirPrefix) {
     override fun configure(builder: TestConfigurationBuilder) {
         builder.wasmArtifactsHandlersStep {
             useHandlers(::WasmTypeScriptCompilationHandler)
