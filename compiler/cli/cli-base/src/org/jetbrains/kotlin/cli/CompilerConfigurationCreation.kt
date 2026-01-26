@@ -21,11 +21,12 @@ fun CompilerConfiguration.Companion.create(): CompilerConfiguration {
     }
 }
 
+@CompilerConfiguration.Internals("Consider using `CompilerConfiguration.Companion.create()` which registers default services")
 fun CompilerConfiguration.registerExtensionStorage() {
     extensionsStorage = CompilerPluginRegistrar.ExtensionStorage()
 }
 
-fun CompilerConfiguration.initializeDiagnosticFactoriesStorageForCli() {
+private fun CompilerConfiguration.initializeDiagnosticFactoriesStorageForCli() {
     val storage = KtRegisteredDiagnosticFactoriesStorage()
     storage.registerDiagnosticContainers(CliDiagnostics)
     this.diagnosticFactoriesStorage = storage
