@@ -41,7 +41,7 @@ import kotlin.contracts.contract
 
 @OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
 class FirJavaTypeParameter(
-    internal val javaTypeParameter: JavaTypeParameter,
+    val javaTypeParameter: JavaTypeParameter,
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
