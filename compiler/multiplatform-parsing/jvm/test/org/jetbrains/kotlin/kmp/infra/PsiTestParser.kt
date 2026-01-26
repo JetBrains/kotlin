@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 class PsiTestParser(disposable: Disposable) : AbstractTestParser<PsiElement>(ParseMode.Full) {
     @OptIn(K1Deprecation::class)
     private val environment: KotlinCoreEnvironment =
-        KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.EMPTY, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.create(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
     private val ktPsiFactory = KtPsiFactory(environment.project)
 
     override fun parse(fileName: String, text: String): TestParseNode<out PsiElement> {

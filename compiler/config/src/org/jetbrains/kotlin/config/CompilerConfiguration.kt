@@ -10,10 +10,6 @@ import java.util.*
 
 class CompilerConfiguration {
     companion object {
-        @OptIn(Internals::class)
-        @JvmField
-        val EMPTY = CompilerConfiguration().apply { isReadOnly = true }
-
         private fun <T> T.unmodifiable(): T {
             @Suppress("UNCHECKED_CAST")
             return when (this) {
