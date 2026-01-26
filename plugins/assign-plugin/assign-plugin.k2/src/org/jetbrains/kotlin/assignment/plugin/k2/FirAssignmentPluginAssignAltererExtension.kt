@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @OptIn(DirectDeclarationsAccess::class)
 class FirAssignmentPluginAssignAltererExtension(
-    session: FirSession,
+    session: FirSession
 ) : FirAssignExpressionAltererExtension(session) {
 
     override fun transformVariableAssignment(variableAssignment: FirVariableAssignment): FirStatement? {
@@ -45,11 +45,8 @@ class FirAssignmentPluginAssignAltererExtension(
         }
     }
 
-    private fun FirVariableSymbol<*>.hasSpecialAnnotation(): Boolean {
-        val symbol = resolvedReturnType.upperBoundIfFlexible().toRegularClassSymbol(session)
-            ?: return false
-        return session.annotationMatchingService.isAnnotated(symbol)
-    }
+    private fun FirVariableSymbol<*>.hasSpecialAnnotation(): Boolean =
+        session.annotationMatchingService.isAnnotated(resolvedReturnType.upperBoundIfFlexible().toRegularClassSymbol(session))
 
     private fun buildFunctionCall(variableAssignment: FirVariableAssignment): FirFunctionCall {
         val leftArgument = variableAssignment.calleeReference as FirNamedReference
