@@ -5,9 +5,8 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
+    id("test-inputs-check")
 }
-
-val scriptingTestDefinition by configurations.creating
 
 dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
@@ -75,8 +74,6 @@ dependencies {
     // We use 'api' instead of 'implementation' because other modules might be using these jars indirectly
     testFixturesApi(project(":plugins:plugin-sandbox"))
     testFixturesApi(testFixtures(project(":plugins:plugin-sandbox")))
-
-    scriptingTestDefinition(testFixtures(project(":plugins:scripting:test-script-definition")))
 }
 
 sourceSets {
@@ -107,21 +104,36 @@ projectTests {
             JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
         )
     ) {
-        dependsOn(":dist")
         workingDir = rootDir
+
+        extensions.configure<TestInputsCheckExtension> {
+            allowFlightRecorder = true
+        }
 
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             // Ensure golden tests run first since some LL tests are complementary for the surface tests
             mustRunAfter(":analysis:analysis-api-fir:test")
         }
-
-        addClasspathProperty(scriptingTestDefinition, "kotlin.script.test.script.definition.classpath")
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.TestGeneratorKt")
 
+    testData(project.isolated, "testData")
+    testData(project(":analysis:analysis-api").isolated, "testData")
+
     withJvmStdlibAndReflect()
+    withStdlibCommon()
+    withJsRuntime()
     withWasmRuntime()
+    withTestJar()
+    withAnnotations()
+    withMockJdkRuntime()
+    withMockJdkAnnotationsJar()
+    withScriptRuntime()
+    withScriptingPlugin()
+    withTestScriptDefinition()
+    withDist()
+    withPluginSandboxAnnotations()
 }
 
 allprojects {
