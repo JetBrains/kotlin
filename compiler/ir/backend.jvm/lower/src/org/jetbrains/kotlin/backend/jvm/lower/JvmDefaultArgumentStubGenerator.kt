@@ -12,11 +12,17 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmVisibilityOfDefaultArgumentStub
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFinalClass
+import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 @PhasePrerequisites(
@@ -32,7 +38,33 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
 ) {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrFunction && declaration.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) return null
-        return super.transformFlat(declaration)
+        val lowered = super.transformFlat(declaration) ?: return null
+        if (lowered.size != 2) return lowered
+        val stub = lowered[1] as? IrFunction ?: return lowered
+
+        stub.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitCall(expression: IrCall): IrExpression {
+                if (expression.origin == JvmLoweredStatementOrigin.DEFAULT_STUB_CALL_TO_IMPLEMENTATION) {
+                    val callee = expression.symbol.owner
+                    for (i in 0 until expression.arguments.size) {
+                        val argument = expression.arguments[i] ?: continue
+                        val parameter = callee.parameters[i]
+                        if (!argument.type.isSubtypeOf(parameter.type, context.typeSystem) || argument.type.isInlineClassType()) {
+                            // KT-78051: When an argument has an inline class type, IrInlineDefaultCodegen cannot be used
+                            // because it inlines the body verbatim without type coercion. The callee may expect
+                            // the underlying type (unboxed) while the argument remains boxed, causing VerifyError.
+                            // Clearing the origin forces IrInlineCodegen to handle unboxing.
+                            // The subtype check handles other potential type mismatches.
+                            expression.origin = null
+                            break
+                        }
+                    }
+                }
+                return super.visitCall(expression)
+            }
+        })
+
+        return lowered
     }
 
     override fun defaultArgumentStubVisibility(function: IrFunction) = function.getJvmVisibilityOfDefaultArgumentStub()
