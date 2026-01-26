@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.SyntheticElement
 import com.intellij.psi.javadoc.PsiDocComment
+import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.analysis.java.parsers.JavaPsiDocCommentParser
 import org.jetbrains.dokka.model.doc.DocumentationNode
 
@@ -23,7 +24,7 @@ internal class SyntheticElementDocumentationProvider(
     fun isDocumented(psiElement: PsiElement): Boolean = psiElement is PsiMethod
             && (psiElement.isSyntheticEnumValuesMethod() || psiElement.isSyntheticEnumValueOfMethod())
 
-    fun getDocumentation(psiElement: PsiElement): DocumentationNode? {
+    fun getDocumentation(psiElement: PsiElement, sourceSet: DokkaSourceSet): DocumentationNode? {
         val psiMethod = psiElement as? PsiMethod ?: return null
         val templatePath = when {
             psiMethod.isSyntheticEnumValuesMethod() -> ENUM_VALUES_TEMPLATE_PATH
@@ -31,7 +32,7 @@ internal class SyntheticElementDocumentationProvider(
             else -> return null
         }
         val docComment = loadSyntheticDoc(templatePath) ?: return null
-        return javadocParser.parsePsiDocComment(docComment, psiElement)
+        return javadocParser.parsePsiDocComment(docComment, psiElement, sourceSet)
     }
 
     private fun loadSyntheticDoc(path: String): PsiDocComment? {

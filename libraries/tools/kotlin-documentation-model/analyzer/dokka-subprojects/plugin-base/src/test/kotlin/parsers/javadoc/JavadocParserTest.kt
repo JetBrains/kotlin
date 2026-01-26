@@ -2,7 +2,7 @@
  * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package parsers
+package parsers.javadoc
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.Callable
@@ -102,7 +102,7 @@ class JavadocParserTest : BaseAbstractTest() {
                 val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
-                kotlin.test.assertEquals(
+                assertEquals(
                     listOf(
                         Text(body = "Identifies calls to "),
                         CodeInline(children = listOf(Text(body = "assertThat")), mapOf("lang" to "java")),
@@ -114,7 +114,7 @@ class JavadocParserTest : BaseAbstractTest() {
                     ),
                     root.children[0].children
                 )
-                kotlin.test.assertEquals(
+                assertEquals(
                     CodeBlock(
                         children = listOf(Text(body = "\nSet<String> s2;\nSystem.out\n        .println(\"s2 = \" + s2);\n")),
                         mapOf("lang" to "java")
@@ -146,7 +146,7 @@ class JavadocParserTest : BaseAbstractTest() {
                 val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
-                kotlin.test.assertEquals(
+                assertEquals(
                     listOf(
                         Text(body = "An example of using the literal tag "),
                         Text(body = "@"),
@@ -181,7 +181,7 @@ class JavadocParserTest : BaseAbstractTest() {
                 val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
-                kotlin.test.assertEquals(
+                assertEquals(
                     listOf(
                         P(children = listOf(Text(body = "An example of using the literal tag "))),
                         Pre(
@@ -189,7 +189,8 @@ class JavadocParserTest : BaseAbstractTest() {
                             listOf(
                                 Text(body = "@"),
                                 Text(body = "Entity\npublic class User {}\n")
-                            )
+                            ),
+                            params = mapOf("lang" to "java")
                         )
                     ),
                     root.children
@@ -218,7 +219,7 @@ class JavadocParserTest : BaseAbstractTest() {
                 val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
-                kotlin.test.assertEquals(
+                assertEquals(
                     listOf(
                         P(
                             children = listOf(
@@ -252,7 +253,7 @@ class JavadocParserTest : BaseAbstractTest() {
                 val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
-                kotlin.test.assertEquals(
+                assertEquals(
                     listOf(
                         P(
                             children = listOf(
@@ -400,7 +401,7 @@ class JavadocParserTest : BaseAbstractTest() {
                 val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
-                kotlin.test.assertEquals(
+                assertEquals(
                     listOf(
                         P(children = listOf(Text("An example of using the header tags "))),
                         H1(
@@ -562,7 +563,7 @@ class JavadocParserTest : BaseAbstractTest() {
                 val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
                 val root = docs.children.first().root
 
-                kotlin.test.assertEquals(
+                assertEquals(
                     listOf(
                         Text(body = "Java's tag with wrong case {@liTeRal @}Entity public class User {}"),
                     ),
