@@ -3,13 +3,11 @@ package org.jetbrains.kotlin.benchmark
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import javax.inject.Inject
 
 private const val NATIVE_FRAMEWORK_NAME = "benchmark"
@@ -41,19 +39,17 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
 
     override fun Project.createExtension() = extensions.create<SwiftBenchmarkExtension>(EXTENSION_NAME, this)
 
-    private val Project.linkTaskProvider: TaskProvider<out KotlinNativeLink>
-        get() = hostKotlinNativeTarget.binaries.getFramework(NATIVE_FRAMEWORK_NAME, project.buildType).linkTaskProvider
-
-    override fun Project.createNativeBinary(target: KotlinNativeTarget) {
-        val xcf = XCFramework(NATIVE_FRAMEWORK_NAME)
-        target.binaries.framework(NATIVE_FRAMEWORK_NAME, listOf(project.buildType)) {
-            isStatic = true
-            export(dependencies.project(":benchmarksLauncher"))
-            xcf.add(this)
+    override fun Project.configureTasks() {
+        kotlin.apply {
+            targets.withType(KotlinNativeTarget::class).configureEach {
+                val xcf = XCFramework(NATIVE_FRAMEWORK_NAME)
+                binaries.framework(NATIVE_FRAMEWORK_NAME, listOf(project.buildType)) {
+                    isStatic = true
+                    export(dependencies.project(":benchmarksLauncher"))
+                    xcf.add(this)
+                }
+            }
         }
-    }
-
-    override fun Project.createExtraTasks() {
         benchmark.generateSwiftPackage.configure {
             swiftToolsVersion.set(benchmark.swiftToolsVersion)
             packageDirectory.set(benchmark.packageDirectory)
@@ -67,14 +63,13 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             scratchPath.set(layout.buildDirectory.dir("swiftbuild"))
             options.addAll("-c", "release") // We are only interested in the optimized Swift.
         }
-    }
-
-    override fun RunKotlinNativeTask.configureKonanRunTask() {
-        executable.set(project.benchmark.buildSwift.map { it.outputFile.get() })
-    }
-
-    override fun JsonReportTask.configureKonanJsonReportTask() {
-        codeSizeBinary.fileProvider(project.linkTaskProvider.map { it.outputFile.get().resolve(NATIVE_FRAMEWORK_NAME) })
-        compilerFlags.addAll(project.linkTaskProvider.map { it.toolOptions.freeCompilerArgs.get() })
+        benchmark.konanRun.configure {
+            executable.set(project.benchmark.buildSwift.map { it.outputFile.get() })
+        }
+        val linkTaskProvider = hostKotlinNativeTarget.binaries.getFramework(NATIVE_FRAMEWORK_NAME, project.buildType).linkTaskProvider
+        benchmark.konanJsonReport.configure {
+            codeSizeBinary.fileProvider(linkTaskProvider.map { it.outputFile.get().resolve(NATIVE_FRAMEWORK_NAME) })
+            compilerFlags.addAll(linkTaskProvider.map { it.toolOptions.freeCompilerArgs.get() })
+        }
     }
 }

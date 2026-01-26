@@ -57,11 +57,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
     protected abstract val Project.benchmark: BenchmarkExtension
     protected abstract fun Project.createExtension(): BenchmarkExtension
 
-    protected abstract fun Project.createNativeBinary(target: KotlinNativeTarget)
-    protected abstract fun RunKotlinNativeTask.configureKonanRunTask()
-    protected abstract fun JsonReportTask.configureKonanJsonReportTask()
-
-    protected open fun Project.createExtraTasks() {}
+    protected abstract fun Project.configureTasks()
 
     override fun apply(target: Project) = with(target) {
         pluginManager.apply("kotlin-multiplatform")
@@ -78,12 +74,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
                 freeCompilerArgs.addAll(benchmark.compilerOpts)
                 freeCompilerArgs.addAll(compilerArgs)
             }
-            targets.withType(KotlinNativeTarget::class).configureEach {
-                createNativeBinary(this)
-            }
         }
-
-        createExtraTasks()
 
         benchmark.konanRun.configure {
             group = BENCHMARKING_GROUP
@@ -105,8 +96,6 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             outputs.upToDateWhen { false }
 
             finalizedBy(benchmark.konanJsonReport)
-
-            configureKonanRunTask()
         }
 
         benchmark.konanJsonReport.configure {
@@ -124,8 +113,8 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             }
             kotlinVersion.set(project.kotlinVersion)
             reportFile.set(layout.buildDirectory.file(nativeJson))
-
-            configureKonanJsonReportTask()
         }
+
+        configureTasks()
     }
 }
