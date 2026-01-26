@@ -302,7 +302,6 @@ fun Project.configureTests() {
             ":analysis:analysis-api-standalone:analysis-api-standalone-native",
             ":analysis:low-level-api-fir",
             ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
-            ":analysis:stubs",
             ":compiler",
             ":compiler:android-tests",
             ":compiler:arguments",

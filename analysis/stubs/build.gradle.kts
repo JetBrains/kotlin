@@ -3,6 +3,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -38,6 +39,15 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.analysis.stubs.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
+    withJsRuntime()
+    withStdlibCommon()
+    withMockJdkRuntime()
+    withMockJdkAnnotationsJar()
+    withScriptRuntime()
+    withDist()
+
+    testData(project.isolated, "testData")
+    testData(project(":compiler").isolated, "testData/psi")
 }
 
 testsJar()
