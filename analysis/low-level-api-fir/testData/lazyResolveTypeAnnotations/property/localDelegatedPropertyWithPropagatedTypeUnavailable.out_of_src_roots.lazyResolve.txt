@@ -313,6 +313,10 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeUnavailable.
             ^ Q|foo/Obj|.R|foo/Obj.explicitType|()
         }
         )
+            local [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ D|<local>/localProperty|.<Unresolved name: getValue>#(Null(null), ::R|<local>/localProperty|)
+            }
+
     }
 
 FILE RAW TO BODY:
@@ -344,4 +348,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localDelegatedPropertyWithPropagatedTypeUnavail
             ^ Q|foo/Obj|.R|foo/Obj.explicitType|()
         }
         )
+            local [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ D|<local>/localProperty|.<Unresolved name: getValue>#(Null(null), ::R|<local>/localProperty|)
+            }
+
     }

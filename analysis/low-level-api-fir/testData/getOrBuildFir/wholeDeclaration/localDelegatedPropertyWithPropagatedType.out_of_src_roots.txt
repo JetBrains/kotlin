@@ -7,6 +7,9 @@ FIR element rendered:
     ^ R|foo/explicitType|()
 }
 )
+    local [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+        ^ D|<local>/localProperty|.<Unresolved name: getValue>#(Null(null), ::R|<local>/localProperty|)
+    }
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedType.kt
@@ -29,6 +32,10 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedType.kt
             ^ R|foo/explicitType|()
         }
         )
+            local [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ D|<local>/localProperty|.<Unresolved name: getValue>#(Null(null), ::R|<local>/localProperty|)
+            }
+
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val secondConstant: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|

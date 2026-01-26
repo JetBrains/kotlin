@@ -7,6 +7,9 @@ FIR element rendered:
     ^ R|foo/explicitType|()
 }
 )
+    local [ResolvedTo(BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| {
+        ^ D|<local>/localProperty|.R|kotlin/getValue|<R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>|>(Null(null), ::R|<local>/localProperty|)
+    }
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedType.kt
@@ -29,6 +32,10 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedType.kt
             ^ R|foo/explicitType|()
         }
         )
+            local [ResolvedTo(BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| {
+                ^ D|<local>/localProperty|.R|kotlin/getValue|<R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>|>(Null(null), ::R|<local>/localProperty|)
+            }
+
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val secondConstant: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|

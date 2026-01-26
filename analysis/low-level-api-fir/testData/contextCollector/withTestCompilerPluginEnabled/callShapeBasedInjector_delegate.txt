@@ -19,6 +19,7 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirLocalPropertySymbol lval df1: <ERROR TYPE REF: Unresolved name: getValue>
+                    local get(): <ERROR TYPE REF: Unresolved name: getValue>
 
 FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_delegate.kt
     public abstract [ResolvedTo(STATUS)] interface DataFrame<[ResolvedTo(STATUS)] out T> : R|kotlin/Any| {
@@ -50,5 +51,9 @@ FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_delegate.kt
             )
         }
         )
+            local [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ D|<local>/df1|.<Unresolved name: getValue>#(Null(null), ::R|<local>/df1|)
+            }
+
         R|<local>/df1|.<Unresolved name: column>#
     }
