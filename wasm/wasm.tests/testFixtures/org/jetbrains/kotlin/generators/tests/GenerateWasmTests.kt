@@ -105,6 +105,10 @@ fun main(args: Array<String>) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
+            testClass<AbstractFirWasmJsCodegenMultiModuleBoxTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + "size")
+            }
+
             testClass<AbstractFirWasmJsCodegenBoxTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
@@ -131,6 +135,10 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmJsInterop")
             }
 
+            testClass<AbstractFirWasmJsCodegenMultiModuleInteropTest> {
+                model("codegen/boxWasmJsInterop")
+            }
+
             testClass<AbstractFirWasmWasiCodegenBoxTest> {
                 model("codegen/boxWasmWasi")
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
@@ -147,6 +155,9 @@ fun main(args: Array<String>) {
                 model("debug/stepping")
             }
             testClass<AbstractFirWasmJsSteppingSingleModuleTest> {
+                model("debug/stepping")
+            }
+            testClass<AbstractFirWasmJsMultiModuleSteppingTest> {
                 model("debug/stepping")
             }
             testClass<AbstractFirWasmJsSteppingWithInlinedFunInKlibTest> {
@@ -166,6 +177,12 @@ fun main(args: Array<String>) {
         }
         testGroup(testsRoot, "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmTypeScriptExportSingleModuleTest> {
+                model("typescript-export/wasm/")
+            }
+        }
+
+        testGroup(testsRoot, "js/js.translator/testData", testRunnerMethodName = "runTest0") {
+            testClass<AbstractFirWasmTypeScriptExportMultiModuleTest> {
                 model("typescript-export/wasm/")
             }
         }

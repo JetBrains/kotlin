@@ -29,6 +29,14 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Ignore failed test in single module mode",
     )
 
+    val WASM_FAILS_IN_MULTI_MODULE_MODE by directive(
+        description = "Ignore failed test in multi module mode",
+    )
+
+    val WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS by directive(
+        description = "Ignore failed test in multi module mode on windows",
+    )
+
     val WASM_NO_JS_TAG by directive(
         description = "Don't use WebAssembly.JSTag for throwing and catching exceptions",
     )
