@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.toolchain
 
-import org.apache.commons.io.file.FilesUncheck.copy
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
+import org.jetbrains.kotlin.konan.util.ArchiveType
+import org.jetbrains.kotlin.konan.util.DependencyExtractor
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.nio.file.StandardCopyOption
 
 internal abstract class NativeVersionValueSource :
     ValueSource<String, NativeVersionValueSource.Params> {
@@ -104,16 +104,8 @@ internal abstract class NativeVersionValueSource :
                 "Please, make sure that you've declared the repository, which contains $kotlinNativeVersion."
 
         val gradleCachesKotlinNativeDir = kotlinNativeCompilerConfiguration
-            .singleOrNull()
-            ?.resolve(kotlinNativeVersion)
-            ?: error(resolutionErrorMessage)
+            .singleOrNull() ?: error(resolutionErrorMessage)
 
-        if (!gradleCachesKotlinNativeDir.exists()) {
-            error(
-                "Kotlin Native bundle dependency was used. " +
-                        "Please provide the corresponding version in 'kotlin.native.version' property instead of any other ways."
-            )
-        }
         return gradleCachesKotlinNativeDir
     }
 
@@ -128,23 +120,37 @@ internal abstract class NativeVersionValueSource :
             fromDirectory: File,
             toDirectory: File,
         ) {
-            logger.info("Moving Kotlin/Native bundle from tmp directory $fromDirectory to ${toDirectory.absolutePath}")
+            logger.info("Moving Kotlin/Native bundle from  $fromDirectory to ${toDirectory.absolutePath}")
             if (!toDirectory.list().isNullOrEmpty()) {
                 logger.warn("Kotlin/Native bundle directory ${toDirectory.absolutePath} is not empty. Native bundle files will be overwritten.")
             }
+            unzipTo(fromDirectory, toDirectory.parentFile)
 
-            fromDirectory.walk().forEach { sourceFile ->
-                val relativePath = sourceFile.toRelativeString(fromDirectory)
-                val bundleDirFile = toDirectory.resolve(relativePath)
-                when {
-                    sourceFile.isFile -> copy(sourceFile.toPath(), bundleDirFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                    sourceFile.isDirectory -> bundleDirFile.mkdir()
-                }
-            }
+            checkKotlinNativeVersionWasDownloaded(toDirectory)
 
             createSuccessfulInstallationFile(toDirectory)
 
             logger.info("Moved Kotlin/Native bundle from $fromDirectory to ${toDirectory.absolutePath}")
+        }
+
+        private fun checkKotlinNativeVersionWasDownloaded(
+            gradleKotlinNativeDir: File,
+        ) {
+            //check that native was actually downloaded and unpacked and there is something except .lock file
+            if (!gradleKotlinNativeDir.exists() || (gradleKotlinNativeDir.list().size <= 1)) {
+                error(
+                    "Kotlin Native bundle dependency was used. " +
+                            "Please provide the corresponding version in 'kotlin.native.version' property instead of any other ways."
+                )
+            }
+        }
+
+        private fun unzipTo(archive: File, toDirectory: File) {
+            when {
+                archive.name.endsWith("zip") -> DependencyExtractor().extract(archive, toDirectory, ArchiveType.ZIP)
+                archive.name.endsWith(".tar.gz") -> DependencyExtractor().extract(archive, toDirectory, ArchiveType.TAR_GZ)
+                else -> error("Unsupported format for unzipping $archive")
+            }
         }
 
         private fun createSuccessfulInstallationFile(bundleDir: File) {
