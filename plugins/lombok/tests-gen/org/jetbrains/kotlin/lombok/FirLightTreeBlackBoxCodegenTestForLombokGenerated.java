@@ -60,6 +60,12 @@ public class FirLightTreeBlackBoxCodegenTestForLombokGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("builderAndSingularAnnOnRecordField.kt")
+  public void testBuilderAndSingularAnnOnRecordField() {
+    runTest("plugins/lombok/testData/box/builderAndSingularAnnOnRecordField.kt");
+  }
+
+  @Test
   @TestMetadata("builderAnnotationArguments.kt")
   public void testBuilderAnnotationArguments() {
     runTest("plugins/lombok/testData/box/builderAnnotationArguments.kt");
