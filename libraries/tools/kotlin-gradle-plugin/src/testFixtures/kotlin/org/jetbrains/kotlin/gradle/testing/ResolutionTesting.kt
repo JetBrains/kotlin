@@ -102,11 +102,13 @@ fun KotlinTarget.runtimeResolution(compilationName: String = "main"): Map<Compon
 
 fun KotlinTarget.compilationConfiguration(compilationName: String = "main"): Configuration {
     // workaround for KT-76284
+    @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     val compilation = compilations
         .getByName(compilationName)
     return compilation.internal.configurations.compileDependencyConfiguration
 }
 fun KotlinTarget.runtimeConfiguration(compilationName: String = "main"): Configuration {
+    @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     val compilation = compilations
         .getByName(compilationName)
     return compilation.internal.configurations.runtimeDependencyConfiguration ?: error("Missing runtime configuration in $compilation")

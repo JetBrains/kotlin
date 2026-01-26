@@ -11,7 +11,7 @@
     },
     "createdBy": {
         "gradle": {
-            "version": "8.14"
+            "version": "9.0.0"
         }
     },
     "variants": [
