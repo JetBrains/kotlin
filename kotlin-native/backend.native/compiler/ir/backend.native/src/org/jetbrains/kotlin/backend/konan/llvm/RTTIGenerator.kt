@@ -70,7 +70,7 @@ internal class RTTIGenerator(
             result = result or TF_SUSPEND_FUNCTION
         }
 
-        if (irClass.hasAnnotation(NativeRuntimeNames.Annotations.HasFinalizer)) {
+        if (irClass.hasFinalizer) {
             result = result or TF_HAS_FINALIZER
         }
 
