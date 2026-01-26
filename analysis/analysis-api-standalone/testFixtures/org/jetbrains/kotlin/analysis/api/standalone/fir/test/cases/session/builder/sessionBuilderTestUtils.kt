@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.NoPreloadingMockLibraryUtil
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Assertions
@@ -71,7 +71,7 @@ internal fun compileCommonKlib(kLibSourcesRoot: Path): Path {
         add("-cp")
         add(StandardLibrariesPathProviderForKotlinProject.commonStdlibForTests().absolutePath)
     }
-    MockLibraryUtil.runMetadataCompiler(arguments)
+    NoPreloadingMockLibraryUtil.runMetadataCompiler(arguments)
 
     return testKlib
 }
@@ -85,7 +85,7 @@ internal fun compileToJar(sourceRoot: Path): Path {
         add("-d")
         add(testJar.absolutePathString())
     }
-    MockLibraryUtil.runJvmCompiler(arguments)
+    NoPreloadingMockLibraryUtil.runJvmCompiler(arguments)
 
     return testJar
 }

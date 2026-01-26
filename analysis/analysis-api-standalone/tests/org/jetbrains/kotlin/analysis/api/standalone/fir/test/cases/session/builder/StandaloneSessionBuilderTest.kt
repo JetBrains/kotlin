@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.light.classes.symbol.withMultiplatformLightClassSupport
 import org.jetbrains.kotlin.name.CallableId
@@ -141,7 +142,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val stdlib = addModule(
                     buildKtLibraryModule {
-                        addBinaryRoot(Paths.get("dist/common/kotlin-stdlib-common.klib"))
+                        addBinaryRoot(ForTestCompileRuntime.stdlibCommonForTests().toPath())
                         platform = CommonPlatforms.defaultCommonPlatform
                         libraryName = "stdlib"
                     }

@@ -5,38 +5,38 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
 class StandaloneSessionBuilderAgainstStdlibTest : AbstractStandaloneSessionBuilderAgainstStdlibTest() {
     @Test
     fun testKotlinStdlibJvm() {
-        doTestKotlinStdLibResolve(JvmPlatforms.defaultJvmPlatform, PathUtil.kotlinPathsForDistDirectory.stdlibPath.toPath())
+        doTestKotlinStdLibResolve(JvmPlatforms.defaultJvmPlatform, ForTestCompileRuntime.runtimeJarForTests().toPath())
     }
 
     @Test
     fun testKotlinStdLibCommon() {
         // KT-63493 to avoid using a hardcoded path
-        doTestKotlinStdLibResolve(CommonPlatforms.defaultCommonPlatform, Paths.get("dist/common/kotlin-stdlib-common.klib"))
+        doTestKotlinStdLibResolve(CommonPlatforms.defaultCommonPlatform, ForTestCompileRuntime.stdlibCommonForTests().toPath())
     }
 
     @Test
     fun testKotlinStdLibJs() {
-        doTestKotlinStdLibResolve(JsPlatforms.defaultJsPlatform, PathUtil.kotlinPathsForDistDirectory.jsStdLibKlibPath.toPath())
+        doTestKotlinStdLibResolve(JsPlatforms.defaultJsPlatform, ForTestCompileRuntime.stdlibJsForTests().toPath())
     }
 
     @Test
     fun testKotlinStdLibJsWithInvalidKlib() {
         doTestKotlinStdLibResolve(
             JsPlatforms.defaultJsPlatform,
-            PathUtil.kotlinPathsForDistDirectory.jsStdLibKlibPath.toPath(),
+            ForTestCompileRuntime.stdlibJsForTests().toPath(),
             additionalStdlibRoots = listOf(
                 Paths.get(System.getProperty("java.home")), // directory which exists and does not contain KLibs inside
-                PathUtil.kotlinPathsForDistDirectory.stdlibPath.toPath(), // file which exists and not a KLib
+                ForTestCompileRuntime.runtimeJarForTests().toPath(), // file which exists and not a KLib
             )
         )
     }

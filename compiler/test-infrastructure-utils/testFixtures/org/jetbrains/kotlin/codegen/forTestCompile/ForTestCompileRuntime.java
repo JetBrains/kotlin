@@ -157,6 +157,11 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File stdlibJsForTests() {
+        return propertyOrDist(KOTLIN_JS_STDLIB_KLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib-js.klib");
+    }
+
+    @NotNull
     private static File assertExists(@NotNull File file) {
         if (!file.exists()) {
             throw new IllegalStateException(file + " does not exist. Run 'gradlew dist'");
