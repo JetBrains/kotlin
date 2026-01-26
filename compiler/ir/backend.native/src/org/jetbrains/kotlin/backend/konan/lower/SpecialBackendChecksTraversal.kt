@@ -53,7 +53,7 @@ class SpecialBackendChecksTraversal(
     override fun lower(irFile: IrFile) {
         irFile.acceptChildrenVoid(BackendChecker(context, symbols, irBuiltIns, irFile))
         // EscapeAnalysisChecker only makes sense when compiling stdlib.
-        irFile.acceptChildrenVoid(EscapeAnalysisChecker(context, irFile))
+        irFile.acceptChildrenVoid(EscapeAnalysisChecker(context, irBuiltIns, irFile))
     }
 }
 
