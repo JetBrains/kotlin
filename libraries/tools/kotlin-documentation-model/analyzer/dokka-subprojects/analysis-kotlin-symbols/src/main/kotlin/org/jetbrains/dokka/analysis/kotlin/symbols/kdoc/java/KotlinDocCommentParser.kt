@@ -5,6 +5,7 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.java
 
 import com.intellij.psi.PsiNamedElement
+import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.java.doccomment.DocComment
 import org.jetbrains.dokka.analysis.java.parsers.DocCommentParser
@@ -25,7 +26,7 @@ internal class KotlinDocCommentParser(
         return docComment is KotlinDocComment
     }
 
-    override fun parse(docComment: DocComment, context: PsiNamedElement): DocumentationNode {
+    override fun parse(docComment: DocComment, context: PsiNamedElement, sourceSet: DokkaSourceSet): DocumentationNode {
         val kotlinDocComment = docComment as KotlinDocComment
         return parseDocumentation(kotlinDocComment)
     }
