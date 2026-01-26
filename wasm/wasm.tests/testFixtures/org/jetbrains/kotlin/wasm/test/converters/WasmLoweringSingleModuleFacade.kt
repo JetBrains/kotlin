@@ -6,21 +6,16 @@
 package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
+import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileWasmLoweredFragmentsForSingleModule
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.SingleModuleCompiler
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
-import org.jetbrains.kotlin.js.config.generateDts
-import org.jetbrains.kotlin.js.config.sourceMap
-import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
+import org.jetbrains.kotlin.js.config.outputDir
+import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -28,6 +23,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.test.PrecompileSetup
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
@@ -43,7 +39,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         return true
     }
 
-    private fun getModuleResolutionMap(currentSetup: PrecompileSetup): Map<String, String> {
+    private fun configureModuleResolutionMap(configuration: CompilerConfiguration,currentSetup: PrecompileSetup) {
         val stdlibInitFile = File(currentSetup.stdlibOutputDir, "$precompiledStdlibOutputName.mjs")
         val kotlinTestInitFile = File(currentSetup.kotlinTestOutputDir, "$precompiledKotlinTestOutputName.mjs")
 
@@ -52,10 +48,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val relativeStdlibPath = stdlibInitFile.relativeTo(outputDir).path.replace('\\', '/').substringBeforeLast('.')
         val relativeKotlinTestPath = kotlinTestInitFile.relativeTo(outputDir).path.replace('\\', '/').substringBeforeLast('.')
 
-        return mapOf(
-            "<kotlin>" to relativeStdlibPath,
-            "<kotlin-test>" to relativeKotlinTestPath,
-        )
+        configuration.wasmDependencyResolutionMap = "<kotlin>:$relativeStdlibPath,<kotlin-test>:$relativeKotlinTestPath"
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Wasm {
@@ -70,6 +63,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
 
         with(configuration) {
             configureWith(testServices.moduleStructure.allDirectives)
+            outputDir = testServices.getWasmTestOutputDirectory()
         }
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
@@ -79,23 +73,25 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             configuration.wasmUseNewExceptionProposal -> PrecompileSetup.NEW_EXCEPTION_PROPOSAL
             else -> PrecompileSetup.REGULAR
         }
-        val moduleResolutionMap = getModuleResolutionMap(currentSetup)
+        configureModuleResolutionMap(configuration, currentSetup)
 
-        val outputName = "index".takeIf { WasmEnvironmentConfigurator.isMainModule(module, testServices) }
+        if (WasmEnvironmentConfigurator.isMainModule(module, testServices)) {
+            configuration.outputName = "index"
+        }
 
-        val wasmIrToCompile = compileWasmLoweredFragmentsForSingleModule(
-            configuration = configuration,
-            irModuleInfo = moduleInfo,
-            mainModule = mainModule,
-            signatureRetriever = moduleInfo.symbolTable.irFactory as IdSignatureRetriever,
-            stdlibIsMainModule = false,
-            outputFileNameBase = outputName,
-            dependencyResolutionMap = moduleResolutionMap,
-            exportedDeclarations = exportedDeclarations,
-        )
+        val irFactory = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC
+        val compiler = SingleModuleCompiler(configuration, irFactory, isWasmStdlib = false)
 
-        val linkedModule = linkWasmIr(wasmIrToCompile)
-        val compileResult = compileWasmIrToBinary(wasmIrToCompile, linkedModule)
+        val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
+            compiler.lowerIr(moduleInfo, mainModule, exportedDeclarations)
+        }
+
+        val compiledIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
+            compiler.compileIr(loweredIr)
+        }
+
+        val linkedModule = linkWasmIr(compiledIr)
+        val compileResult = compileWasmIrToBinary(compiledIr, linkedModule)
 
         return BinaryArtifacts.Wasm(
             linkedModule,

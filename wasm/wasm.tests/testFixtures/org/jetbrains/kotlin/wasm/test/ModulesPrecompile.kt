@@ -19,11 +19,9 @@ import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBackendPipelinePhase
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName

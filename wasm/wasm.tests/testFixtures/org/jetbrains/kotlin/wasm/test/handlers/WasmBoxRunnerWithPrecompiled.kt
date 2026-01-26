@@ -21,8 +21,7 @@ class WasmBoxRunnerWithPrecompiled(
         writeCompilationResult(info.compilerResult, outputDir, info.compilerResult.baseFileName, null)
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         if (debugMode >= DebugMode.DEBUG) {
-            val outputDirBase = testServices.getWasmTestOutputDirectory()
-            val path = outputDirBase.absolutePath
+            val path = outputDir.absolutePath
             val baseFileName = info.compilerResult.baseFileName
             println(" ------ Wat  file://$path/$baseFileName.wat")
             println(" ------ Wasm file://$path/$baseFileName.wasm")
