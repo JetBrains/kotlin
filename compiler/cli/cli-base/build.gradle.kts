@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":js:js.config"))
     implementation(project(":wasm:wasm.config"))
     implementation(project(":native:native.config"))
+    api(project(":compiler:plugin-api"))
     implementation(project(":kotlin-util-klib-metadata"))
 
     compileOnly(intellijCore())
