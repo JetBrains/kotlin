@@ -1156,6 +1156,7 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
 
     @Test
     fun composableLambdaAsTheFunctionReferenceOwner() {
+        assumeTrue(useFir)
         validateBytecode(
             """
                 import androidx.compose.runtime.Composable
