@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
-import org.jetbrains.kotlin.cli.CliDiagnosticsKt;
 import org.jetbrains.kotlin.cli.CompilerConfigurationCreationKt;
 import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot;
@@ -124,7 +123,7 @@ public class KotlinTestUtils {
     @NotNull
     public static CompilerConfiguration newConfiguration() {
         CompilerConfiguration configuration = new CompilerConfiguration();
-        CliDiagnosticsKt.initializeDiagnosticFactoriesStorageForCli(configuration);
+        CompilerConfigurationCreationKt.initializeDiagnosticFactoriesStorageForCli(configuration);
         CompilerConfigurationCreationKt.registerExtensionStorage(configuration);
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME);
         configuration.put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, new MessageCollector() {

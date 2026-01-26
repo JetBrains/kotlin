@@ -7,7 +7,14 @@ package org.jetbrains.kotlin.cli
 
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
 
 fun CompilerConfiguration.registerExtensionStorage() {
     extensionsStorage = CompilerPluginRegistrar.ExtensionStorage()
+}
+
+fun CompilerConfiguration.initializeDiagnosticFactoriesStorageForCli() {
+    val storage = KtRegisteredDiagnosticFactoriesStorage()
+    storage.registerDiagnosticContainers(CliDiagnostics)
+    this.diagnosticFactoriesStorage = storage
 }
