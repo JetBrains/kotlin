@@ -90,10 +90,13 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         mainCallArguments: List<String>?,
     ): List<WasmIrModuleConfiguration> {
         val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
-        val compiler = if (configuration.wasmIncludedModuleOnly) {
-            SingleModuleCompiler(configuration, irFactory, isWasmStdlib = module.klibs.included?.isWasmStdlib == true)
-        } else {
-            WholeWorldCompiler(configuration, irFactory)
+        val compiler = when {
+            configuration.wasmIncludedModuleOnly ->
+                SingleModuleCompiler(configuration, irFactory, isWasmStdlib = module.klibs.included?.isWasmStdlib == true)
+            configuration.wasmGenerateClosedWorldMultimodule ->
+                WholeWorldMultiModuleCompiler(configuration, irFactory)
+            else ->
+                WholeWorldCompiler(configuration, irFactory)
         }
 
         val loadedIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.wasm.ir.*
 
-class WasmFileCodegenContextWithImport(
+open class WasmFileCodegenContextWithImport(
     wasmFileFragment: WasmCompiledFileFragment,
     idSignatureRetriever: IdSignatureRetriever,
     private val moduleName: String,

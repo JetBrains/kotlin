@@ -43,9 +43,12 @@ class WasmModuleFragmentGenerator(
         irModuleFragment: IrModuleFragment,
         moduleName: String,
         referencedDeclarations: ModuleReferencedDeclarations,
+        referencedTypes: ModuleReferencedTypes?,
     ): Pair<WasmCompiledFileFragment, Boolean> {
         val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
-        val wasmFileCodegenContext = WasmFileCodegenContextWithImport(wasmFileFragment, idSignatureRetriever, moduleName, referencedDeclarations)
+        val wasmFileCodegenContext =
+            if (referencedTypes != null) WasmFileCodegenContextWithImportTrackedTypes(wasmFileFragment, idSignatureRetriever, moduleName, referencedDeclarations, referencedTypes)
+            else WasmFileCodegenContextWithImport(wasmFileFragment, idSignatureRetriever, moduleName, referencedDeclarations)
         generate(irModuleFragment, wasmFileCodegenContext)
         return wasmFileFragment to wasmFileCodegenContext.declarationImported
     }
@@ -53,9 +56,12 @@ class WasmModuleFragmentGenerator(
     fun generateModuleAsSingleFileFragmentWithModuleExport(
         irModuleFragment: IrModuleFragment,
         referencedDeclarations: ModuleReferencedDeclarations,
+        referencedTypes: ModuleReferencedTypes?,
     ): WasmCompiledFileFragment {
         val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
-        val wasmFileCodegenContext = WasmFileCodegenContextWithExport(wasmFileFragment, idSignatureRetriever, referencedDeclarations)
+        val wasmFileCodegenContext =
+            if (referencedTypes != null) WasmFileCodegenContextWithExportTrackedTypes(wasmFileFragment, idSignatureRetriever, referencedDeclarations, referencedTypes)
+            else WasmFileCodegenContextWithExport(wasmFileFragment, idSignatureRetriever, referencedDeclarations)
         generate(irModuleFragment, wasmFileCodegenContext)
         return wasmFileFragment
     }
