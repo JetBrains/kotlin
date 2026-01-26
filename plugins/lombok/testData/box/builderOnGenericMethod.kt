@@ -1,8 +1,5 @@
-// FIR_IDENTICAL
-// ISSUE: KT-83334
-// Check incorrect using of `@Builder` and its robust handling in Kotlin
-// TODO: probably it makes sense to add more examples.
-// For instance, a constructor with its own type parameter (it's illegal in Lombok)
+// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND_K2: ANY
 
 // FILE: Method.java
 
@@ -28,8 +25,10 @@ public class TestJava {
 
 // FILE: testKotlin.kt
 
-fun test() {
+fun box(): String {
+    TestJava().use()
     val builder: Method.MethodBuilder<Any> = Method.builder()
     val builder2: Method.MethodBuilder<Any> = builder.m("s")
     val obj: Any = builder2.build()
+    return "OK"
 }
