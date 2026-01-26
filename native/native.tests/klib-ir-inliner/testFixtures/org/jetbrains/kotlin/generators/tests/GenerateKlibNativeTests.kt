@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxCoreTest
 import org.jetbrains.kotlin.konan.test.diagnostics.*
@@ -149,7 +149,7 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeCodegenBoxCoreTest>(
                 suiteTestClassName = "NativeCodegenBoxTestGenerated",
                 annotations = listOf(
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
                 model("box", excludeDirs = k1BoxTestDir)

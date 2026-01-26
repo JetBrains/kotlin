@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
@@ -14,7 +14,7 @@ import kotlin.test.assertTrue
 private const val testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/"
 
 @Tag("sanity")
-@UseStandardTestCaseGroupProvider()
+@UseDummyTestCaseGroupProvider()
 @TestMetadata(testDataRoot)
 class CustomNativeCompilerSecondStageSanity : AbstractCustomNativeCompilerSecondStageTest() {
     @Test
