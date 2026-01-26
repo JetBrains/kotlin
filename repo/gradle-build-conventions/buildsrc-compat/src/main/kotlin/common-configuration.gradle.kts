@@ -311,7 +311,6 @@ fun Project.configureTests() {
             ":compiler:incremental-compilation-impl",
             ":compiler:ir.backend.common",
             ":compiler:multiplatform-parsing",
-            ":compiler:psi:psi-api",
             ":compiler:test-infrastructure-utils",
             ":compiler:tests-different-jdk",
             ":compiler:tests-integration",
