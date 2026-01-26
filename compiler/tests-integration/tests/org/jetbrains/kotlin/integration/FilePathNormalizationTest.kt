@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.configureSourceRoots
@@ -368,7 +369,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
         val libDir = baseDir.resolve("lib")
         val linkToLibDir = createSymlink(libDir, File(tmpdir, "liblink"))
 
-        val configuration = CompilerConfiguration()
+        val configuration = CompilerConfiguration.create()
         val module = ModuleBuilder("", "", "").apply {
             addClasspathEntry(linkToLibDir.path)
         }

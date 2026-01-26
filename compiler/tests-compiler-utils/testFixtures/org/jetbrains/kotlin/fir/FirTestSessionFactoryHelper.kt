@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -36,7 +37,7 @@ object FirTestSessionFactoryHelper {
         friendsPaths: List<Path> = emptyList(),
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
     ): FirSession {
-        val configuration = CompilerConfiguration().apply {
+        val configuration = CompilerConfiguration.create().apply {
             this.languageVersionSettings = languageVersionSettings
             initializeDiagnosticFactoriesStorageForCli()
             registerExtensionStorage()

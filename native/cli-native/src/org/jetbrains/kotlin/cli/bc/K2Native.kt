@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -140,7 +141,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 override fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit) {
                     val spawnedArguments = K2NativeCompilerArguments()
                     parseCommandLineArguments(arguments, spawnedArguments)
-                    val spawnedConfiguration = CompilerConfiguration()
+                    val spawnedConfiguration = CompilerConfiguration.create()
 
                     val spawnedPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
                     spawnedConfiguration.initializeDiagnosticFactoriesStorageForCli()

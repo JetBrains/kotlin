@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.setupKlibAbiCompatibilityLevel
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -122,7 +123,7 @@ open class CompilerConfigurationProviderImpl(
         val configFiles = platform.platformToEnvironmentConfigFiles()
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
             testRootDisposable,
-            CompilerConfiguration()
+            CompilerConfiguration.create()
         )
         val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
         val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
@@ -177,7 +178,7 @@ fun createCompilerConfiguration(
     configurators: List<AbstractEnvironmentConfigurator>,
     compilationStage: CompilationStage,
 ): CompilerConfiguration {
-    val configuration = CompilerConfiguration()
+    val configuration = CompilerConfiguration.create()
     configuration[CommonConfigurationKeys.MODULE_NAME] = module.name
 
     if (JsEnvironmentConfigurationDirectives.GENERATE_STRICT_IMPLICIT_EXPORT in module.directives) {

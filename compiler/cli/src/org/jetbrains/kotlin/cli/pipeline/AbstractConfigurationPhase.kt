@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_K2_RE
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
@@ -45,7 +46,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     val configurationUpdaters: List<ConfigurationUpdater<A>>
 ) : PipelinePhase<ArgumentsPipelineArtifact<A>, ConfigurationPipelineArtifact>(name, preActions, postActions) {
     override fun executePhase(input: ArgumentsPipelineArtifact<A>): ConfigurationPipelineArtifact? {
-        val configuration = CompilerConfiguration()
+        val configuration = CompilerConfiguration.create()
         configuration.setupCommonConfiguration(input)
 
         for (filler in configurationUpdaters) {
