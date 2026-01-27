@@ -8954,6 +8954,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("subjectVariableWithSmartcastedInitializer.kt")
+      public void testSubjectVariableWithSmartcastedInitializer() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/subjectVariableWithSmartcastedInitializer.kt");
+      }
+
+      @Test
       @TestMetadata("typeOfLambdaWithSmartcast.kt")
       public void testTypeOfLambdaWithSmartcast() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/typeOfLambdaWithSmartcast.kt");
