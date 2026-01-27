@@ -46,9 +46,16 @@ public actual constructor(
  * @throws IllegalArgumentException if no enum constant with the specified [name] exists in [T].
  * @sample samples.misc.Enums.enumValueOfSample
  */
-public actual inline fun <reified T: Enum<T>> enumValueOf(name: String): T = enumValueOfIntrinsic<T>(name)
+public actual inline fun <reified T: Enum<T>> enumValueOf(name: String): T = enumValueOfIntrinsic(name)
 
 /**
- * Returns an array containing enum T entries.
+ * Returns an array containing enum entries of the enum type [T].
+ *
+ * The function returns a new instance of the array on every call.
+ * The array could be mutated, so working with it may also require defensive copying.
+ * Consider using [kotlin.enums.enumEntries] as a more efficient alternative
+ * returning an immutable list of enum entries.
+ *
+ * @see kotlin.enums.enumEntries
  */
-public actual inline fun <reified T: Enum<T>> enumValues(): Array<T> = enumValuesIntrinsic<T>()
+public actual inline fun <reified T: Enum<T>> enumValues(): Array<T> = enumValuesIntrinsic()
