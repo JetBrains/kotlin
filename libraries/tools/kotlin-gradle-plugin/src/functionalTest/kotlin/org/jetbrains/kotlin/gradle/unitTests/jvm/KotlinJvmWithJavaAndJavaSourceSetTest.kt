@@ -6,12 +6,17 @@
 package org.jetbrains.kotlin.gradle.unitTests.jvm
 
 import org.gradle.api.Project
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
-import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.assertNoCircularTaskDependencies
+import org.jetbrains.kotlin.gradle.util.assertTaskDependenciesEquals
+import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
+import org.junit.jupiter.api.Assumptions
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -30,6 +35,7 @@ class KotlinJvmWithJavaAndJavaSourceSetTest {
 
     @Test
     fun shouldCreateMainJavaSourceSets() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
         baseJvmProject.evaluate()
 
         val mainSourceSet = baseJvmProject.javaSourceSets.findByName(
@@ -61,6 +67,7 @@ class KotlinJvmWithJavaAndJavaSourceSetTest {
 
     @Test
     fun javaSourceSetsOutputShouldBeIncludedInFinalArtifact() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
         baseJvmProject.evaluate()
 
         val jvmMainCompilation = baseJvmProject.multiplatformExtension.jvmMainCompilation
@@ -78,6 +85,7 @@ class KotlinJvmWithJavaAndJavaSourceSetTest {
 
     @Test
     fun mainJavaCompileTaskIsIncludedAsClassesTaskDependency() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
         baseJvmProject.evaluate()
 
         val jvmMainCompilation = baseJvmProject.multiplatformExtension.jvmMainCompilation
