@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:OptIn(ExperimentalBuildToolsApi::class)
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 
@@ -10,7 +11,6 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.*
 import java.io.File
 
-@Suppress("DEPRECATION")
 internal class PreKotlin220Wrapper(
     private val base: CompilationService
 ) : CompilationService by base {
