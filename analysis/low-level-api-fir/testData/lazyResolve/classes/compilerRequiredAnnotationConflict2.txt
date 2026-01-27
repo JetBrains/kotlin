@@ -218,7 +218,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
             Annotation symbol resolved differently on compiler annotation and symbols stages:
               - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
               - compiler arguments stage: FirRegularPropertySymbol /Some.FIELD
-        >#)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {
+        >#) [evaluated = vararg(this@R|/Some|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
+              - compiler arguments stage: FirRegularPropertySymbol /Some.FIELD
+        >#)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -241,7 +245,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
             Annotation symbol resolved differently on compiler annotation and symbols stages:
               - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
               - compiler arguments stage: FirRegularPropertySymbol /Some.FIELD
-        >#)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        >#) [evaluated = vararg(this@R|/Some|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
+              - compiler arguments stage: FirRegularPropertySymbol /Some.FIELD
+        >#)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 super<R|kotlin/Any|>()
             }
@@ -264,7 +272,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationConflict2.kt
             Annotation symbol resolved differently on compiler annotation and symbols stages:
               - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
               - compiler arguments stage: FirRegularPropertySymbol /Some.FIELD
-        >#)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        >#) [evaluated = vararg(this@R|/Some|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
+              - compiler arguments stage: FirRegularPropertySymbol /Some.FIELD
+        >#)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 super<R|kotlin/Any|>()
             }

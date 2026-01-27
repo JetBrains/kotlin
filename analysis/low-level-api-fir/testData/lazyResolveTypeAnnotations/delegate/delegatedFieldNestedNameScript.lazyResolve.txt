@@ -710,14 +710,14 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0))  second/Base<@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4))  second/Second<@R|second/Anno|(i = Int(5))  kotlin/String>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|@R|second/Anno|(i = Int(0))  second/Base<@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>| = LAZY_EXPRESSION
 
-            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(i = Int(4))  second/Second<@R|second/Anno|(i = Int(5))  kotlin/String>| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| = LAZY_EXPRESSION
 
             public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object Companion : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
@@ -772,14 +772,14 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0))  second/Base<@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4))  second/Second<@R|second/Anno|(i = Int(5))  kotlin/String>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(0))  second/Base<@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  kotlin/Int>>| = Q|second/MyClass.Companion|
+            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>| = Q|second/MyClass.Companion|
 
-            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(i = Int(4))  second/Second<@R|second/Anno|(i = Int(5))  kotlin/String>| = LAZY_EXPRESSION
+            private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| = LAZY_EXPRESSION
 
             public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object Companion : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
@@ -810,7 +810,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -835,16 +835,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameScript.kts
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(), ScriptTopLevelDeclaration=true] val inner: R|kotlin/String| = String()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0))  second/Base<@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4))  second/Second<@R|second/Anno|(i = Int(5))  kotlin/String>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 super<R|kotlin/Any|>()
             }
 
-            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(0))  second/Base<@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  kotlin/Int>>| = Q|second/MyClass.Companion|
+            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>| = Q|second/MyClass.Companion|
 
-            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_1: R|@R|second/Anno|(i = Int(4))  second/Second<@R|second/Anno|(i = Int(5))  kotlin/String>| = Q|second/MyClass.NestedObject|
+            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_1: R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| = Q|second/MyClass.NestedObject|
 
-            public final companion [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object Companion : R|@R|second/Anno|(i = IntegerLiteral(6).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|))  second/Base<@R|second/Anno|(i = IntegerLiteral(7).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|))  second/Base<@R|second/Anno|(i = IntegerLiteral(8).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|))  kotlin/Int>>| {
+            public final companion [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object Companion : R|@R|second/Anno|(i = IntegerLiteral(6).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|) [evaluated = IntegerLiteral(6).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|)])  second/Base<@R|second/Anno|(i = IntegerLiteral(7).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|) [evaluated = IntegerLiteral(7).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|)])  second/Base<@R|second/Anno|(i = IntegerLiteral(8).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|) [evaluated = IntegerLiteral(8).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|)])  kotlin/Int>>| {
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                     super<R|kotlin/Any|>()
                 }
@@ -857,7 +857,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameScript.kts
 
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object NestedObject : R|@R|second/Anno|(i = Int(9))  second/Second<@R|second/Anno|(i = Int(10))  kotlin/String>| {
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object NestedObject : R|@R|second/Anno|(i = Int(9).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|) [evaluated = Int(9)])  second/Second<@R|second/Anno|(i = Int(10).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|) [evaluated = Int(10)])  kotlin/String>| {
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
                     super<R|kotlin/Any|>()
                 }

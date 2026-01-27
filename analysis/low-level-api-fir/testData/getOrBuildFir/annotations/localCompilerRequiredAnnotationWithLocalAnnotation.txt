@@ -3,7 +3,7 @@ FIR element: FirAnnotationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|<local>/LocalClass.MyAnno|[Types](value = String(str))
+@R|<local>/LocalClass.MyAnno|[Types](value = String(str) [evaluated = String(str)])
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localCompilerRequiredAnnotationWithLocalAnnotation.kt
@@ -13,14 +13,14 @@ FILE: [ResolvedTo(IMPORTS)] localCompilerRequiredAnnotationWithLocalAnnotation.k
                 super<R|kotlin/Any|>()
             }
 
-            @R|<local>/LocalClass.MyAnno|[Types](value = String(str)) local final inner [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] class InnerClass : R|kotlin/Any| {
+            @R|<local>/LocalClass.MyAnno|[Types](value = String(str) [evaluated = String(str)]) local final inner [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] class InnerClass : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InnerClass] <local>/LocalClass.constructor(): R|<local>/LocalClass.InnerClass| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            @R|org/jetbrains/kotlin/plugin/sandbox/MetaSupertype|[Types]() @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) local final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] annotation class MyAnno : R|kotlin/Annotation| {
+            @R|org/jetbrains/kotlin/plugin/sandbox/MetaSupertype|[Types]() @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)]) local final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] annotation class MyAnno : R|kotlin/Annotation| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/value] value: R|kotlin/String|): R|<local>/LocalClass.MyAnno| {
                     super<R|kotlin/Any|>()
                 }

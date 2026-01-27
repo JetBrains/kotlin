@@ -24,4 +24,4 @@ FILE: [ResolvedTo(IMPORTS)] wholeFileLevel.kt
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
     }
-    [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](s = String(str5)) @R|foo/Anno|[Types](s = String(o)) <DANGLING MODIFIER: Top level declaration expected>
+    [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](s = String(str).R|kotlin/String.plus|(R|foo/CONSTANT|) [evaluated = String(str5)]) @R|foo/Anno|[Types](s = String(o) [evaluated = String(o)]) <DANGLING MODIFIER: Top level declaration expected>

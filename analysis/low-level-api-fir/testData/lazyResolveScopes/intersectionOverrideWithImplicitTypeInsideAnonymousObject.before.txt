@@ -2,7 +2,7 @@ public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE
     ^foo Q|kotlin/Unit|
 }
 
-public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String}, baseSymbol=FirIntersectionOverrideFunctionSymbol second/B.foo), IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/B.foo] fun foo([ResolvedTo(STATUS)] x: R|@R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String|): <implicit>
+public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|) [evaluated = <strcat>(String(object ), R|second/constant|)])  kotlin/String}, baseSymbol=FirIntersectionOverrideFunctionSymbol second/B.foo), IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/B.foo] fun foo([ResolvedTo(STATUS)] x: R|@R|second/Anno|(str = <strcat>(String(object ), R|second/constant|) [evaluated = <strcat>(String(object ), R|second/constant|)])  kotlin/String|): <implicit>
 
 public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=CallableCopyIntersection(mostSpecific=[FirNamedFunctionSymbol second/B.foo, FirNamedFunctionSymbol second/B.foo]), IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/C.foo] fun foo([ResolvedTo(STATUS)] x: R|T|): <implicit>
 
@@ -14,7 +14,7 @@ public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=Def
 
 public open [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] x: R|F| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
-public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String}, baseSymbol=FirIntersectionOverridePropertySymbol second/B.bar), IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: <implicit>
+public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|) [evaluated = <strcat>(String(object ), R|second/constant|)])  kotlin/String}, baseSymbol=FirIntersectionOverridePropertySymbol second/B.bar), IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: <implicit>
     public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>, IntersectionOverrideOriginalKey=special/accessor] get(): <implicit>
     public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>, IntersectionOverrideOriginalKey=special/accessor] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
 

@@ -1,5 +1,5 @@
 FILE: booleanOperators.kt
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun myRequire(b: R|kotlin/Boolean|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun myRequire(b: R|kotlin/Boolean|): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> b
@@ -19,7 +19,7 @@ FILE: booleanOperators.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun myRequireAnd(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun myRequireAnd(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> b1 && b2
@@ -39,7 +39,7 @@ FILE: booleanOperators.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun myRequireOr(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun myRequireOr(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> b1 || b2
@@ -59,7 +59,7 @@ FILE: booleanOperators.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun myRequireNot(b: R|kotlin/Boolean|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun myRequireNot(b: R|kotlin/Boolean|): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> !b

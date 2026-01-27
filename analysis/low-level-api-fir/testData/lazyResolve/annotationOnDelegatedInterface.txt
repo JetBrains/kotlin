@@ -449,7 +449,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|Base| = @R|Some|[Types](s = String(Anything)) R|<local>/b|
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|Base| = @R|Some|[Types](s = String(Anything) [evaluated = String(Anything)]) R|<local>/b|
 
     }
 
@@ -471,7 +471,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnDelegatedInterface.kt
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Some : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Some : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Some.s] s: R|kotlin/String|): R|Some| {
             super<R|kotlin/Any|>()
         }
@@ -485,6 +485,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnDelegatedInterface.kt
             super<R|kotlin/Any|>()
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|Base| = @R|Some|[Types](s = String(Anything)) R|<local>/b|
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|Base| = @R|Some|[Types](s = String(Anything) [evaluated = String(Anything)]) R|<local>/b|
 
     }

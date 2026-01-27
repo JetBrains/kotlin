@@ -1,22 +1,22 @@
-@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>
+@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>
   context -> FirNamedFunctionSymbol /Derived.getSomething
   anchor -> [FirNamedFunctionSymbol /expectType]
 
-@R|Anno|(position = String(nested return type str))  kotlin/Int
+@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int
   context -> FirNamedFunctionSymbol /Derived.getSomething
   anchor -> [FirNamedFunctionSymbol /expectType]
 
-@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>
+@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>
   context -> FirSimpleSyntheticPropertySymbol /Derived.something
   anchor -> [FirNamedFunctionSymbol /expectType]
 
-@R|Anno|(position = String(nested return type str))  kotlin/Int
+@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int
   context -> FirSimpleSyntheticPropertySymbol /Derived.something
   anchor -> [FirNamedFunctionSymbol /expectType]
 
 
-TARGET: public open override [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] val something: R|@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /expectType]] get(): R|@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>| {
+TARGET: public open override [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] val something: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>|
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /expectType]] get(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>| {
         ^getSomething R|/expectType|()
     }
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
@@ -31,13 +31,13 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expectType(): R|@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expectType(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>| { LAZY_BLOCK }
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /expectType]] fun getSomething(): R|@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>| {
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /expectType]] fun getSomething(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>| {
             ^getSomething R|/expectType|()
         }
 

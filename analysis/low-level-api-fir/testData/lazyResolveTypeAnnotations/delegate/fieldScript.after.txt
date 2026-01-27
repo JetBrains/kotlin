@@ -1,12 +1,12 @@
-@R|one/Anno|(position = String(super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested nested super type ref str))  kotlin/Int>>
+@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|) [evaluated = String(super type ref str)])  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|) [evaluated = String(nested super type ref str)])  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|) [evaluated = String(nested nested super type ref str)])  kotlin/Int>>
   context -> FirFieldSymbol one/Usage.$$delegate_0
   anchor -> [FirRegularClassSymbol one/Usage]
 
-@R|one/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested nested super type ref str))  kotlin/Int>
+@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|) [evaluated = String(nested super type ref str)])  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|) [evaluated = String(nested nested super type ref str)])  kotlin/Int>
   context -> FirFieldSymbol one/Usage.$$delegate_0
   anchor -> [FirRegularClassSymbol one/Usage]
 
-@R|one/Anno|(position = String(nested nested super type ref str))  kotlin/Int
+@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|) [evaluated = String(nested nested super type ref str)])  kotlin/Int
   context -> FirFieldSymbol one/Usage.$$delegate_0
   anchor -> [FirRegularClassSymbol one/Usage]
 
@@ -28,12 +28,12 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}, ScriptTopLevelDeclaration=true] class Usage : R|@R|one/Anno|(position = String(super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested nested super type ref str))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}, ScriptTopLevelDeclaration=true] class Usage : R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|) [evaluated = String(super type ref str)])  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|) [evaluated = String(nested super type ref str)])  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|) [evaluated = String(nested nested super type ref str)])  kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: List<List<Int>>): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|one/Anno|(position = String(super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested nested super type ref str))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|) [evaluated = String(super type ref str)])  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|) [evaluated = String(nested super type ref str)])  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|) [evaluated = String(nested nested super type ref str)])  kotlin/Int>>| = LAZY_EXPRESSION
 
         }
 

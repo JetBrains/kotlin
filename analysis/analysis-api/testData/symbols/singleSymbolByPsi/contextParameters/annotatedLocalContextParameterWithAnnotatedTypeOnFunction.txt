@@ -22,7 +22,7 @@ KaContextParameterSymbol:
         psi: KtAnnotationEntry
     ]
     typeArguments: []
-    type: @R|Anno|(s = String(foo))  kotlin/String
+    type: @R|Anno|(s = String(foo) [evaluated = String(foo)])  kotlin/String
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(annotatedLocalContextParameterWithAnnotatedTypeOnFunction.kt)
   getContainingJvmClassName: null

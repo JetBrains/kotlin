@@ -1,5 +1,5 @@
 FILE: typeAnnotationArgument2.kt
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final annotation class Anno : R|kotlin/Annotation| {
         public constructor(value: R|kotlin/Int|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -8,9 +8,9 @@ FILE: typeAnnotationArgument2.kt
             public get(): R|kotlin/Int|
 
     }
-    public abstract interface MyList : R|kotlin/collections/List<@R|Alias|(value = <Unresolved name: CONST>#)  ERROR CLASS: Incomplete code>| {
+    public abstract interface MyList : R|kotlin/collections/List<@R|Alias|(value = <Unresolved name: CONST># [evaluated = <Unresolved name: CONST>#])  ERROR CLASS: Incomplete code>| {
     }
-    public abstract interface MyListProper : R|kotlin/collections/List<@R|Alias|(value = Int(4))  kotlin/String>| {
+    public abstract interface MyListProper : R|kotlin/collections/List<@R|Alias|(value = R|/CORRECT| [evaluated = Int(4)])  kotlin/String>| {
     }
     public final const val CORRECT: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(Int(2))
         public get(): R|kotlin/Int|

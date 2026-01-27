@@ -263,7 +263,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] contextReceiverAsImplicitReturnTypePropagation.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -278,7 +278,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextReceiverAsImplicitReturnTypePropagation.
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
             ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|
         }
-    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = String(context receiver type str))  kotlin/Int>|)
+    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|) [evaluated = String(context receiver type str)])  kotlin/Int>|)
     public final [ResolvedTo(BODY_RESOLVE)] val foo: <ERROR TYPE REF: Unresolved this@List>
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
             ^ this@List#

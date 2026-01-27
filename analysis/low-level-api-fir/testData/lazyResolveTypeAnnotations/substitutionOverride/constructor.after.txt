@@ -1,24 +1,24 @@
-@R|second/Anno|(position = String(type param: str))  kotlin/collections/List<@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>>
+@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|) [evaluated = String(type param: str)])  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>>
   context -> FirConstructorSymbol second/SubClass.SubClass
   anchor -> [FirRegularClassSymbol second/SubClass]
 
-@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>
+@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>
   context -> FirConstructorSymbol second/SubClass.SubClass
   anchor -> [FirRegularClassSymbol second/SubClass]
 
-@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String
+@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String
   context -> FirConstructorSymbol second/SubClass.SubClass
   anchor -> [FirRegularClassSymbol second/SubClass]
 
-@R|second/Anno|(position = String(type param: str))  kotlin/collections/List<@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>>
+@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|) [evaluated = String(type param: str)])  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>>
   context -> FirConstructorSymbol second/SubClass.SubClass
   anchor -> [FirRegularClassSymbol second/SubClass]
 
-@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>
+@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>
   context -> FirConstructorSymbol second/SubClass.SubClass
   anchor -> [FirRegularClassSymbol second/SubClass]
 
-@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String
+@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String
   context -> FirConstructorSymbol second/SubClass.SubClass
   anchor -> [FirRegularClassSymbol second/SubClass]
 
@@ -34,9 +34,9 @@ FILE: [ResolvedTo(IMPORTS)] constructor.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = String(type param: str))  kotlin/collections/List<@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>>>| {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|) [evaluated = String(type param: str)])  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>>>| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
-            LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = String(type param: str))  kotlin/collections/List<@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>>>|>
+            LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|) [evaluated = String(type param: str)])  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>>>|>
         }
 
     }

@@ -1,19 +1,19 @@
 FILE: some.kt
     package foo
 
-    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(first.kt)) public final class First : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(first.kt) [evaluated = String(first.kt)]) public final class First : R|kotlin/Any| {
         public constructor(): R|foo/First| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(first)) public final class OtherFirst : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(first) [evaluated = String(first)]) public final class OtherFirst : R|kotlin/Any| {
         public constructor(): R|foo/OtherFirst| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(second)) public final class Second : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(second) [evaluated = String(second)]) public final class Second : R|kotlin/Any| {
         public constructor(): R|foo/Second| {
             super<R|kotlin/Any|>()
         }
@@ -45,7 +45,7 @@ FILE: some.kt
 FILE: other.kt
     package bar
 
-    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(first.kt)) public final class First : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/DummyFunction|(fileName = String(first.kt) [evaluated = String(first.kt)]) public final class First : R|kotlin/Any| {
         public constructor(): R|bar/First| {
             super<R|kotlin/Any|>()
         }

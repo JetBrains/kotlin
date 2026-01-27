@@ -3,7 +3,7 @@ FIR element: FirAnnotationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|Anno|[Types](s = String(str))
+@R|Anno|[Types](s = String(str) [evaluated = String(str)])
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereClass.kt
@@ -20,8 +20,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereClass.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str))  Two|>([ResolvedTo(RAW_FIR)] t: T): R|Foo<T>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str) [evaluated = String(str)])  Two|> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str) [evaluated = String(str)])  Two|>([ResolvedTo(RAW_FIR)] t: T): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 

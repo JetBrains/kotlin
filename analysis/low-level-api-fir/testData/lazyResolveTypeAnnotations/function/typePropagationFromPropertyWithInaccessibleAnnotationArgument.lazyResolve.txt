@@ -303,13 +303,13 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(0))  kotlin/collections/List<@R|Anno|(message = String(1))  kotlin/collections/List<@R|Anno|(message = String(2))  kotlin/Int>>?|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(message = String(0))  kotlin/collections/List<@R|Anno|(message = String(1))  kotlin/collections/List<@R|Anno|(message = String(2))  kotlin/Int>>?| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = R|/privateConstant| [evaluated = String(0)])  kotlin/collections/List<@R|Anno|(message = R|/internalConstant| [evaluated = String(1)])  kotlin/collections/List<@R|Anno|(message = R|/regularConstant| [evaluated = String(2)])  kotlin/Int>>?|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(message = R|/privateConstant| [evaluated = String(0)])  kotlin/collections/List<@R|Anno|(message = R|/internalConstant| [evaluated = String(1)])  kotlin/collections/List<@R|Anno|(message = R|/regularConstant| [evaluated = String(2)])  kotlin/Int>>?| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
-            ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(0))  kotlin/collections/List<@R|Anno|(message = String(1))  kotlin/collections/List<@R|Anno|(message = String(2))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(0))  kotlin/collections/List<@R|Anno|(message = String(1))  kotlin/collections/List<@R|Anno|(message = String(2))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = R|/privateConstant| [evaluated = String(0)])  kotlin/collections/List<@R|Anno|(message = R|/internalConstant| [evaluated = String(1)])  kotlin/collections/List<@R|Anno|(message = R|/regularConstant| [evaluated = String(2)])  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = R|/privateConstant| [evaluated = String(0)])  kotlin/collections/List<@R|Anno|(message = R|/internalConstant| [evaluated = String(1)])  kotlin/collections/List<@R|Anno|(message = R|/regularConstant| [evaluated = String(2)])  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
                 ^ <strcat>(String( (), R|<local>/it|, String()))
             }
             ) } ?: String()
@@ -319,7 +319,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] usafe.kt
     public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
-            ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(0))  kotlin/collections/List<@R|Anno|(message = String(1))  kotlin/collections/List<@R|Anno|(message = String(2))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(0))  kotlin/collections/List<@R|Anno|(message = String(1))  kotlin/collections/List<@R|Anno|(message = String(2))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = R|/privateConstant| [evaluated = String(0)])  kotlin/collections/List<@R|Anno|(message = R|/internalConstant| [evaluated = String(1)])  kotlin/collections/List<@R|Anno|(message = R|/regularConstant| [evaluated = String(2)])  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = R|/privateConstant| [evaluated = String(0)])  kotlin/collections/List<@R|Anno|(message = R|/internalConstant| [evaluated = String(1)])  kotlin/collections/List<@R|Anno|(message = R|/regularConstant| [evaluated = String(2)])  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
                 ^ <strcat>(String( (), R|<local>/it|, String()))
             }
             ) } ?: String()

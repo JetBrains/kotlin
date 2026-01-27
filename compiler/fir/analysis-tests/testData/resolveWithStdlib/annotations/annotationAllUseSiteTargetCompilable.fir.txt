@@ -1,7 +1,7 @@
 FILE: annotationAllUseSiteTargetCompilable.kt
     package p
 
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class ParamOnly : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)]) public final annotation class ParamOnly : R|kotlin/Annotation| {
         public constructor(x: R|kotlin/Int| = Int(0)): R|p/ParamOnly| {
             super<R|kotlin/Any|>()
         }
@@ -10,7 +10,7 @@ FILE: annotationAllUseSiteTargetCompilable.kt
             public get(): R|kotlin/Int|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) public final annotation class ParamProperty : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)]) public final annotation class ParamProperty : R|kotlin/Annotation| {
         public constructor(y: R|kotlin/Double| = Double(0.0)): R|p/ParamProperty| {
             super<R|kotlin/Any|>()
         }
@@ -19,7 +19,7 @@ FILE: annotationAllUseSiteTargetCompilable.kt
             public get(): R|kotlin/Double|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final annotation class ParamField : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class ParamField : R|kotlin/Annotation| {
         public constructor(z: R|kotlin/Boolean| = Boolean(false)): R|p/ParamField| {
             super<R|kotlin/Any|>()
         }
@@ -28,7 +28,7 @@ FILE: annotationAllUseSiteTargetCompilable.kt
             public get(): R|kotlin/Boolean|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final annotation class PropertyField : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class PropertyField : R|kotlin/Annotation| {
         public constructor(s: R|kotlin/String| = String()): R|p/PropertyField| {
             super<R|kotlin/Any|>()
         }
@@ -37,7 +37,7 @@ FILE: annotationAllUseSiteTargetCompilable.kt
             public get(): R|kotlin/String|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final annotation class ParamPropertyField : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class ParamPropertyField : R|kotlin/Annotation| {
         public constructor(c: R|kotlin/Char| = Char( )): R|p/ParamPropertyField| {
             super<R|kotlin/Any|>()
         }
@@ -46,7 +46,7 @@ FILE: annotationAllUseSiteTargetCompilable.kt
             public get(): R|kotlin/Char|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|)) public final annotation class GetterSetter : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|)]) public final annotation class GetterSetter : R|kotlin/Annotation| {
         public constructor(x: R|kotlin/Int|): R|p/GetterSetter| {
             super<R|kotlin/Any|>()
         }
@@ -55,7 +55,7 @@ FILE: annotationAllUseSiteTargetCompilable.kt
             public get(): R|kotlin/Int|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class ParamGetter : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)]) public final annotation class ParamGetter : R|kotlin/Annotation| {
         public constructor(y: R|kotlin/Double|): R|p/ParamGetter| {
             super<R|kotlin/Any|>()
         }
@@ -64,7 +64,7 @@ FILE: annotationAllUseSiteTargetCompilable.kt
             public get(): R|kotlin/Double|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class ParamGetterSetter : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)]) public final annotation class ParamGetterSetter : R|kotlin/Annotation| {
         public constructor(z: R|kotlin/Boolean|): R|p/ParamGetterSetter| {
             super<R|kotlin/Any|>()
         }
@@ -83,51 +83,51 @@ FILE: annotationAllUseSiteTargetCompilable.kt
 
     }
     public final class My : R|kotlin/Any| {
-        public constructor(@ALL:R|p/ParamOnly|() @ALL:R|p/ParamProperty|() @ALL:R|p/ParamField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/ParamGetter|(y = Double(1.0)) @ALL:R|p/ParamGetterSetter|(z = Boolean(false)) @ALL:R|p/Default|(s = String(a)) valFromConstructor: R|kotlin/Int|, @ALL:R|p/ParamOnly|() @ALL:R|p/ParamProperty|() @ALL:R|p/ParamField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/ParamGetter|(y = Double(2.0)) @ALL:R|p/ParamGetterSetter|(z = Boolean(true)) @ALL:R|p/Default|(s = String(b)) varFromConstructor: R|kotlin/Int|): R|p/My| {
+        public constructor(@ALL:R|p/ParamOnly|() @ALL:R|p/ParamProperty|() @ALL:R|p/ParamField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/ParamGetter|(y = Double(1.0) [evaluated = Double(1.0)]) @ALL:R|p/ParamGetterSetter|(z = Boolean(false) [evaluated = Boolean(false)]) @ALL:R|p/Default|(s = String(a) [evaluated = String(a)]) valFromConstructor: R|kotlin/Int|, @ALL:R|p/ParamOnly|() @ALL:R|p/ParamProperty|() @ALL:R|p/ParamField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/ParamGetter|(y = Double(2.0) [evaluated = Double(2.0)]) @ALL:R|p/ParamGetterSetter|(z = Boolean(true) [evaluated = Boolean(true)]) @ALL:R|p/Default|(s = String(b) [evaluated = String(b)]) varFromConstructor: R|kotlin/Int|): R|p/My| {
             super<R|kotlin/Any|>()
         }
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(a)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(a)) public final val valFromConstructor: R|kotlin/Int| = R|<local>/valFromConstructor|
-            @R|p/GetterSetter|(x = Int(1)) @R|p/ParamGetter|(y = Double(1.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(a)) public get(): R|kotlin/Int|
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(a) [evaluated = String(a)]) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(a) [evaluated = String(a)]) public final val valFromConstructor: R|kotlin/Int| = R|<local>/valFromConstructor|
+            @R|p/GetterSetter|(x = Int(1) [evaluated = Int(1)]) @R|p/ParamGetter|(y = Double(1.0) [evaluated = Double(1.0)]) @R|p/ParamGetterSetter|(z = Boolean(false) [evaluated = Boolean(false)]) @R|p/Default|(s = String(a) [evaluated = String(a)]) public get(): R|kotlin/Int|
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(b)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(b)) public final var varFromConstructor: R|kotlin/Int| = R|<local>/varFromConstructor|
-            @R|p/GetterSetter|(x = Int(2)) @R|p/ParamGetter|(y = Double(2.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(b)) public get(): R|kotlin/Int|
-            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(2.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(b)) value: R|kotlin/Int|): R|kotlin/Unit|
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(b) [evaluated = String(b)]) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(b) [evaluated = String(b)]) public final var varFromConstructor: R|kotlin/Int| = R|<local>/varFromConstructor|
+            @R|p/GetterSetter|(x = Int(2) [evaluated = Int(2)]) @R|p/ParamGetter|(y = Double(2.0) [evaluated = Double(2.0)]) @R|p/ParamGetterSetter|(z = Boolean(true) [evaluated = Boolean(true)]) @R|p/Default|(s = String(b) [evaluated = String(b)]) public get(): R|kotlin/Int|
+            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(2.0) [evaluated = Double(2.0)]) @R|p/ParamGetterSetter|(z = Boolean(true) [evaluated = Boolean(true)]) @R|p/Default|(s = String(b) [evaluated = String(b)]) value: R|kotlin/Int|): R|kotlin/Unit|
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(c)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(c)) public final val valInside: R|kotlin/Int| = Int(0)
-            @R|p/GetterSetter|(x = Int(3)) @R|p/ParamGetter|(y = Double(3.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(c)) public get(): R|kotlin/Int|
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(c) [evaluated = String(c)]) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(c) [evaluated = String(c)]) public final val valInside: R|kotlin/Int| = Int(0)
+            @R|p/GetterSetter|(x = Int(3) [evaluated = Int(3)]) @R|p/ParamGetter|(y = Double(3.0) [evaluated = Double(3.0)]) @R|p/ParamGetterSetter|(z = Boolean(false) [evaluated = Boolean(false)]) @R|p/Default|(s = String(c) [evaluated = String(c)]) public get(): R|kotlin/Int|
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(d)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(d)) public final var varInside: R|kotlin/Int| = Int(1)
-            @R|p/GetterSetter|(x = Int(4)) @R|p/ParamGetter|(y = Double(4.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(d)) public get(): R|kotlin/Int|
-            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(4.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(d)) value: R|kotlin/Int|): R|kotlin/Unit|
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(d) [evaluated = String(d)]) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(d) [evaluated = String(d)]) public final var varInside: R|kotlin/Int| = Int(1)
+            @R|p/GetterSetter|(x = Int(4) [evaluated = Int(4)]) @R|p/ParamGetter|(y = Double(4.0) [evaluated = Double(4.0)]) @R|p/ParamGetterSetter|(z = Boolean(true) [evaluated = Boolean(true)]) @R|p/Default|(s = String(d) [evaluated = String(d)]) public get(): R|kotlin/Int|
+            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(4.0) [evaluated = Double(4.0)]) @R|p/ParamGetterSetter|(z = Boolean(true) [evaluated = Boolean(true)]) @R|p/Default|(s = String(d) [evaluated = String(d)]) value: R|kotlin/Int|): R|kotlin/Unit|
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(e)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(e)) public final val valWithGetter: R|kotlin/Int| = Int(2)
-            @R|p/GetterSetter|(x = Int(5)) @R|p/ParamGetter|(y = Double(5.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(e)) public get(): R|kotlin/Int| {
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(e) [evaluated = String(e)]) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(e) [evaluated = String(e)]) public final val valWithGetter: R|kotlin/Int| = Int(2)
+            @R|p/GetterSetter|(x = Int(5) [evaluated = Int(5)]) @R|p/ParamGetter|(y = Double(5.0) [evaluated = Double(5.0)]) @R|p/ParamGetterSetter|(z = Boolean(false) [evaluated = Boolean(false)]) @R|p/Default|(s = String(e) [evaluated = String(e)]) public get(): R|kotlin/Int| {
                 ^ this@R|p/My|.F|p/My.valWithGetter|
             }
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(f)) field:@R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(f)) public final val valWithoutField: R|kotlin/Int|
-            @R|p/GetterSetter|(x = Int(6)) @R|p/ParamGetter|(y = Double(6.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(f)) public get(): R|kotlin/Int| {
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(f) [evaluated = String(f)]) field:@R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(f) [evaluated = String(f)]) public final val valWithoutField: R|kotlin/Int|
+            @R|p/GetterSetter|(x = Int(6) [evaluated = Int(6)]) @R|p/ParamGetter|(y = Double(6.0) [evaluated = Double(6.0)]) @R|p/ParamGetterSetter|(z = Boolean(true) [evaluated = Boolean(true)]) @R|p/Default|(s = String(f) [evaluated = String(f)]) public get(): R|kotlin/Int| {
                 ^ Int(3)
             }
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(g)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(g)) public final var varWithSetter: R|kotlin/Int| = Int(4)
-            @R|p/GetterSetter|(x = Int(7)) @R|p/ParamGetter|(y = Double(7.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(g)) public get(): R|kotlin/Int|
-            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(7.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(g)) param: R|kotlin/Int|): R|kotlin/Unit| {
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(g) [evaluated = String(g)]) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(g) [evaluated = String(g)]) public final var varWithSetter: R|kotlin/Int| = Int(4)
+            @R|p/GetterSetter|(x = Int(7) [evaluated = Int(7)]) @R|p/ParamGetter|(y = Double(7.0) [evaluated = Double(7.0)]) @R|p/ParamGetterSetter|(z = Boolean(false) [evaluated = Boolean(false)]) @R|p/Default|(s = String(g) [evaluated = String(g)]) public get(): R|kotlin/Int|
+            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(7.0) [evaluated = Double(7.0)]) @R|p/ParamGetterSetter|(z = Boolean(false) [evaluated = Boolean(false)]) @R|p/Default|(s = String(g) [evaluated = String(g)]) param: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(h)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(h)) public final var varWithSetterAndGetter: R|kotlin/Int| = Int(5)
-            @R|p/GetterSetter|(x = Int(8)) @R|p/ParamGetter|(y = Double(8.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(h)) public get(): R|kotlin/Int| {
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(h) [evaluated = String(h)]) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(h) [evaluated = String(h)]) public final var varWithSetterAndGetter: R|kotlin/Int| = Int(5)
+            @R|p/GetterSetter|(x = Int(8) [evaluated = Int(8)]) @R|p/ParamGetter|(y = Double(8.0) [evaluated = Double(8.0)]) @R|p/ParamGetterSetter|(z = Boolean(true) [evaluated = Boolean(true)]) @R|p/Default|(s = String(h) [evaluated = String(h)]) public get(): R|kotlin/Int| {
                 ^ this@R|p/My|.F|p/My.varWithSetterAndGetter|
             }
-            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(8.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(h)) param: R|kotlin/Int|): R|kotlin/Unit| {
+            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(8.0) [evaluated = Double(8.0)]) @R|p/ParamGetterSetter|(z = Boolean(true) [evaluated = Boolean(true)]) @R|p/Default|(s = String(h) [evaluated = String(h)]) param: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(i)) field:@R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(i)) public final var varWithoutField: R|kotlin/Int|
-            @R|p/GetterSetter|(x = Int(9)) @R|p/ParamGetter|(y = Double(9.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(i)) public get(): R|kotlin/Int| {
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(i) [evaluated = String(i)]) field:@R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(i) [evaluated = String(i)]) public final var varWithoutField: R|kotlin/Int|
+            @R|p/GetterSetter|(x = Int(9) [evaluated = Int(9)]) @R|p/ParamGetter|(y = Double(9.0) [evaluated = Double(9.0)]) @R|p/ParamGetterSetter|(z = Boolean(false) [evaluated = Boolean(false)]) @R|p/Default|(s = String(i) [evaluated = String(i)]) public get(): R|kotlin/Int| {
                 ^ Int(6)
             }
-            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(9.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(i)) param: R|kotlin/Int|): R|kotlin/Unit| {
+            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(9.0) [evaluated = Double(9.0)]) @R|p/ParamGetterSetter|(z = Boolean(false) [evaluated = Boolean(false)]) @R|p/Default|(s = String(i) [evaluated = String(i)]) param: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
     }

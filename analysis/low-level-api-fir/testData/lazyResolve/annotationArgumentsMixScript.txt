@@ -631,7 +631,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#() [evaluated = <Unresolved name: boo>#()]) @R|Anno|[Types](str = String(123) [evaluated = String(123)], ann = R|/AnotherAnnotation.AnotherAnnotation|() [evaluated = R|/AnotherAnnotation.AnotherAnnotation|()], c = <getClass>(Q|AnotherAnnotation|) [evaluated = <getClass>(Q|AnotherAnnotation|)], entry = Q|EnumClass|.R|/EnumClass.Second| [evaluated = Q|EnumClass|.R|/EnumClass.Second|]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 BODY_RESOLVE:
@@ -684,7 +684,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#() [evaluated = <Unresolved name: boo>#()]) @R|Anno|[Types](str = String(123) [evaluated = String(123)], ann = R|/AnotherAnnotation.AnotherAnnotation|() [evaluated = R|/AnotherAnnotation.AnotherAnnotation|()], c = <getClass>(Q|AnotherAnnotation|) [evaluated = <getClass>(Q|AnotherAnnotation|)], entry = Q|EnumClass|.R|/EnumClass.Second| [evaluated = Q|EnumClass|.R|/EnumClass.Second|]) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
         }
 
 
@@ -738,6 +738,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#() [evaluated = <Unresolved name: boo>#()]) @R|Anno|[Types](str = String(123) [evaluated = String(123)], ann = R|/AnotherAnnotation.AnotherAnnotation|() [evaluated = R|/AnotherAnnotation.AnotherAnnotation|()], c = <getClass>(Q|AnotherAnnotation|) [evaluated = <getClass>(Q|AnotherAnnotation|)], entry = Q|EnumClass|.R|/EnumClass.Second| [evaluated = Q|EnumClass|.R|/EnumClass.Second|]) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
         }
 

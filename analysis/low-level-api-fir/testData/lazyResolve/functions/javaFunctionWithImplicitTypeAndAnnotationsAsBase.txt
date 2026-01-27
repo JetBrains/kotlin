@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     }
 
 ANNOTATION_ARGUMENTS:
-TARGET: @R|java/lang/Override|() public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=/JavaExtension.defaultMethod] fun defaultMethod([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = Int(3))  kotlin/String!>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = Int(3))  kotlin/String!>|
+TARGET: @R|java/lang/Override|() public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=/JavaExtension.defaultMethod] fun defaultMethod([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|) [evaluated = Int(3)])  kotlin/String!>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|) [evaluated = Int(3)])  kotlin/String!>|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(i = Int(3))  kotlin/String>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|) [evaluated = Int(3)])  kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
             LAZY_super<<implicit>>
         }
@@ -173,7 +173,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     }
 
 BODY_RESOLVE:
-TARGET: @R|java/lang/Override|() public open override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/JavaExtension.defaultMethod] fun defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = Int(3))  kotlin/String!>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = Int(3))  kotlin/String!>|
+TARGET: @R|java/lang/Override|() public open override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/JavaExtension.defaultMethod] fun defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|) [evaluated = Int(3)])  kotlin/String!>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|) [evaluated = Int(3)])  kotlin/String!>|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(i = Int(3))  kotlin/String>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|) [evaluated = Int(3)])  kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
             LAZY_super<<implicit>>
         }
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.i] i: R|kotlin/Int|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -223,7 +223,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(i = Int(3))  kotlin/String>| {
+    public final [ResolvedTo(BODY_RESOLVE)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|) [evaluated = Int(3)])  kotlin/String>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
             super<R|kotlin/Any|>()
         }

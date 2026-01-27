@@ -1,11 +1,11 @@
 FILE: metaSerializable.kt
-    @R|kotlinx/serialization/MetaSerializable|() @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) public final annotation class MySerializable : R|kotlin/Annotation| {
+    @R|kotlinx/serialization/MetaSerializable|() @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)]) public final annotation class MySerializable : R|kotlin/Annotation| {
         public constructor(): R|MySerializable| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlinx/serialization/MetaSerializable|() @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) public final annotation class MySerializableWithInfo : R|kotlin/Annotation| {
+    @R|kotlinx/serialization/MetaSerializable|() @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)]) public final annotation class MySerializableWithInfo : R|kotlin/Annotation| {
         public constructor(value: R|kotlin/Int|, kclass: R|kotlin/reflect/KClass<*>|): R|MySerializableWithInfo| {
             super<R|kotlin/Any|>()
         }
@@ -54,7 +54,7 @@ FILE: metaSerializable.kt
         }
 
     }
-    @R|MySerializableWithInfo|(value = Int(123), kclass = <getClass>(Q|kotlin/String|)) public final class Project2 : R|kotlin/Any| {
+    @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final class Project2 : R|kotlin/Any| {
         public constructor(name: R|kotlin/String|, language: R|kotlin/String|): R|Project2| {
             super<R|kotlin/Any|>()
         }
@@ -96,7 +96,7 @@ FILE: metaSerializable.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|MySerializableWithInfo|(value = Int(234), kclass = <getClass>(Q|kotlin/Int|)) public final val project: R|Project2| = R|<local>/project|
+        @R|MySerializableWithInfo|(value = Int(234) [evaluated = Int(234)], kclass = <getClass>(Q|kotlin/Int|) [evaluated = <getClass>(Q|kotlin/Int|)]) public final val project: R|Project2| = R|<local>/project|
             public get(): R|Project2|
 
         public final companion object Companion : R|kotlin/Any| {
@@ -125,7 +125,7 @@ FILE: metaSerializable.kt
         }
 
     }
-    @R|kotlinx/serialization/Serializable|() @R|MySerializableWithInfo|(value = Int(123), kclass = <getClass>(Q|kotlin/String|)) public final class Project3 : R|kotlin/Any| {
+    @R|kotlinx/serialization/Serializable|() @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final class Project3 : R|kotlin/Any| {
         public constructor(name: R|kotlin/String|, language: R|kotlin/String|): R|Project3| {
             super<R|kotlin/Any|>()
         }
@@ -162,7 +162,7 @@ FILE: metaSerializable.kt
         }
 
     }
-    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|MySerializer|)) @R|MySerializableWithInfo|(value = Int(123), kclass = <getClass>(Q|kotlin/String|)) public final class Project4 : R|kotlin/Any| {
+    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|MySerializer|) [evaluated = <getClass>(Q|MySerializer|)]) @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final class Project4 : R|kotlin/Any| {
         public constructor(name: R|kotlin/String|, language: R|kotlin/String|): R|Project4| {
             super<R|kotlin/Any|>()
         }
@@ -183,12 +183,12 @@ FILE: metaSerializable.kt
         }
 
     }
-    @R|MySerializableWithInfo|(value = Int(123), kclass = <getClass>(Q|kotlin/String|)) public sealed class TestSealed : R|kotlin/Any| {
+    @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public sealed class TestSealed : R|kotlin/Any| {
         protected constructor(): R|TestSealed| {
             super<R|kotlin/Any|>()
         }
 
-        @R|MySerializableWithInfo|(value = Int(123), kclass = <getClass>(Q|kotlin/String|)) public final class A : R|TestSealed| {
+        @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final class A : R|TestSealed| {
             public constructor(value1: R|kotlin/String|): R|TestSealed.A| {
                 super<R|TestSealed|>()
             }
@@ -223,7 +223,7 @@ FILE: metaSerializable.kt
 
         }
 
-        @R|MySerializableWithInfo|(value = Int(123), kclass = <getClass>(Q|kotlin/String|)) public final class B : R|TestSealed| {
+        @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final class B : R|TestSealed| {
             public constructor(value2: R|kotlin/String|): R|TestSealed.B| {
                 super<R|TestSealed|>()
             }
@@ -273,7 +273,7 @@ FILE: metaSerializable.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|MySerializableWithInfo|(value = Int(123), kclass = <getClass>(Q|kotlin/String|)) public final class A : R|TestSealed| {
+        @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final class A : R|TestSealed| {
             public constructor(value1: R|kotlin/String|): R|TestAbstract.A| {
                 super<R|TestSealed|>()
             }
@@ -308,7 +308,7 @@ FILE: metaSerializable.kt
 
         }
 
-        @R|MySerializableWithInfo|(value = Int(123), kclass = <getClass>(Q|kotlin/String|)) public final class B : R|TestSealed| {
+        @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final class B : R|TestSealed| {
             public constructor(value2: R|kotlin/String|): R|TestAbstract.B| {
                 super<R|TestSealed|>()
             }
@@ -353,7 +353,7 @@ FILE: metaSerializable.kt
         }
 
     }
-    @R|MySerializableWithInfo|(value = Int(123), kclass = <getClass>(Q|kotlin/String|)) public final enum class TestEnum : R|kotlin/Enum<TestEnum>| {
+    @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final enum class TestEnum : R|kotlin/Enum<TestEnum>| {
         private constructor(): R|TestEnum| {
             super<R|kotlin/Enum<TestEnum>|>()
         }
@@ -379,7 +379,7 @@ FILE: metaSerializable.kt
         }
 
     }
-    @R|MySerializableWithInfo|(value = Int(123), kclass = <getClass>(Q|kotlin/String|)) public final object TestObject : R|kotlin/Any| {
+    @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final object TestObject : R|kotlin/Any| {
         private constructor(): R|TestObject| {
             super<R|kotlin/Any|>()
         }

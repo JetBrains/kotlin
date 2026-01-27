@@ -1,6 +1,6 @@
 FILE: selfReferentialAnnotation.kt
     public final annotation class Ann : R|kotlin/Annotation| {
-        public constructor(@R|Ann|(e = Int(1)) e: R|kotlin/Int|): R|Ann| {
+        public constructor(@R|Ann|(e = Int(1) [evaluated = Int(1)]) e: R|kotlin/Int|): R|Ann| {
             super<R|kotlin/Any|>()
         }
 
@@ -8,8 +8,8 @@ FILE: selfReferentialAnnotation.kt
             public get(): R|kotlin/Int|
 
     }
-    @R|MyRequiresOptIn|(a = String(), b = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.ERROR|) public final annotation class MyRequiresOptIn : R|kotlin/Annotation| {
-        public constructor(a: R|kotlin/String| = String(), @R|MyRequiresOptIn|(a = String(), b = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.WARNING|) b: R|MyRequiresOptIn.MyLevel| = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.ERROR|): R|MyRequiresOptIn| {
+    @R|MyRequiresOptIn|(a = String() [evaluated = String()], b = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.ERROR| [evaluated = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.ERROR|]) public final annotation class MyRequiresOptIn : R|kotlin/Annotation| {
+        public constructor(a: R|kotlin/String| = String(), @R|MyRequiresOptIn|(a = String() [evaluated = String()], b = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.WARNING| [evaluated = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.WARNING|]) b: R|MyRequiresOptIn.MyLevel| = Q|MyRequiresOptIn.MyLevel|.R|/MyRequiresOptIn.MyLevel.ERROR|): R|MyRequiresOptIn| {
             super<R|kotlin/Any|>()
         }
 

@@ -1,5 +1,5 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] danglingContextParameter.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] position: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingContextParameter.kt
             super<R|kotlin/Any|>()
         }
 
-        [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](position = String(param)) parameter1: R|@R|Anno|(position = String(12))  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>|)
+        [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](position = String(param) [evaluated = String(param)]) parameter1: R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>|)
         <DANGLING MODIFIER: Top level declaration expected>
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
@@ -22,10 +22,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingContextParameter.kt
                 super<R|kotlin/Any|>()
             }
 
-            [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](position = String(param)) parameter1: R|@R|Anno|(position = String(12))  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>|)
+            [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](position = String(param) [evaluated = String(param)]) parameter1: R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>|)
             <DANGLING MODIFIER: Top level declaration expected>
         }
 
     }
-    [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](position = String(param)) parameter1: R|@R|Anno|(position = String(12))  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>|)
+    [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](position = String(param) [evaluated = String(param)]) parameter1: R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>|)
     <DANGLING MODIFIER: Top level declaration expected>

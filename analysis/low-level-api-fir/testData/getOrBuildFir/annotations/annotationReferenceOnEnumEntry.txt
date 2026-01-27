@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationReferenceOnEnumEntry.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
 
-        @R|Anno|[Types](value = String(str)) public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] enum entry ENTRY1: R|MyClass| = LAZY_EXPRESSION
+        @R|Anno|[Types](value = String(str) [evaluated = String(str)]) public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] enum entry ENTRY1: R|MyClass| = LAZY_EXPRESSION
         public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] enum entry ENTRY2: R|MyClass| = LAZY_EXPRESSION
         public final [ResolvedTo(STATUS)] fun boo([ResolvedTo(STATUS)] a: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 

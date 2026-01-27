@@ -350,7 +350,7 @@ FILE: [ResolvedTo(IMPORTS)] referenceWithConstructorScript.kts
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol util.<script-referenceWithConstructorScript.kts>, ScriptTopLevelDeclaration=true] interface I : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-referenceWithConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|util/Anno|(position = String(super type ref str))  kotlin/collections/List<@R|util/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|util/Anno|(position = String(nested nested super type ref str))  util/I>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-referenceWithConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type ref ), R|util/prop|) [evaluated = String(super type ref str)])  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|) [evaluated = String(nested super type ref str)])  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|) [evaluated = String(nested nested super type ref str)])  util/I>>| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -380,7 +380,7 @@ FILE: [ResolvedTo(IMPORTS)] referenceWithConstructorScript.kts
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol util.<script-referenceWithConstructorScript.kts>, ScriptTopLevelDeclaration=true] interface I : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-referenceWithConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|util/Anno|(position = String(super type ref str))  kotlin/collections/List<@R|util/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|util/Anno|(position = String(nested nested super type ref str))  util/I>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-referenceWithConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type ref ), R|util/prop|) [evaluated = String(super type ref str)])  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|) [evaluated = String(nested super type ref str)])  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|) [evaluated = String(nested nested super type ref str)])  util/I>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
                 super<R|kotlin/Any|>()
             }
@@ -394,7 +394,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] referenceWithConstructorScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-referenceWithConstructorScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-referenceWithConstructorScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -410,7 +410,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] referenceWithConstructorScript.kts
         public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-referenceWithConstructorScript.kts>, ScriptTopLevelDeclaration=true] interface I : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-referenceWithConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|util/Anno|(position = String(super type ref str))  kotlin/collections/List<@R|util/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|util/Anno|(position = String(nested nested super type ref str))  util/I>>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-referenceWithConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type ref ), R|util/prop|) [evaluated = String(super type ref str)])  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|) [evaluated = String(nested super type ref str)])  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|) [evaluated = String(nested nested super type ref str)])  util/I>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
                 super<R|kotlin/Any|>()
             }

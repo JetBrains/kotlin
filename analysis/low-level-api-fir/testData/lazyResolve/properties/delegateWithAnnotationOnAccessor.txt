@@ -287,11 +287,11 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
-    field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var foo: R|kotlin/Int|by R|/MyDelegate.MyDelegate|()
-        @PROPERTY_GETTER:R|Anno|[Types](s = String(getter)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| {
+    field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate) [evaluated = String(delegate)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var foo: R|kotlin/Int|by R|/MyDelegate.MyDelegate|()
+        @PROPERTY_GETTER:R|Anno|[Types](s = String(getter) [evaluated = String(getter)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| {
             ^ D|/foo|.R|/MyDelegate.getValue|(Null(null), ::R|/foo|)
         }
-        @PROPERTY_SETTER:R|Anno|[Types](s = String(setter)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](s = String(parameter)) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+        @PROPERTY_SETTER:R|Anno|[Types](s = String(setter) [evaluated = String(setter)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](s = String(parameter) [evaluated = String(parameter)]) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             ^ D|/foo|.R|/MyDelegate.setValue|(Null(null), ::R|/foo|, R|<local>/<set-?>|)
         }
     @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -318,11 +318,11 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
-    field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(BODY_RESOLVE)] var foo: R|kotlin/Int|by R|/MyDelegate.MyDelegate|()
-        @PROPERTY_GETTER:R|Anno|[Types](s = String(getter)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+    field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate) [evaluated = String(delegate)]) public final [ResolvedTo(BODY_RESOLVE)] var foo: R|kotlin/Int|by R|/MyDelegate.MyDelegate|()
+        @PROPERTY_GETTER:R|Anno|[Types](s = String(getter) [evaluated = String(getter)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ D|/foo|.R|/MyDelegate.getValue|(Null(null), ::R|/foo|)
         }
-        @PROPERTY_SETTER:R|Anno|[Types](s = String(setter)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = String(parameter)) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+        @PROPERTY_SETTER:R|Anno|[Types](s = String(setter) [evaluated = String(setter)]) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = String(parameter) [evaluated = String(parameter)]) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             ^ D|/foo|.R|/MyDelegate.setValue|(Null(null), ::R|/foo|, R|<local>/<set-?>|)
         }
     @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -349,11 +349,11 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithAnnotationOnAccessor.kt
-    field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(BODY_RESOLVE)] var foo: R|kotlin/Int|by R|/MyDelegate.MyDelegate|()
-        @PROPERTY_GETTER:R|Anno|[Types](s = String(getter)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+    field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate) [evaluated = String(delegate)]) public final [ResolvedTo(BODY_RESOLVE)] var foo: R|kotlin/Int|by R|/MyDelegate.MyDelegate|()
+        @PROPERTY_GETTER:R|Anno|[Types](s = String(getter) [evaluated = String(getter)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ D|/foo|.R|/MyDelegate.getValue|(Null(null), ::R|/foo|)
         }
-        @PROPERTY_SETTER:R|Anno|[Types](s = String(setter)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = String(parameter)) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+        @PROPERTY_SETTER:R|Anno|[Types](s = String(setter) [evaluated = String(setter)]) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = String(parameter) [evaluated = String(parameter)]) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             ^ D|/foo|.R|/MyDelegate.setValue|(Null(null), ::R|/foo|, R|<local>/<set-?>|)
         }
     @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {

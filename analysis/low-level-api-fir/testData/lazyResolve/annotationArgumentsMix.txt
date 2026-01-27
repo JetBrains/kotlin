@@ -536,7 +536,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
 
     }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#() [evaluated = <Unresolved name: boo>#()]) @R|Anno|[Types](str = String(123) [evaluated = String(123)], ann = R|/AnotherAnnotation.AnotherAnnotation|() [evaluated = R|/AnotherAnnotation.AnotherAnnotation|()], c = <getClass>(Q|AnotherAnnotation|) [evaluated = <getClass>(Q|AnotherAnnotation|)], entry = Q|EnumClass|.R|/EnumClass.Second| [evaluated = Q|EnumClass|.R|/EnumClass.Second|]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
@@ -581,7 +581,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
 
     }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#() [evaluated = <Unresolved name: boo>#()]) @R|Anno|[Types](str = String(123) [evaluated = String(123)], ann = R|/AnotherAnnotation.AnotherAnnotation|() [evaluated = R|/AnotherAnnotation.AnotherAnnotation|()], c = <getClass>(Q|AnotherAnnotation|) [evaluated = <getClass>(Q|AnotherAnnotation|)], entry = Q|EnumClass|.R|/EnumClass.Second| [evaluated = Q|EnumClass|.R|/EnumClass.Second|]) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
@@ -627,5 +627,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentsMix.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|EnumClass|
 
     }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#() [evaluated = <Unresolved name: boo>#()]) @R|Anno|[Types](str = String(123) [evaluated = String(123)], ann = R|/AnotherAnnotation.AnotherAnnotation|() [evaluated = R|/AnotherAnnotation.AnotherAnnotation|()], c = <getClass>(Q|AnotherAnnotation|) [evaluated = <getClass>(Q|AnotherAnnotation|)], entry = Q|EnumClass|.R|/EnumClass.Second| [evaluated = Q|EnumClass|.R|/EnumClass.Second|]) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
     }

@@ -1,5 +1,5 @@
 FILE: typePredicate.kt
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun checkIsString(x: R|kotlin/Any|): R|kotlin/Boolean|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun checkIsString(x: R|kotlin/Any|): R|kotlin/Boolean|
         [R|Contract description]
          <
             Returns(TRUE) -> x is kotlin/String

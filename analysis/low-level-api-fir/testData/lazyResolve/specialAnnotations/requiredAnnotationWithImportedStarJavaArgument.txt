@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedStarJavaArgument.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedStarJavaArgument.kt
-    @R|java/lang/annotation/Target|[Types](value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[Types](value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) [evaluated = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedStarJavaArgument.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedStarJavaArgument.kt
-    @R|java/lang/annotation/Target|[Types](value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[Types](value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) [evaluated = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             super<R|kotlin/Any|>()
         }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedStarJavaArgument.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] requiredAnnotationWithImportedStarJavaArgument.kt
-    @R|java/lang/annotation/Target|[Types](value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[Types](value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) [evaluated = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             super<R|kotlin/Any|>()
         }

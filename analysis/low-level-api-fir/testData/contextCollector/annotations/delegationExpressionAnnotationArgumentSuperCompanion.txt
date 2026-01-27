@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] delegationExpressionAnnotationArgumentSuperCompanion
             super<R|pack/SuperClass|>()
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|pack/MyInterface| = @R|pack/Anno|[Types](value = Int(1)) R|<local>/i|
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|pack/MyInterface| = @R|pack/Anno|[Types](value = this@R|pack/SuperClass.Companion|.R|pack/SuperClass.Companion.CONST| [evaluated = Int(1)]) R|<local>/i|
 
         public final [ResolvedTo(BODY_RESOLVE)] val i: R|pack/MyInterface| = R|<local>/i|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|pack/MyInterface|

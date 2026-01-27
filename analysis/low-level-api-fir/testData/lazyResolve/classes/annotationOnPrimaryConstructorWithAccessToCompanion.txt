@@ -543,7 +543,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructorWithAccessToCompanion.
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|SuperClass| {
-        @R|Anno|[Types](value = Int(1)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=TopLevelClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/TopLevelClass.i] i: R|kotlin/Int|): R|TopLevelClass| {
+        @R|Anno|[Types](value = this@R|/TopLevelClass.Companion|.R|/TopLevelClass.Companion.CONST| [evaluated = Int(1)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=TopLevelClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/TopLevelClass.i] i: R|kotlin/Int|): R|TopLevelClass| {
             LAZY_super<R|SuperClass|>
         }
 
@@ -590,7 +590,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructorWithAccessToCompanion.
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|SuperClass| {
-        @R|Anno|[Types](value = Int(1)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/TopLevelClass.i] i: R|kotlin/Int|): R|TopLevelClass| {
+        @R|Anno|[Types](value = this@R|/TopLevelClass.Companion|.R|/TopLevelClass.Companion.CONST| [evaluated = Int(1)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/TopLevelClass.i] i: R|kotlin/Int|): R|TopLevelClass| {
             super<R|SuperClass|>()
         }
 
@@ -637,7 +637,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnPrimaryConstructorWithAccessToCompa
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|SuperClass| {
-        @R|Anno|[Types](value = Int(1)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/TopLevelClass.i] i: R|kotlin/Int|): R|TopLevelClass| {
+        @R|Anno|[Types](value = this@R|/TopLevelClass.Companion|.R|/TopLevelClass.Companion.CONST| [evaluated = Int(1)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/TopLevelClass.i] i: R|kotlin/Int|): R|TopLevelClass| {
             super<R|SuperClass|>()
         }
 

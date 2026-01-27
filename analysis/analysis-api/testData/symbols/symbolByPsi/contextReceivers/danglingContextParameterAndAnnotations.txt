@@ -259,7 +259,7 @@ KaContextParameterSymbol:
         ]
         type: ERROR_TYPE
     ]
-    type: kotlin/collections/List<@R|Anno|(position = String(str))  ERROR CLASS: Symbol not found for Unresolved>
+    type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  ERROR CLASS: Symbol not found for Unresolved>
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -355,7 +355,7 @@ KaContextParameterSymbol:
         ]
         type: ERROR_TYPE
     ]
-    type: kotlin/collections/List<@R|Anno|(position = String(str))  ERROR CLASS: Symbol not found for Unresolved>
+    type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  ERROR CLASS: Symbol not found for Unresolved>
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -491,7 +491,7 @@ KaContextParameterSymbol:
         ]
         type: ERROR_TYPE
     ]
-    type: kotlin/collections/List<@R|Anno|(position = String(str))  ERROR CLASS: Symbol not found for Unresolved>
+    type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  ERROR CLASS: Symbol not found for Unresolved>
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null

@@ -654,9 +654,9 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationImplicitCo
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  second/Base<@R|second/Anno|(i = Int(3))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(3)])  kotlin/Int>>| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                LAZY_super<R|@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  second/Base<@R|second/Anno|(i = Int(3))  kotlin/Int>>|>
+                LAZY_super<R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(3)])  kotlin/Int>>|>
             }
 
             public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -711,9 +711,9 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationImplicitCo
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  second/Base<@R|second/Anno|(i = Int(3))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(3)])  kotlin/Int>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                super<R|@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  second/Base<@R|second/Anno|(i = Int(3))  kotlin/Int>>|>()
+                super<R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(3)])  kotlin/Int>>|>()
             }
 
             public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -745,7 +745,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNestedNameClashWithAnnotationImpli
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -768,9 +768,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNestedNameClashWithAnnotationImpli
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(), ScriptTopLevelDeclaration=true] val inner: R|kotlin/String| = String()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  second/Base<@R|second/Anno|(i = Int(3))  kotlin/Int>>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(3)])  kotlin/Int>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                super<R|@R|second/Anno|(i = Int(1))  second/Base<@R|second/Anno|(i = Int(2))  second/Base<@R|second/Anno|(i = Int(3))  kotlin/Int>>|>()
+                super<R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(3)])  kotlin/Int>>|>()
             }
 
             public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts>] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {

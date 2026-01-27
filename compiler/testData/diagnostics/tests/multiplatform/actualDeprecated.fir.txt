@@ -13,7 +13,7 @@ FILE: jvm.kt
             super<R|Jaba|>()
         }
 
-        @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final actual var modCount: R|kotlin/Int|
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final actual var modCount: R|kotlin/Int|
             public get(): R|kotlin/Int| {
                 ^ Int(42)
             }

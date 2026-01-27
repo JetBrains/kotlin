@@ -3,7 +3,7 @@ FILE: kt50875.kt
         public abstract fun foo(): R|kotlin/Unit|
 
     }
-    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_MEMBER), String(INVISIBLE_REFERENCE))) public final fun <K> checkNotNull(x: R|K?|, y: R|K|): R|@Exact K| {
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_MEMBER), String(INVISIBLE_REFERENCE)) [evaluated = vararg(String(INVISIBLE_MEMBER), String(INVISIBLE_REFERENCE))]) public final fun <K> checkNotNull(x: R|K?|, y: R|K|): R|@Exact K| {
         ^checkNotNull R|<local>/x| ?: R|<local>/y|
     }
     public final fun test_1(any: R|kotlin/Any|, a: R|A|, nullableA: R|A?|): R|kotlin/Unit| {

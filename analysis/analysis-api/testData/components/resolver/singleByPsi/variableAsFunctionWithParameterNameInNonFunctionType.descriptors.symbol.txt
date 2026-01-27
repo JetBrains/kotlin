@@ -1,0 +1,5 @@
+KtCallExpression(157,168): 'call(1, "")'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /call(a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int, b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String): kotlin.Unit
+    ]

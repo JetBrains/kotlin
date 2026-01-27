@@ -688,9 +688,9 @@ KaNamedFunctionSymbol:
           Anno5(s = "1")
             psi: KtAnnotationEntry
         ]
-        type: @R|Anno5|(s = String(1))  T
+        type: @R|Anno5|(s = String(1) [evaluated = String(1)])  T
     ]
-    type: kotlin/collections/List<@R|Anno5|(s = String(1))  T>?
+    type: kotlin/collections/List<@R|Anno5|(s = String(1) [evaluated = String(1)])  T>?
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
@@ -800,11 +800,11 @@ KaNamedFunctionSymbol:
               Anno5(s = "1")
                 psi: KtAnnotationEntry
             ]
-            type: @R|Anno5|(s = String(1))  T
+            type: @R|Anno5|(s = String(1) [evaluated = String(1)])  T
         ]
-        type: kotlin/collections/List<@R|Anno5|(s = String(1))  T>
+        type: kotlin/collections/List<@R|Anno5|(s = String(1) [evaluated = String(1)])  T>
     ]
-    type: kotlin/collections/List<kotlin/collections/List<@R|Anno5|(s = String(1))  T>>?
+    type: kotlin/collections/List<kotlin/collections/List<@R|Anno5|(s = String(1) [evaluated = String(1)])  T>>?
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []

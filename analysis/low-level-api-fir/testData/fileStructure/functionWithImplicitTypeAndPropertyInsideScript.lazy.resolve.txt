@@ -3,7 +3,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndPropertyInsideScript
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)]) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] number: R|kotlin/Int|): R|myPack/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -13,21 +13,21 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndPropertyInsideScript
 
         }
 
-        @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] val localAnnotationProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/localAnnotationProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] val localAnnotationProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] val expressionAnnotationProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/expressionAnnotationProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] val expressionAnnotationProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] val setterAnnotationProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/setterAnnotationProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] val setterAnnotationProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] val receiverAnnotationProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/receiverAnnotationProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] val receiverAnnotationProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFunction(): R|kotlin/Unit| {
             ^topLevelFunction this@R|?|.R|kotlin/run|<R|kotlin/script/templates/standard/ScriptTemplateWithArgs|, R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/script/templates/standard/ScriptTemplateWithArgs|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-                @R|myPack/Anno|[Types](number = Int(42)) [ResolvedTo(BODY_RESOLVE)] lvar [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = Int(42)) R|kotlin/Int|.variableToResolve: R|kotlin/String| = @R|myPack/Anno|[Types](number = Int(42)) String(str)
+                @R|myPack/Anno|[Types](number = R|myPack/localAnnotationProperty| [evaluated = Int(42)]) [ResolvedTo(BODY_RESOLVE)] lvar [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverAnnotationProperty| [evaluated = Int(42)]) R|kotlin/Int|.variableToResolve: R|kotlin/String| = @R|myPack/Anno|[Types](number = R|myPack/expressionAnnotationProperty| [evaluated = Int(42)]) String(str)
             }
             )
         }

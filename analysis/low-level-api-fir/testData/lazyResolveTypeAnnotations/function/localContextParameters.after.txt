@@ -1,8 +1,8 @@
-@R|Anno|(s = String(foo))  kotlin/String
+@R|Anno|(s = String(foo) [evaluated = String(foo)])  kotlin/String
   context -> FirValueParameterSymbol <local>/par from FirRegularPropertySymbol <local>/foo
   anchor -> [FirValueParameterSymbol <local>/par from FirRegularPropertySymbol <local>/foo]
 
-@R|Anno|(s = String(baz))  kotlin/String
+@R|Anno|(s = String(baz) [evaluated = String(baz)])  kotlin/String
   context -> FirValueParameterSymbol <local>/par from FirNamedFunctionSymbol <local>/baz
   anchor -> [FirValueParameterSymbol <local>/par from FirNamedFunctionSymbol <local>/baz]
 
@@ -22,13 +22,13 @@ FILE: [ResolvedTo(IMPORTS)] localContextParameters.kt
                 super<R|kotlin/Any|>()
             }
 
-            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(foo))  kotlin/String|)
+            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(foo) [evaluated = String(foo)])  kotlin/String|)
             public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/String|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String| {
                     ^ String(hello)
                 }
 
-            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(baz))  kotlin/String|)
+            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(baz) [evaluated = String(baz)])  kotlin/String|)
             public final [ResolvedTo(BODY_RESOLVE)] fun baz(): R|kotlin/String| {
                 ^baz String(hello)
             }

@@ -262,23 +262,23 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBody.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(BODY_RESOLVE)] class FirstClass : R|kotlin/Any| {
-            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|<local>/FirstClass| {
+        @R|kotlin/Deprecated|[Types](message = String(FirstClass) [evaluated = String(FirstClass)]) @R|Anno|[Types](s = String(FirstClass) [evaluated = String(FirstClass)]) local final [ResolvedTo(BODY_RESOLVE)] class FirstClass : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor) [evaluated = String(constructor)]) @R|Anno|[Types](s = String(constructor) [evaluated = String(constructor)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty) [evaluated = String(constructorProperty)]) a: R|kotlin/Int|): R|<local>/FirstClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            @R|kotlin/Deprecated|[Types](message = String(constructorProperty) [evaluated = String(constructorProperty)]) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(memberFunction) [evaluated = String(memberFunction)]) @R|Anno|[Types](s = String(memberFunction) [evaluated = String(memberFunction)]) public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit| {
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/Int| = Int(32)
+            @R|kotlin/Deprecated|[Types](message = String(memberProperty) [evaluated = String(memberProperty)]) @R|Anno|[Types](s = String(memberProperty) [evaluated = String(memberProperty)]) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/Int| = Int(32)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(BODY_RESOLVE)] fun anotherFunction(): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = String(anotherFunction) [evaluated = String(anotherFunction)]) @R|Anno|[Types](s = String(anotherFunction) [evaluated = String(anotherFunction)]) local final [ResolvedTo(BODY_RESOLVE)] fun anotherFunction(): R|kotlin/Unit| {
         }
 
     }
@@ -303,32 +303,32 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedCompilerRequiredAnnotationsInsideBody.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(BODY_RESOLVE)] class FirstClass : R|kotlin/Any| {
-            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|<local>/FirstClass| {
+        @R|kotlin/Deprecated|[Types](message = String(FirstClass) [evaluated = String(FirstClass)]) @R|Anno|[Types](s = String(FirstClass) [evaluated = String(FirstClass)]) local final [ResolvedTo(BODY_RESOLVE)] class FirstClass : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor) [evaluated = String(constructor)]) @R|Anno|[Types](s = String(constructor) [evaluated = String(constructor)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty) [evaluated = String(constructorProperty)]) a: R|kotlin/Int|): R|<local>/FirstClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            @R|kotlin/Deprecated|[Types](message = String(constructorProperty) [evaluated = String(constructorProperty)]) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(memberFunction) [evaluated = String(memberFunction)]) @R|Anno|[Types](s = String(memberFunction) [evaluated = String(memberFunction)]) public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit| {
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/Int| = Int(32)
+            @R|kotlin/Deprecated|[Types](message = String(memberProperty) [evaluated = String(memberProperty)]) @R|Anno|[Types](s = String(memberProperty) [evaluated = String(memberProperty)]) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/Int| = Int(32)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(BODY_RESOLVE)] fun anotherFunction(): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = String(anotherFunction) [evaluated = String(anotherFunction)]) @R|Anno|[Types](s = String(anotherFunction) [evaluated = String(anotherFunction)]) local final [ResolvedTo(BODY_RESOLVE)] fun anotherFunction(): R|kotlin/Unit| {
         }
 
     }
-    @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(BODY_RESOLVE)] class AnotherClass : R|kotlin/Any| {
+    @R|kotlin/Deprecated|[Types](message = String(AnotherClass) [evaluated = String(AnotherClass)]) @R|Anno|[Types](s = String(AnotherClass) [evaluated = String(AnotherClass)]) public final [ResolvedTo(BODY_RESOLVE)] class AnotherClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
             super<R|kotlin/Any|>()
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = String(memberFunction) [evaluated = String(memberFunction)]) @R|Anno|[Types](s = String(memberFunction) [evaluated = String(memberFunction)]) public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit| {
         }
 
     }

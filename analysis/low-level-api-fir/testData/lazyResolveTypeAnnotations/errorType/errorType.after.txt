@@ -1,20 +1,20 @@
-@R|lowlevel/Anno|(position = String(return str))  ERROR CLASS: Symbol not found for Type3
+@R|lowlevel/Anno|(position = <strcat>(String(return ), R|lowlevel/prop|) [evaluated = String(return str)])  ERROR CLASS: Symbol not found for Type3
   context -> FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = String(receiver str))  ERROR CLASS: Symbol not found for Abc
+@R|lowlevel/Anno|(position = <strcat>(String(receiver ), R|lowlevel/prop|) [evaluated = String(receiver str)])  ERROR CLASS: Symbol not found for Abc
   context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = String(param str))  ERROR CLASS: Symbol not found for Type1<@R|lowlevel/Anno|(position = String(nested param str))  ERROR CLASS: Symbol not found for Type2>
+@R|lowlevel/Anno|(position = <strcat>(String(param ), R|lowlevel/prop|) [evaluated = String(param str)])  ERROR CLASS: Symbol not found for Type1<@R|lowlevel/Anno|(position = <strcat>(String(nested param ), R|lowlevel/prop|) [evaluated = String(nested param str)])  ERROR CLASS: Symbol not found for Type2>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = String(nested param str))  ERROR CLASS: Symbol not found for Type2
+@R|lowlevel/Anno|(position = <strcat>(String(nested param ), R|lowlevel/prop|) [evaluated = String(nested param str)])  ERROR CLASS: Symbol not found for Type2
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = String(bound str))  ERROR CLASS: Symbol not found for ASF
+@R|lowlevel/Anno|(position = <strcat>(String(bound ), R|lowlevel/prop|) [evaluated = String(bound str)])  ERROR CLASS: Symbol not found for ASF
   context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
@@ -30,4 +30,4 @@ FILE: [ResolvedTo(IMPORTS)] errorType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] F : @R|lowlevel/Anno|[Types](position = String(bound str)) <ERROR TYPE REF: Symbol not found for ASF>> [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|lowlevel/Anno|[Types](position = String(receiver str)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(ANNOTATION_ARGUMENTS)] param: @R|lowlevel/Anno|[Types](position = String(param str)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Types](position = String(return str)) <ERROR TYPE REF: Symbol not found for Type3> { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] F : @R|lowlevel/Anno|[Types](position = <strcat>(String(bound ), R|lowlevel/prop|) [evaluated = String(bound str)]) <ERROR TYPE REF: Symbol not found for ASF>> [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|) [evaluated = String(receiver str)]) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(ANNOTATION_ARGUMENTS)] param: @R|lowlevel/Anno|[Types](position = <strcat>(String(param ), R|lowlevel/prop|) [evaluated = String(param str)]) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Types](position = <strcat>(String(return ), R|lowlevel/prop|) [evaluated = String(return str)]) <ERROR TYPE REF: Symbol not found for Type3> { LAZY_BLOCK }

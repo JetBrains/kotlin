@@ -17,7 +17,7 @@ FILE: elvisAndLongIltLegacy.kt
     public final fun fooBarExact(x: R|kotlin/Long|, y: R|kotlin/Long?|): R|kotlin/Boolean| {
         ^fooBarExact !=(R|<local>/x|, R|/barExact|<R|kotlin/Any?|>(R|<local>/y|, Int(0)))
     }
-    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE))) public final fun <E> barExact(x: R|E?|, y: R|E|): R|@Exact E| {
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE)) [evaluated = vararg(String(INVISIBLE_REFERENCE))]) public final fun <E> barExact(x: R|E?|, y: R|E|): R|@Exact E| {
         ^barExact R|<local>/x| ?: R|<local>/y|
     }
     public final fun assign(x: R|kotlin/Long?|): R|kotlin/Unit| {

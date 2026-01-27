@@ -1,12 +1,12 @@
-@R|low/Anno|(position = String(setter parameter type str))  kotlin/collections/List<@R|low/Anno|(position = String(setter nested parameter type str))  kotlin/collections/Collection<@R|low/Anno|(position = String(setter nested nested parameter type str))  kotlin/String>>
+@R|low/Anno|(position = <strcat>(String(setter parameter type ), R|low/prop|) [evaluated = String(setter parameter type str)])  kotlin/collections/List<@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|) [evaluated = String(setter nested parameter type str)])  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|) [evaluated = String(setter nested nested parameter type str)])  kotlin/String>>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol low/resolveMe
   anchor -> [FirRegularPropertySymbol low/resolveMe]
 
-@R|low/Anno|(position = String(setter nested parameter type str))  kotlin/collections/Collection<@R|low/Anno|(position = String(setter nested nested parameter type str))  kotlin/String>
+@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|) [evaluated = String(setter nested parameter type str)])  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|) [evaluated = String(setter nested nested parameter type str)])  kotlin/String>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol low/resolveMe
   anchor -> [FirRegularPropertySymbol low/resolveMe]
 
-@R|low/Anno|(position = String(setter nested nested parameter type str))  kotlin/String
+@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|) [evaluated = String(setter nested nested parameter type str)])  kotlin/String
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol low/resolveMe
   anchor -> [FirRegularPropertySymbol low/resolveMe]
 
@@ -26,6 +26,6 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetter.kt
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved name: field> {
             ^ <Unresolved name: field>#
         }
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|low/Anno|(position = String(setter parameter type str))  kotlin/collections/List<@R|low/Anno|(position = String(setter nested parameter type str))  kotlin/collections/Collection<@R|low/Anno|(position = String(setter nested nested parameter type str))  kotlin/String>>|): R|kotlin/Unit| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|low/Anno|(position = <strcat>(String(setter parameter type ), R|low/prop|) [evaluated = String(setter parameter type str)])  kotlin/collections/List<@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|) [evaluated = String(setter nested parameter type str)])  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|) [evaluated = String(setter nested nested parameter type str)])  kotlin/String>>|): R|kotlin/Unit| {
             ^ value#
         }

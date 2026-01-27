@@ -1,5 +1,5 @@
 FILE: propertyGetter.kt
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun R|kotlin/Any?|.isNotNull(): R|kotlin/Boolean|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun R|kotlin/Any?|.isNotNull(): R|kotlin/Boolean|
         [R|Contract description]
          <
             Returns(TRUE) -> this != null
@@ -14,7 +14,7 @@ FILE: propertyGetter.kt
 
         ^isNotNull !=(this@R|/isNotNull|, Null(null))
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final val R|kotlin/Any?|.isNotNull: R|kotlin/Boolean|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final val R|kotlin/Any?|.isNotNull: R|kotlin/Boolean|
         public get(): R|kotlin/Boolean|
             [R|Contract description]
              <

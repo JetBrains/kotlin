@@ -297,9 +297,9 @@ FILE: [ResolvedTo(IMPORTS)] constructor.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = String(type param: str))  kotlin/collections/List<@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>>>| {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|) [evaluated = String(type param: str)])  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>>>| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
-            LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = String(type param: str))  kotlin/collections/List<@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>>>|>
+            LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|) [evaluated = String(type param: str)])  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>>>|>
         }
 
     }
@@ -323,9 +323,9 @@ FILE: [ResolvedTo(IMPORTS)] constructor.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = String(type param: str))  kotlin/collections/List<@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>>>| {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|) [evaluated = String(type param: str)])  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>>>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
-            super<R|second/AbstractClass<@R|second/Anno|(position = String(type param: str))  kotlin/collections/List<@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>>>|>()
+            super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|) [evaluated = String(type param: str)])  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>>>|>()
         }
 
     }
@@ -338,7 +338,7 @@ FILE: [ResolvedTo(IMPORTS)] constructor.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] constructor.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -349,14 +349,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructor.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val constant: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = String(type param: str))  kotlin/collections/List<@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>>>| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|) [evaluated = String(type param: str)])  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>>>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
-            super<R|second/AbstractClass<@R|second/Anno|(position = String(type param: str))  kotlin/collections/List<@R|second/Anno|(position = String(nested type param: str))  kotlin/collections/Collection<@R|second/Anno|(position = String(nested nested type param: str))  kotlin/String>>>|>()
+            super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|) [evaluated = String(type param: str)])  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|) [evaluated = String(nested type param: str)])  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|) [evaluated = String(nested nested type param: str)])  kotlin/String>>>|>()
         }
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] class AbstractClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
-        @R|second/Anno|[Types](position = String(constructor str)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] @R|second/Anno|[Types](position = String(param str)) t: R|@R|second/Anno|(position = String(param type str))  T|): R|second/AbstractClass<T>| {
+        @R|second/Anno|[Types](position = <strcat>(String(constructor ), R|second/constant|) [evaluated = String(constructor str)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] @R|second/Anno|[Types](position = <strcat>(String(param ), R|second/constant|) [evaluated = String(param str)]) t: R|@R|second/Anno|(position = <strcat>(String(param type ), R|second/constant|) [evaluated = String(param type str)])  T|): R|second/AbstractClass<T>| {
             super<R|kotlin/Any|>()
         }
 

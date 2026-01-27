@@ -35,7 +35,7 @@ FILE: serializableWith.kt
         }
 
     }
-    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|IntHolderAsStringSerializer|)) public final class IntHolder : R|kotlin/Any| {
+    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|IntHolderAsStringSerializer|) [evaluated = <getClass>(Q|IntHolderAsStringSerializer|)]) public final class IntHolder : R|kotlin/Any| {
         public constructor(value: R|kotlin/Int|): R|IntHolder| {
             super<R|kotlin/Any|>()
         }
@@ -53,7 +53,7 @@ FILE: serializableWith.kt
         }
 
     }
-    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|ObjectSerializer|)) public final object SerializableObject : R|kotlin/Any| {
+    @R|kotlinx/serialization/Serializable|(with = <getClass>(Q|ObjectSerializer|) [evaluated = <getClass>(Q|ObjectSerializer|)]) public final object SerializableObject : R|kotlin/Any| {
         private constructor(): R|SerializableObject| {
             super<R|kotlin/Any|>()
         }

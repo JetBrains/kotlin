@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryAnnotationArgument.kt
         public final [ResolvedTo(STATUS)] val i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
 
-        @R|pack/Anno|[Types](s = String(str)) public final static [ResolvedTo(BODY_RESOLVE)] enum entry ENTRY: R|pack/MyEnumClass| = object : R|pack/MyEnumClass| {
+        @R|pack/Anno|[Types](s = this@R|pack/MyEnumClass.Companion|.R|pack/MyEnumClass.Companion.CONSTANT| [evaluated = String(str)]) public final static [ResolvedTo(BODY_RESOLVE)] enum entry ENTRY: R|pack/MyEnumClass| = object : R|pack/MyEnumClass| {
             private [ResolvedTo(BODY_RESOLVE)] constructor(): R|pack/<anonymous>| {
                 super<R|pack/MyEnumClass|>(Int(1))
             }

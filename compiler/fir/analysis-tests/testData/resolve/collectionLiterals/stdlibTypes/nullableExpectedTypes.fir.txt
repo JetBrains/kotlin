@@ -1,5 +1,5 @@
 FILE: nullableExpectedTypes.kt
-    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/ExperimentalUnsignedTypes|)))
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/ExperimentalUnsignedTypes|)) [evaluated = vararg(<getClass>(Q|kotlin/ExperimentalUnsignedTypes|))])
     public final fun test(): R|kotlin/Unit| {
         lval a: R|kotlin/Array<kotlin/Int?>?| = Q|kotlin|.R|kotlin/arrayOf|<R|kotlin/Int?|>(vararg(Int(1), Null(null), Int(3)))
         lval b: R|kotlin/Array<kotlin/Any>?| = Q|kotlin|.R|kotlin/arrayOf|<R|kotlin/Any|>(vararg(Int(1), Int(2), Int(3)))

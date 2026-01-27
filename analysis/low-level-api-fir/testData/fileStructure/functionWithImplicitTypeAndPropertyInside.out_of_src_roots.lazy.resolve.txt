@@ -1,5 +1,5 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndPropertyInside.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)]) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] number: R|kotlin/Int|): R|myPack/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -8,17 +8,17 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndPropertyInside.kt
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
     }
-    @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] val localAnnotationProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/localAnnotationProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] val localAnnotationProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] val expressionAnnotationProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/expressionAnnotationProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] val expressionAnnotationProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] val setterAnnotationProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/setterAnnotationProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] val setterAnnotationProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] val receiverAnnotationProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/receiverAnnotationProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] val receiverAnnotationProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFunction(): <ERROR TYPE REF: Unresolved name: run> {
         ^topLevelFunction <Unresolved name: run>#(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            @R|myPack/Anno|[Types](number = Int(42)) [ResolvedTo(BODY_RESOLVE)] lvar [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = Int(42)) R|kotlin/Int|.variableToResolve: R|kotlin/String| = @R|myPack/Anno|[Types](number = Int(42)) String(str)
+            @R|myPack/Anno|[Types](number = R|myPack/localAnnotationProperty| [evaluated = Int(42)]) [ResolvedTo(BODY_RESOLVE)] lvar [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverAnnotationProperty| [evaluated = Int(42)]) R|kotlin/Int|.variableToResolve: R|kotlin/String| = @R|myPack/Anno|[Types](number = R|myPack/expressionAnnotationProperty| [evaluated = Int(42)]) String(str)
         }
         )
     }

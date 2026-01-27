@@ -1,12 +1,12 @@
-@R|util/Anno|(position = String(super type call str))  util/AbstractClass<@R|util/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|util/Anno|(position = String(nested nested super type ref str))  kotlin/Int>>
+@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|) [evaluated = String(super type call str)])  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|) [evaluated = String(nested super type ref str)])  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|) [evaluated = String(nested nested super type ref str)])  kotlin/Int>>
   context -> FirConstructorSymbol util/MyClass.MyClass
   anchor -> [FirRegularClassSymbol util/MyClass]
 
-@R|util/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|util/Anno|(position = String(nested nested super type ref str))  kotlin/Int>
+@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|) [evaluated = String(nested super type ref str)])  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|) [evaluated = String(nested nested super type ref str)])  kotlin/Int>
   context -> FirConstructorSymbol util/MyClass.MyClass
   anchor -> [FirRegularClassSymbol util/MyClass]
 
-@R|util/Anno|(position = String(nested nested super type ref str))  kotlin/Int
+@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|) [evaluated = String(nested nested super type ref str)])  kotlin/Int
   context -> FirConstructorSymbol util/MyClass.MyClass
   anchor -> [FirRegularClassSymbol util/MyClass]
 
@@ -35,9 +35,9 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|util/Anno|(position = String(super type call str))  util/AbstractClass<@R|util/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|util/Anno|(position = String(nested nested super type ref str))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|) [evaluated = String(super type call str)])  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|) [evaluated = String(nested super type ref str)])  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|) [evaluated = String(nested nested super type ref str)])  kotlin/Int>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
-                super<R|@R|util/Anno|(position = String(super type call str))  util/AbstractClass<@R|util/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|util/Anno|(position = String(nested nested super type ref str))  kotlin/Int>>|>()
+                super<R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|) [evaluated = String(super type call str)])  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|) [evaluated = String(nested super type ref str)])  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|) [evaluated = String(nested nested super type ref str)])  kotlin/Int>>|>()
             }
 
         }

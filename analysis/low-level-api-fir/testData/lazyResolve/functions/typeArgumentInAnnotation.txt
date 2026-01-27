@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
     }
-    @R|Foo<kotlin/Int>|[Types](s = String()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|Foo<kotlin/Int>|[Types](s = String() [evaluated = String()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
     }
-    @R|Foo<kotlin/Int>|[Types](s = String()) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    @R|Foo<kotlin/Int>|[Types](s = String() [evaluated = String()]) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
@@ -179,5 +179,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeArgumentInAnnotation.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
     }
-    @R|Foo<kotlin/Int>|[Types](s = String()) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    @R|Foo<kotlin/Int>|[Types](s = String() [evaluated = String()]) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
     }

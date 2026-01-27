@@ -21,4 +21,4 @@ FILE: [ResolvedTo(IMPORTS)] annotationApplicationArgumentScript.kts
 
         }
 
-        @R|Annotation|[Types](name = String(y)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun x(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Annotation|[Types](name = String(y) [evaluated = String(y)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun x(): R|kotlin/Unit| { LAZY_BLOCK }

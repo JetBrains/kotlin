@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|@R|Anno|(position = String(receiver type str))  kotlin/collections/List<@R|Anno|(position = String(nested receiver type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested receiver type str))  kotlin/String>>|.foo(): R|@R|Anno|(position = String(receiver type str))  kotlin/collections/List<@R|Anno|(position = String(nested receiver type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested receiver type str))  kotlin/String>>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|) [evaluated = String(receiver type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|) [evaluated = String(nested receiver type str)])  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|) [evaluated = String(nested nested receiver type str)])  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|) [evaluated = String(receiver type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|) [evaluated = String(nested receiver type str)])  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|) [evaluated = String(nested nested receiver type str)])  kotlin/String>>| {
         ^foo this@R|/foo|
     }
 
@@ -197,13 +197,13 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|@R|Anno|(position = String(receiver type str))  kotlin/collections/List<@R|Anno|(position = String(nested receiver type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested receiver type str))  kotlin/String>>|.foo(): R|@R|Anno|(position = String(receiver type str))  kotlin/collections/List<@R|Anno|(position = String(nested receiver type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested receiver type str))  kotlin/String>>| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|) [evaluated = String(receiver type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|) [evaluated = String(nested receiver type str)])  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|) [evaluated = String(nested nested receiver type str)])  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|) [evaluated = String(receiver type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|) [evaluated = String(nested receiver type str)])  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|) [evaluated = String(nested nested receiver type str)])  kotlin/String>>| {
         ^foo this@R|/foo|
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] receiverAsImplicitReturnType.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -214,6 +214,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] receiverAsImplicitReturnType.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|@R|Anno|(position = String(receiver type str))  kotlin/collections/List<@R|Anno|(position = String(nested receiver type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested receiver type str))  kotlin/String>>|.foo(): R|@R|Anno|(position = String(receiver type str))  kotlin/collections/List<@R|Anno|(position = String(nested receiver type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested receiver type str))  kotlin/String>>| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|) [evaluated = String(receiver type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|) [evaluated = String(nested receiver type str)])  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|) [evaluated = String(nested nested receiver type str)])  kotlin/String>>|.foo(): R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|) [evaluated = String(receiver type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|) [evaluated = String(nested receiver type str)])  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|) [evaluated = String(nested nested receiver type str)])  kotlin/String>>| {
         ^foo this@R|/foo|
     }

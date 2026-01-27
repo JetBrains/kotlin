@@ -244,7 +244,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
+        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|() [evaluated = R|one/two/AnotherAnnotation.AnotherAnnotation|()]) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()
             }
@@ -271,7 +271,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnLocalClass.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
+        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|() [evaluated = R|one/two/AnotherAnnotation.AnotherAnnotation|()]) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()
             }

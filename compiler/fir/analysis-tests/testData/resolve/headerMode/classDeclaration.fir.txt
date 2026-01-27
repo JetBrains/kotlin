@@ -9,7 +9,7 @@ FILE: classDeclaration.kt
             ^funB String(A.funB body)
         }
 
-        @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun isNotNull(value: R|kotlin/Any?|): R|kotlin/Boolean|
+        @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun isNotNull(value: R|kotlin/Any?|): R|kotlin/Boolean|
             [R|Contract description]
              <
                 Returns(TRUE) -> value != null

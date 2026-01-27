@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 
@@ -41,7 +42,12 @@ open class FirAnnotationRenderer {
             is FirAnnotationCall -> {
                 components.resolvePhaseRenderer?.render(annotation)
                 if (annotation.calleeReference.let { it is FirResolvedNamedReference || it is FirErrorNamedReference }) {
-                    callArgumentsRenderer?.renderArgumentMapping(annotation.argumentMapping)
+                    val argumentList = annotation.argumentList
+                    if (argumentList is FirResolvedArgumentList) {
+                        callArgumentsRenderer?.renderArgumentsWithEvaluated(argumentList, annotation.argumentMapping)
+                    } else {
+                        callArgumentsRenderer?.renderArgumentMapping(annotation.argumentMapping)
+                    }
                 } else {
                     visitor.visitCall(annotation)
                 }

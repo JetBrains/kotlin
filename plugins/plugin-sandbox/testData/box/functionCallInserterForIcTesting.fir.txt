@@ -11,7 +11,7 @@ FILE: a.kt
 FILE: b.kt
     package foo
 
-    @R|org/jetbrains/kotlin/plugin/sandbox/CallSpecifiedFunction|(functionName = String(foo.functionToCall)) public final fun test(): R|kotlin/Int| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/CallSpecifiedFunction|(functionName = String(foo.functionToCall) [evaluated = String(foo.functionToCall)]) public final fun test(): R|kotlin/Int| {
         lval x: R|kotlin/Int| = Int(1)
         lval y: R|kotlin/Int| = Int(2)
         ^test R|<local>/x|.R|kotlin/Int.plus|(R|<local>/y|)

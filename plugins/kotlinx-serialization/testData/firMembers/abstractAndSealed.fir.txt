@@ -121,7 +121,7 @@ FILE: abstractAndSealed.kt
 
         ^testData String(OK)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlinx/serialization/ExperimentalSerializationApi|))) public final fun testKinds(): R|kotlin/String| {
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlinx/serialization/ExperimentalSerializationApi|)) [evaluated = vararg(<getClass>(Q|kotlinx/serialization/ExperimentalSerializationApi|))]) public final fun testKinds(): R|kotlin/String| {
         when () {
             !=(Q|I|.R|/I.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/PolymorphicKind.SEALED|) ->  {
                 ^testKinds String(Not sealed: I)

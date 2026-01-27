@@ -1,7 +1,7 @@
 FILE: delegateFieldWithAnnotationClash.kt
     package second
 
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final annotation class Anno : R|kotlin/Annotation| {
         public constructor(int: R|kotlin/Int|): R|second/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -23,14 +23,14 @@ FILE: delegateFieldWithAnnotationClash.kt
     }
     public final const val constant: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int|
-    public final class MyClass : R|@R|second/Anno|(int = Int(0))  second/Base| {
+    public final class MyClass : R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| {
         public constructor(): R|second/MyClass| {
             super<R|kotlin/Any|>()
         }
 
-        private final field $$delegate_0: R|@R|second/Anno|(int = Int(0))  second/Base| = R|second/bar|()
+        private final field $$delegate_0: R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| = R|second/bar|()
 
-        @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final annotation class Anno : R|kotlin/Annotation| {
             public constructor(string: R|kotlin/String|): R|second/MyClass.Anno| {
                 super<R|kotlin/Any|>()
             }

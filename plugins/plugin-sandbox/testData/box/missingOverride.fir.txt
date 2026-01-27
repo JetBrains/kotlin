@@ -3,7 +3,7 @@ FILE: missingOverride.kt
         public abstract fun value(): R|kotlin/String|
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/AddSupertype|(value = <getClass>(Q|Target|)) public abstract interface MergePoint : R|kotlin/Any|, R|Target| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AddSupertype|(value = <getClass>(Q|Target|) [evaluated = <getClass>(Q|Target|)]) public abstract interface MergePoint : R|kotlin/Any|, R|Target| {
         public abstract override fun value(): R|kotlin/String|
 
     }

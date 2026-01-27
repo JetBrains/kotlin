@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructor.kt
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+        @R|kotlin/Deprecated|[Types](message = String(constructor) [evaluated = String(constructor)]) @R|Anno|[Types](s = String(constructor) [evaluated = String(constructor)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param) [evaluated = String(param)]) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param) [evaluated = String(param)]) i: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/Deprecated|[Types](message = String(parameter) [evaluated = String(parameter)]) @R|Anno|[Types](s = String(parameter) [evaluated = String(parameter)]) b: R|kotlin/String|): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructor.kt
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+        @R|kotlin/Deprecated|[Types](message = String(constructor) [evaluated = String(constructor)]) @R|Anno|[Types](s = String(constructor) [evaluated = String(constructor)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param) [evaluated = String(param)]) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param) [evaluated = String(param)]) i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(parameter) [evaluated = String(parameter)]) @R|Anno|[Types](s = String(parameter) [evaluated = String(parameter)]) b: R|kotlin/String|): R|A| {
             super<R|kotlin/Any|>()
         }
 
@@ -283,11 +283,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnConstructor.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+        @R|kotlin/Deprecated|[Types](message = String(constructor) [evaluated = String(constructor)]) @R|Anno|[Types](s = String(constructor) [evaluated = String(constructor)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param) [evaluated = String(param)]) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param) [evaluated = String(param)]) i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(parameter) [evaluated = String(parameter)]) @R|Anno|[Types](s = String(parameter) [evaluated = String(parameter)]) b: R|kotlin/String|): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property) [evaluated = String(property)]) @PROPERTY:R|Anno|[Types](s = String(property) [evaluated = String(property)]) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field) [evaluated = String(field)]) @FIELD:R|Anno|[Types](s = String(field) [evaluated = String(field)]) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
     }

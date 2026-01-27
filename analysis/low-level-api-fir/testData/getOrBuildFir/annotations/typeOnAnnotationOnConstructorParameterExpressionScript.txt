@@ -12,7 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorParameterExpressionScri
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-typeOnAnnotationOnConstructorParameterExpressionScript.kts>, ScriptTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] addCommaWarning: R|@R|Anno|(s = String(abc))  kotlin/Boolean| = LAZY_EXPRESSION): R|ResolveMe| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] addCommaWarning: R|@R|Anno|(s = String(abc) [evaluated = String(abc)])  kotlin/Boolean| = LAZY_EXPRESSION): R|ResolveMe| {
                 LAZY_super<R|kotlin/Any|>
             }
 

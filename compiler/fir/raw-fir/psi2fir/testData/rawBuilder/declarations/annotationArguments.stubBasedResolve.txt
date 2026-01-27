@@ -113,7 +113,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @R|ConversionCallConsumer|[Types](b = Byte(12)) public final [ResolvedTo(BODY_RESOLVE)] class WithResolvedConversionCall : R|kotlin/Any| {
+    @R|ConversionCallConsumer|[Types](b = Int(12).R|kotlin/Int.toByte|() [evaluated = Byte(12)]) public final [ResolvedTo(BODY_RESOLVE)] class WithResolvedConversionCall : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithResolvedConversionCall] constructor(): R|WithResolvedConversionCall| {
             super<R|kotlin/Any|>()
         }
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @R|kotlin/Deprecated|[Types](message = String(Deprecated), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass))), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final [ResolvedTo(BODY_RESOLVE)] class Another : R|kotlin/Any| {
+    @R|kotlin/Deprecated|[Types](message = String(Deprecated) [evaluated = String(Deprecated)], replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass))) [evaluated = R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass)))], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final [ResolvedTo(BODY_RESOLVE)] class Another : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Another] constructor(): R|Another| {
             super<R|kotlin/Any|>()
         }
@@ -164,7 +164,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @R|kotlin/Deprecated|[Types](message = String(Deprecated), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass))), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final [ResolvedTo(BODY_RESOLVE)] class Qualified : R|kotlin/Any| {
+    @R|kotlin/Deprecated|[Types](message = String(Deprecated) [evaluated = String(Deprecated)], replaceWith = Q|kotlin|.R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass))) [evaluated = R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass)))], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final [ResolvedTo(BODY_RESOLVE)] class Qualified : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Qualified] constructor(): R|Qualified| {
             super<R|kotlin/Any|>()
         }
