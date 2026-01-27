@@ -569,4 +569,57 @@ class SwiftExportIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("check Swift Export swiftinterface generation based on configuration")
+    @GradleTest
+    @GradleTestExtraStringArguments("Debug", "Release")
+    fun testSwiftExportSwiftInterfaceGeneration(
+        gradleVersion: GradleVersion,
+        configuration: String,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(
+                    testBuildDir,
+                    configuration = configuration
+                )
+            ) {
+                // Verify configuration-specific task executed
+                assertTasksExecuted(":iosArm64${configuration}BuildSPMPackage")
+
+                // Check dd-interfaces for .swiftinterface files
+                val ddInterfacesDir = projectPath.resolve("build/SPMBuild/iosArm64/$configuration/dd-interfaces")
+                assertDirectoryExists(ddInterfacesDir)
+
+                val swiftInterfaceFiles = ddInterfacesDir.toFile().walkTopDown()
+                    .filter { it.extension == "swiftinterface" }
+                    .toList()
+
+                if (configuration == "Release") {
+                    assert(swiftInterfaceFiles.isNotEmpty()) {
+                        "Expected .swiftinterface files in dd-interfaces directory for Release build"
+                    }
+                } else {
+                    assert(swiftInterfaceFiles.isEmpty()) {
+                        "Expected NO .swiftinterface files in dd-interfaces directory for Debug build, but found: $swiftInterfaceFiles"
+                    }
+                }
+            }
+        }
+    }
 }
