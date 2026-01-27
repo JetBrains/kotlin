@@ -1052,18 +1052,28 @@ public expect class Int : Number, Comparable<Int> {
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
+     * This is an arithmetic (sign-propagating) right shift.
      *
      * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..31`.
+     *
+     * For a logical (zero-fill) right shift, see [ushr].
+     *
+     * @see ushr
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public infix fun shr(bitCount: Int): Int
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     * This is a logical (zero-fill) right shift.
      *
      * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..31`.
+     *
+     * For an arithmetic (sign-propagating) right shift, see [shr].
+     *
+     * @see shr
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public infix fun ushr(bitCount: Int): Int
@@ -1466,18 +1476,28 @@ public expect class Long : Number, Comparable<Long> {
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
+     * This is an arithmetic (sign-propagating) right shift.
      *
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
+     *
+     * For a logical (zero-fill) right shift, see [ushr].
+     *
+     * @see ushr
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public infix fun shr(bitCount: Int): Long
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     * This is a logical (zero-fill) right shift.
      *
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
+     *
+     * For an arithmetic (sign-propagating) right shift, see [shr].
+     *
+     * @see shr
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public infix fun ushr(bitCount: Int): Long
