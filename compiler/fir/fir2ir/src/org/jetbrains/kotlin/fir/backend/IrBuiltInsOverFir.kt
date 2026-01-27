@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.AnalysisFlags
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -282,10 +284,13 @@ class IrBuiltInsOverFir(
             it.owner.name == OperatorNameConventions.AND && it.owner.parameters[1].type == intType
         }
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override val arrayOf: IrSimpleFunctionSymbol by lazy {
         // distinct() is needed because we can get two Fir symbols for arrayOf function (from builtins and from stdlib)
         //   with the same IR symbol for them
-        fir2irBuiltins.findFunctions(CallableId(kotlinPackage, ArrayFqNames.ARRAY_OF_FUNCTION)).distinct().single()
+        fir2irBuiltins.findFunctions(CallableId(kotlinPackage, ArrayFqNames.ARRAY_OF_FUNCTION))
+            .distinct()
+            .single { !it.owner.isExpect && it.owner.module.name != KotlinBuiltIns.BUILTINS_MODULE_NAME }
     }
 
     // ------------------------------------- function types -------------------------------------
