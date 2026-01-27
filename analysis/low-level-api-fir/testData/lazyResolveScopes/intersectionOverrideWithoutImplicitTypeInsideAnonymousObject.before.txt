@@ -2,7 +2,7 @@ public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE
     ^foo Q|kotlin/Unit|
 }
 
-public open override [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/B.foo] fun foo([ResolvedTo(STATUS)] x: R|@R|second/Anno|(str = <strcat>(String(super ), R|second/constant|))  kotlin/String|): R|kotlin/Unit|
+public open override [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/B.foo] fun foo([ResolvedTo(STATUS)] x: R|@R|second/Anno|(str = <strcat>(String(super ), R|second/constant|) [evaluated = <strcat>(String(super ), R|second/constant|)])  kotlin/String|): R|kotlin/Unit|
 
 public open override [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/C.foo] fun foo([ResolvedTo(STATUS)] x: R|T|): R|kotlin/Unit|
 
@@ -14,9 +14,9 @@ public open override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second
 
 public open [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] x: R|F|): R|kotlin/Unit| { LAZY_BLOCK }
 
-public abstract override [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: R|@R|second/Anno|(str = <strcat>(String(super ), R|second/constant|))  kotlin/String|
-    public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>, IntersectionOverrideOriginalKey=special/accessor] get(): R|@R|second/Anno|(str = <strcat>(String(super ), R|second/constant|))  kotlin/String|
-    public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>, IntersectionOverrideOriginalKey=special/accessor] set([ResolvedTo(STATUS)] value: R|@R|second/Anno|(str = <strcat>(String(super ), R|second/constant|))  kotlin/String|): R|kotlin/Unit|
+public abstract override [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: R|@R|second/Anno|(str = <strcat>(String(super ), R|second/constant|) [evaluated = <strcat>(String(super ), R|second/constant|)])  kotlin/String|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>, IntersectionOverrideOriginalKey=special/accessor] get(): R|@R|second/Anno|(str = <strcat>(String(super ), R|second/constant|) [evaluated = <strcat>(String(super ), R|second/constant|)])  kotlin/String|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>, IntersectionOverrideOriginalKey=special/accessor] set([ResolvedTo(STATUS)] value: R|@R|second/Anno|(str = <strcat>(String(super ), R|second/constant|) [evaluated = <strcat>(String(super ), R|second/constant|)])  kotlin/String|): R|kotlin/Unit|
 
 public abstract override [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T|
     public [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=special/accessor] get(): R|T|

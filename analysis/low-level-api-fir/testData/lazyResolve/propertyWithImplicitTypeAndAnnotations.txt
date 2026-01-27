@@ -350,11 +350,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotations.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val typeParameterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var <@R|myPack/Anno|[Types](number = Int(42)) [ResolvedTo(ANNOTATION_ARGUMENTS)] T> [ResolvedTo(ANNOTATION_ARGUMENTS)] @RECEIVER:R|myPack/Anno|[Types](number = Int(42)) R|@R|myPack/Anno|(number = Int(42))  T|.variableToResolve: R|kotlin/String|
-        @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
+    @R|myPack/Anno|[Types](number = R|myPack/propertyProperty| [evaluated = Int(42)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty| [evaluated = Int(42)]) [ResolvedTo(ANNOTATION_ARGUMENTS)] T> [ResolvedTo(ANNOTATION_ARGUMENTS)] @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty| [evaluated = Int(42)]) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty| [evaluated = Int(42)])  T|.variableToResolve: R|kotlin/String|
+        @R|myPack/Anno|[Types](number = R|myPack/getterProperty| [evaluated = Int(42)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
             ^ String(str)
         }
-        @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|myPack/Anno|[Types](number = Int(42)) value: R|kotlin/String|): R|kotlin/Unit| {
+        @R|myPack/Anno|[Types](number = R|myPack/setterProperty| [evaluated = Int(42)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty| [evaluated = Int(42)]) value: R|kotlin/String|): R|kotlin/Unit| {
             ^ Unit#
         }
 
@@ -383,17 +383,17 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndAnnotations.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val typeParameterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final [ResolvedTo(BODY_RESOLVE)] var <@R|myPack/Anno|[Types](number = Int(42)) [ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = Int(42)) R|@R|myPack/Anno|(number = Int(42))  T|.variableToResolve: R|kotlin/String|
-        @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+    @R|myPack/Anno|[Types](number = R|myPack/propertyProperty| [evaluated = Int(42)]) public final [ResolvedTo(BODY_RESOLVE)] var <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty| [evaluated = Int(42)]) [ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty| [evaluated = Int(42)]) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty| [evaluated = Int(42)])  T|.variableToResolve: R|kotlin/String|
+        @R|myPack/Anno|[Types](number = R|myPack/getterProperty| [evaluated = Int(42)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
             ^ String(str)
         }
-        @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = Int(42)) value: R|kotlin/String|): R|kotlin/Unit| {
+        @R|myPack/Anno|[Types](number = R|myPack/setterProperty| [evaluated = Int(42)]) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty| [evaluated = Int(42)]) value: R|kotlin/String|): R|kotlin/Unit| {
             ^ Q|kotlin/Unit|
         }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeAndAnnotations.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=myPack/Anno.number] number: R|kotlin/Int|): R|myPack/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -402,24 +402,24 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeAndAnnotations.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val propertyProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/propertyProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val propertyProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val getterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/getterProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val getterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val setterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/setterProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val setterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val setterParameterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val setterParameterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val receiverProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/receiverProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val receiverProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val receiverTypeProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/receiverTypeProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val receiverTypeProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val typeParameterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val typeParameterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](number = Int(42)) public final [ResolvedTo(BODY_RESOLVE)] var <@R|myPack/Anno|[Types](number = Int(42)) [ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = Int(42)) R|@R|myPack/Anno|(number = Int(42))  T|.variableToResolve: R|kotlin/String|
-        @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+    @R|myPack/Anno|[Types](number = R|myPack/propertyProperty| [evaluated = Int(42)]) public final [ResolvedTo(BODY_RESOLVE)] var <@R|myPack/Anno|[Types](number = R|myPack/typeParameterProperty| [evaluated = Int(42)]) [ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverProperty| [evaluated = Int(42)]) R|@R|myPack/Anno|(number = R|myPack/receiverTypeProperty| [evaluated = Int(42)])  T|.variableToResolve: R|kotlin/String|
+        @R|myPack/Anno|[Types](number = R|myPack/getterProperty| [evaluated = Int(42)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
             ^ String(str)
         }
-        @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = Int(42)) value: R|kotlin/String|): R|kotlin/Unit| {
+        @R|myPack/Anno|[Types](number = R|myPack/setterProperty| [evaluated = Int(42)]) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty| [evaluated = Int(42)]) value: R|kotlin/String|): R|kotlin/Unit| {
             ^ Q|kotlin/Unit|
         }

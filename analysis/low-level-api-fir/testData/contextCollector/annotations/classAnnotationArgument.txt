@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] classAnnotationArgument.kt
         public final [ResolvedTo(STATUS)] val CONST: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] get(): <implicit>
 
-        @R|pack/Anno|[Types](value = Int(1)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedClass : R|kotlin/Any| {
+        @R|pack/Anno|[Types](value = this@R|pack/SuperClass.Companion|.R|pack/SuperClass.Companion.CONST| [evaluated = Int(1)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] d: R|kotlin/Double|): R|pack/TopLevelClass.NestedClass| {
                 super<R|kotlin/Any|>()
             }

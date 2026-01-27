@@ -353,7 +353,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
             ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
@@ -370,7 +370,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
                         ^doo R|util/foo|()
                     }
 
-                    public final [ResolvedTo(RAW_FIR)] fun foo(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
+                    public final [ResolvedTo(RAW_FIR)] fun foo(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?| {
                         ^foo R|util/bar|()
                     }
 
@@ -404,7 +404,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
             ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
@@ -421,7 +421,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
                         ^doo R|util/foo|()
                     }
 
-                    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
+                    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?| {
                         ^foo R|util/bar|()
                     }
 
@@ -442,7 +442,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationToLocalMemberFunctionImplicitBodyScr
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -455,7 +455,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationToLocalMemberFunctionImplicitBodyScr
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str), ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun bar(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?| {
             ^bar Null(null)
         }
 
@@ -474,7 +474,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationToLocalMemberFunctionImplicitBodyScr
                         ^doo R|util/foo|()
                     }
 
-                    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
+                    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?| {
                         ^foo R|util/bar|()
                     }
 

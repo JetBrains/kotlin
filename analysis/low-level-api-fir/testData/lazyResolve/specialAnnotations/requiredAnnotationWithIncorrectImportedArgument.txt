@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
             public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
             public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             super<R|kotlin/Any|>()
         }
@@ -341,7 +341,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] requiredAnnotationWithIncorrectImportedArgument
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             super<R|kotlin/Any|>()
         }

@@ -1,20 +1,20 @@
-@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int
+@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|)])  kotlin/Int
   context -> FirRegularPropertySymbol <local>/explicitType
   anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
-@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F
+@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|)])  F
   context -> FirReceiverParameterSymbol from FirRegularPropertySymbol <local>/explicitType
   anchor -> [FirReceiverParameterSymbol from FirRegularPropertySymbol <local>/explicitType]
 
-@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int
+@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|)])  kotlin/Int
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/explicitType
   anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
-@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int
+@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|)])  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/explicitType
   anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
-@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number
+@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|)])  kotlin/Number
   context -> FirTypeParameterSymbol F from FirRegularPropertySymbol <local>/explicitType
   anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
@@ -42,8 +42,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
                 public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
 
-                @R|Anno|[Types](position = <strcat>(String(property ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F|.explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int|
-                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int| {
+                @R|Anno|[Types](position = <strcat>(String(property ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(property ), this@R|<local>/OriginalClass|.R|<local>/prop|)]) public final [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)]) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|)])  kotlin/Number|> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)]) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|)])  F|.explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|)])  kotlin/Int|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|) [evaluated = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|)])  kotlin/Int| {
                         ^ Int(1)
                     }
 

@@ -1,132 +1,132 @@
-@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
+@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?
   context -> FirRegularPropertySymbol <local>/doo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
+@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>
   context -> FirRegularPropertySymbol <local>/doo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
+@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int
   context -> FirRegularPropertySymbol <local>/doo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
+@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/doo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
+@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/doo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
+@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/doo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
+@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/doo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
+@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/doo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
+@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/doo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
+@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?
   context -> FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
+@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>
   context -> FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
+@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int
   context -> FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
+@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
+@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
+@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
+@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
+@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
+@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
+@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
+@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
+@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
+@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?
   context -> FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
+@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>
   context -> FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
+@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int
   context -> FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
+@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
+@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
+@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
+@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
+@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
+@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
+@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
+@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
-@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
+@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/baz
   anchor -> [FirRegularPropertySymbol util/bar]
 
@@ -142,9 +142,9 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberPropertyImplicitBody.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var bar: R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?|): R|kotlin/Unit|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var bar: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?|): R|kotlin/Unit|
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
         ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
@@ -155,18 +155,18 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberPropertyImplicitBody.kt
                     super<R|kotlin/Any|>()
                 }
 
-                public final [ResolvedTo(RAW_FIR)] val doo: R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
+                public final [ResolvedTo(RAW_FIR)] val doo: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?|
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?| {
                         ^ this@R|<local>/Local|.R|<local>/foo|
                     }
 
-                public final [ResolvedTo(RAW_FIR)] var foo: R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| = R|util/bar|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?|): R|kotlin/Unit|
+                public final [ResolvedTo(RAW_FIR)] var foo: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?| = R|util/bar|
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?|
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?|): R|kotlin/Unit|
 
-                public final [ResolvedTo(RAW_FIR)] var baz: R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| = this@R|<local>/Local|.R|<local>/foo|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?|): R|kotlin/Unit|
+                public final [ResolvedTo(RAW_FIR)] var baz: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?| = this@R|<local>/Local|.R|<local>/foo|
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?|
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|) [evaluated = String(bar str)])  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|) [evaluated = String(nested bar str)])  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|) [evaluated = String(nested nested bar str)])  kotlin/Int>>?|): R|kotlin/Unit|
 
             }
 

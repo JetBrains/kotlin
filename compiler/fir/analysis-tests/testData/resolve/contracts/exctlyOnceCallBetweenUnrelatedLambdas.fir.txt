@@ -1,7 +1,7 @@
 FILE: exctlyOnceCallBetweenUnrelatedLambdas.kt
     public final fun higherOrder(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_1(b: R|kotlin/Boolean|, bar: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun test_1(b: R|kotlin/Boolean|, bar: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(bar, EXACTLY_ONCE)
@@ -29,7 +29,7 @@ FILE: exctlyOnceCallBetweenUnrelatedLambdas.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_2(b: R|kotlin/Boolean|, bar: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun test_2(b: R|kotlin/Boolean|, bar: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(bar, EXACTLY_ONCE)
@@ -57,7 +57,7 @@ FILE: exctlyOnceCallBetweenUnrelatedLambdas.kt
 
         R|<local>/bar|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_3(b: R|kotlin/Boolean|, bar: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun test_3(b: R|kotlin/Boolean|, bar: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(bar, EXACTLY_ONCE)

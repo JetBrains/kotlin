@@ -291,8 +291,8 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithComplexType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        field:@R|Anno|[Types](position = String(backing field: 0)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any|
-            @R|Anno|[Types](position = String(backing field: 0)) private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|@R|Anno|(position = String(type: 0))  MyList<@R|Anno|(position = String(nested type: 0))  MyList<@R|Anno|(position = String(nested nested type: 0))  kotlin/Int>>| = LAZY_EXPRESSION
+        field:@R|Anno|[Types](position = <strcat>(String(backing field: ), R|/constant|) [evaluated = String(backing field: 0)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any|
+            @R|Anno|[Types](position = <strcat>(String(backing field: ), R|/constant|) [evaluated = String(backing field: 0)]) private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|@R|Anno|(position = <strcat>(String(type: ), R|/constant|) [evaluated = String(type: 0)])  MyList<@R|Anno|(position = <strcat>(String(nested type: ), R|/constant|) [evaluated = String(nested type: 0)])  MyList<@R|Anno|(position = <strcat>(String(nested nested type: ), R|/constant|) [evaluated = String(nested nested type: 0)])  kotlin/Int>>| = LAZY_EXPRESSION
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -317,8 +317,8 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithComplexType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        field:@R|Anno|[Types](position = String(backing field: 0)) public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any|
-            @R|Anno|[Types](position = String(backing field: 0)) private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|@R|Anno|(position = String(type: 0))  MyList<@R|Anno|(position = String(nested type: 0))  MyList<@R|Anno|(position = String(nested nested type: 0))  kotlin/Int>>| = Null(null)!!
+        field:@R|Anno|[Types](position = <strcat>(String(backing field: ), R|/constant|) [evaluated = String(backing field: 0)]) public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any|
+            @R|Anno|[Types](position = <strcat>(String(backing field: ), R|/constant|) [evaluated = String(backing field: 0)]) private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|@R|Anno|(position = <strcat>(String(type: ), R|/constant|) [evaluated = String(type: 0)])  MyList<@R|Anno|(position = <strcat>(String(nested type: ), R|/constant|) [evaluated = String(nested type: 0)])  MyList<@R|Anno|(position = <strcat>(String(nested nested type: ), R|/constant|) [evaluated = String(nested nested type: 0)])  kotlin/Int>>| = Null(null)!!
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -343,14 +343,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] explicitBackingFieldWithComplexType.kt
             super<R|kotlin/Any|>()
         }
 
-        field:@R|Anno|[Types](position = String(backing field: 0)) public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any|
-            @R|Anno|[Types](position = String(backing field: 0)) private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|@R|Anno|(position = String(type: 0))  MyList<@R|Anno|(position = String(nested type: 0))  MyList<@R|Anno|(position = String(nested nested type: 0))  kotlin/Int>>| = Null(null)!!
+        field:@R|Anno|[Types](position = <strcat>(String(backing field: ), R|/constant|) [evaluated = String(backing field: 0)]) public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any|
+            @R|Anno|[Types](position = <strcat>(String(backing field: ), R|/constant|) [evaluated = String(backing field: 0)]) private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|@R|Anno|(position = <strcat>(String(type: ), R|/constant|) [evaluated = String(type: 0)])  MyList<@R|Anno|(position = <strcat>(String(nested type: ), R|/constant|) [evaluated = String(nested type: 0)])  MyList<@R|Anno|(position = <strcat>(String(nested nested type: ), R|/constant|) [evaluated = String(nested nested type: 0)])  kotlin/Int>>| = Null(null)!!
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface MyList<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }

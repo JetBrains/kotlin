@@ -154,8 +154,8 @@ FILE: [ResolvedTo(CONSTANT_EVALUATION)] fileAnnotations.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileAnnotations.kt
-    @FILE:R|kotlin/Deprecated|[Types](message = String())
-    @FILE:R|one/Anno|[Types](s = String(anno))
+    @FILE:R|kotlin/Deprecated|[Types](message = String() [evaluated = String()])
+    @FILE:R|one/Anno|[Types](s = String(anno) [evaluated = String(anno)])
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -168,8 +168,8 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileAnnotations.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotations.kt
-    @FILE:R|kotlin/Deprecated|[Types](message = String())
-    @FILE:R|one/Anno|[Types](s = String(anno))
+    @FILE:R|kotlin/Deprecated|[Types](message = String() [evaluated = String()])
+    @FILE:R|one/Anno|[Types](s = String(anno) [evaluated = String(anno)])
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -182,9 +182,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotations.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotations.kt
-    @FILE:R|kotlin/Deprecated|[Types](message = String())
-    @FILE:R|one/Anno|[Types](s = String(anno))
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @FILE:R|kotlin/Deprecated|[Types](message = String() [evaluated = String()])
+    @FILE:R|one/Anno|[Types](s = String(anno) [evaluated = String(anno)])
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
             super<R|kotlin/Any|>()
         }

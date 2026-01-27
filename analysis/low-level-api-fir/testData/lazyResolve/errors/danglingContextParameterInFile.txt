@@ -9,11 +9,11 @@ FILE: [ResolvedTo(IMPORTS)] danglingContextParameterInFile.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] parameter1: R|@R|Anno|(position = String(12))  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>|)
+    [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] parameter1: R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>|)
     <DANGLING MODIFIER: Top level declaration expected>
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] danglingContextParameterInFile.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -22,5 +22,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingContextParameterInFile.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] parameter1: R|@R|Anno|(position = String(12))  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>|)
+    [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] parameter1: R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>|)
     <DANGLING MODIFIER: Top level declaration expected>

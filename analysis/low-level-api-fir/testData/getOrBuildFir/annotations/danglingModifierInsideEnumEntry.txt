@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] danglingModifierInsideEnumEntry.kt
                 super<R|foo/MyEnumClass|>()
             }
 
-            [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] @R|foo/Anno|[Types](i = Int(1)) <DANGLING MODIFIER: Top level declaration expected>
+            [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] @R|foo/Anno|[Types](i = R|foo/CONSTANT| [evaluated = Int(1)]) <DANGLING MODIFIER: Top level declaration expected>
         }
 
         public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnumClass] fun values(): R|kotlin/Array<foo/MyEnumClass>| {

@@ -506,12 +506,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClashScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(int = Int(0))  second/Base| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|@R|second/Anno|(int = Int(0))  second/Base| = LAZY_EXPRESSION
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| = LAZY_EXPRESSION
 
             @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>] annotation class Anno : R|kotlin/Annotation| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {
@@ -550,12 +550,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClashScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(int = Int(0))  second/Base| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(int = Int(0))  second/Base| = R|second/bar|()
+            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| = R|second/bar|()
 
             @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>] annotation class Anno : R|kotlin/Annotation| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {
@@ -576,7 +576,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateFieldWithAnnotationClashScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.int] int: R|kotlin/Int|): R|second/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -595,14 +595,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateFieldWithAnnotationClashScript.kts
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0), ScriptTopLevelDeclaration=true] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(int = Int(0))  second/Base| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 super<R|kotlin/Any|>()
             }
 
-            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(int = Int(0))  second/Base| = R|second/bar|()
+            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| = R|second/bar|()
 
-            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>] annotation class Anno : R|kotlin/Annotation| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.Anno.string] string: R|kotlin/String|): R|second/MyClass.Anno| {
                     super<R|kotlin/Any|>()
                 }

@@ -14,7 +14,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnDelegatedInterface.kt
         public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Some : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Some : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Some.s] s: R|kotlin/String|): R|Some| {
             super<R|kotlin/Any|>()
         }

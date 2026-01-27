@@ -4,7 +4,7 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-    R|foo/testMe|(<L> = SAM([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(@R|foo/Anno|(position = String(foo param type 0))  foo/Arg) -> @R|foo/Anno|(position = String(foo return type 0))  foo/Arg] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|@R|foo/Anno|(position = String(foo param type 0))  foo/Arg|): R|@R|foo/Anno|(position = String(foo return type 0))  foo/Arg| <inline=NoInline>  {
+    R|foo/testMe|(<L> = SAM([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(@R|foo/Anno|(position = <strcat>(String(foo param type ), R|foo/constant|) [evaluated = String(foo param type 0)])  foo/Arg) -> @R|foo/Anno|(position = <strcat>(String(foo return type ), R|foo/constant|) [evaluated = String(foo return type 0)])  foo/Arg] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|@R|foo/Anno|(position = <strcat>(String(foo param type ), R|foo/constant|) [evaluated = String(foo param type 0)])  foo/Arg|): R|@R|foo/Anno|(position = <strcat>(String(foo return type ), R|foo/constant|) [evaluated = String(foo return type 0)])  foo/Arg| <inline=NoInline>  {
         ^ R|<local>/b|
     }
     ))
@@ -32,12 +32,12 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceWithAnnotation.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
-        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|@R|foo/Anno|(position = String(foo param type 0))  foo/Arg|): R|@R|foo/Anno|(position = String(foo return type 0))  foo/Arg|
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|@R|foo/Anno|(position = <strcat>(String(foo param type ), R|foo/constant|) [evaluated = String(foo param type 0)])  foo/Arg|): R|@R|foo/Anno|(position = <strcat>(String(foo return type ), R|foo/constant|) [evaluated = String(foo return type 0)])  foo/Arg|
 
     }
     public final [ResolvedTo(CONTRACTS)] fun testMe([ResolvedTo(CONTRACTS)] f: R|@R|foo/Anno|(LAZY_EXPRESSION)  foo/Foo|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        R|foo/testMe|(<L> = SAM([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(@R|foo/Anno|(position = String(foo param type 0))  foo/Arg) -> @R|foo/Anno|(position = String(foo return type 0))  foo/Arg] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|@R|foo/Anno|(position = String(foo param type 0))  foo/Arg|): R|@R|foo/Anno|(position = String(foo return type 0))  foo/Arg| <inline=NoInline>  {
+        R|foo/testMe|(<L> = SAM([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(@R|foo/Anno|(position = <strcat>(String(foo param type ), R|foo/constant|) [evaluated = String(foo param type 0)])  foo/Arg) -> @R|foo/Anno|(position = <strcat>(String(foo return type ), R|foo/constant|) [evaluated = String(foo return type 0)])  foo/Arg] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|@R|foo/Anno|(position = <strcat>(String(foo param type ), R|foo/constant|) [evaluated = String(foo param type 0)])  foo/Arg|): R|@R|foo/Anno|(position = <strcat>(String(foo return type ), R|foo/constant|) [evaluated = String(foo return type 0)])  foo/Arg| <inline=NoInline>  {
             ^ R|<local>/b|
         }
         ))

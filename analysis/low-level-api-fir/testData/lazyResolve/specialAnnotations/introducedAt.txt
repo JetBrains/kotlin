@@ -44,14 +44,14 @@ FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
-    @R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(Q|kotlin/ExperimentalVersionOverloading|))) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/IntroducedAt|[Types](version = String(1)) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/IntroducedAt|[Types](version = String(2)) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(Q|kotlin/ExperimentalVersionOverloading|)) [evaluated = vararg(<getClass>(Q|kotlin/ExperimentalVersionOverloading|))]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/IntroducedAt|[Types](version = String(1) [evaluated = String(1)]) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/IntroducedAt|[Types](version = String(2) [evaluated = String(2)]) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
-    @R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(Q|kotlin/ExperimentalVersionOverloading|))) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1), [ResolvedTo(BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](version = String(1)) b: R|kotlin/Int| = Int(2), [ResolvedTo(BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](version = String(2)) c: R|kotlin/Int| = Int(3)): R|kotlin/Unit| {
+    @R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(Q|kotlin/ExperimentalVersionOverloading|)) [evaluated = vararg(<getClass>(Q|kotlin/ExperimentalVersionOverloading|))]) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1), [ResolvedTo(BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](version = String(1) [evaluated = String(1)]) b: R|kotlin/Int| = Int(2), [ResolvedTo(BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](version = String(2) [evaluated = String(2)]) c: R|kotlin/Int| = Int(3)): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] introducedAt.kt
-    @R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(Q|kotlin/ExperimentalVersionOverloading|))) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1), [ResolvedTo(BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](version = String(1)) b: R|kotlin/Int| = Int(2), [ResolvedTo(BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](version = String(2)) c: R|kotlin/Int| = Int(3)): R|kotlin/Unit| {
+    @R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(Q|kotlin/ExperimentalVersionOverloading|)) [evaluated = vararg(<getClass>(Q|kotlin/ExperimentalVersionOverloading|))]) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1), [ResolvedTo(BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](version = String(1) [evaluated = String(1)]) b: R|kotlin/Int| = Int(2), [ResolvedTo(BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](version = String(2) [evaluated = String(2)]) c: R|kotlin/Int| = Int(3)): R|kotlin/Unit| {
     }

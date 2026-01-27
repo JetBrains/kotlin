@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for KClass>
 
     }
-    @R|one/Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|one/Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|) [evaluated = <getClass>(Q|kotlin/Int|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for KClass>
 
     }
-    @R|one/Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|)) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+    @R|one/Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|) [evaluated = <getClass>(Q|kotlin/Int|)]) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
@@ -179,5 +179,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithTypeArgument.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for KClass>
 
     }
-    @R|one/Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|)) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+    @R|one/Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|) [evaluated = <getClass>(Q|kotlin/Int|)]) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }

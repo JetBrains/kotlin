@@ -82,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] valueParameterAnnotationArgument.kt
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CONST: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] R|T|.foo([ResolvedTo(BODY_RESOLVE)] @R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|) i: R|kotlin/Int|): R|kotlin/Int| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] R|T|.foo([ResolvedTo(BODY_RESOLVE)] @R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST| [evaluated = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|]) i: R|kotlin/Int|): R|kotlin/Int| {
             ^foo Int(0)
         }
 

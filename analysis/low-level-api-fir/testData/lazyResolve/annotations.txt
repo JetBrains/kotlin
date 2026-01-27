@@ -56,16 +56,16 @@ FILE: [ResolvedTo(IMPORTS)] annotations.kt
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/Suppress|[Types](names = vararg(String(2)) [evaluated = vararg(String(2))]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|[Types](names = vararg(String(2)) [evaluated = vararg(String(2))]) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotations.kt
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)) [evaluated = vararg(String(1))])
+    @R|kotlin/Suppress|[Types](names = vararg(String(2)) [evaluated = vararg(String(2))]) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }

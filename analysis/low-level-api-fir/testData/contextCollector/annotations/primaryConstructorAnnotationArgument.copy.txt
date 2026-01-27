@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorAnnotationArgument.kt
 
     }
     public final? [ResolvedTo(RAW_FIR)] class TopLevelClass : SuperClass {
-        @R|pack/Anno|[Types](value = Int(1)) public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|pack/TopLevelClass| {
+        @R|pack/Anno|[Types](value = this@R|pack/SuperClass.Companion|.R|pack/SuperClass.Companion.CONST| [evaluated = Int(1)]) public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|pack/TopLevelClass| {
             super<R|pack/SuperClass|>()
         }
 

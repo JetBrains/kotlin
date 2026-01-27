@@ -399,12 +399,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): Base { LAZY_BLOCK }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(int = Int(0))  second/Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|@R|second/Anno|(int = Int(0))  second/Base| = LAZY_EXPRESSION
+        private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| = LAZY_EXPRESSION
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {
@@ -434,12 +434,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
     public final [ResolvedTo(CONTRACTS)] fun bar(): R|second/Base| { LAZY_BLOCK }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(int = Int(0))  second/Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(int = Int(0))  second/Base| = R|second/bar|()
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| = R|second/bar|()
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {
@@ -455,7 +455,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] delegateFieldWithAnnotationClash.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.int] int: R|kotlin/Int|): R|second/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -470,14 +470,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateFieldWithAnnotationClash.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(int = Int(0))  second/Base| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             super<R|kotlin/Any|>()
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(int = Int(0))  second/Base| = R|second/bar|()
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| = R|second/bar|()
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.Anno.string] string: R|kotlin/String|): R|second/MyClass.Anno| {
                 super<R|kotlin/Any|>()
             }

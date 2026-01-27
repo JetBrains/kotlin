@@ -215,7 +215,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.foo: R|T|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str) [evaluated = String(str)])  Two|> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.foo: R|T|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|T| {
             ^ this@R|/foo|
         }
@@ -235,14 +235,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> [ResolvedTo(BODY_RESOLVE)] R|T|.foo: R|T|
+    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T : R|One|, R|@R|Anno|(s = String(str) [evaluated = String(str)])  Two|> [ResolvedTo(BODY_RESOLVE)] R|T|.foo: R|T|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|T| {
             ^ this@R|/foo|
         }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationInsideWhereProperty.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -255,7 +255,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationInsideWhereProperty.kt
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> [ResolvedTo(BODY_RESOLVE)] R|T|.foo: R|T|
+    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T : R|One|, R|@R|Anno|(s = String(str) [evaluated = String(str)])  Two|> [ResolvedTo(BODY_RESOLVE)] R|T|.foo: R|T|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|T| {
             ^ this@R|/foo|
         }

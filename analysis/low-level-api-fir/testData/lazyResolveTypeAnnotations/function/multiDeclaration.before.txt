@@ -161,10 +161,10 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclaration.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol util/bar, FirConstructorSymbol util/Pair.Pair]] fun foo(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| {
         ^foo R|util/withLambda|<R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=(util/Pair) -> TypeVariable(T)] withLambda@fun <anonymous>([ResolvedTo(RAW_FIR)] <unused var>: R|util/Pair|): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| <inline=NoInline>  {
             [ResolvedTo(RAW_FIR)] lval prop: R|kotlin/String| = String(str)
-            @R|util/Anno|[Types](position = <strcat>(String(near for ), R|<local>/prop|))  {
+            @R|util/Anno|[Types](position = <strcat>(String(near for ), R|<local>/prop|) [evaluated = <strcat>(String(near for ), R|<local>/prop|)])  {
                 [ResolvedTo(RAW_FIR)] lval <iterator>: R|kotlin/collections/IntIterator| = Int(1).R|kotlin/Int.rangeTo|(Int(100)).R|kotlin/ranges/IntProgression.iterator|()
                 while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
-                    @R|util/Anno|[Types](position = <strcat>(String(for ), R|<local>/prop|)) [ResolvedTo(RAW_FIR)] [IsForLoopParameterProperty=true] lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+                    @R|util/Anno|[Types](position = <strcat>(String(for ), R|<local>/prop|) [evaluated = <strcat>(String(for ), R|<local>/prop|)]) [ResolvedTo(RAW_FIR)] [IsForLoopParameterProperty=true] lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
                      {
                     }
 
@@ -175,9 +175,9 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclaration.kt
              {
                 [ResolvedTo(RAW_FIR)] lval <iterator>: R|kotlin/collections/Iterator<@R|util/Anno|(LAZY_EXPRESSION)  util/Pair>| = R|util/bar|().R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<@R|util/Anno|(LAZY_EXPRESSION)  util/Pair>|>|()
                 while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
-                    @R|util/Anno|[Types](position = <strcat>(String(second for ), R|<local>/prop|)) [ResolvedTo(RAW_FIR)] [IsForLoopParameterProperty=true] lval <destruct>: R|@R|util/Anno|(LAZY_EXPRESSION)  util/Pair| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|@R|util/Anno|(LAZY_EXPRESSION)  util/Pair|>|()
+                    @R|util/Anno|[Types](position = <strcat>(String(second for ), R|<local>/prop|) [evaluated = <strcat>(String(second for ), R|<local>/prop|)]) [ResolvedTo(RAW_FIR)] [IsForLoopParameterProperty=true] lval <destruct>: R|@R|util/Anno|(LAZY_EXPRESSION)  util/Pair| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|@R|util/Anno|(LAZY_EXPRESSION)  util/Pair|>|()
                     [ResolvedTo(RAW_FIR)] lval x: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
-                    @R|util/Anno|[Types](position = <strcat>(String(destructuring in for ), R|<local>/prop|)) [ResolvedTo(RAW_FIR)] lval y: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
+                    @R|util/Anno|[Types](position = <strcat>(String(destructuring in for ), R|<local>/prop|) [evaluated = <strcat>(String(destructuring in for ), R|<local>/prop|)]) [ResolvedTo(RAW_FIR)] lval y: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
                      {
                     }
 
@@ -186,17 +186,17 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclaration.kt
             }
 
             R|util/withLambda|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=(util/Pair) -> TypeVariable(T)] withLambda@fun <anonymous>([ResolvedTo(RAW_FIR)] <destruct>: R|util/Pair|): R|kotlin/Unit| <inline=NoInline>  {
-                @R|util/Anno|[Types](position = <strcat>(String(lambda a ), R|<local>/prop|)) [ResolvedTo(RAW_FIR)] lval a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
-                @R|util/Anno|[Types](position = <strcat>(String(lambda b ), R|<local>/prop|)) [ResolvedTo(RAW_FIR)] lval b: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
+                @R|util/Anno|[Types](position = <strcat>(String(lambda a ), R|<local>/prop|) [evaluated = <strcat>(String(lambda a ), R|<local>/prop|)]) [ResolvedTo(RAW_FIR)] lval a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
+                @R|util/Anno|[Types](position = <strcat>(String(lambda b ), R|<local>/prop|) [evaluated = <strcat>(String(lambda b ), R|<local>/prop|)]) [ResolvedTo(RAW_FIR)] lval b: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
                  {
                     ^@withLambda Unit
                 }
 
             }
             )
-            @R|util/Anno|[Types](position = <strcat>(String(destr ), R|<local>/prop|)) [ResolvedTo(RAW_FIR)] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
-            @R|util/Anno|[Types](position = <strcat>(String(a ), R|<local>/prop|)) [ResolvedTo(RAW_FIR)] lval a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
-            @R|util/Anno|[Types](position = <strcat>(String(b ), R|<local>/prop|)) [ResolvedTo(RAW_FIR)] lval b: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
+            @R|util/Anno|[Types](position = <strcat>(String(destr ), R|<local>/prop|) [evaluated = <strcat>(String(destr ), R|<local>/prop|)]) [ResolvedTo(RAW_FIR)] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
+            @R|util/Anno|[Types](position = <strcat>(String(a ), R|<local>/prop|) [evaluated = <strcat>(String(a ), R|<local>/prop|)]) [ResolvedTo(RAW_FIR)] lval a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
+            @R|util/Anno|[Types](position = <strcat>(String(b ), R|<local>/prop|) [evaluated = <strcat>(String(b ), R|<local>/prop|)]) [ResolvedTo(RAW_FIR)] lval b: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
             ^ R|<local>/b|
         }
         )

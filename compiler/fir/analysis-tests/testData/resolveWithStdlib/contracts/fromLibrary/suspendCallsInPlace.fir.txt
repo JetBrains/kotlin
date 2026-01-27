@@ -1,5 +1,5 @@
 FILE: suspendCallsInPlace.kt
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final suspend fun <Result> callOnceSuspending(block: R|suspend () -> Result|): R|Result|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final suspend fun <Result> callOnceSuspending(block: R|suspend () -> Result|): R|Result|
         [R|Contract description]
          <
             CallsInPlace(block, EXACTLY_ONCE)

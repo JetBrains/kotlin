@@ -21,7 +21,7 @@ FILE: annotatedBranch.kt
             ==($subj$, Q|SomeEnum|.R|/SomeEnum.A|) ->  {
                 Int(1)
             }
-            ==($subj$, @R|kotlin/Suppress|(names = vararg(String(deprecation))) Q|SomeEnum|.R|/SomeEnum.B|) ->  {
+            ==($subj$, @R|kotlin/Suppress|(names = vararg(String(deprecation)) [evaluated = vararg(String(deprecation))]) Q|SomeEnum|.R|/SomeEnum.B|) ->  {
                 Int(2)
             }
         }

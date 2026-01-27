@@ -641,12 +641,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsScript.kt
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1))  second/Base| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|@R|second/Anno|(i = Int(1))  second/Base| = LAZY_EXPRESSION
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base| = LAZY_EXPRESSION
 
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|
@@ -697,12 +697,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsScript.kt
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1))  second/Base| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(1))  second/Base| = R|<local>/prop|
+            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base| = R|<local>/prop|
 
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base|
@@ -732,7 +732,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameClashAndAnnotationsScri
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -754,15 +754,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameClashAndAnnotationsScri
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(), ScriptTopLevelDeclaration=true] val inner: R|kotlin/String| = String()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1))  second/Base| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(i = Int(0))  second/Base|): R|second/MyClass| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|) [evaluated = Int(0)])  second/Base|): R|second/MyClass| {
                 super<R|kotlin/Any|>()
             }
 
-            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(1))  second/Base| = R|<local>/prop|
+            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base| = R|<local>/prop|
 
-            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(i = Int(0))  second/Base| = R|<local>/prop|
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(i = Int(0))  second/Base|
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|) [evaluated = Int(0)])  second/Base| = R|<local>/prop|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|) [evaluated = Int(0)])  second/Base|
 
             public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] interface Base : R|kotlin/Any| {
             }

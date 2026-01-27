@@ -26,7 +26,7 @@ FILE: WithValidityAssertion.kt
         private final val lazyValue: R|kotlin/Lazy<T>| = R|kotlin/lazy|<R|T|>(Q|kotlin/LazyThreadSafetyMode|.R|kotlin/LazyThreadSafetyMode.PUBLICATION|, R|<local>/init|)
             private get(): R|kotlin/Lazy<T>|
 
-        @R|kotlin/Suppress|(names = vararg(String(UNCHECKED_CAST))) public open override operator fun getValue(thisRef: R|kotlin/Any|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
+        @R|kotlin/Suppress|(names = vararg(String(UNCHECKED_CAST)) [evaluated = vararg(String(UNCHECKED_CAST))]) public open override operator fun getValue(thisRef: R|kotlin/Any|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
             this@R|/ValidityAwareCachedValue|.R|/ValidityAwareCachedValue.token|.R|/KtLifetimeToken.assertIsValid|()
             ^getValue this@R|/ValidityAwareCachedValue|.R|/ValidityAwareCachedValue.lazyValue|.R|SubstitutionOverride<kotlin/Lazy.value: R|T|>|
         }

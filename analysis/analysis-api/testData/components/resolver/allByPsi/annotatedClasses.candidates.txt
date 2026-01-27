@@ -1015,13 +1015,13 @@ KtSuperTypeCallEntry(480,618): '@Anno("super type call $prop") AbstractClass<@An
       kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
+        returnType = AbstractClass<@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|) [evaluated = String(nested super type ref str)])  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|) [evaluated = String(nested nested super type ref str)])  kotlin.Int>>
         symbol = <constructor>(): AbstractClass<T>
         valueParameters = []
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {
-        T -> (@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>)
+        T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|) [evaluated = String(nested super type ref str)])  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|) [evaluated = String(nested nested super type ref str)])  kotlin.Int>)
       }
       valueArgumentMapping = {}
     isInBestCandidates = true
@@ -1036,13 +1036,13 @@ KtConstructorCalleeExpression(480,616): '@Anno("super type call $prop") Abstract
       kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
+        returnType = AbstractClass<@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|) [evaluated = String(nested super type ref str)])  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|) [evaluated = String(nested nested super type ref str)])  kotlin.Int>>
         symbol = <constructor>(): AbstractClass<T>
         valueParameters = []
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {
-        T -> (@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>)
+        T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|) [evaluated = String(nested super type ref str)])  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|) [evaluated = String(nested nested super type ref str)])  kotlin.Int>)
       }
       valueArgumentMapping = {}
     isInBestCandidates = true
@@ -1450,13 +1450,13 @@ KtSuperTypeCallEntry(653,791): '@Anno("super type call $prop") AbstractClass<@An
       kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
+        returnType = AbstractClass<@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|) [evaluated = String(nested super type ref str)])  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|) [evaluated = String(nested nested super type ref str)])  kotlin.Int>>
         symbol = <constructor>(): AbstractClass<T>
         valueParameters = []
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {
-        T -> (@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>)
+        T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|) [evaluated = String(nested super type ref str)])  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|) [evaluated = String(nested nested super type ref str)])  kotlin.Int>)
       }
       valueArgumentMapping = {}
     isInBestCandidates = true
@@ -1471,13 +1471,13 @@ KtConstructorCalleeExpression(653,789): '@Anno("super type call $prop") Abstract
       kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
+        returnType = AbstractClass<@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|) [evaluated = String(nested super type ref str)])  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|) [evaluated = String(nested nested super type ref str)])  kotlin.Int>>
         symbol = <constructor>(): AbstractClass<T>
         valueParameters = []
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {
-        T -> (@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>)
+        T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|) [evaluated = String(nested super type ref str)])  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|) [evaluated = String(nested nested super type ref str)])  kotlin.Int>)
       }
       valueArgumentMapping = {}
     isInBestCandidates = true

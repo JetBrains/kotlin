@@ -1,11 +1,11 @@
 FILE: annotationOnTypeWithContext.kt
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class AnnotationWithTypeTarget : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final annotation class AnnotationWithTypeTarget : R|kotlin/Annotation| {
         public constructor(): R|AnnotationWithTypeTarget| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class AnnotationWithConstructor : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final annotation class AnnotationWithConstructor : R|kotlin/Annotation| {
         public constructor(k: R|kotlin/String|): R|AnnotationWithConstructor| {
             super<R|kotlin/Any|>()
         }
@@ -22,7 +22,7 @@ FILE: annotationOnTypeWithContext.kt
     }
     public final fun annotationOnContextType(a: R|@ContextFunctionTypeParams(1) context(@R|AnnotationWithTypeTarget|()  A) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun annotationWithConstructorOnContextType(a: R|@ContextFunctionTypeParams(1) context(@R|AnnotationWithConstructor|(k = String())  A) () -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun annotationWithConstructorOnContextType(a: R|@ContextFunctionTypeParams(1) context(@R|AnnotationWithConstructor|(k = String() [evaluated = String()])  A) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun annotationOnTypeWithContext(a: R|@ContextFunctionTypeParams(1) @R|AnnotationWithTypeTarget|()  context(A) () -> kotlin/Unit|): R|kotlin/Unit| {
     }

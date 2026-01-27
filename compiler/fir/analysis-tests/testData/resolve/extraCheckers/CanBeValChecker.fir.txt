@@ -111,7 +111,7 @@ FILE: CanBeValChecker.kt
 
     }
     public final fun withAnnotation(p: R|kotlin/collections/List<kotlin/Any>|): R|kotlin/Unit| {
-        @R|kotlin/Suppress|(names = vararg(String(UNCHECKED_CAST))) lvar v: R|kotlin/collections/List<kotlin/String>| = (R|<local>/p| as R|kotlin/collections/List<kotlin/String>|)
+        @R|kotlin/Suppress|(names = vararg(String(UNCHECKED_CAST)) [evaluated = vararg(String(UNCHECKED_CAST))]) lvar v: R|kotlin/collections/List<kotlin/String>| = (R|<local>/p| as R|kotlin/collections/List<kotlin/String>|)
         R|kotlin/io/print|(R|<local>/v|)
     }
     public final fun withReadonlyDeligate(): R|kotlin/Unit| {
@@ -263,7 +263,7 @@ FILE: CanBeValChecker.kt
         )
         R|<local>/a|.R|kotlin/String.length|
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun inlineRun(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun inlineRun(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(f, EXACTLY_ONCE)

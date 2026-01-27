@@ -1,12 +1,12 @@
-@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>
+@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|) [evaluated = String(nested return type str)])  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|) [evaluated = String(nested nested return type str)])  kotlin/Int>>
   context -> FirNamedFunctionSymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
-@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>
+@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|) [evaluated = String(nested return type str)])  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|) [evaluated = String(nested nested return type str)])  kotlin/Int>
   context -> FirNamedFunctionSymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
-@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int
+@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|) [evaluated = String(nested nested return type str)])  kotlin/Int
   context -> FirNamedFunctionSymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/explicitType]
 
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>| { LAZY_BLOCK }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol lowlevel/explicitType]] fun implicitType(): R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|) [evaluated = String(nested return type str)])  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|) [evaluated = String(nested nested return type str)])  kotlin/Int>>| { LAZY_BLOCK }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol lowlevel/explicitType]] fun implicitType(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|) [evaluated = String(nested return type str)])  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|) [evaluated = String(nested nested return type str)])  kotlin/Int>>| {
         ^implicitType R|lowlevel/explicitType|()
     }

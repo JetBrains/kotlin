@@ -1,60 +1,60 @@
-@R|Anno|(position = String(explicitType return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>>
+@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>
   context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>
+@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>
   context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int
+@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int
   context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(explicitType return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>>
+@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>
+@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int
+@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int
   context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(explicitType return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>>
+@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>
+@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>
   context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int
+@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int
   context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(explicitType return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>>
+@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>
+@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int
+@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.explicitType]
 
-@R|Anno|(position = String(bound 0))  kotlin/collections/List<@R|Anno|(position = String(nested bound 0))  kotlin/collections/List<@R|Anno|(position = String(nested nested bound 0))  kotlin/String>>
+@R|Anno|(position = <strcat>(String(bound ), R|/prop|) [evaluated = String(bound 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), R|/prop|) [evaluated = String(nested bound 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|) [evaluated = String(nested nested bound 0)])  kotlin/String>>
   context -> FirTypeParameterSymbol F from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirRegularPropertySymbol /propertyToResolve]
 
-@R|Anno|(position = String(nested bound 0))  kotlin/collections/List<@R|Anno|(position = String(nested nested bound 0))  kotlin/String>
+@R|Anno|(position = <strcat>(String(nested bound ), R|/prop|) [evaluated = String(nested bound 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|) [evaluated = String(nested nested bound 0)])  kotlin/String>
   context -> FirTypeParameterSymbol F from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirRegularPropertySymbol /propertyToResolve]
 
-@R|Anno|(position = String(nested nested bound 0))  kotlin/String
+@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|) [evaluated = String(nested nested bound 0)])  kotlin/String
   context -> FirTypeParameterSymbol F from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirRegularPropertySymbol /propertyToResolve]
 
@@ -81,9 +81,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|Anno|(position = String(explicitType return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>>| { LAZY_BLOCK }
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| { LAZY_BLOCK }
 
-            public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.explicitType]] fun getValue([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(position = String(explicitType return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>>| {
+            public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.explicitType]] fun getValue([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| {
                 ^getValue this@R|/Delegate|.R|/Delegate.explicitType|()
             }
 
@@ -91,11 +91,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeScript.kts
 
         }
 
-        @PROPERTY:R|Anno|[Types](position = String(property 0)) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](position = String(delegate 0)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] var <@R|Anno|[Types](position = String(type param 0)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = String(bound 0))  kotlin/collections/List<@R|Anno|(position = String(nested bound 0))  kotlin/collections/List<@R|Anno|(position = String(nested nested bound 0))  kotlin/String>>|> [ResolvedTo(ANNOTATION_ARGUMENTS)] @RECEIVER:R|Anno|[Types](position = String(receiver 0)) R|F|.propertyToResolve: R|@R|Anno|(position = String(explicitType return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>>|by R|/Delegate.Delegate|()
-            @PROPERTY_GETTER:R|Anno|[Types](position = String(get 0)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(position = String(explicitType return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>>| {
+        @PROPERTY:R|Anno|[Types](position = <strcat>(String(property ), R|/prop|) [evaluated = String(property 0)]) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](position = <strcat>(String(delegate ), R|/prop|) [evaluated = String(delegate 0)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] var <@R|Anno|[Types](position = <strcat>(String(type param ), R|/prop|) [evaluated = String(type param 0)]) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = <strcat>(String(bound ), R|/prop|) [evaluated = String(bound 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), R|/prop|) [evaluated = String(nested bound 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|) [evaluated = String(nested nested bound 0)])  kotlin/String>>|> [ResolvedTo(ANNOTATION_ARGUMENTS)] @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver ), R|/prop|) [evaluated = String(receiver 0)]) R|F|.propertyToResolve: R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>|by R|/Delegate.Delegate|()
+            @PROPERTY_GETTER:R|Anno|[Types](position = <strcat>(String(get ), R|/prop|) [evaluated = String(get 0)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| {
                 ^ D|/propertyToResolve|.R|/Delegate.getValue<Inapplicable(CONVENTION_ERROR): /Delegate.getValue>#|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
             }
-            @PROPERTY_SETTER:R|Anno|[Types](position = String(set 0)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](position = String(setparam 0)) <set-?>: R|@R|Anno|(position = String(explicitType return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested return type 0))  kotlin/collections/List<@R|Anno|(position = String(explicitType nested nested return type 0))  kotlin/Int>>|): R|kotlin/Unit| {
+            @PROPERTY_SETTER:R|Anno|[Types](position = <strcat>(String(set ), R|/prop|) [evaluated = String(set 0)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](position = <strcat>(String(setparam ), R|/prop|) [evaluated = String(setparam 0)]) <set-?>: R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue<Inapplicable(CONVENTION_ERROR): /Delegate.setValue>#|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/<set-?>|)
             }
 

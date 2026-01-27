@@ -568,12 +568,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollisionAndAnnotations.kt
 
     }
     public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyDataClass : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|): R|one/two/MyDataClass| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component1, IsFromPrimaryConstructor=true] val prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>| = R|<local>/prop|
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component1, IsFromPrimaryConstructor=true] val prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/prop|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>|
 
         public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
@@ -592,9 +592,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollisionAndAnnotations.kt
 
         }
 
-        public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>|
 
-        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -618,12 +618,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollisionAndAnnotations.kt
 
     }
     public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyDataClass : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|): R|one/two/MyDataClass| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component1, IsFromPrimaryConstructor=true] val prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>| = R|<local>/prop|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component1, IsFromPrimaryConstructor=true] val prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/prop|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>|
 
         public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
@@ -642,15 +642,15 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollisionAndAnnotations.kt
 
         }
 
-        public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>|
 
-        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] propertyTypeCollisionAndAnnotations.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/two/Anno.i] i: R|kotlin/Int|): R|one/two/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -668,12 +668,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyTypeCollisionAndAnnotations.kt
 
     }
     public final data [ResolvedTo(BODY_RESOLVE)] class MyDataClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|): R|one/two/MyDataClass| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>|): R|one/two/MyDataClass| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component1, IsFromPrimaryConstructor=true] val prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>| = R|<local>/prop|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component1, IsFromPrimaryConstructor=true] val prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/prop|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] B> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(BODY_RESOLVE)] B>(): R|one/two/MyDataClass.MyClass<B>| {
@@ -692,8 +692,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyTypeCollisionAndAnnotations.kt
 
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(0)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(1)])  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|) [evaluated = Int(2)])  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }

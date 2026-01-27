@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunction.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|kotlin/Deprecated|[Types](message = String(function)) @R|Anno|[Types](s = String(function)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun fooo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/Deprecated|[Types](message = String(a)) @R|Anno|[Types](s = String(a)) a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/Deprecated|[Types](message = String(function) [evaluated = String(function)]) @R|Anno|[Types](s = String(function) [evaluated = String(function)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun fooo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/Deprecated|[Types](message = String(a) [evaluated = String(a)]) @R|Anno|[Types](s = String(a) [evaluated = String(a)]) a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunction.kt
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunction.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|kotlin/Deprecated|[Types](message = String(function)) @R|Anno|[Types](s = String(function)) public final [ResolvedTo(BODY_RESOLVE)] fun fooo([ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(a)) @R|Anno|[Types](s = String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
+    @R|kotlin/Deprecated|[Types](message = String(function) [evaluated = String(function)]) @R|Anno|[Types](s = String(function) [evaluated = String(function)]) public final [ResolvedTo(BODY_RESOLVE)] fun fooo([ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(a) [evaluated = String(a)]) @R|Anno|[Types](s = String(a) [evaluated = String(a)]) a: R|kotlin/Int|): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
@@ -179,5 +179,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnFunction.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|kotlin/Deprecated|[Types](message = String(function)) @R|Anno|[Types](s = String(function)) public final [ResolvedTo(BODY_RESOLVE)] fun fooo([ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(a)) @R|Anno|[Types](s = String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
+    @R|kotlin/Deprecated|[Types](message = String(function) [evaluated = String(function)]) @R|Anno|[Types](s = String(function) [evaluated = String(function)]) public final [ResolvedTo(BODY_RESOLVE)] fun fooo([ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(a) [evaluated = String(a)]) @R|Anno|[Types](s = String(a) [evaluated = String(a)]) a: R|kotlin/Int|): R|kotlin/Unit| {
     }

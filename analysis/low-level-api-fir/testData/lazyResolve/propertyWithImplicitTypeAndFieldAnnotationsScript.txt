@@ -433,11 +433,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val fieldProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = Int(42)) field:@FIELD:R|myPack/Anno|[Types](number = Int(42)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
-            @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
+        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty| [evaluated = Int(42)]) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty| [evaluated = Int(42)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
+            @R|myPack/Anno|[Types](number = R|myPack/getterProperty| [evaluated = Int(42)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
                 ^ field#.plus#(String(str))
             }
-            @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|myPack/Anno|[Types](number = Int(42)) value: R|kotlin/String|): R|kotlin/Unit| {
+            @R|myPack/Anno|[Types](number = R|myPack/setterProperty| [evaluated = Int(42)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty| [evaluated = Int(42)]) value: R|kotlin/String|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -473,11 +473,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val fieldProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = Int(42)) field:@FIELD:R|myPack/Anno|[Types](number = Int(42)) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true, ScriptTopLevelDeclaration=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
-            @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty| [evaluated = Int(42)]) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty| [evaluated = Int(42)]) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true, ScriptTopLevelDeclaration=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
+            @R|myPack/Anno|[Types](number = R|myPack/getterProperty| [evaluated = Int(42)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
                 ^ F|myPack/variableToResolve|.R|kotlin/String.plus|(String(str))
             }
-            @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = Int(42)) value: R|kotlin/String|): R|kotlin/Unit| {
+            @R|myPack/Anno|[Types](number = R|myPack/setterProperty| [evaluated = Int(42)]) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty| [evaluated = Int(42)]) value: R|kotlin/String|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
 
@@ -488,7 +488,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeAndFieldAnnotationsScri
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=myPack/Anno.number] number: R|kotlin/Int|): R|myPack/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -498,26 +498,26 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeAndFieldAnnotationsScri
 
         }
 
-        @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val propertyProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val propertyProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val getterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/getterProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val getterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val setterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/setterProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val setterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val setterParameterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val setterParameterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = Int(42)) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val fieldProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/fieldProperty| [evaluated = Int(42)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val fieldProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = Int(42)) field:@FIELD:R|myPack/Anno|[Types](number = Int(42)) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true, ScriptTopLevelDeclaration=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
-            @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty| [evaluated = Int(42)]) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty| [evaluated = Int(42)]) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true, ScriptTopLevelDeclaration=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
+            @R|myPack/Anno|[Types](number = R|myPack/getterProperty| [evaluated = Int(42)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
                 ^ F|myPack/variableToResolve|.R|kotlin/String.plus|(String(str))
             }
-            @R|myPack/Anno|[Types](number = Int(42)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = Int(42)) value: R|kotlin/String|): R|kotlin/Unit| {
+            @R|myPack/Anno|[Types](number = R|myPack/setterProperty| [evaluated = Int(42)]) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty| [evaluated = Int(42)]) value: R|kotlin/String|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
 

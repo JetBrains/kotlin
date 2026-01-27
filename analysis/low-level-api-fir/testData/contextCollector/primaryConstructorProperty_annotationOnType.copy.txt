@@ -28,7 +28,7 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol a: R|kotlin/String| = String(foo)
-                FirValueParameterSymbol b: R|@R|MyAnnotation|(name = String(NAME))  kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol b: R|@R|MyAnnotation|(name = this@R|/Foo.Companion|.R|/Foo.Companion.CONSTANT_NAME| [evaluated = String(NAME)])  kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
                 FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
 
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty_annotationOnType.kt
@@ -42,15 +42,15 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty_annotationOnType.kt
 
     }
     public final? [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] TypeParameter> : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(RAW_FIR)] TypeParameter>([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/String| = String(foo), [ResolvedTo(BODY_RESOLVE)] b: R|@R|MyAnnotation|(name = String(NAME))  kotlin/Int| = R|<local>/a|.R|kotlin/String.length|, [ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()): R|Foo<TypeParameter>| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(RAW_FIR)] TypeParameter>([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/String| = String(foo), [ResolvedTo(BODY_RESOLVE)] b: R|@R|MyAnnotation|(name = this@R|/Foo.Companion|.R|/Foo.Companion.CONSTANT_NAME| [evaluated = String(NAME)])  kotlin/Int| = R|<local>/a|.R|kotlin/String.length|, [ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()): R|Foo<TypeParameter>| {
             super<R|kotlin/Any|>()
         }
 
         public? final? [ResolvedTo(RAW_FIR)] val a: String = R|<local>/a|
             public? [ResolvedTo(RAW_FIR)] get(): String
 
-        public? final? [ResolvedTo(RAW_FIR)] val b: @R|MyAnnotation|[Types](name = String(NAME)) Int = R|<local>/b|
-            public? [ResolvedTo(RAW_FIR)] get(): @R|MyAnnotation|[Types](name = String(NAME)) Int
+        public? final? [ResolvedTo(RAW_FIR)] val b: @R|MyAnnotation|[Types](name = this@R|/Foo.Companion|.R|/Foo.Companion.CONSTANT_NAME| [evaluated = String(NAME)]) Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] get(): @R|MyAnnotation|[Types](name = this@R|/Foo.Companion|.R|/Foo.Companion.CONSTANT_NAME| [evaluated = String(NAME)]) Int
 
         public? final? [ResolvedTo(RAW_FIR)] val c: Long = R|<local>/c|
             public? [ResolvedTo(RAW_FIR)] get(): Long

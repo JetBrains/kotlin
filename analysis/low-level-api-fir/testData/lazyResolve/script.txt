@@ -769,14 +769,14 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
         }
 
         [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
-            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=Builder.() -> kotlin/Unit] build@fun [ResolvedTo(BODY_RESOLVE)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry| [evaluated = Q|En|.R|/En.Entry|]) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=Builder.() -> kotlin/Unit] build@fun [ResolvedTo(BODY_RESOLVE)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 this@R|special/anonymous|.R|/Builder.version| = String(123)
                 local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
                         super<R|kotlin/Any|>()
                     }
 
-                    @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+                    @R|Anno|[Types](s = Q|En|.R|/En.Entry| [evaluated = Q|En|.R|/En.Entry|]) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
                     }
 
                 }
@@ -793,7 +793,7 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
             public [ResolvedTo(BODY_RESOLVE)] get(): R|Builder|
 
         [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
-            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/builder|.R|/Builder.execute|()
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry| [evaluated = Q|En|.R|/En.Entry|]) R|/builder|.R|/Builder.execute|()
         }
 
         [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
@@ -816,7 +816,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] get(): R|kotlin/String|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|kotlin/Unit|
 
-            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun execute(): R|kotlin/Unit| {
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry| [evaluated = Q|En|.R|/En.Entry|]) public final [ResolvedTo(BODY_RESOLVE)] fun execute(): R|kotlin/Unit| {
                 R|kotlin/io/println|(this@R|/Builder|.R|/Builder.version|)
             }
 
@@ -839,7 +839,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|)) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-script.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|)]) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-script.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|En|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -849,19 +849,19 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
 
         }
 
-        @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
+        @R|Anno|[Types](s = Q|En|.R|/En.Entry| [evaluated = Q|En|.R|/En.Entry|]) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
         [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
-            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=Builder.() -> kotlin/Unit] build@fun [ResolvedTo(BODY_RESOLVE)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry| [evaluated = Q|En|.R|/En.Entry|]) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=Builder.() -> kotlin/Unit] build@fun [ResolvedTo(BODY_RESOLVE)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 this@R|special/anonymous|.R|/Builder.version| = String(123)
                 local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
                         super<R|kotlin/Any|>()
                     }
 
-                    @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+                    @R|Anno|[Types](s = Q|En|.R|/En.Entry| [evaluated = Q|En|.R|/En.Entry|]) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
                     }
 
                 }
@@ -878,7 +878,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
             public [ResolvedTo(BODY_RESOLVE)] get(): R|Builder|
 
         [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
-            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/builder|.R|/Builder.execute|()
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry| [evaluated = Q|En|.R|/En.Entry|]) R|/builder|.R|/Builder.execute|()
         }
 
         [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {

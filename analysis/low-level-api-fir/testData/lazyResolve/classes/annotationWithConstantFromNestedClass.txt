@@ -407,7 +407,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CONSTANT_FROM_COMPANION: R|kotlin/Int| = Int(42)
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](number = Int(42)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](number = this@R|/Outer.Companion|.R|/Outer.Companion.CONSTANT_FROM_COMPANION| [evaluated = Int(42)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -442,7 +442,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CONSTANT_FROM_COMPANION: R|kotlin/Int| = Int(42)
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](number = Int(42)) public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](number = this@R|/Outer.Companion|.R|/Outer.Companion.CONSTANT_FROM_COMPANION| [evaluated = Int(42)]) public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     super<R|kotlin/Any|>()
                 }
@@ -477,7 +477,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithConstantFromNestedClass.kt
             public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val CONSTANT_FROM_COMPANION: R|kotlin/Int| = Int(42)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](number = Int(42)) public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](number = this@R|/Outer.Companion|.R|/Outer.Companion.CONSTANT_FROM_COMPANION| [evaluated = Int(42)]) public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     super<R|kotlin/Any|>()
                 }

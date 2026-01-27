@@ -3,7 +3,7 @@ FIR element: FirAnnotationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|kotlin/Suppress|[Types](names = vararg(String()))
+@R|kotlin/Suppress|[Types](names = vararg(String()) [evaluated = vararg(String())])
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationApplicationCallExpressionScript.kts
@@ -11,4 +11,4 @@ FILE: [ResolvedTo(IMPORTS)] annotationApplicationCallExpressionScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/Suppress|[Types](names = vararg(String())) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun x(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Suppress|[Types](names = vararg(String()) [evaluated = vararg(String())]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun x(): R|kotlin/Unit| { LAZY_BLOCK }

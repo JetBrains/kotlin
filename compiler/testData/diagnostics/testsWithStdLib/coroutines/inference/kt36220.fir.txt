@@ -13,7 +13,7 @@ FILE: kt36220.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/experimental/ExperimentalTypeInference|))) public final fun <KotlinType : R|kotlin/Any|> defineType(definition: R|TypeDefinition<KotlinType>.() -> kotlin/Unit|): R|kotlin/Unit| {
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/experimental/ExperimentalTypeInference|)) [evaluated = vararg(<getClass>(Q|kotlin/experimental/ExperimentalTypeInference|))]) public final fun <KotlinType : R|kotlin/Any|> defineType(definition: R|TypeDefinition<KotlinType>.() -> kotlin/Unit|): R|kotlin/Unit| {
         ^defineType R|kotlin/TODO|()
     }
     public final fun main(): R|kotlin/Unit| {

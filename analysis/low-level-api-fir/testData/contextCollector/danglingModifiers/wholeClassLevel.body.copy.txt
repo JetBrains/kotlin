@@ -62,5 +62,5 @@ FILE: [ResolvedTo(IMPORTS)] wholeClassLevel.kt
 
         }
 
-        [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](s = String(str5)) @R|foo/MyClass.NestedAnnotation|[Types](i = Int(0)) <DANGLING MODIFIER: Top level declaration expected>
+        [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](s = String(str).R|kotlin/String.plus|(R|foo/CONSTANT|) [evaluated = String(str5)]) @R|foo/MyClass.NestedAnnotation|[Types](i = this@R|foo/MyClass.Companion|.R|foo/MyClass.Companion.NESTED_CONSTANT| [evaluated = Int(0)]) <DANGLING MODIFIER: Top level declaration expected>
     }
