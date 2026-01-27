@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.preprocessors.ConfigCommentTransformerPreprocessor
 
 // ---------------------------- box ----------------------------
 
@@ -55,5 +56,5 @@ fun TestConfigurationBuilder.enableLombok() {
     useConfigurators(::LombokEnvironmentConfigurator)
     useAdditionalSourceProviders(::LombokAdditionalSourceFileProvider)
     useCustomRuntimeClasspathProviders(::LombokRuntimeClassPathProvider)
-    useSourcePreprocessor()
+    useSourcePreprocessor(::ConfigCommentTransformerPreprocessor)
 }
