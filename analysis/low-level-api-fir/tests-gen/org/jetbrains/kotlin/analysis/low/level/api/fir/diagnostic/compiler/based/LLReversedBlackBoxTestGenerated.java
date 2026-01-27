@@ -17008,6 +17008,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
         }
 
         @Test
+        @TestMetadata("av24_wrapped_correct_fqName.kt")
+        public void testAv24_wrapped_correct_fqName() {
+          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av24_wrapped_correct_fqName.kt");
+        }
+
+        @Test
         @TestMetadata("correctContinuation.kt")
         public void testCorrectContinuation() {
           runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/correctContinuation.kt");

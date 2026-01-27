@@ -260,7 +260,7 @@ class CoroutineTransformerMethodVisitor(
         continuationIndex: Int,
         visibleLocals: List<LocalVariableNode>
     ) {
-        aconst(containingClassInternalName)
+        aconst(Type.getObjectType(containingClassInternalName).className)
         aconst(name)
         aconst(sourceFile)
         iconst(lineNumber)
