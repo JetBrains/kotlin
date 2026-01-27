@@ -60,7 +60,7 @@ internal fun Sequence<InputStream>.loadApiFromJvmClasses(): List<ClassBinarySign
                     }.map { it.field }
 
                 // NB: this 'map' is O(methods + properties * methods) which may accidentally be quadratic
-                val methodSignatures = methods.map { it.buildMethodSignature(mVisibility, this) }
+                val methodSignatures = methods.map { it.buildMethodSignature(mVisibility, this, classNodeMap) }
                     .filter { it.isEffectivelyPublic(classAccess, mVisibility) }
 
                 /**
@@ -183,18 +183,24 @@ private fun ClassNode.qualifiedClassName(metadata: KotlinClassMetadata?): Pair<S
 
 private fun MethodNode.buildMethodSignature(
     ownerVisibility: ClassVisibility?,
-    ownerClass: ClassNode
+    ownerClass: ClassNode,
+    classNodes: Map<String, ClassNode>
 ): MethodBinarySignature {
     /**
      * For getters/setters, pull the annotations from the property
      * This is either on the field if any or in a '$annotations' synthetic function.
      */
-    val annotationHolders =
-        ownerVisibility?.members?.get(JvmMethodSignature(name, desc))?.propertyAnnotation
+    val annotationHolders = ownerVisibility?.findMember(JvmMethodSignature(name, desc))?.propertyAnnotation
     val foundAnnotations = ArrayList<AnnotationNode>()
     if (annotationHolders != null) {
         foundAnnotations += ownerClass.fields.annotationsFor(annotationHolders.field)
         foundAnnotations += ownerClass.methods.annotationsFor(annotationHolders.method)
+
+        for (part in ownerVisibility.partVisibilities) {
+            val partClass = classNodes[part.name] ?: continue
+            foundAnnotations += partClass.fields.annotationsFor(annotationHolders.field)
+            foundAnnotations += partClass.methods.annotationsFor(annotationHolders.method)
+        }
     }
 
     /**

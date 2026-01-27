@@ -11,3 +11,7 @@ public abstract interface annotation class cases/marker/HiddenMethod : java/lang
 public abstract interface annotation class cases/marker/HiddenProperty : java/lang/annotation/Annotation {
 }
 
+public final class cases/marker/PublicClass {
+	public fun <init> ()V
+}
+
