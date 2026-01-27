@@ -7,6 +7,7 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.analysis.java.parsers.JavadocParser
+import org.jetbrains.dokka.analysis.kotlin.symbols.utils.getLocation
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
@@ -63,7 +64,7 @@ internal fun KaSession.getKDocDocumentationFrom(
 
     parseFromKDocTag(
         kDocTag = kDocContent.primaryTag,
-        externalDri = { resolveKDocLink(it, kdocLocation, logger, sourceSet) },
+        externalDri = { resolveKDocLink(it, logger, sourceSet) },
         kdocLocation = kdocLocation
     )
 }

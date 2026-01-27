@@ -1730,6 +1730,34 @@ class LinkTest : BaseAbstractTest() {
         }
     }
 
+    @Test
+    @OnlySymbols
+    fun `should warn about unresolved links`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |
+            |/**
+            |* [property] is unresolved
+            | */
+            |fun usage() = 0
+            |}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { m ->
+                val warn = logger.warnMessages.first()
+                val path = m.sourceSets.first().sourceRoots.first().absolutePath
+                    .replace("\\","/") // for Win
+
+                assertEquals(
+                    "Couldn't resolve link: [property] in file:///PATH/main/kotlin/Testing.kt:2:3 (root/main)",
+                    warn.replace(path, "PATH")
+                )
+            }
+        }
+    }
+
     private fun DModule.getLinkDRIFrom(name: String): DRI? {
         val doc = this.dfs { it.name == name }?.documentation?.values?.single()
             ?: throw IllegalStateException("Can't find documentation for declaration '$name'")
