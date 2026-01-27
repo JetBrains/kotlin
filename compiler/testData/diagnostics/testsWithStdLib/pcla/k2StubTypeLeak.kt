@@ -1,6 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// DUMP_INFERENCE_LOGS: FIXATION
+
 fun test_1() {
     sequence {
         constrain(this)

@@ -20895,6 +20895,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("inferredToNothingDueToBoundsWithSelectWithoutCaptured.kt")
+        public void testInferredToNothingDueToBoundsWithSelectWithoutCaptured() {
+          runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/inferredToNothingDueToBoundsWithSelectWithoutCaptured.kt");
+        }
+
+        @Test
         @TestMetadata("kt45461.kt")
         public void testKt45461() {
           runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461.kt");
