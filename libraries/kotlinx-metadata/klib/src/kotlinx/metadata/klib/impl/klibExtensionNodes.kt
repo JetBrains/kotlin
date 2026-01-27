@@ -5,7 +5,6 @@
 package kotlinx.metadata.klib.impl
 
 import kotlinx.metadata.klib.KlibSourceFile
-import kotlinx.metadata.klib.UniqId
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.extensions.*
@@ -41,7 +40,6 @@ internal val KmTypeAlias.klibExtensions: KlibTypeAliasExtension
     get() = getExtension(KlibTypeAliasExtension.TYPE) as KlibTypeAliasExtension
 
 internal class KlibFunctionExtension : KmFunctionExtension {
-    var uniqId: UniqId? = null
     var file: KlibSourceFile? = null
 
     override val type: KmExtensionType
@@ -53,7 +51,6 @@ internal class KlibFunctionExtension : KmFunctionExtension {
 }
 
 internal class KlibClassExtension : KmClassExtension {
-    var uniqId: UniqId? = null
     var file: KlibSourceFile? = null
 
     override val type: KmExtensionType
@@ -89,7 +86,6 @@ internal class KlibTypeExtension : KmTypeExtension {
 }
 
 internal class KlibPropertyExtension : KmPropertyExtension {
-    var uniqId: UniqId? = null
     var file: KlibSourceFile? = null
     var compileTimeValue: KmAnnotationArgument? = null
 
@@ -103,7 +99,6 @@ internal class KlibPropertyExtension : KmPropertyExtension {
 
 internal class KlibConstructorExtension : KmConstructorExtension {
     val annotations: MutableList<KmAnnotation> = mutableListOf()
-    var uniqId: UniqId? = null
 
     override val type: KmExtensionType
         get() = TYPE
@@ -115,7 +110,6 @@ internal class KlibConstructorExtension : KmConstructorExtension {
 
 internal class KlibTypeParameterExtension : KmTypeParameterExtension {
     val annotations: MutableList<KmAnnotation> = mutableListOf()
-    var uniqId: UniqId? = null
 
     override val type: KmExtensionType
         get() = TYPE
@@ -127,7 +121,6 @@ internal class KlibTypeParameterExtension : KmTypeParameterExtension {
 
 internal class KlibEnumEntryExtension : KmEnumEntryExtension {
     var ordinal: Int? = null
-    var uniqId: UniqId? = null
     val annotations: MutableList<KmAnnotation> = mutableListOf()
 
     override val type: KmExtensionType
@@ -162,8 +155,6 @@ internal class KlibModuleFragmentExtension : KmModuleFragmentExtension {
 }
 
 internal class KlibTypeAliasExtension : KmTypeAliasExtension {
-    var uniqId: UniqId? = null
-
     override val type: KmExtensionType
         get() = TYPE
 

@@ -194,6 +194,9 @@ message TypeParameter {
   repeated Annotation annotation = 100;
 
   extensions 101 to 999;
+
+  // WARNING: Don't occupy index 171 which was previously used for storing DescriptorUniqId.
+  // DescriptorUniqId type_param_uniq_id = 171;
 }
 
 message Class {
@@ -262,6 +265,9 @@ message Class {
   repeated CompilerPluginData compiler_plugin_data = 33;
 
   extensions 100 to 18999;
+
+  // WARNING: Don't occupy index 171 which was previously used for storing DescriptorUniqId.
+  // DescriptorUniqId class_uniq_id = 171;
 }
 
 message Package {
@@ -304,6 +310,9 @@ message Constructor {
   repeated Annotation annotation = 3;
 
   extensions 100 to 18999;
+
+  // WARNING: Don't occupy index 172 which was previously used for storing DescriptorUniqId.
+  // DescriptorUniqId constructor_uniq_id = 172;
 }
 
 message Function {
@@ -353,6 +362,9 @@ message Function {
   repeated Annotation extension_receiver_annotation = 34;
 
   extensions 100 to 18999;
+
+  // WARNING: Don't occupy index 173 which was previously used for storing DescriptorUniqId.
+  // DescriptorUniqId function_uniq_id = 173;
 }
 
 message Property {
@@ -421,6 +433,9 @@ message Property {
   optional Contract setterContract = 41;
 
   extensions 100 to 18999;
+
+  // WARNING: Don't occupy index 179 which was previously used for storing DescriptorUniqId.
+  // DescriptorUniqId property_uniq_id = 179;
 }
 
 message ValueParameter {
@@ -471,6 +486,9 @@ message TypeAlias {
   repeated CompilerPluginData compiler_plugin_data = 32;
 
   extensions 100 to 199;
+
+  // WARNING: Don't occupy index 131 which was previously used for storing DescriptorUniqId.
+  // DescriptorUniqId type_alias_uniq_id = 131;
 }
 
 message EnumEntry {
@@ -479,6 +497,9 @@ message EnumEntry {
   repeated Annotation annotation = 2;
 
   extensions 100 to 199;
+
+  // WARNING: Don't occupy index 172 which was previously used for storing DescriptorUniqId.
+  // DescriptorUniqId enum_entry_uniq_id = 172;
 }
 
 enum Modality {
