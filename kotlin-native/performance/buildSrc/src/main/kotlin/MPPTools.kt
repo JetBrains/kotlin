@@ -7,8 +7,8 @@
 
 package org.jetbrains.kotlin
 
-import org.jetbrains.report.*
-import org.jetbrains.report.json.*
+import org.jetbrains.report.BenchmarksReport
+import org.jetbrains.report.json.JsonTreeParser
 import java.io.File
 
 /*

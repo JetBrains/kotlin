@@ -3,13 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.benchmark.buildType
 import org.jetbrains.kotlin.benchmarkingTargets
+import org.jetbrains.kotlin.buildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.kotlinNativeDist
-import kotlin.io.writeText
-import kotlin.text.replace
+import org.jetbrains.kotlin.kotlinNativeHome
 
 plugins {
     id("benchmarking")
@@ -31,7 +29,7 @@ val flags = buildList {
         NativeBuildType.RELEASE -> add("-opt")
         NativeBuildType.DEBUG -> {
             add("-g")
-            add("-Xauto-cache-from=${kotlinNativeDist}/klib/common")
+            add("-Xauto-cache-from=${kotlinNativeHome}/klib/common")
             // Due to caches possibly being built on the first run, don't forget to have at least a single warmup round.
         }
     }
@@ -39,8 +37,8 @@ val flags = buildList {
 
 benchmark.konanRun.configure {
     reportFile.set(layout.buildDirectory.file("nativeBenchResults.unprocessed.json"))
-    inputs.dir(kotlinNativeDist) // Make the entire used distribution an input
-    environment.put("NATIVE_COMPILER", "${kotlinNativeDist}/bin/kotlinc-native${if (HostManager.hostIsMingw) ".bat" else ""}")
+    inputs.dir(kotlinNativeHome) // Make the entire used distribution an input
+    environment.put("NATIVE_COMPILER", "${kotlinNativeHome}/bin/kotlinc-native${if (HostManager.hostIsMingw) ".bat" else ""}")
     inputs.property("compilerFlags", flags)
     environment.put("COMPILER_FLAGS", flags.joinToString(separator="\n"))
     val source = layout.projectDirectory.dir("testData").file("helloworld.kt")
