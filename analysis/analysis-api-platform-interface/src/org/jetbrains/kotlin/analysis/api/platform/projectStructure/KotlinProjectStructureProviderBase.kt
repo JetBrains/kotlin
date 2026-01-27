@@ -54,6 +54,8 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
     @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
     private fun computeContextModule(file: KtFile): KaModule {
         val originalFile = file.copyOrigin
+
+        @Suppress("DEPRECATION")
         originalFile?.virtualFile?.analysisContextModule?.let { return it }
 
         file.contextModule?.let { return it }
