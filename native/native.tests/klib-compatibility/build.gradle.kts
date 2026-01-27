@@ -45,8 +45,19 @@ fun Project.customCompilerTest(
     tag: String,
     body: Test.() -> Unit = {},
 ): TaskProvider<out Task> {
+    if (HostManager.hostIsMingw) {
+        // Klib compatibility tests are intended to run on MacOS(for some developers) and Linux(for some developers and CI),
+        // Windows-specific artifacts have `@zip` extensions instead of `@tar.gz`, and contain zip files instead of tar.
+        // So the whole task is simply skipped for the simplicity.
+        return tasks.register(taskName) {
+            enabled = false
+        }
+    }
     val customCompiler: Configuration = getOrCreateConfiguration("customCompiler_$version") {
-        project.dependencies.add(name, "org.jetbrains.kotlin:kotlin-native-prebuilt:${version.rawVersion}:${HostManager.platformName()}@tar.gz")
+        project.dependencies.add(
+            name,
+            "org.jetbrains.kotlin:kotlin-native-prebuilt:${version.rawVersion}:${HostManager.platformName()}@tar.gz"
+        )
         dependencies {
             // declared to be included in verification-metadata.xml, to be executed on developer's and CI computers.
             implicitDependencies("org.jetbrains.kotlin:kotlin-native-prebuilt:${version.rawVersion}:macos-aarch64@tar.gz")
