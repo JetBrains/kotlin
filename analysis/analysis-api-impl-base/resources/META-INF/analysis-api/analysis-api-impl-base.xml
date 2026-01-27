@@ -30,10 +30,6 @@
         dynamic="true"
     />
 
-    <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar"
-                    interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"
-                    area="IDEA_PROJECT"/>
-
     <extensionPoint qualifiedName="org.jetbrains.kotlin.irGenerationExtension"
                     interface="org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension"
                     area="IDEA_PROJECT" dynamic="true"/>
