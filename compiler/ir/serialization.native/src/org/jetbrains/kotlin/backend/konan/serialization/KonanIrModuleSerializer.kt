@@ -16,9 +16,10 @@ class KonanIrModuleSerializer(
     settings: IrSerializationSettings,
     diagnosticReporter: IrDiagnosticReporter,
     irBuiltIns: IrBuiltIns,
+    private val declarationTable: KonanDeclarationTable? = null,
 ) : IrModuleSerializer<KonanIrFileSerializer>(settings, diagnosticReporter) {
 
-    override val globalDeclarationTable = KonanGlobalDeclarationTable(irBuiltIns)
+    override val globalDeclarationTable = declarationTable?.globalDeclarationTable ?: KonanGlobalDeclarationTable(irBuiltIns)
 
     // We skip files with IR for C structs and enums because they should be
     // generated anew.
@@ -30,5 +31,5 @@ class KonanIrModuleSerializer(
         file.fileEntry.name != NativeStandardInteropNames.cTypeDefinitionsFileName
 
     override fun createFileSerializer(settings: IrSerializationSettings): KonanIrFileSerializer =
-        KonanIrFileSerializer(settings, KonanDeclarationTable(globalDeclarationTable))
+        KonanIrFileSerializer(settings, declarationTable ?: KonanDeclarationTable(globalDeclarationTable))
 }

@@ -131,7 +131,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             }
             engine.runK2SpecialBackendChecks(fir2IrOutput)
 
-            val loweredIr = performanceManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
+            val (loweredIr, declarationTable) = performanceManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
                 engine.runPreSerializationLowerings(fir2IrOutput, environment)
             }
             val headerKlibPath = config.headerKlibPath
@@ -139,7 +139,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                 // Child performance manager is needed since otherwise the phase ordering is broken
                 PerformanceManagerImpl.createChildIfNeeded(performanceManager, start = false).let {
                     val headerKlib = it.tryMeasurePhaseTime(PhaseType.IrSerialization) {
-                        engine.runFir2IrSerializer(FirSerializerInput(loweredIr, produceHeaderKlib = true))
+                        engine.runFir2IrSerializer(FirSerializerInput(loweredIr, produceHeaderKlib = true, declarationTable))
                     }
                     it.tryMeasurePhaseTime(PhaseType.KlibWriting) {
                         engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
@@ -152,7 +152,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             }
 
             performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
-                engine.runFir2IrSerializer(FirSerializerInput(loweredIr))
+                engine.runFir2IrSerializer(FirSerializerInput(loweredIr, declarationTable = declarationTable))
             }
         }
     }

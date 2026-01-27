@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
+import org.jetbrains.kotlin.backend.konan.serialization.KonanDeclarationTable
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
@@ -84,7 +85,7 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrO
     runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
+internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Pair<Fir2IrOutput, KonanDeclarationTable> {
     val diagnosticReporter = DiagnosticReporterFactory.createReporter()
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticReporter,
@@ -117,7 +118,7 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2
 
     return fir2IrOutput.copy(
             fir2irActualizedResult = preSerializationLowered,
-    )
+    ) to loweringContext.declarationTable
 }
 
 internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(

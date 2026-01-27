@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.native
 
+import org.jetbrains.kotlin.backend.konan.serialization.KonanDeclarationTable
+
 data class FirSerializerInput(
-        val firToIrOutput: Fir2IrOutput,
-        val produceHeaderKlib: Boolean = false,
+    val firToIrOutput: Fir2IrOutput,
+    val produceHeaderKlib: Boolean = false,
+    val declarationTable: KonanDeclarationTable,
 )

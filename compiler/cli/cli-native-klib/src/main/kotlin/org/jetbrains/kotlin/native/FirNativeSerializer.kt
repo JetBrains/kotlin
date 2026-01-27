@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.serialization.KonanDeclarationTable
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.SerializerOutput
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
@@ -30,13 +31,19 @@ fun PhaseContext.firSerializer(input: FirOutput): SerializerOutput? = when (inpu
 }
 
 fun PhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput {
-    return firSerializerBase(input.firToIrOutput.frontendOutput, input.firToIrOutput, produceHeaderKlib = input.produceHeaderKlib)
+    return firSerializerBase(
+        input.firToIrOutput.frontendOutput,
+        input.firToIrOutput,
+        produceHeaderKlib = input.produceHeaderKlib,
+        declarationTable = input.declarationTable
+    )
 }
 
 private fun PhaseContext.firSerializerBase(
         firResult: AllModulesFrontendOutput,
         fir2IrOutput: Fir2IrOutput?,
         produceHeaderKlib: Boolean = false,
+        declarationTable: KonanDeclarationTable? = null,
 ): SerializerOutput {
     val configuration = config.configuration
     val usedResolvedLibraries = fir2IrOutput?.let {
@@ -70,6 +77,7 @@ private fun PhaseContext.firSerializerBase(
                     ),
                     diagnosticReporter = irDiagnosticReporter,
                     irBuiltIns = fir2IrOutput?.fir2irActualizedResult?.irBuiltIns!!,
+                    declarationTable = declarationTable
                 )
             },
     )
