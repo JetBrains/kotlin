@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 internal fun LLFirSession.registerIdeComponents(
     project: Project,
     languageVersionSettings: LanguageVersionSettings,
-    resolutionScope: GlobalSearchScope
+    annotationSearchScope: GlobalSearchScope
 ) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory(project))
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
@@ -61,7 +61,7 @@ internal fun LLFirSession.registerIdeComponents(
 
     @OptIn(FirImplementationDetail::class)
     register(FirJumpingPhaseComputationSessionForLocalClassesProvider::class, LLJumpingPhaseComputationSessionForLocalClassesProvider)
-    register(FirJavaAnnotationProvider::class, LLFirJavaAnnotationProvider(project, resolutionScope))
+    register(FirJavaAnnotationProvider::class, LLFirJavaAnnotationProvider(project, annotationSearchScope))
 }
 
 @SessionConfiguration
