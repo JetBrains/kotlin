@@ -60,6 +60,12 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         providerFactory.environmentVariable("TARGET_DEVICE_IDENTIFIER")
     )
 
+    @get:Optional
+    @get:Input
+    val libraryDistribution: Property<Boolean> = objectFactory.property<Boolean>().convention(
+        configuration.map { it.equals("Release", ignoreCase = true) }
+    )
+
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val packageRoot: DirectoryProperty
@@ -117,6 +123,9 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
             "CONFIGURATION" to configuration.get(),
             "DEPLOYMENT_TARGET_SETTING_NAME" to deploymentTargetSettingName,
             deploymentTargetSettingName to deploymentTarget,
+
+            // Added to enable Library Evolution and .swiftinterface generation
+            "BUILD_LIBRARY_FOR_DISTRIBUTION" to if (libraryDistribution.get()) "YES" else "NO",
 
             /*
             We need to add -public-autolink-library flag because bridge module is imported with @_implementationOnly
