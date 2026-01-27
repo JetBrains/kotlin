@@ -16,18 +16,22 @@ internal inline fun <R> KaSession.withExceptionCatcher(symbol: KaSymbol, action:
     } catch (e: TranslatorError) {
         throw e
     } catch (e: Throwable) {
-        val file = try {
+        val filePath = try {
             symbol.psi?.containingFile?.virtualFile?.path
         } catch (e: Throwable) {
             "[$e]"
         }
-        val textRange = try {
-            symbol.psi?.textRange.toString()
+        val lineSuffix = try {
+            val offset = symbol.psi?.textOffset
+            val fileDocument = symbol.psi?.containingFile?.fileDocument
+            val lineNumber = offset?.let { fileDocument?.getLineNumber(it) }
+            if (lineNumber != null) ":${lineNumber + 1}"
+            else ""
         } catch (e: Throwable) {
             "[$e]"
         }
         throw TranslatorError(
-            "Error in translating of symbol (${(symbol as? KaNamedSymbol)?.name}) $symbol in file: $file, $textRange",
+            "Error in translating of symbol (${(symbol as? KaNamedSymbol)?.name}) $symbol in file:///$filePath$lineSuffix",
             e
         )
     }
