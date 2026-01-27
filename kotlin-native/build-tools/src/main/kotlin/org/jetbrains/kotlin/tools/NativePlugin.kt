@@ -199,10 +199,24 @@ open class NativeToolsExtension(val project: Project) {
     val hostPlatform by nativeDependenciesExtension::hostPlatform
 
     private val jdkDir: File
+        get() = project.extensions.getByType(JavaToolchainService::class.java).launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }.get().metadata.installationPath.asFile
+
+    val jniIncludeFlags: Array<String>
+        get() = arrayOf(
+                "-I${jdkDir.absolutePath}/include",
+                "-I${jdkDir.absolutePath}/include/${org.jetbrains.kotlin.konan.target.HostManager.jniHostPlatformIncludeDir}"
+        )
+
+    val jniHostCompilerArgs: Array<String>
         get() {
-            return project.extensions.getByType(JavaToolchainService::class.java).launcherFor {
-                languageVersion.set(JavaLanguageVersion.of(11))
-            }.get().metadata.installationPath.asFile
+            val fromPlatform = hostPlatform.clangForJni.hostCompilerArgsForJni
+            val firstPath = fromPlatform.firstOrNull { it.startsWith("-I") }?.removePrefix("-I")
+            if (firstPath != null && File(firstPath).resolve("jni.h").exists()) {
+                return fromPlatform
+            }
+            return jniIncludeFlags
         }
 
     private val reproducibilityRootsMap: Map<File, String>
