@@ -38,7 +38,7 @@ pluginManagement {
 }
 
 plugins {
-    //id "internal-gradle-setup" // it's recommended to apply this plugin at first, as it changes the local.properties file
+    id "internal-gradle-setup" // it's recommended to apply this plugin at first, as it changes the local.properties file
     id "kotlin-bootstrap"
     id "develocity"
     id "jvm-toolchain-provisioning"
