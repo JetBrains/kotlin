@@ -9,14 +9,16 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLibs
+import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -48,6 +50,7 @@ class NativeCompilerSecondStageFacade(
         K2NativeCompilerArguments::debug
     val nativeHome = customNativeCompilerSettings.nativeHome
     val kotlinNativeTargets = testRunSettings.get<KotlinNativeTargets>()
+    val withPlatformLibs = testRunSettings.withPlatformLibs
 
     override val outputKind get() = ArtifactKinds.Native
     override fun isMainModule(module: TestModule) = NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)
@@ -85,11 +88,13 @@ class NativeCompilerSecondStageFacade(
                     K2NativeCompilerArguments::includes.cliArgument(mainLibrary),
                     K2NativeCompilerArguments::autoCacheableFrom.cliArgument(nativeHome.resolve("klib").absolutePath)
                         .takeIf { cacheMode.useStaticCacheForDistributionLibraries },
-                    K2NativeCompilerArguments::nodefaultlibs.cliArgument,
                     K2NativeCompilerArguments::enableAssertions.cliArgument.takeIf {
                         AssertionsMode.ALWAYS_DISABLE !in module.directives[ASSERTIONS_MODE]
                     },
                     K2NativeCompilerArguments::target.cliArgument, kotlinNativeTargets.testTarget.name,
+                    K2NativeCompilerArguments::nodefaultlibs.cliArgument.takeIf {
+                        !withPlatformLibs && !module.directives.contains(WITH_PLATFORM_LIBS)
+                    },
                 ),
                 regularAndFriendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::libraries.cliArgument, it)

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLowering
 import org.jetbrains.kotlin.konan.test.handlers.NativeRunnerHandler
 import org.jetbrains.kotlin.konan.test.klib.NativeCompilerSecondStageFacade
 import org.jetbrains.kotlin.konan.test.klib.currentCustomNativeCompilerSettings
+import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
@@ -49,7 +50,7 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
         useAdditionalService(::LibraryProvider)
         useConfigurators(::NativeEnvironmentConfigurator)
         useDirectives(NativeEnvironmentConfigurationDirectives, TestDirectives, LanguageSettingsDirectives)
-        useMetaTestConfigurators(::DisabledNativeTestSkipper)
+        useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper)
         enableMetaInfoHandler()
         useAfterAnalysisCheckers(
             ::FirMetaInfoDiffSuppressor,
