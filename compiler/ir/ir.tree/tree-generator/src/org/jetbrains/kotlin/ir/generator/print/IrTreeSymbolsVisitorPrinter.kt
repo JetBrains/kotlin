@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.IrTree.functionReference
 import org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.generator.IrTree.propertyReference
+import org.jetbrains.kotlin.ir.generator.IrTree.richFunctionReference
+import org.jetbrains.kotlin.ir.generator.IrTree.richPropertyReference
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
@@ -87,6 +89,8 @@ internal class IrTreeSymbolsVisitorPrinter(
             functionReference -> println("visitReferencedFunction(expression, expression.symbol)")
             propertyReference -> println("visitReferencedProperty(expression, expression.symbol)")
             localDelegatedPropertyReference -> println("visitReferencedLocalDelegatedProperty(expression, expression.symbol)")
+            richFunctionReference -> println("expression.reflectionTargetSymbol?.let { visitReferencedFunction(expression, it) }")
+            richPropertyReference -> println("expression.reflectionTargetSymbol?.let { visitReferencedDeclarationWithAccessors(expression, it) }")
         }
     }
 

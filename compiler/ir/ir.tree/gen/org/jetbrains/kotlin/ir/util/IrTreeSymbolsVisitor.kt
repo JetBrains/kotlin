@@ -297,10 +297,12 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
         visitReferencedSimpleFunction(expression, expression.overriddenFunctionSymbol)
+        expression.reflectionTargetSymbol?.let { visitReferencedFunction(expression, it) }
         visitRichCallableReference(expression)
     }
 
     override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
+        expression.reflectionTargetSymbol?.let { visitReferencedDeclarationWithAccessors(expression, it) }
         visitRichCallableReference(expression)
     }
 
