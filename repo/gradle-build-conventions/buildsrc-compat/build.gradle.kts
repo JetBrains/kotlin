@@ -101,9 +101,9 @@ dependencies {
     compileOnly(gradleApi())
     compileOnly(project(":android-sdk-provisioner"))
 
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$embeddedKotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$bootstrapKotlinVersion")
     //implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
-    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:$embeddedKotlinVersion") {
+    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:$bootstrapKotlinVersion") {
         isTransitive = false
     }
     implementation(libs.gson)
