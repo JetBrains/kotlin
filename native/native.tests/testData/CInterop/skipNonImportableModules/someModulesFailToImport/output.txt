@@ -1,0 +1,20 @@
+library {
+  // module name: <foo.def>
+
+  library fragment {
+    // package name: foo
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall.Direct(name = "_one")
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_foo0_one")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun one(): kotlin/Unit
+
+      @kotlinx/cinterop/internal/CCall.Direct(name = "_two")
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_foo1_two")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun two(): kotlin/Unit
+    }
+  }
+}

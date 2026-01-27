@@ -6,13 +6,16 @@ import java.nio.file.Files
 
 data class ModulesInfo(val topLevelHeaders: List<IncludeInfo>, val ownHeaders: Set<String>, val modules: List<String>)
 
-fun getModulesInfo(compilation: Compilation, modules: List<String>): ModulesInfo {
+fun getModulesInfo(compilation: Compilation, modules: List<String>, skipNonImportableModules: Boolean): ModulesInfo {
     if (modules.isEmpty()) return ModulesInfo(emptyList(), emptySet(), emptyList())
 
     val areModulesEnabled = compilation.compilerArgs.contains("-fmodules")
     withIndex(excludeDeclarationsFromPCH = false) { index ->
         ModularCompilation(compilation).use {
-            val modulesASTFiles = getModulesASTFiles(index, it, modules)
+            val modulesASTFiles = if (skipNonImportableModules) {
+                getModulesASTFilesSkipNonImportableModules(index, it, modules)
+            } else getModulesASTFiles(index, it, modules)
+
             return buildModulesInfo(index, modules, modulesASTFiles, areModulesEnabled)
         }
     }
@@ -90,6 +93,54 @@ private fun getModulesASTFiles(index: CXIndex, compilation: ModularCompilation, 
     } finally {
         clang_disposeTranslationUnit(translationUnit)
     }
+    return result.toList()
+}
+
+/**
+ * This method of import is intended for SwiftPM import. We try to import all the modules and skip those that didn't import. This means we
+ * don't need to require explicit module specification in the build script, and we also don't need to heuristically filter out modules we
+ * can't import like C++ modules
+ */
+private fun getModulesASTFilesSkipNonImportableModules(index: CXIndex, compilation: ModularCompilation, modules: List<String>): List<String> {
+    val result = linkedSetOf<String>()
+    var importedSomeModules = false
+    val allErrors = mutableListOf<String>()
+    modules.forEach { module ->
+        val compilationWithImports = compilation.copy(
+                additionalPreambleLines = listOf("@import $module;") + compilation.additionalPreambleLines
+        )
+        val errors = mutableListOf<Diagnostic>()
+        val translationUnit = compilationWithImports.parse(
+                index,
+                options = CXTranslationUnit_DetailedPreprocessingRecord,
+                diagnosticHandler = { if (it.isError()) errors.add(it) }
+        )
+        try {
+            if (errors.isNotEmpty()) {
+                allErrors.addAll(errors.map { it.format })
+            } else if (translationUnit.hasCompileErrors()) (
+                allErrors.addAll(translationUnit.getCompileErrors())
+            ) else {
+                indexTranslationUnit(index, translationUnit, 0, object : Indexer {
+                    override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
+                        result += info.getFile()!!.canonicalPath
+                    }
+                })
+                importedSomeModules = true
+            }
+        } finally {
+            clang_disposeTranslationUnit(translationUnit)
+        }
+    }
+
+    // Throw if all imports failed or just print errors if we managed to import something
+    val errorMessage = allErrors.take(10).joinToString("\n")
+    if (!importedSomeModules && allErrors.isNotEmpty()) {
+        throw Error(errorMessage)
+    } else if (allErrors.isNotEmpty()) {
+        println(Error(errorMessage))
+    }
+
     return result.toList()
 }
 

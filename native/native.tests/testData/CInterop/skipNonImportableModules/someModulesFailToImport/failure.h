@@ -1,0 +1,1 @@
+#error "non-importable module"
