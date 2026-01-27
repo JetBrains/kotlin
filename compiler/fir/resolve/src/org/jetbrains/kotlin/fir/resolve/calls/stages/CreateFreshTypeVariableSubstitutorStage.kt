@@ -222,6 +222,24 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             csBuilder.registerVariable(freshVariable)
         }
 
+        fun FirTypeRef.returnTypeContains(type: ConeKotlinType): Boolean {
+            return coneTypeSafe<ConeKotlinType>()?.contains { it == type } == true
+        }
+
+        if (declaration is FirCallableDeclaration) {
+            for (index in freshTypeVariables.indices) {
+                val parameterType = typeParameters[index].toConeType()
+                declaration.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+                val matchesReturnType = parameterType == declaration.returnTypeRef.coneTypeOrNull
+                if (!matchesReturnType) continue
+                val isMentionedInInputTypes = declaration.contextParameters.any { it.returnTypeRef.returnTypeContains(parameterType) } ||
+                        declaration.receiverParameter?.typeRef?.returnTypeContains(parameterType) == true ||
+                        (declaration as? FirFunction)?.valueParameters?.any { it.returnTypeRef.returnTypeContains(parameterType) } == true
+                if (isMentionedInInputTypes) continue
+                csBuilder.markReturnTypeTypeVariable(freshTypeVariables[index])
+            }
+        }
+
         val constraints = if (LanguageFeature.ProperlyCheckUpperBoundsViolationsWhenCreatingFreshVariables.isEnabled()) {
             addConstraintsProperly(declaration, toFreshVariables, freshTypeVariables)
         } else {

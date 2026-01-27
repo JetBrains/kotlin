@@ -19,6 +19,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     abstract override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
     abstract override val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     abstract override val postponedTypeVariables: List<TypeVariableMarker>
+    abstract override val returnTypeTypeVariables: Set<TypeConstructorMarker>
 
     abstract fun getBuilder(): ConstraintSystemBuilder
 
