@@ -19,6 +19,8 @@ object StringJoinOps : TemplateGroupBase() {
 
             If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
             elements will be appended, followed by the [truncated] string (which defaults to "...").
+
+            If the receiver has no elements, the function appends [prefix] followed by [postfix] to [buffer] (both are empty by default).
             
             @return the [buffer] argument with appended elements.
             """
@@ -72,6 +74,8 @@ object StringJoinOps : TemplateGroupBase() {
 
             If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
             elements will be appended, followed by the [truncated] string (which defaults to "...").
+
+            If the receiver has no elements, the result consists of [prefix] followed by [postfix]; with the default arguments, this is an empty string.
             """
         }
         sample("samples.collections.Collections.Transformations.joinToString")
