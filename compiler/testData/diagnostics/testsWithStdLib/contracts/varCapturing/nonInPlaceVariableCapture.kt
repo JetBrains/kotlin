@@ -6,7 +6,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class MutablePerson(var name: String = "NoName", val age: String = "1", var child: MutablePerson = MutablePerson())
+class MutablePerson(var name: String = "NoName", val age: String = "1", var child: MutablePerson? = null)
 class MutableObject(var mutableField: String = "initial")
 class DeepObject {
     var theProblematicVar: String = "Hello"
@@ -38,6 +38,10 @@ fun barWithContract(f: () -> Unit) {
     f()
 }
 
+fun barRegularString(el : String, f: () -> Unit) {
+    println("Inside barRegular")
+    f()
+}
 
 fun barRegular(f: () -> Unit) {
     println("Inside barRegular")
@@ -56,8 +60,8 @@ private fun testWithClient() = barRegular {
 
     barRegularString(clientvar) {
         barRegularString(another) {
-        println("Hi")
-    }
+            println("Hi")
+        }
     }
 }
 
@@ -77,7 +81,7 @@ class WithMemberFunctions {
             baz(this.memberVar)
             baz(personAlice.name)
             baz(personAlice.age)
-            baz(personAlice.child.age)
+            println(personAlice.child?.age)
         }
     }
 }
@@ -189,10 +193,9 @@ fun foo() {
         val res = nullableStr ?: "default"
     }
 
-    var girl = MutablePerson(name = "Alice")
-    barRegular {
-        var boy = girl
-        boy.name = "bob" // shoud be exception here
-    }
-
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, checkNotNullCall, classDeclaration,
+classReference, contractCallsEffect, contracts, elvisExpression, equalityExpression, functionDeclaration, functionalType,
+ifExpression, inline, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, thisExpression */

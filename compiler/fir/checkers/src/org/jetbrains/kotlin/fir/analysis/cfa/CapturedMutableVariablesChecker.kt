@@ -18,11 +18,14 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableDeclarationExitNode
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.*
 import kotlin.reflect.full.memberProperties
 
 
@@ -30,61 +33,136 @@ object FirCapturedMutableVariablesAnalyzer : AbstractFirPropertyInitializationCh
     @OptIn(SymbolInternals::class)
     context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun analyze(data: VariableInitializationInfoData) {
+        val capturedAliases = mutableSetOf<FirVariableSymbol<*>>()
         val containingLambda = data.graph.declaration as? FirAnonymousFunction ?: return
         val lambdaSymbol = containingLambda.symbol
         if (lambdaSymbol.inlineStatus == InlineStatus.Inline) return
         val invocationKind = containingLambda.invocationKind
         if (invocationKind.isInPlace) return
         for (node in data.graph.nodes) {
-            val (expression, variableSymbol) = when (node) {
-                is QualifiedAccessNode -> node.fir to (node.fir.calleeReference.toResolvedVariableSymbol() ?: continue)
-                is VariableAssignmentNode -> node.fir to (node.fir.calleeReference?.toResolvedVariableSymbol() ?: continue)
-                else -> continue
-            }
-            val source = expression.source ?: continue
-            if (variableSymbol.isVal) continue
+            updateAliases(node, data.properties, capturedAliases)
+            checkUsage(node, containingLambda, data.properties, capturedAliases)
+        }
+    }
 
-            if (variableSymbol.resolvedReturnType is ConeDynamicType) continue
-            val accessExpression = when (expression) {
-                is FirQualifiedAccessExpression -> expression
-                is FirVariableAssignment -> {
-                    expression.lValue as? FirQualifiedAccessExpression
-                }
-                else -> {
-                    val report = IEReporter(source, context, reporter, FirErrors.CV_DIAGNOSTIC)
-                    report(
-                        IEData(
-                            info = "Unexpected expression type for variable capture",
-                            containingLambda = containingLambda.symbol.name.toString(),
-                            variableName = variableSymbol.name.toString(),
-                            leftmostReceiverName = "no receiver",
-                        )
-                    )
-                    return
-                }
-            }
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun checkUsage(
+        node: CFGNode<*>,
+        containingLambda: FirAnonymousFunction,
+        trackedProperties: Set<FirVariableSymbol<*>>,
+        capturedAliases: Set<FirVariableSymbol<*>>,
+    ) {
+        val (expression, variableSymbol) = when (node) {
+            is QualifiedAccessNode -> node.fir to (node.fir.calleeReference.toResolvedVariableSymbol() ?: return)
+            is VariableAssignmentNode -> node.fir to (node.fir.calleeReference?.toResolvedVariableSymbol() ?: return)
+            else -> return
+        }
+        val source = expression.source ?: return
+        if (variableSymbol.isVal) return
 
-            val leftmostReceiverSymbol = leftmostReceiverVariableSymbol(accessExpression)
-            // Logic:
-            // 1. If symbol is in data.properties, it is declared inside this lambda (local).
-            // 2. If symbol is NOT in data.properties, but isLocal == true, it is captured from outer scope.
-            if (leftmostReceiverSymbol != null) {
-                if (!leftmostReceiverSymbol.isLocal) continue
-                if (leftmostReceiverSymbol in data.properties) continue
-            } else {
-                if (!variableSymbol.isLocal) continue
-                if (variableSymbol in data.properties) continue
+        if (variableSymbol.resolvedReturnType is ConeDynamicType) return
+        val accessExpression = when (expression) {
+            is FirQualifiedAccessExpression -> expression
+            is FirVariableAssignment -> expression.lValue as? FirQualifiedAccessExpression
+            else -> {
+                return
             }
+        }
 
-            val report = IEReporter(source, context, reporter, FirErrors.CV_DIAGNOSTIC)
-            report(
-                IEData(
-                    info = "Variable is captured from outer scope",
-                    containingLambda = containingLambda.symbol.name.toString(),
-                    variableName = variableSymbol.name.toString(),
-                    leftmostReceiverName = leftmostReceiverSymbol?.name.toString(),
-                )
+        val leftmostReceiverSymbol = leftmostReceiverVariableSymbol(accessExpression)
+        if (leftmostReceiverSymbol != null) {
+            if (!leftmostReceiverSymbol.isLocal) return
+            val isSymbolCaptured = isCaptured(variableSymbol, leftmostReceiverSymbol, trackedProperties, capturedAliases)
+            if (!isSymbolCaptured) return
+        } else {
+            if (!variableSymbol.isLocal) return
+            val isSymbolCaptured = isCaptured(variableSymbol, null, trackedProperties, capturedAliases)
+            if (!isSymbolCaptured) return
+        }
+
+        val report = IEReporter(source, context, reporter, FirErrors.CV_DIAGNOSTIC)
+        report(
+            IEData(
+                info = "Variable is captured from outer scope",
+                containingLambda = containingLambda.symbol.name.toString(),
+                variableName = variableSymbol.name.toString(),
+                leftmostReceiverName = leftmostReceiverSymbol?.name.toString(),
             )
+        )
+    }
+
+    private fun updateAliases(
+        node: CFGNode<*>,
+        trackedProperties: Set<FirVariableSymbol<*>>,
+        capturedAliases: MutableSet<FirVariableSymbol<*>>,
+    ) {
+        val (lhsSymbol, rValue) = when (node) {
+            is VariableDeclarationExitNode -> node.fir.symbol to node.fir.initializer
+            is VariableAssignmentNode -> {
+                val lhs = (node.fir.lValue as? FirQualifiedAccessExpression)
+                    ?.calleeReference?.toResolvedVariableSymbol()
+                lhs to node.fir.rValue
+            }
+            else -> return
+        }
+        if (lhsSymbol == null) return
+
+        val isRhsCaptured = isOrContainsCapturedRef(rValue, trackedProperties, capturedAliases)
+        if (isRhsCaptured) {
+            capturedAliases.add(lhsSymbol)
+        } else {
+            capturedAliases.remove(lhsSymbol)
+        }
+    }
+
+    private fun isOrContainsCapturedRef(
+        expression: FirExpression?,
+        trackedProperties: Set<FirVariableSymbol<*>>,
+        capturedAliases: Set<FirVariableSymbol<*>>,
+    ): Boolean {
+        if (expression == null) {
+            return false
+        }
+        val type = expression.resolvedType
+        if (type.isPrimitiveOrNullablePrimitive || type.isString || type.isNullableString) return false
+
+        return when (expression) {
+            is FirFunctionCall -> false
+            is FirQualifiedAccessExpression -> {
+                val symbol = expression.calleeReference.toResolvedVariableSymbol() ?: return false
+
+                val leftmostReceiver = leftmostReceiverVariableSymbol(expression)
+                val isReceiverCaptured =
+                    leftmostReceiver != null && isCaptured(leftmostReceiver, leftmostReceiver, trackedProperties, capturedAliases)
+                val isSymbolCaptured = isCaptured(symbol, leftmostReceiver, trackedProperties, capturedAliases)
+
+                if (isSymbolCaptured && symbol.isLocal) return true
+                if (isReceiverCaptured && leftmostReceiver.isLocal) return true
+                false
+            }
+            is FirWhenExpression -> {
+                expression.branches.any { branch ->
+                    isOrContainsCapturedRef(branch.result, trackedProperties, capturedAliases)
+                }
+            }
+            is FirTryExpression -> {
+                val tryBlockResult = expression.tryBlock.statements.lastOrNull() as? FirExpression
+                val catchBlockResults = expression.catches.mapNotNull { it.block.statements.lastOrNull() as? FirExpression }
+
+                (tryBlockResult != null && isOrContainsCapturedRef(tryBlockResult, trackedProperties, capturedAliases)) ||
+                        catchBlockResults.any { isOrContainsCapturedRef(it, trackedProperties, capturedAliases) }
+            }
+            is FirCheckNotNullCall -> isOrContainsCapturedRef(expression.argument, trackedProperties, capturedAliases)
+            is FirElvisExpression -> isOrContainsCapturedRef(expression.lhs, trackedProperties, capturedAliases) ||
+                    isOrContainsCapturedRef(expression.rhs, trackedProperties, capturedAliases)
+            is FirTypeOperatorCall -> isOrContainsCapturedRef(expression.argument, trackedProperties, capturedAliases)
+            is FirSmartCastExpression -> isOrContainsCapturedRef(expression.originalExpression, trackedProperties, capturedAliases)
+            is FirWrappedExpression -> isOrContainsCapturedRef(expression.expression, trackedProperties, capturedAliases)
+            is FirBlock -> {
+                val lastStatement = expression.statements.lastOrNull() as? FirExpression
+                lastStatement != null && isOrContainsCapturedRef(lastStatement, trackedProperties, capturedAliases)
+            }
+            else -> false
         }
     }
 
@@ -110,9 +188,29 @@ object FirCapturedMutableVariablesAnalyzer : AbstractFirPropertyInitializationCh
                 is FirCheckNotNullCall -> {
                     current = e.argument.unwrapErrorExpression().unwrapArgument()
                 }
+                is FirSmartCastExpression -> {
+                    current = e.originalExpression
+                }
                 else -> return null
             }
         }
+    }
+
+
+    private fun isCaptured(
+        variableSymbol: FirVariableSymbol<*>,
+        leftmostReceiverSymbol: FirVariableSymbol<*>?,
+        trackedProperties: Set<FirVariableSymbol<*>>,
+        capturedAliases: Set<FirVariableSymbol<*>>,
+    ): Boolean {
+        // Logic:
+        // If a symbol is in [trackedProperties], it is declared inside the current lambda.
+        // If a symbol is in [capturedAliases], it is an alias to a captured variable.
+        if (leftmostReceiverSymbol != null && leftmostReceiverSymbol !in trackedProperties) return true
+        if (leftmostReceiverSymbol == null && variableSymbol !in trackedProperties) return true
+        if (leftmostReceiverSymbol in capturedAliases) return true
+        if (variableSymbol in capturedAliases) return false
+        return false
     }
 }
 

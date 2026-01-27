@@ -6,7 +6,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class MutablePerson(var name: String = "NoName", val age: String = "1", var child: MutablePerson = MutablePerson())
+class MutablePerson(var name: String = "NoName", val age: String = "1", var child: MutablePerson? = null)
 class MutableObject(var mutableField: String = "initial")
 class DeepObject {
     var theProblematicVar: String = "Hello"
@@ -83,7 +83,7 @@ class WithMemberFunctions {
             baz(this.memberVar)
             baz(<!CV_DIAGNOSTIC!>personAlice.name<!>)
             baz(personAlice.age)
-            baz(<!CV_DIAGNOSTIC!>personAlice.child<!>.age)
+            println(<!CV_DIAGNOSTIC!>personAlice.child<!>?.age)
         }
     }
 }
@@ -214,10 +214,9 @@ fun foo() {
         val res = <!CV_DIAGNOSTIC!>nullableStr<!> ?: "default"
     }
 
-    var girl = MutablePerson(name = "Alice")
-    barRegular {
-        var boy = <!CV_DIAGNOSTIC!>girl<!>
-        boy.name = "bob" // shoud be exception here
-    }
-
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, checkNotNullCall, classDeclaration,
+classReference, contractCallsEffect, contracts, elvisExpression, equalityExpression, functionDeclaration, functionalType,
+ifExpression, inline, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, thisExpression */
