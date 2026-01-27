@@ -7,17 +7,21 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
+import org.junit.jupiter.api.Assumptions
 import kotlin.test.Test
 import kotlin.test.fail
 
 class KT41506WithJavaSourceSet {
     @Test
     fun `test that arbitrary compilation can be created with java enabled in Multiplatform project`() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
+
         val project = buildProjectWithMPP {
             kotlin {
                 jvm {

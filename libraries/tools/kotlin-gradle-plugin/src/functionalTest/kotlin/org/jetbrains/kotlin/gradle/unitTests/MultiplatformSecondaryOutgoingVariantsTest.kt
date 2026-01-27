@@ -19,6 +19,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.project
 import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableNonPackedKlibsUsage
 import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
+import org.junit.jupiter.api.Assumptions
 import kotlin.test.*
 
 class MultiplatformSecondaryOutgoingVariantsTest {
@@ -96,6 +98,8 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
     @Test
     fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaEnabled() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
+
         val project = buildProjectWithMPPAndJvmClassesVariant {
             with(multiplatformExtension) {
                 jvm {
@@ -113,6 +117,8 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
     @Test
     fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaEnabledAndJavaLibraryPluginApplied() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
+
         val project = buildProjectWithMPPAndJvmClassesVariant {
             plugins.apply("java-library")
 
@@ -132,6 +138,8 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
     @Test
     fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaTestFixturesApplied() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
+
         val project = buildProjectWithMPPAndJvmClassesVariant {
             plugins.apply("java-test-fixtures")
 
