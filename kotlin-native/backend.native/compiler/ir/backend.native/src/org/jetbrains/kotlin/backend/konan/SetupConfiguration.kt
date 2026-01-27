@@ -144,16 +144,15 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         putIfNotNull(BinaryOptions.memoryModel, memoryModelFromArgument)
     }
 
-    get(BinaryOptions.hotReload)?.also { enabled ->
-        if (!enabled) return@also
-        report(STRONG_WARNING, "hot-code reloading is an experimental feature for macOS and iOS only, some code may not work as expected!")
-        val debug = getBoolean(KonanConfigKeys.DEBUG)
-        val hasInterposableLinkerFlag = getList(LINKER_ARGS).firstOrNull { arg -> arg.contains("-interposable") } != null
-        if (!debug) {
-            report(ERROR, "hot-code reloading cannot work without debug info. Please compile with debug info enabled (i.e., `-g`.)")
-        }
-        if (!hasInterposableLinkerFlag) {
-            report(ERROR, "hot-code reloading needs the -interposable linker flag. Please add it (i.e. `-linker-option=-interposable`).")
+    // Handle the new --hot-reload-split argument
+    arguments.hotReloadSplit.also { enabled ->
+        if (enabled) {
+            put(KonanConfigKeys.HOT_RELOAD_SPLIT, true)
+            report(STRONG_WARNING, "hot-code reload split compilation is an experimental feature, some code may not work as expected!")
+            val debug = getBoolean(KonanConfigKeys.DEBUG)
+            if (!debug) {
+                report(ERROR, "hot-code reloading cannot work without debug info. Please compile with debug info enabled (i.e., `-g`.)")
+            }
         }
     }
 

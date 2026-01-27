@@ -9622,6 +9622,37 @@
                                         }
                                     },
                                     {
+                                        "name": "Xhot-reload-split",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Enable split compilation for hot-code reloading.\nProduces two artifacts: a host executable (runtime + launcher) and a bootstrap object (user code).\nThe bootstrap object can be hot-reloaded using JITLink without restarting the host.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.1.20",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
                                         "name": "Xic-cache-dir",
                                         "shortName": null,
                                         "deprecatedName": null,

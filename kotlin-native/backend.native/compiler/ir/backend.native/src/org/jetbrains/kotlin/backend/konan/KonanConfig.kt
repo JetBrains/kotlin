@@ -114,7 +114,14 @@ class KonanConfig(
         explicit ?: target.needSmallBinary()
     }
 
-    val hotReloadEnabled: Boolean = configuration.get(BinaryOptions.hotReload) == true
+    val hotReloadEnabled: Boolean = configuration.getBoolean(KonanConfigKeys.HOT_RELOAD_SPLIT)
+
+    /**
+     * Whether split compilation for hot reload is enabled.
+     * This produces two artifacts: host.o (runtime + launcher) and bootstrap.o (user code).
+     * The bootstrap.o can be hot-reloaded using JITLink without restarting the host.
+     */
+    val hotReloadSplitEnabled: Boolean = configuration.getBoolean(KonanConfigKeys.HOT_RELOAD_SPLIT)
 
     val inlineForPerformance get() = !debug && !smallBinary
 

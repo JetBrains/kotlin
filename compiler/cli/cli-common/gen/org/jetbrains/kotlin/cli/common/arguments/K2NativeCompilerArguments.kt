@@ -329,6 +329,18 @@ but they do not affect compilation at all.""",
         }
 
     @Argument(
+        value = "-Xhot-reload-split",
+        description = """Enable split compilation for hot-code reloading.
+Produces two artifacts: a host executable (runtime + launcher) and a bootstrap object (user code).
+The bootstrap object can be hot-reloaded using JITLink without restarting the host.""",
+    )
+    var hotReloadSplit: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xic-cache-dir",
         valueDescription = "<path>",
         description = "Path to the directory where incremental build caches should be put.",
