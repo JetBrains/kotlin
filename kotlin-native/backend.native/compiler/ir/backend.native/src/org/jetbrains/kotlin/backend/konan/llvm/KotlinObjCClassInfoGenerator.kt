@@ -104,13 +104,11 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
         null // Generate as anonymous.
     }
 
-    private val impType = llvm.pointerType
-
     private inner class ObjCMethodDesc(
             val selector: String, val encoding: String, val impFunction: ConstPointer
     ) : Struct(
             runtime.objCMethodDescription,
-            impFunction.bitcast(impType),
+            impFunction,
             staticData.cStringLiteral(selector),
             staticData.cStringLiteral(encoding)
     )

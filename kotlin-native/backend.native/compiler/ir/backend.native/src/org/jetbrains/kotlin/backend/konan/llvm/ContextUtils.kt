@@ -210,9 +210,7 @@ internal interface ContextUtils : RuntimeAware {
      * Address of entry point of [llvmFunction].
      */
     val IrSimpleFunction.entryPointAddress: ConstPointer
-        get() {
-            return llvmFunction.toConstPointer().bitcast(llvm.pointerType)
-        }
+        get() = llvmFunction.toConstPointer()
 
     val IrClass.typeInfoPtr: ConstPointer
         get() {

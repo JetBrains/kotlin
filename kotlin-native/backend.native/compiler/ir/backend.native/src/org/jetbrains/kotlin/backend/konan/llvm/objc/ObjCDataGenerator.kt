@@ -54,7 +54,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
         llvm.compilerUsedGlobals += global.pointer.llvm
 
-        global.pointer.bitcast(llvm.pointerType)
+        global.pointer
     }
 
     private val classObjectType = codegen.runtime.objCClassObjectType
@@ -102,7 +102,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             if (instanceMethods.isEmpty()) return llvm.nullPointer
 
             val methodStructs = instanceMethods.map {
-                Struct(methodType, selectors.get(it.selector), encodings.get(it.encoding), it.imp.bitcast(llvm.pointerType))
+                Struct(methodType, selectors.get(it.selector), encodings.get(it.encoding), it.imp)
             }
 
             val methodList = llvm.struct(
@@ -120,7 +120,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
             llvm.compilerUsedGlobals += global.llvmGlobal
 
-            return global.pointer.bitcast(llvm.pointerType)
+            return global.pointer
         }
 
         fun buildClassRo(isMetaclass: Boolean): ConstPointer {
@@ -221,7 +221,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         val global = codegen.staticData.placeGlobalArray(
                 name,
                 llvm.pointerType,
-                elements.map { it.bitcast(llvm.pointerType) }
+                elements
         )
 
         global.setAlignment(
@@ -249,7 +249,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         fun get(value: String) = literals.getOrPut(value) {
             val globalPointer = generator.generate(llvm.module, llvm, value)
             llvm.compilerUsedGlobals += globalPointer.llvm
-            globalPointer.bitcast(llvm.pointerType)
+            globalPointer
         }
     }
 

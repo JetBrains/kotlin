@@ -398,12 +398,12 @@ internal class RTTIGenerator(
     }
 
     private val debugOperations: ConstValue by lazy {
-        if (debugRuntimeOrNull != null) {
+        if (debugRuntimeOrNull == null) {
+            llvm.nullPointer
+        } else {
             val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
             val local = LLVMAddGlobal(llvm.module, LLVMGlobalGetValueType(external),"Konan_debugOperationsList")!!
-            constPointer(LLVMConstBitCast(local, llvm.pointerType)!!)
-        } else {
-            llvm.nullPointer
+            constPointer(local)
         }
     }
 
@@ -536,7 +536,7 @@ internal class RTTIGenerator(
             if (layoutBuilder == null) {
                 InterfaceTableRecord(llvm.constInt32(0), llvm.constInt32(0), null)
             } else {
-                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!!.bitcast(llvm.pointerType) }
+                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!! }
                 val interfaceVTable = staticData.placeGlobalArray("", llvm.pointerType, vtableEntries)
                 val interfaceVTableType = LLVMArrayType(llvm.pointerType, vtableEntries.size)!!
                 InterfaceTableRecord(

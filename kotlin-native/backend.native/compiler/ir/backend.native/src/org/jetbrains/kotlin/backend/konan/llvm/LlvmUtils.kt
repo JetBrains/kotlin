@@ -42,8 +42,6 @@ private class ConstGetElementPtr(llvm: CodegenLlvmHelpers, pointeeType: LLVMType
     // TODO: squash multiple GEPs
 }
 
-internal fun ConstPointer.bitcast(toType: LLVMTypeRef) = constPointer(LLVMConstBitCast(this.llvm, toType)!!)
-
 internal class ConstArray(elementType: LLVMTypeRef?, val elements: List<ConstValue>) : ConstValue {
     init {
         elements.forEach {
