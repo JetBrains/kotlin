@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
 import org.jetbrains.kotlin.backend.konan.llvm.ContextUtils
 import org.jetbrains.kotlin.backend.konan.llvm.StaticData
 import org.jetbrains.kotlin.backend.konan.llvm.Struct
-import org.jetbrains.kotlin.backend.konan.llvm.bitcast
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.llvmType
 import org.jetbrains.kotlin.backend.konan.llvm.replaceExternalWeakOrCommonGlobal
@@ -145,7 +144,7 @@ private fun CodeGenerator.buildWritableTypeInfoValue(
 
     val objCExportAddition = Struct(
             runtime.typeInfoObjCExportAddition,
-            convertToRetained?.bitcast(llvm.pointerType),
+            convertToRetained,
             objCClass,
             swiftClass,
             typeAdapter

@@ -277,10 +277,9 @@ internal object VirtualTablesLookup {
         val llvmMethod = when {
             canCallViaVtable -> {
                 val index = layoutBuilder.vtableIndex(irFunction)
-                val vtablePlace = gep(runtime.typeInfoType, typeInfoPtr, llvm.int32(1)) // typeInfoPtr + 1
-                val vtable = bitcast(llvm.pointerType, vtablePlace)
+                val vtable = gep(runtime.typeInfoType, typeInfoPtr, llvm.int32(1)) // typeInfoPtr + 1
                 val slot = gep(llvm.pointerType, vtable, llvm.int32(index))
-                load(llvm.pointerType, bitcast(llvm.pointerType, slot))
+                load(llvm.pointerType, slot)
             }
 
             else -> {
@@ -289,13 +288,10 @@ internal object VirtualTablesLookup {
                 val interfaceTableRecord = getInterfaceTableRecord(typeInfoPtr, itablePlace.interfaceId)
                 val vtable = load(llvm.pointerType, structGep(runtime.interfaceTableRecordType, interfaceTableRecord, 2 /* vtable */))
                 val slot = gep(llvm.pointerType, vtable, llvm.int32(itablePlace.methodIndex))
-                load(llvm.pointerType, bitcast(llvm.pointerType, slot))
+                load(llvm.pointerType, slot)
             }
         }
-        return LlvmCallable(
-                bitcast(functionPtrType, llvmMethod),
-                llvmFunctionSignature
-        )
+        return LlvmCallable(llvmMethod, llvmFunctionSignature)
     }
 }
 
@@ -414,7 +410,7 @@ internal class StackLocalsManagerImpl(
             val stackSlot = LLVMBuildAlloca(builder, type, "")!!
             LLVMSetAlignment(stackSlot, classInfo.alignment)
 
-            memset(bitcast(llvm.pointerType, stackSlot), 0, LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8)
+            memset(stackSlot, 0, LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8)
 
             val objectHeader = structGep(type, stackSlot, 0, "objHeader")
             val typeInfo = codegen.typeInfoForAllocation(irClass)
@@ -476,7 +472,7 @@ internal class StackLocalsManagerImpl(
             val sizeField = structGep(runtime.arrayHeaderType, arrayHeaderSlot, 1, "count_")
             store(count, sizeField)
 
-            memset(bitcast(llvm.pointerType, structGep(arrayType, arraySlot, 1, "arrayBody")),
+            memset(structGep(arrayType, arraySlot, 1, "arrayBody"),
                     0,
                     constCount * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[irClass.symbol]).toInt() / 8
             )
@@ -485,7 +481,7 @@ internal class StackLocalsManagerImpl(
         }
 
         stackLocals += stackLocal
-        val result = bitcast(llvm.pointerType, stackLocal.objHeaderPtr)
+        val result = stackLocal.objHeaderPtr
         if (!isRootScope()) {
             clean(stackLocal, false)
         }
@@ -503,7 +499,7 @@ internal class StackLocalsManagerImpl(
                 call(llvm.zeroArrayRefsFunction, listOf(stackLocal.objHeaderPtr))
             } else if (!refsOnly) {
                 val arrayType = localArrayType(stackLocal.irClass, stackLocal.arraySize!!)
-                memset(bitcast(llvm.pointerType, structGep(arrayType, stackLocal.stackAllocationPtr, 1, "arrayBody")),
+                memset(structGep(arrayType, stackLocal.stackAllocationPtr, 1, "arrayBody"),
                         0,
                         stackLocal.arraySize * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[stackLocal.irClass.symbol]).toInt() / 8
                 )
@@ -1258,9 +1254,7 @@ internal abstract class FunctionGenerationContext(
          */
         val memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic
 
-        // TODO: Get rid of the bitcast here by supplying the type in the GEP above.
-        val typeInfoOrMetaPtrRaw = bitcast(llvm.pointerType, typeInfoOrMetaPtr)
-        val typeInfoOrMetaWithFlags = load(codegen.intPtrType, typeInfoOrMetaPtrRaw, memoryOrder = memoryOrder)
+        val typeInfoOrMetaWithFlags = load(codegen.intPtrType, typeInfoOrMetaPtr, memoryOrder = memoryOrder)
         // Clear two lower bits.
         val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlags, codegen.immTypeInfoMask)
         val typeInfoOrMeta = intToPtr(typeInfoOrMetaRaw, llvm.pointerType)
@@ -1367,8 +1361,7 @@ internal abstract class FunctionGenerationContext(
             if (needSlots || needCleanupLandingpadAndLeaveFrame) {
                 check(!forbidRuntime) { "Attempt to start a frame where runtime usage is forbidden" }
                 // Zero-init slots.
-                val slotsMem = bitcast(llvm.pointerType, slots)
-                memset(slotsMem, 0, slotCount * codegen.runtime.pointerSize)
+                memset(slots, 0, slotCount * codegen.runtime.pointerSize)
             }
             addPhiIncoming(slotsPhi!!, prologueBb to slots)
             memScoped {
@@ -1478,13 +1471,13 @@ internal abstract class FunctionGenerationContext(
         get() = constPointer(importNativeRuntimeGlobal(
                 "_ZTI18ExceptionObjHolder", // typeinfo for ObjHolder
                 llvm.pointerType
-        )).bitcast(llvm.pointerType)
+        ))
 
     private val objcNSExceptionRtti: ConstPointer by lazy {
         constPointer(importNativeRuntimeGlobal(
                 "OBJC_EHTYPE_\$_NSException", // typeinfo for NSException*
                 llvm.pointerType
-        )).bitcast(llvm.pointerType)
+        ))
     }
 
     //-------------------------------------------------------------------------//

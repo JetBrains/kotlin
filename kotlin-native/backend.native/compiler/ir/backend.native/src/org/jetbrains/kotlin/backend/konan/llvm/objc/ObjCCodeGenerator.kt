@@ -75,12 +75,8 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     }
 
     // TODO: this doesn't support stret.
-    fun msgSender(functionType: LlvmFunctionSignature): LlvmCallable {
-        val llvmType = functionType.llvmFunctionType
-        return LlvmCallable(
-                objcMsgSend.bitcast(llvm.pointerType).llvm,
-                functionType)
-    }
+    fun msgSender(functionType: LlvmFunctionSignature): LlvmCallable =
+            LlvmCallable(objcMsgSend.llvm, functionType)
 }
 
 internal fun FunctionGenerationContext.genObjCSelector(selector: String): LLVMValueRef {

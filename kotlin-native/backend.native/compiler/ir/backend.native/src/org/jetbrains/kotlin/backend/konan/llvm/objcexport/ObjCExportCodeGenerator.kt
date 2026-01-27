@@ -1301,7 +1301,7 @@ private fun ObjCExportCodeGenerator.createReverseAdapter(
     val kotlinToObjC = generateKotlinToObjCBridge(
             irFunction,
             baseMethod
-    ).bitcast(llvm.pointerType)
+    )
 
     return codegen.KotlinToObjCMethodAdapter(selector,
             itablePlace ?: ClassLayoutBuilder.InterfaceTablePlace.INVALID,
