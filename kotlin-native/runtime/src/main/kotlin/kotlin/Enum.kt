@@ -39,7 +39,12 @@ public actual constructor(
 }
 
 /**
- * Returns an enum entry with specified name.
+ * Returns the enum entry of type [T] with the specified [name].
+ *
+ * The [name] must exactly match an existing enum constant of type [T] (case-sensitive).
+ *
+ * @throws IllegalArgumentException if no enum constant with the specified [name] exists in [T].
+ * @sample samples.misc.Enums.enumValueOfSample
  */
 public actual inline fun <reified T: Enum<T>> enumValueOf(name: String): T = enumValueOfIntrinsic<T>(name)
 
