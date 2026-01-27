@@ -44392,6 +44392,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("kt83572.kt")
+        public void testKt83572() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/kt83572.kt");
+        }
+
+        @Test
         @TestMetadata("mutlipleExpectsForOneActual.kt")
         public void testMutlipleExpectsForOneActual() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/mutlipleExpectsForOneActual.kt");
