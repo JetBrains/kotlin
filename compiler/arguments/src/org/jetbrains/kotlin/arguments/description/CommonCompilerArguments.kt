@@ -1222,7 +1222,7 @@ Warning: this flag is not intended for production use. If you want to configure 
         )
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_3_20
+            introducedVersion = KotlinReleaseVersion.v2_4_0
         )
     }
 
