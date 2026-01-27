@@ -134,8 +134,8 @@ open class CompilerConfigurationProviderImpl(
             registerCompilerExtensions(extensionStorage, module, configuration)
             if (!testServices.cliBasedFacadesEnabled) {
                 configureProject(projectEnv.project, module, configuration)
+                extensionStorage.registerInProject(projectEnv.project)
             }
-            extensionStorage.registerInProject(projectEnv.project)
         }
     }
 

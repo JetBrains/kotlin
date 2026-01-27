@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility
 
-import com.intellij.openapi.extensions.LoadingOrder
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
-import org.jetbrains.kotlin.analysis.api.impl.base.extensions.FirExtensionRegistrarAdapterPointDescriptor
-import org.jetbrains.kotlin.analysis.api.impl.base.extensions.IrGenerationExtensionPointDescriptor
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -101,13 +98,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         val project = mainFile.project
         with(CompilerPluginRegistrar.ExtensionStorage()) {
             IrGenerationExtension.registerExtension(irCollector)
-            registerInProject(
-                project,
-                additionalExtensionPointProjectDescriptors = listOf(
-                    FirExtensionRegistrarAdapterPointDescriptor,
-                    IrGenerationExtensionPointDescriptor,
-                )
-            )
+            registerInProject(project)
         }
 
         val compilerConfiguration = CompilerConfiguration().apply {

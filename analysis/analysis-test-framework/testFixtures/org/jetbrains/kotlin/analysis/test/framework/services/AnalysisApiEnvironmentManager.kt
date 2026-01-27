@@ -9,8 +9,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.impl.base.extensions.FirExtensionRegistrarAdapterPointDescriptor
-import org.jetbrains.kotlin.analysis.api.impl.base.extensions.IrGenerationExtensionPointDescriptor
 import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsModuleImpl
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
@@ -86,13 +84,7 @@ class AnalysisApiEnvironmentManagerImpl(
         )
         val extensionStorage = useSiteCompilerConfiguration.extensionsStorage ?: error("Extensions storage is not registered")
         testServices.compilerConfigurationProvider.registerCompilerExtensions(extensionStorage, useSiteModule, useSiteCompilerConfiguration)
-        extensionStorage.registerInProject(
-            project,
-            additionalExtensionPointProjectDescriptors = listOf(
-                FirExtensionRegistrarAdapterPointDescriptor,
-                IrGenerationExtensionPointDescriptor,
-            )
-        ) { "Error during registering compiler extensions: $it" }
+        extensionStorage.registerInProject(project) { "Error during registering compiler extensions: $it" }
         testServices.compilerConfigurationProvider.configureProject(project, useSiteModule, useSiteCompilerConfiguration)
     }
 

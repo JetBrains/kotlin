@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.impl.base.extensions.FirExtensionRegistrarAdapterPointDescriptor
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -97,7 +96,9 @@ internal fun FirSession.registerCompilerPluginExtensions(project: Project, modul
 
 @SessionConfiguration
 internal fun FirSessionConfigurator.registerCompilerPluginExtensions(project: Project, module: KaModule) {
-    FirExtensionRegistrarAdapterPointDescriptor.getInstances(project).forEach(::applyExtensionRegistrar)
+    project.extensionArea.getExtensionPoint<FirExtensionRegistrarAdapter>(FirExtensionRegistrarAdapter.name)
+        .extensionList
+        .forEach(::applyExtensionRegistrar)
 
     val pluginsProvider = KotlinCompilerPluginsProvider.getInstance(project) ?: return
     pluginsProvider
