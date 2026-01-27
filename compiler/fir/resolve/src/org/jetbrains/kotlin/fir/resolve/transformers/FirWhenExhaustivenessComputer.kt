@@ -53,7 +53,14 @@ object FirWhenExhaustivenessComputer {
 
     context(_: SessionHolder)
     private fun getSubjectType(whenExpression: FirWhenExpression): ConeKotlinType? {
-        val subjectType = whenExpression.subjectVariable?.takeIf { !it.isImplicitWhenSubjectVariable }?.returnTypeRef?.coneType
+        val subjectType = whenExpression.subjectVariable?.takeUnless {
+            it.isImplicitWhenSubjectVariable || (
+                    // if the subject variable doesn't have an explicit return type we want to take the
+                    // smart-casted type of the initializer instead of original type of the property in the RHS
+                    LanguageFeature.ImprovedExhaustivenessCheckForSubjectVariable24.isEnabled() &&
+                            (it.returnTypeRef as? FirResolvedTypeRef)?.delegatedTypeRef == null
+                    )
+        }?.returnTypeRef?.coneType
             ?: whenExpression.subjectVariable?.initializer?.resolvedType
             ?: return null
 

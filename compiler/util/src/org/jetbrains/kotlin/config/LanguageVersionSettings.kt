@@ -494,6 +494,7 @@ enum class LanguageFeature(
     DiscriminateNothingAsNullabilityConstraintInInference(KOTLIN_2_4, "KT-81948"),
     ResolveEqualsRhsInDependentContextWithCompletion(KOTLIN_2_4, "KT-81763"),
     IrIntraModuleInlinerBeforeKlibSerialization(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_3, issue = "KT-79717"),
+    ImprovedExhaustivenessCheckForSubjectVariable24(KOTLIN_2_4, issue = "KT-83903"),
 
     // 2.5
 

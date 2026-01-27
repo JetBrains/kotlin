@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ImprovedExhaustivenessCheckForSubjectVariable24
 // ISSUE: KT-83903
 
 sealed interface Foo {
@@ -8,7 +9,7 @@ sealed interface Foo {
 
 fun test_1(foo: Foo?) {
     if (foo == null) return
-    <!NO_ELSE_IN_WHEN!>when<!> (val it = foo) {
+    when (val it = foo) {
         is Foo.Bar -> "bar"
         is Foo.Baz -> "baz"
     }
