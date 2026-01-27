@@ -517,7 +517,10 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":kotlin-stdlib-jdk8",
     ":kotlin-reflect",
     ":kotlin-main-kts",
-    ":kotlin-dom-api-compat"
+    ":kotlin-dom-api-compat",
+    ":compiler:build-tools:kotlin-build-tools-api",
+    ":compiler:build-tools:kotlin-build-tools-impl",
+    ":compiler:build-tools:kotlin-build-tools-cri-impl",
 )
 
 val coreLibProjects by extra {
