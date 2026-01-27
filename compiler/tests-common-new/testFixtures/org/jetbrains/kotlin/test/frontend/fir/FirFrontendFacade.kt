@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
+import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibsInTestPipeline
 import org.jetbrains.kotlin.cli.common.contentRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -30,11 +31,13 @@ import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.AbstractFirMetadataSessionFactory.JarMetadataProviderComponents
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.*
@@ -54,7 +57,7 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -406,37 +409,60 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             configuration: CompilerConfiguration,
             testServices: TestServices
         ): DependencyListForCliModule {
-            return DependencyListForCliModule.build(mainModuleName) {
-                when {
-                    targetPlatform.isCommon() || targetPlatform.isJvm() -> {
-                        dependencies(configuration.jvmModularRoots.map { it.path })
-                        dependencies(configuration.jvmClasspathRoots.map { it.path })
-                        friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+            return DependencyListForCliModule.build {
+                defaultDependenciesSet(mainModuleName) {
+                    when {
+                        targetPlatform.isCommon() || targetPlatform.isJvm() -> {
+                            dependencies(configuration.jvmModularRoots.map { it.path })
+                            dependencies(configuration.jvmClasspathRoots.map { it.path })
+                            friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+                        }
+                        targetPlatform.isJs() -> {
+                            val runtimeKlibsPaths = JsEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
+                            val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
+                            dependencies(runtimeKlibsPaths)
+                            dependencies(transitiveLibraries.map { it.path })
+                            friendDependencies(friendLibraries.map { it.path })
+                        }
+                        targetPlatform.isNative() -> {
+                            val nativeEnvironmentConfigurator = testServices.nativeEnvironmentConfigurator
+                            val runtimeLibraryProviders = nativeEnvironmentConfigurator.getRuntimeLibraryProviders(mainModule)
+
+                            val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
+                            val allPaths = (runtimeLibraryProviders.flatMap { it.getLibraryPaths() } + transitiveLibraries.map { it.path }).distinct()
+                            val friendPaths = friendLibraries.map { it.path }
+
+                            val loadedKlibs = loadNativeKlibsInTestPipeline(
+                                configuration,
+                                allPaths,
+                                friendPaths,
+                                nativeTarget = nativeEnvironmentConfigurator.getNativeTarget(mainModule)
+                            )
+
+                            val (interopLibs, regularLibs) = loadedKlibs.all.partition { it.isCInteropLibrary() }
+
+                            dependencies(regularLibs.map { it.libraryFile.absolutePath })
+                            friendDependencies(loadedKlibs.friends.map { it.libraryFile.absolutePath })
+
+                            if (interopLibs.isNotEmpty()) {
+                                val interopModuleData = FirBinaryDependenciesModuleData(
+                                    Name.special("<regular interop dependencies of $mainModuleName>"),
+                                    FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
+                                )
+                                this@build.dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
+                            }
+                        }
+                        targetPlatform.isWasm() -> {
+                            val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule(
+                                configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
+                            )
+                            val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
+                            dependencies(runtimeKlibsPaths)
+                            dependencies(transitiveLibraries.map { it.path })
+                            friendDependencies(friendLibraries.map { it.path })
+                        }
+                        else -> error("Unsupported")
                     }
-                    targetPlatform.isJs() -> {
-                        val runtimeKlibsPaths = JsEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
-                        val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
-                        dependencies(runtimeKlibsPaths)
-                        dependencies(transitiveLibraries.map { it.path })
-                        friendDependencies(friendLibraries.map { it.path })
-                    }
-                    targetPlatform.isNative() -> {
-                        val runtimeKlibsPaths = NativeEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
-                        val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
-                        dependencies(runtimeKlibsPaths)
-                        dependencies(transitiveLibraries.map { it.path })
-                        friendDependencies(friendLibraries.map { it.path })
-                    }
-                    targetPlatform.isWasm() -> {
-                        val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule(
-                            configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
-                        )
-                        val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
-                        dependencies(runtimeKlibsPaths)
-                        dependencies(transitiveLibraries.map { it.path })
-                        friendDependencies(friendLibraries.map { it.path })
-                    }
-                    else -> error("Unsupported")
                 }
             }
         }
