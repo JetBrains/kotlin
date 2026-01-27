@@ -32,7 +32,7 @@ import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 public class KotlinToolchainsV1Adapter(
-    @Suppress("DEPRECATION") private val compilationService: CompilationService,
+    @Suppress("DEPRECATION_ERROR") private val compilationService: CompilationService,
 ) : KotlinToolchains {
     private val jvm: JvmPlatformToolchain by lazy {
         object : JvmPlatformToolchain {
@@ -102,13 +102,13 @@ public class KotlinToolchainsV1Adapter(
 
 private class JvmClasspathSnapshottingOperationV1Adapter private constructor(
     override val options: Options = Options(JvmClasspathSnapshottingOperation::class),
-    @Suppress("DEPRECATION") val compilationService: CompilationService,
+    @Suppress("DEPRECATION_ERROR") val compilationService: CompilationService,
     override val classpathEntry: Path,
 ) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder,
     DeepCopyable<JvmClasspathSnapshottingOperationV1Adapter> {
 
     constructor(
-        @Suppress("DEPRECATION") compilationService: CompilationService,
+        @Suppress("DEPRECATION_ERROR") compilationService: CompilationService,
         classpathEntry: Path,
     ) : this(Options(JvmClasspathSnapshottingOperation::class), compilationService, classpathEntry)
 
@@ -156,14 +156,14 @@ private class JvmClasspathSnapshottingOperationV1Adapter private constructor(
 
 private class JvmCompilationOperationV1Adapter private constructor(
     override val options: Options = Options(JvmCompilationOperation::class),
-    @Suppress("DEPRECATION") val compilationService: CompilationService,
+    @Suppress("DEPRECATION_ERROR") val compilationService: CompilationService,
     override val sources: List<Path>,
     override val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl,
 ) : BuildOperationImpl<CompilationResult>(), JvmCompilationOperation, JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationV1Adapter> {
     constructor(
-        @Suppress("DEPRECATION") compilationService: CompilationService,
+        @Suppress("DEPRECATION_ERROR") compilationService: CompilationService,
         kotlinSources: List<Path>,
         destinationDirectory: Path,
         compilerArguments: JvmCompilerArgumentsImpl,
@@ -210,7 +210,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
         dependenciesSnapshotFiles: List<Path>,
         shrunkClasspathSnapshot: Path,
     ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
-        @Suppress("DEPRECATION")
+
         return JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter(
             workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot,
             JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(options.deepCopy())
@@ -236,7 +236,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
         val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS", null)
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicyV1Adapter,
@@ -266,7 +266,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
             config.useIncrementalCompilation(
                 icConfig.workingDirectory.toFile(),
                 icConfig.sourcesChanges,
-                ClasspathSnapshotBasedIncrementalCompilationApproachParameters(
+                @Suppress("DEPRECATION_ERROR") ClasspathSnapshotBasedIncrementalCompilationApproachParameters(
                     icConfig.dependenciesSnapshotFiles.map(Path::toFile),
                     icConfig.shrunkClasspathSnapshot.toFile()
                 ),
@@ -291,7 +291,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
     /**
      * It's better to avoid arguments duplication for the versions that contain the fix
      */
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun CompilationService.treatsJavaSourcesProperly(): Boolean = try {
         val kotlinCompilerVersion = KotlinToolingVersion(getCompilerVersion())
         kotlinCompilerVersion >= KotlinToolingVersion(2, 2, 21, null)
@@ -435,22 +435,22 @@ internal fun List<String>.fixForFirCheck(): List<String> {
 }
 
 private interface ExecutionPolicyV1Adapter {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val strategyConfiguration: CompilerExecutionStrategyConfiguration
 
-    class InProcess(@Suppress("DEPRECATION") override val strategyConfiguration: CompilerExecutionStrategyConfiguration) :
+    class InProcess(@Suppress("DEPRECATION_ERROR") override val strategyConfiguration: CompilerExecutionStrategyConfiguration) :
         ExecutionPolicyV1Adapter, ExecutionPolicy.InProcess
 
     class WithDaemon private constructor(
         private val options: Options = Options(ExecutionPolicy.WithDaemon::class),
-        @Suppress("DEPRECATION") private val compilationService: CompilationService,
+        @Suppress("DEPRECATION_ERROR") private val compilationService: CompilationService,
     ) : ExecutionPolicyV1Adapter,
         ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder, DeepCopyable<WithDaemon> {
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         constructor(compilationService: CompilationService) : this(Options(ExecutionPolicy.WithDaemon::class), compilationService)
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         private fun CompilationService.supportsShutdownDelayInDaemon(): Boolean = try {
             val kotlinCompilerVersion = KotlinToolingVersion(getCompilerVersion())
             kotlinCompilerVersion >= KotlinToolingVersion(2, 3, 0, null)
@@ -459,7 +459,7 @@ private interface ExecutionPolicyV1Adapter {
             false
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         override val strategyConfiguration: CompilerExecutionStrategyConfiguration
             get() {
                 val jvmArguments = get(JVM_ARGUMENTS) ?: emptyList()
@@ -516,7 +516,7 @@ private interface ExecutionPolicyV1Adapter {
 private class BuildSessionV1Adapter(
     override val kotlinToolchains: KotlinToolchains,
     override val projectId: ProjectId,
-    @Suppress("DEPRECATION") private val compilationService: CompilationService,
+    @Suppress("DEPRECATION_ERROR") private val compilationService: CompilationService,
 ) : KotlinToolchains.BuildSession {
     override fun <R> executeOperation(operation: BuildOperation<R>): R {
         return executeOperation(operation, logger = null)
@@ -544,7 +544,7 @@ private class BuildSessionV1Adapter(
     }
 }
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 public fun CompilationService.asKotlinToolchains(): KotlinToolchains = KotlinToolchainsV1Adapter(this)
 
 @OptIn(ExperimentalAtomicApi::class)

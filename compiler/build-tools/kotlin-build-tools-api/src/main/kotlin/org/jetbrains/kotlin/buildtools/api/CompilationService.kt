@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.buildtools.api
 
@@ -28,7 +28,7 @@ import java.io.File
  *
  * This interface is not intended to be implemented by the API consumers. An instance of [CompilationService] is expected to be obtained from [loadImplementation].
  */
-@Deprecated("Use the new BTA API with entry points in KotlinToolchain instead")
+@Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
 @ExperimentalBuildToolsApi
 public interface CompilationService {
     /**
@@ -119,6 +119,7 @@ public interface CompilationService {
     public fun getCompilerVersion(): String
 
     @ExperimentalBuildToolsApi
+    @Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
     public companion object {
         @JvmStatic
         public fun loadImplementation(classLoader: ClassLoader): CompilationService  {

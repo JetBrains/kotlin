@@ -3,15 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
-import org.jetbrains.kotlin.buildtools.api.CompilationService
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.internal.compat.asKotlinToolchains
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -26,38 +24,44 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
 
     companion object {
         fun namedStrategyArguments(): List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> {
-            val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
-            val kotlinToolchainV1Adapter =
-                CompilationService.loadImplementation(BaseCompilationTest::class.java.classLoader).asKotlinToolchains()
-            val v1Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> = listOf(
-                named(
-                    "[v1][${kotlinToolchainV1Adapter.getCompilerVersion()}] in-process",
-                    kotlinToolchainV1Adapter to kotlinToolchainV1Adapter.createInProcessExecutionPolicy()
-                ),
-                named(
-                    "[v1][${kotlinToolchainV1Adapter.getCompilerVersion()}] within daemon",
-                    kotlinToolchainV1Adapter to kotlinToolchainV1Adapter.daemonExecutionPolicyBuilder().build()
-                )
-            )
-            val v2Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> =
-                if (kotlinToolchainV1Adapter::class == kotlinToolchains::class) {
-                    // BTA v2 was not available on the classpath and `kotlinToolchain` is actually the fallback KotlinToolchainV1Adapter
-                    // we don't want to run the same thing twice, so we don't create arguments for v2
-                    emptyList()
-                } else {
-                    listOf(
+            return buildList {
+                val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
+                val kotlinToolchainV1Adapter =
+                    if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) < KotlinToolingVersion(2, 4, 0, null)) {
+                        @Suppress("DEPRECATION_ERROR")
+                        org.jetbrains.kotlin.buildtools.api.CompilationService.loadImplementation(BaseCompilationTest::class.java.classLoader).asKotlinToolchains()
+                    } else null
+                if (kotlinToolchainV1Adapter != null) {
+                    add(
+                        named(
+                            "[v1][${kotlinToolchainV1Adapter.getCompilerVersion()}] in-process",
+                            kotlinToolchainV1Adapter to kotlinToolchainV1Adapter.createInProcessExecutionPolicy()
+                        )
+                    )
+                    add(
+                        named(
+                            "[v1][${kotlinToolchainV1Adapter.getCompilerVersion()}] within daemon",
+                            kotlinToolchainV1Adapter to kotlinToolchainV1Adapter.daemonExecutionPolicyBuilder().build()
+                        )
+                    )
+                }
+                if (kotlinToolchainV1Adapter == null || kotlinToolchainV1Adapter::class != kotlinToolchains::class) {
+                    // only add BTA v2 when `kotlinToolchains` is not actually a v1 adapter
+                    // we don't want to run the same thing twice, we want to test the real v2 implementation
+                    add(
                         named(
                             "[v2][${kotlinToolchains.getCompilerVersion()}] in-process",
                             kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()
-                        ),
+                        )
+                    )
+                    add(
                         named(
                             "[v2][${kotlinToolchains.getCompilerVersion()}] within daemon",
                             kotlinToolchains to kotlinToolchains.daemonExecutionPolicyBuilder().build()
                         )
                     )
                 }
-
-            return v1Args + v2Args
+            }
         }
     }
 }
