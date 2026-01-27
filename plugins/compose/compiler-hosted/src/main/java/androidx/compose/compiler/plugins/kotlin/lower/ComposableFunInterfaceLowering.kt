@@ -21,6 +21,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -46,7 +47,7 @@ class ComposableFunInterfaceLowering(private val context: IrPluginContext) :
     ModuleLoweringPass {
 
     override fun lower(irModule: IrModuleFragment) {
-        if (context.platform.isJvm() || context.platform.isNative()) {
+        if (context.platform.isJvm() || (context.platform.isNative() && context.languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs))) {
             irModule.transformChildrenVoid(this)
         }
     }
