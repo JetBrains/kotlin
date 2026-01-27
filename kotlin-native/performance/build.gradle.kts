@@ -36,15 +36,10 @@ val clean = tasks.named("clean")
 val konanRun by tasks.registering
 defaultTasks(konanRun.name)
 
-val mergeNativeReports by tasks.registering {
-    doLast {
-        val fileName = nativeJson
-        val output = mergeReports(benchmarkSubprojects.mapNotNull {
-            it.layout.buildDirectory.file(fileName).get().asFile.takeIf { it.exists() }
-        })
-        val outputDir = layout.buildDirectory.get().asFile
-        outputDir.mkdirs()
-        outputDir.resolve(fileName).writeText(output)
+val mergeNativeReports by tasks.registering(MergeNativeReportsTask::class) {
+    outputReport = layout.buildDirectory.file(nativeJson)
+    benchmarkSubprojects.forEach {
+        inputReports.from(it.layout.buildDirectory.file(nativeJson).get().asFile)
     }
 }
 
