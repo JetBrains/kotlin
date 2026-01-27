@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMP
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLibs
+import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -42,6 +44,7 @@ class NativeCompilerSecondStageFacade(
     val optimizationMode = testRunSettings.get<OptimizationMode>()
     val nativeHome = customNativeCompilerSettings.nativeHome
     val kotlinNativeTargets = testRunSettings.get<KotlinNativeTargets>()
+    val withPlatformLibs = testRunSettings.withPlatformLibs
 
     override val outputKind get() = ArtifactKinds.Native
     override fun isMainModule(module: TestModule) = NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)
@@ -85,6 +88,9 @@ class NativeCompilerSecondStageFacade(
                     },
                     K2NativeCompilerArguments::optimization.cliArgument.takeIf { optimizationMode == OptimizationMode.OPT },
                     K2NativeCompilerArguments::target.cliArgument, kotlinNativeTargets.testTarget.name,
+                    K2NativeCompilerArguments::nodefaultlibs.cliArgument.takeIf {
+                        !withPlatformLibs && !module.directives.contains(WITH_PLATFORM_LIBS)
+                    },
                 ),
                 regularAndFriendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
