@@ -1,10 +1,10 @@
 Diagnostics from file:
-  for PSI element of type KtNameReferenceExpression at (54,12-17)
-    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(143,148)]
-      PSI: KtNameReferenceExpression at (54,12-17)
-  for PSI element of type KtNameReferenceExpression at (55,12-17)
-    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(166,171)]
-      PSI: KtNameReferenceExpression at (55,12-17)
   for PSI element of type KtNameReferenceExpression at (56,12-17)
-    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(189,194)]
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(145,150)]
       PSI: KtNameReferenceExpression at (56,12-17)
+  for PSI element of type KtNameReferenceExpression at (57,12-17)
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(168,173)]
+      PSI: KtNameReferenceExpression at (57,12-17)
+  for PSI element of type KtNameReferenceExpression at (58,12-17)
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(191,196)]
+      PSI: KtNameReferenceExpression at (58,12-17)
