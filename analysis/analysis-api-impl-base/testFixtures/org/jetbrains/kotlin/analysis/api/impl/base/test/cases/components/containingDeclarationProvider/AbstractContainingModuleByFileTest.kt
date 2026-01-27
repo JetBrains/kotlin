@@ -59,6 +59,8 @@ abstract class AbstractContainingModuleByFileTest : AbstractAnalysisApiBasedTest
 
         if (analysisContextModuleName != null) {
             val contextModule = testServices.ktTestModuleStructure.getKtTestModule(analysisContextModuleName).ktModule
+
+            @Suppress("DEPRECATION")
             mainFile.virtualFile.analysisContextModule = contextModule
         }
     }
