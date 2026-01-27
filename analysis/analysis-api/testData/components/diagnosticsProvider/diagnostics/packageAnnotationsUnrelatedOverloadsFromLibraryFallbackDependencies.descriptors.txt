@@ -1,5 +1,13 @@
 Diagnostics from withLib.kt:
-  <NO DIAGNOSTICS>
+  for PSI element of type KtNameReferenceExpression at (63,12-17)
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(158,163)]
+      PSI: KtNameReferenceExpression at (63,12-17)
+  for PSI element of type KtNameReferenceExpression at (64,12-17)
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(181,186)]
+      PSI: KtNameReferenceExpression at (64,12-17)
+  for PSI element of type KtNameReferenceExpression at (65,12-17)
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(204,209)]
+      PSI: KtNameReferenceExpression at (65,12-17)
 
 Diagnostics from withLib2.kt:
   for PSI element of type KtNameReferenceExpression at (75,12-17)
