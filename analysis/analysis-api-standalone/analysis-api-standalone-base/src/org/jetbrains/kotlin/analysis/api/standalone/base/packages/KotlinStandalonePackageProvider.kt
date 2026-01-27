@@ -67,6 +67,7 @@ class KotlinStandalonePackageProviderFactory(
     /** On-demand package storage for [klibFiles]. */
     private val klibPackages = Caffeine
         .newBuilder()
+        .maximumSize(100)
         .build<Path, List<FqName>> { libraryFile ->
             buildList {
                 val kotlinLibraries = KlibLoader { libraryPaths(libraryFile) }.load().librariesStdlibFirst
