@@ -45,9 +45,14 @@ public enum class KaDanglingFileResolutionMode {
 private val CONTEXT_MODULE_KEY = Key.create<KaModule>("CONTEXT_MODULE")
 
 /**
- * A context module against which analysis of this in-memory file should be performed.
+ * A context module against which analysis of this in-memory file should be performed. It can only be specified for an in-memory file.
  *
- * A [contextModule] can only be specified for an in-memory file.
+ * Normally, the context module is determined automatically from a context element or an original file. This property can be used to specify
+ * the context module explicitly in certain cases.
+ *
+ * [contextModule] cannot be specified for a code fragment. The context module of the code fragment must be determined by the context
+ * element. It is the essence of a code fragment to be analyzed in the context of another element, and this behavior should not be
+ * overridden.
  */
 @KaExperimentalApi
 public var KtFile.contextModule: KaModule?
