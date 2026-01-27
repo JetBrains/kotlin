@@ -6,6 +6,7 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromSymbol
+import org.jetbrains.dokka.analysis.kotlin.symbols.utils.getLocation
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
@@ -27,13 +28,12 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
  */
 internal fun resolveKDocLink(
     link: KDocLink,
-    location: String?,
     logger: DokkaLogger,
     sourceSet: DokkaConfiguration.DokkaSourceSet
 ): DRI? {
     val dri = resolveKDocLinkToDRI(link)
     if (dri == null) {
-        logUnresolvedLink(link.getLinkText(), location, logger, sourceSet)
+        logUnresolvedLink(link.getLinkText(),  getLocation(link), logger, sourceSet)
     }
     return dri
 }
