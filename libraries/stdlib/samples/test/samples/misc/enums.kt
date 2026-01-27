@@ -6,6 +6,7 @@
 package samples.misc
 
 import samples.*
+import kotlin.enums.enumEntries
 import kotlin.test.*
 
 class Enums {
@@ -24,5 +25,19 @@ class Enums {
 
         // The lookup is case-sensitive and fails if the name doesn't match any constant
         assertFailsWith<IllegalArgumentException> { enumValueOf<Direction>("east") }
+    }
+
+    enum class Empty
+
+    @Sample
+    fun enumEntriesSample() {
+        // enum class Direction { NORTH, SOUTH, EAST, WEST }
+        val entries = enumEntries<Direction>()
+        assertPrints(entries, "[NORTH, SOUTH, EAST, WEST]")
+        assertPrints(entries.indexOf(Direction.EAST), "2")
+        assertPrints(entries[1], "SOUTH")
+
+        // enum class Empty {}
+        assertPrints(enumEntries<Empty>(), "[]")
     }
 }

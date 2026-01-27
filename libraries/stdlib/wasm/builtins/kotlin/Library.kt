@@ -97,7 +97,14 @@ public actual inline fun byteArrayOf(vararg elements: Byte): ByteArray = element
 public actual inline fun booleanArrayOf(vararg elements: Boolean): BooleanArray = elements
 
 /**
- * Returns an array containing enum T entries.
+ * Returns an array containing enum entries of the enum type [T].
+ *
+ * The function returns a new instance of the array on every call.
+ * The array could be mutated, so working with it may also require defensive copying.
+ * Consider using [kotlin.enums.enumEntries] as a more efficient alternative
+ * returning an immutable list of enum entries.
+ *
+ * @see kotlin.enums.enumEntries
  */
 @SinceKotlin("1.1")
 public actual inline fun <reified T : Enum<T>> enumValues(): Array<T> =
