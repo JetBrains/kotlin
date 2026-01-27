@@ -372,7 +372,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_HEADER_MODE_TYPE: CommonCompilerArgument<HeaderMode> =
-        CommonCompilerArgument("X_HEADER_MODE_TYPE", KotlinReleaseVersion(2, 3, 20))
+        CommonCompilerArgument("X_HEADER_MODE_TYPE", KotlinReleaseVersion(2, 4, 0))
 
     /**
      * Ignore all compilation exceptions while optimizing some constant expressions.

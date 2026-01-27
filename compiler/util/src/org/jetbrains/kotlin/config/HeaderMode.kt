@@ -12,6 +12,6 @@ enum class HeaderMode(val state: String) {
     companion object {
         fun fromString(string: String): HeaderMode? = entries.find { it.state == string }
 
-        fun availableValues() = entries.joinToString(prefix = "{", postfix = "}") { it.state }
+        fun availableValues(): String = entries.joinToString(prefix = "{", postfix = "}") { it.state }
     }
 }
