@@ -27,6 +27,8 @@ abstract class AbstractPackageSymbolTest : AbstractAnalysisApiBasedTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         builder.apply {
+            // Library indexing is disabled in the test suite as otherwise the package will be returned from the indexed files.
+            // The package provider, however, must work even with library indexing disabled.
             useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.NO_INDEXING) }
         }
     }
