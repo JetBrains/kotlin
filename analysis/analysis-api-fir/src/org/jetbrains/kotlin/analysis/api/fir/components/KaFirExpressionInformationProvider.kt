@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
+import org.jetbrains.kotlin.fir.withSession
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
@@ -33,10 +34,9 @@ internal class KaFirExpressionInformationProvider(
 
     override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withPsiValidityAssertion {
         val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()
-        return FirWhenExhaustivenessComputer.computeAllMissingCases(
-            analysisSession.resolutionFacade.useSiteFirSession,
-            firWhenExpression
-        )
+        return withSession(analysisSession.resolutionFacade.useSiteFirSession) {
+            FirWhenExhaustivenessComputer.computeAllMissingCases(firWhenExpression)
+        }
     }
 
     override val KtExpression.isUsedAsExpression: Boolean
