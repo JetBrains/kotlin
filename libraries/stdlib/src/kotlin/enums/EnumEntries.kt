@@ -29,6 +29,9 @@ public sealed interface EnumEntries<E : Enum<E>> : List<E>
 
 /**
  * Returns [EnumEntries] list containing all enum entries for the given enum type [T].
+ *
+ * @see EnumEntries
+ * @sample samples.misc.Enums.enumEntriesSample
  */
 @WasExperimental(ExperimentalStdlibApi::class)
 @SinceKotlin("2.0")
