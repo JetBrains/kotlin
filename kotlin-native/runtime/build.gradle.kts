@@ -734,11 +734,13 @@ tasks.named("clean", Delete::class) {
 
 // region: Stdlib
 
+val nativeBootstrapDistributionRoot = nativeBootstrapDistribution.map { it.root }
+
 val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
     group = BasePlugin.BUILD_GROUP
     description = "Build the Kotlin/Native standard library"
 
-    this.compilerDistributionRoot.set(nativeBootstrapDistribution.map { it.root })
+    this.compilerDistributionRoot.set(nativeBootstrapDistributionRoot)
 
     this.outputDirectory.set(
             layout.buildDirectory.dir("stdlib/${HostManager.hostName}/stdlib")

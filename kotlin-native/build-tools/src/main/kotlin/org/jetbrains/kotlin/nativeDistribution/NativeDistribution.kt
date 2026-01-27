@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.nativeDistribution
 
 import bootstrapKotlinVersion
 import org.gradle.api.Project
-import org.gradle.api.Transformer
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.specs.Spec
+import org.gradle.api.tasks.Sync
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.kotlinNativeDist
-import java.util.function.BiFunction
 
 /**
  * Describes distribution of Native compiler rooted at [root].
@@ -189,8 +187,15 @@ val Project.nativeDistribution: Provider<NativeDistribution>
  */
 fun Project.nativeReleasedDistribution(version: String): Provider<NativeDistribution> {
     val configuration = releasedNativeDistributionConfiguration(version)
-    val file = configuration.incoming.artifacts.resolvedArtifacts.map { it.single().file }
-    return layout.dir(file).map { NativeDistribution(it) }
+    val distributionFiles = configuration.incoming.files
+
+    val syncTaskName = "syncNativeDistributionV$version"
+    val syncTask = if (syncTaskName !in tasks.names) tasks.register<Sync>(syncTaskName) {
+        from(distributionFiles)
+        into(layout.buildDirectory.dir("nativeDistributionV$version"))
+    } else tasks.named<Sync>(syncTaskName)
+
+    return syncTask.map { NativeDistribution(project.layout.buildDirectory.dir("nativeDistributionV$version").get()) }
 }
 
 /**
