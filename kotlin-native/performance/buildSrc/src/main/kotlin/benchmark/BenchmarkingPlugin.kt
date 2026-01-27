@@ -4,47 +4,40 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.getValue
+import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.registering
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import java.util.Properties
 import javax.inject.Inject
-
-internal val Project.nativeWarmup: Int
-    get() = (property("nativeWarmup") as String).toInt()
-
-internal val Project.attempts: Int
-    get() = (property("attempts") as String).toInt()
-
-// Gradle property to add flags to benchmarks run from command line.
-internal val Project.compilerArgs: List<String>
-    get() = (findProperty("compilerArgs") as String?)?.split("\\s".toRegex()).orEmpty()
-
-internal val Project.kotlinVersion: String
-    get() = (findProperty("build.number") as String?) ?: kotlinNativeDist.resolve("konan/konan.properties").let {
-        Properties().apply {
-            load(it.reader())
-        }["compilerVersion"] as String
-    }
-
-internal val Project.konanVersion: String?
-    get() = findProperty("konanVersion") as String?
-
-val Project.nativeJson: String
-    get() = project.property("nativeJson") as String
-
-val Project.buildType: NativeBuildType
-    get() = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: NativeBuildType.RELEASE
-
-internal val Project.useCSet: Boolean
-    get() = (findProperty("useCSet") as String?).toBoolean()
 
 internal const val BENCHMARKING_GROUP = "benchmarking"
 
 open class BenchmarkExtension @Inject constructor(project: Project) {
+    /**
+     * Benchmarks group name.
+     *
+     * - each benchmark will be prefixed with `applicationName::` (unless [prefixBenchmarksWithApplicationName] is set to `false`)
+     * - code size metric (i.e. the size of the Kotlin-produced artifact for this benchmark group) will be named `applicationName`
+     * - for [SwiftBenchmarkingPlugin] this is used as the "product name" to use in the corresponding `Package.swift`
+     */
     val applicationName: Property<String> = project.objects.property(String::class.java).convention(project.name)
+
+    /**
+     * Additional compiler options to use for this benchmark group
+     *
+     * The benchmark will apply both this and contents of [compilerArgs] Gradle property
+     */
     val compilerOpts: ListProperty<String> = project.objects.listProperty(String::class.java)
+
+    /**
+     * Whether this benchmark should perform warmup and repetitions itself or be externally driven.
+     */
     val repeatingType: Property<BenchmarkRepeatingType> = project.objects.property(BenchmarkRepeatingType::class.java).convention(BenchmarkRepeatingType.INTERNAL)
+
+    /**
+     * Whether to prepend [applicationName::][applicationName] to each benchmark run.
+     */
     val prefixBenchmarksWithApplicationName: Property<Boolean> = project.objects.property(Boolean::class.java).convention(true)
 
     val konanRun by project.tasks.registering(RunKotlinNativeTask::class)
@@ -54,7 +47,7 @@ open class BenchmarkExtension @Inject constructor(project: Project) {
 /**
  * A plugin configuring a benchmark Kotlin/Native project.
  */
-abstract class BenchmarkingPlugin: Plugin<Project> {
+abstract class BenchmarkingPlugin : Plugin<Project> {
     protected abstract val Project.benchmark: BenchmarkExtension
     protected abstract fun Project.createExtension(): BenchmarkExtension
 
@@ -83,7 +76,9 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
             reportFile.set(layout.buildDirectory.file("nativeBenchResults.json"))
             verbose.convention(logger.isInfoEnabled)
-            baseOnly.convention(false)
+            baseOnly.convention(project.baseOnly)
+            filter.convention(project.filter)
+            filterRegex.convention(project.filterRegex)
             warmupCount.convention(nativeWarmup)
             repeatCount.convention(attempts)
             repeatingType.set(benchmark.repeatingType)
@@ -103,16 +98,15 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             group = BENCHMARKING_GROUP
             description = "Builds the benchmarking report for Kotlin/Native."
 
-            applicationName.set(benchmark.applicationName)
+            codeSizeName.set(benchmark.applicationName)
             benchmarksReportFile.set(benchmark.konanRun.map { it.reportFile.get() })
-            compilerVersion.set(project.konanVersion)
+            compilerVersion.set(project.compilerVersion)
             if (buildType.optimized) {
                 compilerFlags.add("-opt")
             }
             if (buildType.debuggable) {
                 compilerFlags.add("-g")
             }
-            kotlinVersion.set(project.kotlinVersion)
             reportFile.set(layout.buildDirectory.file(nativeJson))
         }
 

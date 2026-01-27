@@ -1,8 +1,4 @@
-import org.jetbrains.kotlin.kotlinNativeDist
-import org.jetbrains.kotlin.mergeReports
-import org.jetbrains.kotlin.benchmark.nativeJson
-import org.jetbrains.kotlin.capitalized
-import org.jetbrains.kotlin.hostKotlinNativeTargetName
+import org.jetbrains.kotlin.*
 
 plugins {
     `lifecycle-base`
@@ -11,7 +7,7 @@ plugins {
 subprojects {
     // We are using bootstrap version of KGP, but we want to use a different compiler version.
     // This instructs KGP to look for the Native compiler in a given folder.
-    extra["kotlin.native.home"] = kotlinNativeDist.toString()
+    extra["kotlin.native.home"] = kotlinNativeHome.toString()
 
     repositories {
         mavenCentral()
