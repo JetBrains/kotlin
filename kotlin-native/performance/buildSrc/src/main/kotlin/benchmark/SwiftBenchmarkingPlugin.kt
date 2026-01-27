@@ -68,8 +68,10 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             executable.set(project.benchmark.buildSwift.map { it.outputFile.get() })
         }
         val linkTaskProvider = kotlin.hostTarget().binaries.getFramework(NATIVE_FRAMEWORK_NAME, project.buildType).linkTaskProvider
-        benchmark.konanJsonReport.configure {
+        benchmark.getCodeSize.configure {
             codeSizeBinary.fileProvider(linkTaskProvider.map { it.outputFile.get().resolve(NATIVE_FRAMEWORK_NAME) })
+        }
+        benchmark.konanJsonReport.configure {
             compilerFlags.addAll(linkTaskProvider.map { it.toolOptions.freeCompilerArgs.get() })
         }
     }
