@@ -24,13 +24,20 @@ import org.jetbrains.kotlin.psi.doNotAnalyze
  */
 public enum class KaDanglingFileResolutionMode {
     /**
-     * Resolve first to declarations in the dangling file, and delegate to the original file or module only when needed.
+     * Resolve first to declarations in the dangling file and delegate to the original file or module only when needed.
      */
     PREFER_SELF,
 
     /**
-     * Resolve only to declarations in the original file or module. Ignore all non-local declarations in the dangling file.
-     * The mode is only supported for single-file dangling file modules.
+     * Resolve only to declarations in the original file or module by default. Ignore all non-local declarations in the dangling file during
+     * resolution. The mode is only supported for single-file dangling file modules.
+     *
+     * If a declaration from the dangling file is explicitly requested through the Analysis API, it will be resolved from the dangling file.
+     * [IGNORE_SELF] only affects declarations which are internally resolved in the course of an analysis request, for example when getting
+     * the type of an expression or resolving a call.
+     *
+     * The mode is offered for optimization purposes, as it removes the need to re-analyze the declarations in the dangling file and instead
+     * reuses the (possibly) resolved declarations from the original file.
      */
     IGNORE_SELF
 }
