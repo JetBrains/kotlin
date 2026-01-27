@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.gradle.utils.toMap
+import org.junit.jupiter.api.Disabled
 import java.util.*
 import kotlin.test.*
 
@@ -284,6 +285,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         }
     }
 
+    @Disabled("withJava() is no longer supported since Gradle 9.0")
     class TestDisambiguationAttributePropagation {
         private val disambiguationAttribute = Attribute.of("disambiguationAttribute", String::class.java)
 
