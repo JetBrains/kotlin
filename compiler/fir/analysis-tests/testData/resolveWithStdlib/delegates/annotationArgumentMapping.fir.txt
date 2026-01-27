@@ -12,7 +12,7 @@ FILE: annotationArgumentMapping.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun buildAnnotationArgumentMapping(init: R|FirAnnotationArgumentMappingBuilder.() -> kotlin/Unit|): R|FirAnnotationArgumentMapping|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun buildAnnotationArgumentMapping(init: R|FirAnnotationArgumentMappingBuilder.() -> kotlin/Unit|): R|FirAnnotationArgumentMapping|
         [R|Contract description]
          <
             CallsInPlace(init, EXACTLY_ONCE)

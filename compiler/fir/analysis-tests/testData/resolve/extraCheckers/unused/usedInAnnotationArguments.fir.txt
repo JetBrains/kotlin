@@ -10,6 +10,6 @@ FILE: usedInAnnotationArguments.kt
     }
     public final fun foo(): R|kotlin/Int| {
         lval x: R|kotlin/Int| = Int(3)
-        @R|Ann|(value = R|<local>/x|) lval y: R|kotlin/Int| = Int(5)
+        @R|Ann|(value = R|<local>/x| [evaluated = R|<local>/x|]) lval y: R|kotlin/Int| = Int(5)
         ^foo R|<local>/y|
     }

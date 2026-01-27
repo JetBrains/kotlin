@@ -231,7 +231,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|) [evaluated = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -251,7 +251,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|) [evaluated = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             super<R|kotlin/Any|>()
         }
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] requiredAnnotationWithFakeOverrideAsImportedArg
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|) [evaluated = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             super<R|kotlin/Any|>()
         }

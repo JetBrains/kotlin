@@ -1,12 +1,12 @@
-@R|Anno|(str = String(return type))  P1.P2<@R|Anno|(str = String(nested return type))  T2, T1>
+@R|Anno|(str = String(return type) [evaluated = String(return type)])  P1.P2<@R|Anno|(str = String(nested return type) [evaluated = String(nested return type)])  T2, T1>
   context -> FirNamedFunctionSymbol /P1.createP2
   anchor -> [FirNamedFunctionSymbol /P1.createP2]
 
-@R|Anno|(str = String(nested return type))  T2
+@R|Anno|(str = String(nested return type) [evaluated = String(nested return type)])  T2
   context -> FirNamedFunctionSymbol /P1.createP2
   anchor -> [FirNamedFunctionSymbol /P1.createP2]
 
-@R|Anno|(str = String(nested return type))  T2
+@R|Anno|(str = String(nested return type) [evaluated = String(nested return type)])  T2
   context -> FirNamedFunctionSymbol /P1.createP2
   anchor -> [FirNamedFunctionSymbol /P1.createP2]
 
@@ -39,8 +39,8 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(str = String(return type))  P1.P2<@R|Anno|(str = String(nested return type))  T2, T1>| {
-                ^createP2 this@R|/P1|.R|SubstitutionOverride</P1.P2.P2>|<R|@R|Anno|(str = String(nested return type))  T2|>()
+            public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(str = String(return type) [evaluated = String(return type)])  P1.P2<@R|Anno|(str = String(nested return type) [evaluated = String(nested return type)])  T2, T1>| {
+                ^createP2 this@R|/P1|.R|SubstitutionOverride</P1.P2.P2>|<R|@R|Anno|(str = String(nested return type) [evaluated = String(nested return type)])  T2|>()
             }
 
         }

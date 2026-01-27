@@ -79,9 +79,9 @@ KaKotlinPropertySymbol:
                 psi: KtAnnotationEntry
             ]
             typeArguments: []
-            type: @R|Anno|(position = String(str))  kotlin/Int
+            type: @R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int
         ]
-        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
+        type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(propertyWithContextReceivers.kt)
       getContainingJvmClassName: PropertyWithContextReceiversKt
@@ -107,9 +107,9 @@ KaKotlinPropertySymbol:
                 psi: KtAnnotationEntry
             ]
             typeArguments: []
-            type: @R|Anno|(position = String(str))  kotlin/Int
+            type: @R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int
         ]
-        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
+        type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>
   ]
   getter: KaPropertyGetterSymbol:
     annotations: []

@@ -3,7 +3,7 @@ FIR element: FirAnnotationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|Anno|[Types](s = String(str))
+@R|Anno|[Types](s = String(str) [evaluated = String(str)])
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
@@ -20,7 +20,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.foo: R|T|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str) [evaluated = String(str)])  Two|> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.foo: R|T|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|T| {
             ^ this@R|/foo|
         }

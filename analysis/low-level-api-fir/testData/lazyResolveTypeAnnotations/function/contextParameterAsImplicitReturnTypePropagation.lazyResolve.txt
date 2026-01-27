@@ -182,11 +182,11 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/String|.bar(): R|@R|Anno|(position = String(12))  kotlin/String| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/String|.bar(): R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String| {
         ^bar R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
     }
-    context([ResolvedTo(ANNOTATION_ARGUMENTS)] parameter: R|@R|Anno|(position = String(12))  kotlin/String|)
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|@R|Anno|(position = String(12))  kotlin/String| {
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] parameter: R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String| {
         ^foo R|<local>/parameter|
     }
 
@@ -201,17 +201,17 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.bar(): R|@R|Anno|(position = String(12))  kotlin/String| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.bar(): R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String| {
         ^bar R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
     }
-    context([ResolvedTo(ANNOTATION_ARGUMENTS)] parameter: R|@R|Anno|(position = String(12))  kotlin/String|)
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|@R|Anno|(position = String(12))  kotlin/String| {
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] parameter: R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String| {
         ^foo R|<local>/parameter|
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] contextParameterAsImplicitReturnTypePropagation.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -220,10 +220,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextParameterAsImplicitReturnTypePropagation
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.bar(): R|@R|Anno|(position = String(12))  kotlin/String| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.bar(): R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String| {
         ^bar R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
     }
-    context([ResolvedTo(BODY_RESOLVE)] parameter: R|@R|Anno|(position = String(12))  kotlin/String|)
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|Anno|(position = String(12))  kotlin/String| {
+    context([ResolvedTo(BODY_RESOLVE)] parameter: R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String| {
         ^foo R|<local>/parameter|
     }

@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] innerClassAnnotationArgument.kt
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CONST: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        @R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|) public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedClass : R|kotlin/Any| {
+        @R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST| [evaluated = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|]) public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] pack/TopLevelClass.constructor([ResolvedTo(BODY_RESOLVE)] d: R|kotlin/Double|): R|pack/TopLevelClass.NestedClass| {
                 super<R|kotlin/Any|>()
             }

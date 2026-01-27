@@ -111,7 +111,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|kotlin/annotation/AnnotationTarget|
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|kotlin/annotation/AnnotationTarget|
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             super<R|kotlin/Any|>()
         }
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(BODY_RESOLVE)] typealias MyTypeAlias = R|kotlin/annotation/AnnotationTarget|
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             super<R|kotlin/Any|>()
         }

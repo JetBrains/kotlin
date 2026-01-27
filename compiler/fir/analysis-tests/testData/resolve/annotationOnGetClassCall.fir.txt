@@ -12,5 +12,5 @@ FILE: annotationOnGetClassCall.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        @R|Ann|(s = String(hello), x = Long(1)) <getClass>(Q|kotlin/String|)
+        @R|Ann|(s = String(hello) [evaluated = String(hello)], x = Long(1) [evaluated = Long(1)]) <getClass>(Q|kotlin/String|)
     }

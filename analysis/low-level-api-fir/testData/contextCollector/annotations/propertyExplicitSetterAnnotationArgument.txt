@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyExplicitSetterAnnotationArgument.kt
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ Int(0)
             }
-            @R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            @R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST| [evaluated = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|]) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
         public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {

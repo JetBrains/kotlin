@@ -11,7 +11,11 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] functionInsideFileAnnotation.kt
         [ResolvedTo(RAW_FIR)] lval s: R|kotlin/Int| = String(str)
         ^ R|<local>/s|
     }
-    )
+     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/String] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(RAW_FIR)] lval s: R|kotlin/Int| = String(str)
+        ^ R|<local>/s|
+    }
+    ])
     package one
 
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

@@ -1,5 +1,5 @@
 FILE: eqNotEq.kt
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun checkNotNull(x: R|kotlin/Any?|): R|kotlin/Boolean|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun checkNotNull(x: R|kotlin/Any?|): R|kotlin/Boolean|
         [R|Contract description]
          <
             Returns(TRUE) -> x != null
@@ -16,7 +16,7 @@ FILE: eqNotEq.kt
 
         ^checkNotNull !=(R|<local>/x|, Null(null))
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun trickyRequireNotNull(x: R|kotlin/Any?|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun trickyRequireNotNull(x: R|kotlin/Any?|): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> !x == null

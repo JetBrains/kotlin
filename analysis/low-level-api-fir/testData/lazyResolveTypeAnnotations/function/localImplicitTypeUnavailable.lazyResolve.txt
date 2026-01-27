@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?| {
                 ^bar this@R|<local>/A|.R|<local>/A.B.B|().R|<local>/foo|()
             }
 
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
                     super<R|kotlin/Any|>()
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?| {
                     ^foo Null(null)
                 }
 
@@ -195,12 +195,12 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
 
         }
 
-        [ResolvedTo(BODY_RESOLVE)] lval a: R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| = R|<local>/A.A|().R|<local>/bar|()
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?| = R|<local>/A.A|().R|<local>/bar|()
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] localImplicitTypeUnavailable.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.str] str: R|kotlin/reflect/KClass<*>|): R|second/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -215,7 +215,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localImplicitTypeUnavailable.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?| {
                 ^bar this@R|<local>/A|.R|<local>/A.B.B|().R|<local>/foo|()
             }
 
@@ -224,7 +224,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localImplicitTypeUnavailable.kt
                     super<R|kotlin/Any|>()
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?| {
                     ^foo Null(null)
                 }
 
@@ -239,5 +239,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localImplicitTypeUnavailable.kt
 
         }
 
-        [ResolvedTo(BODY_RESOLVE)] lval a: R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| = R|<local>/A.A|().R|<local>/bar|()
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?| = R|<local>/A.A|().R|<local>/bar|()
     }

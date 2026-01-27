@@ -52,9 +52,9 @@ KaNamedFunctionSymbol:
                 psi: KtAnnotationEntry
             ]
             typeArguments: []
-            type: @R|Anno|(position = String(str))  kotlin/Int
+            type: @R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int
         ]
-        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
+        type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(functionWithContextReceivers.kt)
       getContainingJvmClassName: FunctionWithContextReceiversKt
@@ -80,9 +80,9 @@ KaNamedFunctionSymbol:
                 psi: KtAnnotationEntry
             ]
             typeArguments: []
-            type: @R|Anno|(position = String(str))  kotlin/Int
+            type: @R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int
         ]
-        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
+        type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>
   ]
   contractEffects: []
   hasStableParameterNames: true

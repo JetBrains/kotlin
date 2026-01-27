@@ -307,8 +307,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
-        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] val <@R|Anno|[Types](position = String(type param 0)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = String(bound 0))  kotlin/Number|> explicitType: R|@R|Anno|(position = String(bound 0))  kotlin/Int|
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = String(bound 0))  kotlin/Int| { LAZY_BLOCK }
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(type param 0)]) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(bound 0)])  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(bound 0)])  kotlin/Int|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(bound 0)])  kotlin/Int| { LAZY_BLOCK }
 
         public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
@@ -334,8 +334,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
-        public open [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = String(type param 0)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = String(bound 0))  kotlin/Number|> explicitType: R|@R|Anno|(position = String(bound 0))  kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = String(bound 0))  kotlin/Int| {
+        public open [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(type param 0)]) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(bound 0)])  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(bound 0)])  kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(bound 0)])  kotlin/Int| {
                 ^ Int(1)
             }
 
@@ -353,7 +353,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterAnnotations.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -363,8 +363,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterAnnotations.kt
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface OriginalInterface : R|kotlin/Any| {
-        public open [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = String(type param 0)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = String(bound 0))  kotlin/Number|> explicitType: R|@R|Anno|(position = String(bound 0))  kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = String(bound 0))  kotlin/Int| {
+        public open [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(type param 0)]) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(bound 0)])  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(bound 0)])  kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|) [evaluated = String(bound 0)])  kotlin/Int| {
                 ^ Int(1)
             }
 

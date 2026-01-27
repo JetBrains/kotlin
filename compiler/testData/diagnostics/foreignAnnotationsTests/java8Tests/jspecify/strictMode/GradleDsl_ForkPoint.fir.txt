@@ -7,7 +7,7 @@ FILE: dsl.kt
         }
         )
     }
-    @R|kotlin/Suppress|(names = vararg(String(NOTHING_TO_INLINE))) public final inline operator fun <IT : R|kotlin/Any|, IC : R|api/NamedDomainObjectContainer<IT>|> R|IC|.invoke(configuration: R|api/action/Action<dsl/NamedDomainObjectContainerScope<IT>>|): R|IC| {
+    @R|kotlin/Suppress|(names = vararg(String(NOTHING_TO_INLINE)) [evaluated = vararg(String(NOTHING_TO_INLINE))]) public final inline operator fun <IT : R|kotlin/Any|, IC : R|api/NamedDomainObjectContainer<IT>|> R|IC|.invoke(configuration: R|api/action/Action<dsl/NamedDomainObjectContainerScope<IT>>|): R|IC| {
         ^invoke this@R|dsl/invoke|
     }
     public final val <RT : R|kotlin/Any|, RC : R|api/NamedDomainObjectContainer<RT>|> R|RC|.registering: R|dsl/RegisteringDomainObjectDelegateProvider<out RC>|

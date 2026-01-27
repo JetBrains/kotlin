@@ -1,7 +1,7 @@
 FILE: First.kt
     package sample.pack
 
-    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE), String(INVISIBLE_MEMBER))) @<ERROR TYPE REF: HIDDEN: kotlin/internal/HidesMembers is invisible>() public final fun R|sample/pack/A|.forEach(): R|kotlin/String| {
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE), String(INVISIBLE_MEMBER)) [evaluated = vararg(String(INVISIBLE_REFERENCE), String(INVISIBLE_MEMBER))]) @<ERROR TYPE REF: HIDDEN: kotlin/internal/HidesMembers is invisible>() public final fun R|sample/pack/A|.forEach(): R|kotlin/String| {
         ^forEach String(::A.forEach)
     }
     public final class A : R|kotlin/Any| {

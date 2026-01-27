@@ -1,12 +1,12 @@
-{MyTypeAlias=} @R|TypeAnnWithArg|(arg = String(type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int>>
+{MyTypeAlias=} @R|TypeAnnWithArg|(arg = <strcat>(String(type: ), R|/constant|) [evaluated = String(type: 0)])  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|/constant|) [evaluated = String(nested type: 0)])  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|) [evaluated = String(nested nested type: 0)])  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /resolveMe
   anchor -> [FirTypeAliasSymbol MyTypeAlias]
 
-@R|TypeAnnWithArg|(arg = String(nested type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int>
+@R|TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|/constant|) [evaluated = String(nested type: 0)])  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|) [evaluated = String(nested nested type: 0)])  kotlin/Int>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /resolveMe
   anchor -> [FirTypeAliasSymbol MyTypeAlias]
 
-@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int
+@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|) [evaluated = String(nested nested type: 0)])  kotlin/Int
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /resolveMe
   anchor -> [FirTypeAliasSymbol MyTypeAlias]
 
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(arg = String(type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int>>|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(arg = <strcat>(String(type: ), R|/constant|) [evaluated = String(type: 0)])  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|/constant|) [evaluated = String(nested type: 0)])  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|) [evaluated = String(nested nested type: 0)])  kotlin/Int>>|
 
-        public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(TYPES)] param: R|{MyTypeAlias=} @R|TypeAnnWithArg|(arg = String(type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(TYPES)] param: R|{MyTypeAlias=} @R|TypeAnnWithArg|(arg = <strcat>(String(type: ), R|/constant|) [evaluated = String(type: 0)])  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|/constant|) [evaluated = String(nested type: 0)])  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|) [evaluated = String(nested nested type: 0)])  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
 

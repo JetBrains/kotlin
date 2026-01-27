@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
 ANNOTATION_ARGUMENTS:
-TARGET: @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
+TARGET: @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|) [evaluated = <strcat>(String(number: ), R|/prop|)]) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
     ^getSomething <strcat>(String(body: ), R|/propertyFromBody|)
 }
 
@@ -147,7 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|kotlin/String| {
+        @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|) [evaluated = <strcat>(String(number: ), R|/prop|)]) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|kotlin/String| {
             ^getSomething <strcat>(String(body: ), R|/propertyFromBody|)
         }
 
@@ -170,7 +170,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
 BODY_RESOLVE:
-TARGET: @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+TARGET: @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|) [evaluated = <strcat>(String(number: ), R|/prop|)]) public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
     ^getSomething <strcat>(String(body: ), R|/propertyFromBody|)
 }
 
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
+        @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|) [evaluated = <strcat>(String(number: ), R|/prop|)]) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
             ^getSomething <strcat>(String(body: ), R|/propertyFromBody|)
         }
 
@@ -209,12 +209,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
             super<R|Base|>()
         }
 
-        @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
+        @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|) [evaluated = <strcat>(String(number: ), R|/prop|)]) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
             ^getSomething <strcat>(String(body: ), R|/propertyFromBody|)
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }

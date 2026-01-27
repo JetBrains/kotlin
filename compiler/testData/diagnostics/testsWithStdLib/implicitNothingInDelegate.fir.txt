@@ -1,5 +1,5 @@
 FILE: implicitNothingInDelegate.fir.kt
-    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE), String(INVISIBLE_MEMBER))) public final operator fun <V, V1 : R|V|> R|kotlin/collections/Map<in kotlin/String, @Exact V>|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|V1| {
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE), String(INVISIBLE_MEMBER)) [evaluated = vararg(String(INVISIBLE_REFERENCE), String(INVISIBLE_MEMBER))]) public final operator fun <V, V1 : R|V|> R|kotlin/collections/Map<in kotlin/String, @Exact V>|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|V1| {
         ^getValue Null(null)!!
     }
     public final val m2: R|kotlin/collections/Map<kotlin/String, *>| = R|kotlin/collections/mapOf|<R|kotlin/String|, R|kotlin/String|>(String(baz).R|kotlin/to|<R|kotlin/String|, R|kotlin/String|>(String(bat)))

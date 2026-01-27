@@ -18,7 +18,7 @@ FILE: enumConstructor.fir.kt
         }
 
         public final static enum entry ENTRY2: R|Enum1|
-        @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|O|))) public final static enum entry ENTRY3: R|Enum1| = object : R|Enum1| {
+        @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|O|)) [evaluated = vararg(<getClass>(Q|O|))]) public final static enum entry ENTRY3: R|Enum1| = object : R|Enum1| {
             private constructor(): R|<anonymous>| {
                 super<R|Enum1|>()
             }
@@ -104,7 +104,7 @@ FILE: enumConstructor.fir.kt
         public final val x: R|kotlin/Int| = R|<local>/x|
             public get(): R|kotlin/Int|
 
-        @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|O|))) private constructor(): R|Enum3| {
+        @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|O|)) [evaluated = vararg(<getClass>(Q|O|))]) private constructor(): R|Enum3| {
             this<R|Enum3|>(Int(0))
         }
 

@@ -1,5 +1,5 @@
 FILE: visibilityTransformation.kt
-    @R|org/jetbrains/kotlin/plugin/sandbox/AllPublic|(visibility = Q|org/jetbrains/kotlin/plugin/sandbox/Visibility|.R|org/jetbrains/kotlin/plugin/sandbox/Visibility.Protected|) public final class A : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllPublic|(visibility = Q|org/jetbrains/kotlin/plugin/sandbox/Visibility|.R|org/jetbrains/kotlin/plugin/sandbox/Visibility.Protected| [evaluated = Q|org/jetbrains/kotlin/plugin/sandbox/Visibility|.R|org/jetbrains/kotlin/plugin/sandbox/Visibility.Protected|]) public final class A : R|kotlin/Any| {
         protected constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -21,7 +21,7 @@ FILE: visibilityTransformation.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/AllPublic|(visibility = Q|org/jetbrains/kotlin/plugin/sandbox/Visibility|.R|org/jetbrains/kotlin/plugin/sandbox/Visibility.Private|) public final class B : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllPublic|(visibility = Q|org/jetbrains/kotlin/plugin/sandbox/Visibility|.R|org/jetbrains/kotlin/plugin/sandbox/Visibility.Private| [evaluated = Q|org/jetbrains/kotlin/plugin/sandbox/Visibility|.R|org/jetbrains/kotlin/plugin/sandbox/Visibility.Private|]) public final class B : R|kotlin/Any| {
         private constructor(): R|B| {
             super<R|kotlin/Any|>()
         }

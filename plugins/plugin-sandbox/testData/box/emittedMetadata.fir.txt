@@ -1,6 +1,6 @@
 Module: lib
 FILE: module_lib_emittedMetadata.kt
-    @R|org/jetbrains/kotlin/plugin/sandbox/EmitMetadata|(value = Int(5)) public final class Some : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/EmitMetadata|(value = Int(5) [evaluated = Int(5)]) public final class Some : R|kotlin/Any| {
         public constructor(): R|Some| {
             super<R|kotlin/Any|>()
         }

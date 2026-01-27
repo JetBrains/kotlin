@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterAnnotationArgument.kt
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] R|T|.foo: R|kotlin/Int|
-            @PROPERTY_GETTER:R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            @PROPERTY_GETTER:R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST| [evaluated = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ Int(0)
             }
 

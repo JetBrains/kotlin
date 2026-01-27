@@ -124,8 +124,8 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     }
 
 ANNOTATION_ARGUMENTS:
-TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] val something: R|@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>|
-    @R|Anno|[Types](position = String(getSomething str)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>| { LAZY_BLOCK }
+TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] val something: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>|
+    @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|) [evaluated = String(getSomething str)]) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -144,13 +144,13 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](position = String(getSomething str)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>| { LAZY_BLOCK }
+        @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|) [evaluated = String(getSomething str)]) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>| { LAZY_BLOCK }
 
     }
 
 BODY_RESOLVE:
-TARGET: public open override [<synthetic> BODY_RESOLVE] val something: R|@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>|
-    @R|Anno|[Types](position = String(getSomething str)) public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>| {
+TARGET: public open override [<synthetic> BODY_RESOLVE] val something: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>|
+    @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|) [evaluated = String(getSomething str)]) public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>| {
         ^getSomething Int(42)
     }
 
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](position = String(getSomething str)) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>| {
+        @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|) [evaluated = String(getSomething str)]) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>| {
             ^getSomething Int(42)
         }
 
@@ -179,7 +179,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -195,7 +195,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
             super<R|Base|>()
         }
 
-        @R|Anno|[Types](position = String(getSomething str)) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(position = String(return type str))  kotlin/collections/List<@R|Anno|(position = String(nested return type str))  kotlin/Int>| {
+        @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|) [evaluated = String(getSomething str)]) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|) [evaluated = String(nested return type str)])  kotlin/Int>| {
             ^getSomething Int(42)
         }
 

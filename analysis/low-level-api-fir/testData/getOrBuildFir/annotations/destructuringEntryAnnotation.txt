@@ -3,7 +3,7 @@ FIR element: FirAnnotationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|DestrAnno|[Types](s = String(destr 1 0))
+@R|DestrAnno|[Types](s = <strcat>(String(destr 1 ), R|/prop|) [evaluated = String(destr 1 0)])
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructuringEntryAnnotation.kts
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringEntryAnnotation.kts
         }
 
         [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|MyPair| = R|/MyPair.MyPair|(Int(1), Int(2))
-        @R|DestrAnno|[Types](s = String(destr 1 0)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyPair.component1|()
+        @R|DestrAnno|[Types](s = <strcat>(String(destr 1 ), R|/prop|) [evaluated = String(destr 1 0)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyPair.component1|()
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val b: <implicit> = LAZY_EXPRESSION

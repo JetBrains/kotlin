@@ -214,7 +214,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] val one: R|kotlin/Int|by LAZY_EXPRESSION
-            @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+            @R|kotlin/Deprecated|[Types](message = String(reason) [evaluated = String(reason)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>, ScriptTopLevelDeclaration=true] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -233,7 +233,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val one: R|kotlin/Int|by R|/Prp.Prp|()
-            @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            @R|kotlin/Deprecated|[Types](message = String(reason) [evaluated = String(reason)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ D|/one|.R|/Prp.getValue<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Prp.getValue>#|(Null(null), ::R|/one|)
             }
 
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] getterWithDelegationScript.kts
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val one: R|kotlin/Int|by R|/Prp.Prp|()
-            @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            @R|kotlin/Deprecated|[Types](message = String(reason) [evaluated = String(reason)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ D|/one|.R|/Prp.getValue<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Prp.getValue>#|(Null(null), ::R|/one|)
             }
 

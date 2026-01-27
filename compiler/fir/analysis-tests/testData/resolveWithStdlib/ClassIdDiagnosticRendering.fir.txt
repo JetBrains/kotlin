@@ -22,7 +22,7 @@ FILE: ClassIdDiagnosticRendering.kt
         }
 
     }
-    @R|kotlin/SubclassOptInRequired|(markerClass = vararg(<getClass>(Q|a/b/c/NotOptIn|))) public open class IncorrectSubclassOptInArgumentMarker : R|kotlin/Any| {
+    @R|kotlin/SubclassOptInRequired|(markerClass = vararg(<getClass>(Q|a/b/c/NotOptIn|)) [evaluated = vararg(<getClass>(Q|a/b/c/NotOptIn|))]) public open class IncorrectSubclassOptInArgumentMarker : R|kotlin/Any| {
         public constructor(): R|a/b/c/IncorrectSubclassOptInArgumentMarker| {
             super<R|kotlin/Any|>()
         }

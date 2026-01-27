@@ -202,7 +202,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = String(context receiver type str))  kotlin/Int>|)
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|) [evaluated = String(context receiver type str)])  kotlin/Int>|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val foo: <ERROR TYPE REF: Unresolved this@List>
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved this@List> {
             ^ this@List#
@@ -221,7 +221,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = String(context receiver type str))  kotlin/Int>|)
+    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|) [evaluated = String(context receiver type str)])  kotlin/Int>|)
     public final [ResolvedTo(BODY_RESOLVE)] val foo: <ERROR TYPE REF: Unresolved this@List>
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
             ^ this@List#
@@ -229,7 +229,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] contextReceiverAsImplicitReturnType.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextReceiverAsImplicitReturnType.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = String(context receiver type str))  kotlin/Int>|)
+    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|) [evaluated = String(context receiver type str)])  kotlin/Int>|)
     public final [ResolvedTo(BODY_RESOLVE)] val foo: <ERROR TYPE REF: Unresolved this@List>
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
             ^ this@List#

@@ -9,7 +9,7 @@ FILE: postponedLambdaInReturn.kt
             public set(value: R|R|): R|kotlin/Unit|
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun <R : R|kotlin/Any|> build(crossinline builder: R|Lateinit<R>.() -> kotlin/Unit|): R|R|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun <R : R|kotlin/Any|> build(crossinline builder: R|Lateinit<R>.() -> kotlin/Unit|): R|R|
         [R|Contract description]
          <
             CallsInPlace(builder, EXACTLY_ONCE)

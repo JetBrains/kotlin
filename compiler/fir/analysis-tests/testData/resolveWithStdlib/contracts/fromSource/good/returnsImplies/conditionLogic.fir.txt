@@ -1,5 +1,5 @@
 FILE: conditionLogic.kt
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test1(x: R|kotlin/String?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test1(x: R|kotlin/String?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(NOT_NULL) -> !x == null
@@ -14,7 +14,7 @@ FILE: conditionLogic.kt
 
         ^test1 R|<local>/x|
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test2(x: R|kotlin/String?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test2(x: R|kotlin/String?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(NOT_NULL) -> x is kotlin/String
@@ -29,7 +29,7 @@ FILE: conditionLogic.kt
 
         ^test2 R|<local>/x|
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test3(x: R|kotlin/String?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test3(x: R|kotlin/String?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(NOT_NULL) -> x !is kotlin/String
@@ -44,7 +44,7 @@ FILE: conditionLogic.kt
 
         ^test3 R|<local>/x|
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test4(x: R|kotlin/String?|, y: R|kotlin/String?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test4(x: R|kotlin/String?|, y: R|kotlin/String?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(TRUE) -> x != null && y != null
@@ -59,7 +59,7 @@ FILE: conditionLogic.kt
 
         ^test4 !=(R|<local>/x|, Null(null)) && !=(R|<local>/y|, Null(null))
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test5(x: R|kotlin/Any?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test5(x: R|kotlin/Any?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(TRUE) -> x != null || x is kotlin/Any
@@ -74,7 +74,7 @@ FILE: conditionLogic.kt
 
         ^test5 !=(R|<local>/x|, Null(null))
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test6(x: R|kotlin/Any?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test6(x: R|kotlin/Any?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(TRUE) -> x is kotlin/String? && x != null
@@ -89,7 +89,7 @@ FILE: conditionLogic.kt
 
         ^test6 (R|<local>/x| is R|kotlin/String|)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test7(x: R|kotlin/Any?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test7(x: R|kotlin/Any?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(TRUE) -> x is kotlin/String? && x != null || x is kotlin/Int
@@ -104,7 +104,7 @@ FILE: conditionLogic.kt
 
         ^test7 (R|<local>/x| is R|kotlin/String|)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test8(x: R|kotlin/Any?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test8(x: R|kotlin/Any?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(TRUE) -> x is kotlin/String || x is kotlin/Int
@@ -119,7 +119,7 @@ FILE: conditionLogic.kt
 
         ^test8 (R|<local>/x| is R|kotlin/String|) || (R|<local>/x| is R|kotlin/Int|)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test9(x: R|kotlin/Any?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test9(x: R|kotlin/Any?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(TRUE) -> x is kotlin/String || x is kotlin/Int
@@ -140,7 +140,7 @@ FILE: conditionLogic.kt
 
         ^test9 (R|<local>/x| is R|kotlin/Int|)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test10(x: R|kotlin/Any?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test10(x: R|kotlin/Any?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(TRUE) -> x is kotlin/Comparable<*> || x is kotlin/CharSequence
@@ -155,7 +155,7 @@ FILE: conditionLogic.kt
 
         ^test10 (R|<local>/x| is R|kotlin/String|)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test11(x: R|kotlin/Any?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test11(x: R|kotlin/Any?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(TRUE) -> x is kotlin/Comparable<*> && x is kotlin/CharSequence
@@ -170,7 +170,7 @@ FILE: conditionLogic.kt
 
         ^test11 (R|<local>/x| is R|kotlin/String|)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test12(x: R|kotlin/Any?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test12(x: R|kotlin/Any?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(TRUE) -> x is kotlin/Comparable<*> && x is kotlin/CharSequence || x is kotlin/Number
@@ -185,7 +185,7 @@ FILE: conditionLogic.kt
 
         ^test12 (R|<local>/x| is R|kotlin/String|) || (R|<local>/x| is R|kotlin/Int|)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test13(x: R|kotlin/Any?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun test13(x: R|kotlin/Any?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(TRUE) -> (!)x !is kotlin/Comparable<*> || x !is kotlin/CharSequence && (!x is kotlin/Number)

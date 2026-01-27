@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] initAnnotationArgument.kt
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CONST: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        [ResolvedTo(BODY_RESOLVE)] @R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|) init {
+        [ResolvedTo(BODY_RESOLVE)] @R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST| [evaluated = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|]) init {
         }
 
         public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
