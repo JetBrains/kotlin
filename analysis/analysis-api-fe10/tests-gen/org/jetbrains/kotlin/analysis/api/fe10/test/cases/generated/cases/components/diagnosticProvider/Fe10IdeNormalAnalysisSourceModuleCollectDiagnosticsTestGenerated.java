@@ -263,6 +263,18 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   }
 
   @Test
+  @TestMetadata("packageAnnotationsFromLibraryInSources.kt")
+  public void testPackageAnnotationsFromLibraryInSources() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsFromLibraryInSources.kt");
+  }
+
+  @Test
+  @TestMetadata("packageAnnotationsFromTransitiveLibrary.kt")
+  public void testPackageAnnotationsFromTransitiveLibrary() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsFromTransitiveLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("packageAnnotationsOverloads.kt")
   public void testPackageAnnotationsOverloads() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsOverloads.kt");
@@ -275,6 +287,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   }
 
   @Test
+  @TestMetadata("packageAnnotationsOverloadsFromLibraryInSources.kt")
+  public void testPackageAnnotationsOverloadsFromLibraryInSources() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsOverloadsFromLibraryInSources.kt");
+  }
+
+  @Test
   @TestMetadata("packageAnnotationsUnrelatedOverloads.kt")
   public void testPackageAnnotationsUnrelatedOverloads() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsUnrelatedOverloads.kt");
@@ -284,6 +302,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   @TestMetadata("packageAnnotationsUnrelatedOverloadsFromLibrary.kt")
   public void testPackageAnnotationsUnrelatedOverloadsFromLibrary() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsUnrelatedOverloadsFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("packageAnnotationsUnrelatedOverloadsFromLibraryFallbackDependencies.kt")
+  public void testPackageAnnotationsUnrelatedOverloadsFromLibraryFallbackDependencies() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/packageAnnotationsUnrelatedOverloadsFromLibraryFallbackDependencies.kt");
   }
 
   @Test

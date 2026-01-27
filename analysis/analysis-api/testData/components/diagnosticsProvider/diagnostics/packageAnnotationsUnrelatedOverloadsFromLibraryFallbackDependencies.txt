@@ -1,0 +1,21 @@
+Diagnostics from withLib.kt:
+  for PSI element of type KtNameReferenceExpression at (61,12-17)
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(156,161)]
+      PSI: KtNameReferenceExpression at (61,12-17)
+  for PSI element of type KtNameReferenceExpression at (62,12-17)
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(179,184)]
+      PSI: KtNameReferenceExpression at (62,12-17)
+  for PSI element of type KtNameReferenceExpression at (63,12-17)
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(202,207)]
+      PSI: KtNameReferenceExpression at (63,12-17)
+
+Diagnostics from withLib2.kt:
+  for PSI element of type KtNameReferenceExpression at (73,12-17)
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(171,176)]
+      PSI: KtNameReferenceExpression at (73,12-17)
+  for PSI element of type KtNameReferenceExpression at (74,12-17)
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(194,199)]
+      PSI: KtNameReferenceExpression at (74,12-17)
+  for PSI element of type KtNameReferenceExpression at (75,12-17)
+    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(217,222)]
+      PSI: KtNameReferenceExpression at (75,12-17)
