@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicUnstableAndK2LanguageFeaturesSkipConfigurator
 import org.jetbrains.kotlin.test.model.ResultingArtifact
+import org.jetbrains.kotlin.test.preprocessors.CommentTransformerPreprocessor
 import org.jetbrains.kotlin.test.preprocessors.JvmInlineSourceTransformer
 import org.jetbrains.kotlin.test.preprocessors.MetaInfosCleanupPreprocessor
 import org.jetbrains.kotlin.test.services.*
@@ -36,6 +37,7 @@ abstract class AbstractKotlinCompilerTest {
         val defaultPreprocessors: List<Constructor<SourceFilePreprocessor>> = listOf(
             ::MetaInfosCleanupPreprocessor,
             ::JvmInlineSourceTransformer,
+            ::CommentTransformerPreprocessor,
         )
 
         private fun configureDebugFlags() {
