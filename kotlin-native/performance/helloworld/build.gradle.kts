@@ -61,10 +61,12 @@ val processBenchResults by tasks.registering {
     }
 }
 
-benchmark.konanJsonReport.configure {
-    codeSizeBinary.set(outputBinary)
+benchmark.getCodeSize.configure {
+    codeSizeBinary = outputBinary
     dependsOn(benchmark.konanRun) // make sure there's a dependency information attached to the input above
+}
 
-    benchmarksReportFile.fileProvider(processBenchResults.map { it.outputs.files.singleFile })
+benchmark.konanJsonReport.configure {
+    benchmarksReports.setFrom(benchmark.getCodeSize, processBenchResults)
     compilerFlags.set(flags)
 }

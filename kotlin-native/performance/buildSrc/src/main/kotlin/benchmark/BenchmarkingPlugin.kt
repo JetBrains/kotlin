@@ -41,6 +41,7 @@ open class BenchmarkExtension @Inject constructor(project: Project) {
     val prefixBenchmarksWithApplicationName: Property<Boolean> = project.objects.property(Boolean::class.java).convention(true)
 
     val konanRun by project.tasks.registering(RunKotlinNativeTask::class)
+    val getCodeSize by project.tasks.registering(CodeSizeTask::class)
     val konanJsonReport by project.tasks.registering(JsonReportTask::class)
 }
 
@@ -94,12 +95,20 @@ abstract class BenchmarkingPlugin : Plugin<Project> {
             finalizedBy(benchmark.konanJsonReport)
         }
 
+        benchmark.getCodeSize.configure {
+            group = BENCHMARKING_GROUP
+            description = "Collect the code size metric for Kotlin/Native."
+
+            name.set(benchmark.applicationName)
+            reportFile.set(layout.buildDirectory.file("nativeCodeSizeResults.json"))
+        }
+
         benchmark.konanJsonReport.configure {
             group = BENCHMARKING_GROUP
             description = "Builds the benchmarking report for Kotlin/Native."
 
-            codeSizeName.set(benchmark.applicationName)
-            benchmarksReportFile.set(benchmark.konanRun.map { it.reportFile.get() })
+            benchmarksReports.from(benchmark.getCodeSize)
+            benchmarksReports.from(benchmark.konanRun.map { it.reportFile.get() })
             compilerVersion.set(project.compilerVersion)
             if (buildType.optimized) {
                 compilerFlags.add("-opt")

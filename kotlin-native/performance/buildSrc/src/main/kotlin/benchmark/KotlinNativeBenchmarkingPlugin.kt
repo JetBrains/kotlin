@@ -35,8 +35,10 @@ open class KotlinNativeBenchmarkingPlugin : BenchmarkingPlugin() {
         benchmark.konanRun.configure {
             executable.fileProvider(linkTaskProvider.map { it.outputFile.get() })
         }
-        benchmark.konanJsonReport.configure {
+        benchmark.getCodeSize.configure {
             codeSizeBinary.fileProvider(linkTaskProvider.map { it.outputFile.get() })
+        }
+        benchmark.konanJsonReport.configure {
             compilerFlags.addAll(linkTaskProvider.map { it.toolOptions.freeCompilerArgs.get() })
         }
     }
