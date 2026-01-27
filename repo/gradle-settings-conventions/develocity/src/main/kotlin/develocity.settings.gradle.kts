@@ -44,7 +44,7 @@ buildCache {
         }
     }
     if (develocity.server.isPresent) {
-        val remoteBuildCacheUrl = buildProperties.buildCacheUrl.get()?.trim()
+        val remoteBuildCacheUrl = buildProperties.buildCacheUrl.orNull?.trim()
         if (System.getenv("TC_K8S_CLOUD_PROFILE_ID") == "kotlindev-kotlin-k8s") {
             remote(develocity.buildCache) {
                 isPush = buildProperties.pushToBuildCache.get()
