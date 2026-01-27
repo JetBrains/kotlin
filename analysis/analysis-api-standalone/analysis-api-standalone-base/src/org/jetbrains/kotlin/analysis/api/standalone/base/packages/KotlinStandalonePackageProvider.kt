@@ -57,7 +57,7 @@ class KotlinStandalonePackageProviderFactory(
     /** A mapping between the library root (normally, a root entry in a JAR/KLib archive) and its containing KLib file. */
     private val klibFiles: Map<VirtualFile, Path> = buildMap {
         for (libraryRoot in libraryRoots) {
-            val libraryFile = VfsUtilCore.getVirtualFileForJar(libraryRoot)?.toNioPath() ?: continue
+            val libraryFile = runCatching { VfsUtilCore.getVirtualFileForJar(libraryRoot)?.toNioPath() }.getOrNull() ?: continue
             if (libraryFile.extension.lowercase() == KLIB_FILE_EXTENSION) {
                 put(libraryRoot, libraryFile)
             }
