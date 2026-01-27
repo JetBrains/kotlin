@@ -1,0 +1,9 @@
+module one {
+    header "one.h"
+}
+module failure {
+    header "failure.h"
+}
+module two {
+    header "two.h"
+}

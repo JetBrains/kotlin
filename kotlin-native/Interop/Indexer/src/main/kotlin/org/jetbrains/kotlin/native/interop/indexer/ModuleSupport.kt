@@ -3,16 +3,23 @@ package org.jetbrains.kotlin.native.interop.indexer
 import clang.*
 import kotlinx.cinterop.readValue
 import java.nio.file.Files
+import java.util.LinkedList
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.plus
 
 data class ModulesInfo(val topLevelHeaders: List<IncludeInfo>, val ownHeaders: Set<String>, val modules: List<String>)
 
-fun getModulesInfo(compilation: Compilation, modules: List<String>): ModulesInfo {
+fun getModulesInfo(compilation: Compilation, modules: List<String>, skipNonImportableModules: Boolean): ModulesInfo {
     if (modules.isEmpty()) return ModulesInfo(emptyList(), emptySet(), emptyList())
 
     val areModulesEnabled = compilation.compilerArgs.contains("-fmodules")
     withIndex(excludeDeclarationsFromPCH = false) { index ->
         ModularCompilation(compilation).use {
-            val modulesASTFiles = getModulesASTFiles(index, it, modules)
+            val modulesASTFiles = if (skipNonImportableModules) {
+                getModulesASTFilesSkipNonImportableModules(index, it, modules)
+            } else getModulesASTFiles(index, it, modules)
+
             return buildModulesInfo(index, modules, modulesASTFiles, areModulesEnabled)
         }
     }
@@ -61,36 +68,125 @@ internal open class ModularCompilation(compilation: Compilation) : Compilation b
     }
 }
 
-private fun getModulesASTFiles(index: CXIndex, compilation: ModularCompilation, modules: List<String>): List<String> {
-    val compilationWithImports = compilation.copy(
-            additionalPreambleLines = modules.map { "@import $it;" } + compilation.additionalPreambleLines
-    )
+private data class TranslationUnitParseResult(
+        val translationUnit: CXTranslationUnit,
+        val errors: List<Diagnostic>
+)
 
-    val result = linkedSetOf<String>()
+private fun ModularCompilation.parseModules(index: CXIndex, modules: List<String>): TranslationUnitParseResult {
+    val compilationWithImports = copy(additionalPreambleLines = modules.map { "@import $it;" } + additionalPreambleLines)
     val errors = mutableListOf<Diagnostic>()
-
     val translationUnit = compilationWithImports.parse(
             index,
             options = CXTranslationUnit_DetailedPreprocessingRecord,
             diagnosticHandler = { if (it.isError()) errors.add(it) }
     )
+    return TranslationUnitParseResult(translationUnit, errors)
+}
+
+private fun CXTranslationUnit.importedASTFiles(index: CXIndex): Set<String> {
+    val result = linkedSetOf<String>()
+    indexTranslationUnit(index, this, 0, object : Indexer {
+        override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
+            result += info.getFile()!!.canonicalPath
+        }
+    })
+    return result
+}
+
+private const val ERROR_COUNT_LIMIT = 10
+
+private fun getModulesASTFiles(index: CXIndex, compilation: ModularCompilation, modules: List<String>): List<String> {
+    val (translationUnit, errors) = compilation.parseModules(index, modules)
     try {
         if (errors.isNotEmpty()) {
-            val errorMessage = errors.take(10).joinToString("\n") { it.format }
+            val errorMessage = errors.take(ERROR_COUNT_LIMIT).joinToString("\n") { it.format }
             throw Error(errorMessage)
         }
 
         translationUnit.ensureNoCompileErrors()
 
-        indexTranslationUnit(index, translationUnit, 0, object : Indexer {
-            override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                result += info.getFile()!!.canonicalPath
-            }
-        })
+        return translationUnit.importedASTFiles(index).toList()
     } finally {
         clang_disposeTranslationUnit(translationUnit)
     }
-    return result.toList()
+}
+
+/**
+ * This method of import is intended for SwiftPM import. We try to import all modules one by one and skip those that didn't import. This means we
+ * don't need to require explicit module specification in the build script, and we also don't need to heuristically filter out modules we
+ * can't import like C++ modules
+ */
+private fun getModulesASTFilesSkipNonImportableModules(index: CXIndex, compilation: ModularCompilation, modules: List<String>): List<String> {
+    val importedFiles = linkedSetOf<String>()
+    var importedSomeModules = false
+
+    class ModuleImportErrors(val moduleName: String, val errors: List<String>)
+
+    val moduleImportErrors = mutableListOf<ModuleImportErrors>()
+    modules.forEach { module ->
+        val (translationUnit, errors) = compilation.parseModules(index, listOf(module))
+        try {
+            if (errors.isNotEmpty()) {
+                moduleImportErrors.add(ModuleImportErrors(module, errors.map { it.format }))
+            } else if (translationUnit.hasCompileErrors()) {
+                moduleImportErrors.add(ModuleImportErrors(module, translationUnit.getCompileErrors().toList()))
+            } else {
+                importedFiles.addAll(translationUnit.importedASTFiles(index))
+                importedSomeModules = true
+            }
+        } finally {
+            clang_disposeTranslationUnit(translationUnit)
+        }
+    }
+
+    if (moduleImportErrors.isNotEmpty()) {
+        val truncatedErrors = roundRobinTake(
+                input = moduleImportErrors.associateWith { it.errors },
+                outputLimit = maxOf(ERROR_COUNT_LIMIT, moduleImportErrors.size),
+        )
+        val error = Error(
+                truncatedErrors.flatMap { (module, errors) ->
+                    errors.map { "${module.moduleName}: ${it}" }
+                }.joinToString("\n")
+        )
+        if (importedSomeModules) {
+            println(error)
+        } else {
+            throw error
+        }
+    }
+
+    return importedFiles.toList()
+}
+
+/**
+ * Given an [input] map of modules and their errors return an ordered map with the total number of errors <= [outputLimit] taken in a
+ * round-robin fashion per keys ordering
+ */
+internal fun <T, R> roundRobinTake(
+        input: Map<T, List<R>>,
+        outputLimit: Int,
+): Map<T, List<R>> {
+    val keysQueue = LinkedList(input.keys)
+    var totalTakenElementsCount = 0
+    val output = LinkedHashMap<T, MutableList<R>>()
+    var iterator = keysQueue.listIterator()
+    while (iterator.hasNext() && totalTakenElementsCount < outputLimit) {
+        val key = iterator.next()
+        val takenElements = output.getOrPut(key) { mutableListOf() }
+        val associatedElements = input[key] ?: emptyList()
+        if (takenElements.size == associatedElements.size) {
+            iterator.remove()
+        } else {
+            takenElements.add(associatedElements[takenElements.size])
+            totalTakenElementsCount += 1
+        }
+        if (!iterator.hasNext()) {
+            iterator = keysQueue.listIterator()
+        }
+    }
+    return output
 }
 
 private fun getModulesHeaders(

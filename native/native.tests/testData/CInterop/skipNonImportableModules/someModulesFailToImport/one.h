@@ -1,0 +1,1 @@
+void one(void);
