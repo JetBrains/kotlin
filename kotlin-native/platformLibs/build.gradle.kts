@@ -3,18 +3,16 @@
  * that can be found in the LICENSE file.
  */
 
-import org.gradle.kotlin.dsl.getByType
-import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
-import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanInteropTask
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
+import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
+import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanInteropTask
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
-import org.jetbrains.kotlin.nativeDistribution.nativeBootstrapDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
+import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 import org.jetbrains.kotlin.platformLibs.*
 import org.jetbrains.kotlin.platformManager
-import org.jetbrains.kotlin.tools.NativeToolsExtension
 import org.jetbrains.kotlin.utils.capitalized
 
 plugins {
@@ -79,7 +77,7 @@ enabledTargets(platformManager).forEach { target ->
             updateDefFileTasksPerFamily[target.family]?.let { dependsOn(it) }
 
             if (kotlinBuildProperties.buildPlatformLibsByBootstrapCompiler) {
-                this.compilerDistributionRoot.set(nativeBootstrapDistribution.map { it.root })
+                this.compilerDistributionRoot.set(registerNativeBootstrapDistribution().map { it.root })
             } else {
                 // Requires Native distribution with compiler JARs and stdlib klib.
                 this.compilerDistributionRoot.set(nativeDistribution.map { it.root })
