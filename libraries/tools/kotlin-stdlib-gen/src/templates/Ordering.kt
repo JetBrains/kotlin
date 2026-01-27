@@ -90,6 +90,9 @@ object Ordering : TemplateGroupBase() {
         include(Iterables, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, Strings)
     } builder {
         doc { "Returns a list with elements in reversed order." }
+        if (f == ArraysOfObjects || f == ArraysOfPrimitives || f == ArraysOfUnsigned) {
+            appendSeeAlso("reversedArray")
+        }
         returns("List<T>")
         body {
             """
@@ -123,6 +126,7 @@ object Ordering : TemplateGroupBase() {
         include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns an array with elements of this array in reversed order." }
+        appendSeeAlso("reversed")
         returns("SELF")
         body(InvariantArraysOfObjects) {
             """
@@ -163,6 +167,14 @@ object Ordering : TemplateGroupBase() {
         }
     }
 
+    private fun MemberBuilder.appendSeeAlso(link: String) {
+        doc {
+            val base = doc.orEmpty().trimIndent()
+            val separator = if (base.isEmpty()) "" else "\n\n"
+            base + separator + "See also [$link]."
+        }
+    }
+
     val stableSortBySelectorNote = """
         The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order 
         relative to each other after sorting.
@@ -184,6 +196,9 @@ object Ordering : TemplateGroupBase() {
             """
             Returns a list of all elements sorted according to their natural sort order.
             """
+        }
+        if (f == ArraysOfObjects || f == ArraysOfPrimitives || f == ArraysOfUnsigned) {
+            appendSeeAlso("sortedArray")
         }
         if (f != ArraysOfPrimitives && f != ArraysOfUnsigned) {
             appendStableSortNote()
@@ -244,6 +259,7 @@ object Ordering : TemplateGroupBase() {
         doc {
             "Returns an array with all elements of this array sorted according to their natural sort order."
         }
+        appendSeeAlso("sorted")
         specialFor(InvariantArraysOfObjects) {
             appendStableSortNote()
         }
@@ -293,6 +309,9 @@ object Ordering : TemplateGroupBase() {
             Returns a list of all elements sorted descending according to their natural sort order.
             """
         }
+        if (f == ArraysOfObjects || f == ArraysOfPrimitives || f == ArraysOfUnsigned) {
+            appendSeeAlso("sortedArrayDescending")
+        }
         if (f != ArraysOfPrimitives && f != ArraysOfUnsigned) {
             appendStableSortNote()
         }
@@ -326,6 +345,7 @@ object Ordering : TemplateGroupBase() {
         doc {
             "Returns an array with all elements of this array sorted descending according to their natural sort order."
         }
+        appendSeeAlso("sortedDescending")
         specialFor(InvariantArraysOfObjects) {
             appendStableSortNote()
         }
@@ -353,6 +373,9 @@ object Ordering : TemplateGroupBase() {
             """
             Returns a list of all elements sorted according to the specified [comparator].
             """
+        }
+        if (f == ArraysOfObjects) {
+            appendSeeAlso("sortedArrayWith")
         }
         if (f != ArraysOfPrimitives) {
             appendStableSortNote()
@@ -405,6 +428,7 @@ object Ordering : TemplateGroupBase() {
         doc {
             "Returns an array with all elements of this array sorted according the specified [comparator]."
         }
+        appendSeeAlso("sortedWith")
         appendStableSortNote()
         returns("SELF")
         body {
