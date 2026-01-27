@@ -1,7 +1,16 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
     kotlin("multiplatform")
+}
+
+val benchmarksAnalyzerExecutable by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named("executable"))
+    }
 }
 
 kotlin {
@@ -11,7 +20,16 @@ kotlin {
             macosArm64(),
             mingwX64(),
     ).forEach {
-        it.binaries.executable("benchmarksAnalyzer", listOf(NativeBuildType.RELEASE))
+        it.binaries.executable("benchmarksAnalyzer", listOf(NativeBuildType.RELEASE)) {
+            benchmarksAnalyzerExecutable.outgoing.variants {
+                create(target.name) {
+                    artifact(linkTaskProvider.map { it.outputFile.get() })
+                    attributes {
+                        attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
+                    }
+                }
+            }
+        }
     }
 
     sourceSets {
