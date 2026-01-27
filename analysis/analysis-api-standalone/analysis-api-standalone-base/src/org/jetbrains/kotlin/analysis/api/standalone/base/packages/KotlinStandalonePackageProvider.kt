@@ -86,11 +86,11 @@ class KotlinStandalonePackageProviderFactory(
                 if (searchScope.contains(sourceVirtualFile)) {
                     add(sourceKtFile.packageFqName)
                 }
+            }
 
-                for ((libraryRoot, libraryFile) in klibFiles) {
-                    if (searchScope.contains(libraryRoot)) {
-                        addAll(klibPackages[libraryFile] ?: emptyList())
-                    }
+            for ((libraryRoot, libraryFile) in klibFiles) {
+                if (searchScope.contains(libraryRoot)) {
+                    addAll(klibPackages[libraryFile] ?: emptyList())
                 }
             }
         }
