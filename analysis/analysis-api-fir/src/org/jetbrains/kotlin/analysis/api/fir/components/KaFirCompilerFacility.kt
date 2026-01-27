@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.fir.components.compilation.CodeFragment
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaClassBuilderFactory
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
-import org.jetbrains.kotlin.analysis.api.impl.base.extensions.IrGenerationExtensionPointDescriptor
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
@@ -947,7 +946,9 @@ internal class KaFirCompilerFacility(
     }
 
     private fun getIrGenerationExtensions(module: KaModule): List<IrGenerationExtension> {
-        val projectExtensions = IrGenerationExtensionPointDescriptor.getInstances(project)
+        val projectExtensions = project.extensionArea
+            .getExtensionPoint<IrGenerationExtension>(IrGenerationExtension.name)
+            .extensionList
 
         val unwrappedModule = module.baseContextModuleOrSelf
         if (unwrappedModule !is KaSourceModule) {

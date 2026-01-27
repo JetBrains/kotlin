@@ -11,29 +11,18 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
-/**
- * @param additionalExtensionPointProjectDescriptors allows registering extensions which extension point descriptors are
- * unbound from intellij API, but there are still project descriptors for them in the AA environment.
- */
 fun CompilerPluginRegistrar.ExtensionStorage.registerInProject(
     project: Project,
-    additionalExtensionPointProjectDescriptors: List<ProjectExtensionDescriptor<*>> = emptyList(),
     errorMessage: (Any) -> String = { "Error while registering ${it.javaClass.name} "}
 ) {
     for ((extensionPoint, extensions) in registeredExtensions) {
         for (extension in extensions) {
             @Suppress("UNCHECKED_CAST")
             try {
-                if (extensionPoint is ProjectExtensionDescriptor<*>) {
-                    (extensionPoint as ProjectExtensionDescriptor<Any>).registerExtensionUnsafe(project, extension)
-                }
-                for (additionalDescriptor in additionalExtensionPointProjectDescriptors) {
-                    if (additionalDescriptor.extensionClass.isInstance(extension)) {
-                        (additionalDescriptor as ProjectExtensionDescriptor<Any>).registerExtensionUnsafe(project, extension)
-                    }
-                }
+                val platformExtensionPoint = project.extensionArea.getExtensionPointIfRegistered<Any>(extensionPoint.name) ?: continue
+                if (platformExtensionPoint.extensions.any { it.javaClass == extension.javaClass }) continue
+                platformExtensionPoint.registerExtension(extension, project)
             } catch (e: AbstractMethodError) {
                 throw IllegalStateException(errorMessage(extension), e)
             }
@@ -42,10 +31,6 @@ fun CompilerPluginRegistrar.ExtensionStorage.registerInProject(
     for (disposable in disposables) {
         Disposer.register(project) { disposable.dispose() }
     }
-}
-
-private fun ProjectExtensionDescriptor<Any>.registerExtensionUnsafe(project: Project, extension: Any) {
-    this.registerExtension(project, extension)
 }
 
 @TestOnly
