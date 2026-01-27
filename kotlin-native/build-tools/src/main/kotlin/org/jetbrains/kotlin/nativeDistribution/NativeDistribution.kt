@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.nativeDistribution
 
 import bootstrapKotlinVersion
 import org.gradle.api.Project
-import org.gradle.api.Transformer
-import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.RegularFile
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
+import org.gradle.api.file.*
 import org.gradle.api.provider.Provider
-import org.gradle.api.specs.Spec
+import org.gradle.api.tasks.Sync
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.konan.util.ArchiveType
+import org.jetbrains.kotlin.konan.util.ArchiveType.TAR_GZ
+import org.jetbrains.kotlin.konan.util.ArchiveType.ZIP
 import org.jetbrains.kotlin.kotlinNativeDist
-import java.util.function.BiFunction
 
 /**
  * Describes distribution of Native compiler rooted at [root].
@@ -184,17 +182,44 @@ fun DirectoryProperty.asNativeDistribution(): Provider<NativeDistribution> = thi
 val Project.nativeDistribution: Provider<NativeDistribution>
     get() = layout.dir(provider { kotlinNativeDist }).map { NativeDistribution(it) }
 
+
 /**
  * Get released Native distribution of [version].
  */
-fun Project.nativeReleasedDistribution(version: String): Provider<NativeDistribution> {
+fun Project.registerNativeReleasedDistribution(version: String): Provider<NativeDistribution> {
     val configuration = releasedNativeDistributionConfiguration(version)
-    val file = configuration.incoming.artifacts.resolvedArtifacts.map { it.single().file }
-    return layout.dir(file).map { NativeDistribution(it) }
+    val distributionFiles = configuration.incoming.files
+
+    /*
+    Setup a 'sync' task to unpack the native distribution archive.
+    We're using a sync into the build directory in favor of any artifact transform, because this native
+    distribution is ment to used, as is, for further builds. Such builds might store files within the distribution
+    which would violate Gradle invariants for artifact transforms (which are ment to stay immutable).
+     */
+    val syncTaskName = "syncNativeDistributionV$version"
+    val syncTask = if (syncTaskName !in tasks.names) tasks.register<Sync>(syncTaskName) {
+        from(project.files({
+            distributionFiles.map { archive ->
+                when {
+                    archive.path.endsWith("." + TAR_GZ.fileExtension) -> tarTree(archive)
+                    archive.path.endsWith("." + ZIP.fileExtension) -> zipTree(archive)
+                    else -> error("Unsupported archive type: $archive")
+                }
+            }
+        }).builtBy(distributionFiles)) {
+            eachFile {
+                relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
+            }
+            includeEmptyDirs = false
+        }
+        into(layout.buildDirectory.dir("nativeDistributionV$version"))
+    } else tasks.named<Sync>(syncTaskName)
+
+    return syncTask.map { NativeDistribution(project.layout.buildDirectory.dir("nativeDistributionV$version").get()) }
 }
 
 /**
  * Get Native bootstrap distribution.
  */
-val Project.nativeBootstrapDistribution: Provider<NativeDistribution>
-    get() = nativeReleasedDistribution(bootstrapKotlinVersion)
+fun Project.registerNativeBootstrapDistribution(): Provider<NativeDistribution> =
+        registerNativeReleasedDistribution(bootstrapKotlinVersion)
