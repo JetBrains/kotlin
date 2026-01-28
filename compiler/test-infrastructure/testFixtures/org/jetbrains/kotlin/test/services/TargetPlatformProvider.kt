@@ -21,18 +21,18 @@ import org.jetbrains.kotlin.test.model.TestModule
  * It allows configuring how the target platform is determined for a module based on default settings, directives and module name
  */
 abstract class TargetPlatformProvider : TestService {
-    abstract fun getTargetPlatform(module: TestModule): TargetPlatform
+    abstract fun getTargetPlatform(module: TestModule, allowMultiplatform: Boolean = false): TargetPlatform
 }
 
 val TestServices.targetPlatformProvider: TargetPlatformProvider by TestServices.testServiceAccessor()
 
-fun TestModule.targetPlatform(testServices: TestServices): TargetPlatform =
-    testServices.targetPlatformProvider.getTargetPlatform(this)
+fun TestModule.targetPlatform(testServices: TestServices, allowMultiplatform: Boolean = false): TargetPlatform =
+    testServices.targetPlatformProvider.getTargetPlatform(this, allowMultiplatform)
 
 class TargetPlatformProviderForCompilerTests(val testServices: TestServices) : TargetPlatformProvider() {
-    override fun getTargetPlatform(module: TestModule): TargetPlatform {
+    override fun getTargetPlatform(module: TestModule, allowMultiplatform: Boolean): TargetPlatform {
         val directives = module.directives
-        if (METADATA_ONLY_COMPILATION in directives) {
+        if (allowMultiplatform || METADATA_ONLY_COMPILATION in directives) {
             return MetadataConfigurationUpdater.computeTargetPlatform(
                 directives[METADATA_TARGET_PLATFORMS],
                 onUnknownPlatform = { error("Unknown target platform: $it") },
