@@ -19,6 +19,11 @@ val assignmentCompilerPluginResolvable = configurations.resolvable("assignmentCo
     extendsFrom(assignmentCompilerPlugin.get())
 }
 
+val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
+val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplResolvable") {
+    extendsFrom(buildToolsApiImpl.get())
+}
+
 dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
@@ -32,6 +37,9 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
     noArgCompilerPlugin(project(":kotlin-noarg-compiler-plugin.embeddable"))
     assignmentCompilerPlugin(project(":kotlin-assignment-compiler-plugin.embeddable"))
+    buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
+    buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
+    buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
 }
 
 kotlin {
@@ -55,11 +63,23 @@ class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolea
     override fun toString() = if (isCurrent) "Snapshot" else version.toString()
 }
 
+val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
+
 fun Test.ensureExecutedAgainstExpectedBuildToolsImplVersion(version: BuildToolsVersion) {
     if (version.isCurrent) return
+    val compilerClasspathProperty = COMPILER_CLASSPATH_PROPERTY // to make the task action configuration cache-friendly, we have to copy it to a local var
     // the check is required for the case when Gradle substitutes external dependencies with project ones
     doFirst {
-        check(classpath.any { "kotlin-build-tools-impl-${version}" in it.name }) {
+        // we cannot check systemProperties because the classpath is configured in addClasspathProperty via jvmArgumentProviders
+        val compilerClasspath = jvmArgumentProviders
+            .map { it.asArguments().joinToString("|||") }
+            .find { compilerClasspathProperty in it }
+            ?.substring("-D$compilerClasspathProperty=".length)
+            ?.substringBefore("|||")
+            ?.split(File.pathSeparator)
+            ?: error("Failed to parse compiler classpath system property $compilerClasspathProperty")
+        check(
+            compilerClasspath.any { "kotlin-build-tools-impl-${version}" in it }) {
             "runtime classpath must contain kotlin-build-tools-impl:$version"
         }
     }
@@ -96,6 +116,40 @@ val businessLogicTestSuits = setOf(
     "testBuildMetrics",
 )
 
+fun JvmTestSuite.addSnapshotBuildToolsImpl() {
+    targets.all {
+        testTask.configure {
+            addClasspathProperty(buildToolsApiImplResolvable.get(), COMPILER_CLASSPATH_PROPERTY)
+        }
+    }
+}
+
+fun JvmTestSuite.addSpecificBuildToolsImpl(version: String) {
+    val baseName = "buildToolsApiImpl$version"
+    val resolvableSuffix = "Resolvable"
+    val configurationsExist = baseName in configurations.names
+    val resolvableConfiguration = if (configurationsExist) {
+        configurations.named("$baseName$resolvableSuffix")
+    } else {
+        val buildToolsApiImpl = configurations.dependencyScope(baseName)
+        val buildToolsApiImplResolvable = configurations.resolvable("$baseName$resolvableSuffix") {
+            extendsFrom(buildToolsApiImpl.get())
+        }
+        project.dependencies {
+            buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-api"))
+            buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
+            buildToolsApiImpl("org.jetbrains.kotlin:kotlin-build-tools-impl:${version}")
+        }
+        buildToolsApiImplResolvable
+    }
+
+    targets.all {
+        testTask.configure {
+            addClasspathProperty(resolvableConfiguration.get(), COMPILER_CLASSPATH_PROPERTY)
+        }
+    }
+}
+
 testing {
     suites {
         for (suit in businessLogicTestSuits) {
@@ -108,13 +162,10 @@ testing {
                 if (!kotlinBuildProperties.isInIdeaSync.get() || !configuredIdeaSourceSets) {
                     sources.configureCompatibilitySourceDirectories("testCompatibility")
                 }
-                dependencies {
-                    runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
-                    if (implVersion.isCurrent) {
-                        runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
-                    } else {
-                        runtimeOnly("org.jetbrains.kotlin:kotlin-build-tools-impl:${implVersion}")
-                    }
+                if (implVersion.isCurrent) {
+                    addSnapshotBuildToolsImpl()
+                } else {
+                    addSpecificBuildToolsImpl(implVersion.toString())
                 }
                 targets.all {
                     projectTests {
@@ -149,7 +200,7 @@ testing {
                         testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                             systemProperty(
-                                "kotlin.build-tools-api.test.compilerClasspath",
+                                COMPILER_CLASSPATH_PROPERTY,
                                 configurations.named("isolatedCompilerClasspath$implVersion").get().asPath
                             )
                             systemProperty(
@@ -165,24 +216,14 @@ testing {
 
         withType<JvmTestSuite>().configureEach configureSuit@{
             val isRegular = this@configureSuit.name in businessLogicTestSuits
-            val isIsolatedClasspath = this@configureSuit.name.startsWith("testIsolatedCompiler")
             dependencies {
                 useJUnitJupiter(libs.versions.junit5.get())
 
-                compileOnly(project()) // propagate stdlib from the main dependencies for compilation, the runtime dependency provides the actual required version
-                implementation(project()) {
-                    // for the "testIsolatedCompiler" test suite, we don't bring in the build-tools-impl dependency,
-                    // so we don't have stdlib and other deps either. We need to bring them in explicitly.
-                    isTransitive = isIsolatedClasspath
-                }
+                implementation(project())
                 implementation(project(":kotlin-tooling-core"))
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
-                if (!isIsolatedClasspath) {
-                    runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
-                    if (isRegular) {
-                        runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
-                        runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
-                    }
+                if (isRegular) {
+                    addSnapshotBuildToolsImpl()
                 }
             }
 

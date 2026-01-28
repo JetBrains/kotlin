@@ -5,6 +5,7 @@
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.cri
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -15,7 +16,7 @@ class CriToolchainSmokeTest {
     @DisplayName("Smoke test for the CRI toolchain lookups deserialization operation")
     fun smokeTestCriLookupDeserialization() {
         val lookupData = ByteArray(1)
-        val toolchain = KotlinToolchains.loadImplementation(CriToolchainSmokeTest::class.java.classLoader)
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
         val operation = toolchain.cri.createCriLookupDataDeserializationOperation(lookupData)
         val lookups = toolchain.createBuildSession().use { it.executeOperation(operation) }
         assertTrue(lookups.toList().isEmpty())
@@ -25,7 +26,7 @@ class CriToolchainSmokeTest {
     @DisplayName("Smoke test for the CRI toolchain fileIdToPath deserialization operation")
     fun smokeTestCriFileIdToPathDeserialization() {
         val fileIdToPathData = ByteArray(1)
-        val toolchain = KotlinToolchains.loadImplementation(CriToolchainSmokeTest::class.java.classLoader)
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
         val operation = toolchain.cri.createCriFileIdToPathDataDeserializationOperation(fileIdToPathData)
         val fileIdsToPaths = toolchain.createBuildSession().use { it.executeOperation(operation) }
         assertTrue(fileIdsToPaths.toList().isEmpty())
@@ -35,7 +36,7 @@ class CriToolchainSmokeTest {
     @DisplayName("Smoke test for the CRI toolchain subtype deserialization operation")
     fun smokeTestCriSubtypeDeserialization() {
         val subtypeData = ByteArray(1)
-        val toolchain = KotlinToolchains.loadImplementation(CriToolchainSmokeTest::class.java.classLoader)
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
         val operation = toolchain.cri.createCriSubtypeDataDeserializationOperation(subtypeData)
         val subtypes = toolchain.createBuildSession().use { it.executeOperation(operation) }
         assertTrue(subtypes.toList().isEmpty())
