@@ -65,14 +65,6 @@ class VariableReadinessCalculator(
         // ILT type = Integer literal type = yet unknown choice from Byte/Short/Int/Long (at least two of them)
         // Any proper constraint can be here which isn't bound to ILT type
         HAS_PROPER_NON_ILT_CONSTRAINT,
-
-        // Explicit lower `Nothing` constraints tend to always fix to `Nothing`
-        // (if there's an explicit one, then the user wrote it on purpose somewhere),
-        // which may "poison" other type variables depending on the current one.
-        // This entry de-prioritizes variables that have `:> Nothing(?)` constraints
-        // (both nullable and not null).
-        // See: `reifiedToNothing.kt` (KT-76443)
-        HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT,
         ;
 
         init {
@@ -135,16 +127,8 @@ class VariableReadinessCalculator(
         val (_, hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
         readiness[Q.HAS_PROPER_NON_ILT_CONSTRAINT] = hasProperNonIltConstraint
 
-        readiness[Q.HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT] = hasNoExplicitLowerNothingConstraint()
-
         return readiness
     }
-
-    context(c: Context)
-    private fun TypeConstructorMarker.hasNoExplicitLowerNothingConstraint(): Boolean =
-        c.notFixedTypeVariables[this]?.constraints
-            ?.none { it.kind.isLower() && it.type.typeConstructor().isNothingConstructor() }
-            ?: true
 
     context(c: Context)
     private fun TypeConstructorMarker.hasLowerNonNothingNonIltProperConstraint(): Boolean {

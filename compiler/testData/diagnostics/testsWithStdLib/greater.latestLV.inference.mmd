@@ -59,7 +59,6 @@ flowchart TD
 	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
 	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
 	false HAS_PROPER_NON_ILT_CONSTRAINT
-	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
 )</tt></pre>"]
     class variableReadiness8 nowrapClass;
     class variableReadiness8 readinessStyle;
@@ -117,7 +116,6 @@ flowchart TD
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
 	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
 	 true HAS_PROPER_NON_ILT_CONSTRAINT
-	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
 )</tt></pre>"]
     class variableReadiness17 nowrapClass;
     class variableReadiness17 readinessStyle;
@@ -232,7 +230,6 @@ flowchart TD
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
 	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
 	 true HAS_PROPER_NON_ILT_CONSTRAINT
-	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
 )</tt></pre>"]
     class variableReadiness39 nowrapClass;
     class variableReadiness39 readinessStyle;
@@ -280,7 +277,6 @@ flowchart TD
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
 	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
 	 true HAS_PROPER_NON_ILT_CONSTRAINT
-	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
 )</tt></pre>"]
     class variableReadiness40 nowrapClass;
     class variableReadiness40 readinessStyle;
@@ -395,7 +391,6 @@ flowchart TD
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
 	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
 	 true HAS_PROPER_NON_ILT_CONSTRAINT
-	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
 )</tt></pre>"]
     class variableReadiness69 nowrapClass;
     class variableReadiness69 readinessStyle;
@@ -416,7 +411,6 @@ flowchart TD
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
 	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
 	 true HAS_PROPER_NON_ILT_CONSTRAINT
-	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
 )</tt></pre>"]
     class variableReadiness70 nowrapClass;
     class variableReadiness70 readinessStyle;
@@ -560,7 +554,7 @@ flowchart TD
 
     stage101 ~~~ variableReadiness102
 
-    variableReadiness102["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness102["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -571,17 +565,16 @@ flowchart TD
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
 	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
 	 true HAS_PROPER_NON_ILT_CONSTRAINT
-	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
 )</tt></pre>"]
     class variableReadiness102 nowrapClass;
     class variableReadiness102 readinessStyle;
-    constraint104["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
+    constraint104["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
     class constraint104 nowrapClass;
     variableReadiness102 ~~~ constraint104
 
     constraint104 ~~~ variableReadiness103
 
-    variableReadiness103["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness103["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -592,11 +585,10 @@ flowchart TD
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
 	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
 	 true HAS_PROPER_NON_ILT_CONSTRAINT
-	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
 )</tt></pre>"]
     class variableReadiness103 nowrapClass;
     class variableReadiness103 readinessStyle;
-    constraint105["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    constraint105["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
     class constraint105 nowrapClass;
     variableReadiness103 ~~~ constraint105
 

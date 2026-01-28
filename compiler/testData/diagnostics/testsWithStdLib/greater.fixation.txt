@@ -9,7 +9,6 @@ CHOSEN for fixation: TypeVariable(M) --- Readiness(
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: T
 ********************************
@@ -24,7 +23,6 @@ CHOSEN for fixation: TypeVariable(M) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: T
      = T (inferred during fixation)
@@ -41,7 +39,6 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: TypeVariable(T)?
      <: kotlin/Comparable<TypeVariable(T)>?
@@ -64,7 +61,6 @@ TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: kotlin/Comparable<TypeVariable(T)>
      >: TypeVariable(S) & Any
@@ -84,7 +80,6 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: kotlin/Comparable<TypeVariable(T)>
      = ILT: 0
@@ -104,7 +99,6 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: kotlin/Comparable<TypeVariable(T)>
      >: TypeVariable(S) & Any
@@ -123,7 +117,6 @@ TypeVariable(S) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: TypeVariable(T)?
      <: kotlin/Comparable<TypeVariable(T)>?
@@ -143,7 +136,6 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: kotlin/Comparable<TypeVariable(S) & Any>?
      <: kotlin/Long
@@ -154,7 +146,7 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
      <: kotlin/Long? (inferred during fixation)
     FIXED TO: it(kotlin/Long & kotlin/String)
 ********************************
-CHOSEN for fixation: TypeVariable(S) --- Readiness(
+CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -165,7 +157,26 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    )
+     <: kotlin/Comparable<TypeVariable(T)>
+     >: TypeVariable(S) & Any
+     <: kotlin/Comparable<TypeVariable(S) & Any>
+     = kotlin/String
+     <: kotlin/Comparable<kotlin/String>
+     >: kotlin/Nothing
+     <: kotlin/Comparable<kotlin/Nothing>
+    FIXED TO: kotlin/String
+TypeVariable(S) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
     )
      <: TypeVariable(T)?
      <: kotlin/Comparable<TypeVariable(T)>?
@@ -175,29 +186,8 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
      = kotlin/Nothing
      <: kotlin/Comparable<kotlin/Nothing>?
      <: kotlin/Long
-    FIXED TO: kotlin/Nothing
-TypeVariable(T) --- Readiness(
-    	 true ALLOWED
-    	 true HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE
-    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-    )
-     <: kotlin/Comparable<TypeVariable(T)>
-     >: TypeVariable(S) & Any
-     <: kotlin/Comparable<TypeVariable(S) & Any>
-     = kotlin/String
-     <: kotlin/Comparable<kotlin/String>
-     >: kotlin/Nothing
-     <: kotlin/Comparable<kotlin/Nothing>
 ********************************
-CHOSEN for fixation: TypeVariable(T) --- Readiness(
+CHOSEN for fixation: TypeVariable(S) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -208,12 +198,12 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
-     <: kotlin/Comparable<TypeVariable(T)>
-     = kotlin/String
-     <: kotlin/Comparable<kotlin/String>
-     >: kotlin/Nothing
-     <: kotlin/Comparable<kotlin/Nothing>
-    FIXED TO: kotlin/String
+     <: kotlin/Comparable<TypeVariable(S) & Any>?
+     <: kotlin/String?
+     <: kotlin/Comparable<kotlin/String>?
+     = kotlin/Nothing
+     <: kotlin/Comparable<kotlin/Nothing>?
+     <: kotlin/Long
+    FIXED TO: kotlin/Nothing
 ********************************
