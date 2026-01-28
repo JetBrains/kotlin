@@ -287,7 +287,8 @@ internal fun Project.createGeneralTestTask(
                 environment(version.envName, jdkHome)
             }
         }
-    }.apply { configure(body) }
+        body()
+    }
 }
 
 private val defaultMaxMemoryPerTestWorkerMb = 1600

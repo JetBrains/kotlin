@@ -35,6 +35,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-compiler"))
 
     embeddableTestRuntime(libs.junit.jupiter.engine)
+    embeddableTestRuntime(libs.junit.jupiter.api)
     embeddableTestRuntime(project(":kotlin-scripting-jsr223"))
     embeddableTestRuntime(project(":kotlin-scripting-compiler-embeddable"))
     embeddableTestRuntime(testSourceSet.output)
@@ -63,7 +64,6 @@ projectTests {
 
     testTask("embeddableTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
         workingDir = rootDir
-        dependsOn(embeddableTestRuntime)
         classpath = embeddableTestRuntime
         val testRuntimeProvider = project.provider { embeddableTestRuntime.asPath }
         val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
