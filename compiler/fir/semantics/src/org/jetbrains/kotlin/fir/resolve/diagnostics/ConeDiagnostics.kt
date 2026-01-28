@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -90,6 +91,12 @@ class ConeUnresolvedNameError(
         get() = when (val token = operatorToken) {
             null -> name.toString()
             else -> "$name ($token)"
+        }
+
+    val receiverTypeMessage: String
+        get() = when (receiverType) {
+            null -> ""
+            else -> "With receiver of type '${receiverType.renderReadable()}'"
         }
 }
 
