@@ -430,8 +430,6 @@ private fun File.readCompiledScript(): CompiledScript {
     }
 }
 
-private fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
-
 private fun Class<*>.supertypes(): MutableList<Class<*>> = when {
     superclass == null -> interfaces.toMutableList()
     interfaces.isEmpty() -> mutableListOf(superclass)
