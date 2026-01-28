@@ -107,14 +107,14 @@ FILE: test.kt
 
     public final fun R|api/Owner|.foo(): R|kotlin/Unit| {
         this@R|dsl/foo|.R|api/Owner.configurations|.R|dsl/invoke|(<L> = SAM(invoke@fun <anonymous>(it: R|dsl/ConfigurationContainerScope!|): R|kotlin/Unit| <inline=NoInline>  {
-            lval valley: R|api/NamedDomainObjectProvider<artifacts/Configuration>|by R|<local>/it|.R|dsl/registering<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): dsl/registering>#|<R|@EnhancedNullability artifacts/Configuration|, R|dsl/ConfigurationContainerScope!|>
+            lval valley: R|api/NamedDomainObjectProvider<artifacts/Configuration>|by R|<local>/it|.R|dsl/registering|<R|@EnhancedNullability artifacts/Configuration|, R|dsl/ConfigurationContainerScope!|>.R|dsl/provideDelegate|<R|@EnhancedNullability artifacts/Configuration|, R|CapturedType(out dsl/ConfigurationContainerScope!)|>(Null(null), ::R|<local>/valley|)
                 local get(): R|api/NamedDomainObjectProvider<artifacts/Configuration>| {
-                    ^ D|<local>/valley|.R|dsl/getValue<None of the following candidates is applicable because of receiver type mismatch: [dsl/getValue]>#|<<ERROR TYPE REF: Cannot infer argument for type parameter GV>>(Null(null), ::R|<local>/valley|)
+                    ^ D|<local>/valley|.R|dsl/getValue|<R|@EnhancedNullability api/NamedDomainObjectProvider<@EnhancedNullability artifacts/Configuration>|>(Null(null), ::R|<local>/valley|)
                 }
 
             R|<local>/it|.R|dsl/registering|<R|@EnhancedNullability artifacts/Configuration|, R|dsl/ConfigurationContainerScope!|>.R|dsl/provideDelegate<Inapplicable(INAPPLICABLE): dsl/provideDelegate>#|<R|@EnhancedNullability artifacts/Configuration|, R|CapturedType(out dsl/ConfigurationContainerScope!)|>(Null(null), ::<References to variables aren't supported yet>#).R|kotlin/Any.hashCode|()
-            R|kotlin/with|<R|dsl/RegisteringDomainObjectDelegateProvider<out dsl/ConfigurationContainerScope>|, R|kotlin/Unit|>(R|<local>/it|.R|dsl/registering|<R|@EnhancedNullability artifacts/Configuration|, R|dsl/ConfigurationContainerScope!|>, <L> = with@fun R|dsl/RegisteringDomainObjectDelegateProvider<out dsl/ConfigurationContainerScope>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-                this@R|special/anonymous|.R|dsl/provideDelegate<Inapplicable(INAPPLICABLE): dsl/provideDelegate>#|<R|@EnhancedNullability artifacts/Configuration|, R|CapturedType(out dsl/ConfigurationContainerScope)|>(Null(null), ::<References to variables aren't supported yet>#).R|kotlin/Any.hashCode|()
+            R|kotlin/with|<R|dsl/RegisteringDomainObjectDelegateProvider<out dsl/ConfigurationContainerScope!>|, R|kotlin/Unit|>(R|<local>/it|.R|dsl/registering|<R|@EnhancedNullability artifacts/Configuration|, R|dsl/ConfigurationContainerScope!|>, <L> = with@fun R|dsl/RegisteringDomainObjectDelegateProvider<out dsl/ConfigurationContainerScope!>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                this@R|special/anonymous|.R|dsl/provideDelegate<Inapplicable(INAPPLICABLE): dsl/provideDelegate>#|<R|@EnhancedNullability artifacts/Configuration|, R|CapturedType(out dsl/ConfigurationContainerScope!)|>(Null(null), ::<References to variables aren't supported yet>#).R|kotlin/Any.hashCode|()
             }
             )
         }
