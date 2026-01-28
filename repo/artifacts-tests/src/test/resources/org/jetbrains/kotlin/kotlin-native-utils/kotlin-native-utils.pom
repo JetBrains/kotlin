@@ -49,5 +49,11 @@
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>config.native</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 </project>
