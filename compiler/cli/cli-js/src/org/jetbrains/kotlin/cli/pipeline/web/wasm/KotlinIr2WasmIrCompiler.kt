@@ -100,7 +100,6 @@ class SingleModuleCompiler(configuration: CompilerConfiguration, override val ir
             loweredIr = loweredIr,
             signatureRetriever = irFactory,
             stdlibIsMainModule = isWasmStdlib,
-            outputFileNameBase = configuration.outputName,
             mainModuleFragment = loweredIr.backendContext.irModuleFragment,
         )
 }
@@ -140,7 +139,6 @@ private fun compileSingleModuleToWasmIr(
     loweredIr: LoweredIrWithExtraArtifacts,
     signatureRetriever: IdSignatureRetriever,
     stdlibIsMainModule: Boolean,
-    outputFileNameBase: String? = null,
     mainModuleFragment: IrModuleFragment,
 ): WasmIrModuleConfiguration {
 
@@ -219,7 +217,7 @@ private fun compileSingleModuleToWasmIr(
         moduleName = moduleName,
         configuration = configuration,
         typeScriptFragment = loweredIr.typeScriptFragment,
-        baseFileName = outputFileNameBase ?: mainModuleFragment.outputFileName,
+        baseFileName = mainModuleFragment.outputFileName,
         multimoduleOptions = multimoduleOptions,
     )
 }

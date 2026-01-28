@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getFriendDependencies
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -63,8 +64,9 @@ class FirWasmKlibSerializerFacade(
         val target = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
 
         if (firstTimeCompilation) {
+            val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
             serializeModuleIntoKlib(
-                moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
+                moduleName = moduleName,
                 configuration = configuration,
                 diagnosticReporter = irDiagnosticReporter,
                 metadataSerializer = inputArtifact.metadataSerializer,
@@ -73,7 +75,9 @@ class FirWasmKlibSerializerFacade(
                 irBuiltIns = inputArtifact.irBuiltIns,
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
-                jsOutputName = null,
+                jsOutputName = if (WasmEnvironmentConfigurator.isMainModule(module, testServices)) {
+                    "index"
+                } else moduleName,
                 builtInsPlatform = BuiltInsPlatform.WASM,
                 wasmTarget = target,
             )
