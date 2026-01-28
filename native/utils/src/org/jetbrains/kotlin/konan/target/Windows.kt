@@ -16,13 +16,13 @@ class MingwConfigurablesImpl(target: KonanTarget, properties: Properties, depend
     KonanPropertiesLoader(target, properties, dependenciesRoot, progressCallback = progressCallback) {
     override val windowsKit: WindowsKit by lazy {
         when (windowsSdkPartsProvider) {
-            WindowsSdkPartsProvider.InternalServer -> createCustomWindowsKitPath(Paths.get(absolute(windowsKitParts)))
+            WindowsSdkPartsProvider.InternalServer -> WindowsKit.CustomPath(Paths.get(absolute(windowsKitParts)))
             WindowsSdkPartsProvider.Local -> WindowsKit.DefaultPath
         }
     }
     override val msvc: Msvc by lazy {
         when (windowsSdkPartsProvider) {
-            WindowsSdkPartsProvider.InternalServer -> createCustomMsvcPath(Paths.get(absolute(msvcParts)))
+            WindowsSdkPartsProvider.InternalServer -> Msvc.CustomPath(Paths.get(absolute(msvcParts)))
             WindowsSdkPartsProvider.Local -> Msvc.DefaultPath
         }
     }
@@ -50,29 +50,6 @@ class MingwConfigurablesImpl(target: KonanTarget, properties: Properties, depend
         }
 }
 
-private fun createCustomWindowsKitPath(windowsKitParts: Path): WindowsKit.CustomPath {
-    return WindowsKit.CustomPath(
-            libraryDirectories = listOf(
-                    windowsKitParts.resolve("Lib").resolve("ucrt").resolve("x64"),
-                    windowsKitParts.resolve("Lib").resolve("um").resolve("x64")
-            ),
-            includeDirectories = listOf(
-                    windowsKitParts.resolve("Include").resolve("ucrt")
-            )
-    )
-}
-
-private fun createCustomMsvcPath(msvcParts: Path): Msvc.CustomPath {
-    return Msvc.CustomPath(
-            libraryDirectories = listOf(
-                    msvcParts.resolve("lib").resolve("x64")
-            ),
-            includeDirectories = listOf(
-                    msvcParts.resolve("include")
-            )
-    )
-}
-
 sealed class Msvc {
 
     abstract fun compilerFlags(): List<String>
@@ -81,16 +58,9 @@ sealed class Msvc {
         override fun compilerFlags(): List<String> = emptyList()
     }
 
-    class CustomPath(
-            private val includeDirectories: List<Path>,
-            private val libraryDirectories: List<Path>
-    ) : Msvc() {
-        // Note that this approach doesn't exclude default VS path.
-        // TODO: A better (but harder) way would be LIB environment variable.
+    class CustomPath(private val path: Path) : Msvc() {
         override fun compilerFlags(): List<String> =
-                includeDirectories.flatMap { listOf("-isystem", it.toAbsolutePath().toString()) } +
-                        libraryDirectories.flatMap { listOf("-L", it.toAbsolutePath().toString()) }
-
+            listOf("-Xmicrosoft-visualc-tools-root", path.toAbsolutePath().toString())
     }
 }
 
@@ -101,16 +71,11 @@ sealed class WindowsKit {
         override fun compilerFlags(): List<String> = emptyList()
     }
 
-    class CustomPath(
-            private val includeDirectories: List<Path>,
-            private val libraryDirectories: List<Path>
-    ) : WindowsKit() {
-        // Note that this approach doesn't exclude default Windows Kit path.
-        // TODO: A better (but harder) way would be LIB environment variable.
-        override fun compilerFlags(): List<String> =
-                includeDirectories.flatMap { listOf("-isystem", it.toAbsolutePath().toString()) } +
-                        libraryDirectories.flatMap { listOf("-L", it.toAbsolutePath().toString()) }
-
+    class CustomPath(private val path: Path) : WindowsKit() {
+        override fun compilerFlags(): List<String> = buildList {
+            addAll(listOf("-Xmicrosoft-windows-sdk-root", path.toAbsolutePath().toString()))
+            addAll(listOf("-L", path.resolve("Lib").resolve("um").resolve("x64").toAbsolutePath().toString()))
+        }
     }
 }
 
