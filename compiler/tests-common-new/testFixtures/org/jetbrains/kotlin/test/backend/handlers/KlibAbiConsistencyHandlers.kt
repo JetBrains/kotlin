@@ -7,10 +7,16 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import org.jetbrains.kotlin.backend.common.lower.inline.SignaturesComputationLowering
+import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.JsInliningPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.js.config.produceKlibFile
@@ -100,8 +106,8 @@ class FirJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices) :
             "FirJsKlibAbiDumpBeforeInliningSavingHandler expects Fir2IrCliBasedWebOutputArtifact as input"
         }
         val cliArtifact = inputArtifact.cliArtifact
-        require(cliArtifact is JsInliningPipelineArtifact) {
-            "FirJsKlibAbiDumpBeforeInliningSavingHandler expects JsInliningPipelineArtifact as input"
+        require(cliArtifact is JsFir2IrPipelineArtifact) {
+            "FirJsKlibAbiDumpBeforeInliningSavingHandler expects JsFir2IrPipelineArtifact as input"
         }
 
         val tmpConfiguration = cliArtifact.configuration.copy()
@@ -115,7 +121,28 @@ class FirJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices) :
 
         val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter, configuration = tmpConfiguration)
 
-        WebKlibSerializationPipelinePhase.executePhase(input)
+        val preSerializationLoweringContext = JsPreSerializationLoweringContext(
+            irBuiltIns = input.result.irBuiltIns,
+            configuration = input.configuration,
+            diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+                input.diagnosticCollector.deduplicating(),
+                input.configuration.languageVersionSettings
+            )
+        )
+        SignaturesComputationLowering(
+            preSerializationLoweringContext
+        ).lower(input.result.irModuleFragment)
+
+        WebKlibSerializationPipelinePhase.executePhase(
+            JsInliningPipelineArtifact(
+                result = input.result,
+                frontendOutput = input.frontendOutput,
+                configuration = input.configuration,
+                diagnosticCollector = input.diagnosticCollector,
+                moduleStructure = input.moduleStructure,
+                declarationTable = preSerializationLoweringContext.declarationTable
+            )
+        )
 
         return BinaryArtifacts.KLib(outputFile, diagnosticReporter)
     }
