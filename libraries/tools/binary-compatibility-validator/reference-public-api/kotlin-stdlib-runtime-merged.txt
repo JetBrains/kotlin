@@ -4912,6 +4912,23 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun downTo (SI)Lkotlin/ranges/IntProgression;
 	public static final fun downTo (SJ)Lkotlin/ranges/LongProgression;
 	public static final fun downTo (SS)Lkotlin/ranges/IntProgression;
+	public static final fun downUntil (BB)Lkotlin/ranges/IntProgression;
+	public static final fun downUntil (BI)Lkotlin/ranges/IntProgression;
+	public static final fun downUntil (BJ)Lkotlin/ranges/LongProgression;
+	public static final fun downUntil (BS)Lkotlin/ranges/IntProgression;
+	public static final fun downUntil (CC)Lkotlin/ranges/CharProgression;
+	public static final fun downUntil (IB)Lkotlin/ranges/IntProgression;
+	public static final fun downUntil (II)Lkotlin/ranges/IntProgression;
+	public static final fun downUntil (IJ)Lkotlin/ranges/LongProgression;
+	public static final fun downUntil (IS)Lkotlin/ranges/IntProgression;
+	public static final fun downUntil (JB)Lkotlin/ranges/LongProgression;
+	public static final fun downUntil (JI)Lkotlin/ranges/LongProgression;
+	public static final fun downUntil (JJ)Lkotlin/ranges/LongProgression;
+	public static final fun downUntil (JS)Lkotlin/ranges/LongProgression;
+	public static final fun downUntil (SB)Lkotlin/ranges/IntProgression;
+	public static final fun downUntil (SI)Lkotlin/ranges/IntProgression;
+	public static final fun downUntil (SJ)Lkotlin/ranges/LongProgression;
+	public static final fun downUntil (SS)Lkotlin/ranges/IntProgression;
 	public static final fun first (Lkotlin/ranges/CharProgression;)C
 	public static final fun first (Lkotlin/ranges/IntProgression;)I
 	public static final fun first (Lkotlin/ranges/LongProgression;)J
@@ -5089,6 +5106,10 @@ public final class kotlin/ranges/URangesKt {
 	public static final fun downTo-J1ME1BU (II)Lkotlin/ranges/UIntProgression;
 	public static final fun downTo-Kr8caGY (BB)Lkotlin/ranges/UIntProgression;
 	public static final fun downTo-eb3DHEI (JJ)Lkotlin/ranges/ULongProgression;
+	public static final fun downUntil-5PvTz6A (SS)Lkotlin/ranges/UIntProgression;
+	public static final fun downUntil-J1ME1BU (II)Lkotlin/ranges/UIntProgression;
+	public static final fun downUntil-Kr8caGY (BB)Lkotlin/ranges/UIntProgression;
+	public static final fun downUntil-eb3DHEI (JJ)Lkotlin/ranges/ULongProgression;
 	public static final fun first (Lkotlin/ranges/UIntProgression;)I
 	public static final fun first (Lkotlin/ranges/ULongProgression;)J
 	public static final fun firstOrNull (Lkotlin/ranges/UIntProgression;)Lkotlin/UInt;
