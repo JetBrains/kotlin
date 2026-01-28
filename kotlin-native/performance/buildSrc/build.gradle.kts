@@ -16,12 +16,15 @@ sourceSets["main"].kotlin {
 
 dependencies {
     val kotlinVersion = project.bootstrapKotlinVersion
+    val kotlinxBenchmarkVersion = "0.4.17"
 
     compileOnly(gradleApi())
 
     implementation(kotlinBuildHelpers())
     implementation(kotlin("gradle-plugin", kotlinVersion))
     implementation(kotlin("stdlib", kotlinVersion))
+
+    implementation("org.jetbrains.kotlinx.benchmark:org.jetbrains.kotlinx.benchmark.gradle.plugin:${kotlinxBenchmarkVersion}")
 }
 
 gradlePlugin {
@@ -33,6 +36,10 @@ gradlePlugin {
         create("swiftBenchmarking") {
             id = "swift-benchmarking"
             implementationClass = "org.jetbrains.kotlin.benchmark.SwiftBenchmarkingPlugin"
+        }
+        create("kotlinxBenchmarking") {
+            id = "kotlinx-benchmarking"
+            implementationClass = "org.jetbrains.kotlin.benchmark.KotlinxBenchmarkingPlugin"
         }
     }
 }
