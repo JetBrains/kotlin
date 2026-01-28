@@ -132,6 +132,7 @@ class NativeKlibSerializerFacade(
                     settings = IrSerializationSettings(configuration),
                     diagnosticReporter = irDiagnosticReporter,
                     irBuiltIns = inputArtifact.irBuiltIns,
+                    declarationTable = inputArtifact.declarationTable,
                 )
             },
             inputArtifact.metadataSerializer ?: error("expected metadata serializer"),
