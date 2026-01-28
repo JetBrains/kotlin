@@ -30,9 +30,9 @@ private val CLASSES_TO_PROCESS: List<KClass<*>> = listOf(
 )
 
 private val PACKAGE_TO_DIR_MAPPING: Map<Package, File> = mapOf(
-    K2JVMCompilerArguments::class.java.`package` to File("compiler/cli/cli-common/gen"),
+    K2JVMCompilerArguments::class.java.`package` to File("compiler/cli/cli-base/gen"),
     JpsPluginSettings::class.java.`package` to File("jps/jps-common/gen"),
-    CommonCompilerArguments::class.java.`package` to File("compiler/cli/cli-common/gen"),
+    CommonCompilerArguments::class.java.`package` to File("compiler/cli/cli-base/gen"),
 )
 
 fun generateCompilerArgumentsCopy(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {

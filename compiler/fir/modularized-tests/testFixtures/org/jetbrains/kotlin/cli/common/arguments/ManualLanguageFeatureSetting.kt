@@ -9,7 +9,7 @@ import com.intellij.util.xmlb.XmlSerializer
 import org.jetbrains.kotlin.config.LanguageFeature
 
 /**
- * This class is needed here to monkey-patch the same class from the :compiler:cli:cli-common module to make it deserializable
+ * This class is needed here to monkey-patch the same class from the :compiler:cli:cli-base module to make it deserializable
  * with XML parser. The [XmlSerializer] needs the no-arg constructor for this class.
  */
 @Suppress("unused")

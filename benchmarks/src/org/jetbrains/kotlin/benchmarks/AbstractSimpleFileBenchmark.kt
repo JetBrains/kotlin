@@ -68,7 +68,7 @@ private val LANGUAGE_FEATURE_SETTINGS =
 private fun newConfiguration(useNewInference: Boolean): CompilerConfiguration {
     val configuration = CompilerConfiguration()
     configuration.put(CommonConfigurationKeys.MODULE_NAME, "benchmark")
-    configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, "../compiler/cli/cli-common/resources")
+    configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, "../compiler/cli/cli-base/resources")
     configuration.addJvmClasspathRoot(JDK_PATH)
     configuration.addJvmClasspathRoot(RUNTIME_JAR)
     configuration.configureJdkClasspathRoots()
@@ -154,7 +154,7 @@ abstract class AbstractSimpleFileBenchmark {
     @OptIn(ObsoleteTestInfrastructure::class)
     private fun analyzeGreenFileIr(bh: Blackhole) {
         val scope = GlobalSearchScope.filesScope(env.project, listOf(file.virtualFile))
-            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(env.project))
+            .uniteWith(AllJavaSourcesInProjectScope(env.project))
         val session = FirTestSessionFactoryHelper.createSessionForTests(env.toVfsBasedProjectEnvironment(), scope.toAbstractProjectFileSearchScope())
         val firProvider = session.firProvider as FirProviderImpl
         val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)

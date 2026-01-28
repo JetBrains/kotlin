@@ -41,7 +41,6 @@ dependencies {
     implementation(project(":kotlin-util-klib"))
     implementation(project(":kotlin-util-klib-metadata"))
     testImplementation(project(":compiler:cli"))
-    testImplementation(project(":compiler:cli-common"))
     testImplementation(project(":compiler:compiler.version"))
     testImplementation(project(":compiler:config"))
     testImplementation(project(":compiler:config.jvm"))

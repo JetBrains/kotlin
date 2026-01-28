@@ -26,6 +26,7 @@ dependencies {
     testImplementation(intellijCore())
     testCompileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     testCompileOnly(project(":compiler:cli"))
+    testCompileOnly(project(":compiler:cli-jvm"))
     testCompileOnly(project(":core:util.runtime"))
 
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))

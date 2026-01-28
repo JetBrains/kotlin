@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:cli"))
+    api(project(":compiler:cli-jvm"))
 
     compileOnly(intellijCore())
 
