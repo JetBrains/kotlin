@@ -2,14 +2,14 @@
  * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
+package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DependencyScenarioDslCacheKey
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DependencyScenarioDslCacheKey
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*

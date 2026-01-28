@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests
+package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import java.util.concurrent.ConcurrentHashMap

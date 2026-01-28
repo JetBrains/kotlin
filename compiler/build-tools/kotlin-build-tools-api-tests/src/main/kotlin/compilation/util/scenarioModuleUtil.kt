@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.util
+package org.jetbrains.kotlin.buildtools.tests.compilation.util
 
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertExactOutput
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.ScenarioModule
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertExactOutput
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 
 /**
  * Shorthands for commonly used scenario steps & assertions

@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests
+package org.jetbrains.kotlin.buildtools.tests
 
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName

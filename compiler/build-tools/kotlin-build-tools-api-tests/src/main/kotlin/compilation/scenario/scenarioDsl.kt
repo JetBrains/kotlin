@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
+package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.*
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.deleteExisting

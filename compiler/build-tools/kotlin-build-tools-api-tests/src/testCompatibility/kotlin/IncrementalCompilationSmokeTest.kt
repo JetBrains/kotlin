@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests
+package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertNoOutputSetChanges
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assumptions

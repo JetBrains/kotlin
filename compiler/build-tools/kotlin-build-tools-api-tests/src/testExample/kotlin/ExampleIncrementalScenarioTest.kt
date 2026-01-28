@@ -3,17 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation
+package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.KEEP_IC_CACHES_IN_MEMORY
-import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertNoCompiledSources
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertAddedOutputs
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertNoOutputSetChanges
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertRemovedOutputs
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.util.*
