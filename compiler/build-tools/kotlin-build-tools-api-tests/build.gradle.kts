@@ -24,6 +24,11 @@ val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplRe
     extendsFrom(buildToolsApiImpl.get())
 }
 
+val scriptingCompilerPlugin = configurations.dependencyScope("scriptingCompilerPlugin")
+val scriptingCompilerPluginResolvable = configurations.resolvable("scriptingCompilerPluginResolvable") {
+    extendsFrom(scriptingCompilerPlugin.get())
+}
+
 dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
@@ -37,6 +42,7 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
     noArgCompilerPlugin(project(":kotlin-noarg-compiler-plugin.embeddable"))
     assignmentCompilerPlugin(project(":kotlin-assignment-compiler-plugin.embeddable"))
+    scriptingCompilerPlugin(project(":kotlin-scripting-compiler-embeddable"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
@@ -210,10 +216,21 @@ testing {
         }
 
         named<JvmTestSuite>("testCompilerPlugins") {
+            dependencies {
+                compileOnly(project(":kotlin-scripting-common"))
+            }
             targets.all {
                 testTask.configure {
                     addClasspathProperty(noArgCompilerPluginResolvable.get(), "NOARG_COMPILER_PLUGIN")
                     addClasspathProperty(assignmentCompilerPluginResolvable.get(), "ASSIGNMENT_COMPILER_PLUGIN")
+                    addClasspathProperty(scriptingCompilerPluginResolvable.get(), "SCRIPTING_COMPILER_PLUGIN")
+
+                    // those classes use compileOnly dependency on scripting and should not be considered as containing test classes to avoid runtime failures
+                    exclude(
+                        "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptTemplate.class",
+                        "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptCustomExtensionTemplate.class",
+                        "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptDefinition.class",
+                    )
                 }
             }
         }

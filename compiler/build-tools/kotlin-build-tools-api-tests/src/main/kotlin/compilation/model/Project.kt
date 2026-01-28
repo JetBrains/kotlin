@@ -28,7 +28,7 @@ class Project(
 
     fun module(
         moduleName: String,
-        dependencies: List<Module> = emptyList(),
+        dependencies: List<Dependency> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         stdlibClasspath: List<Path>? = null,
         moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
