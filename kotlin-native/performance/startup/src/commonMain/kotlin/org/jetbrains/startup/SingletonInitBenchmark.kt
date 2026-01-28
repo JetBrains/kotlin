@@ -5,9 +5,7 @@
 
 package org.jetbrains.startup
 
-import org.jetbrains.benchmarksLauncher.measureNanoTime
 import org.jetbrains.benchmarksLauncher.Random
-import org.jetbrains.report.BenchmarkResult
 
 private object A0 { val a = Random.nextInt(100) }
 private object A1 { val a = Random.nextInt(100) }
