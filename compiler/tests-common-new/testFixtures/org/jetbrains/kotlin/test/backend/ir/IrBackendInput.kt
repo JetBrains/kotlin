@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedData
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.konan.serialization.KonanDeclarationTable
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -160,6 +161,7 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
         override val irMangler: KotlinMangler.IrMangler,
         val metadataSerializer: KlibSingleFileMetadataSerializer<*>?,
         val usedLibrariesForManifest: List<KotlinLibrary>,
+        val declarationTable: KonanDeclarationTable? = null,
     ) : NativeBackendInput()
 
     class NativeDeserializedFromKlibBackendInput(

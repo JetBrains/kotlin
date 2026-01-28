@@ -45,18 +45,23 @@ class NativePreSerializationLoweringFacade(
             configuration.languageVersionSettings
         )
         val phaseConfig = PhaseConfig()
+        val loweringContext = NativePreSerializationLoweringContext(inputArtifact.irBuiltIns, configuration, irDiagnosticReporter)
         val transformedModule = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
             PhaseEngine(
                 phaseConfig,
                 PhaserState(),
-                NativePreSerializationLoweringContext(inputArtifact.irBuiltIns, configuration, irDiagnosticReporter)
+                loweringContext,
             ).runPreSerializationLoweringPhases(
                 nativeLoweringsOfTheFirstPhase(module.languageVersionSettings),
                 inputArtifact.irModuleFragment,
             )
         }
 
-        return inputArtifact.copy(irModuleFragment = transformedModule, diagnosticReporter = diagnosticReporter)
+        return inputArtifact.copy(
+            irModuleFragment = transformedModule,
+            diagnosticReporter = diagnosticReporter,
+            declarationTable = loweringContext.declarationTable
+        )
     }
 }
 
