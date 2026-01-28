@@ -116,8 +116,6 @@ class ModulesStructure(
     private val storageManager: LockBasedStorageManager = LockBasedStorageManager("ModulesStructure")
     private var runtimeModule: ModuleDescriptorImpl? = null
 
-    private val _descriptors: MutableMap<KotlinLibrary, ModuleDescriptorImpl> = mutableMapOf()
-
     init {
         val descriptors = klibs.all.map { getModuleDescriptorImpl(it) }
         val friendDescriptors = klibs.friends.mapTo(mutableSetOf(), ::getModuleDescriptorImpl)
@@ -128,11 +126,11 @@ class ModulesStructure(
 
     // TODO: these are roughly equivalent to KlibResolvedModuleDescriptorsFactoryImpl. Refactor me.
     val descriptors: Map<KotlinLibrary, ModuleDescriptor>
-        get() = _descriptors
+        field = mutableMapOf<KotlinLibrary, ModuleDescriptorImpl>()
 
     private fun getModuleDescriptorImpl(current: KotlinLibrary): ModuleDescriptorImpl {
-        if (current in _descriptors) {
-            return _descriptors.getValue(current)
+        if (current in descriptors) {
+            return descriptors.getValue(current)
         }
 
         val isBuiltIns = current.isJsStdlib || current.isWasmStdlib
@@ -148,7 +146,7 @@ class ModulesStructure(
         )
         if (isBuiltIns) runtimeModule = md
 
-        _descriptors[current] = md
+        descriptors[current] = md
 
         return md
     }

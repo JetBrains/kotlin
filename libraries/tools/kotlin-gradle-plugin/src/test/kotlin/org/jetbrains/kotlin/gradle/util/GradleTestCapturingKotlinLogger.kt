@@ -8,34 +8,34 @@ package org.jetbrains.kotlin.gradle.util
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 
 class GradleTestCapturingKotlinLogger : KotlinLogger {
-    private val _messages = mutableListOf<String>()
-    val messages: List<String> get() = _messages
+    val messages: List<String>
+        field = mutableListOf<String>()
 
-    private val _exceptions = mutableListOf<Throwable>()
-    val exceptions: List<Throwable> get() = _exceptions
+    val exceptions: List<Throwable>
+        field = mutableListOf<Throwable>()
 
     override val isDebugEnabled: Boolean
         get() = true
 
     override fun error(msg: String, throwable: Throwable?) {
-        _messages.add(msg)
-        _exceptions.add(throwable ?: return)
+        messages.add(msg)
+        exceptions.add(throwable ?: return)
     }
 
     override fun warn(msg: String, throwable: Throwable?) {
-        _messages.add(msg)
-        _exceptions.add(throwable ?: return)
+        messages.add(msg)
+        exceptions.add(throwable ?: return)
     }
 
     override fun info(msg: String) {
-        _messages.add(msg)
+        messages.add(msg)
     }
 
     override fun debug(msg: String) {
-        _messages.add(msg)
+        messages.add(msg)
     }
 
     override fun lifecycle(msg: String) {
-        _messages.add(msg)
+        messages.add(msg)
     }
 }

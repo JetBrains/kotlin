@@ -27,17 +27,13 @@ internal interface KotlinCompilationSourceSetsContainer {
 private class DefaultKotlinCompilationSourceSetsContainer(
     override val defaultSourceSet: KotlinSourceSet
 ) : KotlinCompilationSourceSetsContainer {
-    private val kotlinSourceSetsImpl: MutableObservableSet<KotlinSourceSet> = MutableObservableSetImpl(defaultSourceSet)
-
-    private val allKotlinSourceSetsImpl: MutableObservableSet<KotlinSourceSet> = MutableObservableSetImpl<KotlinSourceSet>().also { set ->
-        defaultSourceSet.internal.withDependsOnClosure.forAll(set::add)
-    }
-
     override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
-        get() = kotlinSourceSetsImpl
+        field = MutableObservableSetImpl(defaultSourceSet)
 
     override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
-        get() = allKotlinSourceSetsImpl
+        field = MutableObservableSetImpl<KotlinSourceSet>().also { set ->
+            defaultSourceSet.internal.withDependsOnClosure.forAll(set::add)
+        }
 
     /**
      * All SourceSets that have been processed by [source] already.
@@ -48,9 +44,9 @@ private class DefaultKotlinCompilationSourceSetsContainer(
 
     override fun source(sourceSet: KotlinSourceSet) {
         if (!sourcedKotlinSourceSets.add(sourceSet)) return
-        kotlinSourceSetsImpl.add(sourceSet)
+        kotlinSourceSets.add(sourceSet)
         sourceSet.internal.withDependsOnClosure.forAll { inDependsOnClosure ->
-            allKotlinSourceSetsImpl.add(inDependsOnClosure)
+            allKotlinSourceSets.add(inDependsOnClosure)
         }
     }
 }

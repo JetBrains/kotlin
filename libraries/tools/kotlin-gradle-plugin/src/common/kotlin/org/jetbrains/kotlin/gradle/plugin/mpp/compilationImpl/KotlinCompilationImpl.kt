@@ -223,21 +223,17 @@ internal class KotlinCompilationImpl(
     // endregion
 
 
-    private val associatedCompilationsImpl = MutableObservableSetImpl<KotlinCompilation<*>>()
-
-    private val allAssociatedCompilationsImpl = MutableObservableSetImpl<KotlinCompilation<*>>()
-
     override val associatedCompilations: ObservableSet<KotlinCompilation<*>>
-        get() = associatedCompilationsImpl
+        field = MutableObservableSetImpl<KotlinCompilation<*>>()
 
     override val allAssociatedCompilations: ObservableSet<KotlinCompilation<*>>
-        get() = allAssociatedCompilationsImpl
+        field = MutableObservableSetImpl<KotlinCompilation<*>>()
 
     override fun associateWith(other: KotlinCompilation<*>) {
         require(other.target == target) { "Only associations between compilations of a single target are supported" }
-        if (!associatedCompilationsImpl.add(other)) return
-        if (!allAssociatedCompilationsImpl.add(other)) return
-        other.internal.allAssociatedCompilations.forAll { compilation -> allAssociatedCompilationsImpl.add(compilation) }
+        if (!associatedCompilations.add(other)) return
+        if (!allAssociatedCompilations.add(other)) return
+        other.internal.allAssociatedCompilations.forAll { compilation -> allAssociatedCompilations.add(compilation) }
     }
 
     //region final init

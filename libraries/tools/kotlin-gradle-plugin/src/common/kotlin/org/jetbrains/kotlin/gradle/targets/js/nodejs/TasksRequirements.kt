@@ -13,11 +13,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.toDeclaration
 import java.io.Serializable
 
 class TasksRequirements : Serializable {
-    private val _byTask = mutableMapOf<String, Set<RequiredKotlinJsDependency>>()
     private val byCompilation = mutableMapOf<String, MutableSet<NpmDependencyDeclaration>>()
 
     val byTask: Map<String, Set<RequiredKotlinJsDependency>>
-        get() = _byTask
+        field = mutableMapOf<String, Set<RequiredKotlinJsDependency>>()
 
     internal fun getCompilationNpmRequirements(projectPath: String, compilationName: String): Set<NpmDependencyDeclaration> =
         byCompilation["$projectPath:$compilationName"]
@@ -26,7 +25,7 @@ class TasksRequirements : Serializable {
     fun addTaskRequirements(task: RequiresNpmDependencies) {
         val requirements = task.requiredNpmDependencies
 
-        _byTask[task.getPath()] = requirements
+        byTask[task.getPath()] = requirements
 
         val requiredNpmDependencies = requirements
             .asSequence()

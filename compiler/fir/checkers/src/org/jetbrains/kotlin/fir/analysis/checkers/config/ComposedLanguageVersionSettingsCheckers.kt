@@ -11,13 +11,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.LanguageVersionSettingsChecker
 class ComposedLanguageVersionSettingsCheckers : LanguageVersionSettingsCheckers() {
 
     override val languageVersionSettingsCheckers: Set<FirLanguageVersionSettingsChecker>
-        get() = _languageVersionSettingsCheckers
-
-    private val _languageVersionSettingsCheckers: MutableSet<FirLanguageVersionSettingsChecker> = mutableSetOf()
+        field = mutableSetOf()
 
     @CheckersComponentInternal
     fun register(checkers: LanguageVersionSettingsCheckers) {
-        _languageVersionSettingsCheckers += checkers.languageVersionSettingsCheckers
+        languageVersionSettingsCheckers += checkers.languageVersionSettingsCheckers
     }
 
 }

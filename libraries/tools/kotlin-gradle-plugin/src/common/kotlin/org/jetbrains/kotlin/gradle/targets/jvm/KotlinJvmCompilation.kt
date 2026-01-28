@@ -90,24 +90,24 @@ open class KotlinJvmCompilation @Inject internal constructor(
     internal val defaultCompileJavaProvider: TaskProvider<out JavaCompile>
         get() = project.tasks.named<JavaCompile>(defaultJavaSourceSet.compileJavaTaskName)
 
-    internal val javaSourceSet: Future<SourceSet?> get() = javaSourceSetImpl
-    private val javaSourceSetImpl: CompletableFuture<SourceSet> = CompletableFuture<SourceSet>().also { future ->
-        /**
-         * If no SourceSet was set until 'AfterFinaliseDsl', then user really did never call into 'withJava'.
-         * Hence, we can complete the Future with Java SourceSet created by default.
-         */
-        target.project.launchInStage(AfterFinaliseDsl) {
-            if (!future.isCompleted) {
-                future.complete(defaultJavaSourceSet)
+    internal val javaSourceSet: Future<SourceSet?>
+        field = CompletableFuture<SourceSet>().also { future ->
+            /**
+             * If no SourceSet was set until 'AfterFinaliseDsl', then user really did never call into 'withJava'.
+             * Hence, we can complete the Future with Java SourceSet created by default.
+             */
+            target.project.launchInStage(AfterFinaliseDsl) {
+                if (!future.isCompleted) {
+                    future.complete(defaultJavaSourceSet)
+                }
             }
         }
-    }
 
     @Deprecated("Conditionally creating Java source sets is deprecated. Check 'defaultJavaSourceSet' instead. Scheduled for removal in Kotlin 2.4.")
     internal fun maybeCreateJavaSourceSet(): SourceSet {
         check(target.withJavaEnabled)
         val sourceSet = target.project.javaSourceSets.maybeCreate(compilationName)
-        javaSourceSetImpl.complete(sourceSet)
+        javaSourceSet.complete(sourceSet)
         return sourceSet
     }
 

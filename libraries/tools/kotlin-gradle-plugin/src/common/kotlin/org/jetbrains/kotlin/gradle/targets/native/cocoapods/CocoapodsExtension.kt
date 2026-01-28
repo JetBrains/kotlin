@@ -132,16 +132,14 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
     internal val specRepos = SpecRepos()
 
-    private val _pods = project.objects.domainObjectContainer(CocoapodsDependency::class.java)
-
     val podsAsTaskInput: List<CocoapodsDependency>
-        get() = _pods.toList()
+        get() = pods.toList()
 
     /**
      * Returns a list of pod dependencies.
      */
     val pods: NamedDomainObjectSet<CocoapodsDependency>
-        get() = _pods
+        field = project.objects.domainObjectContainer(CocoapodsDependency::class.java)
 
     /**
      * Add a CocoaPods dependency to the pod built from this project.
@@ -197,8 +195,8 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
     private fun addToPods(dependency: CocoapodsDependency) {
         val name = dependency.name
-        check(_pods.findByName(name) == null) { "Project already has a CocoaPods dependency with name $name" }
-        _pods.add(dependency)
+        check(pods.findByName(name) == null) { "Project already has a CocoaPods dependency with name $name" }
+        pods.add(dependency)
     }
 
     /**

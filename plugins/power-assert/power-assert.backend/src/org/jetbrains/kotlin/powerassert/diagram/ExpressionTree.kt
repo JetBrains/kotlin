@@ -35,11 +35,11 @@ import org.jetbrains.kotlin.powerassert.isInnerOfComparisonOperator
 import org.jetbrains.kotlin.powerassert.isInnerOfNotEqualOperator
 
 sealed class Node {
-    private val _children = mutableListOf<Node>()
-    val children: List<Node> get() = _children
+    val children: List<Node>
+        field = mutableListOf<Node>()
 
     fun addChild(node: Node) {
-        _children.add(node)
+        children.add(node)
     }
 
     abstract fun isVisible(): Boolean

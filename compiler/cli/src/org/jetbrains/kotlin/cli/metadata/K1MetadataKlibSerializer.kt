@@ -124,22 +124,21 @@ private class KlibMetadataDependencyContainer(
             mutableDependenciesForAllModuleDescriptors.addAll(resultValues)
         }
 
-    private val moduleInfosImpl: List<KlibModuleInfo> = mutableListOf<KlibModuleInfo>().apply {
-        addAll(
-            moduleDescriptorsForKotlinLibraries.map { (kotlinLibrary, moduleDescriptor) ->
-                KlibModuleInfo(moduleDescriptor.name, kotlinLibrary, mutableDependenciesForAllModules)
-            }
-        )
-        mutableDependenciesForAllModules.addAll(this@apply)
-    }
+    override val moduleInfos: List<ModuleInfo>
+        field = mutableListOf<KlibModuleInfo>().apply {
+            addAll(
+                moduleDescriptorsForKotlinLibraries.map { (kotlinLibrary, moduleDescriptor) ->
+                    KlibModuleInfo(moduleDescriptor.name, kotlinLibrary, mutableDependenciesForAllModules)
+                }
+            )
+            mutableDependenciesForAllModules.addAll(this@apply)
+        }
 
-    override val moduleInfos: List<ModuleInfo> get() = moduleInfosImpl
-
-    override val friendModuleInfos: List<ModuleInfo> = moduleInfosImpl.filter {
+    override val friendModuleInfos: List<ModuleInfo> = moduleInfos.filter {
         it.kotlinLibrary.libraryFile.absolutePath in friendPaths
     }
 
-    override val refinesModuleInfos: List<ModuleInfo> = moduleInfosImpl.filter {
+    override val refinesModuleInfos: List<ModuleInfo> = moduleInfos.filter {
         it.kotlinLibrary.libraryFile.absolutePath in refinesPaths
     }
 

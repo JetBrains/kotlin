@@ -11,27 +11,24 @@ import org.jetbrains.kotlin.gradle.plugin.findExtension
 
 abstract class KotlinArtifactsPodspecExtension {
 
-    private val attrs = mutableMapOf<String, String>()
-    private val statements = mutableListOf<String>()
-
     internal val attributes: Map<String, String>
-        get() = attrs
+        field = mutableMapOf<String, String>()
 
     internal val rawStatements: List<String>
-        get() = statements
+        field = mutableListOf<String>()
 
     /**
      * Appends an attribute to the generated podspec
      */
     fun attribute(key: String, value: String) {
-        attrs[key] = value
+        attributes[key] = value
     }
 
     /**
      * Appends a statement 'as is' to the end of the generated podspec
      */
     fun rawStatement(statement: String) {
-        statements.add(statement)
+        rawStatements.add(statement)
     }
 }
 

@@ -151,16 +151,14 @@ private class CompilationPeerCollectingVisitor(
     val actualizer: LLPlatformActualizer?,
 ) : FirDefaultVisitorVoid() {
     private val collectedFunctions = HashSet<FirFunction>()
-    private val collectedFiles = LinkedHashSet<FirFile>()
-    private val collectedInlinedClasses = LinkedHashSet<KtClassOrObject>()
 
     private var isInlineFunctionContext: Boolean = false
 
     val files: Set<FirFile>
-        get() = collectedFiles
+        field = LinkedHashSet<FirFile>()
 
     val inlinedClasses: Set<KtClassOrObject>
-        get() = collectedInlinedClasses
+        field = LinkedHashSet<KtClassOrObject>()
 
     override fun visitElement(element: FirElement) {
         if (element is FirResolvable) {
@@ -211,7 +209,7 @@ private class CompilationPeerCollectingVisitor(
         super.visitClass(klass)
 
         if (isInlineFunctionContext) {
-            collectedInlinedClasses.addIfNotNull(klass.psi as? KtClassOrObject)
+            inlinedClasses.addIfNotNull(klass.psi as? KtClassOrObject)
         }
     }
 
@@ -253,7 +251,7 @@ private class CompilationPeerCollectingVisitor(
                 if (collectedFunctions.add(originalFunction)) {
                     val calleeFile = callee.getContainingFile()
                     if (calleeFile != null && calleeFile.origin == FirDeclarationOrigin.Source) {
-                        collectedFiles.add(calleeFile)
+                        files.add(calleeFile)
                     }
                 }
             }
@@ -286,7 +284,7 @@ private class CompilationPeerCollectingVisitor(
             if (targetModule == actualModule) {
                 val actualResolutionFacade = resolutionFacadeService.getResolutionFacade(actualModule)
                 val actualFile = actualResolutionFacade.getOrBuildFirFile(actualPsiFile)
-                collectedFiles.add(actualFile)
+                files.add(actualFile)
             }
         }
     }

@@ -43,13 +43,13 @@ class FirCommonDeclarationsMappingSymbolProvider(
 
     data class ClassPair(val commonClass: FirClassLikeSymbol<*>?, val platformClass: FirClassLikeSymbol<*>?)
 
-    val classMapping: Map<ClassId, ClassPair> get() = _classMapping
-    private val _classMapping: MutableMap<ClassId, ClassPair> = mutableMapOf()
+    val classMapping: Map<ClassId, ClassPair>
+        field = mutableMapOf()
 
     private val processedCallables: MutableMap<CallableId, List<FirCallableSymbol<*>>> = hashMapOf()
 
-    val commonCallableToPlatformCallableMap: Map<FirCallableSymbol<*>, FirCallableSymbol<*>> get() = _commonCallableToPlatformCallableMap
-    private val _commonCallableToPlatformCallableMap: MutableMap<FirCallableSymbol<*>, FirCallableSymbol<*>> = mutableMapOf()
+    val commonCallableToPlatformCallableMap: Map<FirCallableSymbol<*>, FirCallableSymbol<*>>
+        field = mutableMapOf()
 
     override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeSymbolNamesProvider.Companion.fromSymbolProviders(providers)
 
@@ -59,7 +59,7 @@ class FirCommonDeclarationsMappingSymbolProvider(
 
         if (commonSymbol == null && platformSymbol == null) return null
 
-        _classMapping[classId] = ClassPair(commonSymbol, platformSymbol)
+        classMapping[classId] = ClassPair(commonSymbol, platformSymbol)
 
         return when {
             commonSymbol == null -> platformSymbol
@@ -109,7 +109,7 @@ class FirCommonDeclarationsMappingSymbolProvider(
             val matchingPlatformSymbol = platformDeclarations.firstOrNull { areEquivalentTopLevelCallables(it.fir, commonSymbol.fir) }
 
             if (matchingPlatformSymbol != null) {
-                _commonCallableToPlatformCallableMap[commonSymbol] = matchingPlatformSymbol
+                commonCallableToPlatformCallableMap[commonSymbol] = matchingPlatformSymbol
             } else {
                 result += commonSymbol
             }

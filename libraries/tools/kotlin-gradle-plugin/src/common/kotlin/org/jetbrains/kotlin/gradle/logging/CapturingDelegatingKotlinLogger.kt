@@ -16,28 +16,27 @@ internal class CapturingDelegatingKotlinLogger(private val origin: KotlinLogger,
     override val isDebugEnabled: Boolean
         get() = origin.isDebugEnabled || buildReportMode >= BuildReportMode.VERBOSE
 
-    private val _capturedLines = mutableListOf<String>()
-
-    val capturedLines: List<String> get() = _capturedLines
+    val capturedLines: List<String>
+        field = mutableListOf<String>()
 
     override fun error(msg: String, throwable: Throwable?) {
         origin.error(msg, throwable)
         withBuildReportModeAtLeast(BuildReportMode.SIMPLE) {
-            _capturedLines += msg
+            capturedLines += msg
         }
     }
 
     override fun warn(msg: String, throwable: Throwable?) {
         origin.warn(msg, throwable)
         withBuildReportModeAtLeast(BuildReportMode.SIMPLE) {
-            _capturedLines += msg
+            capturedLines += msg
         }
     }
 
     override fun info(msg: String) {
         origin.info(msg)
         withBuildReportModeAtLeast(BuildReportMode.SIMPLE) {
-            _capturedLines += msg
+            capturedLines += msg
         }
     }
 
@@ -46,14 +45,14 @@ internal class CapturingDelegatingKotlinLogger(private val origin: KotlinLogger,
         // this message is used only for tests and is duplicated by a more user-friendly one
         if (msg.startsWith("[KOTLIN] compile iteration: ")) return
         withBuildReportModeAtLeast(BuildReportMode.VERBOSE) {
-            _capturedLines += msg
+            capturedLines += msg
         }
     }
 
     override fun lifecycle(msg: String) {
         origin.lifecycle(msg)
         withBuildReportModeAtLeast(BuildReportMode.SIMPLE) {
-            _capturedLines += msg
+            capturedLines += msg
         }
     }
 

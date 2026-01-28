@@ -13,11 +13,10 @@ import org.jetbrains.kotlin.diagnostics.Severity
 
 class PendingDiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
     private val pendingDiagnosticsByFilePath: MutableMap<String, MutableList<KtDiagnostic>> = mutableMapOf()
-    private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
-        get() = _diagnosticsByFilePath.flatMap { it.value }
+        get() = diagnosticsByFilePath.flatMap { it.value }
     override val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
-        get() = _diagnosticsByFilePath
+        field = mutableMapOf<String?, MutableList<KtDiagnostic>>()
 
     override var hasErrors = false
         private set
@@ -26,7 +25,7 @@ class PendingDiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
         if (diagnostic != null && !context.isDiagnosticSuppressed(diagnostic)) {
             when (val filePath = context.containingFilePath) {
                 null -> {
-                    val diagnostics = _diagnosticsByFilePath.getOrPut(key = null) { mutableListOf() }
+                    val diagnostics = diagnosticsByFilePath.getOrPut(key = null) { mutableListOf() }
                     diagnostics.add(diagnostic)
                     updateHasErrors(diagnostic)
                 }
@@ -47,7 +46,7 @@ class PendingDiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
         val pendingIterator = pendingDiagnosticsByFilePath.iterator()
         while (pendingIterator.hasNext()) {
             val (path, pendingList) = pendingIterator.next()
-            val committedList = _diagnosticsByFilePath.getOrPut(path) { mutableListOf() }
+            val committedList = diagnosticsByFilePath.getOrPut(path) { mutableListOf() }
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {
                 val diagnostic = iterator.next()

@@ -45,10 +45,8 @@ class FirPCLAInferenceSession(
     var currentCommonSystem: NewConstraintSystemImpl = prepareSharedBaseSystem(outerCandidate.system, inferenceComponents)
         private set
 
-    private val semiFixedVariablesInternal: MutableMap<TypeConstructorMarker, KotlinTypeMarker> = mutableMapOf()
-
     override val semiFixedVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
-        get() = semiFixedVariablesInternal
+        field = mutableMapOf()
 
     override fun baseConstraintStorageForCandidate(candidate: Candidate, bodyResolveContext: BodyResolveContext): ConstraintStorage? {
         if (candidate.mightBeAnalyzedAndCompletedIndependently(bodyResolveContext.returnTypeCalculator)) return null
@@ -214,7 +212,7 @@ class FirPCLAInferenceSession(
             val variable = variableWithConstraints.typeVariable
             addEqualityConstraint(variable.defaultType(), resultType, ConeSemiFixVariableConstraintPosition(variable))
 
-            semiFixedVariablesInternal[coneTypeVariableTypeConstructor] = resultType
+            semiFixedVariables[coneTypeVariableTypeConstructor] = resultType
             return Pair(coneTypeVariableTypeConstructor, resultType)
         }
     }

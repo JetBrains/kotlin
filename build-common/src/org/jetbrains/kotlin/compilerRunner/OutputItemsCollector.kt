@@ -28,30 +28,24 @@ interface OutputItemsCollector {
 
 class OutputItemsCollectorImpl : OutputItemsCollector {
     val outputs: List<SimpleOutputItem>
-        get() = _outputs
-
-    private val _outputs: MutableList<SimpleOutputItem> = mutableListOf()
+        field = mutableListOf()
 
     val sourcesReferencedByCompilerPlugin: List<File>
-        get() = _sourcesReferencedByCompilerPlugin
-
-    private val _sourcesReferencedByCompilerPlugin: MutableList<File> = mutableListOf()
+        field = mutableListOf()
 
     val outputsFileGeneratedForPlugin: List<File>
-        get() = _outputsFileGeneratedForPlugin
-
-    private val _outputsFileGeneratedForPlugin: MutableList<File> = mutableListOf()
+        field = mutableListOf()
 
     override fun add(sourceFiles: Collection<File>, outputFile: File) {
-        _outputs.add(SimpleOutputItem(sourceFiles, outputFile))
+        outputs.add(SimpleOutputItem(sourceFiles, outputFile))
     }
 
     override fun addSourceReferencedByCompilerPlugin(sourceFile: File) {
-        _sourcesReferencedByCompilerPlugin.add(sourceFile)
+        sourcesReferencedByCompilerPlugin.add(sourceFile)
     }
 
     override fun addOutputFileGeneratedForPlugin(outputFile: File) {
-        _outputsFileGeneratedForPlugin.add(outputFile)
+        outputsFileGeneratedForPlugin.add(outputFile)
     }
 }
 

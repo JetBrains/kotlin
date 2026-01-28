@@ -29,52 +29,49 @@ annotation class CheckersComponentInternal
  */
 @NoMutableState
 class CheckersComponent : FirSessionComponent {
-    val commonDeclarationCheckers: DeclarationCheckers get() = _commonDeclarationCheckers
-    val platformDeclarationCheckers: DeclarationCheckers get() = _platformDeclarationCheckers
+    val commonDeclarationCheckers: DeclarationCheckers
+        field = ComposedDeclarationCheckers(MppCheckerKind.Common)
+    val platformDeclarationCheckers: DeclarationCheckers
+        field = ComposedDeclarationCheckers(MppCheckerKind.Platform)
 
-    private val _commonDeclarationCheckers = ComposedDeclarationCheckers(MppCheckerKind.Common)
-    private val _platformDeclarationCheckers = ComposedDeclarationCheckers(MppCheckerKind.Platform)
+    val commonExpressionCheckers: ExpressionCheckers
+        field = ComposedExpressionCheckers(MppCheckerKind.Common)
+    val platformExpressionCheckers: ExpressionCheckers
+        field = ComposedExpressionCheckers(MppCheckerKind.Platform)
 
-    val commonExpressionCheckers: ExpressionCheckers get() = _commonExpressionCheckers
-    val platformExpressionCheckers: ExpressionCheckers get() = _platformExpressionCheckers
+    val commonTypeCheckers: TypeCheckers
+        field = ComposedTypeCheckers(MppCheckerKind.Common)
+    val platformTypeCheckers: TypeCheckers
+        field = ComposedTypeCheckers(MppCheckerKind.Platform)
 
-    private val _commonExpressionCheckers = ComposedExpressionCheckers(MppCheckerKind.Common)
-    private val _platformExpressionCheckers = ComposedExpressionCheckers(MppCheckerKind.Platform)
-
-    val commonTypeCheckers: TypeCheckers get() = _commonTypeCheckers
-    val platformTypeCheckers: TypeCheckers get() = _platformTypeCheckers
-
-    private val _commonTypeCheckers = ComposedTypeCheckers(MppCheckerKind.Common)
-    private val _platformTypeCheckers = ComposedTypeCheckers(MppCheckerKind.Platform)
-
-    val languageVersionSettingsCheckers: LanguageVersionSettingsCheckers get() = _languageVersionSettingsCheckers
-    private val _languageVersionSettingsCheckers = ComposedLanguageVersionSettingsCheckers()
+    val languageVersionSettingsCheckers: LanguageVersionSettingsCheckers
+        field = ComposedLanguageVersionSettingsCheckers()
 
     @SessionConfiguration
     @OptIn(CheckersComponentInternal::class)
     fun register(checkers: DeclarationCheckers) {
-        _commonDeclarationCheckers.register(checkers)
-        _platformDeclarationCheckers.register(checkers)
+        commonDeclarationCheckers.register(checkers)
+        platformDeclarationCheckers.register(checkers)
     }
 
     @SessionConfiguration
     @OptIn(CheckersComponentInternal::class)
     fun register(checkers: ExpressionCheckers) {
-        _commonExpressionCheckers.register(checkers)
-        _platformExpressionCheckers.register(checkers)
+        commonExpressionCheckers.register(checkers)
+        platformExpressionCheckers.register(checkers)
     }
 
     @SessionConfiguration
     @OptIn(CheckersComponentInternal::class)
     fun register(checkers: TypeCheckers) {
-        _commonTypeCheckers.register(checkers)
-        _platformTypeCheckers.register(checkers)
+        commonTypeCheckers.register(checkers)
+        platformTypeCheckers.register(checkers)
     }
 
     @SessionConfiguration
     @OptIn(CheckersComponentInternal::class)
     fun register(checkers: LanguageVersionSettingsCheckers) {
-        _languageVersionSettingsCheckers.register(checkers)
+        languageVersionSettingsCheckers.register(checkers)
     }
 
     @SessionConfiguration

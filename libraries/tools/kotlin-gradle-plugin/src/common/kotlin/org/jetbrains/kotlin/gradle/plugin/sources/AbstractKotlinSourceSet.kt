@@ -18,18 +18,15 @@ import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 
 abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
-    private val dependsOnImpl = MutableObservableSetImpl<KotlinSourceSet>()
-    private val dependsOnClosureImpl = MutableObservableSetImpl<KotlinSourceSet>()
-    private val withDependsOnClosureImpl = MutableObservableSetImpl<KotlinSourceSet>(this)
 
     final override val dependsOn: ObservableSet<KotlinSourceSet>
-        get() = dependsOnImpl
+        field = MutableObservableSetImpl<KotlinSourceSet>()
 
     final override val dependsOnClosure: ObservableSet<KotlinSourceSet>
-        get() = dependsOnClosureImpl
+        field = MutableObservableSetImpl<KotlinSourceSet>()
 
     final override val withDependsOnClosure: ObservableSet<KotlinSourceSet>
-        get() = withDependsOnClosureImpl
+        field = MutableObservableSetImpl<KotlinSourceSet>(this)
 
     override val compilations: MutableObservableSet<KotlinCompilation<*>> = MutableObservableSetImpl()
 
@@ -49,12 +46,12 @@ abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
         project.multiplatformExtensionOrNull?.redundantDependsOnEdgesTracker?.remember(this, other)
 
         /* Nothing to-do, if already added as dependency */
-        if (!dependsOnImpl.add(other)) return
+        if (!dependsOn.add(other)) return
 
         /* Maintain dependsOn closure sets */
         other.internal.withDependsOnClosure.forAll { inDependsOnClosure ->
-            this.dependsOnClosureImpl.add(inDependsOnClosure)
-            this.withDependsOnClosureImpl.add(inDependsOnClosure)
+            this.dependsOnClosure.add(inDependsOnClosure)
+            this.withDependsOnClosure.add(inDependsOnClosure)
         }
 
         afterDependsOnAdded(other)

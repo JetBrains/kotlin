@@ -9,21 +9,20 @@ package org.jetbrains.kotlin.cli.common.messages
  * A message collector which collects all messages into a list and allows to access it.
  */
 open class MessageCollectorImpl : MessageCollector {
-    private val _messages: MutableList<Message> = mutableListOf<Message>()
-
-    val messages: List<Message> get() = _messages
+    val messages: List<Message>
+        field = mutableListOf<Message>()
 
     val errors: List<Message>
         get() = messages.filter { it.severity.isError }
 
     fun forward(other: MessageCollector) {
-        for (message in _messages) {
+        for (message in messages) {
             other.report(message.severity, message.message, message.location)
         }
     }
 
     override fun clear() {
-        _messages.clear()
+        messages.clear()
     }
 
     override fun report(
@@ -31,7 +30,7 @@ open class MessageCollectorImpl : MessageCollector {
         message: String,
         location: CompilerMessageSourceLocation?,
     ) {
-        _messages.add(Message(severity, message, location))
+        messages.add(Message(severity, message, location))
     }
 
     override fun hasErrors(): Boolean =
