@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
+import org.jetbrains.kotlin.native.NativeFir2IrExtensions
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.fir.AbstractFir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -44,7 +45,7 @@ import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigu
 class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
 
     override fun createIrMangler(): KotlinMangler.IrMangler = KonanManglerIr
-    override fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): Fir2IrExtensions = Fir2IrExtensions.Default
+    override fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): Fir2IrExtensions = NativeFir2IrExtensions
     override fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter = Fir2IrVisibilityConverter.Default
     override fun createTypeSystemContextProvider(): (IrBuiltIns) -> IrTypeSystemContext = ::IrTypeSystemContextImpl
     override fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider? = null
