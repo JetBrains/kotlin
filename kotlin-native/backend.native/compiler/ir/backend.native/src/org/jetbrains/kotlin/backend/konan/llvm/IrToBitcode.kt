@@ -2306,8 +2306,9 @@ internal class CodeGeneratorVisitor(
             val nodebug = f.originalConstructor != null && f.parentAsClass.isSubclassOf(context.irBuiltIns.throwableClass.owner)
             if (functionLlvmValue != null) {
                 subprograms.getOrPut(functionLlvmValue) {
-                    // Also enable transparent stepping if this function is a bridge:
-                    val isTransparentStepping = generationState.config.enableDebugTransparentStepping && f.bridgeTarget != null
+                    // Also enable transparent stepping if this function marked with @TransparentForDebugger:
+                    val isTransparentStepping = generationState.config.enableDebugTransparentStepping
+                            && f.hasAnnotation(KonanFqNames.transparentForDebugger)
 
                     diFunctionScope(fileEntry(), functionLlvmValue.name!!, startLine, nodebug, isTransparentStepping).also {
                         if (!this@scope.isInline)

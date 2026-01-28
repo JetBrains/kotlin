@@ -42,6 +42,7 @@ private object ClassIds {
     val filterExceptions = ClassId.topLevel(RuntimeNames.filterExceptions)
     val exportForCppRuntime = ClassId.topLevel(RuntimeNames.exportForCppRuntime)
     val typedIntrinsic = ClassId.topLevel(RuntimeNames.typedIntrinsicAnnotation)
+    val transparentForDebugger = ClassId.topLevel(KonanFqNames.transparentForDebugger)
 
     // Internal classes
     private val String.internalClassId get() = ClassId(RuntimeNames.kotlinNativeInternalPackageName, Name.identifier(this))
@@ -647,6 +648,8 @@ class KonanSymbols(
     val eagerInitialization = ClassIds.eagerInitialization.classSymbol()
 
     val noInline = ClassIds.noInline.classSymbol()
+
+    val transparentForDebugger = ClassIds.transparentForDebugger.classSymbol()
 
     val enumVarConstructorSymbol by ClassIds.interopCEnumVar.primaryConstructorSymbol()
     val primitiveVarTypePrimaryConstructor by ClassIds.interopCPrimitiveVarType.primaryConstructorSymbol()
