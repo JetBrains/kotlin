@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.preprocessors
 
 import org.jetbrains.kotlin.test.model.TestFile
-import org.jetbrains.kotlin.test.model.extension
 import org.jetbrains.kotlin.test.services.ReversibleSourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.TestServices
 import java.util.regex.Pattern
@@ -14,15 +13,14 @@ import java.util.regex.Pattern.MULTILINE
 import java.util.regex.Pattern.compile
 
 /**
- * A preprocessor that normalizes comments of different styles in source files.
- * Currently, it only supports mapping between standard single-line comment (`//`) and configuration comment (`#`).
+ * A preprocessor that normalizes single line standard comments (`//`) into configuration style comments (`#`).
  * This transformation is reversible and operates on files with the `.config` extension.
  */
-class CommentTransformerPreprocessor(testServices: TestServices) : ReversibleSourceFilePreprocessor(testServices) {
+class ConfigCommentTransformerPreprocessor(testServices: TestServices) : ReversibleSourceFilePreprocessor(testServices) {
     companion object {
-        const val CONFIG_EXTENSION: String = "config"
-        const val LEADING_SPACES_GROUP_NAME: String = "leadingspaces"
-        const val COMMENT_CONTENT_GROUP_NAME: String = "commentcontent"
+        private const val LOMBOK_CONFIG_FILE: String = "lombok.config"
+        private const val LEADING_SPACES_GROUP_NAME: String = "leadingspaces"
+        private const val COMMENT_CONTENT_GROUP_NAME: String = "commentcontent"
 
         private val standardCommentPattern: Pattern = compile(
             """^(?<${LEADING_SPACES_GROUP_NAME}>\s*)//(?<${COMMENT_CONTENT_GROUP_NAME}>.*)$""",
@@ -31,7 +29,7 @@ class CommentTransformerPreprocessor(testServices: TestServices) : ReversibleSou
     }
 
     override fun process(file: TestFile, content: String): String {
-        if (file.extension != CONFIG_EXTENSION) return content
+        if (!file.checkFileName()) return content
 
         var previousIndex = 0
         val matcher = standardCommentPattern.matcher(content)
@@ -49,8 +47,12 @@ class CommentTransformerPreprocessor(testServices: TestServices) : ReversibleSou
     }
 
     override fun revert(file: TestFile, actualContent: String): String {
-        if (file.extension != CONFIG_EXTENSION) return actualContent
+        if (!file.checkFileName()) return actualContent
         // Return just the original content because it's not supposed to be changed.
         return file.originalContent.trim()
+    }
+
+    private fun TestFile.checkFileName(): Boolean {
+        return name == LOMBOK_CONFIG_FILE
     }
 }

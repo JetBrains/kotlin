@@ -68,9 +68,6 @@ class TestFile(
 val TestFile.nameWithoutExtension: String
     get() = name.substringBeforeLast(".")
 
-val TestFile.extension: String
-    get() = name.substringAfterLast(".")
-
 /**
  * This enum represents the relation between the module and its dependency (assume that B depends on A)
  * - [RegularDependency] means that B depend on A as a regular library dependency (A is passed to classpath of B);
