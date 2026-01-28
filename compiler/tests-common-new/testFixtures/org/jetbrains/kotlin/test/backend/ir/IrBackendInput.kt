@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
+import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedData
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
@@ -100,6 +101,7 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
         override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
         val metadataSerializer: KlibSingleFileMetadataSerializer<*>,
+        val declarationTable: DeclarationTable.Default? = null,
     ) : WasmBackendInput()
 
     class WasmDeserializedFromKlibBackendInput(

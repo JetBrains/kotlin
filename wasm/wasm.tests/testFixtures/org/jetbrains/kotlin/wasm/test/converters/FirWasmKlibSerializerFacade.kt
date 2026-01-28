@@ -80,6 +80,7 @@ class FirWasmKlibSerializerFacade(
                 } else moduleName,
                 builtInsPlatform = BuiltInsPlatform.WASM,
                 wasmTarget = target,
+                declarationTable = inputArtifact.declarationTable,
             )
         }
 
