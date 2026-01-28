@@ -189,6 +189,12 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     }
 
     override fun visitClass(declaration: IrClass) {
+        // Skip external classes - their declarations come from the host module
+        // (e.g., stdlib classes in hot reload bootstrap)
+        if (isExternal(declaration)) {
+            super.visitClass(declaration)
+            return
+        }
         if (declaration.requiresRtti()) {
             val classLlvmDeclarations = createClassDeclarations(declaration)
             declaration.metadata = KonanMetadata.Class(declaration, classLlvmDeclarations, context.getLayoutBuilder(declaration))
@@ -440,7 +446,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (!declaration.shouldGenerateBody()) {
                 return
             }
-            val symbolName = if (declaration.isExported()) {
+            val baseSymbolName = if (declaration.isExported()) {
                 declaration.computeSymbolName().also {
                     if (declaration.name.asString() != "main") {
                         assert(LLVMGetNamedFunction(llvm.module, it) == null) {
@@ -459,6 +465,18 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                             ?: (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
                     declaration.computePrivateSymbolName(containerName)
                 }
+            }
+            // For hot reload: add $hr_impl suffix to function definitions so JITLink can create
+            // stubs with the stable name that can be repointed on reload.
+            // BUT: don't add suffix to functions with explicit symbol names from annotations
+            // (like @ExportForCppRuntime or @ExportedBridge) - these are runtime functions
+            // that need stable names for C++ interop.
+            val hasExplicitSymbolName = declaration.annotations.findAnnotation(RuntimeNames.exportForCppRuntime) != null
+                    || declaration.annotations.findAnnotation(RuntimeNames.exportedBridge) != null
+            val symbolName = if (context.config.hotReloadEnabled && !declaration.isExternal && !hasExplicitSymbolName) {
+                baseSymbolName + KonanBinaryInterface.HOT_RELOAD_IMPL_SUFFIX
+            } else {
+                baseSymbolName
             }
 
             val proto = LlvmFunctionProto(declaration, symbolName, this, linkageOf(declaration))

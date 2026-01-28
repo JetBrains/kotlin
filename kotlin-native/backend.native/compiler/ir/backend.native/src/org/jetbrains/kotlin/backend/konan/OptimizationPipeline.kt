@@ -150,7 +150,10 @@ internal fun createLTOFinalPipelineConfig(
     // similar to DCE enabled by internalize but later:
     //
     // Important for binary size, workarounds references to undefined symbols from interop libraries.
-    val makeDeclarationsHidden = config.produce == CompilerOutputKind.STATIC_CACHE
+    // NOTE: Disabled for STATIC_CACHE to support hot reload - symbols need to be visible
+    // so they can be resolved from the host process when loading bootstrap via JITLink/dlopen.
+    // TODO: Add a dedicated flag for hot-reload-compatible caches to avoid impact on non-hot-reload builds.
+    val makeDeclarationsHidden = false // was: config.produce == CompilerOutputKind.STATIC_CACHE
     val objcPasses = configurables is AppleConfigurables
 
     // Null value means that LLVM should use default inliner params

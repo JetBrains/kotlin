@@ -464,8 +464,6 @@ class CacheBuilder(
             put(KonanConfigKeys.CACHED_LIBRARIES, cachedLibraries)
             put(KonanConfigKeys.CACHE_DIRECTORIES, listOf(libraryCacheDirectory.absolutePath))
             put(KonanConfigKeys.MAKE_PER_FILE_CACHE, makePerFileCache)
-            // Used for symbols visibility produced by incremental compilation
-            put(BinaryOptions.hotReload, konanConfig.hotReloadEnabled)
 
             if (filesToCache.isNotEmpty())
                 put(KonanConfigKeys.FILES_TO_CACHE, filesToCache)

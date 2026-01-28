@@ -115,6 +115,12 @@ private fun CodeGenerator.setWritableTypeInfo(
         writableTypeInfoValue: Struct,
 ) {
     if (isExternal(irClass)) {
+        // For hot reload bootstrap: Skip setting writable type info for external classes (stdlib).
+        // The host's stdlib-cache.a already has these properly configured.
+        // Creating local definitions would cause TypeInfo pointer mismatches at runtime.
+        if (context.config.hotReloadSplitEnabled) {
+            return
+        }
         // Note: this global replaces the external one with common linkage.
         replaceExternalWeakOrCommonGlobal(
                 irClass.writableTypeInfoSymbolName,

@@ -23,4 +23,15 @@ interface LlvmModuleSpecification {
     fun containsModule(module: IrModuleFragment): Boolean
     fun containsPackageFragment(packageFragment: IrPackageFragment): Boolean
     fun containsDeclaration(declaration: IrDeclaration): Boolean
+
+    /**
+     * Returns true if the library is excluded specifically for hot reload bootstrap.
+     * Such libraries are not contained in this module (containsLibrary returns false),
+     * but they are NOT cached either - they are in the host module and will be
+     * resolved via JITLink at runtime.
+     *
+     * This is used by codegen to skip the "library expected to be cached" check
+     * for libraries that are in the hot reload host.
+     */
+    fun isLibraryExcludedForHotReload(library: KotlinLibrary): Boolean = false
 }

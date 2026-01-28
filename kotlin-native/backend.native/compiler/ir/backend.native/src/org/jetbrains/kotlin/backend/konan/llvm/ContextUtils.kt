@@ -193,10 +193,19 @@ internal interface ContextUtils : RuntimeAware {
             assert(this.isReal) {
                 this.computeFullName()
             }
-            return if (isExternal(this)) {
+            // For hot reload: treat all function calls as external references using stable names.
+            // This ensures calls go through stubs that can be repointed on reload.
+            val treatAsExternal = isExternal(this) ||
+                    (context.config.hotReloadEnabled && !this.isInline)
+            return if (treatAsExternal) {
                 runtime.addedLLVMExternalFunctions.getOrPut(this) {
+                    // Use stable name (without $hr_impl suffix) for call sites
                     val symbolName = if (KonanBinaryInterface.isExported(this)) {
                         this.computeSymbolName()
+                    } else if (context.config.hotReloadEnabled) {
+                        // For hot reload: must match the naming in LlvmDeclarations.kt
+                        // which uses qualifyInternalName() -> fqName + "#internal"
+                        "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${this.fqNameForIrSerialization}#internal"
                     } else {
                         val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
                                 ?: context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this)

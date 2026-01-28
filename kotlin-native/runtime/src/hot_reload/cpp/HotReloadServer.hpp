@@ -8,7 +8,6 @@
 
 #ifdef KONAN_HOT_RELOAD
 
-#include <iostream>
 #include <vector>
 #include <string>
 #include <thread>
@@ -24,24 +23,28 @@ using namespace kotlin::hot;
 
 class HotReloadServer {
 public:
+    static int32_t GetDefaultPort() {
+        if (const auto* portEnv = getenv(kKonanHotReloadPortEnvVar); portEnv != nullptr) {
+            try {
+                const auto port = std::stoi(std::string(portEnv));
+                if (port <= 0 || port > std::numeric_limits<uint16_t>::max())
+                    throw std::out_of_range("Port number out of range");
+                return port;
+            } catch (std::invalid_argument&) {
+                HRLogWarning("(HotReloadServer) Parsed invalid server port, falling back to the default one");
+                return kDefaultServerPort;
+            } catch (std::out_of_range&) {
+                HRLogWarning("(HotReloadServer) Out of range server port, falling back to the default one");
+                return kDefaultServerPort;
+            }
+        }
+        return kDefaultServerPort;
+    }
+
     explicit HotReloadServer(const int32_t port) : port(port) {}
 
     explicit HotReloadServer() {
-        if (const auto* portEnv = getenv(kKonanHotReloadPortEnvVar); portEnv != nullptr) {
-            try {
-                port = std::stoi(std::string(portEnv));
-                if (port <= 0 || port > std::numeric_limits<uint16_t>::max())
-                    throw std::out_of_range("Port number out of range");
-            } catch (std::invalid_argument&) {
-                HRLogWarning("(HotReloadServer) Parsed invalid server port, falling back to the default one");
-                port = kDefaultServerPort;
-            } catch (std::out_of_range&) {
-                HRLogWarning("(HotReloadServer) Out of range server port, falling back to the default one");
-                port = kDefaultServerPort;
-            }
-        } else {
-            port = kDefaultServerPort;
-        }
+        port = GetDefaultPort();
     }
 
     ~HotReloadServer() { stop(); }
@@ -92,7 +95,7 @@ public:
 
         runningThread = std::make_unique<std::thread>([this, onReloadMessageCallback]() {
 #if KONAN_APPLE
-            pthread_setname_np("HotReload Server Listener Thread");
+            pthread_setname_np("Hot-Reload Listener Thread");
 #endif
 
             if (!running) {

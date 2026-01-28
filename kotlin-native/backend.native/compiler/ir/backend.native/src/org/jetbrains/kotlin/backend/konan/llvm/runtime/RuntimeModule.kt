@@ -30,6 +30,7 @@ enum class RuntimeModule(val filename: String) {
     EXTERNAL_CALLS_CHECKER_IMPL("impl_externalCallsChecker.bc"),
     EXTERNAL_CALLS_CHECKER_NOOP("noop_externalCallsChecker.bc"),
     LAUNCHER("launcher.bc"),
+    HOT_RELOAD_LAUNCHER("hot_reload_launcher.bc"),
     OBJC("objc.bc"),
     XCTEST_LAUNCHER("xctest_launcher.bc"),
     EXCEPTIONS_SUPPORT("exceptionsSupport.bc"),

@@ -18,6 +18,10 @@ internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLV
     val config = generationState.config
     if (!(config.isFinalBinary && config.target.family.isAppleFamily)) return null
 
+    // objCExport may not be initialized yet (e.g., during hot reload split compilation
+    // when collecting runtime modules before codegen has run)
+    if (!generationState.hasObjCExport()) return null
+
     val patchBuilder = PatchBuilder(generationState.objCExport.namer)
     patchBuilder.addObjCPatches()
 

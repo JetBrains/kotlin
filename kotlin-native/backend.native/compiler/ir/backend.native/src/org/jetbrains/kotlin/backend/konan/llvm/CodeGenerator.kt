@@ -38,6 +38,23 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
     fun llvmFunctionOrNull(function: IrSimpleFunction): LlvmCallable? =
             function.llvmFunctionOrNull
 
+    /**
+     * Returns the LLVM function definition from llvmDeclarations.
+     * For hot reload, this returns the function with the $hr_impl suffix.
+     * Use this when generating function bodies, not for call sites.
+     */
+    fun llvmFunctionDefinition(function: IrSimpleFunction): LlvmCallable =
+            llvmDeclarations.forFunctionOrNull(function)
+                    ?: error("no function definition for ${function.name} in ${function.file.packageFqName}")
+
+    /**
+     * Returns the LLVM function definition from llvmDeclarations, or null if not found.
+     * For hot reload, this returns the function with the $hr_impl suffix.
+     * Use this when generating function bodies or debug info, not for call sites.
+     */
+    fun llvmFunctionDefinitionOrNull(function: IrSimpleFunction): LlvmCallable? =
+            llvmDeclarations.forFunctionOrNull(function)
+
     val llvmDeclarations = generationState.llvmDeclarations
     val intPtrType = LLVMIntPtrTypeInContext(llvm.llvmContext, llvmTargetData)!!
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
@@ -49,7 +66,9 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
 
     fun typeInfoValue(irClass: IrClass): LLVMValueRef = irClass.llvmTypeInfoPtr
 
-    fun param(fn: IrSimpleFunction, i: Int) = fn.llvmFunction.param(i)
+    // Use llvmFunctionDefinition to get parameters from the actual definition (with $hr_impl suffix for hot reload)
+    // rather than llvmFunction which returns the stable name for call sites
+    fun param(fn: IrSimpleFunction, i: Int) = llvmFunctionDefinition(fn).param(i)
 
     fun functionEntryPointAddress(function: IrSimpleFunction) = function.entryPointAddress.llvm
 
@@ -111,7 +130,9 @@ internal inline fun generateFunction(
         endLocation: LocationInfo?,
         code: FunctionGenerationContext.() -> Unit
 ) {
-    val llvmFunction = codegen.llvmFunction(function)
+    // Use llvmFunctionDefinition to get the actual function definition (with $hr_impl suffix for hot reload)
+    // rather than llvmFunction which may return the stable name for call sites
+    val llvmFunction = codegen.llvmFunctionDefinition(function)
 
     val isCToKotlinBridge = function.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
             // TODO: Alternative approach: lowering that changes origin of such functions to C_TO_KOTLIN_BRIDGE?

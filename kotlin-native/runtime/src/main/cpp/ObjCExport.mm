@@ -315,8 +315,14 @@ static void initTypeAdapters() {
 }
 
 static void Kotlin_ObjCExport_initializeImpl() {
-  RuntimeCheck(Kotlin_ObjCExport_toKotlinSelector != nullptr, "unexpected initialization order");
-  RuntimeCheck(Kotlin_ObjCExport_releaseAsAssociatedObjectSelector != nullptr, "unexpected initialization order");
+  // Initialize selectors if not already set by KotlinBase's +load method.
+  // This can happen in hot reload scenarios where class loading order differs.
+  if (Kotlin_ObjCExport_toKotlinSelector == nullptr) {
+    Kotlin_ObjCExport_toKotlinSelector = @selector(toKotlin:);
+  }
+  if (Kotlin_ObjCExport_releaseAsAssociatedObjectSelector == nullptr) {
+    Kotlin_ObjCExport_releaseAsAssociatedObjectSelector = @selector(releaseAsAssociatedObject);
+  }
 
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
@@ -378,6 +384,38 @@ extern "C" void Kotlin_ObjCExport_initialize() {
   dispatch_once(&onceToken, ^{
     Kotlin_ObjCExport_initializeImpl();
   });
+}
+
+// Initialize type adapters for ObjC export. This can be called multiple times
+// to pick up newly available type adapters (e.g., after JIT loading in hot reload).
+// The weak symbols Kotlin_ObjCExport_sortedClassAdapters etc. may resolve differently
+// after new code is loaded, so this function re-initializes the type adapters.
+extern "C" void Kotlin_ObjCExport_initializeTypeAdapters() {
+  // Make sure the basic ObjC export initialization has been done first
+  Kotlin_ObjCExport_initialize();
+
+  // Now (re-)initialize type adapters from the current weak symbol values.
+  // In hot reload, these symbols may now be resolved from JIT'd code.
+  initTypeAdapters();
+}
+
+// Initialize type adapters with explicitly provided adapter arrays.
+// This is used by hot reload to pass adapters looked up from JIT'd code.
+// The adapter pointers must remain valid for the lifetime of the program.
+extern "C" void Kotlin_ObjCExport_initializeTypeAdaptersWithPointers(
+    const ObjCTypeAdapter** classAdapters, int classAdaptersNum,
+    const ObjCTypeAdapter** protocolAdapters, int protocolAdaptersNum) {
+  // Make sure the basic ObjC export initialization has been done first
+  Kotlin_ObjCExport_initialize();
+
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
+
+  if (classAdapters != nullptr && classAdaptersNum > 0) {
+    initTypeAdaptersFrom(classAdapters, classAdaptersNum);
+  }
+  if (protocolAdapters != nullptr && protocolAdaptersNum > 0) {
+    initTypeAdaptersFrom(protocolAdapters, protocolAdaptersNum);
+  }
 }
 
 static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd) {
@@ -1054,10 +1092,14 @@ static Class getOrCreateClass(const TypeInfo* typeInfo) {
   }
 
   const ObjCTypeAdapter* typeAdapter = getTypeAdapter(typeInfo);
+
   if (typeAdapter != nullptr) {
     result = objc_getClass(typeAdapter->objCName);
     setClassEnsureInitialized(typeInfo, result);
   } else {
+    if (typeInfo->superType_ == nullptr) {
+      return nullptr;
+    }
     Class superClass = getOrCreateClass(typeInfo->superType_);
 
     std::lock_guard lockGuard(classCreationMutex); // Note: non-recursive

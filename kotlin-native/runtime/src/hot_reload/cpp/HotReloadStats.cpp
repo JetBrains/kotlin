@@ -12,10 +12,11 @@
 #include "concurrent/Mutex.hpp"
 
 namespace kotlin::hot {
-    class HotReloader : Pinned {
+
+class HotReloadImpl : Pinned {
 public:
-    static HotReloader& Instance() noexcept;
-    StatsCollector statsCollector;
+    static HotReloadImpl& Instance() noexcept;
+    StatsCollector& GetStatsCollector() noexcept;
 };
 
 } // namespace kotlin::hot
@@ -40,7 +41,7 @@ RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_fill
         // TODO: check here?
         kotlin::ThreadStateGuard stateGuard(kotlin::ThreadState::kNative);
         std::lock_guard guard(lock);
-        const kotlin::hot::Stats current = kotlin::hot::HotReloader::Instance().statsCollector.getCurrent();
+        const kotlin::hot::Stats current = kotlin::hot::HotReloadImpl::Instance().GetStatsCollector().GetCurrent();
         copy = current;
     }
     copy.build(builder);
@@ -62,23 +63,23 @@ void Stats::build(KRef builder) const noexcept {
     Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadedLibrary(builder, loadedLibraryHolder.obj());
 }
 
-void StatsCollector::registerStart(long start) noexcept {
+void StatsCollector::RegisterStart(long start) noexcept {
     kCurrent.start = start;
 }
 
-void StatsCollector::registerEnd(long end) noexcept {
+void StatsCollector::RegisterEnd(long end) noexcept {
     kCurrent.end = end;
 }
 
-void StatsCollector::registerLoadedLibrary(const std::string& loadedLibrary) noexcept {
+void StatsCollector::RegisterLoadedObject(const std::string& loadedLibrary) noexcept {
     kCurrent.loadedLibrary = loadedLibrary;
 }
 
-void StatsCollector::registerReboundSymbols(int reboundSymbols) noexcept {
+void StatsCollector::RegisterReboundSymbols(int reboundSymbols) noexcept {
     kCurrent.reboundSymbols = reboundSymbols;
 }
 
-void StatsCollector::registerSuccessful(bool wasSuccessful) noexcept {
+void StatsCollector::RegisterSuccessful(bool wasSuccessful) noexcept {
     kCurrent.wasSuccessful = wasSuccessful;
 }
 } // namespace kotlin::hot

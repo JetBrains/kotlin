@@ -13,6 +13,7 @@
 #ifdef KONAN_HOT_RELOAD
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <deque>
@@ -28,15 +29,28 @@
 #include "llvm/ExecutionEngine/Orc/LinkGraphLinkingLayer.h"
 #include "llvm/ExecutionEngine/Orc/IndirectionUtils.h"
 #include "llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h"
+#include "llvm/ExecutionEngine/Orc/Debugging/DebuggerSupportPlugin.h"
+#include "llvm/ExecutionEngine/Orc/MachOPlatform.h"
 #include "llvm/ExecutionEngine/SectionMemoryManager.h"
 
 typedef int (*KonanStartFunc)(const ObjHeader*);
 
 namespace kotlin::mm {
 class ThreadData;
+} // namespace kotlin::mm
+
+extern "C" {
+    void Kotlin_native_internal_HotReload_perform(ObjHeader*, const ObjHeader* dylibPath);
+    void Kotlin_native_internal_HotReload_invokeSuccessCallback();
 }
 
 namespace kotlin::hot {
+
+/// Result of parsing an object file for hot reload symbols.
+struct ParsedObjectFile {
+    std::unique_ptr<llvm::MemoryBuffer> buffer;
+    std::vector<std::string> implSymbols;  // List of $hr_impl symbol names
+};
 
 struct KotlinObjectFile {
     std::unordered_map<std::string, llvm::orc::ExecutorAddr> functions{};
@@ -77,18 +91,34 @@ public:
     void Reload(const std::string& objectPath) noexcept;
 
     /// Load bootstrap file and return the Konan_start symbol.
-    KonanStartFunc LoadBoostrapFile(const char* boostrapFilePath);
+    KonanStartFunc LoadBoostrapFile(const char* boostrapFilePath) const;
 
     StatsCollector& GetStatsCollector() noexcept;
+    void SetupMachOPlatform() const;
 
 private:
     void StartServer();
     void SetupORC();
+
+    // Object loading helpers
+    static std::optional<ParsedObjectFile> ParseObjectFile(std::string_view objectPath);
+    void EnsurePlaceholderStubs(const std::vector<std::string>& implSymbols, bool checkExisting) const;
+    void UpdateStubPointers(llvm::orc::JITDylib& JD, const std::vector<std::string>& implSymbols) const;
+    bool LoadObjectFromPath(std::string_view objectPath) const;
+
+#if KONAN_OBJC_INTEROP
+    // ObjC interop initialization
+    void InitializeObjCUniquePrefixFromJIT() const;
+    void InitializeObjCAdaptersFromJIT() const;
+#endif
+
+    // Legacy stub management (may be removed)
     void CreateFunctionStubs(const std::unordered_map<std::string, llvm::orc::ExecutorAddr>& functions) const;
     void ReplaceFunctionStubs(const std::unordered_map<std::string, llvm::orc::ExecutorAddr>& pairs) const;
+
+    // Class/instance reloading
     void ReloadClassesAndInstances(mm::ThreadData& currentThreadData, std::unordered_map<std::string, llvm::orc::ExecutorAddr> newClasses) const;
     void Perform(mm::ThreadData& currentThreadData) noexcept;
-    bool LoadObjectFromPath(std::string_view objectPath);
     static ObjHeader* PerformStateTransfer(mm::ThreadData& currentThreadData, ObjHeader* existingObject, const TypeInfo* newTypeInfo);
     std::vector<ObjHeader*> FindObjectsToReload(const TypeInfo* oldTypeInfo) const;
     static int UpdateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject);
@@ -103,11 +133,6 @@ private:
 };
 
 } // namespace kotlin::hot
-
-extern "C" {
-    void Kotlin_native_internal_HotReload_perform(ObjHeader*, const ObjHeader* dylibPath);
-    void Kotlin_native_internal_HotReload_invokeSuccessCallback();
-}
 
 #endif
 

@@ -138,6 +138,35 @@ internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationSt
     file.addChild(makeEntryPoint(context))
 }
 
+/**
+ * Entry point phase for hot reload split compilation.
+ * Creates Konan_start (same as normal compilation) which will be in bootstrap.o.
+ *
+ * The call chain for hot reload:
+ * 1. main.cpp calls Init_and_run_start() (from launcher in host.o)
+ * 2. Init_and_run_start() → Konan_run_start() → Konan_start() (in bootstrap.o via JITLink)
+ * 3. Konan_start() calls the user's Kotlin main()
+ *
+ * This uses the standard makeEntryPoint (not makeHotReloadEntryPoint) for compatibility
+ * with the existing launcher infrastructure.
+ */
+internal val HotReloadEntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "addHotReloadEntryPoint",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
+) { context, module ->
+    val parent = context.context
+    val entryPoint = parent.symbols.entryPoint!!.owner
+    val file: IrFile = if (context.llvmModuleSpecification.containsDeclaration(entryPoint)) {
+        entryPoint.file
+    } else {
+        module.addFile(NaiveSourceBasedFileEntryImpl("entryPointOwner"), FqName("kotlin.native.internal.abi"))
+    }
+
+    // Use makeEntryPoint (creates Konan_start) for compatibility with the launcher
+    file.addChild(makeEntryPoint(context))
+}
+
 internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, FrontendPhaseOutput.Full>(
         "CreateTestBundlePhase",
 ) { context, input ->

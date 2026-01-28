@@ -28,13 +28,13 @@ struct Stats {
 
 class StatsCollector {
 public:
-    void registerStart(long start) noexcept;
-    void registerEnd(long end) noexcept;
-    void registerLoadedLibrary(const std::string& loadedLibrary) noexcept;
-    void registerReboundSymbols(int reboundSymbols) noexcept;
-    void registerSuccessful(bool wasSuccessful) noexcept;
+    void RegisterStart(long start) noexcept;
+    void RegisterEnd(long end) noexcept;
+    void RegisterLoadedObject(const std::string& loadedLibrary) noexcept;
+    void RegisterReboundSymbols(int reboundSymbols) noexcept;
+    void RegisterSuccessful(bool wasSuccessful) noexcept;
 
-    const Stats& getCurrent() const noexcept { return kCurrent; }
+    const Stats& GetCurrent() const noexcept { return kCurrent; }
 
 private:
     Stats kCurrent = {};

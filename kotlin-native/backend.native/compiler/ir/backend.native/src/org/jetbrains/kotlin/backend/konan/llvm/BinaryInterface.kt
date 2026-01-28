@@ -35,6 +35,9 @@ object KonanBinaryInterface {
     internal const val MANGLE_CLASS_PREFIX = "kclass"
     internal const val MANGLE_FIELD_PREFIX = "kfield"
 
+    /** Suffix added to function implementation symbols for hot reload indirection */
+    internal const val HOT_RELOAD_IMPL_SUFFIX = "\$hr_impl"
+
     private val mangler = object : AbstractKonanIrMangler(withReturnType = true, allowOutOfScopeTypeParameters = true) {}
 
     private val exportChecker = mangler.getExportChecker(compatibleMode = true)

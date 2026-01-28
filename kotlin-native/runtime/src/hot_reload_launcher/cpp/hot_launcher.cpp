@@ -7,7 +7,13 @@
 #include "Types.h"
 #include "Common.h"
 #include "HotReload.hpp"
+#include "HotReloadInternal.hpp"
 
+using kotlin::hot::HotReload;
+using kotlin::hot::HotReloadImpl;
+
+// TODO: this needs extra checks (on macOS, it can be tailed down to the final executable)
+// TODO: While, on iOS, it needs to be bundled, somehow?
 constexpr auto EXPECTED_BOOTSTRAP_FILE_PATH = "./output.bootstrap.o";
 
 OBJ_GETTER(setupArgs, const int argc, const char** argv) {
@@ -33,12 +39,9 @@ extern "C" KInt Konan_run_start(const int argc, const char** argv) {
     ObjHolder args{};
     setupArgs(argc, argv, args.slot());
 
-    // TODO: Here, the Hot-Reload module is responsible to bootstrap the application
-    // TODO: by using JITLink APIs.
-
     // 1) Find bootstrap file, fail if this wasn't found.
     // 2) From the HotReload module, load the bootstrap file, and return the konan_start symbol
-    const auto KonanStart = HotReload::Instance().loadBootstrapFile(EXPECTED_BOOTSTRAP_FILE_PATH);
+    const auto KonanStart = HotReloadImpl::Instance().LoadBoostrapFile(EXPECTED_BOOTSTRAP_FILE_PATH);
 
     // 3) Run the symbol if not null
     if (KonanStart != nullptr) {
@@ -52,6 +55,10 @@ extern "C" KInt Konan_run_start(const int argc, const char** argv) {
 
 extern "C" RUNTIME_EXPORT int Init_and_run_start(const int argc, const char** argv, const int memoryDeInit) {
     Kotlin_initRuntimeIfNeeded();
+
+    // TODO: let's initialize the hot-reload module here, but maybe it should be done globally
+    HotReload::InitModule();
+
     Kotlin_mm_switchThreadStateRunnable();
 
     const KInt exitStatus = Konan_run_start(argc, argv);
