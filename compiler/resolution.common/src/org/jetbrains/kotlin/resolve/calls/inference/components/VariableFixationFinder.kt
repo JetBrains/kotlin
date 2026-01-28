@@ -232,7 +232,7 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
     }
 
     context(c: Context)
-    private fun Constraint.hasDependencyToOtherTypeVariable(ownerTypeVariable: TypeConstructorMarker): Boolean {
+    protected fun Constraint.hasDependencyToOtherTypeVariable(ownerTypeVariable: TypeConstructorMarker): Boolean {
         return type.lowerBoundIfFlexible().argumentsCount() != 0 &&
                 type.contains { it.typeConstructor() != ownerTypeVariable && c.notFixedTypeVariables.containsKey(it.typeConstructor()) }
     }
