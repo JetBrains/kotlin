@@ -14,37 +14,95 @@
  * limitations under the License.
  */
 
-
+import kotlinx.benchmark.Benchmark
+import kotlinx.benchmark.Scope
+import kotlinx.benchmark.State
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 import org.jetbrains.structsProducedByMacrosBenchmarks.*
-import org.jetbrains.benchmarksLauncher.*
 import org.jetbrains.structsBenchmarks.*
 import org.jetbrains.typesBenchmarks.*
-import kotlinx.cli.*
 
-class CinteropLauncher : Launcher() {
-    override val baseBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf(
-            "stringToC" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringToCBenchmark() }),
-            "stringToKotlin" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringToKotlinBenchmark() }),
-            "intMatrix" to BenchmarkEntryWithInit.create(::IntMatrixBenchmark, { intMatrixBenchmark() })
-    )
-    override val extendedBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf(
-            "macros" to BenchmarkEntry(::macrosBenchmark),
-            "struct" to BenchmarkEntry(::structBenchmark),
-            "union" to BenchmarkEntry(::unionBenchmark),
-            "enum" to BenchmarkEntry(::enumBenchmark),
-            "int" to BenchmarkEntryWithInit.create(::IntBenchmark, { intBenchmark() }),
-            "boxedInt" to BenchmarkEntryWithInit.create(::BoxedIntBenchmark, { boxedIntBenchmark() }),
-            "pinnedArray" to BenchmarkEntryWithInit.create(::PinnedArrayBenchmark, { pinnedArrayBenchmark() }),
-    )
+@State(Scope.Benchmark)
+class StringBenchmarkHideName {
+    private val instance = StringBenchmark()
 
+    @Benchmark
+    fun stringToC() {
+        instance.stringToCBenchmark()
+    }
+
+    @Benchmark
+    fun stringToKotlin() {
+        instance.stringToKotlinBenchmark()
+    }
 }
 
-fun main(args: Array<String>) {
-    val launcher = CinteropLauncher()
-    BenchmarksRunner.runBenchmarks(args, { arguments: BenchmarkArguments ->
-        if (arguments is BaseBenchmarkArguments) {
-            launcher.launch(arguments.warmup, arguments.repeat, arguments.prefix,
-                    arguments.filter, arguments.filterRegex, arguments.verbose)
-        } else emptyList()
-    }, benchmarksListAction = launcher::benchmarksListAction)
+@State(Scope.Benchmark)
+class IntMatrixBenchmarkHideName {
+    private val instance = IntMatrixBenchmark()
+
+    @Benchmark
+    fun intMatrix() {
+        instance.intMatrixBenchmark()
+    }
+}
+
+@State(Scope.Benchmark)
+class CinteropHideName : SkipWhenBaseOnly() {
+    @Benchmark
+    fun macros() {
+        skipWhenBaseOnly()
+        macrosBenchmark()
+    }
+
+    @Benchmark
+    fun struct() {
+        skipWhenBaseOnly()
+        structBenchmark()
+    }
+
+    @Benchmark
+    fun union() {
+        skipWhenBaseOnly()
+        unionBenchmark()
+    }
+
+    @Benchmark
+    fun enum() {
+        skipWhenBaseOnly()
+        enumBenchmark()
+    }
+}
+
+@State(Scope.Benchmark)
+class IntBenchmarkHideName : SkipWhenBaseOnly() {
+    private val instance = IntBenchmark()
+
+    @Benchmark
+    fun int() {
+        skipWhenBaseOnly()
+        instance.intBenchmark()
+    }
+}
+
+@State(Scope.Benchmark)
+class BoxedIntBenchmarkHideName : SkipWhenBaseOnly() {
+    private val instance = BoxedIntBenchmark()
+
+    @Benchmark
+    fun boxedInt() {
+        skipWhenBaseOnly()
+        instance.boxedIntBenchmark()
+    }
+}
+
+@State(Scope.Benchmark)
+class PinnedArrayBenchmarkHideName : SkipWhenBaseOnly() {
+    private val instance = PinnedArrayBenchmark()
+
+    @Benchmark
+    fun pinnedArray() {
+        skipWhenBaseOnly()
+        instance.pinnedArrayBenchmark()
+    }
 }
