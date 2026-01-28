@@ -212,6 +212,444 @@
             ]
         },
         {
+            "name": "gradle80ApiElements",
+            "attributes": {
+                "org.gradle.category": "library",
+                "org.gradle.dependency.bundling": "external",
+                "org.gradle.usage": "java-api",
+                "org.gradle.jvm.environment": "standard-jvm",
+                "org.gradle.jvm.version": 8,
+                "org.gradle.libraryelements": "jar",
+                "org.gradle.plugin.api-version": "8.0"
+            },
+            "dependencies": [
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-build-tools-api",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-gradle-plugin-annotations",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-gradle-plugins-bom",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "attributes": {
+                        "org.gradle.category": "platform"
+                    },
+                    "endorseStrictVersions": true,
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-native-utils",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-util-klib"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-tooling-core",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                }
+            ],
+            "files": [
+                {
+                    "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle80.jar",
+                    "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle80.jar",
+                    "size": null,
+                    "sha512": null,
+                    "sha256": null,
+                    "sha1": null,
+                    "md5": null
+                }
+            ],
+            "capabilities": [
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "name": "kotlin-gradle-plugin-api",
+                    "version": "ArtifactsTest.version"
+                }
+            ]
+        },
+        {
+            "name": "gradle80RuntimeElements",
+            "attributes": {
+                "org.gradle.category": "library",
+                "org.gradle.dependency.bundling": "external",
+                "org.gradle.usage": "java-runtime",
+                "org.gradle.jvm.environment": "standard-jvm",
+                "org.gradle.jvm.version": 8,
+                "org.gradle.libraryelements": "jar",
+                "org.gradle.plugin.api-version": "8.0"
+            },
+            "dependencies": [
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-build-tools-api",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-gradle-plugin-annotations",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-gradle-plugins-bom",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "attributes": {
+                        "org.gradle.category": "platform"
+                    },
+                    "endorseStrictVersions": true,
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-native-utils",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-util-klib"
+                        }
+                    ]
+                },
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-tooling-core",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                }
+            ],
+            "files": [
+                {
+                    "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle80.jar",
+                    "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle80.jar",
+                    "size": null,
+                    "sha512": null,
+                    "sha256": null,
+                    "sha1": null,
+                    "md5": null
+                }
+            ],
+            "capabilities": [
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "name": "kotlin-gradle-plugin-api",
+                    "version": "ArtifactsTest.version"
+                }
+            ]
+        },
+        {
+            "name": "gradle80SourcesElements",
+            "attributes": {
+                "org.gradle.category": "documentation",
+                "org.gradle.dependency.bundling": "external",
+                "org.gradle.docstype": "sources",
+                "org.gradle.usage": "java-runtime",
+                "org.gradle.plugin.api-version": "8.0"
+            },
+            "files": [
+                {
+                    "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle80-sources.jar",
+                    "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle80-sources.jar",
+                    "size": null,
+                    "sha512": null,
+                    "sha256": null,
+                    "sha1": null,
+                    "md5": null
+                }
+            ],
+            "capabilities": [
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "name": "kotlin-gradle-plugin-api",
+                    "version": "ArtifactsTest.version"
+                }
+            ]
+        },
+        {
             "name": "gradle811ApiElements",
             "attributes": {
                 "org.gradle.category": "library",
@@ -401,34 +839,6 @@
                 {
                     "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle811.jar",
                     "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle811.jar",
-                    "size": null,
-                    "sha512": null,
-                    "sha256": null,
-                    "sha1": null,
-                    "md5": null
-                }
-            ],
-            "capabilities": [
-                {
-                    "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-api",
-                    "version": "ArtifactsTest.version"
-                }
-            ]
-        },
-        {
-            "name": "gradle811JavadocElements",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "javadoc",
-                "org.gradle.usage": "java-runtime",
-                "org.gradle.plugin.api-version": "8.11"
-            },
-            "files": [
-                {
-                    "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle811-javadoc.jar",
-                    "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle811-javadoc.jar",
                     "size": null,
                     "sha512": null,
                     "sha256": null,
@@ -883,34 +1293,6 @@
             ]
         },
         {
-            "name": "gradle813JavadocElements",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "javadoc",
-                "org.gradle.usage": "java-runtime",
-                "org.gradle.plugin.api-version": "8.13"
-            },
-            "files": [
-                {
-                    "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle813-javadoc.jar",
-                    "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle813-javadoc.jar",
-                    "size": null,
-                    "sha512": null,
-                    "sha256": null,
-                    "sha1": null,
-                    "md5": null
-                }
-            ],
-            "capabilities": [
-                {
-                    "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-api",
-                    "version": "ArtifactsTest.version"
-                }
-            ]
-        },
-        {
             "name": "gradle813RuntimeElements",
             "attributes": {
                 "org.gradle.category": "library",
@@ -1333,34 +1715,6 @@
                 {
                     "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle81.jar",
                     "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle81.jar",
-                    "size": null,
-                    "sha512": null,
-                    "sha256": null,
-                    "sha1": null,
-                    "md5": null
-                }
-            ],
-            "capabilities": [
-                {
-                    "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-api",
-                    "version": "ArtifactsTest.version"
-                }
-            ]
-        },
-        {
-            "name": "gradle81JavadocElements",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "javadoc",
-                "org.gradle.usage": "java-runtime",
-                "org.gradle.plugin.api-version": "8.1"
-            },
-            "files": [
-                {
-                    "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle81-javadoc.jar",
-                    "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle81-javadoc.jar",
                     "size": null,
                     "sha512": null,
                     "sha256": null,
@@ -1815,34 +2169,6 @@
             ]
         },
         {
-            "name": "gradle82JavadocElements",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "javadoc",
-                "org.gradle.usage": "java-runtime",
-                "org.gradle.plugin.api-version": "8.2"
-            },
-            "files": [
-                {
-                    "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle82-javadoc.jar",
-                    "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle82-javadoc.jar",
-                    "size": null,
-                    "sha512": null,
-                    "sha256": null,
-                    "sha1": null,
-                    "md5": null
-                }
-            ],
-            "capabilities": [
-                {
-                    "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-api",
-                    "version": "ArtifactsTest.version"
-                }
-            ]
-        },
-        {
             "name": "gradle82RuntimeElements",
             "attributes": {
                 "org.gradle.category": "library",
@@ -2265,34 +2591,6 @@
                 {
                     "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle85.jar",
                     "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle85.jar",
-                    "size": null,
-                    "sha512": null,
-                    "sha256": null,
-                    "sha1": null,
-                    "md5": null
-                }
-            ],
-            "capabilities": [
-                {
-                    "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-api",
-                    "version": "ArtifactsTest.version"
-                }
-            ]
-        },
-        {
-            "name": "gradle85JavadocElements",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "javadoc",
-                "org.gradle.usage": "java-runtime",
-                "org.gradle.plugin.api-version": "8.5"
-            },
-            "files": [
-                {
-                    "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle85-javadoc.jar",
-                    "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle85-javadoc.jar",
                     "size": null,
                     "sha512": null,
                     "sha256": null,
@@ -2747,34 +3045,6 @@
             ]
         },
         {
-            "name": "gradle86JavadocElements",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "javadoc",
-                "org.gradle.usage": "java-runtime",
-                "org.gradle.plugin.api-version": "8.6"
-            },
-            "files": [
-                {
-                    "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle86-javadoc.jar",
-                    "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle86-javadoc.jar",
-                    "size": null,
-                    "sha512": null,
-                    "sha256": null,
-                    "sha1": null,
-                    "md5": null
-                }
-            ],
-            "capabilities": [
-                {
-                    "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-api",
-                    "version": "ArtifactsTest.version"
-                }
-            ]
-        },
-        {
             "name": "gradle86RuntimeElements",
             "attributes": {
                 "org.gradle.category": "library",
@@ -3213,34 +3483,6 @@
             ]
         },
         {
-            "name": "gradle88JavadocElements",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "javadoc",
-                "org.gradle.usage": "java-runtime",
-                "org.gradle.plugin.api-version": "8.8"
-            },
-            "files": [
-                {
-                    "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle88-javadoc.jar",
-                    "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-gradle88-javadoc.jar",
-                    "size": null,
-                    "sha512": null,
-                    "sha256": null,
-                    "sha1": null,
-                    "md5": null
-                }
-            ],
-            "capabilities": [
-                {
-                    "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-api",
-                    "version": "ArtifactsTest.version"
-                }
-            ]
-        },
-        {
             "name": "gradle88RuntimeElements",
             "attributes": {
                 "org.gradle.category": "library",
@@ -3470,26 +3712,6 @@
                     "group": "org.jetbrains.kotlin",
                     "name": "kotlin-gradle-plugin-api",
                     "version": "ArtifactsTest.version"
-                }
-            ]
-        },
-        {
-            "name": "javadocElements",
-            "attributes": {
-                "org.gradle.category": "documentation",
-                "org.gradle.dependency.bundling": "external",
-                "org.gradle.docstype": "javadoc",
-                "org.gradle.usage": "java-runtime"
-            },
-            "files": [
-                {
-                    "name": "kotlin-gradle-plugin-api-ArtifactsTest.version-javadoc.jar",
-                    "url": "kotlin-gradle-plugin-api-ArtifactsTest.version-javadoc.jar",
-                    "size": null,
-                    "sha512": null,
-                    "sha256": null,
-                    "sha1": null,
-                    "md5": null
                 }
             ]
         },
