@@ -21,35 +21,35 @@ NS_ASSUME_NONNULL_BEGIN
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("A")))
 @interface SharedA : SharedBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("A.A1")))
 @interface SharedAA1 : SharedBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("A.A1B1")))
 @interface SharedAA1B1 : SharedBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("A.A2")))
 @interface SharedAA2 : SharedBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("A.A2B2")))
 @interface SharedAA2B2 : SharedBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 

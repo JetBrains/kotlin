@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooReturnA : ReturnA<id<UpperBound1>, id<UpperBound1>>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithReturnA:(id<UpperBound> (^)(void))returnA __attribute__((swift_name("init(returnA:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @end
@@ -39,7 +39,7 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface FooReturnB : ReturnB<id<UpperBound1>, id<UpperBound1>>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithReturnB:(id<UpperBound> (^)(void))returnB __attribute__((swift_name("init(returnB:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @end

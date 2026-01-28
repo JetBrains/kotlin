@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol Foo
 @required
-- (void)invoke __attribute__((swift_name("invoke()")));
+- (void)invoke;
 @end
 
 #pragma pop_macro("_Nullable_result")

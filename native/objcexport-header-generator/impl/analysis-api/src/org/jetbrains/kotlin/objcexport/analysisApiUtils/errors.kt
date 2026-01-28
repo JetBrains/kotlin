@@ -51,7 +51,7 @@ internal val KtObjCExportSession.errorInterface
                 returnType = ObjCInstanceType,
                 selectors = listOf("init"),
                 parameters = emptyList(),
-                attributes = listOf("swift_name(\"init()\")", "objc_designated_initializer")
+                attributes = listOf("objc_designated_initializer")
             ),
             ObjCMethod(
                 comment = null,

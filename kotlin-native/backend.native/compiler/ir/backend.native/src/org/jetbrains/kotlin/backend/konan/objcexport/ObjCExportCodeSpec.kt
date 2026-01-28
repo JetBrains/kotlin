@@ -99,7 +99,9 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 }
 
                 descriptor.enumEntries.mapTo(methods) {
-                    ObjCGetterForKotlinEnumEntry(symbolTable.descriptorExtension.referenceEnumEntry(it), namer.getEnumEntrySelector(it))
+                    ObjCGetterForKotlinEnumEntry(
+                            symbolTable.descriptorExtension.referenceEnumEntry(it),
+                            namer.getEnumEntryName(it).objCName)
                 }
 
                 descriptor.getEnumValuesFunctionDescriptor()?.let {
@@ -142,7 +144,7 @@ internal fun <S : IrFunctionSymbol> createObjCMethodSpecBaseMethod(
 ): ObjCMethodSpec.BaseMethod<S> {
     require(mapper.isBaseMethod(descriptor))
 
-    val selector = namer.getSelector(descriptor)
+    val selector = namer.getFunctionName(descriptor).objCName
     val bridge = mapper.bridgeMethod(descriptor)
 
     return ObjCMethodSpec.BaseMethod(symbol, bridge, selector)

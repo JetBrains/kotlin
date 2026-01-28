@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol Clock
 @required
-- (Instant *)now __attribute__((swift_name("now()")));
+- (Instant *)now;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -32,7 +32,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) ClockCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) ClockCompanion *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -40,33 +40,33 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)system __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) ClockSystem *shared __attribute__((swift_name("shared")));
-- (Instant *)now __attribute__((swift_name("now()")));
+@property (class, readonly, getter=shared) ClockSystem *shared;
+- (Instant *)now;
 @end
 
 @interface DateTimePeriod : Base
-@property (class, readonly, getter=companion) DateTimePeriodCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) DateTimePeriodCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int32_t days __attribute__((swift_name("days")));
-@property (readonly) int32_t hours __attribute__((swift_name("hours")));
-@property (readonly) int32_t minutes __attribute__((swift_name("minutes")));
-@property (readonly) int32_t months __attribute__((swift_name("months")));
-@property (readonly) int32_t nanoseconds __attribute__((swift_name("nanoseconds")));
-@property (readonly) int32_t seconds __attribute__((swift_name("seconds")));
-@property (readonly) int32_t years __attribute__((swift_name("years")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) int32_t days;
+@property (readonly) int32_t hours;
+@property (readonly) int32_t minutes;
+@property (readonly) int32_t months;
+@property (readonly) int32_t nanoseconds;
+@property (readonly) int32_t seconds;
+@property (readonly) int32_t years;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface DatePeriod : DateTimePeriod
 - (instancetype)initWithYears:(int32_t)years months:(int32_t)months days:(int32_t)days __attribute__((swift_name("init(years:months:days:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) DatePeriodCompanion *companion __attribute__((swift_name("companion")));
-@property (readonly) int32_t days __attribute__((swift_name("days")));
-@property (readonly) int32_t hours __attribute__((swift_name("hours")));
-@property (readonly) int32_t minutes __attribute__((swift_name("minutes")));
-@property (readonly) int32_t nanoseconds __attribute__((swift_name("nanoseconds")));
-@property (readonly) int32_t seconds __attribute__((swift_name("seconds")));
+@property (class, readonly, getter=companion) DatePeriodCompanion *companion;
+@property (readonly) int32_t days;
+@property (readonly) int32_t hours;
+@property (readonly) int32_t minutes;
+@property (readonly) int32_t nanoseconds;
+@property (readonly) int32_t seconds;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -75,13 +75,13 @@ __attribute__((swift_name("DatePeriod.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DatePeriodCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DatePeriodCompanion *shared;
 - (DatePeriod *)parseText:(NSString *)text __attribute__((swift_name("parse(text:)")));
-- (KSerializer<DatePeriod *> *)serializer __attribute__((swift_name("serializer()")));
+- (KSerializer<DatePeriod *> *)serializer;
 @end
 
 @interface KotlinThrowable : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -91,16 +91,16 @@ __attribute__((swift_name("DatePeriod.Companion")))
  * @note annotations
  *   kotlin.experimental.ExperimentalNativeApi
 */
-- (KotlinArray<NSString *> *)getStackTrace __attribute__((swift_name("getStackTrace()")));
-- (void)printStackTrace __attribute__((swift_name("printStackTrace()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) KotlinThrowable * _Nullable cause __attribute__((swift_name("cause")));
-@property (readonly) NSString * _Nullable message __attribute__((swift_name("message")));
-- (NSError *)asError __attribute__((swift_name("asError()")));
+- (KotlinArray<NSString *> *)getStackTrace;
+- (void)printStackTrace;
+- (NSString *)description;
+@property (readonly) KotlinThrowable * _Nullable cause;
+@property (readonly) NSString * _Nullable message;
+- (NSError *)asError;
 @end
 
 @interface KotlinException : KotlinThrowable
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -108,7 +108,7 @@ __attribute__((swift_name("DatePeriod.Companion")))
 @end
 
 @interface KotlinRuntimeException : KotlinException
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -117,7 +117,7 @@ __attribute__((swift_name("DatePeriod.Companion")))
 
 __attribute__((objc_subclassing_restricted))
 @interface DateTimeArithmeticException : KotlinRuntimeException
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString *)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable *)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -130,13 +130,13 @@ __attribute__((swift_name("DateTimePeriod.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimePeriodCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DateTimePeriodCompanion *shared;
 - (DateTimePeriod *)parseText:(NSString *)text __attribute__((swift_name("parse(text:)")));
-- (KSerializer<DateTimePeriod *> *)serializer __attribute__((swift_name("serializer()")));
+- (KSerializer<DateTimePeriod *> *)serializer;
 @end
 
 @interface DateTimeUnit : Base
-@property (class, readonly, getter=companion) DateTimeUnitCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) DateTimeUnitCompanion *companion;
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
@@ -156,8 +156,8 @@ __attribute__((swift_name("DateTimeUnit.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimeUnitCompanion *shared __attribute__((swift_name("shared")));
-- (KSerializer<DateTimeUnit *> *)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) DateTimeUnitCompanion *shared;
+- (KSerializer<DateTimeUnit *> *)serializer;
 @property (readonly) DateTimeUnitMonthBased *CENTURY __attribute__((swift_name("CENTURY")));
 @property (readonly) DateTimeUnitDayBased *DAY __attribute__((swift_name("DAY")));
 @property (readonly) DateTimeUnitTimeBased *HOUR __attribute__((swift_name("HOUR")));
@@ -174,7 +174,7 @@ __attribute__((swift_name("DateTimeUnit.Companion")))
 
 __attribute__((swift_name("DateTimeUnit.DateBased")))
 @interface DateTimeUnitDateBased : DateTimeUnit
-@property (class, readonly, getter=companion) DateTimeUnitDateBasedCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) DateTimeUnitDateBasedCompanion *companion;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -183,20 +183,20 @@ __attribute__((swift_name("DateTimeUnit.DateBasedCompanion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimeUnitDateBasedCompanion *shared __attribute__((swift_name("shared")));
-- (KSerializer<DateTimeUnitDateBased *> *)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) DateTimeUnitDateBasedCompanion *shared;
+- (KSerializer<DateTimeUnitDateBased *> *)serializer;
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("DateTimeUnit.DayBased")))
 @interface DateTimeUnitDayBased : DateTimeUnitDateBased
 - (instancetype)initWithDays:(int32_t)days __attribute__((swift_name("init(days:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) DateTimeUnitDayBasedCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) DateTimeUnitDayBasedCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSUInteger)hash;
 - (DateTimeUnitDayBased *)timesScalar:(int32_t)scalar __attribute__((swift_name("times(scalar:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int32_t days __attribute__((swift_name("days")));
+- (NSString *)description;
+@property (readonly) int32_t days;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -205,20 +205,20 @@ __attribute__((swift_name("DateTimeUnit.DayBasedCompanion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimeUnitDayBasedCompanion *shared __attribute__((swift_name("shared")));
-- (KSerializer<DateTimeUnitDayBased *> *)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) DateTimeUnitDayBasedCompanion *shared;
+- (KSerializer<DateTimeUnitDayBased *> *)serializer;
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("DateTimeUnit.MonthBased")))
 @interface DateTimeUnitMonthBased : DateTimeUnitDateBased
 - (instancetype)initWithMonths:(int32_t)months __attribute__((swift_name("init(months:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) DateTimeUnitMonthBasedCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) DateTimeUnitMonthBasedCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSUInteger)hash;
 - (DateTimeUnitMonthBased *)timesScalar:(int32_t)scalar __attribute__((swift_name("times(scalar:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int32_t months __attribute__((swift_name("months")));
+- (NSString *)description;
+@property (readonly) int32_t months;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -227,21 +227,21 @@ __attribute__((swift_name("DateTimeUnit.MonthBasedCompanion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimeUnitMonthBasedCompanion *shared __attribute__((swift_name("shared")));
-- (KSerializer<DateTimeUnitMonthBased *> *)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) DateTimeUnitMonthBasedCompanion *shared;
+- (KSerializer<DateTimeUnitMonthBased *> *)serializer;
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("DateTimeUnit.TimeBased")))
 @interface DateTimeUnitTimeBased : DateTimeUnit
 - (instancetype)initWithNanoseconds:(int64_t)nanoseconds __attribute__((swift_name("init(nanoseconds:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) DateTimeUnitTimeBasedCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) DateTimeUnitTimeBasedCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSUInteger)hash;
 - (DateTimeUnitTimeBased *)timesScalar:(int32_t)scalar __attribute__((swift_name("times(scalar:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int64_t duration __attribute__((swift_name("duration")));
-@property (readonly) int64_t nanoseconds __attribute__((swift_name("nanoseconds")));
+- (NSString *)description;
+@property (readonly) int64_t duration;
+@property (readonly) int64_t nanoseconds;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -250,8 +250,8 @@ __attribute__((swift_name("DateTimeUnit.TimeBasedCompanion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimeUnitTimeBasedCompanion *shared __attribute__((swift_name("shared")));
-- (KSerializer<DateTimeUnitTimeBased *> *)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) DateTimeUnitTimeBasedCompanion *shared;
+- (KSerializer<DateTimeUnitTimeBased *> *)serializer;
 @end
 
 @protocol KotlinComparable
@@ -261,13 +261,13 @@ __attribute__((swift_name("DateTimeUnit.TimeBasedCompanion")))
 
 @interface KotlinEnum<E> : Base <KotlinComparable>
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) KotlinEnumCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) KotlinEnumCompanion *companion;
 - (int32_t)compareToOther:(E)other __attribute__((swift_name("compareTo(other:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) NSString *name __attribute__((swift_name("name")));
-@property (readonly) int32_t ordinal __attribute__((swift_name("ordinal")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) NSString *name;
+@property (readonly) int32_t ordinal;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -275,34 +275,34 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) DayOfWeek *monday __attribute__((swift_name("monday")));
-@property (class, readonly) DayOfWeek *tuesday __attribute__((swift_name("tuesday")));
-@property (class, readonly) DayOfWeek *wednesday __attribute__((swift_name("wednesday")));
-@property (class, readonly) DayOfWeek *thursday __attribute__((swift_name("thursday")));
-@property (class, readonly) DayOfWeek *friday __attribute__((swift_name("friday")));
-@property (class, readonly) DayOfWeek *saturday __attribute__((swift_name("saturday")));
-@property (class, readonly) DayOfWeek *sunday __attribute__((swift_name("sunday")));
-+ (KotlinArray<DayOfWeek *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<DayOfWeek *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) DayOfWeek *monday;
+@property (class, readonly) DayOfWeek *tuesday;
+@property (class, readonly) DayOfWeek *wednesday;
+@property (class, readonly) DayOfWeek *thursday;
+@property (class, readonly) DayOfWeek *friday;
+@property (class, readonly) DayOfWeek *saturday;
+@property (class, readonly) DayOfWeek *sunday;
++ (KotlinArray<DayOfWeek *> *)values;
+@property (class, readonly) NSArray<DayOfWeek *> *entries;
 @end
 
 @interface TimeZone : Base
-@property (class, readonly, getter=companion) TimeZoneCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) TimeZoneCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSUInteger)hash;
 - (Instant *)toInstant:(LocalDateTime *)receiver __attribute__((swift_name("toInstant(_:)")));
 - (LocalDateTime *)toLocalDateTime:(Instant *)receiver __attribute__((swift_name("toLocalDateTime(_:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) NSString *id __attribute__((swift_name("id")));
+- (NSString *)description;
+@property (readonly) NSString *id;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface FixedOffsetTimeZone : TimeZone
 - (instancetype)initWithOffset:(UtcOffset *)offset __attribute__((swift_name("init(offset:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) FixedOffsetTimeZoneCompanion *companion __attribute__((swift_name("companion")));
-@property (readonly) NSString *id __attribute__((swift_name("id")));
-@property (readonly) UtcOffset *offset __attribute__((swift_name("offset")));
-@property (readonly) int32_t totalSeconds __attribute__((swift_name("totalSeconds"))) __attribute__((deprecated("Use offset.totalSeconds")));
+@property (class, readonly, getter=companion) FixedOffsetTimeZoneCompanion *companion;
+@property (readonly) NSString *id;
+@property (readonly) UtcOffset *offset;
+@property (readonly) int32_t totalSeconds __attribute__((deprecated("Use offset.totalSeconds")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -311,12 +311,12 @@ __attribute__((swift_name("FixedOffsetTimeZone.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) FixedOffsetTimeZoneCompanion *shared __attribute__((swift_name("shared")));
-- (KSerializer<FixedOffsetTimeZone *> *)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) FixedOffsetTimeZoneCompanion *shared;
+- (KSerializer<FixedOffsetTimeZone *> *)serializer;
 @end
 
 @interface KotlinIllegalArgumentException : KotlinRuntimeException
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -325,7 +325,7 @@ __attribute__((swift_name("FixedOffsetTimeZone.Companion")))
 
 __attribute__((objc_subclassing_restricted))
 @interface IllegalTimeZoneException : KotlinIllegalArgumentException
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString *)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable *)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -334,17 +334,17 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface Instant : Base <KotlinComparable>
-@property (class, readonly, getter=companion) InstantCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) InstantCompanion *companion;
 - (int32_t)compareToOther:(Instant *)other __attribute__((swift_name("compareTo(other:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSUInteger)hash;
 - (Instant *)minusDuration:(int64_t)duration __attribute__((swift_name("minus(duration:)")));
 - (int64_t)minusOther:(Instant *)other __attribute__((swift_name("minus(other:)")));
 - (Instant *)plusDuration:(int64_t)duration __attribute__((swift_name("plus(duration:)")));
-- (int64_t)toEpochMilliseconds __attribute__((swift_name("toEpochMilliseconds()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int64_t epochSeconds __attribute__((swift_name("epochSeconds")));
-@property (readonly) int32_t nanosecondsOfSecond __attribute__((swift_name("nanosecondsOfSecond")));
+- (int64_t)toEpochMilliseconds;
+- (NSString *)description;
+@property (readonly) int64_t epochSeconds;
+@property (readonly) int32_t nanosecondsOfSecond;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -353,13 +353,13 @@ __attribute__((swift_name("Instant.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) InstantCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) InstantCompanion *shared;
 - (Instant *)fromEpochMillisecondsEpochMilliseconds:(int64_t)epochMilliseconds __attribute__((swift_name("fromEpochMilliseconds(epochMilliseconds:)")));
 - (Instant *)fromEpochSecondsEpochSeconds:(int64_t)epochSeconds nanosecondAdjustment:(int32_t)nanosecondAdjustment __attribute__((swift_name("fromEpochSeconds(epochSeconds:nanosecondAdjustment:)")));
 - (Instant *)fromEpochSecondsEpochSeconds:(int64_t)epochSeconds nanosecondAdjustment_:(int64_t)nanosecondAdjustment __attribute__((swift_name("fromEpochSeconds(epochSeconds:nanosecondAdjustment_:)")));
-- (Instant *)now __attribute__((swift_name("now()"))) __attribute__((unavailable("Use Clock.System.now() instead")));
+- (Instant *)now __attribute__((unavailable("Use Clock.System.now() instead")));
 - (Instant *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
-- (KSerializer<Instant *> *)serializer __attribute__((swift_name("serializer()")));
+- (KSerializer<Instant *> *)serializer;
 @property (readonly) Instant *DISTANT_FUTURE __attribute__((swift_name("DISTANT_FUTURE")));
 @property (readonly) Instant *DISTANT_PAST __attribute__((swift_name("DISTANT_PAST")));
 @end
@@ -368,18 +368,18 @@ __attribute__((objc_subclassing_restricted))
 @interface LocalDate : Base <KotlinComparable>
 - (instancetype)initWithYear:(int32_t)year monthNumber:(int32_t)monthNumber dayOfMonth:(int32_t)dayOfMonth __attribute__((swift_name("init(year:monthNumber:dayOfMonth:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithYear:(int32_t)year month:(Month *)month dayOfMonth:(int32_t)dayOfMonth __attribute__((swift_name("init(year:month:dayOfMonth:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) LocalDateCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) LocalDateCompanion *companion;
 - (int32_t)compareToOther:(LocalDate *)other __attribute__((swift_name("compareTo(other:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (int32_t)toEpochDays __attribute__((swift_name("toEpochDays()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int32_t dayOfMonth __attribute__((swift_name("dayOfMonth")));
-@property (readonly) DayOfWeek *dayOfWeek __attribute__((swift_name("dayOfWeek")));
-@property (readonly) int32_t dayOfYear __attribute__((swift_name("dayOfYear")));
-@property (readonly) Month *month __attribute__((swift_name("month")));
-@property (readonly) int32_t monthNumber __attribute__((swift_name("monthNumber")));
-@property (readonly) int32_t year __attribute__((swift_name("year")));
+- (NSUInteger)hash;
+- (int32_t)toEpochDays;
+- (NSString *)description;
+@property (readonly) int32_t dayOfMonth;
+@property (readonly) DayOfWeek *dayOfWeek;
+@property (readonly) int32_t dayOfYear;
+@property (readonly) Month *month;
+@property (readonly) int32_t monthNumber;
+@property (readonly) int32_t year;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -388,11 +388,11 @@ __attribute__((swift_name("LocalDate.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalDateCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalDateCompanion *shared;
 - (id<DateTimeFormat>)FormatBlock:(void (^)(id<DateTimeFormatBuilderWithDate>))block __attribute__((swift_name("Format(block:)")));
 - (LocalDate *)fromEpochDaysEpochDays:(int32_t)epochDays __attribute__((swift_name("fromEpochDays(epochDays:)")));
 - (LocalDate *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
-- (KSerializer<LocalDate *> *)serializer __attribute__((swift_name("serializer()")));
+- (KSerializer<LocalDate *> *)serializer;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -401,7 +401,7 @@ __attribute__((swift_name("LocalDate.Formats")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)formats __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalDateFormats *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalDateFormats *shared;
 @property (readonly) id<DateTimeFormat> ISO __attribute__((swift_name("ISO")));
 @property (readonly) id<DateTimeFormat> ISO_BASIC __attribute__((swift_name("ISO_BASIC")));
 @end
@@ -411,23 +411,23 @@ __attribute__((objc_subclassing_restricted))
 - (instancetype)initWithDate:(LocalDate *)date time:(LocalTime *)time __attribute__((swift_name("init(date:time:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithYear:(int32_t)year monthNumber:(int32_t)monthNumber dayOfMonth:(int32_t)dayOfMonth hour:(int32_t)hour minute:(int32_t)minute second:(int32_t)second nanosecond:(int32_t)nanosecond __attribute__((swift_name("init(year:monthNumber:dayOfMonth:hour:minute:second:nanosecond:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithYear:(int32_t)year month:(Month *)month dayOfMonth:(int32_t)dayOfMonth hour:(int32_t)hour minute:(int32_t)minute second:(int32_t)second nanosecond:(int32_t)nanosecond __attribute__((swift_name("init(year:month:dayOfMonth:hour:minute:second:nanosecond:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) LocalDateTimeCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) LocalDateTimeCompanion *companion;
 - (int32_t)compareToOther:(LocalDateTime *)other __attribute__((swift_name("compareTo(other:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) LocalDate *date __attribute__((swift_name("date")));
-@property (readonly) int32_t dayOfMonth __attribute__((swift_name("dayOfMonth")));
-@property (readonly) DayOfWeek *dayOfWeek __attribute__((swift_name("dayOfWeek")));
-@property (readonly) int32_t dayOfYear __attribute__((swift_name("dayOfYear")));
-@property (readonly) int32_t hour __attribute__((swift_name("hour")));
-@property (readonly) int32_t minute __attribute__((swift_name("minute")));
-@property (readonly) Month *month __attribute__((swift_name("month")));
-@property (readonly) int32_t monthNumber __attribute__((swift_name("monthNumber")));
-@property (readonly) int32_t nanosecond __attribute__((swift_name("nanosecond")));
-@property (readonly) int32_t second __attribute__((swift_name("second")));
-@property (readonly) LocalTime *time __attribute__((swift_name("time")));
-@property (readonly) int32_t year __attribute__((swift_name("year")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) LocalDate *date;
+@property (readonly) int32_t dayOfMonth;
+@property (readonly) DayOfWeek *dayOfWeek;
+@property (readonly) int32_t dayOfYear;
+@property (readonly) int32_t hour;
+@property (readonly) int32_t minute;
+@property (readonly) Month *month;
+@property (readonly) int32_t monthNumber;
+@property (readonly) int32_t nanosecond;
+@property (readonly) int32_t second;
+@property (readonly) LocalTime *time;
+@property (readonly) int32_t year;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -436,10 +436,10 @@ __attribute__((swift_name("LocalDateTime.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalDateTimeCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalDateTimeCompanion *shared;
 - (id<DateTimeFormat>)FormatBuilder:(void (^)(id<DateTimeFormatBuilderWithDateTime>))builder __attribute__((swift_name("Format(builder:)")));
 - (LocalDateTime *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
-- (KSerializer<LocalDateTime *> *)serializer __attribute__((swift_name("serializer()")));
+- (KSerializer<LocalDateTime *> *)serializer;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -448,25 +448,25 @@ __attribute__((swift_name("LocalDateTime.Formats")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)formats __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalDateTimeFormats *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalDateTimeFormats *shared;
 @property (readonly) id<DateTimeFormat> ISO __attribute__((swift_name("ISO")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface LocalTime : Base <KotlinComparable>
 - (instancetype)initWithHour:(int32_t)hour minute:(int32_t)minute second:(int32_t)second nanosecond:(int32_t)nanosecond __attribute__((swift_name("init(hour:minute:second:nanosecond:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) LocalTimeCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) LocalTimeCompanion *companion;
 - (int32_t)compareToOther:(LocalTime *)other __attribute__((swift_name("compareTo(other:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (int32_t)toMillisecondOfDay __attribute__((swift_name("toMillisecondOfDay()")));
-- (int64_t)toNanosecondOfDay __attribute__((swift_name("toNanosecondOfDay()")));
-- (int32_t)toSecondOfDay __attribute__((swift_name("toSecondOfDay()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int32_t hour __attribute__((swift_name("hour")));
-@property (readonly) int32_t minute __attribute__((swift_name("minute")));
-@property (readonly) int32_t nanosecond __attribute__((swift_name("nanosecond")));
-@property (readonly) int32_t second __attribute__((swift_name("second")));
+- (NSUInteger)hash;
+- (int32_t)toMillisecondOfDay;
+- (int64_t)toNanosecondOfDay;
+- (int32_t)toSecondOfDay;
+- (NSString *)description;
+@property (readonly) int32_t hour;
+@property (readonly) int32_t minute;
+@property (readonly) int32_t nanosecond;
+@property (readonly) int32_t second;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -475,13 +475,13 @@ __attribute__((swift_name("LocalTime.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalTimeCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalTimeCompanion *shared;
 - (id<DateTimeFormat>)FormatBuilder:(void (^)(id<DateTimeFormatBuilderWithTime>))builder __attribute__((swift_name("Format(builder:)")));
 - (LocalTime *)fromMillisecondOfDayMillisecondOfDay:(int32_t)millisecondOfDay __attribute__((swift_name("fromMillisecondOfDay(millisecondOfDay:)")));
 - (LocalTime *)fromNanosecondOfDayNanosecondOfDay:(int64_t)nanosecondOfDay __attribute__((swift_name("fromNanosecondOfDay(nanosecondOfDay:)")));
 - (LocalTime *)fromSecondOfDaySecondOfDay:(int32_t)secondOfDay __attribute__((swift_name("fromSecondOfDay(secondOfDay:)")));
 - (LocalTime *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
-- (KSerializer<LocalTime *> *)serializer __attribute__((swift_name("serializer()")));
+- (KSerializer<LocalTime *> *)serializer;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -490,7 +490,7 @@ __attribute__((swift_name("LocalTime.Formats")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)formats __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalTimeFormats *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalTimeFormats *shared;
 @property (readonly) id<DateTimeFormat> ISO __attribute__((swift_name("ISO")));
 @end
 
@@ -499,20 +499,20 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) Month *january __attribute__((swift_name("january")));
-@property (class, readonly) Month *february __attribute__((swift_name("february")));
-@property (class, readonly) Month *march __attribute__((swift_name("march")));
-@property (class, readonly) Month *april __attribute__((swift_name("april")));
-@property (class, readonly) Month *may __attribute__((swift_name("may")));
-@property (class, readonly) Month *june __attribute__((swift_name("june")));
-@property (class, readonly) Month *july __attribute__((swift_name("july")));
-@property (class, readonly) Month *august __attribute__((swift_name("august")));
-@property (class, readonly) Month *september __attribute__((swift_name("september")));
-@property (class, readonly) Month *october __attribute__((swift_name("october")));
-@property (class, readonly) Month *november __attribute__((swift_name("november")));
-@property (class, readonly) Month *december __attribute__((swift_name("december")));
-+ (KotlinArray<Month *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<Month *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) Month *january;
+@property (class, readonly) Month *february;
+@property (class, readonly) Month *march;
+@property (class, readonly) Month *april;
+@property (class, readonly) Month *may;
+@property (class, readonly) Month *june;
+@property (class, readonly) Month *july;
+@property (class, readonly) Month *august;
+@property (class, readonly) Month *september;
+@property (class, readonly) Month *october;
+@property (class, readonly) Month *november;
+@property (class, readonly) Month *december;
++ (KotlinArray<Month *> *)values;
+@property (class, readonly) NSArray<Month *> *entries;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -521,21 +521,21 @@ __attribute__((swift_name("TimeZone.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) TimeZoneCompanion *shared __attribute__((swift_name("shared")));
-- (TimeZone *)currentSystemDefault __attribute__((swift_name("currentSystemDefault()")));
+@property (class, readonly, getter=shared) TimeZoneCompanion *shared;
+- (TimeZone *)currentSystemDefault;
 - (TimeZone *)ofZoneId:(NSString *)zoneId __attribute__((swift_name("of(zoneId:)")));
-- (KSerializer<TimeZone *> *)serializer __attribute__((swift_name("serializer()")));
+- (KSerializer<TimeZone *> *)serializer;
 @property (readonly) FixedOffsetTimeZone *UTC __attribute__((swift_name("UTC")));
-@property (readonly) NSSet<NSString *> *availableZoneIds __attribute__((swift_name("availableZoneIds")));
+@property (readonly) NSSet<NSString *> *availableZoneIds;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface UtcOffset : Base
-@property (class, readonly, getter=companion) UtcOffsetCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) UtcOffsetCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int32_t totalSeconds __attribute__((swift_name("totalSeconds")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) int32_t totalSeconds;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -544,10 +544,10 @@ __attribute__((swift_name("UtcOffset.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) UtcOffsetCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) UtcOffsetCompanion *shared;
 - (id<DateTimeFormat>)FormatBlock:(void (^)(id<DateTimeFormatBuilderWithUtcOffset>))block __attribute__((swift_name("Format(block:)")));
 - (UtcOffset *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
-- (KSerializer<UtcOffset *> *)serializer __attribute__((swift_name("serializer()")));
+- (KSerializer<UtcOffset *> *)serializer;
 @property (readonly) UtcOffset *ZERO __attribute__((swift_name("ZERO")));
 @end
 
@@ -557,7 +557,7 @@ __attribute__((swift_name("UtcOffset.Formats")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)formats __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) UtcOffsetFormats *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) UtcOffsetFormats *shared;
 @property (readonly) id<DateTimeFormat> FOUR_DIGITS __attribute__((swift_name("FOUR_DIGITS")));
 @property (readonly) id<DateTimeFormat> ISO __attribute__((swift_name("ISO")));
 @property (readonly) id<DateTimeFormat> ISO_BASIC __attribute__((swift_name("ISO_BASIC")));
@@ -568,42 +568,42 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) AmPmMarker *am __attribute__((swift_name("am")));
-@property (class, readonly) AmPmMarker *pm __attribute__((swift_name("pm")));
-+ (KotlinArray<AmPmMarker *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<AmPmMarker *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) AmPmMarker *am;
+@property (class, readonly) AmPmMarker *pm;
++ (KotlinArray<AmPmMarker *> *)values;
+@property (class, readonly) NSArray<AmPmMarker *> *entries;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface DateTimeComponents : Base
-@property (class, readonly, getter=companion) DateTimeComponentsCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) DateTimeComponentsCompanion *companion;
 - (void)setDateLocalDate:(LocalDate *)localDate __attribute__((swift_name("setDate(localDate:)")));
 - (void)setDateTimeLocalDateTime:(LocalDateTime *)localDateTime __attribute__((swift_name("setDateTime(localDateTime:)")));
 - (void)setDateTimeOffsetInstant:(Instant *)instant utcOffset:(UtcOffset *)utcOffset __attribute__((swift_name("setDateTimeOffset(instant:utcOffset:)")));
 - (void)setDateTimeOffsetLocalDateTime:(LocalDateTime *)localDateTime utcOffset:(UtcOffset *)utcOffset __attribute__((swift_name("setDateTimeOffset(localDateTime:utcOffset:)")));
 - (void)setOffsetUtcOffset:(UtcOffset *)utcOffset __attribute__((swift_name("setOffset(utcOffset:)")));
 - (void)setTimeLocalTime:(LocalTime *)localTime __attribute__((swift_name("setTime(localTime:)")));
-- (Instant *)toInstantUsingOffset __attribute__((swift_name("toInstantUsingOffset()")));
-- (LocalDate *)toLocalDate __attribute__((swift_name("toLocalDate()")));
-- (LocalDateTime *)toLocalDateTime __attribute__((swift_name("toLocalDateTime()")));
-- (LocalTime *)toLocalTime __attribute__((swift_name("toLocalTime()")));
-- (UtcOffset *)toUtcOffset __attribute__((swift_name("toUtcOffset()")));
-@property AmPmMarker * _Nullable amPm __attribute__((swift_name("amPm")));
-@property Int * _Nullable dayOfMonth __attribute__((swift_name("dayOfMonth")));
-@property DayOfWeek * _Nullable dayOfWeek __attribute__((swift_name("dayOfWeek")));
-@property Int * _Nullable hour __attribute__((swift_name("hour")));
-@property Int * _Nullable hourOfAmPm __attribute__((swift_name("hourOfAmPm")));
-@property Int * _Nullable minute __attribute__((swift_name("minute")));
-@property Month * _Nullable month __attribute__((swift_name("month")));
-@property Int * _Nullable monthNumber __attribute__((swift_name("monthNumber")));
-@property Int * _Nullable nanosecond __attribute__((swift_name("nanosecond")));
-@property Int * _Nullable offsetHours __attribute__((swift_name("offsetHours")));
-@property Boolean * _Nullable offsetIsNegative __attribute__((swift_name("offsetIsNegative")));
-@property Int * _Nullable offsetMinutesOfHour __attribute__((swift_name("offsetMinutesOfHour")));
-@property Int * _Nullable offsetSecondsOfMinute __attribute__((swift_name("offsetSecondsOfMinute")));
-@property Int * _Nullable second __attribute__((swift_name("second")));
-@property NSString * _Nullable timeZoneId __attribute__((swift_name("timeZoneId")));
-@property Int * _Nullable year __attribute__((swift_name("year")));
+- (Instant *)toInstantUsingOffset;
+- (LocalDate *)toLocalDate;
+- (LocalDateTime *)toLocalDateTime;
+- (LocalTime *)toLocalTime;
+- (UtcOffset *)toUtcOffset;
+@property AmPmMarker * _Nullable amPm;
+@property Int * _Nullable dayOfMonth;
+@property DayOfWeek * _Nullable dayOfWeek;
+@property Int * _Nullable hour;
+@property Int * _Nullable hourOfAmPm;
+@property Int * _Nullable minute;
+@property Month * _Nullable month;
+@property Int * _Nullable monthNumber;
+@property Int * _Nullable nanosecond;
+@property Int * _Nullable offsetHours;
+@property Boolean * _Nullable offsetIsNegative;
+@property Int * _Nullable offsetMinutesOfHour;
+@property Int * _Nullable offsetSecondsOfMinute;
+@property Int * _Nullable second;
+@property NSString * _Nullable timeZoneId;
+@property Int * _Nullable year;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -612,7 +612,7 @@ __attribute__((swift_name("DateTimeComponents.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimeComponentsCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DateTimeComponentsCompanion *shared;
 - (id<DateTimeFormat>)FormatBlock:(void (^)(id<DateTimeFormatBuilderWithDateTimeComponents>))block __attribute__((swift_name("Format(block:)")));
 @end
 
@@ -622,7 +622,7 @@ __attribute__((swift_name("DateTimeComponents.Formats")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)formats __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimeComponentsFormats *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DateTimeComponentsFormats *shared;
 @property (readonly) id<DateTimeFormat> ISO_DATE_TIME_OFFSET __attribute__((swift_name("ISO_DATE_TIME_OFFSET")));
 @property (readonly) id<DateTimeFormat> RFC_1123 __attribute__((swift_name("RFC_1123")));
 @end
@@ -640,7 +640,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimeFormatCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DateTimeFormatCompanion *shared;
 - (NSString *)formatAsKotlinBuilderDslFormat:(id<DateTimeFormat>)format __attribute__((swift_name("formatAsKotlinBuilderDsl(format:)")));
 @end
 
@@ -688,18 +688,18 @@ __attribute__((objc_subclassing_restricted))
 @protocol DateTimeFormatBuilderWithDateTimeComponents <DateTimeFormatBuilderWithDateTime, DateTimeFormatBuilderWithUtcOffset>
 @required
 - (void)dateTimeComponentsFormat:(id<DateTimeFormat>)format __attribute__((swift_name("dateTimeComponents(format:)")));
-- (void)timeZoneId __attribute__((swift_name("timeZoneId()")));
+- (void)timeZoneId;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface DayOfWeekNames : Base
 - (instancetype)initWithNames:(NSArray<NSString *> *)names __attribute__((swift_name("init(names:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithMonday:(NSString *)monday tuesday:(NSString *)tuesday wednesday:(NSString *)wednesday thursday:(NSString *)thursday friday:(NSString *)friday saturday:(NSString *)saturday sunday:(NSString *)sunday __attribute__((swift_name("init(monday:tuesday:wednesday:thursday:friday:saturday:sunday:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) DayOfWeekNamesCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) DayOfWeekNamesCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) NSArray<NSString *> *names __attribute__((swift_name("names")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) NSArray<NSString *> *names;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -708,7 +708,7 @@ __attribute__((swift_name("DayOfWeekNames.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DayOfWeekNamesCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DayOfWeekNamesCompanion *shared;
 @property (readonly) DayOfWeekNames *ENGLISH_ABBREVIATED __attribute__((swift_name("ENGLISH_ABBREVIATED")));
 @property (readonly) DayOfWeekNames *ENGLISH_FULL __attribute__((swift_name("ENGLISH_FULL")));
 @end
@@ -717,11 +717,11 @@ __attribute__((objc_subclassing_restricted))
 @interface MonthNames : Base
 - (instancetype)initWithNames:(NSArray<NSString *> *)names __attribute__((swift_name("init(names:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithJanuary:(NSString *)january february:(NSString *)february march:(NSString *)march april:(NSString *)april may:(NSString *)may june:(NSString *)june july:(NSString *)july august:(NSString *)august september:(NSString *)september october:(NSString *)october november:(NSString *)november december:(NSString *)december __attribute__((swift_name("init(january:february:march:april:may:june:july:august:september:october:november:december:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) MonthNamesCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) MonthNamesCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) NSArray<NSString *> *names __attribute__((swift_name("names")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) NSArray<NSString *> *names;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -730,7 +730,7 @@ __attribute__((swift_name("MonthNames.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) MonthNamesCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) MonthNamesCompanion *shared;
 @property (readonly) MonthNames *ENGLISH_ABBREVIATED __attribute__((swift_name("ENGLISH_ABBREVIATED")));
 @property (readonly) MonthNames *ENGLISH_FULL __attribute__((swift_name("ENGLISH_FULL")));
 @end
@@ -740,11 +740,11 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) Padding *none __attribute__((swift_name("none")));
-@property (class, readonly) Padding *zero __attribute__((swift_name("zero")));
-@property (class, readonly) Padding *space __attribute__((swift_name("space")));
-+ (KotlinArray<Padding *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<Padding *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) Padding *none;
+@property (class, readonly) Padding *zero;
+@property (class, readonly) Padding *space;
++ (KotlinArray<Padding *> *)values;
+@property (class, readonly) NSArray<Padding *> *entries;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -756,11 +756,11 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)dateBasedDateTimeUnitSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateBasedDateTimeUnitSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DateBasedDateTimeUnitSerializer *shared;
 - (DeserializationStrategy<DateTimeUnitDateBased *> * _Nullable)findPolymorphicSerializerOrNullDecoder:(CompositeDecoder *)decoder klassName:(NSString * _Nullable)klassName __attribute__((swift_name("findPolymorphicSerializerOrNull(decoder:klassName:)")));
 - (SerializationStrategy<DateTimeUnitDateBased *> * _Nullable)findPolymorphicSerializerOrNullEncoder:(Encoder *)encoder value:(DateTimeUnitDateBased *)value __attribute__((swift_name("findPolymorphicSerializerOrNull(encoder:value:)")));
-@property (readonly) id<KotlinKClass> baseClass __attribute__((swift_name("baseClass")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) id<KotlinKClass> baseClass;
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -772,10 +772,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)datePeriodComponentSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DatePeriodComponentSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DatePeriodComponentSerializer *shared;
 - (DatePeriod *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(DatePeriod *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -783,10 +783,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)datePeriodIso8601Serializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DatePeriodIso8601Serializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DatePeriodIso8601Serializer *shared;
 - (DatePeriod *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(DatePeriod *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -794,10 +794,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)dateTimePeriodComponentSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimePeriodComponentSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DateTimePeriodComponentSerializer *shared;
 - (DateTimePeriod *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(DateTimePeriod *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -805,10 +805,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)dateTimePeriodIso8601Serializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimePeriodIso8601Serializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DateTimePeriodIso8601Serializer *shared;
 - (DateTimePeriod *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(DateTimePeriod *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -816,11 +816,11 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)dateTimeUnitSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DateTimeUnitSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DateTimeUnitSerializer *shared;
 - (DeserializationStrategy<DateTimeUnit *> * _Nullable)findPolymorphicSerializerOrNullDecoder:(CompositeDecoder *)decoder klassName:(NSString * _Nullable)klassName __attribute__((swift_name("findPolymorphicSerializerOrNull(decoder:klassName:)")));
 - (SerializationStrategy<DateTimeUnit *> * _Nullable)findPolymorphicSerializerOrNullEncoder:(Encoder *)encoder value:(DateTimeUnit *)value __attribute__((swift_name("findPolymorphicSerializerOrNull(encoder:value:)")));
-@property (readonly) id<KotlinKClass> baseClass __attribute__((swift_name("baseClass")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) id<KotlinKClass> baseClass;
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -828,10 +828,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)dayBasedDateTimeUnitSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DayBasedDateTimeUnitSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DayBasedDateTimeUnitSerializer *shared;
 - (DateTimeUnitDayBased *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(DateTimeUnitDayBased *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -839,10 +839,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)dayOfWeekSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) DayOfWeekSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) DayOfWeekSerializer *shared;
 - (DayOfWeek *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(DayOfWeek *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -850,10 +850,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)fixedOffsetTimeZoneSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) FixedOffsetTimeZoneSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) FixedOffsetTimeZoneSerializer *shared;
 - (FixedOffsetTimeZone *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(FixedOffsetTimeZone *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -861,10 +861,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)instantComponentSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) InstantComponentSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) InstantComponentSerializer *shared;
 - (Instant *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(Instant *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -872,10 +872,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)instantIso8601Serializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) InstantIso8601Serializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) InstantIso8601Serializer *shared;
 - (Instant *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(Instant *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -883,10 +883,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)localDateComponentSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalDateComponentSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalDateComponentSerializer *shared;
 - (LocalDate *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(LocalDate *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -894,10 +894,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)localDateIso8601Serializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalDateIso8601Serializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalDateIso8601Serializer *shared;
 - (LocalDate *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(LocalDate *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -905,10 +905,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)localDateTimeComponentSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalDateTimeComponentSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalDateTimeComponentSerializer *shared;
 - (LocalDateTime *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(LocalDateTime *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -916,10 +916,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)localDateTimeIso8601Serializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalDateTimeIso8601Serializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalDateTimeIso8601Serializer *shared;
 - (LocalDateTime *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(LocalDateTime *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -927,10 +927,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)localTimeComponentSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalTimeComponentSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalTimeComponentSerializer *shared;
 - (LocalTime *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(LocalTime *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -938,10 +938,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)localTimeIso8601Serializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LocalTimeIso8601Serializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LocalTimeIso8601Serializer *shared;
 - (LocalTime *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(LocalTime *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -949,10 +949,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)monthBasedDateTimeUnitSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) MonthBasedDateTimeUnitSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) MonthBasedDateTimeUnitSerializer *shared;
 - (DateTimeUnitMonthBased *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(DateTimeUnitMonthBased *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -960,10 +960,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)monthSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) MonthSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) MonthSerializer *shared;
 - (Month *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(Month *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -971,10 +971,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)timeBasedDateTimeUnitSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) TimeBasedDateTimeUnitSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) TimeBasedDateTimeUnitSerializer *shared;
 - (DateTimeUnitTimeBased *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(DateTimeUnitTimeBased *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -982,10 +982,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)timeZoneSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) TimeZoneSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) TimeZoneSerializer *shared;
 - (TimeZone *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(TimeZone *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -993,10 +993,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)utcOffsetSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) UtcOffsetSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) UtcOffsetSerializer *shared;
 - (UtcOffset *)deserializeDecoder:(Decoder *)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(Encoder *)encoder value:(UtcOffset *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) SerialDescriptor *descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1091,9 +1091,9 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (T _Nullable)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
+- (id<KotlinIterator>)iterator;
 - (void)setIndex:(int32_t)index value:(T _Nullable)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1101,7 +1101,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinEnumCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinEnumCompanion *shared;
 @end
 
 @protocol KotlinAppendable
@@ -1167,8 +1167,8 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.SinceKotlin(version="1.1")
 */
 - (BOOL)isInstanceValue:(id _Nullable)value __attribute__((swift_name("isInstance(value:)")));
-@property (readonly) NSString * _Nullable qualifiedName __attribute__((swift_name("qualifiedName")));
-@property (readonly) NSString * _Nullable simpleName __attribute__((swift_name("simpleName")));
+@property (readonly) NSString * _Nullable qualifiedName;
+@property (readonly) NSString * _Nullable simpleName;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1190,7 +1190,7 @@ __attribute__((objc_subclassing_restricted))
 */
 @protocol KotlinTimeSource
 @required
-- (id<KotlinTimeMark>)markNow __attribute__((swift_name("markNow()")));
+- (id<KotlinTimeMark>)markNow;
 @end
 
 
@@ -1207,14 +1207,14 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)unit __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinUnit *shared __attribute__((swift_name("shared")));
-- (NSString *)description __attribute__((swift_name("description()")));
+@property (class, readonly, getter=shared) KotlinUnit *shared;
+- (NSString *)description;
 @end
 
 @protocol KotlinIterator
 @required
-- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
-- (id _Nullable)next __attribute__((swift_name("next()")));
+- (BOOL)hasNext;
+- (id _Nullable)next;
 @end
 
 
@@ -1224,9 +1224,9 @@ __attribute__((objc_subclassing_restricted))
 */
 @protocol KotlinTimeMark
 @required
-- (int64_t)elapsedNow __attribute__((swift_name("elapsedNow()")));
-- (BOOL)hasNotPassedNow __attribute__((swift_name("hasNotPassedNow()")));
-- (BOOL)hasPassedNow __attribute__((swift_name("hasPassedNow()")));
+- (int64_t)elapsedNow;
+- (BOOL)hasNotPassedNow;
+- (BOOL)hasPassedNow;
 - (id<KotlinTimeMark>)minusDuration:(int64_t)duration __attribute__((swift_name("minus(duration:)")));
 - (id<KotlinTimeMark>)plusDuration:(int64_t)duration __attribute__((swift_name("plus(duration:)")));
 @end
@@ -1244,7 +1244,7 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface DayOfWeek (Extensions)
-@property (readonly) int32_t isoDayNumber __attribute__((swift_name("isoDayNumber")));
+@property (readonly) int32_t isoDayNumber;
 @end
 
 @interface Instant (Extensions)
@@ -1271,12 +1271,12 @@ __attribute__((objc_subclassing_restricted))
 - (Instant *)plusValue:(int32_t)value unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("plus(value:unit:timeZone:)")));
 - (Instant *)plusValue:(int64_t)value unit:(DateTimeUnit *)unit timeZone_:(TimeZone *)timeZone __attribute__((swift_name("plus(value:unit:timeZone_:)")));
 - (LocalDateTime *)toLocalDateTimeTimeZone:(TimeZone *)timeZone __attribute__((swift_name("toLocalDateTime(timeZone:)")));
-- (NSDate *)toNSDate __attribute__((swift_name("toNSDate()")));
+- (NSDate *)toNSDate;
 - (int64_t)untilOther:(Instant *)other unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("until(other:unit:)")));
 - (int64_t)untilOther:(Instant *)other unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("until(other:unit:timeZone:)")));
 - (int32_t)yearsUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("yearsUntil(other:timeZone:)")));
-@property (readonly) BOOL isDistantFuture __attribute__((swift_name("isDistantFuture")));
-@property (readonly) BOOL isDistantPast __attribute__((swift_name("isDistantPast")));
+@property (readonly) BOOL isDistantFuture;
+@property (readonly) BOOL isDistantPast;
 @end
 
 @interface LocalDate (Extensions)
@@ -1296,7 +1296,7 @@ __attribute__((objc_subclassing_restricted))
 - (LocalDate *)plusUnit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(unit:)"))) __attribute__((deprecated("Use the plus overload with an explicit number of units")));
 - (LocalDate *)plusValue:(int32_t)value unit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(value:unit:)")));
 - (LocalDate *)plusValue:(int64_t)value unit_:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(value:unit_:)")));
-- (NSDateComponents *)toNSDateComponents __attribute__((swift_name("toNSDateComponents()")));
+- (NSDateComponents *)toNSDateComponents;
 - (int32_t)untilOther:(LocalDate *)other unit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("until(other:unit:)")));
 - (int32_t)yearsUntilOther:(LocalDate *)other __attribute__((swift_name("yearsUntil(other:)")));
 @end
@@ -1305,7 +1305,7 @@ __attribute__((objc_subclassing_restricted))
 - (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
 - (Instant *)toInstantTimeZone:(TimeZone *)timeZone __attribute__((swift_name("toInstant(timeZone:)")));
 - (Instant *)toInstantOffset:(UtcOffset *)offset __attribute__((swift_name("toInstant(offset:)")));
-- (NSDateComponents *)toNSDateComponents __attribute__((swift_name("toNSDateComponents()")));
+- (NSDateComponents *)toNSDateComponents;
 @end
 
 @interface LocalTime (Extensions)
@@ -1316,24 +1316,24 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface Month (Extensions)
-@property (readonly) int32_t number __attribute__((swift_name("number")));
+@property (readonly) int32_t number;
 @end
 
 @interface NSDate (Extensions)
-- (Instant *)toKotlinInstant __attribute__((swift_name("toKotlinInstant()")));
+- (Instant *)toKotlinInstant;
 @end
 
 @interface NSTimeZone (Extensions)
-- (TimeZone *)toKotlinTimeZone __attribute__((swift_name("toKotlinTimeZone()")));
+- (TimeZone *)toKotlinTimeZone;
 @end
 
 @interface TimeZone (Extensions)
 - (UtcOffset *)offsetAtInstant:(Instant *)instant __attribute__((swift_name("offsetAt(instant:)")));
-- (NSTimeZone *)toNSTimeZone __attribute__((swift_name("toNSTimeZone()")));
+- (NSTimeZone *)toNSTimeZone;
 @end
 
 @interface UtcOffset (Extensions)
-- (FixedOffsetTimeZone *)asTimeZone __attribute__((swift_name("asTimeZone()")));
+- (FixedOffsetTimeZone *)asTimeZone;
 - (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
 @end
 

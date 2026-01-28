@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly, getter=bool) BOOL bool_ __attribute__((swift_name("bool_")));
-@property (class, getter=complex, setter=setComplex:) int32_t complex_ __attribute__((swift_name("complex_")));
+@property (class, readonly, getter=bool) BOOL bool_;
+@property (class, getter=complex, setter=setComplex:) int32_t complex_;
 @end
 
 #pragma pop_macro("_Nullable_result")

@@ -20,16 +20,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (NSString *)someMethodInFooA __attribute__((swift_name("someMethodInFooA()")));
+- (NSString *)someMethodInFooA;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo_ : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (NSString *)someMethodInFooB __attribute__((swift_name("someMethodInFooB()")));
+- (NSString *)someMethodInFooB;
 @end
 
 #pragma pop_macro("_Nullable_result")
