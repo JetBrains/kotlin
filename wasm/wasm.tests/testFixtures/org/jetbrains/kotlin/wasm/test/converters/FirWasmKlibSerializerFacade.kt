@@ -76,6 +76,7 @@ class FirWasmKlibSerializerFacade(
                 jsOutputName = null,
                 builtInsPlatform = BuiltInsPlatform.WASM,
                 wasmTarget = target,
+                declarationTable = inputArtifact.declarationTable,
             )
         }
 

@@ -76,14 +76,15 @@ class WasmPreSerializationLoweringFacade(
                     return inputArtifact.copy(diagnosticReporter = diagnosticReporter)
                 }
 
+                val loweringContext = WasmPreSerializationLoweringContext(
+                    inputArtifact.irBuiltIns,
+                    configuration,
+                    irDiagnosticReporter,
+                )
                 val transformedModule = PhaseEngine(
                     phaseConfig,
                     PhaserState(),
-                    WasmPreSerializationLoweringContext(
-                        inputArtifact.irBuiltIns,
-                        configuration,
-                        irDiagnosticReporter,
-                    ),
+                    loweringContext,
                 ).runPreSerializationLoweringPhases(
                     wasmLoweringsOfTheFirstPhase(module.languageVersionSettings),
                     inputArtifact.irModuleFragment,
@@ -91,7 +92,11 @@ class WasmPreSerializationLoweringFacade(
 
                 // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
                 // Later, third artifact of class `WasmDeserializedFromKlibBackendInput` might replace it again during some test pipelines.
-                return inputArtifact.copy(irModuleFragment = transformedModule, diagnosticReporter = diagnosticReporter)
+                return inputArtifact.copy(
+                    irModuleFragment = transformedModule,
+                    diagnosticReporter = diagnosticReporter,
+                    declarationTable = loweringContext.declarationTable
+                )
             }
             else -> {
                 throw IllegalArgumentException("Unexpected inputArtifact type: ${inputArtifact.javaClass.simpleName}")
