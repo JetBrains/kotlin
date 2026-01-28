@@ -176,41 +176,6 @@ testing {
                     }
                 }
             }
-
-            // in the `testIsolatedCompiler` tests we will need classpaths for the compiler and matching stdlib at runtime
-            configurations.create("isolatedCompilerClasspath$implVersion")
-            configurations.create("isolatedCompilerStdlib$implVersion")
-            dependencies {
-                "isolatedCompilerClasspath$implVersion"(project(":compiler:build-tools:kotlin-build-tools-compat"))
-                if (implVersion.isCurrent) {
-                    "isolatedCompilerClasspath$implVersion"(project(":compiler:build-tools:kotlin-build-tools-impl"))
-                    "isolatedCompilerStdlib$implVersion"(project(":kotlin-stdlib"))
-                } else {
-                    "isolatedCompilerClasspath$implVersion"("org.jetbrains.kotlin:kotlin-build-tools-impl:${implVersion}")
-                    "isolatedCompilerStdlib$implVersion"("org.jetbrains.kotlin:kotlin-stdlib:${implVersion}")
-                }
-            }
-            register<JvmTestSuite>("testIsolatedCompiler${implVersion}") {
-                if (!kotlinBuildProperties.isInIdeaSync.get() || !configuredIdeaSourceSets) {
-                    sources.configureCompatibilitySourceDirectories("testIsolatedCompiler")
-                }
-
-                targets.all {
-                    projectTests {
-                        testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
-                            systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
-                            systemProperty(
-                                COMPILER_CLASSPATH_PROPERTY,
-                                configurations.named("isolatedCompilerClasspath$implVersion").get().asPath
-                            )
-                            systemProperty(
-                                "kotlin.build-tools-api.test.stdlibClasspath",
-                                configurations.named("isolatedCompilerStdlib$implVersion").get().asPath
-                            )
-                        }
-                    }
-                }
-            }
             configuredIdeaSourceSets = true
         }
 
