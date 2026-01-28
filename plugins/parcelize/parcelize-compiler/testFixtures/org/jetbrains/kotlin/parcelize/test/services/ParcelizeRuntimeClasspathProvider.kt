@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.parcelize.test.services
 
+import org.hamcrest.BaseDescription
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.ClassWriter
@@ -19,13 +19,19 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.junit.runner.JUnitCore
 import java.io.File
+import kotlin.reflect.KClass
 
 class ParcelizeRuntimeClasspathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     companion object {
         val layoutlibJar: File by lazy { getLayoutLibFile("layoutLib.path") }
         val layoutlibApiJar: File by lazy { getLayoutLibFile("layoutLibApi.path") }
 
-        private const val ANDROID_TOOLS_PREFIX = "studio.android.sdktools."
+        /**
+         * The android api version used by robolectric's `android-all`.
+         *
+         * See comment in gradle build file.
+         */
+        private const val ANDROID_API_VERSION = 36
 
         private fun getLayoutLibFile(property: String): File {
             val layoutLibFile = File(System.getProperty(property))
@@ -51,7 +57,7 @@ class ParcelizeRuntimeClasspathProvider(testServices: TestServices) : RuntimeCla
                 }
 
                 with(visitAnnotation("Lorg/robolectric/annotation/Config;", true)) {
-                    visit("sdk", intArrayOf(21))
+                    visit("sdk", intArrayOf(ANDROID_API_VERSION))
                     visit("manifest", "--none")
                     visitEnd()
                 }
@@ -110,13 +116,6 @@ class ParcelizeRuntimeClasspathProvider(testServices: TestServices) : RuntimeCla
             .map { File(it) }
             .sortedBy { it.nameWithoutExtension }
 
-        val junitCoreResourceName = JUnitCore::class.java.name.replace('.', '/') + ".class"
-        val junitJar = File(
-            JUnitCore::class.java.classLoader.getResource(junitCoreResourceName)!!.file
-                .substringAfter("file:")
-                .substringBeforeLast('!')
-        )
-
         val parcelizeRuntimeJars = System.getProperty("parcelizeRuntime.classpath")?.split(File.pathSeparator)?.map(::File)
             ?: error("Unable to get a valid classpath from 'parcelizeRuntime.classpath' property")
 
@@ -126,14 +125,30 @@ class ParcelizeRuntimeClasspathProvider(testServices: TestServices) : RuntimeCla
             .resolve(JUNIT_GENERATED_TEST_CLASS_NAME)
             .apply { writeBytes(JUNIT_GENERATED_TEST_CLASS_BYTES) }
 
+        val hamcrestJar = getJarFor(BaseDescription::class)
+        val junitJar = getJarFor(JUnitCore::class)
+
         return buildList {
             add(kotlinRuntimeJar)
             add(layoutlibJar)
             add(layoutlibApiJar)
             addAll(robolectricJars)
             add(junitJar)
+            add(hamcrestJar)
             addAll(parcelizeRuntimeJars)
             add(tempDir)
         }
+    }
+
+    /**
+     * Returns jar file where `clazz` is located by using `clazz`'s classloader.
+     */
+    private fun getJarFor(clazz: KClass<out Any>): File {
+        val resourceName = clazz.java.name.replace('.', '/') + ".class"
+        return File(
+            clazz.java.classLoader.getResource(resourceName)!!.file
+                .substringAfter("file:")
+                .substringBeforeLast('!')
+        )
     }
 }

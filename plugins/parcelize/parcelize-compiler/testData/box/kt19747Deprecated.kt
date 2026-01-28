@@ -19,18 +19,12 @@ class J(val j: @RawValue JHelp) : Parcelable
 fun box() = parcelTest { parcel ->
     val test = J(JHelp("A"))
 
-    var exceptionCaught = false
     try {
         test.writeToParcel(parcel, 0)
     } catch (e: RuntimeException) {
-        if (e.message!!.contains("Parcel: unable to marshal value test.JHelp")) {
-            exceptionCaught = true
-        } else {
-            throw e
+        val isExpectedErrorMessage = e.message!!.contains("Parcel: unknown type for value test.JHelp")
+        if (!isExpectedErrorMessage) {
+            error("Unexpected error: ${e.toString()}")
         }
-    }
-
-    if (!exceptionCaught) {
-        error("Exception should be thrown")
     }
 }
