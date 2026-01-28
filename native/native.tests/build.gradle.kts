@@ -33,6 +33,7 @@ dependencies {
     testFixturesApi(commonDependency("org.jetbrains.kotlinx", "kotlinx-metadata-klib"))
     testFixturesImplementation(libs.kotlinx.coroutines.core) { isTransitive = false }
 
+    testFixturesImplementation(project(":compiler:cli:cli-native-klib"))
     testRuntimeOnly(libs.intellij.fastutil)
 }
 
