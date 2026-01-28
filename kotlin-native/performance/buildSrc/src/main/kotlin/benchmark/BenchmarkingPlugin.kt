@@ -40,7 +40,6 @@ open class BenchmarkExtension @Inject constructor(project: Project) {
      */
     val prefixBenchmarksWithApplicationName: Property<Boolean> = project.objects.property(Boolean::class.java).convention(true)
 
-    val konanRun by project.tasks.registering(RunKotlinNativeTask::class)
     val getCodeSize by project.tasks.registering(CodeSizeTask::class)
     val konanJsonReport by project.tasks.registering(JsonReportTask::class)
 }
@@ -60,39 +59,10 @@ abstract class BenchmarkingPlugin : Plugin<Project> {
         createExtension()
 
         kotlin.apply {
-            sourceSets.commonMain.dependencies {
-                // All benchmarks require a benchmarks launcher.
-                // swiftinterop benchmarks also have to export it via ObjCExport => api instead of implementation dependency
-                api(project.dependencies.project(":benchmarksLauncher"))
-            }
             compilerOptions {
                 freeCompilerArgs.addAll(benchmark.compilerOpts)
                 freeCompilerArgs.addAll(compilerArgs)
             }
-        }
-
-        benchmark.konanRun.configure {
-            group = BENCHMARKING_GROUP
-            description = "Runs the benchmark for Kotlin/Native."
-
-            reportFile.set(layout.buildDirectory.file("nativeBenchResults.json"))
-            verbose.convention(logger.isInfoEnabled)
-            baseOnly.convention(project.baseOnly)
-            filter.convention(project.filter)
-            filterRegex.convention(project.filterRegex)
-            warmupCount.convention(nativeWarmup)
-            repeatCount.convention(attempts)
-            repeatingType.set(benchmark.repeatingType)
-            if (benchmark.prefixBenchmarksWithApplicationName.get()) {
-                arguments.add("-p")
-                arguments.add(benchmark.applicationName.map { "$it::" })
-            }
-            useCSet.convention(project.useCSet)
-
-            // We do not want to cache benchmarking runs; we want the task to run whenever requested.
-            outputs.upToDateWhen { false }
-
-            finalizedBy(benchmark.konanJsonReport)
         }
 
         benchmark.getCodeSize.configure {
@@ -108,7 +78,6 @@ abstract class BenchmarkingPlugin : Plugin<Project> {
             description = "Builds the benchmarking report for Kotlin/Native."
 
             benchmarksReports.from(benchmark.getCodeSize)
-            benchmarksReports.from(benchmark.konanRun.map { it.reportFile.get() })
             compilerVersion.set(project.compilerVersion)
             if (buildType.optimized) {
                 compilerFlags.add("-opt")

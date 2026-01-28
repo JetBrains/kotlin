@@ -29,6 +29,7 @@ open class SwiftBenchmarkExtension @Inject constructor(project: Project) : Bench
 
     val generateSwiftPackage by project.tasks.registering(GenerateSwiftPackageTask::class)
     val buildSwift by project.tasks.registering(SwiftBuildTask::class)
+    val konanRun by project.tasks.registering(RunKotlinNativeTask::class)
 }
 
 /**
@@ -42,11 +43,16 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
 
     override fun Project.configureTasks() {
         kotlin.apply {
+            sourceSets.commonMain.dependencies {
+                // Exported via ObjCExport => api instead of implementation dependency
+                api(project.dependencies.project(":benchmarksLauncher"))
+            }
             targets.withType(KotlinNativeTarget::class).configureEach {
                 val xcf = XCFramework(NATIVE_FRAMEWORK_NAME)
                 binaries.framework(NATIVE_FRAMEWORK_NAME, listOf(project.buildType)) {
                     isStatic = true
                     export(dependencies.project(":benchmarksLauncher"))
+                    export(dependencies.project(":benchmarksReports"))
                     xcf.add(this)
                 }
             }
@@ -65,13 +71,35 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             options.addAll("-c", "release") // We are only interested in the optimized Swift.
         }
         benchmark.konanRun.configure {
+            group = BENCHMARKING_GROUP
+            description = "Runs the benchmark for Kotlin/Native."
+
             executable.set(project.benchmark.buildSwift.map { it.outputFile.get() })
+            reportFile.set(layout.buildDirectory.file("nativeBenchResults.json"))
+            verbose.convention(logger.isInfoEnabled)
+            baseOnly.convention(project.baseOnly)
+            filter.convention(project.filter)
+            filterRegex.convention(project.filterRegex)
+            warmupCount.convention(nativeWarmup)
+            repeatCount.convention(attempts)
+            repeatingType.set(benchmark.repeatingType)
+            if (benchmark.prefixBenchmarksWithApplicationName.get()) {
+                arguments.add("-p")
+                arguments.add(benchmark.applicationName.map { "$it::" })
+            }
+            useCSet.convention(project.useCSet)
+
+            // We do not want to cache benchmarking runs; we want the task to run whenever requested.
+            outputs.upToDateWhen { false }
+
+            finalizedBy(benchmark.konanJsonReport)
         }
         val linkTaskProvider = kotlin.hostTarget().binaries.getFramework(NATIVE_FRAMEWORK_NAME, project.buildType).linkTaskProvider
         benchmark.getCodeSize.configure {
             codeSizeBinary.fileProvider(linkTaskProvider.map { it.outputFile.get().resolve(NATIVE_FRAMEWORK_NAME) })
         }
         benchmark.konanJsonReport.configure {
+            benchmarksReports.from(benchmark.konanRun.map { it.reportFile.get() })
             compilerFlags.addAll(linkTaskProvider.map { it.toolOptions.freeCompilerArgs.get() })
         }
     }
