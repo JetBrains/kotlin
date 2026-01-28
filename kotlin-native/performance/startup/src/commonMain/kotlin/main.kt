@@ -3,24 +3,24 @@
  * that can be found in the LICENSE file.
  */
 
+import kotlinx.benchmark.Benchmark
+import kotlinx.benchmark.BenchmarkTimeUnit
+import kotlinx.benchmark.Measurement
+import kotlinx.benchmark.Scope
+import kotlinx.benchmark.State
 import org.jetbrains.startup.*
-import org.jetbrains.benchmarksLauncher.*
-import kotlinx.cli.*
 
-class StartupLauncher : Launcher() {
-    override val baseBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf(
-            "Singleton.initialize" to BenchmarkEntryManual(::singletonInitialize),
-            "Singleton.initializeNested" to BenchmarkEntryManual(::singletonInitializeNested),
-    )
+@State(Scope.Benchmark)
+// These benchmarks should not be repeated within a single process.
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.NANOSECONDS)
+class Singleton {
+    @Benchmark
+    fun initialize() {
+        singletonInitialize()
+    }
 
-}
-
-fun main(args: Array<String>) {
-    val launcher = StartupLauncher()
-    BenchmarksRunner.runBenchmarks(args, { arguments: BenchmarkArguments ->
-        if (arguments is BaseBenchmarkArguments) {
-            launcher.launch(arguments.warmup, arguments.repeat, arguments.prefix,
-                    arguments.filter, arguments.filterRegex, arguments.verbose)
-        } else emptyList()
-    }, benchmarksListAction = launcher::benchmarksListAction)
+    @Benchmark
+    fun initializeNested() {
+        singletonInitializeNested()
+    }
 }
