@@ -41,7 +41,7 @@ tasks.register("compileKotlinNative") {
 
 val benchmarkSubprojects = subprojects.filter {
     when (it.name) {
-        "benchmarksAnalyzer", "benchmarksLauncher", "benchmarksReports" -> false
+        "benchmarksAnalyzer", "benchmarksKotlinxAdapter", "benchmarksLauncher", "benchmarksReports" -> false
         else -> true
     }
 }

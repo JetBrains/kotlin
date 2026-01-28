@@ -21,6 +21,7 @@ plugins {
 }
 
 include(":benchmarksAnalyzer")
+include(":benchmarksKotlinxAdapter")
 include(":benchmarksLauncher")
 include(":benchmarksReports")
 include(":ring")

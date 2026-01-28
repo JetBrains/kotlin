@@ -28,12 +28,15 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 dependencies {
     val kotlinVersion = project.bootstrapKotlinVersion
+    val kotlinxBenchmarkVersion = "0.4.15"
 
     compileOnly(gradleApi())
 
     implementation(kotlin("build-gradle-plugin", kotlinBuildProperties.buildGradlePluginVersion.get()))
     implementation(kotlin("gradle-plugin", kotlinVersion))
     implementation(kotlin("stdlib", kotlinVersion))
+
+    implementation("org.jetbrains.kotlinx.benchmark:org.jetbrains.kotlinx.benchmark.gradle.plugin:${kotlinxBenchmarkVersion}")
 }
 
 gradlePlugin {
@@ -45,6 +48,10 @@ gradlePlugin {
         create("swiftBenchmarking") {
             id = "swift-benchmarking"
             implementationClass = "org.jetbrains.kotlin.benchmark.SwiftBenchmarkingPlugin"
+        }
+        create("kotlinxBenchmarking") {
+            id = "kotlinx-benchmarking"
+            implementationClass = "org.jetbrains.kotlin.benchmark.KotlinxBenchmarkingPlugin"
         }
     }
 }
