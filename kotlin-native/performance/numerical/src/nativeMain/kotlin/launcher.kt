@@ -3,14 +3,22 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the licenses/LICENSE.txt file.
  */
 
+import kotlinx.benchmark.Benchmark
+import kotlinx.benchmark.Scope
+import kotlinx.benchmark.State
 import org.jetbrains.benchmarksLauncher.*
 
-actual class NumericalLauncher : Launcher() {
-    actual override val baseBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf(
-            "BellardPi" to BenchmarkEntry(::konanBellardPi),
-            "BellardPiCinterop" to BenchmarkEntry(::clangBellardPi)
-    )
+@State(Scope.Benchmark)
+class NumericalHideName {
+    @Benchmark
+    fun BellardPi() {
+        konanBellardPi()
+    }
 
+    @Benchmark
+    fun BellardPiCinterop() {
+        clangBellardPi()
+    }
 }
 
 fun konanBellardPi() {
