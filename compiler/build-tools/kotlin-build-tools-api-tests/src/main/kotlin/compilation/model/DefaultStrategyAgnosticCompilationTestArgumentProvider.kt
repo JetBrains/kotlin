@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.internal.compat.asKotlinToolchains
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
@@ -25,11 +24,14 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
     companion object {
         fun namedStrategyArguments(): List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> {
             return buildList {
-                val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
+                val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
                 val kotlinToolchainV1Adapter =
+                    @Suppress("DEPRECATION_ERROR")
                     if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) < KotlinToolingVersion(2, 4, 0, null)) {
-                        @Suppress("DEPRECATION_ERROR")
-                        org.jetbrains.kotlin.buildtools.api.CompilationService.loadImplementation(BaseCompilationTest::class.java.classLoader).asKotlinToolchains()
+                        val asKotlinToolchainsMethod =
+                            btaClassloader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1AdapterKt")
+                                .getDeclaredMethod("asKotlinToolchains", org.jetbrains.kotlin.buildtools.api.CompilationService::class.java)
+                        asKotlinToolchainsMethod.invoke(null, org.jetbrains.kotlin.buildtools.api.CompilationService.loadImplementation(btaClassloader)) as KotlinToolchains
                     } else null
                 if (kotlinToolchainV1Adapter != null) {
                     add(

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.model
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
@@ -21,7 +22,7 @@ class BtaV2StrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
 
     companion object {
         fun namedStrategyArguments(): List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> {
-            val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
+            val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
             val v2Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> =
                 listOf(
                     Named.named(
