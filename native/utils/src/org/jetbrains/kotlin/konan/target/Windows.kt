@@ -59,8 +59,11 @@ sealed class Msvc {
     }
 
     class CustomPath(private val path: Path) : Msvc() {
-        override fun compilerFlags(): List<String> =
-            listOf("-Xmicrosoft-visualc-tools-root", path.toAbsolutePath().toString())
+        override fun compilerFlags(): List<String> = buildList {
+            val pathStr = path.toAbsolutePath().toString()
+            addAll(listOf("-Xmicrosoft-visualc-tools-root", pathStr))
+            add("-Wl,-vctoolsdir:$pathStr")
+        }
     }
 }
 
@@ -73,7 +76,10 @@ sealed class WindowsKit {
 
     class CustomPath(private val path: Path) : WindowsKit() {
         override fun compilerFlags(): List<String> = buildList {
-            addAll(listOf("-Xmicrosoft-windows-sdk-root", path.toAbsolutePath().toString()))
+            val pathStr = path.toAbsolutePath().toString()
+            addAll(listOf("-Xmicrosoft-windows-sdk-root", pathStr))
+            add("-Wl,-winsdkdir:$pathStr")
+
             addAll(listOf("-L", path.resolve("Lib").resolve("um").resolve("x64").toAbsolutePath().toString()))
         }
     }
