@@ -20,8 +20,6 @@ class SpaceCodeOwnersTest : TestCase() {
             .filterValues { occurrences -> occurrences.size > 1 }
             .values
 
-        fail("This test is broken on purpose")
-
         if (duplicatedOwnerListEntries.isNotEmpty()) {
             fail(
                 buildString {
