@@ -189,6 +189,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
 
 inline fun <T : ConeKotlinType> T.withArguments(replacement: (ConeTypeProjection) -> ConeTypeProjection): T {
     val typeArguments = typeArguments
+    if (typeArguments.isEmpty()) return this
     return withArguments(Array(typeArguments.size) { replacement(typeArguments[it]) })
 }
 
