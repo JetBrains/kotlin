@@ -80,7 +80,7 @@ sealed class WindowsKit {
             addAll(listOf("-Xmicrosoft-windows-sdk-root", pathStr))
             add("-Wl,-winsdkdir:$pathStr")
 
-            addAll(listOf("-L", path.resolve("Lib").resolve("um").resolve("x64").toAbsolutePath().toString()))
+//            addAll(listOf("-L", path.resolve("Lib").resolve("um").resolve("x64").toAbsolutePath().toString()))
         }
     }
 }
