@@ -18,6 +18,66 @@ import kotlin.contracts.*
 import kotlin.random.*
 
 /**
+ * Returns the product of all elements in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@SinceKotlin("2.4")
+public fun Sequence<UInt>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfULong")
+@SinceKotlin("2.4")
+public fun Sequence<ULong>.product(): ULong {
+    var product: ULong = 1uL
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfUByte")
+@SinceKotlin("2.4")
+public fun Sequence<UByte>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfUShort")
+@SinceKotlin("2.4")
+public fun Sequence<UShort>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
  * Returns the sum of all elements in the sequence.
  *
  * The operation is _terminal_.

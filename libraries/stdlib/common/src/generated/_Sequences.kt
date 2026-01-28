@@ -3156,6 +3156,96 @@ public fun Sequence<Double>.average(): Double {
 }
 
 /**
+ * Returns the product of all elements in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfByte")
+@SinceKotlin("2.4")
+public fun Sequence<Byte>.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfShort")
+@SinceKotlin("2.4")
+public fun Sequence<Short>.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@SinceKotlin("2.4")
+public fun Sequence<Int>.product(): Int {
+    var product: Int = 1
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfLong")
+@SinceKotlin("2.4")
+public fun Sequence<Long>.product(): Long {
+    var product: Long = 1L
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfFloat")
+@SinceKotlin("2.4")
+public fun Sequence<Float>.product(): Float {
+    var product: Float = 1.0f
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfDouble")
+@SinceKotlin("2.4")
+public fun Sequence<Double>.product(): Double {
+    var product: Double = 1.0
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
  * Returns the sum of all elements in the sequence.
  *
  * The operation is _terminal_.
