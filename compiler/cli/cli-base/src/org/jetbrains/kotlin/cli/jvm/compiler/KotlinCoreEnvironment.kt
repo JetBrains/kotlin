@@ -205,8 +205,8 @@ class KotlinCoreEnvironment private constructor(
     private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
 
-    private val _packagePartProviders = mutableListOf<JvmPackagePartProvider>()
-    val packagePartProviders: List<JvmPackagePartProvider> get() = _packagePartProviders
+    val packagePartProviders: List<JvmPackagePartProvider>
+        field = mutableListOf<JvmPackagePartProvider>()
 
     private val classpathRootsResolver: ClasspathRootsResolver
     private val initialRoots = ArrayList<JavaRoot>()
@@ -276,7 +276,7 @@ class KotlinCoreEnvironment private constructor(
 
         javaFileManager.initialize(
             rootsIndex,
-            _packagePartProviders,
+            packagePartProviders,
             SingleJavaFileRootsIndex(singleJavaFileRoots),
             configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING),
             perfManager,
@@ -332,7 +332,7 @@ class KotlinCoreEnvironment private constructor(
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
         return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
             addRoots(initialRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
-            _packagePartProviders += this
+            packagePartProviders += this
         }
     }
 
@@ -361,10 +361,10 @@ class KotlinCoreEnvironment private constructor(
         val newIndex = rootsIndex.addNewIndexForRoots(newRoots) ?: return null
         updateClasspathFromRootsIndex(newIndex)
 
-        if (_packagePartProviders.isEmpty()) {
+        if (packagePartProviders.isEmpty()) {
             initialRoots.addAll(newRoots)
         } else {
-            for (packagePartProvider in _packagePartProviders) {
+            for (packagePartProvider in packagePartProviders) {
                 packagePartProvider.addRoots(newRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
             }
         }

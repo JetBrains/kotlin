@@ -382,10 +382,9 @@ private class KotlinLocalsUsageCollector(
 ) : RecursiveJsVisitor() {
     private val functionStack = mutableListOf<JsFunction?>(null)
     private val processedNames = mutableSetOf<String>()
-    private val kotlinLocalsUsedInJs = linkedMapOf<JsName, IrValueDeclaration>()
 
     val usedLocals: Map<JsName, IrValueDeclaration>
-        get() = kotlinLocalsUsedInJs
+        field = linkedMapOf<JsName, IrValueDeclaration>()
 
     override fun visitFunction(x: JsFunction) {
         functionStack.push(x)
@@ -401,7 +400,7 @@ private class KotlinLocalsUsageCollector(
         // Keeping track of processed names to avoid registering them multiple times
         if (processedNames.add(name.ident) && !name.isDeclaredInsideJsCode()) {
             findValueDeclarationWithName(name.ident)?.let {
-                kotlinLocalsUsedInJs[name] = it
+                usedLocals[name] = it
             }
         }
     }

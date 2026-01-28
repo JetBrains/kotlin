@@ -51,30 +51,27 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
     lateinit var headerMetadata: ByteArray
         private set
 
-    private val _packageParts = hashMapOf<File, TranslationResultValue>()
     val packageParts: Map<File, TranslationResultValue>
-        get() = _packageParts
+        field = hashMapOf<File, TranslationResultValue>()
 
     override fun processHeader(headerMetadata: ByteArray) {
         this.headerMetadata = headerMetadata
     }
 
     override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray) {
-        _packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata, binaryAst, inlineData))
+        packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata, binaryAst, inlineData))
     }
 
-    private val _packageMetadata = hashMapOf<String, ByteArray>()
     val packageMetadata: Map<String, ByteArray>
-        get() = _packageMetadata
+        field = hashMapOf<String, ByteArray>()
 
     override fun processPackageMetadata(packageName: String, metadata: ByteArray) {
-        _packageMetadata[packageName] = metadata
+        packageMetadata[packageName] = metadata
     }
 
 //    class IrFileData(fileData: ByteArray, symbols: ByteArray, types: ByteArray, strings: ByteArray, bodies: ByteArray, declarations: ByteArray)
-    private val _irFileData = hashMapOf<File, IrTranslationResultValue>()
     val irFileData: Map<File, IrTranslationResultValue>
-        get() = _irFileData
+        field = hashMapOf<File, IrTranslationResultValue>()
 
     override fun processIrFile(
         sourceFile: File,
@@ -89,7 +86,7 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         debugInfo: ByteArray?,
         fileEntries: ByteArray?,
     ) {
-        _irFileData[sourceFile] = IrTranslationResultValue(
+        irFileData[sourceFile] = IrTranslationResultValue(
             fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfo, fileEntries
         )
     }

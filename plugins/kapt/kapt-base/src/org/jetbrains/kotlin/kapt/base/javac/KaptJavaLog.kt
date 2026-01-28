@@ -53,9 +53,7 @@ class KaptJavaLog(
     }
 
     override val reportedDiagnostics: List<JCDiagnostic>
-        get() = _reportedDiagnostics
-
-    private val _reportedDiagnostics = mutableListOf<JCDiagnostic>()
+        field = mutableListOf<JCDiagnostic>()
 
     private val jcImportQualidField = JCImport::class.java.declaredFields.single { it.name == "qualid" }
 
@@ -69,12 +67,12 @@ class KaptJavaLog(
             else -> return
         }
 
-        _reportedDiagnostics.removeAll { it.type == diagnosticKind }
+        reportedDiagnostics.removeAll { it.type == diagnosticKind }
     }
 
     override fun flush() {
         super.flush()
-        _reportedDiagnostics.clear()
+        reportedDiagnostics.clear()
     }
 
     override fun report(diagnostic: JCDiagnostic) {
@@ -143,13 +141,13 @@ class KaptJavaLog(
             val oldErrors = nerrors
             super.report(diagnostic)
             if (nerrors > oldErrors) {
-                _reportedDiagnostics += diagnostic
+                reportedDiagnostics += diagnostic
             }
         } else if (diagnostic.kind == Diagnostic.Kind.WARNING) {
             val oldWarnings = nwarnings
             super.report(diagnostic)
             if (nwarnings > oldWarnings) {
-                _reportedDiagnostics += diagnostic
+                reportedDiagnostics += diagnostic
             }
         } else {
             super.report(diagnostic)

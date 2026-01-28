@@ -22,9 +22,8 @@ fun TestGroupSuite.forEachTestClassParallel(f: (TestGroup.TestClass) -> Unit) {
 }
 
 class TestGroupSuite(val testInfraRevision: TestInfraRevision, val defaultSkipTestAllFilesCheck: Boolean) {
-    private val _testGroups = mutableListOf<TestGroup>()
     val testGroups: List<TestGroup>
-        get() = _testGroups
+        field = mutableListOf<TestGroup>()
 
     fun testGroup(
         testsRoot: String,
@@ -32,7 +31,7 @@ class TestGroupSuite(val testInfraRevision: TestInfraRevision, val defaultSkipTe
         testRunnerMethodName: String = MethodGenerator.DEFAULT_RUN_TEST_METHOD_NAME,
         init: TestGroup.() -> Unit
     ) {
-        _testGroups += TestGroup(
+        testGroups += TestGroup(
             testsRoot,
             testDataRoot,
             testRunnerMethodName,
@@ -49,9 +48,8 @@ class TestGroup(
     val testInfraRevision: TestInfraRevision,
     val defaultSkipTestAllFilesCheck: Boolean,
 ) {
-    private val _testClasses: MutableList<TestClass> = mutableListOf()
     val testClasses: List<TestClass>
-        get() = _testClasses
+        field: MutableList<TestClass> = mutableListOf()
 
     inline fun <reified T> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
@@ -69,7 +67,7 @@ class TestGroup(
         annotations: List<AnnotationModel> = emptyList(),
         init: TestClass.() -> Unit
     ) {
-        _testClasses += TestClass(testKClass, baseTestClassName, suiteTestClassName, annotations).apply(init)
+        testClasses += TestClass(testKClass, baseTestClassName, suiteTestClassName, annotations).apply(init)
     }
 
     inner class TestClass(

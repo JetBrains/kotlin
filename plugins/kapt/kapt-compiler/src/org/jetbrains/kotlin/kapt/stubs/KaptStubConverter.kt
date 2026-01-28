@@ -141,10 +141,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     private val strictMode = kaptContext.options[KaptFlag.STRICT]
     private val stripMetadata = kaptContext.options[KaptFlag.STRIP_METADATA]
 
-    private val mutableBindings = mutableMapOf<String, KaptJavaFileObject>()
-
     val bindings: Map<String, KaptJavaFileObject>
-        get() = mutableBindings
+        field = mutableMapOf<String, KaptJavaFileObject>()
 
     private val typeMapper = KaptTypeMapper
 
@@ -275,7 +273,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         KaptJavaFileObject(topLevel, classDeclaration).apply {
             topLevel.sourcefile = this
-            mutableBindings[clazz.name] = this
+            bindings[clazz.name] = this
         }
 
         postProcess(topLevel)

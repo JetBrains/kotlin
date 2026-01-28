@@ -6,24 +6,22 @@
 package org.jetbrains.kotlin.test
 
 class Directives {
-    private val directives = mutableMapOf<String, MutableList<String>?>()
-
     val allDirectives: Map<String, List<String>?>
-        get() = directives
+        field = mutableMapOf<String, MutableList<String>?>()
 
     operator fun contains(key: String): Boolean {
-        return key in directives
+        return key in allDirectives
     }
 
     operator fun get(key: String): String? {
-        return directives[key]?.single()
+        return allDirectives[key]?.single()
     }
 
     fun put(key: String, value: String?) {
         if (value == null) {
-            directives[key] = null
+            allDirectives[key] = null
         } else {
-            directives.getOrPut(key, { arrayListOf() }).let {
+            allDirectives.getOrPut(key, { arrayListOf() }).let {
                 it?.add(value) ?: error("Null value was already passed to $key via smth like // $key")
             }
         }
@@ -35,7 +33,7 @@ class Directives {
     // or
     // MY_DIRECTIVE: XXX, YYY
     fun listValues(name: String): List<String>? {
-        return directives[name]?.let { values ->
+        return allDirectives[name]?.let { values ->
             values.flatMap { InTextDirectivesUtils.splitValues(arrayListOf(), it) }
         }
     }

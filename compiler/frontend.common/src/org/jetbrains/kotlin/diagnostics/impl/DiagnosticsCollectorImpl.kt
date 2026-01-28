@@ -13,18 +13,17 @@ import org.jetbrains.kotlin.diagnostics.Severity
  * Standard implementation of [BaseDiagnosticsCollector]
  */
 class DiagnosticsCollectorImpl : BaseDiagnosticsCollector() {
-    private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
-        get() = _diagnosticsByFilePath.flatMap { it.value }
+        get() = diagnosticsByFilePath.flatMap { it.value }
     override val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
-        get() = _diagnosticsByFilePath
+        field = mutableMapOf<String?, MutableList<KtDiagnostic>>()
 
     override var hasErrors = false
         private set
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null && !context.isDiagnosticSuppressed(diagnostic)) {
-            _diagnosticsByFilePath.getOrPut(context.containingFilePath) { mutableListOf() }.run {
+            diagnosticsByFilePath.getOrPut(context.containingFilePath) { mutableListOf() }.run {
                 add(diagnostic)
                 if (!hasErrors && diagnostic.severity == Severity.ERROR) {
                     hasErrors = true

@@ -91,23 +91,21 @@ private class KDocComment(val body: String) : Tokens.Comment {
 }
 
 private class KaptDocCommentTable(map: Map<JCTree, Tokens.Comment> = emptyMap()) : DocCommentTable {
-    private val table = map.toMutableMap()
-
     val map: Map<JCTree, Tokens.Comment>
-        get() = table
+        field = map.toMutableMap()
 
-    override fun hasComment(tree: JCTree) = tree in table
-    override fun getComment(tree: JCTree) = table[tree]
+    override fun hasComment(tree: JCTree) = tree in map
+    override fun getComment(tree: JCTree) = map[tree]
     override fun getCommentText(tree: JCTree) = getComment(tree)?.text
 
     override fun getCommentTree(tree: JCTree): DCTree.DCDocComment? = null
 
     override fun putComment(tree: JCTree, c: Tokens.Comment) {
-        table[tree] = c
+        map[tree] = c
     }
 
     fun removeComment(tree: JCTree) {
-        table.remove(tree)
+        map.remove(tree)
     }
 }
 

@@ -224,11 +224,11 @@ class Candidate(
 
     // ---------------------------------------- Postponed atoms ----------------------------------------
 
-    private val _postponedAtoms: MutableList<ConePostponedResolvedAtom> = mutableListOf()
-    val postponedAtoms: List<ConePostponedResolvedAtom> get() = _postponedAtoms
+    val postponedAtoms: List<ConePostponedResolvedAtom>
+        field = mutableListOf()
 
     fun addPostponedAtom(atom: ConePostponedResolvedAtom) {
-        _postponedAtoms += atom
+        postponedAtoms += atom
     }
 
     // ------------------------ Context-sensitively resolved arguments ------------------------------------
@@ -275,12 +275,11 @@ class Candidate(
     override val applicability: CandidateApplicability
         get() = lowestApplicability
 
-    private val _diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
     override val diagnostics: List<ResolutionDiagnostic>
-        get() = _diagnostics
+        field = mutableListOf()
 
     fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
-        _diagnostics += diagnostic
+        diagnostics += diagnostic
         if (diagnostic.applicability < lowestApplicability) {
             lowestApplicability = diagnostic.applicability
         }
