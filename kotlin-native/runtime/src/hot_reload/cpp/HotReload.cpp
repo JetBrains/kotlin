@@ -54,15 +54,16 @@ static int RELOAD_COUNTER = 0;
 /// Cached value for HOT_RELOAD_IMPL_SUFFIX
 static constexpr std::string_view IMPL_SUFFIX = HOT_RELOAD_IMPL_SUFFIX;
 
+static const auto ORC_RUNTIME_PATH = "/opt/homebrew/Cellar/llvm/21.1.0/lib/clang/21/lib/darwin/liborc_rt_osx.a";
+
 /// Check if a string ends with a suffix (C++17 compatible)
-static inline bool endsWith(std::string_view str, std::string_view suffix) noexcept {
-    return str.size() >= suffix.size() &&
-           str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+static bool endsWith(std::string_view str, std::string_view suffix) noexcept {
+    return str.size() >= suffix.size() && str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
 }
 
 /// Extract stable name from impl name (removes $hr_impl suffix) as string_view.
 /// Caller must ensure implName outlives the returned view.
-static inline std::string_view getStableName(std::string_view implName) noexcept {
+static std::string_view getStableName(const std::string_view implName) noexcept {
     return implName.substr(0, implName.size() - IMPL_SUFFIX.size());
 }
 
@@ -152,6 +153,7 @@ void Kotlin_native_internal_HotReload_perform(ObjHeader* obj, const ObjHeader* d
 // region LLVM Plugins
 
 #if defined(__APPLE__)
+
 /// Plugin that registers ObjC selectors with the runtime.
 /// This is needed because MachOPlatform's selector fixup may not work correctly
 /// for all object files. This plugin explicitly finds selector references and
@@ -160,7 +162,6 @@ class ObjCSelectorFixupPlugin : public llvm::orc::ObjectLinkingLayer::Plugin {
 public:
     void modifyPassConfig(
             llvm::orc::MaterializationResponsibility& MR, llvm::jitlink::LinkGraph& G, llvm::jitlink::PassConfiguration& Config) override {
-
         // Log all sections in the graph for debugging
         HRLogDebug("ObjCSelectorFixupPlugin: Analyzing graph '%s'", G.getName().c_str());
         for (auto& section : G.sections()) {
@@ -179,12 +180,9 @@ public:
                 // Check for both naming conventions:
                 // - JITLink format: "__DATA,__objc_selrefs"
                 // - Simple format: "__objc_selrefs"
-                if (sectionName == "__DATA,__objc_selrefs" ||
-                    sectionName == "__objc_selrefs" ||
-                    sectionName.ends_with(",__objc_selrefs")) {
+                if (sectionName == "__DATA,__objc_selrefs" || sectionName == "__objc_selrefs" || sectionName.ends_with(",__objc_selrefs")) {
                     selrefsSection = &section;
-                    HRLogDebug("ObjCSelectorFixupPlugin: Found selector section: %s",
-                               std::string(sectionName).c_str());
+                    HRLogDebug("ObjCSelectorFixupPlugin: Found selector section: %s", std::string(sectionName).c_str());
                     break;
                 }
             }
@@ -206,8 +204,7 @@ public:
 
             for (auto& section : Graph.sections()) {
                 auto sectionName = section.getName();
-                if (sectionName == "__TEXT,__objc_methname" ||
-                    sectionName == "__objc_methname" ||
+                if (sectionName == "__TEXT,__objc_methname" || sectionName == "__objc_methname" ||
                     sectionName.ends_with(",__objc_methname")) {
                     for (auto* block : section.blocks()) {
                         auto content = block->getContent();
@@ -215,8 +212,7 @@ public:
                             // The content is the null-terminated string
                             std::string str(content.data(), strnlen(content.data(), content.size()));
                             methnameStrings[block->getAddress().getValue()] = str;
-                            HRLogDebug("  methname @ 0x%llx: '%s'",
-                                       block->getAddress().getValue(), str.c_str());
+                            HRLogDebug("  methname @ 0x%llx: '%s'", block->getAddress().getValue(), str.c_str());
                         }
                     }
                 }
@@ -271,16 +267,16 @@ public:
                 }
 
                 if (selectorName.empty()) {
-                    HRLogDebug("ObjCSelectorFixupPlugin: Could not determine selector for block @ 0x%llx",
-                               block->getAddress().getValue());
+                    HRLogDebug("ObjCSelectorFixupPlugin: Could not determine selector for block @ 0x%llx", block->getAddress().getValue());
                     continue;
                 }
 
                 // Register the selector with the ObjC runtime
                 SEL registeredSel = sel_registerName(selectorName.c_str());
 
-                HRLogDebug("ObjCSelectorFixupPlugin: '%s' -> registered %p (selref @ 0x%llx)",
-                           selectorName.c_str(), (void*)registeredSel, block->getAddress().getValue());
+                HRLogDebug(
+                        "ObjCSelectorFixupPlugin: '%s' -> registered %p (selref @ 0x%llx)", selectorName.c_str(), (void*)registeredSel,
+                        block->getAddress().getValue());
 
                 // Update the selector reference to use the registered selector.
                 // This replaces the pointer to our local string with the canonical SEL pointer.
@@ -334,7 +330,9 @@ public:
             }
 
             _objManager.RegisterKotlinObjectFile(std::move(kotlinObjectFile));
-            HRLogDebug("Registered %zu functions and %zu classes from object file", kotlinObjectFile.functions.size(), kotlinObjectFile.classes.size());
+            HRLogDebug(
+                    "Registered %zu functions and %zu classes from object file", kotlinObjectFile.functions.size(),
+                    kotlinObjectFile.classes.size());
 
             return llvm::Error::success();
         });
@@ -365,7 +363,6 @@ public:
             llvm::orc::JITDylib& JD,
             llvm::orc::JITDylibLookupFlags JDLookupFlags,
             const llvm::orc::SymbolLookupSet& Symbols) override {
-
         llvm::orc::SymbolMap NewSymbols;
 
         for (const auto& [Name, Flags] : Symbols) {
@@ -373,14 +370,12 @@ public:
             // Only handle kfun: symbols (stable function names)
             if (NameStr.find(MANGLED_FUN_NAME_PREFIX) == std::string::npos) continue;
             // Skip if this is already an impl symbol
-            if (NameStr.size() > IMPL_SUFFIX.size() &&
-                NameStr.substr(NameStr.size() - IMPL_SUFFIX.size()) == IMPL_SUFFIX) continue;
+            if (NameStr.size() > IMPL_SUFFIX.size() && NameStr.substr(NameStr.size() - IMPL_SUFFIX.size()) == IMPL_SUFFIX) continue;
 
             // Look for pre-created stub
             const auto StubSym = _ISM.findStub(*Name, true);
             if (StubSym.getAddress()) {
-                HRLogDebug("StubDefinitionGenerator: resolved %s -> stub @ 0x%llx",
-                           NameStr.c_str(), StubSym.getAddress().getValue());
+                HRLogDebug("StubDefinitionGenerator: resolved %s -> stub @ 0x%llx", NameStr.c_str(), StubSym.getAddress().getValue());
                 NewSymbols[Name] = StubSym;
             } else {
                 HRLogDebug("StubDefinitionGenerator: no stub found for %s", NameStr.c_str());
@@ -416,7 +411,6 @@ public:
             llvm::orc::JITDylib& JD,
             llvm::orc::JITDylibLookupFlags JDLookupFlags,
             const llvm::orc::SymbolLookupSet& Symbols) override {
-
         llvm::orc::SymbolMap NewSymbols;
 
         for (const auto& [Name, Flags] : Symbols) {
@@ -440,19 +434,16 @@ public:
 
             // Check if this is a symbol we can provide a fallback for
             bool shouldProvideWeakDef =
-                // ObjC notification constants
-                NameStr.find("_NSAccessibility") == 0 ||
-                // Mach kernel traps
-                NameStr.find("_mach_vm_") == 0;
+                    // ObjC notification constants
+                    NameStr.find("_NSAccessibility") == 0 ||
+                    // Mach kernel traps
+                    NameStr.find("_mach_vm_") == 0;
 
             if (shouldProvideWeakDef) {
                 HRLogDebug("WeakSymbolFallbackGenerator: providing null definition for %s", NameStr.c_str());
                 // Provide a null address - if called, will crash with null pointer
                 // The Weak flag tells the linker this can be overridden
-                NewSymbols[Name] = {
-                    llvm::orc::ExecutorAddr(),
-                    llvm::JITSymbolFlags::Exported | llvm::JITSymbolFlags::Weak
-                };
+                NewSymbols[Name] = {llvm::orc::ExecutorAddr(), llvm::JITSymbolFlags::Exported | llvm::JITSymbolFlags::Weak};
             }
         }
 
@@ -484,6 +475,56 @@ StatsCollector& HotReloadImpl::GetStatsCollector() noexcept {
     return _statsCollector;
 }
 
+void HotReloadImpl::SetupMachOPlatform() const {
+#if defined(__APPLE__)
+
+    // Set up MachOPlatform for proper ObjC support (selector registration, class registration, etc.)
+    // The ORC runtime is required for MachOPlatform to function.
+    HRLogDebug("Setting up MachOPlatform with ORC runtime: %s", ORC_RUNTIME_PATH);
+
+    auto& ES = _JIT->getExecutionSession();
+
+    if (auto* OLL = llvm::dyn_cast<llvm::orc::ObjectLinkingLayer>(&_JIT->getObjLinkingLayer())) {
+        // Create a separate PlatformJD for the ORC runtime (as per LLVM docs).
+        // This keeps platform internals separate from user code in MainJD.
+        auto& PlatformJD = ES.createBareJITDylib("__orc_platform");
+
+        // Add DLG to PlatformJD so ORC runtime can resolve libc++, libobjc, etc.
+        // Filter out symbols that MachOPlatform defines itself to avoid conflicts.
+        auto PlatformDLG = ExitOnErr(
+                llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(
+                        _JIT->getDataLayout().getGlobalPrefix(), [](const llvm::orc::SymbolStringPtr& Name) {
+                            const auto& nameStr = *Name;
+                            // MachOPlatform creates these for each JITDylib
+                            if (nameStr == "___dso_handle" || nameStr.starts_with("__mh_")) {
+                                return false;
+                            }
+                            return true;
+                        }));
+        PlatformJD.addGenerator(std::move(PlatformDLG));
+
+        // Create MachOPlatform with separate PlatformJD
+        auto machoPlatform = ExitOnErr(llvm::orc::MachOPlatform::Create(*OLL, PlatformJD, ORC_RUNTIME_PATH));
+        ES.setPlatform(std::move(machoPlatform));
+
+        HRLogDebug("MachOPlatform initialized with separate PlatformJD");
+
+        // Link MainJD to PlatformJD so it can access platform/runtime symbols
+        auto& MainJD = _JIT->getMainJITDylib();
+        MainJD.addToLinkOrder(PlatformJD);
+
+        // Set up MainJD for platform support (initializers, eh-frame, ObjC registration)
+        if (auto Err = ES.getPlatform()->setupJITDylib(MainJD)) {
+            HRLogWarning("setupJITDylib(MainJD) failed");
+        } else {
+            HRLogDebug("MainJD configured for MachOPlatform support");
+        }
+    } else {
+        HRLogError("Failed to get ObjectLinkingLayer from JITEngine. HotReload module won't work as expected.");
+    }
+#endif
+}
+
 void HotReloadImpl::SetupORC() {
     HRLogDebug("Setting up ORC JIT...");
 
@@ -496,156 +537,55 @@ void HotReloadImpl::SetupORC() {
 
     auto JTMB = ExitOnErr(llvm::orc::JITTargetMachineBuilder::detectHost());
 
-    // Store ObjectLinkingLayer pointer for MachOPlatform setup
-    llvm::orc::ObjectLinkingLayer* OLLPtr = nullptr;
-
     _JIT = ExitOnErr(
             llvm::orc::LLJITBuilder()
-                    .setObjectLinkingLayerCreator([this, &OLLPtr](llvm::orc::ExecutionSession& ES) {
-                        // Install the LatestObjectListener plugin to a custom ObjectLinkingLayer
-                        // https://llvm.org/docs/JITLink.html
+                    .setObjectLinkingLayerCreator([this](llvm::orc::ExecutionSession& ES) {
                         auto OLL = std::make_unique<llvm::orc::ObjectLinkingLayer>(
                                 ES, ExitOnErr(llvm::jitlink::InProcessMemoryManager::Create()));
-                        // Add an instance of our plugin.
                         OLL->addPlugin(std::make_unique<LatestObjectListener>(_objectManager));
 #if defined(__APPLE__)
-                        // Add ObjC selector fixup plugin - this registers selectors with the ObjC runtime
-                        // and updates selector references to use the canonical registered selectors.
-                        // This is critical for ObjC interop to work in JIT'd code.
+                        // Add ObjC selector fixup plugin. MachOPlatform may not reliably fix up
+                        // selectors in all JIT'd object files, so we do it explicitly during
+                        // the JITLink PostFixup pass before any code runs.
                         OLL->addPlugin(std::make_unique<ObjCSelectorFixupPlugin>());
 #endif
-                        OLLPtr = OLL.get();
                         return OLL;
                     })
                     .setJITTargetMachineBuilder(std::move(JTMB))
                     .create());
 
-    HRLogDebug("Checking for MachOPlatform support (OLLPtr=%p)", (void*)OLLPtr);
-#if defined(__APPLE__)
-    HRLogDebug("Apple platform detected, looking for ORC runtime...");
-    // Set up MachOPlatform for proper ObjC support (selector registration, class registration, etc.)
-    // The ORC runtime is required for MachOPlatform to function.
-    // Try common paths for the ORC runtime library.
-    static const char* orcRuntimePaths[] = {
-        "/opt/homebrew/Cellar/llvm/21.1.0/lib/clang/21/lib/darwin/liborc_rt_osx.a",
-        "/opt/homebrew/opt/llvm/lib/clang/21/lib/darwin/liborc_rt_osx.a",
-        "/usr/local/opt/llvm/lib/clang/21/lib/darwin/liborc_rt_osx.a",
-        nullptr
-    };
-
-    const char* orcRuntimePath = nullptr;
-    for (const char** path = orcRuntimePaths; *path != nullptr; ++path) {
-        if (access(*path, R_OK) == 0) {
-            orcRuntimePath = *path;
-            break;
-        }
-    }
-
-    if (orcRuntimePath && OLLPtr) {
-        HRLogDebug("Setting up MachOPlatform with ORC runtime: %s", orcRuntimePath);
-        auto& ES = _JIT->getExecutionSession();
-
-        // Create a bare JITDylib for the platform (no default generators).
-        // Add DynamicLibrarySearchGenerator first as shown in LLVM docs.
-        auto& PlatformJD = ES.createBareJITDylib("__orc_platform");
-
-        // Add generator so PlatformJD can resolve libc++, libobjc, etc.
-        // Note: The host executable must be linked against LLVM's libc++ (not Apple's)
-        // because the ORC runtime has external symbol dependencies that Apple's libc++ inlines.
-        auto PlatformDLG = ExitOnErr(llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(
-            _JIT->getDataLayout().getGlobalPrefix(),
-            [](const llvm::orc::SymbolStringPtr& Name) {
-                const auto& nameStr = *Name;
-                // Debug: log atexit lookups
-                if (nameStr.find("atexit") != std::string::npos) {
-                    fprintf(stderr, "[DEBUG] PlatformDLG filter: atexit lookup: %s\n", nameStr.data());
-                    fflush(stderr);
-                }
-                // Filter out __dso_handle to avoid conflict with MachOPlatform's header
-                return nameStr != "___dso_handle";
-            }));
-        PlatformJD.addGenerator(std::move(PlatformDLG));
-
-        auto MachOPlatformOrErr = llvm::orc::MachOPlatform::Create(
-            *OLLPtr, PlatformJD, orcRuntimePath);
-
-        if (MachOPlatformOrErr) {
-            ES.setPlatform(std::move(*MachOPlatformOrErr));
-            HRLogDebug("MachOPlatform initialized successfully");
-
-            // Link the main JITDylib to the platform JITDylib
-            auto& MainJD = _JIT->getMainJITDylib();
-            MainJD.addToLinkOrder(PlatformJD);
-
-            // Set up MainJD for MachOPlatform - this is critical for ObjC selector registration.
-            // MainJD was created before the platform was set, so we need to explicitly set it up.
-            // This ensures ObjC selectors in JIT'd code are properly registered with the runtime.
-            // Note: setupJITDylib may fail if the ORC runtime has missing dependencies or
-            // if there are symbol conflicts. We log the error but continue - our custom
-            // ObjCSelectorFixupPlugin provides a fallback for selector registration.
-            if (auto Err = ES.getPlatform()->setupJITDylib(MainJD)) {
-                std::string errMsg;
-                llvm::handleAllErrors(std::move(Err), [&](const llvm::ErrorInfoBase& EIB) {
-                    if (!errMsg.empty()) errMsg += "; ";
-                    errMsg += EIB.message();
-                });
-                if (errMsg.empty()) {
-                    errMsg = "(empty error - likely a failed symbol lookup)";
-                }
-                HRLogWarning("setupJITDylib(MainJD) failed: %s", errMsg.c_str());
-                HRLogWarning("ObjC support will rely on ObjCSelectorFixupPlugin fallback");
-            } else {
-                HRLogDebug("MainJD configured for MachOPlatform ObjC support");
-            }
-        } else {
-            llvm::Error err = MachOPlatformOrErr.takeError();
-            std::string errMsg;
-            llvm::handleAllErrors(std::move(err), [&](const llvm::ErrorInfoBase& EIB) {
-                if (!errMsg.empty()) errMsg += "; ";
-                errMsg += EIB.message();
-            });
-            if (errMsg.empty()) {
-                errMsg = "(empty error message)";
-            }
-            HRLogWarning("Failed to create MachOPlatform: %s", errMsg.c_str());
-            HRLogWarning("ObjC interop may not work correctly");
-        }
-    } else {
-        if (!orcRuntimePath) {
-            HRLogWarning("ORC runtime not found, MachOPlatform disabled");
-        }
-        HRLogWarning("ObjC interop may not work correctly without MachOPlatform");
-    }
-#endif
-
-    _LCTM = ExitOnErr(
-            llvm::orc::createLocalLazyCallThroughManager(_JIT->getTargetTriple(), _JIT->getExecutionSession(), llvm::orc::ExecutorAddr()));
-
-    _ISM = llvm::orc::createLocalIndirectStubsManagerBuilder(_JIT->getTargetTriple())();
-
-    // Create a generator that looks up symbols in the current process.
-    // Filter out Kotlin ObjC export symbols - they should come from JIT'd code (bootstrap.o),
-    // not from the host executable which has weak default values.
+    // Add DynamicLibrarySearchGenerator to MainJD BEFORE setting up MachOPlatform.
+    // MachOPlatform's setupJITDylib needs to resolve symbols like ___cxa_atexit,
+    // which requires the DLG to be present.
     auto& MainJD = _JIT->getMainJITDylib();
-
-    auto DLG = ExitOnErr(llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(
-        _JIT->getDataLayout().getGlobalPrefix(),
-        [](const llvm::orc::SymbolStringPtr& Name) {
-            // Filter out symbols that should come from JIT'd code, not host
-            const auto& nameStr = *Name;
-            // Debug: log kclass symbol lookups
-            if (nameStr.find("kclass:") != std::string::npos) {
-                fprintf(stderr, "[DEBUG] DLG filter: kclass symbol lookup: %s\n", nameStr.data());
-                fflush(stderr);
-            }
-            // ObjC export symbols - their weak defaults in host would shadow JIT'd definitions
-            if (nameStr.starts_with("_Kotlin_ObjCExport_sorted") ||
-                nameStr.starts_with("_Kotlin_ObjCExport_initTypeAdapters")) {
-                return false;
-            }
-            return true;
-        }));
+    auto DLG = ExitOnErr(
+            llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(
+                    _JIT->getDataLayout().getGlobalPrefix(), [](const llvm::orc::SymbolStringPtr& Name) {
+                        const auto& nameStr = *Name;
+                        // Filter out symbols that MachOPlatform creates for each JITDylib
+                        if (nameStr == "___dso_handle" || nameStr.starts_with("__mh_")) {
+                            return false;
+                        }
+                        // ObjC export symbols - their weak defaults in host would shadow JIT'd definitions
+                        if (nameStr.starts_with("_Kotlin_ObjCExport_sorted") ||
+                            nameStr.starts_with("_Kotlin_ObjCExport_initTypeAdapters")) {
+                            return false;
+                        }
+                        return true;
+                    }));
     MainJD.addGenerator(std::move(DLG));
+
+    SetupMachOPlatform();
+
+    auto& TargetTriple = _JIT->getTargetTriple();
+    auto& ES = _JIT->getExecutionSession();
+
+    _LCTM = ExitOnErr(llvm::orc::createLocalLazyCallThroughManager(TargetTriple, ES, llvm::orc::ExecutorAddr()));
+
+    _ISM = llvm::orc::createLocalIndirectStubsManagerBuilder(TargetTriple)();
+
+    // DynamicLibrarySearchGenerator was already added to MainJD before SetupMachOPlatform()
+    // (MachOPlatform's setupJITDylib needs it to resolve symbols like ___cxa_atexit)
 
     // Add stub definition generator - resolves stable function names to stub addresses.
     // When JITLink encounters a reference to "kfun:foo", this generator looks up
@@ -680,8 +620,7 @@ void HotReloadImpl::StartServer() {
 std::optional<ParsedObjectFile> HotReloadImpl::ParseObjectFile(const std::string_view objectPath) {
     auto objBufferOrError = llvm::MemoryBuffer::getFile(objectPath);
     if (!objBufferOrError) {
-        HRLogError("Failed to read object file %s: %s",
-                   std::string(objectPath).c_str(), objBufferOrError.getError().message().c_str());
+        HRLogError("Failed to read object file %s: %s", std::string(objectPath).c_str(), objBufferOrError.getError().message().c_str());
         return std::nullopt;
     }
     auto objBuffer = std::move(*objBufferOrError);
@@ -711,8 +650,7 @@ std::optional<ParsedObjectFile> HotReloadImpl::ParseObjectFile(const std::string
 
         // Check if this is a defined $hr_impl symbol
         if (const auto flags = *flagsOrErr; (flags & llvm::object::SymbolRef::SF_Undefined) == 0 &&
-            name.find(MANGLED_FUN_NAME_PREFIX) != std::string::npos &&
-            endsWith(name, IMPL_SUFFIX)) {
+            name.find(MANGLED_FUN_NAME_PREFIX) != std::string::npos && endsWith(name, IMPL_SUFFIX)) {
             implSymbols.push_back(name);
         }
     }
@@ -736,10 +674,9 @@ void HotReloadImpl::EnsurePlaceholderStubs(const std::vector<std::string>& implS
             }
         }
 
-        if (auto err = _ISM->createStub(*stableNameSymbol, llvm::orc::ExecutorAddr(),
-                llvm::JITSymbolFlags::Callable | llvm::JITSymbolFlags::Exported)) {
-            HRLogError("Failed to create placeholder stub for %.*s: %s",
-                       static_cast<int>(stableName.size()), stableName.data(), llvm::toString(std::move(err)).c_str());
+        if (auto err = _ISM->createStub(*stableNameSymbol, llvm::orc::ExecutorAddr(), llvm::JITSymbolFlags::Callable | llvm::JITSymbolFlags::Exported)) {
+            HRLogError("Failed to create placeholder stub for %.*s: %s", static_cast<int>(stableName.size()), stableName.data(),
+                    llvm::toString(std::move(err)).c_str());
             continue;
         }
         HRLogDebug("Created placeholder stub for: %.*s -> %s", static_cast<int>(stableName.size()), stableName.data(), implName.c_str());
@@ -752,13 +689,10 @@ void HotReloadImpl::UpdateStubPointers(llvm::orc::JITDylib& JD, const std::vecto
 
     for (const auto& implName : implSymbols) {
         const auto implSymbol = ES.intern(implName);
-        auto lookupResult = ES.lookup(
-            llvm::orc::makeJITDylibSearchOrder(&JD, llvm::orc::JITDylibLookupFlags::MatchAllSymbols),
-            implSymbol);
+        auto lookupResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&JD, llvm::orc::JITDylibLookupFlags::MatchAllSymbols), implSymbol);
 
         if (auto Err = lookupResult.takeError()) {
-            HRLogError("Failed to look up impl symbol %s: %s",
-                       implName.c_str(), llvm::toString(std::move(Err)).c_str());
+            HRLogError("Failed to look up impl symbol %s: %s", implName.c_str(), llvm::toString(std::move(Err)).c_str());
             continue;
         }
 
@@ -766,8 +700,7 @@ void HotReloadImpl::UpdateStubPointers(llvm::orc::JITDylib& JD, const std::vecto
         const auto stableName = getStableName(implName);
 
         if (auto err = _ISM->updatePointer(llvm::StringRef(stableName.data(), stableName.size()), implAddr)) {
-            HRLogError("Failed to update stub pointer for %.*s: %s",
-                       static_cast<int>(stableName.size()), stableName.data(), llvm::toString(std::move(err)).c_str());
+            HRLogError("Failed to update stub pointer for %.*s: %s", static_cast<int>(stableName.size()), stableName.data(), llvm::toString(std::move(err)).c_str());
             continue;
         }
 
@@ -776,6 +709,7 @@ void HotReloadImpl::UpdateStubPointers(llvm::orc::JITDylib& JD, const std::vecto
 }
 
 #if KONAN_OBJC_INTEROP
+
 /// Initialize ObjC unique prefix from JIT'd code.
 /// This must happen before any ObjC class creation (CreateKotlinObjCClass).
 /// The compiler generates Kotlin_ObjCInterop_uniquePrefix in bootstrap.o,
@@ -789,9 +723,7 @@ void HotReloadImpl::InitializeObjCUniquePrefixFromJIT() const {
     // Symbol name with underscore prefix for macOS
     const auto prefixName = ES.intern("_Kotlin_ObjCInterop_uniquePrefix");
 
-    auto prefixResult = ES.lookup(
-        llvm::orc::makeJITDylibSearchOrder(&MainJD),
-        prefixName);
+    auto prefixResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&MainJD), prefixName);
 
     if (!prefixResult) {
         llvm::consumeError(prefixResult.takeError());
@@ -807,8 +739,7 @@ void HotReloadImpl::InitializeObjCUniquePrefixFromJIT() const {
         return;
     }
 
-    HRLogDebug("Found _Kotlin_ObjCInterop_uniquePrefix @ 0x%llx -> \"%s\"",
-               prefixResult->getAddress().getValue(), jitPrefix);
+    HRLogDebug("Found _Kotlin_ObjCInterop_uniquePrefix @ 0x%llx -> \"%s\"", prefixResult->getAddress().getValue(), jitPrefix);
 
     // Set the runtime's weak symbol to the JIT value
     Kotlin_ObjCInterop_uniquePrefix = jitPrefix;
@@ -839,22 +770,19 @@ void HotReloadImpl::InitializeObjCAdaptersFromJIT() const {
     const ObjCTypeAdapter** classAdapters = nullptr;
     int classAdaptersNum = 0;
 
-    auto classAdaptersResult = ES.lookup(
-        llvm::orc::makeJITDylibSearchOrder(&MainJD),
-        classAdaptersName);
+    auto classAdaptersResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&MainJD), classAdaptersName);
     if (!classAdaptersResult) {
         llvm::consumeError(classAdaptersResult.takeError());
         HRLogDebug("_Kotlin_ObjCExport_sortedClassAdapters not found");
     } else {
         // The symbol is a pointer to array, so we dereference once to get the array pointer
         classAdapters = *classAdaptersResult->getAddress().toPtr<const ObjCTypeAdapter***>();
-        HRLogDebug("Found _Kotlin_ObjCExport_sortedClassAdapters @ 0x%llx -> 0x%llx",
-                   classAdaptersResult->getAddress().getValue(), (unsigned long long)classAdapters);
+        HRLogDebug(
+                "Found _Kotlin_ObjCExport_sortedClassAdapters @ 0x%llx -> 0x%llx", classAdaptersResult->getAddress().getValue(),
+                (unsigned long long)classAdapters);
     }
 
-    auto classAdaptersNumResult = ES.lookup(
-        llvm::orc::makeJITDylibSearchOrder(&MainJD),
-        classAdaptersNumName);
+    auto classAdaptersNumResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&MainJD), classAdaptersNumName);
     if (!classAdaptersNumResult) {
         llvm::consumeError(classAdaptersNumResult.takeError());
         HRLogDebug("_Kotlin_ObjCExport_sortedClassAdaptersNum not found");
@@ -867,21 +795,18 @@ void HotReloadImpl::InitializeObjCAdaptersFromJIT() const {
     const ObjCTypeAdapter** protocolAdapters = nullptr;
     int protocolAdaptersNum = 0;
 
-    auto protocolAdaptersResult = ES.lookup(
-        llvm::orc::makeJITDylibSearchOrder(&MainJD),
-        protocolAdaptersName);
+    auto protocolAdaptersResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&MainJD), protocolAdaptersName);
     if (!protocolAdaptersResult) {
         llvm::consumeError(protocolAdaptersResult.takeError());
         HRLogDebug("_Kotlin_ObjCExport_sortedProtocolAdapters not found");
     } else {
         protocolAdapters = *protocolAdaptersResult->getAddress().toPtr<const ObjCTypeAdapter***>();
-        HRLogDebug("Found _Kotlin_ObjCExport_sortedProtocolAdapters @ 0x%llx -> 0x%llx",
-                   protocolAdaptersResult->getAddress().getValue(), (unsigned long long)protocolAdapters);
+        HRLogDebug(
+                "Found _Kotlin_ObjCExport_sortedProtocolAdapters @ 0x%llx -> 0x%llx", protocolAdaptersResult->getAddress().getValue(),
+                (unsigned long long)protocolAdapters);
     }
 
-    auto protocolAdaptersNumResult = ES.lookup(
-        llvm::orc::makeJITDylibSearchOrder(&MainJD),
-        protocolAdaptersNumName);
+    auto protocolAdaptersNumResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&MainJD), protocolAdaptersNumName);
     if (!protocolAdaptersNumResult) {
         llvm::consumeError(protocolAdaptersNumResult.takeError());
         HRLogDebug("_Kotlin_ObjCExport_sortedProtocolAdaptersNum not found");
@@ -890,14 +815,11 @@ void HotReloadImpl::InitializeObjCAdaptersFromJIT() const {
         HRLogDebug("Found _Kotlin_ObjCExport_sortedProtocolAdaptersNum = %d", protocolAdaptersNum);
     }
 
-    HRLogDebug("Found %d class adapters and %d protocol adapters from JIT",
-               classAdaptersNum, protocolAdaptersNum);
+    HRLogDebug("Found %d class adapters and %d protocol adapters from JIT", classAdaptersNum, protocolAdaptersNum);
 
     // Initialize adapters in the runtime
     if (classAdaptersNum > 0 || protocolAdaptersNum > 0) {
-        Kotlin_ObjCExport_initializeTypeAdaptersWithPointers(
-            classAdapters, classAdaptersNum,
-            protocolAdapters, protocolAdaptersNum);
+        Kotlin_ObjCExport_initializeTypeAdaptersWithPointers(classAdapters, classAdaptersNum, protocolAdapters, protocolAdaptersNum);
         HRLogDebug("ObjC type adapters initialized from JIT");
     } else {
         HRLogDebug("No ObjC type adapters found in JIT'd code");
@@ -917,8 +839,7 @@ KonanStartFunc HotReloadImpl::LoadBoostrapFile(const char* boostrapFilePath) con
     EnsurePlaceholderStubs(parsed->implSymbols, /*checkExisting=*/false);
 
     // Add object file to main JITDylib
-    ExitOnErr(_JIT->addObjectFile(
-        llvm::MemoryBuffer::getMemBufferCopy(parsed->buffer->getBuffer(), parsed->buffer->getBufferIdentifier())));
+    ExitOnErr(_JIT->addObjectFile(llvm::MemoryBuffer::getMemBufferCopy(parsed->buffer->getBuffer(), parsed->buffer->getBufferIdentifier())));
     HRLogDebug("Bootstrap file added to JIT.");
 
     // Update stubs with real addresses
@@ -937,122 +858,71 @@ KonanStartFunc HotReloadImpl::LoadBoostrapFile(const char* boostrapFilePath) con
 
     // Look up Konan_start entry point
     HRLogDebug("Looking up `Konan_start` symbol...");
+
     const auto konanStartSymbol = ExitOnErr(_JIT->lookup("Konan_start"));
     return konanStartSymbol.toPtr<KonanStartFunc>();
 }
 
-bool HotReloadImpl::LoadObjectFromPath(const std::string_view objectPath) {
+bool HotReloadImpl::LoadObjectFromPath(std::string_view objectPath) const {
     HRLogDebug("Loading object file for reload: %s", std::string(objectPath).c_str());
 
-    // Read the object file
-    auto objBufferOrError = llvm::MemoryBuffer::getFile(objectPath);
-    if (!objBufferOrError) {
-        HRLogError("Failed to load object file: %s", objBufferOrError.getError().message().c_str());
-        return false;
-    }
-    auto objBuffer = std::move(*objBufferOrError);
+    const auto parsed = ParseObjectFile(objectPath);
+    if (!parsed) return false;
 
-    // Parse the object file to find all $hr_impl symbols
-    std::vector<std::string> implSymbols;
-    const std::string implSuffix = HOT_RELOAD_IMPL_SUFFIX;
+    HRLogDebug("Found %zu impl symbols in reload object", parsed->implSymbols.size());
 
-    auto objFile = llvm::object::ObjectFile::createObjectFile(objBuffer->getMemBufferRef());
-    if (!objFile) {
-        llvm::consumeError(objFile.takeError());
-        HRLogError("Failed to parse object file");
-        return false;
-    }
+    // Ensure placeholder stubs exist (check for existing ones from previous loads)
+    EnsurePlaceholderStubs(parsed->implSymbols, /*checkExisting=*/true);
 
+    // Create a NEW JITDylib for this reload to avoid duplicate symbol errors
     auto& ES = _JIT->getExecutionSession();
 
-    // Find all $hr_impl symbols and create/update stubs as needed
-    for (const auto& sym : (*objFile)->symbols()) {
-        auto nameOrErr = sym.getName();
-        if (!nameOrErr) {
-            llvm::consumeError(nameOrErr.takeError());
-            continue;
-        }
-        auto name = nameOrErr->str();
-
-        // Check if this is an $hr_impl symbol (defined function)
-        auto flagsOrErr = sym.getFlags();
-        if (!flagsOrErr) {
-            llvm::consumeError(flagsOrErr.takeError());
-            continue;
-        }
-        auto flags = *flagsOrErr;
-        if ((flags & llvm::object::SymbolRef::SF_Undefined) == 0 &&  // Not undefined
-            name.find(MANGLED_FUN_NAME_PREFIX) != std::string::npos &&  // Is a kfun: symbol
-            name.size() > implSuffix.size() &&
-            name.substr(name.size() - implSuffix.size()) == implSuffix) {  // Has $hr_impl suffix
-            implSymbols.push_back(name);
-
-            // Check if stub already exists for this function
-            std::string stableName = name.substr(0, name.size() - implSuffix.size());
-            auto stableNameSymbol = ES.intern(stableName);
-            auto existingStub = _ISM->findStub(*stableNameSymbol, true);
-
-            if (!existingStub.getAddress()) {
-                // New function - create placeholder stub
-                if (auto err = _ISM->createStub(*stableNameSymbol, llvm::orc::ExecutorAddr(),
-                        llvm::JITSymbolFlags::Callable | llvm::JITSymbolFlags::Exported)) {
-                    HRLogError("Failed to create placeholder stub for new function %s: %s",
-                               stableName.c_str(), llvm::toString(std::move(err)).c_str());
-                    continue;
-                }
-                HRLogDebug("Created placeholder stub for new function: %s", stableName.c_str());
-            } else {
-                HRLogDebug("Stub already exists for: %s", stableName.c_str());
-            }
-        }
-    }
-
-    HRLogDebug("Found %zu impl symbols in reload object", implSymbols.size());
-
-    // Create a NEW JITDylib for this reload to avoid duplicate symbol errors.
-    // Each reload gets its own dylib so symbols can be redefined.
-    std::string reloadDylibName = "reload_" + std::to_string(++reloadCounter);
+    const auto reloadDylibName = "reload_" + std::to_string(++RELOAD_COUNTER);
     auto& ReloadJD = ES.createBareJITDylib(reloadDylibName);
     HRLogDebug("Created new JITDylib: %s", reloadDylibName.c_str());
 
-    // The reload dylib needs access to symbols from the main dylib (runtime, etc.)
-    auto& MainJD = _JIT->getMainJITDylib();
-    ReloadJD.addToLinkOrder(MainJD);
+    // Link reload dylib to main dylib for runtime symbol access
+    ReloadJD.addToLinkOrder(_JIT->getMainJITDylib());
 
-    // Add the object file to the NEW reload JITDylib
-    auto err = _JIT->addObjectFile(ReloadJD, llvm::MemoryBuffer::getMemBufferCopy(objBuffer->getBuffer(), objBuffer->getBufferIdentifier()));
-    if (err) {
+    // Add DynamicLibrarySearchGenerator directly to ReloadJD for resolving system symbols.
+    // While ReloadJD links to MainJD (which has its own DLG), the link order doesn't always
+    // propagate generator lookups correctly during __mod_init_func processing.
+    // Adding a DLG directly ensures ReloadJD can resolve symbols like _atexit.
+    auto ReloadDLG = llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(
+            _JIT->getDataLayout().getGlobalPrefix(), [](const llvm::orc::SymbolStringPtr& Name) {
+                const auto& nameStr = *Name;
+                if (nameStr.starts_with("_Kotlin_") || nameStr.starts_with("_kfun:") || nameStr.starts_with("_kclass:") ||
+                    nameStr.starts_with("_ktypew:") || nameStr.starts_with("_kniBridge") || nameStr == "___dso_handle") {
+                    return false;
+                }
+                return true;
+            });
+    if (ReloadDLG) {
+        ReloadJD.addGenerator(std::move(*ReloadDLG));
+        HRLogDebug("Added DynamicLibrarySearchGenerator to %s", reloadDylibName.c_str());
+    } else {
+        HRLogWarning(
+                "Failed to create DynamicLibrarySearchGenerator for %s: %s", reloadDylibName.c_str(),
+                llvm::toString(ReloadDLG.takeError()).c_str());
+    }
+
+    // Set up reload dylib with MachOPlatform so it can resolve _atexit and other
+    // platform symbols needed for __mod_init_func processing
+    if (auto* Platform = ES.getPlatform()) {
+        if (auto Err = Platform->setupJITDylib(ReloadJD)) {
+            HRLogWarning("setupJITDylib(ReloadJD) failed: %s", llvm::toString(std::move(Err)).c_str());
+        }
+    }
+
+    // Add object file to the reload JITDylib
+    if (auto err = _JIT->addObjectFile(ReloadJD, llvm::MemoryBuffer::getMemBufferCopy(parsed->buffer->getBuffer(), parsed->buffer->getBufferIdentifier()))) {
         HRLogError("Failed to add object file to JIT engine: %s", llvm::toString(std::move(err)).c_str());
         return false;
     }
-
     HRLogDebug("Object file added to JIT (dylib: %s).", reloadDylibName.c_str());
 
-    // Look up impl symbols from the RELOAD dylib (not main) and update stub pointers
-    for (const auto& implName : implSymbols) {
-        auto implSymbol = ES.intern(implName);
-        auto lookupResult = ES.lookup(
-            llvm::orc::makeJITDylibSearchOrder(&ReloadJD, llvm::orc::JITDylibLookupFlags::MatchAllSymbols),
-            implSymbol);
-
-        if (auto Err = lookupResult.takeError()) {
-            HRLogError("Failed to look up impl symbol %s: %s",
-                       implName.c_str(), llvm::toString(std::move(Err)).c_str());
-            continue;
-        }
-
-        auto implAddr = lookupResult->getAddress();
-
-        // Update stub with new address
-        std::string stableName = implName.substr(0, implName.size() - implSuffix.size());
-        if (auto err = _ISM->updatePointer(stableName, implAddr)) {
-            HRLogError("Failed to update stub pointer for %s: %s",
-                       stableName.c_str(), llvm::toString(std::move(err)).c_str());
-            continue;
-        }
-
-        HRLogInfo("Updated stub: %s -> 0x%llx", stableName.c_str(), implAddr.getValue());
-    }
+    // Update stubs with new addresses from reload dylib
+    UpdateStubPointers(ReloadJD, parsed->implSymbols);
 
     return true;
 }
@@ -1066,14 +936,16 @@ void HotReloadImpl::Reload(const std::string& objectPath) noexcept {
     auto* currentThreadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     currentThreadData->suspensionData().requestThreadsSuspension("Hot-Reload");
 
+    // From this point on, the threads could be suspended. Remember to invoke `ResumeThreads`.
+    // TODO: maybe it is a good idea to use RAII here.
+
     CallsCheckerIgnoreGuard allowWait;
 
     _statsCollector.RegisterStart(static_cast<int64_t>(utility::getCurrentEpoch()));
     _statsCollector.RegisterLoadedObject(objectPath);
 
     /// 1. Load new object in JIT engine
-    auto objFile = LoadObjectFromPath(objectPath);
-    if (!objFile) {
+    if (const auto objFile = LoadObjectFromPath(objectPath); !objFile) {
         _statsCollector.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
         _statsCollector.RegisterSuccessful(false);
         mm::ResumeThreads();
@@ -1082,12 +954,13 @@ void HotReloadImpl::Reload(const std::string& objectPath) noexcept {
 
     try {
         mm::WaitForThreadsSuspension();
-        perform(*currentThreadData, parsedDynamicLib);
-        statsCollector.registerEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
-        statsCollector.registerSuccessful(true);
-        HRLogDebug("Invoking HotReload Success Handlers...");
-        Kotlin_native_internal_HotReload_invokeSuccessCallback();
+        Perform(*currentThreadData);
+        _statsCollector.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
+        _statsCollector.RegisterSuccessful(true);
+        HRLogDebug("Resuming threads...");
         mm::ResumeThreads();
+        HRLogDebug("Threads resumed successfully. Invoking success handlers (if any)...");
+        Kotlin_native_internal_HotReload_invokeSuccessCallback();
     } catch (const std::exception& e) {
         HRLogError("Hot-reload failed with exception: %s", e.what());
         _statsCollector.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
@@ -1099,11 +972,6 @@ void HotReloadImpl::Reload(const std::string& objectPath) noexcept {
 void HotReloadImpl::ReloadClassesAndInstances(
         mm::ThreadData& currentThreadData, std::unordered_map<std::string, llvm::orc::ExecutorAddr> newClasses) const {
     for (const auto& [typeInfoName, typeInfoAddress] : newClasses) {
-        if (NON_RELOADABLE_CLASS_SYMBOLS.find(typeInfoName) != NON_RELOADABLE_CLASS_SYMBOLS.end()) {
-            HRLogWarning("Cannot reload class of type: %s", typeInfoName.c_str());
-            continue;
-        }
-
         const TypeInfo* oldTypeInfo = _objectManager.GetPreviousTypeInfo(typeInfoName);
         if (oldTypeInfo == nullptr) {
             HRLogWarning("Cannot find the old TypeInfo for class: %s", typeInfoName.c_str());
@@ -1123,64 +991,51 @@ void HotReloadImpl::ReloadClassesAndInstances(
 }
 
 void HotReloadImpl::CreateFunctionStubs(const std::unordered_map<std::string, llvm::orc::ExecutorAddr>& functions) const {
-    const std::string implSuffix = HOT_RELOAD_IMPL_SUFFIX;
-
     for (const auto& [name, addr] : functions) {
         // Only create stubs for implementation symbols (ending with $hr_impl)
-        if (name.size() <= implSuffix.size() ||
-            name.substr(name.size() - implSuffix.size()) != implSuffix) {
+        if (name.size() <= IMPL_SUFFIX.size() || name.substr(name.size() - IMPL_SUFFIX.size()) != IMPL_SUFFIX) {
             HRLogDebug("Skipping non-impl function: %s", name.c_str());
             continue;
         }
 
         // Extract stable name by removing the $hr_impl suffix
-        const auto stableName = name.substr(0, name.size() - implSuffix.size());
+        const auto stableName = name.substr(0, name.size() - IMPL_SUFFIX.size());
 
         // Create stub with stable name pointing to implementation
-        auto err = _ISM->createStub(stableName, addr, llvm::JITSymbolFlags::Callable | llvm::JITSymbolFlags::Exported);
-        if (err) {
-            HRLogError("Failed to create stub for %s: %s",
-                       stableName.c_str(), llvm::toString(std::move(err)).c_str());
+        if (auto err = _ISM->createStub(stableName, addr, llvm::JITSymbolFlags::Callable | llvm::JITSymbolFlags::Exported)) {
+            HRLogError("Failed to create stub for %s: %s", stableName.c_str(), llvm::toString(std::move(err)).c_str());
             continue;
         }
 
-        HRLogDebug("Created stub: %s -> %s @ 0x%llx",
-                   stableName.c_str(), name.c_str(), addr.getValue());
+        HRLogDebug("Created stub: %s -> %s @ 0x%llx", stableName.c_str(), name.c_str(), addr.getValue());
     }
 }
 
 void HotReloadImpl::ReplaceFunctionStubs(const std::unordered_map<std::string, llvm::orc::ExecutorAddr>& functions) const {
-    const std::string implSuffix = HOT_RELOAD_IMPL_SUFFIX;
-
     for (const auto& [name, newAddr] : functions) {
         // Only handle implementation symbols (ending with $hr_impl)
-        if (name.size() <= implSuffix.size() ||
-            name.substr(name.size() - implSuffix.size()) != implSuffix) {
+        if (name.size() <= IMPL_SUFFIX.size() || name.substr(name.size() - IMPL_SUFFIX.size()) != IMPL_SUFFIX) {
             continue;
         }
 
         // Extract stable name
-        std::string stableName = name.substr(0, name.size() - implSuffix.size());
+        const auto stableName = name.substr(0, name.size() - IMPL_SUFFIX.size());
 
-        // Check if stub already exists
+        // Check if a stub already exists
         auto existingStub = _ISM->findStub(stableName, true);
         if (!existingStub.getAddress()) {
             // New function added in reload - create stub
-            auto err = _ISM->createStub(stableName, newAddr, llvm::JITSymbolFlags::Callable | llvm::JITSymbolFlags::Exported);
-            if (err) {
-                HRLogError("Failed to create stub for new function %s: %s",
-                           stableName.c_str(), llvm::toString(std::move(err)).c_str());
+            if (auto err = _ISM->createStub(stableName, newAddr, llvm::JITSymbolFlags::Callable | llvm::JITSymbolFlags::Exported)) {
+                HRLogError("Failed to create stub for new function %s: %s", stableName.c_str(), llvm::toString(std::move(err)).c_str());
             } else {
-                HRLogInfo("Created stub for new function: %s -> 0x%llx",
-                          stableName.c_str(), newAddr.getValue());
+                HRLogInfo("Created stub for new function: %s -> 0x%llx", stableName.c_str(), newAddr.getValue());
             }
             continue;
         }
 
-        // Update existing stub to point to new implementation
+        // Update the existing stub to point to the new implementation
         if (auto err = _ISM->updatePointer(stableName, newAddr)) {
-            HRLogError("Failed to update stub %s: %s",
-                       stableName.c_str(), llvm::toString(std::move(err)).c_str());
+            HRLogError("Failed to update stub %s: %s", stableName.c_str(), llvm::toString(std::move(err)).c_str());
             continue;
         }
 
