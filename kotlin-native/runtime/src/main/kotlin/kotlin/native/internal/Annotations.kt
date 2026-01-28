@@ -161,3 +161,10 @@ public annotation class ReflectionPackageName(val name: String)
 @Retention(value = AnnotationRetention.BINARY)
 @ExperimentalNativeApi
 public annotation class ExportedBridge(val bridgeName: String)
+
+/**
+ * Indicates that the marked function should be skipped by the debugger when stepping into (if allowed by the platform).
+ */
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION)
+@Retention(value = AnnotationRetention.BINARY)
+internal annotation class TransparentForDebugger
