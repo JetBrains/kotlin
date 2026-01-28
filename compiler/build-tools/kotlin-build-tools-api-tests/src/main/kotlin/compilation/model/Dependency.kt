@@ -20,3 +20,19 @@ interface Dependency {
     val location: Path
     val scenarioDslCacheKey: DependencyScenarioDslCacheKey
 }
+
+/**
+ * Represents a simple provided dependency file
+ *
+ * The [scenarioDslCacheKey] considers only the path, but not the file content.
+ */
+class FileDependency(
+    override val location: Path,
+) : Dependency {
+    data class FileDependencyCacheKey(
+        val location: Path,
+    ) : DependencyScenarioDslCacheKey
+
+    override val scenarioDslCacheKey: DependencyScenarioDslCacheKey
+        get() = FileDependencyCacheKey(location)
+}

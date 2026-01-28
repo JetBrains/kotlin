@@ -225,7 +225,9 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
         public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER")
 
         /**
-         * An array of additional Kotlin script extensions (on top of the default `.kt` and `.kts`).
+         * An array of additional Kotlin script extensions (on top of the default `kt` and `kts`).
+         *
+         * The extension should not contain the leading dot (an example of a valid value `bar` for the `foo.bar` file)
          */
         @JvmField
         public val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS")
