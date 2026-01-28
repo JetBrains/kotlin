@@ -68,6 +68,8 @@ tasks.withType<Test>().configureEach {
 }
 
 tasks.register<Test>("lincheckTest") {
+    classpath = sourceSets["test"].runtimeClasspath
+    testClassesDirs = sourceSets["test"].output.classesDirs
     jvmArgs(
         "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
         "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
