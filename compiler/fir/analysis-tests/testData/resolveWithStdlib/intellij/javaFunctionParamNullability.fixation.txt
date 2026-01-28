@@ -44,6 +44,7 @@ TypeVariable(T) --- Readiness(
     )
      = kotlin/String
      <: TypeVariable(S)!
+     <: kotlin/String? (inferred during fixation)
      <: kotlin/String! (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- Readiness(
@@ -78,6 +79,7 @@ TypeVariable(T) --- Readiness(
     )
      = kotlin/String
      <: TypeVariable(S)!
+     <: kotlin/String? (inferred during fixation)
      <: kotlin/String! (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
@@ -144,6 +146,7 @@ TypeVariable(T) --- Readiness(
     )
      = kotlin/String
      <: TypeVariable(S)!
+     <: kotlin/String? (inferred during fixation)
      <: kotlin/String! (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- Readiness(
@@ -178,6 +181,7 @@ TypeVariable(T) --- Readiness(
     )
      = kotlin/String
      <: TypeVariable(S)!
+     <: kotlin/String? (inferred during fixation)
      <: kotlin/String! (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(K) --- Readiness(
