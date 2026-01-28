@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
@@ -68,6 +69,7 @@ class NativeCompilerSecondStageFacade(
         friendDependencies: Set<String>,
     ): BinaryArtifacts.Native {
         val executableFile = getNativeArtifactsOutputDir(testServices, File(mainLibrary).name).resolve(module.name + ".kexe")
+        val fileCheckStage = module.fileCheckStage()
 
         val compilerXmlOutput = ByteArrayOutputStream()
 
@@ -107,6 +109,10 @@ class NativeCompilerSecondStageFacade(
                 },
                 module.directives[FREE_COMPILER_ARGS],
                 customArgs,
+                fileCheckStage?.let { listOf(
+                        K2NativeCompilerArguments::saveLlvmIrAfter.cliArgument(it),
+                        K2NativeCompilerArguments::saveLlvmIrDirectory.cliArgument(executableFile.fileCheckDump(fileCheckStage).parent),
+                    )},
             )
         }
 
@@ -120,3 +126,15 @@ class NativeCompilerSecondStageFacade(
         }
     }
 }
+
+internal fun TestModule.fileCheckStage(): String? {
+    if (!directives.contains(FILECHECK_STAGE))
+        return null
+    return directives[FILECHECK_STAGE].singleOrNull()
+        ?: error("Exactly one argument for FILECHECK directive is needed: LLVM stage name to dump bitcode after, in files: $files")
+}
+
+/**
+ * Constructs file check dump path for the given executable file and stage
+ */
+internal fun File.fileCheckDump(fileCheckStage: String): File = this.resolveSibling("out.$fileCheckStage.ll")
