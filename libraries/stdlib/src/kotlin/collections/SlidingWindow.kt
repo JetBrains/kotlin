@@ -167,6 +167,7 @@ private class RingBuffer<T>(private val buffer: Array<Any?>, filledSize: Int) : 
     /**
      * Add [element] to the buffer or fail with [IllegalStateException] if no free space available in the buffer
      */
+    @kotlin.jvm.JvmName("addToBuffer")
     fun add(element: T) {
         if (isFull()) {
             throw IllegalStateException("ring buffer is full")
