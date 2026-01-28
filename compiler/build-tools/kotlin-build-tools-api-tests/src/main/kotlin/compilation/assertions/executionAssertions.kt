@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions
+package org.jetbrains.kotlin.buildtools.tests.compilation.assertions
 
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.ExecutionOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ExecutionOutcome
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
