@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
@@ -242,24 +241,15 @@ class LLFirSessionCacheStorageInvalidator(
      */
     private inline fun performInvalidation(crossinline block: () -> Unit) {
         synchronized(this) {
-            // Any exception from session invalidation is an error that should be logged (even control flow exceptions). Since an exception
-            // interrupts session invalidation, session caches might be left in an inconsistent state. See KT-78994.
+            // Cancellation exceptions can bring session caches into an inconsistent state (see KT-78994). Conceptually, session
+            // invalidation is a critical operation that must not be interrupted. Historically, this was not an issue because session
+            // invalidation was performed only in write actions. However, with low-memory cache cleanup, session invalidation can be
+            // executed in a read action.
             //
-            // This is temporary code to gather more diagnostic data.
-            try {
-                // Cancellation exceptions can bring session caches into an inconsistent state (see KT-78994). Conceptually, session
-                // invalidation is a critical operation that must not be interrupted. Historically, this was not an issue because session
-                // invalidation was performed only in write actions. However, with low-memory cache cleanup, session invalidation can be
-                // executed in a read action.
-                //
-                // Note that this does not prevent all cancellation exceptions, for example, when awaiting on an external cancellable
-                // resource. However, it covers all known cases of such exceptions occurring during session invalidation.
-                ProgressManager.getInstance().executeNonCancelableSection {
-                    block()
-                }
-            } catch (t: Throwable) {
-                LOG.error("Exception from LL FIR session invalidation!", t)
-                throw t
+            // Note that this does not prevent all cancellation exceptions, for example, when awaiting on an external cancellable resource.
+            // However, it covers all known cases of such exceptions occurring during session invalidation.
+            ProgressManager.getInstance().executeNonCancelableSection {
+                block()
             }
         }
     }
@@ -423,9 +413,5 @@ class LLFirSessionCacheStorageInvalidator(
     private inline fun MutableList<Result<Unit>>.independently(block: () -> Unit) {
         val result = runCatching { block() }
         add(result)
-    }
-
-    companion object {
-        private val LOG = logger<LLFirSessionCacheStorageInvalidator>()
     }
 }
