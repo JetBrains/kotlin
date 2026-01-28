@@ -34,6 +34,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-scripting-jsr223-unshaded"))
     testRuntimeOnly(project(":kotlin-compiler"))
 
+    embeddableTestRuntime(libs.junit.platform.launcher)
     embeddableTestRuntime(libs.junit.jupiter.engine)
     embeddableTestRuntime(libs.junit.jupiter.api)
     embeddableTestRuntime(project(":kotlin-scripting-jsr223"))
