@@ -153,8 +153,6 @@ public final class org/jetbrains/kotlin/buildtools/api/KotlinToolchainsKt {
 
 public final class org/jetbrains/kotlin/buildtools/api/OperationCancelledException : java/lang/RuntimeException {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/ProjectId {
