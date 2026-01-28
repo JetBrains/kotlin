@@ -7,9 +7,9 @@ FILE: C.kt
         public final fun g(): R|kotlin/Unit| {
             (this@R|/C|.R|/C.r|() as R|kotlin/String|)
              {
-                lval <iterator>: R|kotlin/collections/Iterator<@EnhancedNullability @R|org/jspecify/annotations/NonNull|()  kotlin/String>| = Q|P|.R|/P.f*s|().R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<@EnhancedNullability @R|org/jspecify/annotations/NonNull|()  kotlin/String>|>|()
+                lval <iterator>: R|kotlin/collections/Iterator<kotlin/String>| = Q|P|.R|/P.f*s|().R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
                 while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
-                    lval p: R|@R|org/jspecify/annotations/NonNull|()  kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|@EnhancedNullability @R|org/jspecify/annotations/NonNull|()  kotlin/String|>|()
+                    lval p: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
                      {
                         R|<local>/p|.R|kotlin/String.length|
                     }
