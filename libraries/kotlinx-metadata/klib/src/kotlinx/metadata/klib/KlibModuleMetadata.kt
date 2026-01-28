@@ -9,7 +9,6 @@ import kotlinx.metadata.klib.impl.*
 import kotlinx.metadata.klib.impl.readHeader
 import kotlinx.metadata.klib.impl.writeHeader
 import kotlinx.metadata.klib.impl.KlibMetadataVersionWriteExtension
-import kotlin.metadata.KmAnnotation
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.*
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
@@ -55,7 +54,6 @@ interface KlibModuleFragmentWriteStrategy {
 class KlibModuleMetadata(
     val name: String,
     val fragments: List<KmModuleFragment>,
-    val annotations: List<KmAnnotation>,
     val metadataVersion: KlibMetadataVersion,
     internal val isAllowedToWrite: Boolean = true,
 ) {
@@ -125,8 +123,7 @@ class KlibModuleMetadata(
             checkMetadataVersionForRead(library.metadataVersion, lenient)
 
             val moduleHeaderProto = parseModuleHeader(library.moduleHeaderData)
-            val headerNameResolver = NameResolverImpl(moduleHeaderProto.strings, moduleHeaderProto.qualifiedNames)
-            val moduleHeader = moduleHeaderProto.readHeader(headerNameResolver)
+            val moduleHeader = moduleHeaderProto.readHeader()
             val fileIndex = SourceFileIndexReadExtension(moduleHeader.file)
             val moduleFragments = moduleHeader.packageFragmentName.flatMap { packageFqName ->
                 library.packageMetadataParts(packageFqName).map { part ->
@@ -138,7 +135,6 @@ class KlibModuleMetadata(
             return KlibModuleMetadata(
                 moduleHeader.moduleName,
                 moduleFragments,
-                moduleHeader.annotation,
                 library.metadataVersion,
                 isAllowedToWrite = !lenient,
             )
@@ -175,7 +171,6 @@ class KlibModuleMetadata(
             reverseIndex.fileIndex,
             groupedFragments.map { it.key },
             groupedFragments.filter { it.value.all(KmModuleFragment::isEmpty) }.map { it.key },
-            annotations
         )
         val versionExt = KlibMetadataVersionWriteExtension(metadataVersion)
         val groupedProtos = groupedFragments.mapValues { (_, fragments) ->

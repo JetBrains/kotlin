@@ -92,7 +92,6 @@ internal class KotlinpBasedMetadataDumper(
                 }
             }
         }.sortedBy { it.fqName.orEmpty() },
-        annotations = originalModuleMetadata.annotations,
         metadataVersion = originalModuleMetadata.metadataVersion,
     )
 

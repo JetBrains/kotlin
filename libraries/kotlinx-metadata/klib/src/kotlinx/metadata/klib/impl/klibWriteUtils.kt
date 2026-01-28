@@ -6,7 +6,6 @@
 package kotlinx.metadata.klib.impl
 
 import kotlin.metadata.internal.WriteContext
-import kotlin.metadata.internal.writeAnnotation
 import kotlinx.metadata.klib.KlibHeader
 import kotlinx.metadata.klib.KlibSourceFile
 import kotlinx.metadata.klib.UniqId
@@ -31,7 +30,6 @@ internal fun KlibHeader.writeHeader(context: WriteContext): KlibMetadataProtoBuf
         proto.strings = strings
         proto.addAllPackageFragmentName(packageFragmentName)
         proto.addAllFile(file.map { it.writeFile().build() })
-        proto.addAllAnnotation(annotation.map { it.writeAnnotation(context.strings).build() })
         proto.addAllEmptyPackage(emptyPackage)
     }
 
