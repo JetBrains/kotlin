@@ -5,6 +5,7 @@
 
 import org.jetbrains.kotlin.benchmarkingTargets
 import org.jetbrains.kotlin.buildType
+import org.jetbrains.kotlin.compilerArgs
 import org.jetbrains.kotlin.dryRun
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -34,6 +35,7 @@ val flags = buildList {
             // Due to caches possibly being built on the first run, don't forget to have at least a single warmup round.
         }
     }
+    addAll(project.compilerArgs)
 }
 
 benchmark.konanRun.configure {
