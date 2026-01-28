@@ -37,8 +37,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib"))
                 implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
+                implementation(project(":benchmarksReports"))
             }
-            kotlin.srcDir("../reports/src/main/kotlin")
         }
         commonTest {
             dependencies {

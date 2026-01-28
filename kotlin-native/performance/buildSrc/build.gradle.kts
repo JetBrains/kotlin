@@ -13,7 +13,7 @@ repositories {
 
 sourceSets["main"].kotlin {
     srcDir("src/main/kotlin")
-    srcDir("../reports/src/main/kotlin/report")
+    srcDir("../benchmarksReports/src/commonMain/kotlin")
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

@@ -22,6 +22,7 @@ plugins {
 
 include(":benchmarksAnalyzer")
 include(":benchmarksLauncher")
+include(":benchmarksReports")
 include(":ring")
 include(":cinterop")
 include(":helloworld")
