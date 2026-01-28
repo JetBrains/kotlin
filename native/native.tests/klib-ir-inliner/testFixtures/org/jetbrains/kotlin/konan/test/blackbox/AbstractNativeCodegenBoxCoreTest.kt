@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
+import org.jetbrains.kotlin.konan.test.handlers.FileCheckHandler
 import org.jetbrains.kotlin.konan.test.handlers.NativeRunnerHandler
 import org.jetbrains.kotlin.konan.test.klib.NativeCompilerSecondStageFacade
 import org.jetbrains.kotlin.konan.test.klib.currentCustomNativeCompilerSettings
 import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
+import org.jetbrains.kotlin.konan.test.services.FileCheckTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
 import org.jetbrains.kotlin.test.FirParser
@@ -50,7 +52,7 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
         useAdditionalService(::LibraryProvider)
         useConfigurators(::NativeEnvironmentConfigurator)
         useDirectives(NativeEnvironmentConfigurationDirectives, TestDirectives, LanguageSettingsDirectives)
-        useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper)
+        useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper, ::FileCheckTestSkipper)
         enableMetaInfoHandler()
         useAfterAnalysisCheckers(
             ::FirMetaInfoDiffSuppressor,
@@ -78,7 +80,7 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
         // 2nd stage (klibs -> executable)
         facadeStep(::NativeCompilerSecondStageFacade.bind(currentCustomNativeCompilerSettings))
         nativeArtifactsHandlersStep {
-            useHandlers(::NativeRunnerHandler)
+            useHandlers(::FileCheckHandler, ::NativeRunnerHandler)
         }
 
         defaultDirectives {

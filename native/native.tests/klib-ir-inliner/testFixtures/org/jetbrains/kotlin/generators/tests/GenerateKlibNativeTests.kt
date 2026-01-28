@@ -164,7 +164,7 @@ fun main(args: Array<String>) {
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
-                model(excludeDirs = listOf("fileCheck")) // TODO KT-83769: implement FileCheck testing
+                model()
             }
         }
 
