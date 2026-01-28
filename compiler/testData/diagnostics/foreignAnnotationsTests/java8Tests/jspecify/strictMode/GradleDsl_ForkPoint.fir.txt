@@ -1,0 +1,122 @@
+FILE: dsl.kt
+    package dsl
+
+    public final operator fun R|artifacts/ConfigurationContainer|.invoke(configuration: R|api/action/Action<dsl/ConfigurationContainerScope>|): R|artifacts/ConfigurationContainer| {
+        ^invoke this@R|dsl/invoke|.R|kotlin/apply|<R|artifacts/ConfigurationContainer|>(<L> = apply@fun R|artifacts/ConfigurationContainer|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^@apply Unit
+        }
+        )
+    }
+    @R|kotlin/Suppress|(names = vararg(String(NOTHING_TO_INLINE))) public final inline operator fun <IT : R|kotlin/Any|, IC : R|api/NamedDomainObjectContainer<IT>|> R|IC|.invoke(configuration: R|api/action/Action<dsl/NamedDomainObjectContainerScope<IT>>|): R|IC| {
+        ^invoke this@R|dsl/invoke|
+    }
+    public final val <RT : R|kotlin/Any|, RC : R|api/NamedDomainObjectContainer<RT>|> R|RC|.registering: R|dsl/RegisteringDomainObjectDelegateProvider<out RC>|
+        public inline get(): R|dsl/RegisteringDomainObjectDelegateProvider<out RC>| {
+            ^ Q|dsl/RegisteringDomainObjectDelegateProvider|.R|dsl/RegisteringDomainObjectDelegateProvider.Companion.of|<R|RC|>(this@R|dsl/registering|)
+        }
+    public final class RegisteringDomainObjectDelegateProvider<RP> : R|kotlin/Any| {
+        private constructor<RP>(delegateProvider: R|RP|): R|dsl/RegisteringDomainObjectDelegateProvider<RP>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val delegateProvider: R|RP| = R|<local>/delegateProvider|
+            public get(): R|RP|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|dsl/RegisteringDomainObjectDelegateProvider.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun <RPO> of(delegateProvider: R|RPO|): R|dsl/RegisteringDomainObjectDelegateProvider<RPO>| {
+                ^of R|dsl/RegisteringDomainObjectDelegateProvider.RegisteringDomainObjectDelegateProvider|<R|RPO|>(R|<local>/delegateProvider|)
+            }
+
+        }
+
+    }
+    public final class ExistingDomainObjectDelegate<ED> : R|kotlin/Any| {
+        private constructor<ED>(delegate: R|ED|): R|dsl/ExistingDomainObjectDelegate<ED>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val delegate: R|ED| = R|<local>/delegate|
+            public get(): R|ED|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|dsl/ExistingDomainObjectDelegate.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun <EDO> of(delegate: R|EDO|): R|dsl/ExistingDomainObjectDelegate<EDO>| {
+                ^of R|dsl/ExistingDomainObjectDelegate.ExistingDomainObjectDelegate|<R|EDO|>(R|<local>/delegate|)
+            }
+
+        }
+
+    }
+    public final class ConfigurationContainerScope : R|dsl/NamedDomainObjectContainerScope<artifacts/Configuration>|, R|artifacts/ConfigurationContainer| {
+        private constructor(delegate: R|artifacts/ConfigurationContainer|): R|dsl/ConfigurationContainerScope| {
+            super<R|dsl/NamedDomainObjectContainerScope<artifacts/Configuration>|>(R|<local>/delegate|)
+        }
+
+        internal open override val delegate: R|artifacts/ConfigurationContainer| = R|<local>/delegate|
+            internal get(): R|artifacts/ConfigurationContainer|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|dsl/ConfigurationContainerScope.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun of(container: R|artifacts/ConfigurationContainer|): R|dsl/ConfigurationContainerScope| {
+                ^of R|dsl/ConfigurationContainerScope.ConfigurationContainerScope|(R|<local>/container|)
+            }
+
+        }
+
+    }
+    public open class NamedDomainObjectContainerScope<NS : R|kotlin/Any|> : R|dsl/NamedDomainObjectContainerDelegate<NS>| {
+        internal constructor<NS : R|kotlin/Any|>(delegate: R|api/NamedDomainObjectContainer<NS>|): R|dsl/NamedDomainObjectContainerScope<NS>| {
+            super<R|dsl/NamedDomainObjectContainerDelegate<NS>|>()
+        }
+
+        internal open override val delegate: R|api/NamedDomainObjectContainer<NS>| = R|<local>/delegate|
+            internal get(): R|api/NamedDomainObjectContainer<NS>|
+
+    }
+    public abstract class NamedDomainObjectContainerDelegate<ND : R|kotlin/Any|> : R|api/NamedDomainObjectContainer<ND>| {
+        public constructor<ND : R|kotlin/Any|>(): R|dsl/NamedDomainObjectContainerDelegate<ND>| {
+            super<R|kotlin/Any|>()
+        }
+
+        internal abstract val delegate: R|api/NamedDomainObjectContainer<ND>|
+            internal get(): R|api/NamedDomainObjectContainer<ND>|
+
+        public open override fun register(name: R|kotlin/String|): R|api/NamedDomainObjectProvider<ND>| {
+            ^register this@R|dsl/NamedDomainObjectContainerDelegate|.R|dsl/NamedDomainObjectContainerDelegate.delegate|.R|SubstitutionOverride<api/NamedDomainObjectContainer.register: R|@EnhancedNullability api/NamedDomainObjectProvider<@EnhancedNullability ND>|>|(R|<local>/name|)
+        }
+
+    }
+    public final operator fun <PDT : R|kotlin/Any|, PDC : R|api/NamedDomainObjectContainer<PDT>|> R|dsl/RegisteringDomainObjectDelegateProvider<PDC>|.provideDelegate(receiver: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|dsl/ExistingDomainObjectDelegate<@EnhancedNullability api/NamedDomainObjectProvider<@EnhancedNullability PDT>>| {
+        ^provideDelegate Q|dsl/ExistingDomainObjectDelegate|.R|dsl/ExistingDomainObjectDelegate.Companion.of|<R|@EnhancedNullability api/NamedDomainObjectProvider<@EnhancedNullability PDT>|>(this@R|dsl/provideDelegate|.R|SubstitutionOverride<dsl/RegisteringDomainObjectDelegateProvider.delegateProvider: R|PDC|>|.R|SubstitutionOverride<api/NamedDomainObjectContainer.register: R|@EnhancedNullability api/NamedDomainObjectProvider<@EnhancedNullability PDT>|>|(R|<local>/property|.R|SubstitutionOverride<kotlin/reflect/KProperty.name: R|kotlin/String|>|))
+    }
+    public final operator fun <GV> R|dsl/ExistingDomainObjectDelegate<out GV>|.getValue(receiver: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|GV| {
+        ^getValue this@R|dsl/getValue|.R|SubstitutionOverride<dsl/ExistingDomainObjectDelegate.delegate: R|CapturedType(out GV)|>|
+    }
+FILE: test.kt
+    package dsl
+
+    public final fun R|api/Owner|.foo(): R|kotlin/Unit| {
+        this@R|dsl/foo|.R|api/Owner.configurations|.R|dsl/invoke|(<L> = SAM(invoke@fun <anonymous>(it: R|dsl/ConfigurationContainerScope!|): R|kotlin/Unit| <inline=NoInline>  {
+            lval valley: R|api/NamedDomainObjectProvider<artifacts/Configuration>|by R|<local>/it|.R|dsl/registering<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): dsl/registering>#|<R|@EnhancedNullability artifacts/Configuration|, R|dsl/ConfigurationContainerScope!|>
+                local get(): R|api/NamedDomainObjectProvider<artifacts/Configuration>| {
+                    ^ D|<local>/valley|.R|dsl/getValue<None of the following candidates is applicable because of receiver type mismatch: [dsl/getValue]>#|<<ERROR TYPE REF: Cannot infer argument for type parameter GV>>(Null(null), ::R|<local>/valley|)
+                }
+
+            R|<local>/it|.R|dsl/registering|<R|@EnhancedNullability artifacts/Configuration|, R|dsl/ConfigurationContainerScope!|>.R|dsl/provideDelegate<Inapplicable(INAPPLICABLE): dsl/provideDelegate>#|<R|@EnhancedNullability artifacts/Configuration|, R|CapturedType(out dsl/ConfigurationContainerScope!)|>(Null(null), ::<References to variables aren't supported yet>#).R|kotlin/Any.hashCode|()
+            R|kotlin/with|<R|dsl/RegisteringDomainObjectDelegateProvider<out dsl/ConfigurationContainerScope>|, R|kotlin/Unit|>(R|<local>/it|.R|dsl/registering|<R|@EnhancedNullability artifacts/Configuration|, R|dsl/ConfigurationContainerScope!|>, <L> = with@fun R|dsl/RegisteringDomainObjectDelegateProvider<out dsl/ConfigurationContainerScope>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                this@R|special/anonymous|.R|dsl/provideDelegate<Inapplicable(INAPPLICABLE): dsl/provideDelegate>#|<R|@EnhancedNullability artifacts/Configuration|, R|CapturedType(out dsl/ConfigurationContainerScope)|>(Null(null), ::<References to variables aren't supported yet>#).R|kotlin/Any.hashCode|()
+            }
+            )
+        }
+        ))
+    }
