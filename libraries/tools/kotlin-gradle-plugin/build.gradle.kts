@@ -68,12 +68,15 @@ tasks.withType<Test>().configureEach {
 }
 
 tasks.register<Test>("lincheckTest") {
+    classpath = sourceSets.test.get().runtimeClasspath
+    testClassesDirs = sourceSets.test.get().output.classesDirs
     jvmArgs(
         "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
         "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
         "--add-exports", "java.base/sun.security.action=ALL-UNNAMED"
     )
     filter { include("**/*LincheckTest.class") }
+    failOnNoDiscoveredTests.set(false)
 }
 
 binaryCompatibilityValidator {

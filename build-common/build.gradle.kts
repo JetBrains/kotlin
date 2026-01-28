@@ -35,6 +35,7 @@ dependencies {
 
     testCompileOnly(project(":compiler:cli-common"))
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.junit4)
