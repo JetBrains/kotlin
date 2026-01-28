@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
 abstract class AbstractTypePreparator {
     abstract fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker
+
+    @K2Only
+    open fun clearTypeFromUnnecessaryAttributes(type: RigidTypeMarker): RigidTypeMarker = type
 
     object Default : AbstractTypePreparator() {
         override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {

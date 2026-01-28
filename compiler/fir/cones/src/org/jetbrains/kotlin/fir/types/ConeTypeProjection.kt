@@ -90,6 +90,7 @@ fun ConeTypeProjection.replaceType(newType: ConeKotlinType?): ConeTypeProjection
 }
 
 fun ConeKotlinTypeProjection.replaceType(newType: ConeKotlinType): ConeKotlinTypeProjection {
+    if (newType === type) return this
     return when (this) {
         is ConeKotlinType -> newType
         is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
