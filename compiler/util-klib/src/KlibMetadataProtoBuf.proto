@@ -32,8 +32,6 @@ message Header {
   optional int32 flags = 2;
   optional org.jetbrains.kotlin.metadata.StringTable strings = 4;
   optional org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;
-  // Annotations on the whole module
-  repeated org.jetbrains.kotlin.metadata.Annotation annotation = 6;
   repeated string package_fragment_name = 7;
   repeated string empty_package = 8;
   repeated File file = 9;
@@ -43,6 +41,8 @@ message Header {
   // (patch << 16) + (minor << 8) + major
   // optional int32 js_code_binary_version = 3 [default = 1];
 
+  // WARNING: Don't occupy index 6 which was previously used for storing Annotations.
+  // org.jetbrains.kotlin.metadata.Annotation annotation = 6;
 }
 
 message File {
