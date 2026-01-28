@@ -52,7 +52,7 @@ registerKotlinSourceForVersionRange(
 )
 
 tasks.test {
-    useJUnit {
+    useJUnitPlatform {
         exclude("**/*LincheckTest.class")
     }
     val jdk8Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
@@ -75,8 +75,9 @@ tasks.register<Test>("lincheckTest") {
         "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
         "--add-exports", "java.base/sun.security.action=ALL-UNNAMED"
     )
-    filter { include("**/*LincheckTest.class") }
-    failOnNoDiscoveredTests.set(false)
+    useJUnitPlatform {
+        include("**/*LincheckTest.class")
+    }
 }
 
 binaryCompatibilityValidator {
