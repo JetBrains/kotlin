@@ -111,6 +111,7 @@ fun Project.configureKotlinCompilationOptions() {
             "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false },
             "-Xdont-warn-on-error-suppression",
             "-Xcontext-parameters", // KT-72222
+            "-Xexplicit-backing-fields", // KT-14663
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
