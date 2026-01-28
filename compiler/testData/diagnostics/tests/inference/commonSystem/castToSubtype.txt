@@ -3,12 +3,13 @@ package
 public fun </*0*/ R, /*1*/ U : R> castToSubtype(/*0*/ obj: R): U
 public fun main1(): kotlin.Unit
 public fun main2(): kotlin.Unit
-public fun </*0*/ S> materialize(): S
+public fun </*0*/ S1> materialize1(): S1
+public fun </*0*/ S2> materialize2(): S2
 public fun </*0*/ T> select(/*0*/ vararg x: T /*kotlin.Array<out T>*/): T
 
-public final class Bar</*0*/ T> : Foo<T> {
-    public constructor Bar</*0*/ T>(/*0*/ x: Foo<T>)
-    public final val x: Foo<T>
+public final class Bar</*0*/ W> : Foo<W> {
+    public constructor Bar</*0*/ W>(/*0*/ x: Foo<W>)
+    public final val x: Foo<W>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -22,7 +23,7 @@ public final class Bar1</*0*/ P> : Foo2<P> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface Foo</*0*/ T> : I {
+public interface Foo</*0*/ E> : I {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -34,7 +35,7 @@ public interface Foo1</*0*/ Y> : I {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface Foo2</*0*/ Y> : Foo1<Y> {
+public interface Foo2</*0*/ Z> : Foo1<Z> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
