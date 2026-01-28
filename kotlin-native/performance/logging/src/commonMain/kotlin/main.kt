@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
+import kotlinx.benchmark.Benchmark
+import kotlinx.benchmark.Scope
+import kotlinx.benchmark.State
 import org.jetbrains.benchmarksLauncher.*
 
-fun loop() {
-    for (i in 0..10000) {
-        Blackhole.consume(i)
+@State(Scope.Benchmark)
+class LoopHideName {
+    @Benchmark
+    fun Loop() {
+        for (i in 0..10000) {
+            Blackhole.consume(i)
+        }
     }
-}
-
-fun main(args: Array<String>) {
-    val launcher = object : Launcher() {
-        override val baseBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf("Loop" to BenchmarkEntry(::loop))
-    }
-
-    BenchmarksRunner.runBenchmarks(args, { arguments: BenchmarkArguments ->
-        if (arguments is BaseBenchmarkArguments) {
-            launcher.launch(arguments.warmup, arguments.repeat, arguments.prefix,
-                    arguments.filter, arguments.filterRegex, arguments.verbose)
-        } else emptyList()
-    }, benchmarksListAction = launcher::benchmarksListAction)
 }
