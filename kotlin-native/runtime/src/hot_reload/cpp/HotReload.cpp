@@ -475,6 +475,33 @@ StatsCollector& HotReloadImpl::GetStatsCollector() noexcept {
     return _statsCollector;
 }
 
+/// Add the GDBJITDebugInfoRegistrationPlugin to the ObjectLinkingLayer.
+/// This plugin registers DWARF debug info with GDB/LLDB for all JIT'd objects,
+/// enabling debuggers to show Kotlin function names in stack traces.
+///
+/// IMPORTANT: This should only be called ONCE during setup. The plugin is added
+/// to the shared ObjectLinkingLayer and processes ALL objects (including reloads).
+/// The JITDylib parameter is used to resolve the ORC runtime symbol
+/// _llvm_orc_registerJITLoaderGDBAllocAction, so it must have access to PlatformJD.
+void HotReloadImpl::AddDebugInfoRegistrationPlugin(llvm::orc::JITDylib& JD) const {
+    auto& ES = _JIT->getExecutionSession();
+    auto& TT = _JIT->getTargetTriple();
+    if (auto* OLL = llvm::dyn_cast<llvm::orc::ObjectLinkingLayer>(&_JIT->getObjLinkingLayer())) {
+#if defined(__APPLE__)
+        auto plugin = llvm::orc::GDBJITDebugInfoRegistrationPlugin::Create(ES, JD, TT);
+        if (plugin) {
+            OLL->addPlugin(std::move(*plugin));
+            HRLogDebug("GDBJITDebugInfoRegistrationPlugin added for debug symbol support");
+        } else {
+            HRLogWarning("Failed to create GDBJITDebugInfoRegistrationPlugin: %s",
+                         llvm::toString(plugin.takeError()).c_str());
+        }
+#elif defined(__LINUX__)
+        HRLogWarning("Debug info registration not yet supported on Linux.");
+#endif
+    }
+}
+
 void HotReloadImpl::SetupMachOPlatform() const {
 #if defined(__APPLE__)
 
@@ -577,12 +604,18 @@ void HotReloadImpl::SetupORC() {
 
     SetupMachOPlatform();
 
-    auto& TargetTriple = _JIT->getTargetTriple();
+    // Add debug info registration plugin AFTER MachOPlatform setup.
+    // This allows the plugin to resolve _llvm_orc_registerJITLoaderGDBAllocAction
+    // from the ORC runtime in PlatformJD. The plugin is added to the shared
+    // ObjectLinkingLayer and will handle debug info for ALL objects (including reloads).
+    AddDebugInfoRegistrationPlugin(MainJD);
+
+    auto& TT = _JIT->getTargetTriple();
     auto& ES = _JIT->getExecutionSession();
 
-    _LCTM = ExitOnErr(llvm::orc::createLocalLazyCallThroughManager(TargetTriple, ES, llvm::orc::ExecutorAddr()));
+    _LCTM = ExitOnErr(llvm::orc::createLocalLazyCallThroughManager(TT, ES, llvm::orc::ExecutorAddr()));
 
-    _ISM = llvm::orc::createLocalIndirectStubsManagerBuilder(TargetTriple)();
+    _ISM = llvm::orc::createLocalIndirectStubsManagerBuilder(TT)();
 
     // DynamicLibrarySearchGenerator was already added to MainJD before SetupMachOPlatform()
     // (MachOPlatform's setupJITDylib needs it to resolve symbols like ___cxa_atexit)

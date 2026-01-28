@@ -106,6 +106,8 @@ private:
     void UpdateStubPointers(llvm::orc::JITDylib& JD, const std::vector<std::string>& implSymbols) const;
     bool LoadObjectFromPath(std::string_view objectPath) const;
 
+    void AddDebugInfoRegistrationPlugin(llvm::orc::JITDylib& JD) const;
+
 #if KONAN_OBJC_INTEROP
     // ObjC interop initialization
     void InitializeObjCUniquePrefixFromJIT() const;
