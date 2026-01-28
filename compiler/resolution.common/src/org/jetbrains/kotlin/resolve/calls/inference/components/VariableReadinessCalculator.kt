@@ -53,17 +53,16 @@ class VariableReadinessCalculator(
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS,
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
 
-        // *** "ready for fixation" kinds ***
-        // Prefer `LOWER` `T :> SomeRegularType` to `UPPER` `T <: SomeRegularType` for KT-41934.
-        // Prefer `LOWER` constraint also to `EQUALS` `T = SomeRegularType` because of the test
-        // FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated.testJavaFunctionParamNullability.
-        // TODO: KT-82574 (consider preferring EQUALS constraints)
-        HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT,
+        // Starts fixation of variables with a LOWER flexible constraint even if
+        // they have LOWER constraints referring to some others: this makes fixing
+        // them into the flexible type rather than a potential nullable counterpart
+        // coming from fixing those other variables more likely.
+        // See: `javaFunctionParamNullability.kt`, KT-82574.
+        HAS_PROPER_FLEXIBLE_CONSTRAINT,
 
-        // *** The following block constitutes what "with complex dependency" used to mean in the old fixation code ***
-        // Prioritizers needed for KT-67335 (the `greater.kt` case with ILTs).
         // ILT type = Integer literal type = yet unknown choice from Byte/Short/Int/Long (at least two of them)
-        // Any proper constraint can be here which isn't bound to ILT type
+        // Any proper constraint not bound to an ILT type can be here.
+        // See: `greater.kt`, KT-67335.
         HAS_PROPER_NON_ILT_CONSTRAINT,
 
         // Explicit lower `Nothing` constraints tend to always fix to `Nothing`
@@ -73,6 +72,16 @@ class VariableReadinessCalculator(
         // (both nullable and not null).
         // See: `lambdaParameterTypeInElvis.kt` and `reifiedToNothing.kt` (KT-76443).
         HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT,
+
+        // An explicit prioritizer of `EQUALITY` constraints that guarantees
+        // they take precedence over both `LOWER` and `UPPER` constraints.
+        // See: `flatMapWithReverseOrder.kt`, KT-71854.
+        HAS_PROPER_EQUALITY_CONSTRAINT,
+
+        // Prefer `LOWER` `T :> SomeRegularType` to `UPPER` `T <: SomeRegularType`
+        // because `LOWER` constraints tend to lead to more specific fixations.
+        // See `preferLowerToUpperConstraint.kt`, KT-41934.
+        HAS_PROPER_LOWER_CONSTRAINT,
         ;
 
         init {
@@ -131,12 +140,18 @@ class VariableReadinessCalculator(
         readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] =
             !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
 
-        readiness[Q.HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT] = hasLowerNonNothingNonIltProperConstraint()
+        readiness[Q.HAS_PROPER_FLEXIBLE_CONSTRAINT] = true == c.notFixedTypeVariables[this]?.constraints
+            ?.any { it.kind.isLower() && it.isProperArgumentConstraint() && it.type.isFlexible() }
 
         val (_, hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
         readiness[Q.HAS_PROPER_NON_ILT_CONSTRAINT] = hasProperNonIltConstraint
 
         readiness[Q.HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT] = hasNoExplicitLowerNothingConstraint()
+
+        readiness[Q.HAS_PROPER_EQUALITY_CONSTRAINT] = true == c.notFixedTypeVariables[this]?.constraints
+            ?.any { it.kind.isEqual() && it.isProperArgumentConstraint() }
+        readiness[Q.HAS_PROPER_LOWER_CONSTRAINT] = true == c.notFixedTypeVariables[this]?.constraints
+            ?.any { it.kind.isLower() && it.isProperArgumentConstraint() }
 
         return readiness
     }
