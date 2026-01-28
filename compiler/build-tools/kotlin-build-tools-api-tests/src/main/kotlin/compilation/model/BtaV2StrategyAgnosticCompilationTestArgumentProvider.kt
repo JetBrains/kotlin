@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
+package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments

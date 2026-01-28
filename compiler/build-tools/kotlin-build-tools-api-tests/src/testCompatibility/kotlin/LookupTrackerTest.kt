@@ -5,14 +5,14 @@
 
 @file:Suppress("DEPRECATION")
 
-package org.jetbrains.kotlin.buildtools.api.tests
+package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertTrue
