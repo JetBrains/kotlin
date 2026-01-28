@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -15,11 +16,13 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ArrayFqNames
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
@@ -188,8 +191,15 @@ abstract class IrBuiltInsOverSymbolFinder(override val symbolFinder: SymbolFinde
     override val intAndSymbol: IrSimpleFunctionSymbol by CallableId(StandardClassIds.Int, OperatorNameConventions.AND)
         .functionSymbol { it.parameters[1].type == intType }
 
-    override val arrayOf: IrSimpleFunctionSymbol = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_FUNCTION).functionSymbol()
-    override val arrayOfNulls: IrSimpleFunctionSymbol = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_NULLS_FUNCTION).functionSymbol()
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override val arrayOf: IrSimpleFunctionSymbol by CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_FUNCTION).functionSymbol {
+        return@functionSymbol !it.isExpect && it.descriptor.module.name != KotlinBuiltIns.BUILTINS_MODULE_NAME
+    }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override val arrayOfNulls: IrSimpleFunctionSymbol by CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_NULLS_FUNCTION).functionSymbol {
+        return@functionSymbol !it.isExpect && it.descriptor.module.name != KotlinBuiltIns.BUILTINS_MODULE_NAME
+    }
 
     override val deprecatedSymbol: IrClassSymbol = StandardClassIds.Annotations.Deprecated.classSymbol()
     override val deprecationLevelSymbol: IrClassSymbol = StandardClassIds.DeprecationLevel.classSymbol()
