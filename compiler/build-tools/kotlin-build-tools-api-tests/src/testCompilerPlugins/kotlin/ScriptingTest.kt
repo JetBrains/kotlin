@@ -81,7 +81,15 @@ class ScriptingTest : BaseCompilationTest() {
     }
 
     private val dependencyOnThisClasspath: Dependency
-        get() = FileDependency(Paths.get(GreetScriptTemplate::class.java.protectionDomain.codeSource.location.path))
+        get() = FileDependency(
+            Paths.get(
+                GreetScriptTemplate::class.java
+                    .protectionDomain
+                    .codeSource
+                    .location
+                    .toURI()
+            )
+        )
 
     private fun configureCompilerArgs(
         scriptingTemplate: KClass<*>,
