@@ -105,6 +105,10 @@ internal fun Project.createGeneralTestTask(
         evaluationDependsOn(":test-instrumenter")
     }
     return getOrCreateTask<Test>(taskName) {
+        if (taskName != "test") {
+            classpath = sourceSets.getByName("test").runtimeClasspath
+            testClassesDirs = sourceSets.getByName("test").output.classesDirs
+        }
         inputs.file(
             rootProject.tasks.named("createIdeaHomeForTests")
                 .map { task -> task.outputs.files.singleFile.resolve("build.txt") })
@@ -283,7 +287,8 @@ internal fun Project.createGeneralTestTask(
                 environment(version.envName, jdkHome)
             }
         }
-    }.apply { configure(body) }
+        body()
+    }
 }
 
 private val defaultMaxMemoryPerTestWorkerMb = 1600

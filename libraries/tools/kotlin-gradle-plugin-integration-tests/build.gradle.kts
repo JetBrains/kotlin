@@ -255,6 +255,8 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
                 description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
                 maxParallelForks = maxParallelTestForks
 
+                classpath = sourceSets["test"].runtimeClasspath
+                testClassesDirs = sourceSets["test"].output.classesDirs
                 systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
                 systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 
@@ -277,6 +279,8 @@ tasks.register<Test>("kgpAllParallelTests") {
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
     maxParallelForks = maxParallelTestForks
 
+    classpath = sourceSets["test"].runtimeClasspath
+    testClassesDirs = sourceSets["test"].output.classesDirs
     useJUnitPlatform {
         excludeTags(JunitTag.DaemonsKGP.name)
     }
