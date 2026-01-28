@@ -44,6 +44,7 @@ gradle.beforeProject {
 
 include(":benchmarksAnalyzer")
 include(":benchmarksLauncher")
+include(":benchmarksReports")
 knownGroups.forEach {
     include(":$it")
 }
