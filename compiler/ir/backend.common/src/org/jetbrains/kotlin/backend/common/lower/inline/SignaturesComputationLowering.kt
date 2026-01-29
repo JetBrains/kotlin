@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class SignaturesComputationLowering(val context: PreSerializationLoweringContext) : ModuleLoweringPass {
     private val declarationTable: DeclarationTable<*> = context.declarationTable
+
+    // TODO: introduce non-void IrTreeSymbolsVisitor and include it in 'data'
     private var isDeclared = false
 
     private val visitor = object : IrTreeSymbolsVisitor() {
@@ -61,22 +63,14 @@ class SignaturesComputationLowering(val context: PreSerializationLoweringContext
         }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-            if (declaration.originalOfPreparedInlineFunctionCopy == null) {
-                visitDeclaredSimpleFunction(declaration, declaration.symbol)
-            } else {
-                computeSignatureForPreparedInlineFunction(declaration)
+            if (declaration.originalOfPreparedInlineFunctionCopy != null) {
+                declarationTable.signatureByDeclaration(
+                    declaration.originalOfPreparedInlineFunctionCopy!!,
+                    compatibleMode = false,
+                    recordInSignatureClashDetector = false
+                )
             }
-            declaration.overriddenSymbols.forEach { visitReferencedSimpleFunction(declaration, it) }
-            declaration.correspondingPropertySymbol?.let { visitReferencedProperty(declaration, it) }
-            visitFunction(declaration)
-        }
-
-        private fun computeSignatureForPreparedInlineFunction(functionCopy: IrSimpleFunction) {
-            declarationTable.signatureByDeclaration(
-                functionCopy.originalOfPreparedInlineFunctionCopy!!,
-                compatibleMode = false,
-                recordInSignatureClashDetector = false
-            )
+            super.visitSimpleFunction(declaration)
         }
     }
 
