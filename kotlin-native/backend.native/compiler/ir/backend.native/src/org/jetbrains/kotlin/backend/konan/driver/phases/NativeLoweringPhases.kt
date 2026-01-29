@@ -625,6 +625,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         stripTypeAliasDeclarationsPhase,
         assertionRemoverPhase,
         volatilePhase,
+        computeTypesPhase, // Inliner erases generics. Trying to restore some of the information and simplify IR.
         delegatedPropertyOptimizationPhase,
         propertyReferencePhase,
         functionReferencePhase,
@@ -662,6 +663,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         expressionBodyTransformPhase,
         objectClassesPhase,
         staticInitializersPhase,
+        // Running 2nd time not only helps the following heavy analysis but also corrects some lowerings' inaccuracies in IR types.
         computeTypesPhase,
         removeCastsFromNothing,
         optimizeCastsPhase.takeIf { this.genericSafeCasts },

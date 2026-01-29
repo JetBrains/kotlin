@@ -67,14 +67,14 @@ fun testMultipleReturnsRequireDeeperAnalysisShortRange(): Int {
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntSumOfIterableInt(){}kotlin.Int
-// CHECK: iterator
+// CHECK-NOT: iterator
 // CHECK-LABEL: epilogue:
 fun testIntSumOfIterableInt(): Int {
     return iterableInt().sumOf { it }
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntSumOfTempVal(){}kotlin.Int
-// CHECK: iterator
+// CHECK-NOT: iterator
 // CHECK-LABEL: epilogue:
 fun testIntSumOfTempVal(): Int {
     val iterableInt: Iterable<Int> = iterableInt()
@@ -82,14 +82,14 @@ fun testIntSumOfTempVal(): Int {
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntSumOfIterableIntWithTempVal(){}kotlin.Int
-// CHECK: iterator
+// CHECK-NOT: iterator
 // CHECK-LABEL: epilogue:
 fun testIntSumOfIterableIntWithTempVal(): Int {
     return iterableIntWithTempVal().sumOf { it }
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntSumOfIterableIntWithTempValIterableInt(){}kotlin.Int
-// CHECK: iterator
+// CHECK-NOT: iterator
 // CHECK-LABEL: epilogue:
 fun testIntSumOfIterableIntWithTempValIterableInt(): Int {
     return iterableIntWithTempValIterableInt().sumOf { it }
