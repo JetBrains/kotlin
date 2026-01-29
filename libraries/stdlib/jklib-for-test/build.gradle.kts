@@ -1,4 +1,4 @@
-description = "Kotlin JVM IR Stdlib for Tests"
+description = "Kotlin JKlib Stdlib for Tests"
 
 plugins {
     kotlin("jvm")
