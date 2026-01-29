@@ -2,8 +2,6 @@
  * Created by semoro on 07.07.17.
  */
 
-import org.jetbrains.benchmarksLauncher.assert
-
 fun octoTest() {
     val tree = OctoTree<Boolean>(4)
     val to = (2 shl tree.depth)
@@ -39,6 +37,7 @@ fun octoTest() {
 
                 val res = tree.get(x, y, z)
 
+                @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
                 assert(res == c)
                 z++
             }
