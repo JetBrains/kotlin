@@ -1,26 +1,29 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.fields
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.PsiImmediateClassType
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.asJava.classes.cannotModify
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.LightTypeElementWithParent
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
-import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -83,19 +86,18 @@ internal class SymbolLightFieldForEnumEntry(
 
     override fun getName(): String = enumEntryName
 
-    private val _type: PsiType by lazyPub {
-        withEnumEntrySymbol { enumEntrySymbol ->
-            enumEntrySymbol.returnType
-                .asPsiType(
-                    this@SymbolLightFieldForEnumEntry,
-                    allowErrorTypes = true,
-                    allowNonJvmPlatforms = true,
-                )
-                ?: nonExistentType()
-        }
+    override fun getType(): PsiType {
+        val psiType = PsiImmediateClassType(containingClass, PsiSubstitutor.EMPTY)
+        val typeElement = LightTypeElementWithParent(lightParent = this, psiType)
+        psiType.annotateByTypeAnnotationProvider(
+            annotations = sequenceOf(
+                listOf(SymbolLightSimpleAnnotation(fqName = NotNull::class.java.name, parent = typeElement))
+            )
+        )
+
+        return psiType
     }
 
-    override fun getType(): PsiType = _type
     override fun getInitializer(): PsiExpression? = null
 
     override fun isValid(): Boolean = enumEntry.isValid
