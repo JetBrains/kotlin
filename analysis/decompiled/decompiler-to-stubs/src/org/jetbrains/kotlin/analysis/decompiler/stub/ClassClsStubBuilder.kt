@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -132,6 +133,8 @@ private class ClassClsStubBuilder(
             isNumberedFunctionClassFqName(it.asSingleFqName().toUnsafe())
         }.map { it.shortClassName.ref() }.ifNotEmpty { toTypedArray() } ?: StringRef.EMPTY_ARRAY
 
+        val kdoc = classProto.getExtensionOrNull(KlibMetadataProtoBuf.classKdoc)
+
         @OptIn(ClassIdBasedLocality::class)
         val classId = classId.takeUnless { it.isLocal }
         val isTopLevel = classId?.isNestedClass == false
@@ -144,7 +147,7 @@ private class ClassClsStubBuilder(
                     isTopLevel = isTopLevel,
                     isLocal = false,
                     isObjectLiteral = false,
-                    kdocText = null,
+                    kdocText = kdoc,
                 )
             }
 
@@ -161,7 +164,7 @@ private class ClassClsStubBuilder(
                     isClsStubCompiledToJvmDefaultImplementation = JvmProtoBufUtil.isNewPlaceForBodyGeneration(classProto),
                     isLocal = false,
                     isTopLevel = isTopLevel,
-                    kdocText = null,
+                    kdocText = kdoc,
                     valueClassRepresentation = valueClassRepresentation(),
                 )
             }
