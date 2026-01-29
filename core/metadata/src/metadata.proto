@@ -274,6 +274,9 @@ message Package {
   optional VersionRequirementTable version_requirement_table = 32;
 
   extensions 100 to 199;
+
+  // WARNING: Don't occupy index 171 which was previously used for storing package_fq_name.
+  // int32 package_fq_name = 171;
 }
 
 message TypeTable {

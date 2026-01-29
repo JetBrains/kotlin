@@ -7,7 +7,6 @@ public final class DebugKlibMetadataProtoBuf {
   private DebugKlibMetadataProtoBuf() {}
   public static void registerAllExtensions(
       org.jetbrains.kotlin.protobuf.ExtensionRegistry registry) {
-    registry.add(org.jetbrains.kotlin.library.metadata.DebugKlibMetadataProtoBuf.packageFqName);
     registry.add(org.jetbrains.kotlin.library.metadata.DebugKlibMetadataProtoBuf.classAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.DebugKlibMetadataProtoBuf.classFile);
     registry.add(org.jetbrains.kotlin.library.metadata.DebugKlibMetadataProtoBuf.classKdoc);
@@ -3138,17 +3137,6 @@ public final class DebugKlibMetadataProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.library.metadata.DescriptorUniqId)
   }
 
-  public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 171;
-  /**
-   * <code>extend .org.jetbrains.kotlin.metadata.Package { ... }</code>
-   */
-  public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.kotlin.metadata.DebugProtoBuf.Package,
-      java.lang.Integer> packageFqName = org.jetbrains.kotlin.protobuf.GeneratedMessage
-          .newFileScopedGeneratedExtension(
-        java.lang.Integer.class,
-        null);
   public static final int CLASS_ANNOTATION_FIELD_NUMBER = 170;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
@@ -3570,98 +3558,96 @@ public final class DebugKlibMetadataProtoBuf {
       "\0229\n\004file\030\t \003(\0132+.org.jetbrains.kotlin.li" +
       "brary.metadata.File\"\024\n\004File\022\014\n\004name\030\001 \002(" +
       "\t\"\'\n\020DescriptorUniqId\022\r\n\005index\030\001 \002(\003:\004\240\273" +
-      "\030\001:@\n\017package_fq_name\022&.org.jetbrains.ko" +
-      "tlin.metadata.Package\030\253\001 \001(\005:j\n\020class_an" +
-      "notation\022$.org.jetbrains.kotlin.metadata" +
-      ".Class\030\252\001 \003(\0132).org.jetbrains.kotlin.met" +
-      "adata.Annotation:?\n\nclass_file\022$.org.jet",
-      "brains.kotlin.metadata.Class\030\257\001 \001(\005B\004\200\265\030" +
-      "\001:?\n\nclass_kdoc\022$.org.jetbrains.kotlin.m" +
-      "etadata.Class\030\260\001 \001(\tB\004\200\265\030\001:u\n\rclass_uniq" +
-      "_id\022$.org.jetbrains.kotlin.metadata.Clas" +
-      "s\030\253\001 \001(\01327.org.jetbrains.kotlin.library." +
-      "metadata.DescriptorUniqId:v\n\026constructor" +
-      "_annotation\022*.org.jetbrains.kotlin.metad" +
-      "ata.Constructor\030\252\001 \003(\0132).org.jetbrains.k" +
-      "otlin.metadata.Annotation:K\n\020constructor" +
-      "_kdoc\022*.org.jetbrains.kotlin.metadata.Co",
-      "nstructor\030\255\001 \001(\tB\004\200\265\030\001:\201\001\n\023constructor_u" +
-      "niq_id\022*.org.jetbrains.kotlin.metadata.C" +
-      "onstructor\030\254\001 \001(\01327.org.jetbrains.kotlin" +
-      ".library.metadata.DescriptorUniqId:p\n\023fu" +
-      "nction_annotation\022\'.org.jetbrains.kotlin" +
-      ".metadata.Function\030\252\001 \003(\0132).org.jetbrain" +
-      "s.kotlin.metadata.Annotation:\203\001\n&functio" +
-      "n_extension_receiver_annotation\022\'.org.je" +
-      "tbrains.kotlin.metadata.Function\030\253\001 \003(\0132" +
-      ").org.jetbrains.kotlin.metadata.Annotati",
-      "on:E\n\rfunction_file\022\'.org.jetbrains.kotl" +
-      "in.metadata.Function\030\254\001 \001(\005B\004\200\265\030\001:E\n\rfun" +
-      "ction_kdoc\022\'.org.jetbrains.kotlin.metada" +
-      "ta.Function\030\256\001 \001(\tB\004\200\265\030\001:{\n\020function_uni" +
-      "q_id\022\'.org.jetbrains.kotlin.metadata.Fun" +
-      "ction\030\255\001 \001(\01327.org.jetbrains.kotlin.libr" +
-      "ary.metadata.DescriptorUniqId:p\n\023propert" +
-      "y_annotation\022\'.org.jetbrains.kotlin.meta" +
-      "data.Property\030\252\001 \003(\0132).org.jetbrains.kot" +
-      "lin.metadata.Annotation:w\n\032property_gett",
-      "er_annotation\022\'.org.jetbrains.kotlin.met" +
-      "adata.Property\030\261\001 \003(\0132).org.jetbrains.ko" +
-      "tlin.metadata.Annotation:w\n\032property_set" +
-      "ter_annotation\022\'.org.jetbrains.kotlin.me" +
-      "tadata.Property\030\262\001 \003(\0132).org.jetbrains.k" +
-      "otlin.metadata.Annotation:~\n!property_ba" +
-      "cking_field_annotation\022\'.org.jetbrains.k" +
-      "otlin.metadata.Property\030\265\001 \003(\0132).org.jet" +
-      "brains.kotlin.metadata.Annotation:\200\001\n#pr" +
-      "operty_delegated_field_annotation\022\'.org.",
-      "jetbrains.kotlin.metadata.Property\030\266\001 \003(" +
-      "\0132).org.jetbrains.kotlin.metadata.Annota" +
-      "tion:\203\001\n&property_extension_receiver_ann" +
+      "\030\001:j\n\020class_annotation\022$.org.jetbrains.k" +
+      "otlin.metadata.Class\030\252\001 \003(\0132).org.jetbra" +
+      "ins.kotlin.metadata.Annotation:?\n\nclass_" +
+      "file\022$.org.jetbrains.kotlin.metadata.Cla" +
+      "ss\030\257\001 \001(\005B\004\200\265\030\001:?\n\nclass_kdoc\022$.org.jetb",
+      "rains.kotlin.metadata.Class\030\260\001 \001(\tB\004\200\265\030\001" +
+      ":u\n\rclass_uniq_id\022$.org.jetbrains.kotlin" +
+      ".metadata.Class\030\253\001 \001(\01327.org.jetbrains.k" +
+      "otlin.library.metadata.DescriptorUniqId:" +
+      "v\n\026constructor_annotation\022*.org.jetbrain" +
+      "s.kotlin.metadata.Constructor\030\252\001 \003(\0132).o" +
+      "rg.jetbrains.kotlin.metadata.Annotation:" +
+      "K\n\020constructor_kdoc\022*.org.jetbrains.kotl" +
+      "in.metadata.Constructor\030\255\001 \001(\tB\004\200\265\030\001:\201\001\n" +
+      "\023constructor_uniq_id\022*.org.jetbrains.kot",
+      "lin.metadata.Constructor\030\254\001 \001(\01327.org.je" +
+      "tbrains.kotlin.library.metadata.Descript" +
+      "orUniqId:p\n\023function_annotation\022\'.org.je" +
+      "tbrains.kotlin.metadata.Function\030\252\001 \003(\0132" +
+      ").org.jetbrains.kotlin.metadata.Annotati" +
+      "on:\203\001\n&function_extension_receiver_annot" +
+      "ation\022\'.org.jetbrains.kotlin.metadata.Fu" +
+      "nction\030\253\001 \003(\0132).org.jetbrains.kotlin.met" +
+      "adata.Annotation:E\n\rfunction_file\022\'.org." +
+      "jetbrains.kotlin.metadata.Function\030\254\001 \001(",
+      "\005B\004\200\265\030\001:E\n\rfunction_kdoc\022\'.org.jetbrains" +
+      ".kotlin.metadata.Function\030\256\001 \001(\tB\004\200\265\030\001:{" +
+      "\n\020function_uniq_id\022\'.org.jetbrains.kotli" +
+      "n.metadata.Function\030\255\001 \001(\01327.org.jetbrai" +
+      "ns.kotlin.library.metadata.DescriptorUni" +
+      "qId:p\n\023property_annotation\022\'.org.jetbrai" +
+      "ns.kotlin.metadata.Property\030\252\001 \003(\0132).org" +
+      ".jetbrains.kotlin.metadata.Annotation:w\n" +
+      "\032property_getter_annotation\022\'.org.jetbra" +
+      "ins.kotlin.metadata.Property\030\261\001 \003(\0132).or",
+      "g.jetbrains.kotlin.metadata.Annotation:w" +
+      "\n\032property_setter_annotation\022\'.org.jetbr" +
+      "ains.kotlin.metadata.Property\030\262\001 \003(\0132).o" +
+      "rg.jetbrains.kotlin.metadata.Annotation:" +
+      "~\n!property_backing_field_annotation\022\'.o" +
+      "rg.jetbrains.kotlin.metadata.Property\030\265\001" +
+      " \003(\0132).org.jetbrains.kotlin.metadata.Ann" +
+      "otation:\200\001\n#property_delegated_field_ann" +
       "otation\022\'.org.jetbrains.kotlin.metadata." +
-      "Property\030\267\001 \003(\0132).org.jetbrains.kotlin.m" +
-      "etadata.Annotation:~\n\022compile_time_value" +
-      "\022\'.org.jetbrains.kotlin.metadata.Propert" +
-      "y\030\255\001 \001(\01328.org.jetbrains.kotlin.metadata" +
-      ".Annotation.Argument.Value:E\n\rproperty_f" +
-      "ile\022\'.org.jetbrains.kotlin.metadata.Prop",
-      "erty\030\260\001 \001(\005B\004\200\265\030\001:E\n\rproperty_kdoc\022\'.org" +
-      ".jetbrains.kotlin.metadata.Property\030\264\001 \001" +
-      "(\tB\004\200\265\030\001:{\n\020property_uniq_id\022\'.org.jetbr" +
-      "ains.kotlin.metadata.Property\030\263\001 \001(\01327.o" +
-      "rg.jetbrains.kotlin.library.metadata.Des" +
-      "criptorUniqId:s\n\025enum_entry_annotation\022(" +
-      ".org.jetbrains.kotlin.metadata.EnumEntry" +
+      "Property\030\266\001 \003(\0132).org.jetbrains.kotlin.m",
+      "etadata.Annotation:\203\001\n&property_extensio" +
+      "n_receiver_annotation\022\'.org.jetbrains.ko" +
+      "tlin.metadata.Property\030\267\001 \003(\0132).org.jetb" +
+      "rains.kotlin.metadata.Annotation:~\n\022comp" +
+      "ile_time_value\022\'.org.jetbrains.kotlin.me" +
+      "tadata.Property\030\255\001 \001(\01328.org.jetbrains.k" +
+      "otlin.metadata.Annotation.Argument.Value" +
+      ":E\n\rproperty_file\022\'.org.jetbrains.kotlin" +
+      ".metadata.Property\030\260\001 \001(\005B\004\200\265\030\001:E\n\rprope" +
+      "rty_kdoc\022\'.org.jetbrains.kotlin.metadata",
+      ".Property\030\264\001 \001(\tB\004\200\265\030\001:{\n\020property_uniq_" +
+      "id\022\'.org.jetbrains.kotlin.metadata.Prope" +
+      "rty\030\263\001 \001(\01327.org.jetbrains.kotlin.librar" +
+      "y.metadata.DescriptorUniqId:s\n\025enum_entr" +
+      "y_annotation\022(.org.jetbrains.kotlin.meta" +
+      "data.EnumEntry\030\252\001 \003(\0132).org.jetbrains.ko" +
+      "tlin.metadata.Annotation:E\n\022enum_entry_o" +
+      "rdinal\022(.org.jetbrains.kotlin.metadata.E" +
+      "numEntry\030\253\001 \001(\005:~\n\022enum_entry_uniq_id\022(." +
+      "org.jetbrains.kotlin.metadata.EnumEntry\030",
+      "\254\001 \001(\01327.org.jetbrains.kotlin.library.me" +
+      "tadata.DescriptorUniqId:w\n\024parameter_ann" +
+      "otation\022-.org.jetbrains.kotlin.metadata." +
+      "ValueParameter\030\252\001 \003(\0132).org.jetbrains.ko" +
+      "tlin.metadata.Annotation:h\n\017type_annotat" +
+      "ion\022#.org.jetbrains.kotlin.metadata.Type" +
       "\030\252\001 \003(\0132).org.jetbrains.kotlin.metadata." +
-      "Annotation:E\n\022enum_entry_ordinal\022(.org.j" +
-      "etbrains.kotlin.metadata.EnumEntry\030\253\001 \001(",
-      "\005:~\n\022enum_entry_uniq_id\022(.org.jetbrains." +
-      "kotlin.metadata.EnumEntry\030\254\001 \001(\01327.org.j" +
-      "etbrains.kotlin.library.metadata.Descrip" +
-      "torUniqId:w\n\024parameter_annotation\022-.org." +
-      "jetbrains.kotlin.metadata.ValueParameter" +
-      "\030\252\001 \003(\0132).org.jetbrains.kotlin.metadata." +
-      "Annotation:h\n\017type_annotation\022#.org.jetb" +
-      "rains.kotlin.metadata.Type\030\252\001 \003(\0132).org." +
-      "jetbrains.kotlin.metadata.Annotation:{\n\031" +
-      "type_parameter_annotation\022,.org.jetbrain",
-      "s.kotlin.metadata.TypeParameter\030\252\001 \003(\0132)" +
-      ".org.jetbrains.kotlin.metadata.Annotatio" +
-      "n:\202\001\n\022type_param_uniq_id\022,.org.jetbrains" +
-      ".kotlin.metadata.TypeParameter\030\253\001 \001(\01327." +
-      "org.jetbrains.kotlin.library.metadata.De" +
-      "scriptorUniqId:U\n\026package_fragment_files" +
-      "\022..org.jetbrains.kotlin.metadata.Package" +
-      "Fragment\030\252\001 \003(\005B\004\200\265\030\001:A\n\010is_empty\022..org." +
+      "Annotation:{\n\031type_parameter_annotation\022" +
+      ",.org.jetbrains.kotlin.metadata.TypePara" +
+      "meter\030\252\001 \003(\0132).org.jetbrains.kotlin.meta",
+      "data.Annotation:\202\001\n\022type_param_uniq_id\022," +
+      ".org.jetbrains.kotlin.metadata.TypeParam" +
+      "eter\030\253\001 \001(\01327.org.jetbrains.kotlin.libra" +
+      "ry.metadata.DescriptorUniqId:U\n\026package_" +
+      "fragment_files\022..org.jetbrains.kotlin.me" +
+      "tadata.PackageFragment\030\252\001 \003(\005B\004\200\265\030\001:A\n\010i" +
+      "s_empty\022..org.jetbrains.kotlin.metadata." +
+      "PackageFragment\030\254\001 \001(\010:@\n\007fq_name\022..org." +
       "jetbrains.kotlin.metadata.PackageFragmen" +
-      "t\030\254\001 \001(\010:@\n\007fq_name\022..org.jetbrains.kotl",
-      "in.metadata.PackageFragment\030\255\001 \001(\t:G\n\ncl" +
-      "ass_name\022..org.jetbrains.kotlin.metadata" +
-      ".PackageFragment\030\256\001 \003(\005B\002\020\001:~\n\022type_alia" +
-      "s_uniq_id\022(.org.jetbrains.kotlin.metadat" +
-      "a.TypeAlias\030\203\001 \001(\01327.org.jetbrains.kotli" +
-      "n.library.metadata.DescriptorUniqIdB\033B\031D" +
-      "ebugKlibMetadataProtoBuf"
+      "t\030\255\001 \001(\t:G\n\nclass_name\022..org.jetbrains.k",
+      "otlin.metadata.PackageFragment\030\256\001 \003(\005B\002\020" +
+      "\001:~\n\022type_alias_uniq_id\022(.org.jetbrains." +
+      "kotlin.metadata.TypeAlias\030\203\001 \001(\01327.org.j" +
+      "etbrains.kotlin.library.metadata.Descrip" +
+      "torUniqIdB\033B\031DebugKlibMetadataProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -3695,41 +3681,40 @@ public final class DebugKlibMetadataProtoBuf {
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_library_metadata_DescriptorUniqId_descriptor,
         new java.lang.String[] { "Index", });
-    packageFqName.internalInit(descriptor.getExtensions().get(0));
-    classAnnotation.internalInit(descriptor.getExtensions().get(1));
-    classFile.internalInit(descriptor.getExtensions().get(2));
-    classKdoc.internalInit(descriptor.getExtensions().get(3));
-    classUniqId.internalInit(descriptor.getExtensions().get(4));
-    constructorAnnotation.internalInit(descriptor.getExtensions().get(5));
-    constructorKdoc.internalInit(descriptor.getExtensions().get(6));
-    constructorUniqId.internalInit(descriptor.getExtensions().get(7));
-    functionAnnotation.internalInit(descriptor.getExtensions().get(8));
-    functionExtensionReceiverAnnotation.internalInit(descriptor.getExtensions().get(9));
-    functionFile.internalInit(descriptor.getExtensions().get(10));
-    functionKdoc.internalInit(descriptor.getExtensions().get(11));
-    functionUniqId.internalInit(descriptor.getExtensions().get(12));
-    propertyAnnotation.internalInit(descriptor.getExtensions().get(13));
-    propertyGetterAnnotation.internalInit(descriptor.getExtensions().get(14));
-    propertySetterAnnotation.internalInit(descriptor.getExtensions().get(15));
-    propertyBackingFieldAnnotation.internalInit(descriptor.getExtensions().get(16));
-    propertyDelegatedFieldAnnotation.internalInit(descriptor.getExtensions().get(17));
-    propertyExtensionReceiverAnnotation.internalInit(descriptor.getExtensions().get(18));
-    compileTimeValue.internalInit(descriptor.getExtensions().get(19));
-    propertyFile.internalInit(descriptor.getExtensions().get(20));
-    propertyKdoc.internalInit(descriptor.getExtensions().get(21));
-    propertyUniqId.internalInit(descriptor.getExtensions().get(22));
-    enumEntryAnnotation.internalInit(descriptor.getExtensions().get(23));
-    enumEntryOrdinal.internalInit(descriptor.getExtensions().get(24));
-    enumEntryUniqId.internalInit(descriptor.getExtensions().get(25));
-    parameterAnnotation.internalInit(descriptor.getExtensions().get(26));
-    typeAnnotation.internalInit(descriptor.getExtensions().get(27));
-    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(28));
-    typeParamUniqId.internalInit(descriptor.getExtensions().get(29));
-    packageFragmentFiles.internalInit(descriptor.getExtensions().get(30));
-    isEmpty.internalInit(descriptor.getExtensions().get(31));
-    fqName.internalInit(descriptor.getExtensions().get(32));
-    className.internalInit(descriptor.getExtensions().get(33));
-    typeAliasUniqId.internalInit(descriptor.getExtensions().get(34));
+    classAnnotation.internalInit(descriptor.getExtensions().get(0));
+    classFile.internalInit(descriptor.getExtensions().get(1));
+    classKdoc.internalInit(descriptor.getExtensions().get(2));
+    classUniqId.internalInit(descriptor.getExtensions().get(3));
+    constructorAnnotation.internalInit(descriptor.getExtensions().get(4));
+    constructorKdoc.internalInit(descriptor.getExtensions().get(5));
+    constructorUniqId.internalInit(descriptor.getExtensions().get(6));
+    functionAnnotation.internalInit(descriptor.getExtensions().get(7));
+    functionExtensionReceiverAnnotation.internalInit(descriptor.getExtensions().get(8));
+    functionFile.internalInit(descriptor.getExtensions().get(9));
+    functionKdoc.internalInit(descriptor.getExtensions().get(10));
+    functionUniqId.internalInit(descriptor.getExtensions().get(11));
+    propertyAnnotation.internalInit(descriptor.getExtensions().get(12));
+    propertyGetterAnnotation.internalInit(descriptor.getExtensions().get(13));
+    propertySetterAnnotation.internalInit(descriptor.getExtensions().get(14));
+    propertyBackingFieldAnnotation.internalInit(descriptor.getExtensions().get(15));
+    propertyDelegatedFieldAnnotation.internalInit(descriptor.getExtensions().get(16));
+    propertyExtensionReceiverAnnotation.internalInit(descriptor.getExtensions().get(17));
+    compileTimeValue.internalInit(descriptor.getExtensions().get(18));
+    propertyFile.internalInit(descriptor.getExtensions().get(19));
+    propertyKdoc.internalInit(descriptor.getExtensions().get(20));
+    propertyUniqId.internalInit(descriptor.getExtensions().get(21));
+    enumEntryAnnotation.internalInit(descriptor.getExtensions().get(22));
+    enumEntryOrdinal.internalInit(descriptor.getExtensions().get(23));
+    enumEntryUniqId.internalInit(descriptor.getExtensions().get(24));
+    parameterAnnotation.internalInit(descriptor.getExtensions().get(25));
+    typeAnnotation.internalInit(descriptor.getExtensions().get(26));
+    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(27));
+    typeParamUniqId.internalInit(descriptor.getExtensions().get(28));
+    packageFragmentFiles.internalInit(descriptor.getExtensions().get(29));
+    isEmpty.internalInit(descriptor.getExtensions().get(30));
+    fqName.internalInit(descriptor.getExtensions().get(31));
+    className.internalInit(descriptor.getExtensions().get(32));
+    typeAliasUniqId.internalInit(descriptor.getExtensions().get(33));
     org.jetbrains.kotlin.protobuf.ExtensionRegistry registry =
         org.jetbrains.kotlin.protobuf.ExtensionRegistry.newInstance();
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.skipMessageInComparison);

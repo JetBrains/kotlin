@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 object KlibMetadataSerializerProtocol : SerializerExtensionProtocol(
     ExtensionRegistryLite.newInstance().apply(KlibMetadataProtoBuf::registerAllExtensions),
-    KlibMetadataProtoBuf.packageFqName,
+    packageFqName = null,
     KlibMetadataProtoBuf.constructorAnnotation,
     KlibMetadataProtoBuf.classAnnotation,
     KlibMetadataProtoBuf.functionAnnotation,

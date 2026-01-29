@@ -7,7 +7,6 @@ public final class KlibMetadataProtoBuf {
   private KlibMetadataProtoBuf() {}
   public static void registerAllExtensions(
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
-    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.packageFqName);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classFile);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classKdoc);
@@ -2521,22 +2520,6 @@ public final class KlibMetadataProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.library.metadata.DescriptorUniqId)
   }
 
-  public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 171;
-  /**
-   * <code>extend .org.jetbrains.kotlin.metadata.Package { ... }</code>
-   */
-  public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.metadata.ProtoBuf.Package,
-      java.lang.Integer> packageFqName = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Package.getDefaultInstance(),
-        0,
-        null,
-        null,
-        171,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
-        java.lang.Integer.class);
   public static final int CLASS_ANNOTATION_FIELD_NUMBER = 170;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>

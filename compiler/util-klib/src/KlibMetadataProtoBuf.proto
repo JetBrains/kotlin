@@ -55,10 +55,6 @@ message DescriptorUniqId {
   option (org.jetbrains.kotlin.metadata.skip_message_in_comparison) = true;
 }
 
-extend org.jetbrains.kotlin.metadata.Package {
-  optional int32 package_fq_name = 171;
-}
-
 extend org.jetbrains.kotlin.metadata.Class {
   repeated org.jetbrains.kotlin.metadata.Annotation class_annotation = 170;
   optional int32 class_file = 175 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
