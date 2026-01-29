@@ -172,3 +172,23 @@ private data class CodeLine(
 @DslMarker
 @MustBeDocumented
 internal annotation class StringBlockBuilderDsl
+
+/**
+ * Emit a list of items, each potentially multi-line, with proper comma separation.
+ * Items are separated by commas, with no trailing comma after the last item.
+ */
+@StringBlockBuilderDsl
+internal fun StringBlockBuilder.emitListItems(items: List<String>) {
+    items.forEachIndexed { index, item ->
+        val isLast = index == items.lastIndex
+        val lines = item.lines()
+        lines.forEachIndexed { lineIndex, lineContent ->
+            val isLastLine = lineIndex == lines.lastIndex
+            if (isLastLine && !isLast) {
+                line("$lineContent,")
+            } else {
+                line(lineContent)
+            }
+        }
+    }
+}

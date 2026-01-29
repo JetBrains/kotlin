@@ -13,6 +13,89 @@ import kotlin.test.assertEquals
 class StringBlockBuilderTest {
 
     @Test
+    fun `test emitListItems with single item`() {
+        val result = buildStringBlock {
+            block("[", "]") {
+                emitListItems(listOf("item1"))
+            }
+        }
+
+        assertEquals(
+            """
+            |[
+            |    item1
+            |]
+            |""".trimMargin(),
+            result
+        )
+    }
+
+    @Test
+    fun `test emitListItems with multiple items`() {
+        val result = buildStringBlock {
+            block("[", "]") {
+                emitListItems(listOf("item1", "item2", "item3"))
+            }
+        }
+
+        assertEquals(
+            """
+            |[
+            |    item1,
+            |    item2,
+            |    item3
+            |]
+            |""".trimMargin(),
+            result
+        )
+    }
+
+    @Test
+    fun `test emitListItems with multiline items`() {
+        val result = buildStringBlock {
+            block("[", "]") {
+                emitListItems(
+                    listOf(
+                        ".target(\n    name: \"First\"\n)",
+                        ".target(\n    name: \"Second\"\n)"
+                    )
+                )
+            }
+        }
+
+        assertEquals(
+            """
+            |[
+            |    .target(
+            |        name: "First"
+            |    ),
+            |    .target(
+            |        name: "Second"
+            |    )
+            |]
+            |""".trimMargin(),
+            result
+        )
+    }
+
+    @Test
+    fun `test emitListItems with empty list`() {
+        val result = buildStringBlock {
+            block("[", "]") {
+                emitListItems(emptyList())
+            }
+        }
+
+        assertEquals(
+            """
+            |[
+            |]
+            |""".trimMargin(),
+            result
+        )
+    }
+
+    @Test
     fun `test buildStringBlock with default indent`() {
         assertEquals(
             """
