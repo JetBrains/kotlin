@@ -167,6 +167,10 @@ val reflectShadowJar by task<ShadowJar> {
     exclude("org/jetbrains/annotations/Nls*.class")
 
     if (kotlinBuildProperties.relocation) {
+        /*
+        Disable Kotlin Module remapping to allow our own 'KotlinModuleMetadataVersionBasedSkippingTransformer' to run
+        */
+        enableKotlinModuleRemapping = false
         mergeServiceFiles()
         transform(KotlinModuleShadowTransformer(logger))
         relocate("kotlin.metadata", "kotlin.reflect.jvm.internal.impl.km")
