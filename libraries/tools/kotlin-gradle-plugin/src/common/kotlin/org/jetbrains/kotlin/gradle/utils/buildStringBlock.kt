@@ -108,6 +108,67 @@ internal sealed interface ConnectedLinesBuilder {
     fun line(content: String)
 }
 
+/**
+ * Build a block of comma-separated entries.
+ *
+ * Each entry can contain multiple lines and/or nested blocks.
+ * A comma is appended to the **last line** of each entry, **except the final entry**.
+ *
+ * ###### Example: Create a Swift Package.swift manifest.
+ *
+ * ```kotlin
+ * block("let package = Package(", ")") {
+ *     commaSeparatedEntries {
+ *         entry { line("name: \"MyPackage\"") }
+ *         entry { block("platforms: [", "]") { emitListItems(platforms) } }
+ *         entry { block("products: [", "]") { ... } }
+ *     }
+ * }
+ * ```
+ *
+ * Result:
+ *
+ * ```text
+ * let package = Package(
+ *     name: "MyPackage",
+ *     platforms: [
+ *         .iOS("15.0")
+ *     ],
+ *     products: [
+ *         ...
+ *     ]
+ * )
+ * ```
+ */
+@StringBlockBuilderDsl
+internal fun StringBlockBuilder.commaSeparatedEntries(
+    block: CommaSeparatedEntriesBuilder.() -> Unit,
+) {
+    check(this is StringBlockBuilderImpl)
+    val builder = CommaSeparatedEntriesBuilderImpl(
+        level = this.level,
+        defaultIndent = this.defaultIndent,
+    )
+    builder.block()
+    lines += builder.buildLines()
+}
+
+/**
+ * @see commaSeparatedEntries
+ */
+@StringBlockBuilderDsl
+internal sealed interface CommaSeparatedEntriesBuilder {
+    /**
+     * Add an entry to the comma-separated list.
+     *
+     * Each entry can contain multiple lines and/or nested blocks.
+     * A comma will be appended to the last line of this entry,
+     * unless it is the final entry in the list.
+     */
+    @StringBlockBuilderDsl
+    fun entry(content: StringBlockBuilder.() -> Unit)
+}
+
 private class StringBlockBuilderImpl(
     val level: Int = 0,
     val defaultIndent: String = "    ",
@@ -164,6 +225,33 @@ private class ConnectedLinesBuilderImpl(
     }
 }
 
+private class CommaSeparatedEntriesBuilderImpl(
+    private val level: Int,
+    private val defaultIndent: String,
+) : CommaSeparatedEntriesBuilder {
+    private val entries: MutableList<ArrayDeque<CodeLine>> = mutableListOf()
+
+    override fun entry(content: StringBlockBuilder.() -> Unit) {
+        val entryBuilder = StringBlockBuilderImpl(level = level, defaultIndent = defaultIndent)
+        entryBuilder.content()
+        entries.add(entryBuilder.lines)
+    }
+
+    fun buildLines(): ArrayDeque<CodeLine> {
+        val result = ArrayDeque<CodeLine>()
+        entries.forEachIndexed { index, entryLines ->
+            val isLastEntry = index == entries.lastIndex
+            if (!isLastEntry && entryLines.isNotEmpty()) {
+                // Add comma to the last line of this entry
+                val lastLine = entryLines.removeLast()
+                entryLines.addLast(CodeLine(lastLine.content + ",", lastLine.level))
+            }
+            result.addAll(entryLines)
+        }
+        return result
+    }
+}
+
 private data class CodeLine(
     val content: String,
     val level: Int,
@@ -172,3 +260,23 @@ private data class CodeLine(
 @DslMarker
 @MustBeDocumented
 internal annotation class StringBlockBuilderDsl
+
+/**
+ * Emit a list of items, each potentially multi-line, with proper comma separation.
+ * Items are separated by commas, with no trailing comma after the last item.
+ */
+@StringBlockBuilderDsl
+internal fun StringBlockBuilder.emitListItems(items: List<String>) {
+    items.forEachIndexed { index, item ->
+        val isLast = index == items.lastIndex
+        val lines = item.lines()
+        lines.forEachIndexed { lineIndex, lineContent ->
+            val isLastLine = lineIndex == lines.lastIndex
+            if (isLastLine && !isLast) {
+                line("$lineContent,")
+            } else {
+                line(lineContent)
+            }
+        }
+    }
+}
