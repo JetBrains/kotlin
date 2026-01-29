@@ -1326,36 +1326,48 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         CONTEXT_PARAMETER(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = true),
     }
 
+    protected open fun isReplSnippet(script: T, fileBuilder: FirFileBuilder): Boolean {
+        val scriptSource = script.toFirSourceElement()
+        val sourceFile = fileBuilder.sourceFile!!
+        return baseSession.extensionService.replSnippetConfigurators.any {
+            it.isReplSnippetsSource(sourceFile, scriptSource)
+        }
+    }
+
     protected fun convertScriptOrSnippets(declaration: T, fileBuilder: FirFileBuilder): FirDeclaration {
         val scriptSource = declaration.toFirSourceElement()
         val sourceFile = fileBuilder.sourceFile!!
 
-        val repSnippetConfigurator =
-            baseSession.extensionService.replSnippetConfigurators.filter {
-                it.isReplSnippetsSource(sourceFile, scriptSource)
-            }.let {
-                requireWithAttachment(
-                    it.size <= 1,
-                    message = { "More than one REPL snippet configurator is found for the file" },
-                ) {
-                    withEntry("fileName", sourceFile.name)
-                    withEntry("configurators", it.joinToString { "${it::class.java.name}" })
+        return if (isReplSnippet(declaration, fileBuilder)) {
+            val repSnippetConfigurator =
+                baseSession.extensionService.replSnippetConfigurators.filter {
+                    it.isReplSnippetsSource(sourceFile, scriptSource)
+                }.let {
+                    requireWithAttachment(
+                        it.size <= 1,
+                        message = { "More than one REPL snippet configurator is found for the file" },
+                    ) {
+                        withEntry("fileName", sourceFile.name)
+                        withEntry("configurators", it.joinToString { "${it::class.java.name}" })
+                    }
+                    it.firstOrNull()
                 }
-                it.firstOrNull()
-            }
 
-        return if (repSnippetConfigurator != null) {
             convertReplSnippet(
                 declaration, scriptSource, sourceFile.name,
                 snippetSetup = {
-                    with(repSnippetConfigurator) {
-                        configureContainingFile(fileBuilder)
-                        configure(fileBuilder.sourceFile, context)
+                    if (repSnippetConfigurator != null) {
+                        with(repSnippetConfigurator) {
+                            configureContainingFile(fileBuilder)
+                            configure(fileBuilder.sourceFile, context)
+                        }
                     }
                 },
                 statementsSetup = {
-                    with(repSnippetConfigurator) {
-                        configure(fileBuilder.sourceFile, scriptSource, context)
+                    if (repSnippetConfigurator != null) {
+                        with(repSnippetConfigurator) {
+                            configure(fileBuilder.sourceFile, scriptSource, context)
+                        }
                     }
                 },
             )
@@ -1386,7 +1398,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         scriptSource: KtSourceElement,
         fileName: String,
         snippetSetup: FirReplSnippetBuilder.() -> Unit,
-        statementsSetup: MutableList<FirStatement>.() -> Unit,
+        statementsSetup: MutableList<FirElement>.() -> Unit,
     ): FirReplSnippet
 
     protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {

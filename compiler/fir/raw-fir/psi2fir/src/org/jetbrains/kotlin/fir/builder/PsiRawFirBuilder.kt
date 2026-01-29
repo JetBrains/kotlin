@@ -183,6 +183,16 @@ open class PsiRawFirBuilder(
             }
         }
 
+    @OptIn(KtExperimentalApi::class)
+    override fun isReplSnippet(
+        script: PsiElement,
+        fileBuilder: FirFileBuilder,
+    ): Boolean {
+        // TODO(KT-84387): reintroduce call to `FirReplSnippetConfiguratorExtension.isReplSnippetSource`?
+        //  The lack of this call is a requirement from AA; make sure they agree with any redesign.
+        return (script as? KtScript)?.isReplSnippet == true
+    }
+
     override fun convertScript(
         script: PsiElement,
         scriptSource: KtSourceElement,
