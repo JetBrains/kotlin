@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.backend.utils.shouldUseCalleeReferenceAsItsSourc
 import org.jetbrains.kotlin.fir.backend.utils.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -217,6 +218,17 @@ class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler
                 super.visitProperty(property, data)
                 property.evaluatedInitializer?.unwrapOr<FirExpression> { }?.let { result ->
                     val (start, end) = property.initializer?.getCorrespondingIrOffset() ?: return
+                    render(result, start, end)
+                }
+            }
+
+            override fun visitValueParameter(valueParameter: FirValueParameter, data: Options) {
+                if (valueParameter in visitedElements) return
+                visitedElements.add(valueParameter)
+
+                super.visitValueParameter(valueParameter, data)
+                valueParameter.evaluatedInitializer?.unwrapOr<FirExpression> { }?.let { result ->
+                    val (start, end) = valueParameter.defaultValue?.getCorrespondingIrOffset() ?: return
                     render(result, start, end)
                 }
             }
