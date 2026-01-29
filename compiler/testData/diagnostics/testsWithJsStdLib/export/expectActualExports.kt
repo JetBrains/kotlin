@@ -14,6 +14,8 @@ package sample
 
 @kotlin.js.JsExport expect fun bar(): Int
 
+@kotlin.js.JsExport expect fun baz(): Int
+
 // Classes
 @kotlin.js.JsExport expect class Foo
 @kotlin.js.JsExport expect class Bar
@@ -33,31 +35,37 @@ package sample
     fun test()
 }
 
+@kotlin.js.JsExport expect class PossiblyExternal
+
 // MODULE: jsMain()()(commonMain)
 // TARGET_PLATFORM: JS
 // FILE: js.kt
 package sample
 
 // Functions
-<!NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual fun foo()<!> = 42
+<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual fun foo()<!> = 42
 
 @kotlin.js.JsExport actual fun bar() = 42
 
+<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual external fun baz(): Int<!>
+
 // Classes
-actual class <!NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>Foo<!>
+actual class <!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>Foo<!>
 
 @kotlin.js.JsExport actual class Bar {
     <!WRONG_EXPORTED_DECLARATION("suspend function")!>suspend fun foo()<!> = 42
 }
 
 @kotlin.js.JsExport actual class Nested {
-    @kotlin.js.JsExport.Ignore actual interface <!NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>A<!>
+    @kotlin.js.JsExport.Ignore actual interface <!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>A<!>
 }
 
 @kotlin.js.JsExport class ExportedOne { fun test() {} }
 class NotExportedOne { fun test() {} }
 @kotlin.js.JsExport interface ExportedInterface { fun test() }
 
-<!NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual typealias Test1 = NotExportedOne<!>
+<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual typealias Test1 = NotExportedOne<!>
 actual typealias Test2 = ExportedOne
 actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND!>Test3<!> = ExportedInterface
+
+actual external class PossiblyExternal
