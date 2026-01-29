@@ -76,7 +76,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
 
             executable.set(project.benchmark.buildSwift.map { it.outputFile.get() })
             reportFile.set(layout.buildDirectory.file("nativeBenchResults.json"))
-            verbose.convention(logger.isInfoEnabled)
+            verbose.convention(true) // kotlinx-benchmark benchmarks always output the progress
             baseOnly.convention(project.baseOnly)
             filter.convention(project.filter)
             filterRegex.convention(project.filterRegex)

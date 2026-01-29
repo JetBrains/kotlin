@@ -29,8 +29,6 @@ Pass as Gradle Properties (i.e. as `-P<option>=<value>`):
 
 The full list can be found [here](buildSrc/src/main/kotlin/Properties.kt).
 
-Running with `--info` will enable debugging output in the benchmarks allowing to monitor the progress.
-
 ## Benchmark groups
 
 The benchmarks are split into several groups:
@@ -44,3 +42,12 @@ The benchmarks are split into several groups:
 
 `./gradlew :konanRun` (or just `./gradlew`) runs all the groups; use something like `./gradlew :ring :startup`
 to only run a subset of groups.
+
+## Writing benchmarks
+
+Excepting `swiftinterop` (see [the corresponding](swiftinterop/README.md) documentation),
+all the benchmarks are written using `kotlinx-benchmark`.
+
+## kotlinx-benchmark
+
+**TODO**
