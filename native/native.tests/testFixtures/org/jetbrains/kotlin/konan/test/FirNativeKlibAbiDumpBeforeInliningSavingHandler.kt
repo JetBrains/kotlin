@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test
 
+import org.jetbrains.kotlin.backend.common.lower.inline.SignaturesComputationLowering
+import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
@@ -28,7 +30,20 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
         )
         val outputFile = getAbiCheckKlibArtifactFile(module.name)
 
-        NativeKlibSerializerFacade(testServices).serializeBare(module, inputArtifact, outputFile, configuration, irDiagnosticReporter)
+        val preSerializationLoweringContext = NativePreSerializationLoweringContext(
+            irBuiltIns = inputArtifact.irBuiltIns,
+            configuration = configuration,
+            diagnosticReporter = irDiagnosticReporter
+        )
+        SignaturesComputationLowering(
+            preSerializationLoweringContext
+        ).lower(inputArtifact.irModuleFragment)
+
+        val newInputArtifact = if (inputArtifact is IrBackendInput.NativeAfterFrontendBackendInput) {
+            inputArtifact.copy(declarationTable = preSerializationLoweringContext.declarationTable)
+        } else inputArtifact
+
+        NativeKlibSerializerFacade(testServices).serializeBare(module, newInputArtifact, outputFile, configuration, irDiagnosticReporter)
 
         return BinaryArtifacts.KLib(outputFile, diagnosticReporter)
     }
