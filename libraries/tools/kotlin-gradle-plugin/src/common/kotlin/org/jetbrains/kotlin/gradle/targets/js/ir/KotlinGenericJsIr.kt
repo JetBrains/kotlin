@@ -17,7 +17,9 @@ internal constructor(
     target: KotlinJsIrTarget,
     private val objects: ObjectFactory,
     private val providers: ProviderFactory
-) : KotlinJsGenericDsl {
+) :
+    KotlinJsIrSubTarget(target, "generic"),
+    KotlinJsGenericDsl {
     @ExperimentalMainFunctionArgumentsDsl
     override fun passProcessArgvToMainFunction() {
         target.passAsArgumentToMainFunction("process.argv")
