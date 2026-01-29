@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.internal.jvm.operations.DiscoverScriptExtensionsOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmClasspathSnapshottingOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import java.io.File
@@ -41,4 +42,8 @@ internal class JvmPlatformToolchainImpl(private val buildIdToSessionFlagFile: Mu
 
     override fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperation.Builder =
         JvmClasspathSnapshottingOperationImpl(classpathEntry)
+
+    override fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperationImpl {
+        return DiscoverScriptExtensionsOperationImpl(classpath)
+    }
 }

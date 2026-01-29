@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.buildtools.internal.compat
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
 import org.jetbrains.kotlin.buildtools.api.jvm.*
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
@@ -65,6 +66,45 @@ public class KotlinToolchainsV1Adapter(
             override fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperation.Builder {
                 return JvmClasspathSnapshottingOperationV1Adapter(compilationService, classpathEntry)
             }
+
+            override fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperation.Builder {
+                return DiscoverScriptExtensionsOperationV1Adapter(compilationService, classpath)
+            }
+        }
+    }
+
+    private class DiscoverScriptExtensionsOperationV1Adapter(
+        @Suppress("DEPRECATION_ERROR") val compilationService: CompilationService,
+        override val classpath: List<Path>,
+        override val options: Options = Options(DiscoverScriptExtensionsOperation::class),
+    ) : BuildOperationImpl<Collection<String>>(), DiscoverScriptExtensionsOperation, DiscoverScriptExtensionsOperation.Builder,
+        DeepCopyable<DiscoverScriptExtensionsOperationV1Adapter> {
+
+
+        override fun executeImpl(
+            projectId: ProjectId,
+            executionPolicy: ExecutionPolicyV1Adapter,
+            logger: KotlinLogger?,
+        ): Collection<String> {
+            check(executionPolicy is ExecutionPolicy.InProcess) { "Only in-process execution policy is supported for this operation." }
+            return compilationService.getCustomKotlinScriptFilenameExtensions(classpath.map(Path::toFile))
+        }
+
+        override fun toBuilder(): DiscoverScriptExtensionsOperation.Builder = deepCopy()
+
+        override fun <V> get(key: DiscoverScriptExtensionsOperation.Option<V>): V = options[key]
+
+        override fun <V> set(
+            key: DiscoverScriptExtensionsOperation.Option<V>,
+            value: V,
+        ) {
+            options[key] = value
+        }
+
+        override fun build(): DiscoverScriptExtensionsOperation = deepCopy()
+
+        override fun deepCopy(): DiscoverScriptExtensionsOperationV1Adapter {
+            return DiscoverScriptExtensionsOperationV1Adapter(compilationService, classpath, options.deepCopy())
         }
     }
 

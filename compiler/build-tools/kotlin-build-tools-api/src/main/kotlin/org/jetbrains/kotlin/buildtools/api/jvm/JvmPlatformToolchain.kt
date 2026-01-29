@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.jvm
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.getToolchain
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.nio.file.Path
@@ -85,6 +86,16 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
      */
     public fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperation.Builder
 
+    /**
+     * Creates a builder for an operation for discovering Kotlin script extensions.
+     *
+     * @param classpath classpath to search for custom script extensions
+     * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchains.BuildSession.executeOperation
+     *
+     * @since 2.4.0
+     */
+    public fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperation.Builder
+
     public companion object {
         /**
          * Gets a [JvmPlatformToolchain] instance from [KotlinToolchains].
@@ -132,4 +143,24 @@ public inline fun JvmPlatformToolchain.classpathSnapshottingOperation(
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
     }
     return classpathSnapshottingOperationBuilder(classpathEntry).apply(builderAction).build()
+}
+
+/**
+ * Convenience function for creating a [DiscoverScriptExtensionsOperation] with options configured by [builderAction].
+ *
+ * @return an immutable `DiscoverScriptExtensionsOperation`.
+ * @see JvmPlatformToolchain.discoverScriptExtensionsOperationBuilder
+ *
+ * @since 2.4.0
+ */
+@OptIn(ExperimentalContracts::class)
+@ExperimentalBuildToolsApi
+public inline fun JvmPlatformToolchain.discoverScriptExtensionsOperation(
+    classpath: List<Path>,
+    builderAction: DiscoverScriptExtensionsOperation.Builder.() -> Unit = {},
+): DiscoverScriptExtensionsOperation {
+    contract {
+        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
+    }
+    return discoverScriptExtensionsOperationBuilder(classpath).apply(builderAction).build()
 }
