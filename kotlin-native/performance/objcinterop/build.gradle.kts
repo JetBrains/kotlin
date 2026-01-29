@@ -6,7 +6,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    id("benchmarking")
+    id("kotlinx-benchmarking")
 }
 
 kotlin {
@@ -26,6 +26,6 @@ kotlin {
     }
 }
 
-benchmark {
+kotlinxBenchmark {
     applicationName = "ObjCInterop"
 }
