@@ -150,7 +150,6 @@ internal class KlibPackageExtension : KmPackageExtension {
 }
 
 internal class KlibModuleFragmentExtension : KmModuleFragmentExtension {
-    val moduleFragmentFiles: MutableList<KlibSourceFile> = ArrayList()
     var fqName: String? = null
     val className: MutableList<ClassName> = ArrayList()
 

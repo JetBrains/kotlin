@@ -75,9 +75,6 @@ var KmModuleFragment.fqName: String?
 val KmModuleFragment.className: MutableList<ClassName>
     get() = klibExtensions.className
 
-val KmModuleFragment.moduleFragmentFiles: MutableList<KlibSourceFile>
-    get() = klibExtensions.moduleFragmentFiles
-
 val KmTypeParameter.annotations: MutableList<KmAnnotation>
     get() = klibExtensions.annotations
 

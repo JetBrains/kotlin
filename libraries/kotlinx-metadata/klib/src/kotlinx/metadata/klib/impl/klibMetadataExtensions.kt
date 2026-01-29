@@ -82,9 +82,6 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     override fun readModuleFragmentExtensions(kmModuleFragment: KmModuleFragment, proto: ProtoBuf.PackageFragment, c: ReadContext) {
         val extension = kmModuleFragment.klibExtensions
 
-        for (file in proto.getExtension(KlibMetadataProtoBuf.packageFragmentFiles)) {
-            extension.moduleFragmentFiles.add(c.getSourceFile(file))
-        }
         proto.getExtensionOrNull(KlibMetadataProtoBuf.fqName)?.let {
             extension.fqName = it
         }
@@ -236,10 +233,6 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     override fun writeModuleFragmentExtensions(
         kmModuleFragment: KmModuleFragment, proto: ProtoBuf.PackageFragment.Builder, c: WriteContext,
     ) {
-        for (file in kmModuleFragment.moduleFragmentFiles) {
-            proto.addExtension(KlibMetadataProtoBuf.packageFragmentFiles, c.getIndexOf(file))
-        }
-
         kmModuleFragment.fqName?.let { fqName ->
             proto.setExtension(KlibMetadataProtoBuf.fqName, fqName)
         }

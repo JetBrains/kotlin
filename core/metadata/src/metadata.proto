@@ -568,6 +568,10 @@ message PackageFragment {
   repeated Class class = 4;
 
   extensions 100 to 199;
+
+  // WARNING: Don't occupy index 170 which was previously used for storing package_fragment_files.
+  // int32 package_fragment_files = 170;
+
 }
 
 

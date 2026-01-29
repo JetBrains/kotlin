@@ -110,7 +110,6 @@ extend org.jetbrains.kotlin.metadata.TypeParameter {
 }
 
 extend org.jetbrains.kotlin.metadata.PackageFragment {
-  repeated int32 package_fragment_files = 170 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
   optional bool is_empty = 172;
   optional string fq_name = 173;
   // id in StringTable

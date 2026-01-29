@@ -37,7 +37,6 @@ public final class KlibMetadataProtoBuf {
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.typeParameterAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.typeParamUniqId);
-    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.packageFragmentFiles);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.isEmpty);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.fqName);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.className);
@@ -2038,22 +2037,6 @@ public final class KlibMetadataProtoBuf {
         171,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.DescriptorUniqId.class);
-  public static final int PACKAGE_FRAGMENT_FILES_FIELD_NUMBER = 170;
-  /**
-   * <code>extend .org.jetbrains.kotlin.metadata.PackageFragment { ... }</code>
-   */
-  public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment,
-      java.util.List<java.lang.Integer>> packageFragmentFiles = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment.getDefaultInstance(),
-        null,
-        null,
-        170,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
-        false,
-        java.lang.Integer.class);
   public static final int IS_EMPTY_FIELD_NUMBER = 172;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.PackageFragment { ... }</code>
