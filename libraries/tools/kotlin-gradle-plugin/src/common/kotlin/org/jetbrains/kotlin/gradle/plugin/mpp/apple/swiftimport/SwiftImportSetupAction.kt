@@ -64,7 +64,9 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.ParallelTask
 import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.utils.buildStringBlock
 import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.emitListItems
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
@@ -619,10 +621,10 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
                     val traitsString = importedPackage.traits.joinToString(", ") { "\"${it}\"" }
                     appendLine("  traits: [${traitsString}],")
                 }
-                appendLine("),")
+                append(")")
             }
         } + localSyntheticPackages.map {
-            ".package(path: \"${SUBPACKAGES}/${it}\"),"
+            ".package(path: \"${SUBPACKAGES}/${it}\")"
         })
         val targetDependencies = (directlyImportedSwiftPMDependencies.flatMap { dep -> dep.products.map { it to dep.packageName } }.map {
             buildString {
@@ -634,10 +636,10 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
                     val platformsString = platformConstraints.joinToString(", ") { ".${it.swiftEnumName}" }
                     appendLine("  condition: .when(platforms: [${platformsString}]),")
                 }
-                appendLine("),")
+                append(")")
             }
         } + localSyntheticPackages.map {
-            ".product(name: \"${it}\", package: \"${it}\"),"
+            ".product(name: \"${it}\", package: \"${it}\")"
         })
 
         val platforms = konanTargets.get().map { it.family }.toSet().map {
@@ -648,7 +650,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
                         MACOS_DEPLOYMENT_VERSION_DEFAULT,
                         dependencyIdentifierToImportedSwiftPMDependencies.get().values.mapNotNull { it.macosDeploymentVersion },
                     )
-                    ".macOS(\"${deploymentTarget}\"),"
+                    ".macOS(\"${deploymentTarget}\")"
                 }
                 Family.IOS -> {
                     val deploymentTarget = explicitOrMaximumDeploymentTarget(
@@ -656,7 +658,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
                         IOS_DEPLOYMENT_VERSION_DEFAULT,
                         dependencyIdentifierToImportedSwiftPMDependencies.get().values.mapNotNull { it.iosDeploymentVersion },
                     )
-                    ".iOS(\"${deploymentTarget}\"),"
+                    ".iOS(\"${deploymentTarget}\")"
                 }
                 Family.TVOS -> {
                     val deploymentTarget = explicitOrMaximumDeploymentTarget(
@@ -664,7 +666,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
                         TVOS_DEPLOYMENT_VERSION_DEFAULT,
                         dependencyIdentifierToImportedSwiftPMDependencies.get().values.mapNotNull { it.tvosDeploymentVersion },
                     )
-                    ".tvOS(\"${deploymentTarget}\"),"
+                    ".tvOS(\"${deploymentTarget}\")"
                 }
                 Family.WATCHOS -> {
                     val deploymentTarget = explicitOrMaximumDeploymentTarget(
@@ -672,7 +674,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
                         WATCHOS_DEPLOYMENT_VERSION_DEFAULT,
                         dependencyIdentifierToImportedSwiftPMDependencies.get().values.mapNotNull { it.watchosDeploymentVersion },
                     )
-                    ".watchOS(\"${deploymentTarget}\"),"
+                    ".watchOS(\"${deploymentTarget}\")"
                 }
                 Family.LINUX,
                 Family.MINGW,
@@ -690,40 +692,36 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
         manifest.also {
             it.parentFile.mkdirs()
         }.writeText(
-            buildString {
-                appendLine("// swift-tools-version: 5.9")
-                appendLine("import PackageDescription")
-                appendLine("let package = Package(")
-                appendLine("  name: \"$identifier\",")
-                appendLine("  platforms: [")
-                platforms.forEach { appendLine("    $it")}
-                appendLine("  ],")
-                appendLine(
-                    """
-                        products: [
-                            .library(
-                                name: "$identifier",
-                                type: ${productType},
-                                targets: ["$identifier"]
-                            ),
-                        ],
-                    """.replaceIndent("  ")
-                )
-                appendLine("  dependencies: [")
-                repoDependencies.forEach { appendLine(it.replaceIndent("    ")) }
-                appendLine("  ],")
-                appendLine("  targets: [")
-                appendLine("    .target(")
-                appendLine("      name: \"$identifier\",")
-                appendLine("      dependencies: [")
-                targetDependencies.forEach { appendLine(it.replaceIndent("        ")) }
-                appendLine("      ]")
-                if (linkerHackPath != null) {
-                    appendLine("      , linkerSettings: [.unsafeFlags([\"-fuse-ld=${linkerHackPath.path}\"])]")
+            buildStringBlock(defaultIndent = "  ") {
+                line("// swift-tools-version: 5.9")
+                line("import PackageDescription")
+                block("let package = Package(", ")") {
+                    line("name: \"$identifier\",")
+                    block("platforms: [", "],") {
+                        emitListItems(platforms)
+                    }
+                    block("products: [", "],") {
+                        block(".library(", ")") {
+                            line("name: \"$identifier\",")
+                            line("type: $productType,")
+                            line("targets: [\"$identifier\"]")
+                        }
+                    }
+                    block("dependencies: [", "],") {
+                        emitListItems(repoDependencies)
+                    }
+                    block("targets: [", "]") {
+                        block(".target(", ")") {
+                            line("name: \"$identifier\",")
+                            block("dependencies: [", "]" + if (linkerHackPath != null) "," else "") {
+                                emitListItems(targetDependencies)
+                            }
+                            if (linkerHackPath != null) {
+                                line("linkerSettings: [.unsafeFlags([\"-fuse-ld=${linkerHackPath.path}\"])]")
+                            }
+                        }
+                    }
                 }
-                appendLine("    ),")
-                appendLine("  ]")
-                appendLine(")")
             }
         )
 
