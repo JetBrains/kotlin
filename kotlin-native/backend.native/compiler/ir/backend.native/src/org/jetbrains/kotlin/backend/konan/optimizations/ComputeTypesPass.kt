@@ -302,7 +302,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
                 }
                 cfmpInfo.variableWrites?.computeType()?.let { aTry.type = it }
 
-                return cfmpInfo.variablesValues
+                return aTry.finallyExpression?.accept(this, cfmpInfo.variablesValues) ?: cfmpInfo.variablesValues
             }
 
             override fun visitBreak(jump: IrBreak, data: BitSet): BitSet {
