@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.metadata.jvm.deserialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.registerAllExtensions
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.protobuf.MessageLite
@@ -16,7 +18,10 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 object JvmProtoBufUtil {
-    val EXTENSION_REGISTRY: ExtensionRegistryLite = ExtensionRegistryLite.newInstance().apply(JvmProtoBuf::registerAllExtensions)
+    val EXTENSION_REGISTRY: ExtensionRegistryLite = ExtensionRegistryLite.newInstance().apply {
+        registerAllExtensions(this)
+        SerializationPluginMetadataExtensions.registerAllExtensions(this)
+    }
 
     const val PLATFORM_TYPE_ID = "kotlin.jvm.PlatformType"
 
