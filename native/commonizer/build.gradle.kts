@@ -46,6 +46,7 @@ dependencies {
     testImplementation(project(":kotlin-metadata")) { isTransitive = false }
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
     testImplementation(project(":kotlin-tooling-core"))
+    testImplementation(project(":native:native.config"))
     testImplementation(intellijCore())
 }
 

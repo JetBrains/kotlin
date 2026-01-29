@@ -10,7 +10,6 @@ dependencies {
     compileOnly(kotlin("stdlib", coreDepsVersion))
     api(project(":kotlin-util-io"))
     api(project(":kotlin-util-klib"))
-    api(project(":native:config.native"))
     api(platform(project(":kotlin-gradle-plugins-bom")))
 
     testImplementation(kotlin("stdlib", coreDepsVersion))

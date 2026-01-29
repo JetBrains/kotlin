@@ -3,10 +3,9 @@ plugins {
 }
 
 dependencies {
-    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
-    compileOnly(kotlin("stdlib", coreDepsVersion))
     api(project(":core:compiler.common")) { isTransitive = false }
     api(project(":compiler:config")) { isTransitive = false }
+    api(project(":native:kotlin-native-utils"))
     compileOnly(intellijCore())
 
     compileOnly(project(":core:metadata")) { isTransitive = false }
@@ -17,5 +16,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-
-configureKotlinCompileTasksGradleCompatibility()

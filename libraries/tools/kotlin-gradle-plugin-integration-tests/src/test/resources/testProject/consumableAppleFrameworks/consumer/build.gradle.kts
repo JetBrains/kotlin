@@ -1,3 +1,4 @@
+import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat.FRAMEWORK
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework

@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":kotlin-native:backend.native"))
     implementation(project(":native:frontend.native"))
+    implementation(project(":native:native.config"))
 }
 
 sourceSets {
