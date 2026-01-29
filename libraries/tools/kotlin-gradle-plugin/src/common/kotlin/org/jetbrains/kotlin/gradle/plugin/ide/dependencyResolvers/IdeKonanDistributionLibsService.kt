@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.extras.isCommonized
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerTask
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import java.io.File
 
 /**
