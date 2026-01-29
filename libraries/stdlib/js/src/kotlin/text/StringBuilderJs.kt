@@ -112,6 +112,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
+    @IgnorableReturnValue
     @SinceKotlin("1.9")
     public fun append(value: Byte): StringBuilder = append(value.toString())
 
@@ -121,6 +122,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
+    @IgnorableReturnValue
     @SinceKotlin("1.9")
     public fun append(value: Short): StringBuilder = append(value.toString())
 
@@ -276,6 +278,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     @SinceKotlin("1.9")
     public fun insert(index: Int, value: Byte): StringBuilder = insert(index, value.toString())
 
@@ -287,6 +290,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     @SinceKotlin("1.9")
     public fun insert(index: Int, value: Short): StringBuilder = insert(index, value.toString())
 
