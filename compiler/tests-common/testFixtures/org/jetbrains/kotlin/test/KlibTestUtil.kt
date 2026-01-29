@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.util.toKlibMetadataVersion
 import java.io.File
 import java.nio.file.Path
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 
 object KlibTestUtil {
     fun compileCommonSourcesToKlib(

@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.Project
-import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
 import org.jetbrains.kotlin.gradle.utils.loadSingleKlib
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 
 internal fun Project.resolveCInteropDependencies(
     errorReporter: IdeMultiplatformImportLogger,
