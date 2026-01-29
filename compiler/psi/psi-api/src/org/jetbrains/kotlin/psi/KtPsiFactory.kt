@@ -49,7 +49,22 @@ private const val DO_NOT_ANALYZE_NOTIFICATION = "This file was created by KtPsiF
 
 var KtFile.doNotAnalyze: String? by UserDataProperty(Key.create("DO_NOT_ANALYZE"))
 var KtFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS_CONTEXT"))
+private val REPL_SNIPPET_KEY = Key.create<Boolean>("REPL_SNIPPET")
 
+/**
+ * Determines whether a [KtScript] should be parsed as a REPL snippet or not.
+ */
+@KtExperimentalApi
+val KtScript.isReplSnippet: Boolean
+    get() = this.getUserData(REPL_SNIPPET_KEY) == true
+
+/**
+ * Marks the [KtScript] as a REPL snippet, so it is parsed by the compiler accordingly.
+ */
+@KtNonPublicApi
+fun KtScript.markAsReplSnippet() {
+    putUserData(REPL_SNIPPET_KEY, true)
+}
 
 /**
  * @param markGenerated This needs to be set to true if the `KtPsiFactory` is going to be used for creating elements that are going
@@ -283,6 +298,18 @@ class KtPsiFactory private constructor(
         val file = PsiFileFactory.getInstance(project).createFileFromText(fileName, KotlinFileType.INSTANCE, text, time, true) as KtFile
         file.analysisContext = this@KtPsiFactory.context
         return file
+    }
+
+    /**
+     * Creates a REPL snippet [KtScript] from the specified text content.
+     */
+    @KtExperimentalApi
+    @OptIn(KtNonPublicApi::class)
+    fun createReplSnippet(@NonNls text: String): KtScript {
+        val file = doCreateFile("snippet.repl.kts", text)
+        val script = file.script!!
+        script.markAsReplSnippet()
+        return script
     }
 
     fun createProperty(
