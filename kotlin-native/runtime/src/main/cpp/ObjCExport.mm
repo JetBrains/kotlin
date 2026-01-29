@@ -322,13 +322,14 @@ static void Kotlin_ObjCExport_initializeImpl() {
 
   initTypeAdapters();
 
+  Class nsObjectClazz = [NSObject class];
   SEL toKotlinSelector = Kotlin_ObjCExport_toKotlinSelector;
-  Method toKotlinMethod = class_getClassMethod([NSObject class], toKotlinSelector);
+  Method toKotlinMethod = class_getClassMethod(nsObjectClazz, toKotlinSelector);
   RuntimeAssert(toKotlinMethod != nullptr, "");
   const char* toKotlinTypeEncoding = method_getTypeEncoding(toKotlinMethod);
 
   SEL releaseAsAssociatedObjectSelector = Kotlin_ObjCExport_releaseAsAssociatedObjectSelector;
-  Method releaseAsAssociatedObjectMethod = class_getClassMethod([NSObject class], releaseAsAssociatedObjectSelector);
+  Method releaseAsAssociatedObjectMethod = class_getClassMethod(nsObjectClazz, releaseAsAssociatedObjectSelector);
   RuntimeAssert(releaseAsAssociatedObjectMethod != nullptr, "");
   const char* releaseAsAssociatedObjectTypeEncoding = method_getTypeEncoding(releaseAsAssociatedObjectMethod);
 
