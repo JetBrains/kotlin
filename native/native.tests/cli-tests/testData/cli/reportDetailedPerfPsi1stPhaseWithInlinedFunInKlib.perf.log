@@ -22,6 +22,7 @@ Kotlin to Native compiler performance report
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineFunctionSerializationPreProcessing)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (RedundantCastsRemoverLowering)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (SignaturesComputationLowering)
     IR SERIALIZATION        $UINT>>$ ms            $REAL>>$ loc/s
         KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
 KLIB element 'KLIB file cumulative size' has size of $UINT$ Bytes
