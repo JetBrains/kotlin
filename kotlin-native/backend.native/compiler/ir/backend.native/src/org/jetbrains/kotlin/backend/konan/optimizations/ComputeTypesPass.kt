@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
@@ -439,13 +440,25 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
 
             override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
                 expression.transformChildrenVoid(this)
-                if (expression.operator != IrTypeOperator.IMPLICIT_CAST) return expression
-                val dstClass = expression.typeOperand.erasedUpperBound
-                if (dstClass.isInterface) return expression
-                if (!expression.typeOperand.isNullable() && expression.type.isNullable()) return expression
-                if (expression.argument.type.erasedUpperBound.symbol.isSubtypeOfClass(dstClass.symbol))
-                    return expression.argument
-                return expression
+
+                when (expression.operator) {
+                    IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
+                        return if (expression.argument.type.isUnit())
+                            expression.argument
+                        else expression
+                    }
+
+                    IrTypeOperator.IMPLICIT_CAST -> {
+                        val dstClass = expression.typeOperand.erasedUpperBound
+                        if (dstClass.isInterface) return expression
+                        if (!expression.typeOperand.isNullable() && expression.type.isNullable()) return expression
+                        return if (expression.argument.type.erasedUpperBound.symbol.isSubtypeOfClass(dstClass.symbol))
+                            expression.argument
+                        else expression
+                    }
+
+                    else -> return expression
+                }
             }
         })
     }
