@@ -86,6 +86,7 @@ projectTests {
     withScriptingPlugin()
     withMockJdkRuntime()
     withStdlibCommon()
+    withStdlibWeb()
     withAnnotations()
     withThirdPartyJsr305()
     withThirdPartyAnnotations()

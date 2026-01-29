@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.isMultiplatformWeb
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
@@ -113,6 +114,9 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
 
                     val standardLibrariesPathProvider = testServices.standardLibrariesPathProvider
                     dependencies.add(standardLibrariesPathProvider.commonStdlibForTests().canonicalPath)
+                    if (testModule.targetPlatform(testServices, allowMultiplatform = true).isMultiplatformWeb()) {
+                        dependencies.add(standardLibrariesPathProvider.webStdlibForTests().canonicalPath)
+                    }
 
                     moduleDependencies[cliModule] = dependencies
                     friendDependencies[cliModule] = friends
