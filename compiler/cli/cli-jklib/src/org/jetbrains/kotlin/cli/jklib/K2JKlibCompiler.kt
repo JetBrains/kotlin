@@ -59,7 +59,10 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.backend.jklib.JKlibDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrLinker
 import org.jetbrains.kotlin.ir.backend.jklib.JKlibModuleSerializer
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibCliPipeline
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -148,6 +151,17 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         val exitCodeKlib = compileLibrary(arguments, rootDisposable, paths, destination)
         if (outputKind == OutputKind.LIBRARY || exitCodeKlib != ExitCode.OK) return exitCodeKlib
         return ExitCode.OK
+    }
+
+    private fun compileLibraryInPipeline(
+        arguments: K2JKlibCompilerArguments,
+        rootDisposable: Disposable,
+        paths: KotlinPaths?,
+        destination: File
+    ): ExitCode {
+        val performanceManager = configuration.perfManager
+        val pipeline = JKlibCliPipeline(performanceManager ?: object : PerformanceManager(JvmPlatforms.defaultJvmPlatform, "JKlib") {})
+        return pipeline.execute(arguments, Services.EMPTY, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
     }
 
     fun createJarDependenciesModuleDescriptor(

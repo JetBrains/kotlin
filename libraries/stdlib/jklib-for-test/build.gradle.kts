@@ -316,13 +316,15 @@ val compileStdlib by tasks.registering(JavaExec::class) {
     configureJklibCompilation(copySources, outputKlib, jarJava.flatMap { it.archiveFile })
 }
 
+val fullStdlibJarProvider = project(":kotlin-stdlib").tasks.named("jvmJar", Jar::class).flatMap { it.archiveFile }
+
 val compileMinimalStdlib by tasks.registering(JavaExec::class) {
     val javaToolchains = project.extensions.getByType(JavaToolchainService::class.java)
     javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(8))
     })
-    // Use the SAME jarJava (full stdlib Java classes) as classpath, as requested.
-    configureJklibCompilation(copyMinimalSources, outputMinimalKlib, jarJava.flatMap { it.archiveFile }, project.files({ project.findProject(":kotlin-stdlib")?.tasks?.getByName("jvmJar")?.outputs?.files ?: project.files() }))
+    // Use the full stdlib jar as classpath, instead of the locally built jarJava
+    configureJklibCompilation(copyMinimalSources, outputMinimalKlib, fullStdlibJarProvider)
     
     // Suppress "Actual without expect" errors typical in minimal stdlib (due to missing common sources)
     args("-nowarn") 
@@ -348,5 +350,5 @@ artifacts {
     add(distMinimalJKlib.name, outputMinimalKlib) {
         builtBy(compileMinimalStdlib)
     }
-    add(distMinimalJKlib.name, jarJava)
+    add(distMinimalJKlib.name, fullStdlibJarProvider)
 }

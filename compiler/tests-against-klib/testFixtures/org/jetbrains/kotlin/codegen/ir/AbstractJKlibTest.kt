@@ -61,16 +61,33 @@ abstract class AbstractJKlibTest : AbstractBlackBoxCodegenTest() {
             val stdlibJarPath = java.security.AccessController.doPrivileged(java.security.PrivilegedAction {
                 System.getProperty("kotlin.stdlib.jvm.ir.jar")
             })
+            val reflectJarPath = java.security.AccessController.doPrivileged(java.security.PrivilegedAction {
+                System.getProperty("kotlin.reflect.jar")
+            })
+            val fullStdlibJarPath = java.security.AccessController.doPrivileged(java.security.PrivilegedAction {
+                System.getProperty("kotlin.stdlib.jar")
+            })
            
             checkNotNull(stdlibKlibPath) { "System property 'kotlin.stdlib.jvm.ir.klib' not found" }
             checkNotNull(stdlibJarPath) { "System property 'kotlin.stdlib.jvm.ir.jar' not found" }
             println("stdlibKlibPath: $stdlibKlibPath")
             println("stdlibJarPath: $stdlibJarPath")
             klibLibraries = stdlibKlibPath
-            //klibLibraries = "/Users/joseefort/Code/kotlin/compiler/tests-against-klib/build/stdlib-for-test/kotlin-stdlib-js-2.3.255-SNAPSHOT.klib"
-            noStdlib = true
-            noReflect = true
-            classpath = stdlibJarPath
+            // klibLibraries = "/Users/joseefort/Code/kotlin/compiler/tests-against-klib/build/stdlib-for-test/kotlin-stdlib-js-2.3.255-SNAPSHOT.klib"
+            if (reflectJarPath != null && fullStdlibJarPath != null) {
+                 println("Configuring FULL stdlib and reflect")
+                 println("Reflect: $reflectJarPath")
+                 println("Stdlib: $fullStdlibJarPath")
+                 noStdlib = true
+                 noReflect = true
+                 classpath = "$fullStdlibJarPath${File.pathSeparator}$reflectJarPath"
+            } else {
+                 println("Configuring MINIMAL stdlib (fallback)")
+                 noStdlib = true
+                 noReflect = true
+                 classpath = stdlibJarPath
+            }
+            println("FINAL arguments: noStdlib=$noStdlib, noReflect=$noReflect, classpath=$classpath")
         }
 
         val rootDisposable = Disposer.newDisposable("Disposable for ${CLICompiler::class.simpleName}.execImpl")
