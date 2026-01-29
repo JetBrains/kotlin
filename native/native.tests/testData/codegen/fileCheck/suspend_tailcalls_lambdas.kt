@@ -43,6 +43,8 @@ fun builderInt(c: suspend () -> Int) {
 
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
+    builderInt { return@builderInt callsIntrinsicInt() }
+    builderUnit { callsIntrinsicUnit() }
     s1()
     s2()
     s3()
@@ -69,6 +71,16 @@ fun box(): String {
     s24()
     return "OK"
 }
+
+// CHECK-LABEL: define ptr @"kfun:#callsIntrinsicInt#suspend(kotlin.coroutines.Continuation<kotlin.Int>){}kotlin.Any
+suspend fun callsIntrinsicInt(): Int =
+    // CHECK-NOT: call void @"kfun:$callsIntrinsicIntCOROUTINE${{[0-9]*}}.<init>
+    suspendCoroutineUninterceptedOrReturn { 1 }
+
+// CHECK-LABEL: define ptr @"kfun:#callsIntrinsicUnit#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
+suspend fun callsIntrinsicUnit(): Unit =
+    // CHECK-NOT: call void @"kfun:$callsIntrinsicUnitCOROUTINE${{[0-9]*}}.<init>
+    suspendCoroutineUninterceptedOrReturn { Unit }
 
 fun s1() {
     // CHECK-LABEL: define internal ptr @"kfun:s1${{[0-9]*}}.invoke
