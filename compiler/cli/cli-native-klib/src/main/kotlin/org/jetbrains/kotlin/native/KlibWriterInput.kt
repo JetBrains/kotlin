@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.native
 
-import org.jetbrains.kotlin.backend.konan.serialization.SerializerOutput
+import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 
 data class KlibWriterInput(
     val serializerOutput: SerializerOutput,

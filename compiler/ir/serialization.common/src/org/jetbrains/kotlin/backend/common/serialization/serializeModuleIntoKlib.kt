@@ -54,10 +54,10 @@ class KotlinFileSerializedData private constructor(
     constructor(metadata: ByteArray, path: String?, fqName: String) : this(metadata, irData = null, path, fqName)
 }
 
-class SerializerOutput<Dependency : KotlinLibrary>(
+class SerializerOutput(
     val serializedMetadata: SerializedMetadata?,
     val serializedIr: SerializedIrModule?,
-    val neededLibraries: List<Dependency>, // ???
+    val neededLibraries: Collection<KotlinLibrary>,
 )
 
 fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
@@ -88,19 +88,19 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
  * @param processCompiledFileData Called for each newly serialized file. Useful for incremental compilation.
  * @param processKlibHeader Called after serializing the KLIB header. Useful for incremental compilation.
  */
-fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
+fun <SourceFile> serializeModuleIntoKlib(
     moduleName: String,
     irModuleFragment: IrModuleFragment?,
     configuration: CompilerConfiguration,
     diagnosticReporter: IrDiagnosticReporter,
     cleanFiles: List<KotlinFileSerializedData>,
-    dependencies: List<Dependency>,
+    dependencies: List<KotlinLibrary>,
     createModuleSerializer: (irDiagnosticReporter: IrDiagnosticReporter) -> IrModuleSerializer<*>,
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
     platformKlibCheckers: List<(IrDiagnosticReporter) -> IrVisitor<*, Nothing?>> = emptyList(),
     processCompiledFileData: ((File, KotlinFileSerializedData) -> Unit)? = null,
     processKlibHeader: (ByteArray) -> Unit = {},
-): SerializerOutput<Dependency> {
+): SerializerOutput {
     val serializedIr = irModuleFragment?.let {
         it.runIrLevelCheckers(
             diagnosticReporter,
