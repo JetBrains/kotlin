@@ -805,6 +805,7 @@ class FusStatisticsIT : KGPBaseTest() {
                 buildScriptInjection {
                     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
                     kotlinJvm.compilerVersion.set("2.2.20")
+                    kotlinJvm.coreLibrariesVersion = "2.2.20"
                 }
                 build(
                     "compileKotlin",
