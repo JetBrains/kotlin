@@ -43,7 +43,7 @@ internal fun scriptingPlugin(templateClass: KClass<*>) =
         listOf(
             CompilerPluginOption(
                 "script-definitions",
-                templateClass.qualifiedName ?: error("Cannot retrieve FQN for ${GreetScriptTemplate::class}")
+                templateClass.qualifiedName ?: error("Cannot retrieve FQN for $templateClass")
             )
         )
     )
