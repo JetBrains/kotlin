@@ -45,16 +45,8 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
         private fun isTailReturn(expression: IrReturn) =
             expression.returnTargetSymbol == irFunction.symbol || expression.returnTargetSymbol in tailReturnableBlocks
 
-        private fun IrTypeOperatorCall.canBeOptimized() =
-            operator == IrTypeOperator.IMPLICIT_CAST || operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-
         override fun visitReturn(expression: IrReturn, data: VisitorState) {
-            val returnValue = expression.value
-            val actualExpressionValue = when {
-                returnValue is IrTypeOperatorCall && isTailReturn(expression) && returnValue.canBeOptimized() -> returnValue.argument
-                else -> returnValue
-            }
-            actualExpressionValue.accept(this, VisitorState(data.insideTryBlock, isTailReturn(expression)))
+            expression.value.accept(this, VisitorState(data.insideTryBlock, isTailReturn(expression)))
         }
 
         override fun visitExpressionBody(body: IrExpressionBody, data: VisitorState) =
