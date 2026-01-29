@@ -27,6 +27,7 @@ dependencies {
     testFixturesImplementation(project(":core:compiler.common.native"))
     testFixturesImplementation(project(":kotlin-util-klib-abi"))
     testFixturesImplementation(project(":native:swift:swift-export-standalone"))
+    testFixturesImplementation(project(":compiler:ir.backend.native"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
