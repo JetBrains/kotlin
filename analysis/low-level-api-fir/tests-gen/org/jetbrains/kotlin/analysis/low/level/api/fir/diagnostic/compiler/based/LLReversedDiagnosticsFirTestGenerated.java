@@ -501,6 +501,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Test
+    @TestMetadata("kt83990reproducer.kt")
+    public void testKt83990reproducer() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/kt83990reproducer.kt");
+    }
+
+    @Test
     @TestMetadata("labelAndReceiverForInfix.kt")
     public void testLabelAndReceiverForInfix() {
       runTest("compiler/fir/analysis-tests/testData/resolve/labelAndReceiverForInfix.kt");
