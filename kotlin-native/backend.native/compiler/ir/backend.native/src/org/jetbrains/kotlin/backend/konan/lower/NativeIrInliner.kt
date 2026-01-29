@@ -37,4 +37,5 @@ internal class NativePreCodegenFunctionInlining(context: Context, functionsToInl
                 return expression is IrCall && expression.isVirtualCall
             }
         },
+        insertImplicitCasts = false,
 )

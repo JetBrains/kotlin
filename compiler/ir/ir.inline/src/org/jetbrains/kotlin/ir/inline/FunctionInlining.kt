@@ -44,6 +44,7 @@ import java.util.ArrayDeque
 abstract class FunctionInlining(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
+    private val insertImplicitCasts: Boolean = true,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
     private val fileEntriesStack = ArrayDeque<IrFileEntry>()
 
@@ -97,7 +98,8 @@ abstract class FunctionInlining(
             context = context,
             currentFileEntry = fileEntriesStack.getLast(),
             currentFile = data.file,
-            parent = data as? IrDeclarationParent ?: data.parent
+            parent = data as? IrDeclarationParent ?: data.parent,
+            insertImplicitCasts = insertImplicitCasts,
         ).inline(expression, actualCallee)
     }
 }
@@ -111,7 +113,8 @@ private class CallInlining(
     private val context: LoweringContext,
     private val currentFileEntry: IrFileEntry,
     private val currentFile: IrFile,
-    private val parent: IrDeclarationParent
+    private val parent: IrDeclarationParent,
+    private val insertImplicitCasts: Boolean = true,
 ) {
     private val parents = (parent as? IrDeclaration)?.parentsWithSelf?.toSet() ?: setOf(parent)
 
@@ -309,6 +312,7 @@ private class CallInlining(
 
     private fun IrExpression.doImplicitCastIfNeededTo(type: IrType): IrExpression {
         return when {
+            !insertImplicitCasts -> this
             type.isUnit() -> this.coerceToUnit(context.irBuiltIns)
             else -> this.implicitCastIfNeededTo(type)
         }
