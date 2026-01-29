@@ -1,0 +1,36 @@
+FILE: replNestedClass.repl.kts
+    public final object ReplNestedClass_repl : R|kotlin/Any| {
+        public ReplNestedClass_repl.constructor(): R|ReplNestedClass_repl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplNestedClass_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+            public final? [ContainingReplKey=FirReplSnippetSymbol ReplNestedClass_repl] interface Derived : Base {
+            }
+
+            public final? [ContainingReplKey=FirReplSnippetSymbol ReplNestedClass_repl] class Foo : Base {
+                public? [ContainingClassKey=Foo] constructor(): R|ReplNestedClass_repl.Base.Foo| {
+                    LAZY_super<<implicit>>
+                }
+
+            }
+
+            public final? [ContainingReplKey=FirReplSnippetSymbol ReplNestedClass_repl] object Bar : Base {
+                private [ContainingClassKey=Bar] constructor(): R|ReplNestedClass_repl.Base.Bar| {
+                    LAZY_super<<implicit>>
+                }
+
+            }
+
+            public abstract [ContainingReplKey=FirReplSnippetSymbol ReplNestedClass_repl] class Baz : Base {
+                public? [ContainingClassKey=Baz] constructor(): R|ReplNestedClass_repl.Base.Baz| {
+                    LAZY_super<<implicit>>
+                }
+
+            }
+
+        }
+
+    }

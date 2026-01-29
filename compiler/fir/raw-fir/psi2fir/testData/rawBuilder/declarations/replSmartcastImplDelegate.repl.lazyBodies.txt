@@ -1,0 +1,26 @@
+FILE: replSmartcastImplDelegate.repl.kts
+    public final object ReplSmartcastImplDelegate_repl : R|kotlin/Any| {
+        public ReplSmartcastImplDelegate_repl.constructor(): R|ReplSmartcastImplDelegate_repl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSmartcastImplDelegate_repl, ReplSnippetTopLevelDeclaration=true] interface MyInterface : R|kotlin/Any| {
+            public? final? fun foo(): R|kotlin/Unit|
+
+        }
+
+        public? final? [ReplSnippetTopLevelDeclaration=true] val localProperty: Any = REPL_EXPRESSION_REF
+            public? [ContainingClassKey=ReplSmartcastImplDelegate_repl] get(): Any
+
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSmartcastImplDelegate_repl, DelegateFieldsMapKey={0=FirFieldSymbol /ReplSmartcastImplDelegate_repl.MyClass.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class MyClass : MyInterface {
+            public? [ContainingClassKey=MyClass] constructor(): R|ReplSmartcastImplDelegate_repl.MyClass| {
+                LAZY_super<<implicit>>
+            }
+
+            private final field $$delegate_0: MyInterface = LAZY_EXPRESSION
+
+        }
+
+    }

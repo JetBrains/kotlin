@@ -1,0 +1,40 @@
+FILE: replPropertyDelegated.repl.kts
+    public final object ReplPropertyDelegated_repl : R|kotlin/Any| {
+        public ReplPropertyDelegated_repl.constructor(): R|ReplPropertyDelegated_repl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun $$eval(): R|kotlin/Unit| {
+            <repl declaration reference>: /ReplPropertyDelegated_repl.Provider
+            <repl property delegate: /ReplPropertyDelegated_repl.foo> = lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                String()
+            }
+            )
+            <repl property delegate: /ReplPropertyDelegated_repl.bar> = Provider#
+        }
+
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplPropertyDelegated_repl, ReplSnippetTopLevelDeclaration=true] object Provider : R|kotlin/Any| {
+            private [ContainingClassKey=Provider] constructor(): R|ReplPropertyDelegated_repl.Provider| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? operator fun provideDelegate(thisRef: Any?, property: kotlin.reflect.KProperty<*>): Lazy<String> {
+                ^provideDelegate lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    property#.name#
+                }
+                )
+            }
+
+        }
+
+        public? final? [ReplSnippetTopLevelDeclaration=true] val foo: <implicit>by REPL_EXPRESSION_REF
+            public? [ContainingClassKey=ReplPropertyDelegated_repl] get(): <implicit> {
+                ^ D|/ReplPropertyDelegated_repl.foo|.getValue#(Null(null), ::R|/ReplPropertyDelegated_repl.foo|)
+            }
+
+        public? final? [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+            public? [ContainingClassKey=ReplPropertyDelegated_repl] get(): <implicit> {
+                ^ D|/ReplPropertyDelegated_repl.bar|.getValue#(Null(null), ::R|/ReplPropertyDelegated_repl.bar|)
+            }
+
+    }

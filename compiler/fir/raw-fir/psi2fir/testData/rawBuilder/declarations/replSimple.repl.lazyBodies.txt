@@ -1,0 +1,40 @@
+FILE: replSimple.repl.kts
+    public final object ReplSimple_repl : R|kotlin/Any| {
+        public ReplSimple_repl.constructor(): R|ReplSimple_repl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSimple_repl, ReplSnippetTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
+            public? [ContainingClassKey=Builder] constructor(): R|ReplSimple_repl.Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? var version: String = LAZY_EXPRESSION
+                public? [ContainingClassKey=Builder] get(): String
+                public? [ContainingClassKey=Builder] set(value: String): R|kotlin/Unit|
+
+            public? final? fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public final? [ContainingReplKey=FirReplSnippetSymbol ReplSimple_repl] class Nested : R|kotlin/Any| {
+                public? [ContainingClassKey=Nested] constructor(): R|ReplSimple_repl.Builder.Nested| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                public? final? fun boo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+        public? final? [ReplSnippetTopLevelDeclaration=true] fun build(action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        public? final? [ReplSnippetTopLevelDeclaration=true] fun build2(action: ( Builder.() -> Unit )): Builder { LAZY_BLOCK }
+
+        public? final? [ReplSnippetTopLevelDeclaration=true] val builder: <implicit> = REPL_EXPRESSION_REF
+            public? [ContainingClassKey=ReplSimple_repl] get(): <implicit>
+
+    }

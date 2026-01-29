@@ -1,0 +1,75 @@
+FILE: replSimple.repl.kts
+    public final object ReplSimple_repl : R|kotlin/Any| {
+        public ReplSimple_repl.constructor(): R|ReplSimple_repl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun $$eval(): R|kotlin/Unit| {
+            <repl declaration reference>: /ReplSimple_repl.Builder
+            <repl declaration reference>: /ReplSimple_repl.build
+            <repl declaration reference>: /ReplSimple_repl.build2
+            build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                version# = String(123)
+                local final? [ContainingReplKey=FirReplSnippetSymbol ReplSimple_repl] class A : R|kotlin/Any| {
+                    public? [ContainingClassKey=A] constructor(): R|<local>/A| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public? final? fun doo(): R|kotlin/Unit| {
+                    }
+
+                }
+
+                execute#()
+            }
+            )
+            +=(version#, IntegerLiteral(123))
+            <repl property initializer: /ReplSimple_repl.builder> = build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                version# = String(321)
+            }
+            )
+            println#()
+            builder#.version# = String()
+            builder#.execute#()
+        }
+
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSimple_repl, ReplSnippetTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
+            public? [ContainingClassKey=Builder] constructor(): R|ReplSimple_repl.Builder| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? var version: String = String()
+                public? [ContainingClassKey=Builder] get(): String
+                public? [ContainingClassKey=Builder] set(value: String): R|kotlin/Unit|
+
+            public? final? fun execute(): R|kotlin/Unit| {
+                println#(version#)
+            }
+
+            public final? [ContainingReplKey=FirReplSnippetSymbol ReplSimple_repl] class Nested : R|kotlin/Any| {
+                public? [ContainingClassKey=Nested] constructor(): R|ReplSimple_repl.Builder.Nested| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? fun foo(): R|kotlin/Unit| {
+                }
+
+                public? final? fun boo(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        public? final? [ReplSnippetTopLevelDeclaration=true] fun build(action: ( Builder.() -> Unit )): <implicit> {
+            ^build Builder#().apply#(action#)
+        }
+
+        public? final? [ReplSnippetTopLevelDeclaration=true] fun build2(action: ( Builder.() -> Unit )): Builder {
+            ^build2 Builder#().apply#(action#)
+        }
+
+        public? final? [ReplSnippetTopLevelDeclaration=true] val builder: <implicit> = REPL_EXPRESSION_REF
+            public? [ContainingClassKey=ReplSimple_repl] get(): <implicit>
+
+    }

@@ -1,0 +1,21 @@
+FILE: replLevelDestructuringWithAnnotation.repl.kts
+    public final object ReplLevelDestructuringWithAnnotation_repl : R|kotlin/Any| {
+        public ReplLevelDestructuringWithAnnotation_repl.constructor(): R|ReplLevelDestructuringWithAnnotation_repl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        @LeftAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val a: <implicit> = REPL_EXPRESSION_REF
+            public get(): <implicit>
+
+        @RightAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
+            public get(): <implicit>
+
+        @SecondLeftAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val c: <implicit> = REPL_EXPRESSION_REF
+            public get(): <implicit>
+
+        @SecondRightAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val d: <implicit> = REPL_EXPRESSION_REF
+            public get(): <implicit>
+
+    }

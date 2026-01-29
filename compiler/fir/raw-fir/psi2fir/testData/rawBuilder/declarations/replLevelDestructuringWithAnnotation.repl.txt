@@ -1,0 +1,28 @@
+FILE: replLevelDestructuringWithAnnotation.repl.kts
+    public final object ReplLevelDestructuringWithAnnotation_repl : R|kotlin/Any| {
+        public ReplLevelDestructuringWithAnnotation_repl.constructor(): R|ReplLevelDestructuringWithAnnotation_repl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun $$eval(): R|kotlin/Unit| {
+            @DestrAnno(<strcat>(String(destr 1 ), prop#)) lval <destruct>: <implicit> = IntegerLiteral(0).to#(IntegerLiteral(1))
+            <repl property initializer: /ReplLevelDestructuringWithAnnotation_repl.a> = R|<local>/<destruct>|.component1#()
+            <repl property initializer: /ReplLevelDestructuringWithAnnotation_repl.b> = R|<local>/<destruct>|.component2#()
+            @Destr2Anno(<strcat>(String(destr 1 ), prop#)) lval <destruct>: <implicit> = IntegerLiteral(2).to#(IntegerLiteral(3))
+            <repl property initializer: /ReplLevelDestructuringWithAnnotation_repl.c> = R|<local>/<destruct>|.component1#()
+            <repl property initializer: /ReplLevelDestructuringWithAnnotation_repl.d> = R|<local>/<destruct>|.component2#()
+        }
+
+        @LeftAnno(<strcat>(String(a ), prop#)) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val a: <implicit> = REPL_EXPRESSION_REF
+            public get(): <implicit>
+
+        @RightAnno(<strcat>(String(b ), prop#)) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
+            public get(): <implicit>
+
+        @SecondLeftAnno(<strcat>(String(c ), prop#)) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val c: <implicit> = REPL_EXPRESSION_REF
+            public get(): <implicit>
+
+        @SecondRightAnno(<strcat>(String(d ), prop#)) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val d: <implicit> = REPL_EXPRESSION_REF
+            public get(): <implicit>
+
+    }
