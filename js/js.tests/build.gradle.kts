@@ -181,6 +181,7 @@ projectTests {
     )
 
     withJsRuntime()
+    withStdlibWeb()
     withStdlibCommon()
     withWasmRuntime()
 }
