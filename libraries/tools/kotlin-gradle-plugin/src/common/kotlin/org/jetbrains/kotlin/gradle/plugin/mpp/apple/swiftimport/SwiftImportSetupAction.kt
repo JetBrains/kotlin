@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.ParallelTask
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.buildStringBlock
+import org.jetbrains.kotlin.gradle.utils.commaSeparatedEntries
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.emitListItems
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -692,37 +693,14 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
         manifest.also {
             it.parentFile.mkdirs()
         }.writeText(
-            buildStringBlock(defaultIndent = "  ") {
-                line("// swift-tools-version: 5.9")
-                line("import PackageDescription")
-                block("let package = Package(", ")") {
-                    line("name: \"$identifier\",")
-                    block("platforms: [", "],") {
-                        emitListItems(platforms)
-                    }
-                    block("products: [", "],") {
-                        block(".library(", ")") {
-                            line("name: \"$identifier\",")
-                            line("type: $productType,")
-                            line("targets: [\"$identifier\"]")
-                        }
-                    }
-                    block("dependencies: [", "],") {
-                        emitListItems(repoDependencies)
-                    }
-                    block("targets: [", "]") {
-                        block(".target(", ")") {
-                            line("name: \"$identifier\",")
-                            block("dependencies: [", "]" + if (linkerHackPath != null) "," else "") {
-                                emitListItems(targetDependencies)
-                            }
-                            if (linkerHackPath != null) {
-                                line("linkerSettings: [.unsafeFlags([\"-fuse-ld=${linkerHackPath.path}\"])]")
-                            }
-                        }
-                    }
-                }
-            }
+            SwiftImportManifestGenerator.generateManifest(
+                identifier = identifier,
+                productType = productType,
+                platforms = platforms,
+                repoDependencies = repoDependencies,
+                targetDependencies = targetDependencies,
+                linkerHackPath = linkerHackPath?.path,
+            )
         )
 
         val objcSource = "Sources/${identifier}/${identifier}.m"
@@ -770,6 +748,80 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
         const val MACOS_DEPLOYMENT_VERSION_DEFAULT = "10.15"
         const val WATCHOS_DEPLOYMENT_VERSION_DEFAULT = "15.0"
         const val TVOS_DEPLOYMENT_VERSION_DEFAULT = "9.0"
+    }
+}
+
+/**
+ * Generates Package.swift manifest content for Swift Import synthetic packages.
+ *
+ * This generator is extracted from [GenerateSyntheticLinkageImportProject] to enable unit testing
+ * of manifest generation without requiring Gradle task infrastructure.
+ */
+internal object SwiftImportManifestGenerator {
+    /**
+     * Generates the content of a Package.swift manifest file.
+     *
+     * @param identifier The package and target identifier
+     * @param productType The product type string (e.g., ".dynamic" or ".none")
+     * @param platforms List of platform strings (e.g., ".iOS(\"15.0\")")
+     * @param repoDependencies List of package dependency declarations
+     * @param targetDependencies List of target dependency declarations
+     * @param linkerHackPath Optional path to linker hack, adds linkerSettings if present
+     * @return The complete Package.swift manifest content
+     */
+    fun generateManifest(
+        identifier: String,
+        productType: String,
+        platforms: List<String>,
+        repoDependencies: List<String>,
+        targetDependencies: List<String>,
+        linkerHackPath: String? = null,
+    ): String = buildStringBlock(defaultIndent = "  ") {
+        line("// swift-tools-version: 5.9")
+        line("import PackageDescription")
+        block("let package = Package(", ")") {
+            commaSeparatedEntries {
+                entry { line("name: \"$identifier\"") }
+                entry {
+                    block("platforms: [", "]") {
+                        emitListItems(platforms)
+                    }
+                }
+                entry {
+                    block("products: [", "]") {
+                        block(".library(", ")") {
+                            commaSeparatedEntries {
+                                entry { line("name: \"$identifier\"") }
+                                entry { line("type: $productType") }
+                                entry { line("targets: [\"$identifier\"]") }
+                            }
+                        }
+                    }
+                }
+                entry {
+                    block("dependencies: [", "]") {
+                        emitListItems(repoDependencies)
+                    }
+                }
+                entry {
+                    block("targets: [", "]") {
+                        block(".target(", ")") {
+                            commaSeparatedEntries {
+                                entry { line("name: \"$identifier\"") }
+                                entry {
+                                    block("dependencies: [", "]") {
+                                        emitListItems(targetDependencies)
+                                    }
+                                }
+                                if (linkerHackPath != null) {
+                                    entry { line("linkerSettings: [.unsafeFlags([\"-fuse-ld=$linkerHackPath\"])]") }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
