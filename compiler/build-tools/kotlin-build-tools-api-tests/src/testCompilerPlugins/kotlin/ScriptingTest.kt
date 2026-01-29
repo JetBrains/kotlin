@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutput
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Dependency
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.FileDependency
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -26,7 +25,7 @@ import kotlin.reflect.KClass
 class ScriptingTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of compiler plugins application (non-incremental)")
-    @TestMetadata("compiler-plugins")
+    @TestMetadata("scripting-kts")
     fun smokeTestCompilerPluginsApplicationNonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
             val module = module("scripting-kts", dependencies = listOf(dependencyOnThisClasspath))
@@ -38,12 +37,11 @@ class ScriptingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of compiler plugins application with custom extension (non-incremental)")
-    @TestMetadata("compiler-plugins")
+    @TestMetadata("scripting-custom-extension")
     fun smokeTestCompilerPluginsApplicationCustomExtensionNonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
             val module = module("scripting-custom-extension", dependencies = listOf(dependencyOnThisClasspath))
             module.compile(compilationConfigAction = configureCompilerArgs(GreetScriptCustomExtensionTemplate::class, "greet")) {
-                requireLogLevel(LogLevel.DEBUG)
                 assertOutputs("Test.class")
             }
         }
@@ -51,7 +49,7 @@ class ScriptingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of compiler plugins application (incremental)")
-    @TestMetadata("compiler-plugins")
+    @TestMetadata("scripting-kts")
     fun smokeTestCompilerPluginsApplicationIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
             val module = module("scripting-kts", dependencies = listOf(dependencyOnThisClasspath))
@@ -66,7 +64,7 @@ class ScriptingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of compiler plugins application with custom extension (incremental)")
-    @TestMetadata("compiler-plugins")
+    @TestMetadata("scripting-custom-extension")
     fun smokeTestCompilerPluginsApplicationCustomExtensionIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
             val module = module("scripting-custom-extension", dependencies = listOf(dependencyOnThisClasspath))
@@ -74,7 +72,6 @@ class ScriptingTest : BaseCompilationTest() {
                 SourcesChanges.Unknown,
                 compilationConfigAction = configureCompilerArgs(GreetScriptCustomExtensionTemplate::class, "greet")
             ) {
-                requireLogLevel(LogLevel.DEBUG)
                 assertOutputs("Test.class")
             }
         }
