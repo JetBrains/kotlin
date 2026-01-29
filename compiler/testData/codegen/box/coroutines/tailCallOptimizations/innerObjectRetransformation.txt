@@ -64,7 +64,6 @@ public final class flow/LibKt$flow$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class flow/LibKt$flowWith$$inlined$flow$1$1 {
     enclosing method flow/LibKt$flowWith$$inlined$flow$1.collect(Lflow/FlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-    field I$0: int
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
@@ -148,7 +147,6 @@ public final class flow/MainKt$check$$inlined$flowWith$1 {
 final class flow/MainKt$check$1 {
     // source: 'main.kt'
     enclosing method flow/MainKt.check(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-    field I$0: int
     field L$0: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object

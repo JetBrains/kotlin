@@ -28,8 +28,6 @@ public final class LibKt$consumeEach$2 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class LibKt$filter$$inlined$source$1$1 {
     enclosing method LibKt$filter$$inlined$source$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-    field I$0: int
-    field I$1: int
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
@@ -87,7 +85,6 @@ public final class LibKt$filter$lambda$0$$inlined$consumeEach$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class LibKt$fold$$inlined$consumeEach$1$1 {
     enclosing method LibKt$fold$$inlined$consumeEach$1.send(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-    field I$0: int
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
@@ -120,8 +117,6 @@ public final class LibKt$fold$$inlined$consumeEach$1 {
 final class LibKt$fold$1 {
     // source: 'lib.kt'
     enclosing method LibKt.fold(LSourceCrossinline;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-    field I$0: int
-    field I$1: int
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
@@ -140,7 +135,6 @@ public final class LibKt$range$$inlined$source$1$1 {
     enclosing method LibKt$range$$inlined$source$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field I$0: int
     field I$1: int
-    field I$2: int
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
@@ -213,8 +207,6 @@ public final class LibKt {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class MainKt$box$1$invokeSuspend$$inlined$filter$1$1 {
     enclosing method MainKt$box$1$invokeSuspend$$inlined$filter$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-    field I$0: int
-    field I$1: int
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
@@ -268,8 +260,6 @@ final class MainKt$box$1 {
     // source: 'main.kt'
     enclosing method MainKt.box()Ljava/lang/String;
     synthetic final field $res: kotlin.jvm.internal.Ref$IntRef
-    field I$0: int
-    field I$1: int
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
