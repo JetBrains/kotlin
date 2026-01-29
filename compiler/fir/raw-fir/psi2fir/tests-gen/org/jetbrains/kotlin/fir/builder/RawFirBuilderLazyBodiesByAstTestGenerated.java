@@ -426,6 +426,36 @@ public class RawFirBuilderLazyBodiesByAstTestGenerated extends AbstractRawFirBui
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/propertyWithBackingFieldDifferentTypes.kt");
     }
 
+    @TestMetadata("replLevelDestructuringWithAnnotation.repl.kts")
+    public void testReplLevelDestructuringWithAnnotation_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replLevelDestructuringWithAnnotation.repl.kts");
+    }
+
+    @TestMetadata("replNestedClass.repl.kts")
+    public void testReplNestedClass_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replNestedClass.repl.kts");
+    }
+
+    @TestMetadata("replPropertyDelegated.repl.kts")
+    public void testReplPropertyDelegated_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replPropertyDelegated.repl.kts");
+    }
+
+    @TestMetadata("replSealedClass.repl.kts")
+    public void testReplSealedClass_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replSealedClass.repl.kts");
+    }
+
+    @TestMetadata("replSimple.repl.kts")
+    public void testReplSimple_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replSimple.repl.kts");
+    }
+
+    @TestMetadata("replSmartcastImplDelegate.repl.kts")
+    public void testReplSmartcastImplDelegate_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replSmartcastImplDelegate.repl.kts");
+    }
+
     @TestMetadata("script.kts")
     public void testScript() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/script.kts");

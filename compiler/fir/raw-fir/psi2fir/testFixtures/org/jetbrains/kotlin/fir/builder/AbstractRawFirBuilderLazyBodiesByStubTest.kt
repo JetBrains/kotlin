@@ -10,6 +10,8 @@ import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.impl.source.PsiFileImpl
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNonPublicApi
+import org.jetbrains.kotlin.psi.markAsReplSnippet
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
@@ -34,9 +36,12 @@ abstract class AbstractRawFirBuilderLazyBodiesByStubTest : AbstractRawFirBuilder
         assertEquals("The tree access is not detected. 'IGNORE_TREE_ACCESS' have to be dropped", ignoreTreeAccess, treeAccessFound)
     }
 
+    @OptIn(KtNonPublicApi::class)
     override fun createKtFile(filePath: String): KtFile {
         val originalFile = super.createKtFile(filePath)
-        return createKtFile(originalFile, testRootDisposable)
+        return createKtFile(originalFile, testRootDisposable).apply {
+            if (filePath.endsWith(".repl.kts")) script?.markAsReplSnippet()
+        }
     }
 
     override val alternativeTestPrefix: String? get() = "stub"

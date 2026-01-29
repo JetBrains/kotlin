@@ -1,0 +1,23 @@
+@DestrAnno(<strcat>(String(destr 1 ), prop#))
+owner -> FirNamedFunctionSymbol /ReplLevelDestructuringWithAnnotation_repl.$$eval
+context -> FirLocalPropertySymbol <local>/<destruct> from FirNamedFunctionSymbol /ReplLevelDestructuringWithAnnotation_repl.$$eval
+
+@Destr2Anno(<strcat>(String(destr 1 ), prop#))
+owner -> FirNamedFunctionSymbol /ReplLevelDestructuringWithAnnotation_repl.$$eval
+context -> FirLocalPropertySymbol <local>/<destruct> from FirNamedFunctionSymbol /ReplLevelDestructuringWithAnnotation_repl.$$eval
+
+@LeftAnno(<strcat>(String(a ), prop#))
+owner -> FirRegularPropertySymbol /ReplLevelDestructuringWithAnnotation_repl.a
+context -> FirRegularPropertySymbol /ReplLevelDestructuringWithAnnotation_repl.a
+
+@RightAnno(<strcat>(String(b ), prop#))
+owner -> FirRegularPropertySymbol /ReplLevelDestructuringWithAnnotation_repl.b
+context -> FirRegularPropertySymbol /ReplLevelDestructuringWithAnnotation_repl.b
+
+@SecondLeftAnno(<strcat>(String(c ), prop#))
+owner -> FirRegularPropertySymbol /ReplLevelDestructuringWithAnnotation_repl.c
+context -> FirRegularPropertySymbol /ReplLevelDestructuringWithAnnotation_repl.c
+
+@SecondRightAnno(<strcat>(String(d ), prop#))
+owner -> FirRegularPropertySymbol /ReplLevelDestructuringWithAnnotation_repl.d
+context -> FirRegularPropertySymbol /ReplLevelDestructuringWithAnnotation_repl.d

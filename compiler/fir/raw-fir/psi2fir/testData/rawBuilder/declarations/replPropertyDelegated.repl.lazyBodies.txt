@@ -1,0 +1,24 @@
+FILE: replPropertyDelegated.repl.kts
+    public final object ReplPropertyDelegated_repl : R|kotlin/Any| {
+        public ReplPropertyDelegated_repl.constructor(): R|ReplPropertyDelegated_repl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final? object Provider : R|kotlin/Any| {
+            private constructor(): R|ReplPropertyDelegated_repl.Provider| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? operator fun provideDelegate(thisRef: Any?, property: kotlin.reflect.KProperty<*>): Lazy<String> { LAZY_BLOCK }
+
+        }
+
+        public? final? val foo: <implicit>by REPL_EXPRESSION_REF
+            public? get(): <implicit> { LAZY_BLOCK }
+
+        public? final? val bar: <implicit>by REPL_EXPRESSION_REF
+            public? get(): <implicit> { LAZY_BLOCK }
+
+    }

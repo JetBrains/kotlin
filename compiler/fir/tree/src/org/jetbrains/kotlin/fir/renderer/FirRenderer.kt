@@ -254,6 +254,29 @@ class FirRenderer(
             scriptReceiverParameter.typeRef.accept(this)
         }
 
+        override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference) {
+            print("<repl declaration reference>: ")
+            referencedSymbolRenderer.printReference(replDeclarationReference.symbol)
+        }
+
+        override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer) {
+            print("<repl property initializer: ")
+            referencedSymbolRenderer.printReference(replPropertyInitializer.propertySymbol)
+            print("> = ")
+            replPropertyInitializer.initializer.accept(this)
+        }
+
+        override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate) {
+            print("<repl property delegate: ")
+            referencedSymbolRenderer.printReference(replPropertyDelegate.propertySymbol)
+            print("> = ")
+            replPropertyDelegate.delegate.accept(this)
+        }
+
+        override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference) {
+            print("REPL_EXPRESSION_REF")
+        }
+
         override fun visitCodeFragment(codeFragment: FirCodeFragment) {
             printer.print("CODE FRAGMENT:")
             bodyRenderer?.renderBody(codeFragment.block)

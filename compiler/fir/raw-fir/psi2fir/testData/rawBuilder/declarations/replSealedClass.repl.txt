@@ -1,0 +1,42 @@
+FILE: replSealedClass.repl.kts
+    public final object ReplSealedClass_repl : R|kotlin/Any| {
+        public ReplSealedClass_repl.constructor(): R|ReplSealedClass_repl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun $$eval(): R|kotlin/Unit| {
+            <repl declaration reference>: /ReplSealedClass_repl.Base
+            <repl declaration reference>: /ReplSealedClass_repl.Foo
+            <repl declaration reference>: /ReplSealedClass_repl.Bar
+            <repl declaration reference>: /ReplSealedClass_repl.Baz
+        }
+
+        public sealed [ContainingReplKey=FirReplSnippetSymbol ReplSealedClass_repl, ReplSnippetTopLevelDeclaration=true] class Base : R|kotlin/Any| {
+            protected [ContainingClassKey=Base] constructor(): R|ReplSealedClass_repl.Base| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSealedClass_repl, ReplSnippetTopLevelDeclaration=true] class Foo : Base {
+            public? [ContainingClassKey=Foo] constructor(): R|ReplSealedClass_repl.Foo| {
+                super<Base>()
+            }
+
+        }
+
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSealedClass_repl, ReplSnippetTopLevelDeclaration=true] object Bar : Base {
+            private [ContainingClassKey=Bar] constructor(): R|ReplSealedClass_repl.Bar| {
+                super<Base>()
+            }
+
+        }
+
+        public abstract [ContainingReplKey=FirReplSnippetSymbol ReplSealedClass_repl, ReplSnippetTopLevelDeclaration=true] class Baz : Base {
+            public? [ContainingClassKey=Baz] constructor(): R|ReplSealedClass_repl.Baz| {
+                super<Base>()
+            }
+
+        }
+
+    }
