@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.library.writer.includeBitcode
 import org.jetbrains.kotlin.konan.library.writer.includeNativeIncludedBinaries
 import org.jetbrains.kotlin.konan.library.writer.legacyNativeDependenciesInManifest
 import org.jetbrains.kotlin.konan.library.writer.legacyNativeShortNameInManifest
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_HEADER
 import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
@@ -70,7 +71,26 @@ fun PhaseContext.writeKlib(input: KlibWriterInput, klibOutputFileName: String, s
     }
 
     val nativeTargetsForManifest = config.nativeTargetsForManifest?.map { it.visibleName }
-        ?: if (this.config.metadataKlib) emptyList() else listOf(target.visibleName)
+        ?: if (this.config.metadataKlib) {
+            // There previously was a workaround in KGP: KGP passed the custom manifest file through `-manifest` CLI
+            // parameter to every Kotlin/Native metadata compilation. The manifest file had the empty list of
+            // Kotlin/Native targets in the `native_targets` property. As a result, the generated KLIB had no limitations
+            // on targets where it can be used.
+            //
+            // This workaround has been removed in commits aceb4f32dc90e560fb43287c3b38ab40e5f9ca8d and
+            // 30d8efaf80e9439259b30fe45e2001eac6957c8f. Still, it is possible to set up a configuration when
+            // an older version of KGP is used together with a recent (2.4.+) version of the compiler.
+            // In such a configuration there is still a custom manifest file with the `native_targets` property
+            // passed to the compiler. But it is forbidden now due to the restrictions that we have in `KlibWriter`:
+            // certain sensitive properties such as `native_targets` cannot be set through a custom manifest.
+            //
+            // To work this around, we remove the `native_targets` property from the custom manifest file if it is empty.
+            if (manifestProperties.getProperty(KLIB_PROPERTY_NATIVE_TARGETS)?.isBlank() == true) {
+                manifestProperties -= KLIB_PROPERTY_NATIVE_TARGETS
+            }
+
+            emptyList()
+        } else listOf(target.visibleName)
 
     KlibWriter {
         format(if (nopack) KlibFormat.Directory else KlibFormat.ZipArchive)
