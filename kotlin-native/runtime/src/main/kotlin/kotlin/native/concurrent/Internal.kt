@@ -2,7 +2,7 @@
  * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(ExperimentalForeignApi::class)
+@file:OptIn(ExperimentalForeignApi::class, ExperimentalNativeApi::class)
 package kotlin.native.concurrent
 
 import kotlin.experimental.ExperimentalNativeApi
@@ -12,6 +12,7 @@ import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.native.internal.*
 import kotlin.native.internal.ref.*
+import kotlin.native.NoInline
 
 // Implementation details.
 
@@ -44,6 +45,7 @@ external internal fun versionToken(): Int
 @PublishedApi
 @ExportForCompiler
 @ObsoleteWorkersApi
+@NoInline
 internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any?,
                          job: CPointer<CFunction<*>>): Future<Any?> {
     val jobArgument = createRetainedExternalRCRef(producer())
