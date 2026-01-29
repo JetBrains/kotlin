@@ -49,6 +49,31 @@ internal class AnnotationsCollectorFieldVisitor(
     }
 }
 
+internal class AnnotationsCollectorRecordComponentVisitor(
+    private val recordComponent: BinaryJavaRecordComponent,
+    private val context: ClassifierResolutionContext,
+    private val signatureParser: BinaryClassSignatureParser,
+) : RecordComponentVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
+    override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor =
+        BinaryJavaAnnotation.addAnnotation(recordComponent, desc, context, signatureParser)
+
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String?, visible: Boolean): AnnotationVisitor? {
+        if (descriptor == null) return null
+
+        val typeReference = TypeReference(typeRef)
+        val targetType = if (typePath != null) computeTargetType(recordComponent.type, typePath) else recordComponent.type
+
+        if (targetType !is MutableJavaAnnotationOwner) return null
+
+        return when (typeReference.sort) {
+            TypeReference.METHOD_FORMAL_PARAMETER -> BinaryJavaAnnotation.addAnnotation(
+                targetType, descriptor, context, signatureParser, isFreshlySupportedAnnotation = true
+            )
+            else -> null
+        }
+    }
+}
+
 internal class AnnotationsAndParameterCollectorMethodVisitor(
     private val member: BinaryJavaMethodBase,
     private val context: ClassifierResolutionContext,
