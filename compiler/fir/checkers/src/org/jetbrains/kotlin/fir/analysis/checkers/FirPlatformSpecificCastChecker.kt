@@ -7,41 +7,29 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCastOperatorsChecker
+import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 abstract class FirPlatformSpecificCastChecker : FirSessionComponent {
-    abstract fun shouldSuppressImpossibleCast(
-        session: FirSession,
+    context(context: CheckerContext)
+    abstract fun runApplicabilityCheck(
+        expression: FirTypeOperatorCall,
         fromType: ConeKotlinType,
         toType: ConeKotlinType,
-        generalApplicabilityChecker: TypeOperationApplicabilityChecker,
-    ): Boolean
-
-    abstract fun shouldSuppressImpossibleIsCheck(
-        session: FirSession,
-        fromType: ConeKotlinType,
-        toType: ConeKotlinType,
-        generalApplicabilityChecker: TypeOperationApplicabilityChecker,
-    ): Boolean
+        checker: FirCastOperatorsChecker,
+    ): FirCastOperatorsChecker.Applicability
 
     object Default : FirPlatformSpecificCastChecker() {
-        override fun shouldSuppressImpossibleCast(
-            session: FirSession,
+        context(context: CheckerContext)
+        override fun runApplicabilityCheck(
+            expression: FirTypeOperatorCall,
             fromType: ConeKotlinType,
             toType: ConeKotlinType,
-            generalApplicabilityChecker: TypeOperationApplicabilityChecker
-        ): Boolean {
-            return false
-        }
-
-        override fun shouldSuppressImpossibleIsCheck(
-            session: FirSession,
-            fromType: ConeKotlinType,
-            toType: ConeKotlinType,
-            generalApplicabilityChecker: TypeOperationApplicabilityChecker
-        ): Boolean {
-            return false
-        }
+            checker: FirCastOperatorsChecker,
+        ): FirCastOperatorsChecker.Applicability =
+            checker.checkGeneralApplicability(expression, fromType.toTypeInfo(context.session), toType.toTypeInfo(context.session))
     }
 }
 

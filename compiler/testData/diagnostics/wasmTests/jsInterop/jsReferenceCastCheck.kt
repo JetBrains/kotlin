@@ -12,15 +12,15 @@ val c = C(1)
 
 fun testTypeOperations(obj: JsReference<C>) {
     val allowed = listOf(
-        obj as C,
-        obj as? C,
-        obj as Any,
-        obj as? Any,
+        { obj as C },
+        { obj as? C },
+        { obj as Any },
+        { obj as? Any },
     )
 
     val reported = listOf(
-        obj <!CAST_NEVER_SUCCEEDS!>as<!> String,
-        obj <!CAST_NEVER_SUCCEEDS!>as?<!> String,
+        { obj <!CAST_NEVER_SUCCEEDS!>as<!> String },
+        { obj <!CAST_NEVER_SUCCEEDS!>as?<!> String },
     )
 }
 
@@ -29,25 +29,25 @@ fun testTypeOperationsWithIntersection(obj: JsReference<C>) {
     // here obj becomes "C & JsReference<C>" for checks
 
     val allowed = listOf(
-        obj as C,
-        obj as? C,
-        obj as Any,
-        obj as? Any,
+        { obj as C },
+        { obj as? C },
+        { obj as Any },
+        { obj as? Any },
     )
 
     val reported = listOf(
-        obj <!CAST_NEVER_SUCCEEDS!>as<!> String,
-        obj <!CAST_NEVER_SUCCEEDS!>as?<!> String,
+        { obj <!CAST_NEVER_SUCCEEDS!>as<!> String },
+        { obj <!CAST_NEVER_SUCCEEDS!>as?<!> String },
     )
 }
 
 fun testTypeOperations(obj: JsReference<*>) {
     val allowed = listOf(
-        obj as String,
-        obj as? String,
-        obj as C,
-        obj as? C,
-        obj as Any,
-        obj as? Any,
+        { obj as String },
+        { obj as? String },
+        { obj as C },
+        { obj as? C },
+        { obj as Any },
+        { obj as? Any },
     )
 }

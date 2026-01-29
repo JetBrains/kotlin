@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirEqualityCompatibilityChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirEqualityCompatibilityChecker.Applicability
 import org.jetbrains.kotlin.fir.analysis.checkers.toTypeInfo
-import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.JsStandardClassIds
@@ -53,13 +52,13 @@ object FirWasmJsEqualityChecker : FirPlatformSpecificEqualityChecker() {
 
     context(context: CheckerContext)
     override fun runApplicabilityCheck(
-        expression: FirEqualityOperatorCall,
+        equalityOperation: FirOperation,
         leftType: ConeKotlinType,
         rightType: ConeKotlinType,
         checker: FirEqualityCompatibilityChecker,
     ): Applicability = minApplicabilityAmongJsTypesComponents(leftType) { leftType ->
         minApplicabilityAmongJsTypesComponents(rightType) { rightType ->
-            runCheckForIntersectionComponents(expression.operation, leftType, rightType, checker)
+            runCheckForIntersectionComponents(equalityOperation, leftType, rightType, checker)
         }
     }
 

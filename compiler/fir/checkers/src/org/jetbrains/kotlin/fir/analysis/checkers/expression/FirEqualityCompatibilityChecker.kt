@@ -35,7 +35,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         checkSenselessness(l.smartCastType, r.smartCastType, expression)
 
         context.session.firPlatformSpecificEqualityChecker.runApplicabilityCheck(
-            expression,
+            expression.operation,
             l.originalType,
             r.originalType,
             this
@@ -63,7 +63,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         }
 
         context.session.firPlatformSpecificEqualityChecker.runApplicabilityCheck(
-            expression,
+            expression.operation,
             l.smartCastType,
             r.smartCastType,
             this
@@ -76,6 +76,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         }
     }
 
+    // checks applicability with no platform-specific rules
     context(context: CheckerContext)
     fun checkApplicability(operation: FirOperation, l: TypeInfo, r: TypeInfo): Applicability = when (operation) {
         FirOperation.EQ, FirOperation.NOT_EQ -> { checkEqualityApplicability(l, r) }
