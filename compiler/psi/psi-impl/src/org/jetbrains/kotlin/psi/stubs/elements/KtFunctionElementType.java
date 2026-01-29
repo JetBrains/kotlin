@@ -13,6 +13,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
@@ -21,8 +22,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.kotlin.psi.stubs.StubUtils;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin;
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean;
 
 import java.io.IOException;
+import java.util.List;
 
 public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubImpl, KtNamedFunction> {
 
@@ -52,6 +55,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
                 (StubElement<?>) parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
                 isExtension, hasNoExpressionBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
                 psi.mayHaveContract(),
+                /* kdocText = */ null,
                 /* contract = */ null,
                 /* origin = */ null
         );
@@ -76,6 +80,8 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
             StubUtils.writeContract$psi_impl(dataStream, stub.getContract());
         }
 
+        StubUtils.serializeKdocText$psi_impl(dataStream, stub.getKdocText());
+
         KotlinStubOrigin.serialize(stub.getOrigin(), dataStream);
     }
 
@@ -93,10 +99,16 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
         boolean hasBody = dataStream.readBoolean();
         boolean hasTypeParameterListBeforeFunctionName = dataStream.readBoolean();
         boolean mayHaveContract = dataStream.readBoolean();
+
+        @SuppressWarnings("rawtypes")
+        List<KtContractDescriptionElement> contract = mayHaveContract ? StubUtils.readContract$psi_impl(dataStream) : null;
+
+        String kdocText = StubUtils.deserializeKdocText$psi_impl(dataStream);
         return new KotlinFunctionStubImpl(
                 (StubElement<?>) parentStub, name, isTopLevel, fqName, isExtension, hasNoExpressionBody, hasBody,
                 hasTypeParameterListBeforeFunctionName, mayHaveContract,
-                mayHaveContract ? StubUtils.readContract$psi_impl(dataStream) : null,
+                kdocText,
+                contract,
                 KotlinStubOrigin.deserialize(dataStream)
         );
     }

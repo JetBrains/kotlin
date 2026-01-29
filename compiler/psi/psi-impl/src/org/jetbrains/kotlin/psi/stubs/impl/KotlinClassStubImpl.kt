@@ -26,6 +26,7 @@ class KotlinClassStubImpl(
     override val isClsStubCompiledToJvmDefaultImplementation: Boolean,
     override val isLocal: Boolean,
     override val isTopLevel: Boolean,
+    override val kdocText: String?,
     val valueClassRepresentation: KotlinValueClassRepresentation?,
 ) : KotlinStubBaseImpl<KtClass>(
     parent = parent,
@@ -51,5 +52,6 @@ class KotlinClassStubImpl(
         isLocal = isLocal,
         isTopLevel = isTopLevel,
         valueClassRepresentation = valueClassRepresentation,
+        kdocText = kdocText,
     )
 }

@@ -21,6 +21,7 @@ class KotlinSecondaryConstructorStubImpl(
     override val isDelegatedCallToThis: Boolean,
     override val isExplicitDelegationCall: Boolean,
     override val mayHaveContract: Boolean,
+    override val kdocText: String?,
 ) : KotlinStubBaseImpl<KtSecondaryConstructor>(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR),
     KotlinConstructorStub<KtSecondaryConstructor> {
     override val fqName: FqName? get() = null
@@ -40,5 +41,6 @@ class KotlinSecondaryConstructorStubImpl(
         isDelegatedCallToThis = isDelegatedCallToThis,
         isExplicitDelegationCall = isExplicitDelegationCall,
         mayHaveContract = mayHaveContract,
+        kdocText = kdocText,
     )
 }

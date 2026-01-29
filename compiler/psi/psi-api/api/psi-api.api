@@ -4021,6 +4021,7 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinBlockString
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase : org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName {
+	public abstract fun getKdocText ()Ljava/lang/String;
 	public abstract fun isExtension ()Z
 	public abstract fun isTopLevel ()Z
 }
@@ -4029,6 +4030,7 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinClassLitera
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinClassOrObjectStub : org/jetbrains/kotlin/psi/stubs/KotlinClassifierStub, org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName {
+	public abstract fun getKdocText ()Ljava/lang/String;
 	public abstract fun getSuperNames ()Ljava/util/List;
 	public fun isLocal ()Z
 	public abstract fun isTopLevel ()Z

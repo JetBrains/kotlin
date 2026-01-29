@@ -66,6 +66,14 @@ interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub<T>
     val isLocal: Boolean get() = classId == null
     val superNames: List<String>
     val isTopLevel: Boolean
+
+    /**
+     * Raw KDoc text, if available.
+     *
+     * Currently, KDoc is only available for decompiled declaration.
+     * For source ones one can read the KDoc content from the PSI directly.
+     */
+    val kdocText: String?
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -228,6 +236,14 @@ interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
 interface KotlinCallableStubBase<TDeclaration : KtCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
     val isTopLevel: Boolean
     val isExtension: Boolean
+
+    /**
+     * Raw KDoc text, if available.
+     *
+     * Currently, KDoc is only available for decompiled declaration.
+     * For source ones one can read the KDoc content from the PSI directly.
+     */
+    val kdocText: String?
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)

@@ -29,6 +29,7 @@ class KotlinPropertyStubImpl(
     val constantInitializer: ConstantValue<*>?,
     val origin: KotlinStubOrigin?,
     override val hasBackingField: Boolean?,
+    override val kdocText: String?,
 ) : KotlinStubBaseImpl<KtProperty>(parent, KtStubElementTypes.PROPERTY), KotlinPropertyStub {
 
     init {
@@ -57,5 +58,6 @@ class KotlinPropertyStubImpl(
         constantInitializer = constantInitializer,
         origin = origin,
         hasBackingField = hasBackingField,
+        kdocText = kdocText,
     )
 }

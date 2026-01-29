@@ -17,6 +17,14 @@ import java.lang.reflect.Method
 
 val STUB_TO_STRING_PREFIX = "KotlinStub$"
 
+private val IGNORED_NULL_VALUES: Map<Class<out StubElement<*>>, Set<String>> = buildMap {
+    put(KotlinFunctionStub::class.java, setOf(KotlinCallableStubBase<*>::kdocText.name))
+    put(KotlinPropertyStub::class.java, setOf(KotlinCallableStubBase<*>::kdocText.name))
+    put(KotlinConstructorStub::class.java, setOf(KotlinCallableStubBase<*>::kdocText.name))
+    put(KotlinClassStub::class.java, setOf(KotlinClassOrObjectStub<*>::kdocText.name))
+    put(KotlinObjectStub::class.java, setOf(KotlinClassOrObjectStub<*>::kdocText.name))
+}
+
 @OptIn(KtImplementationDetail::class)
 abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) :
     StubBase<T>(parent, elementType), KotlinStubElement<T> {
@@ -42,7 +50,9 @@ abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<
     }
 
     private fun renderPropertyValues(stubInterface: Class<out Any?>): List<String> {
-        return collectProperties(stubInterface).mapNotNull { property -> renderProperty(property) }.sorted()
+        return collectProperties(stubInterface)
+            .mapNotNull { property -> renderProperty(stubInterface, property) }
+            .sorted()
     }
 
     private fun collectProperties(stubInterface: Class<*>): Collection<Method> = buildList {
@@ -54,10 +64,18 @@ abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<
         }
     }
 
-    private fun renderProperty(property: Method): String? {
+    private fun renderProperty(stubInterface: Class<*>, property: Method): String? {
         return try {
             val value = property.invoke(this)
             val name = getPropertyName(property)
+
+            if (value == null) {
+                val ignoredNamesForClass = IGNORED_NULL_VALUES[stubInterface].orEmpty()
+                if (name in ignoredNamesForClass) {
+                    return null
+                }
+            }
+
             "$name=$value"
         } catch (e: Exception) {
             LOGGER.error(e)

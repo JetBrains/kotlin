@@ -266,6 +266,7 @@ private class FunctionClsStubBuilder(
             hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
             hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty(),
             mayHaveContract = hasContract,
+            kdocText = null,
             runIf(hasContract) {
                 ClsContractBuilder(c, typeStubBuilder).loadContract(
                     contractOwner = ClsContractOwner.Function(functionProto),
@@ -351,6 +352,7 @@ private class PropertyClsStubBuilder(
             initializer,
             origin = createStubOrigin(protoContainer),
             hasBackingField = propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature)?.hasField(),
+            kdocText = null,
         )
     }
 
@@ -637,11 +639,13 @@ private class ConstructorClsStubBuilder(
                 isDelegatedCallToThis = false,
                 isExplicitDelegationCall = false,
                 mayHaveContract = false, // constructors don't have contracts in the metadata yet
+                kdocText = null,
             )
         else
             KotlinPrimaryConstructorStubImpl(
                 parent = parent,
                 containingClassName = name,
+                kdocText = null,
             )
     }
 }
