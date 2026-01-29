@@ -40,7 +40,9 @@ class FirConstantEvaluationTransformerAdapter(session: FirSession) : FirTransfor
 
 class FirConstantEvaluationBodyResolveTransformer(private val session: FirSession) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
-        return element
+        //return element
+        @Suppress("UNCHECKED_CAST")
+        return (element.transformChildren(this, data) as E)
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): FirFile {
@@ -51,9 +53,13 @@ class FirConstantEvaluationBodyResolveTransformer(private val session: FirSessio
         return script.transformDeclarations(this, data)
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
-        return regularClass.transformDeclarations(this, data)
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): FirStatement {
+        if (valueParameter.containingDeclarationSymbol.isAnnotationConstructor(session)) {
+            valueParameter.evaluatedInitializer = FirExpressionEvaluator.evaluateParameterDefaultValue(valueParameter, session)
+        }
+        return valueParameter
     }
+
 
     override fun transformProperty(property: FirProperty, data: Nothing?): FirStatement {
         property.evaluatedInitializer = FirExpressionEvaluator.evaluatePropertyInitializer(property, session)
