@@ -229,6 +229,9 @@ private class ExtTestDataFile(
         testDataFileSettings.returnValueCheckerMode?.let {
             args += "-Xreturn-value-checker=${it.state}"
         }
+        val fileCheckStage = retrieveFileCheckStage()
+        if (fileCheckStage != null && !args.any { it.startsWith("-Xbinary=preCodegenInlineThreshold=") })
+            args.add("-Xbinary=preCodegenInlineThreshold=0")
         return TestCompilerArgs(args, freeCInteropArgs, testDataFileSettings.assertionsMode)
     }
 
