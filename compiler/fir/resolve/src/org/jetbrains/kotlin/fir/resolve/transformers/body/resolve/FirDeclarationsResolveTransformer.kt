@@ -1215,6 +1215,10 @@ open class FirDeclarationsResolveTransformer(
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
         }
 
+        if (result.containingDeclarationSymbol.isAnnotationConstructor(session)) {
+            result.evaluatedInitializer = FirExpressionEvaluator.evaluateParameterDefaultValue(result, session)
+        }
+
         return result
     }
 
