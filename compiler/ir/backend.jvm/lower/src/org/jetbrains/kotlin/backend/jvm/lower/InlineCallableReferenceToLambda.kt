@@ -72,14 +72,18 @@ class JvmInlineCallableReferenceToLambdaPhase(
         if (declaration.isInlineParameter()) {
             when (val defaultExpression = declaration.defaultValue?.expression) {
                 is IrCallableReference<*> -> { defaultExpression.origin = JvmLoweredStatementOrigin.DEFAULT_VALUE_OF_INLINABLE_PARAMETER }
-                is IrBlock if defaultExpression.origin.isReferenceAdapter -> defaultExpression.apply {
-                    val reference = statements.last() as IrFunctionReference
-                    reference.origin = JvmLoweredStatementOrigin.DEFAULT_VALUE_OF_INLINABLE_PARAMETER
-                }
+                is IrBlock if (defaultExpression.origin.isReferenceAdapter || defaultExpression.isSuspendLambdaBlock) ->
+                    defaultExpression.apply {
+                        val reference = statements.last() as IrFunctionReference
+                        reference.origin = JvmLoweredStatementOrigin.DEFAULT_VALUE_OF_INLINABLE_PARAMETER
+                    }
             }
         }
         return super.visitValueParameter(declaration, data)
     }
+
+    private val IrBlock.isSuspendLambdaBlock: Boolean
+        get() = origin.isLambda && (statements.last() as? IrFunctionReference)?.isSuspend == true
 
     protected fun IrExpression.transformToLambda(scope: IrDeclarationParent?) = when {
         this is IrBlock && origin.isInlinable -> apply {
