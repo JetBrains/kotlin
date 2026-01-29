@@ -96,7 +96,7 @@ object Numeric : TemplateGroupBase() {
         doc { "Returns the product of all elements in the ${f.collection}." }
         returns(p.sumType().name)
 
-        sinceAtLeast("2.4")
+        //sinceAtLeast("2.4")
         specialFor(ArraysOfUnsigned) {
             inlineOnly()
 

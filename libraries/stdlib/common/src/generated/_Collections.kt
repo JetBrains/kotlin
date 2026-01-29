@@ -2814,6 +2814,77 @@ public inline fun <T, C : Iterable<T>> C.onEachIndexed(action: (index: Int, T) -
 }
 
 /**
+ * Returns the product of all values produced by [selector] function applied to each element in the collection.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable<T>.productOf(selector: (T) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the collection.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable<T>.productOf(selector: (T) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the collection.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable<T>.productOf(selector: (T) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the collection.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable<T>.productOf(selector: (T) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the collection.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable<T>.productOf(selector: (T) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
  * Accumulates value starting with the first element and applying [operation] from left to right
  * to current accumulator value and each element.
  * 
@@ -3772,7 +3843,6 @@ public fun Iterable<Double>.average(): Double {
  * Returns the product of all elements in the collection.
  */
 @kotlin.jvm.JvmName("productOfByte")
-@SinceKotlin("2.4")
 public fun Iterable<Byte>.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -3785,7 +3855,6 @@ public fun Iterable<Byte>.product(): Int {
  * Returns the product of all elements in the collection.
  */
 @kotlin.jvm.JvmName("productOfShort")
-@SinceKotlin("2.4")
 public fun Iterable<Short>.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -3798,7 +3867,6 @@ public fun Iterable<Short>.product(): Int {
  * Returns the product of all elements in the collection.
  */
 @kotlin.jvm.JvmName("productOfInt")
-@SinceKotlin("2.4")
 public fun Iterable<Int>.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -3811,7 +3879,6 @@ public fun Iterable<Int>.product(): Int {
  * Returns the product of all elements in the collection.
  */
 @kotlin.jvm.JvmName("productOfLong")
-@SinceKotlin("2.4")
 public fun Iterable<Long>.product(): Long {
     var product: Long = 1L
     for (element in this) {
@@ -3824,7 +3891,6 @@ public fun Iterable<Long>.product(): Long {
  * Returns the product of all elements in the collection.
  */
 @kotlin.jvm.JvmName("productOfFloat")
-@SinceKotlin("2.4")
 public fun Iterable<Float>.product(): Float {
     var product: Float = 1.0f
     for (element in this) {
@@ -3837,7 +3903,6 @@ public fun Iterable<Float>.product(): Float {
  * Returns the product of all elements in the collection.
  */
 @kotlin.jvm.JvmName("productOfDouble")
-@SinceKotlin("2.4")
 public fun Iterable<Double>.product(): Double {
     var product: Double = 1.0
     for (element in this) {

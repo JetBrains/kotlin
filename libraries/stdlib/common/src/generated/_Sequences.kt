@@ -2326,6 +2326,87 @@ public fun <T> Sequence<T>.onEachIndexed(action: (index: Int, T) -> Unit): Seque
 }
 
 /**
+ * Returns the product of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.productOf(selector: (T) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.productOf(selector: (T) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.productOf(selector: (T) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.productOf(selector: (T) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.productOf(selector: (T) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
  * Accumulates value starting with the first element and applying [operation] from left to right
  * to current accumulator value and each element.
  * 
@@ -3161,7 +3242,6 @@ public fun Sequence<Double>.average(): Double {
  * The operation is _terminal_.
  */
 @kotlin.jvm.JvmName("productOfByte")
-@SinceKotlin("2.4")
 public fun Sequence<Byte>.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -3176,7 +3256,6 @@ public fun Sequence<Byte>.product(): Int {
  * The operation is _terminal_.
  */
 @kotlin.jvm.JvmName("productOfShort")
-@SinceKotlin("2.4")
 public fun Sequence<Short>.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -3191,7 +3270,6 @@ public fun Sequence<Short>.product(): Int {
  * The operation is _terminal_.
  */
 @kotlin.jvm.JvmName("productOfInt")
-@SinceKotlin("2.4")
 public fun Sequence<Int>.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -3206,7 +3284,6 @@ public fun Sequence<Int>.product(): Int {
  * The operation is _terminal_.
  */
 @kotlin.jvm.JvmName("productOfLong")
-@SinceKotlin("2.4")
 public fun Sequence<Long>.product(): Long {
     var product: Long = 1L
     for (element in this) {
@@ -3221,7 +3298,6 @@ public fun Sequence<Long>.product(): Long {
  * The operation is _terminal_.
  */
 @kotlin.jvm.JvmName("productOfFloat")
-@SinceKotlin("2.4")
 public fun Sequence<Float>.product(): Float {
     var product: Float = 1.0f
     for (element in this) {
@@ -3236,7 +3312,6 @@ public fun Sequence<Float>.product(): Float {
  * The operation is _terminal_.
  */
 @kotlin.jvm.JvmName("productOfDouble")
-@SinceKotlin("2.4")
 public fun Sequence<Double>.product(): Double {
     var product: Double = 1.0
     for (element in this) {

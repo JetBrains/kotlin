@@ -20499,6 +20499,645 @@ public inline fun CharArray.onEachIndexed(action: (index: Int, Char) -> Unit): C
 }
 
 /**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.productOf(selector: (T) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.productOf(selector: (Byte) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.productOf(selector: (Short) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun IntArray.productOf(selector: (Int) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun LongArray.productOf(selector: (Long) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.productOf(selector: (Float) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.productOf(selector: (Double) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.productOf(selector: (Boolean) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun CharArray.productOf(selector: (Char) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.productOf(selector: (T) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.productOf(selector: (Byte) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.productOf(selector: (Short) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun IntArray.productOf(selector: (Int) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun LongArray.productOf(selector: (Long) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.productOf(selector: (Float) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.productOf(selector: (Double) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.productOf(selector: (Boolean) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun CharArray.productOf(selector: (Char) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.productOf(selector: (T) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.productOf(selector: (Byte) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.productOf(selector: (Short) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun IntArray.productOf(selector: (Int) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun LongArray.productOf(selector: (Long) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.productOf(selector: (Float) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.productOf(selector: (Double) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.productOf(selector: (Boolean) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun CharArray.productOf(selector: (Char) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.productOf(selector: (T) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.productOf(selector: (Byte) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.productOf(selector: (Short) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun IntArray.productOf(selector: (Int) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun LongArray.productOf(selector: (Long) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.productOf(selector: (Float) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.productOf(selector: (Double) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.productOf(selector: (Boolean) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun CharArray.productOf(selector: (Char) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.productOf(selector: (T) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.productOf(selector: (Byte) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.productOf(selector: (Short) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun IntArray.productOf(selector: (Int) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun LongArray.productOf(selector: (Long) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.productOf(selector: (Float) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.productOf(selector: (Double) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.productOf(selector: (Boolean) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun CharArray.productOf(selector: (Char) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
  * Accumulates value starting with the first element and applying [operation] from left to right
  * to current accumulator value and each element.
  * 
@@ -25733,7 +26372,6 @@ public fun DoubleArray.average(): Double {
  * Returns the product of all elements in the array.
  */
 @kotlin.jvm.JvmName("productOfByte")
-@SinceKotlin("2.4")
 public fun Array<out Byte>.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -25746,7 +26384,6 @@ public fun Array<out Byte>.product(): Int {
  * Returns the product of all elements in the array.
  */
 @kotlin.jvm.JvmName("productOfShort")
-@SinceKotlin("2.4")
 public fun Array<out Short>.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -25759,7 +26396,6 @@ public fun Array<out Short>.product(): Int {
  * Returns the product of all elements in the array.
  */
 @kotlin.jvm.JvmName("productOfInt")
-@SinceKotlin("2.4")
 public fun Array<out Int>.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -25772,7 +26408,6 @@ public fun Array<out Int>.product(): Int {
  * Returns the product of all elements in the array.
  */
 @kotlin.jvm.JvmName("productOfLong")
-@SinceKotlin("2.4")
 public fun Array<out Long>.product(): Long {
     var product: Long = 1L
     for (element in this) {
@@ -25785,7 +26420,6 @@ public fun Array<out Long>.product(): Long {
  * Returns the product of all elements in the array.
  */
 @kotlin.jvm.JvmName("productOfFloat")
-@SinceKotlin("2.4")
 public fun Array<out Float>.product(): Float {
     var product: Float = 1.0f
     for (element in this) {
@@ -25798,7 +26432,6 @@ public fun Array<out Float>.product(): Float {
  * Returns the product of all elements in the array.
  */
 @kotlin.jvm.JvmName("productOfDouble")
-@SinceKotlin("2.4")
 public fun Array<out Double>.product(): Double {
     var product: Double = 1.0
     for (element in this) {
@@ -25810,7 +26443,6 @@ public fun Array<out Double>.product(): Double {
 /**
  * Returns the product of all elements in the array.
  */
-@SinceKotlin("2.4")
 public fun ByteArray.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -25822,7 +26454,6 @@ public fun ByteArray.product(): Int {
 /**
  * Returns the product of all elements in the array.
  */
-@SinceKotlin("2.4")
 public fun ShortArray.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -25834,7 +26465,6 @@ public fun ShortArray.product(): Int {
 /**
  * Returns the product of all elements in the array.
  */
-@SinceKotlin("2.4")
 public fun IntArray.product(): Int {
     var product: Int = 1
     for (element in this) {
@@ -25846,7 +26476,6 @@ public fun IntArray.product(): Int {
 /**
  * Returns the product of all elements in the array.
  */
-@SinceKotlin("2.4")
 public fun LongArray.product(): Long {
     var product: Long = 1L
     for (element in this) {
@@ -25858,7 +26487,6 @@ public fun LongArray.product(): Long {
 /**
  * Returns the product of all elements in the array.
  */
-@SinceKotlin("2.4")
 public fun FloatArray.product(): Float {
     var product: Float = 1.0f
     for (element in this) {
@@ -25870,7 +26498,6 @@ public fun FloatArray.product(): Float {
 /**
  * Returns the product of all elements in the array.
  */
-@SinceKotlin("2.4")
 public fun DoubleArray.product(): Double {
     var product: Double = 1.0
     for (element in this) {

@@ -1895,6 +1895,77 @@ public inline fun <S : CharSequence> S.onEachIndexed(action: (index: Int, Char) 
 }
 
 /**
+ * Returns the product of all values produced by [selector] function applied to each character in the char sequence.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.productOf(selector: (Char) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each character in the char sequence.
+ */
+@kotlin.jvm.JvmName("productOfInt")
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.productOf(selector: (Char) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each character in the char sequence.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfLong")
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.productOf(selector: (Char) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each character in the char sequence.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.productOf(selector: (Char) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each character in the char sequence.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfULong")
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.productOf(selector: (Char) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
  * Accumulates value starting with the first character and applying [operation] from left to right
  * to current accumulator value and each character.
  * 

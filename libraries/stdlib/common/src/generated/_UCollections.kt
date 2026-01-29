@@ -75,7 +75,6 @@ public fun Collection<UShort>.toUShortArray(): UShortArray {
  * Returns the product of all elements in the collection.
  */
 @kotlin.jvm.JvmName("productOfUInt")
-@SinceKotlin("2.4")
 public fun Iterable<UInt>.product(): UInt {
     var product: UInt = 1u
     for (element in this) {
@@ -88,7 +87,6 @@ public fun Iterable<UInt>.product(): UInt {
  * Returns the product of all elements in the collection.
  */
 @kotlin.jvm.JvmName("productOfULong")
-@SinceKotlin("2.4")
 public fun Iterable<ULong>.product(): ULong {
     var product: ULong = 1uL
     for (element in this) {
@@ -101,7 +99,6 @@ public fun Iterable<ULong>.product(): ULong {
  * Returns the product of all elements in the collection.
  */
 @kotlin.jvm.JvmName("productOfUByte")
-@SinceKotlin("2.4")
 public fun Iterable<UByte>.product(): UInt {
     var product: UInt = 1u
     for (element in this) {
@@ -114,7 +111,6 @@ public fun Iterable<UByte>.product(): UInt {
  * Returns the product of all elements in the collection.
  */
 @kotlin.jvm.JvmName("productOfUShort")
-@SinceKotlin("2.4")
 public fun Iterable<UShort>.product(): UInt {
     var product: UInt = 1u
     for (element in this) {
