@@ -5,19 +5,28 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.COMPILER_PLUGINS
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Dependency
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.FileDependency
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.TestKotlinLogger
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
+import kotlin.io.path.copyToRecursively
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
 import kotlin.reflect.KClass
 
 class ScriptingTest : BaseCompilationTest() {
@@ -73,6 +82,33 @@ class ScriptingTest : BaseCompilationTest() {
                 assertOutputs("Test.class")
             }
         }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Smoke test of custom script extension discovery")
+    fun smokeTestCustomScriptExtensionDiscovery(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        assumeTrue(
+            strategyConfig.second is ExecutionPolicy.InProcess,
+            "DiscoverScriptExtensionsOperation only supports in-process execution"
+        )
+
+        // prepare directory structure with class and template marker
+        dependencyOnThisClasspath.location.copyToRecursively(workingDirectory, followLinks = false, overwrite = false)
+        workingDirectory.resolve("META-INF/kotlin/script/templates").apply {
+            createDirectories()
+            resolve(GreetScriptTemplate::class.qualifiedName!!).createFile()
+        }
+
+        val toolchain = strategyConfig.first
+        val operation =
+            toolchain.jvm.discoverScriptExtensionsOperationBuilder(listOf(workingDirectory)).build()
+        val result = toolchain.createBuildSession().use { session ->
+            session.executeOperation(
+                operation, strategyConfig.second,
+                TestKotlinLogger()
+            )
+        }
+        Assertions.assertEquals(listOf("greet.kts"), result)
     }
 
     private val dependencyOnThisClasspath: Dependency

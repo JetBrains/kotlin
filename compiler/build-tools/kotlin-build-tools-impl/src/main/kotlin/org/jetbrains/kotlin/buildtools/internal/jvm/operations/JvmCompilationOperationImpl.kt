@@ -106,7 +106,6 @@ internal class JvmCompilationOperationImpl private constructor(
 
     private operator fun <V> get(key: Option<V>): V = options[key]
 
-    @OptIn(UseFromImplModuleRestricted::class)
     private operator fun <V> set(key: Option<V>, value: V) {
         options[key] = value
     }
