@@ -138,14 +138,11 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
     @TestMetadata("metadata_compilation_with_manifest_addendum_empty_native_targets")
     fun `Manifest of metadata compilation with manifest addendum with empty native targets`(testInfo: TestInfo) {
         val addendum = generateManifestAddendum("foo=foo", "bar=bar", "baz=baz", "native_targets=")
-        val exception = assertThrows<CompilationToolException> {
-            doManifestTest(
-                testInfo,
-                "-Xmetadata-klib",
-                "-manifest=$addendum"
-            )
-        }
-        assertTrue { "Custom properties [native_targets] are not allowed to be added" in exception.reason }
+        doManifestTest(
+            testInfo,
+            "-Xmetadata-klib",
+            "-manifest=$addendum"
+        )
     }
 
     @Test
