@@ -20,7 +20,6 @@ val kotlinNativeEmbeddedClasspath = configurations.resolvable("kotlinNativeEmbed
 }
 
 val kotlinNativeSources by configurations.creating {
-    isVisible = false
     isCanBeConsumed = false
     isCanBeResolved = true
 
@@ -31,7 +30,6 @@ val kotlinNativeSources by configurations.creating {
 }
 
 val kotlinNativeJavadoc by configurations.creating {
-    isVisible = false
     isCanBeConsumed = false
     isCanBeResolved = true
 
