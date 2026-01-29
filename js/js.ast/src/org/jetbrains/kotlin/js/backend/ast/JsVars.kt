@@ -66,15 +66,15 @@ class JsVars : SourceInfoAwareJsNode, JsStatement, Iterable<JsVars.JsVar> {
      * A single variable-value binding.
      */
     class JsVar(
-        private var name: JsName,
+        var assignable: JsAssignable,
         var initExpression: JsExpression? = null
     ) : SourceInfoAwareJsNode(), HasName {
-        override fun getName(): JsName {
-            return this.name
-        }
+        constructor(name: JsName, initExpression: JsExpression? = null) : this(JsAssignable.Named(name), initExpression)
 
-        override fun setName(name: JsName) {
-            this.name = name
+        override fun getName() = (assignable as? HasName)?.name
+
+        override fun setName(name: JsName?) {
+            (assignable as? HasName)?.name = name
         }
 
         override fun accept(v: JsVisitor) {
@@ -82,22 +82,22 @@ class JsVars : SourceInfoAwareJsNode, JsStatement, Iterable<JsVars.JsVar> {
         }
 
         override fun acceptChildren(visitor: JsVisitor) {
-            initExpression?.let { visitor.accept(it) }
+            visitor.accept(assignable)
+            visitor.accept(initExpression)
         }
 
         override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
             if (v.visit(this, ctx)) {
-                initExpression?.let {
-                    initExpression = v.accept(it)
-                }
+                assignable = v.accept(assignable)
+                initExpression = v.accept(initExpression)
             }
             v.endVisit(this, ctx)
         }
 
         override fun deepCopy(): JsVar {
-            if (initExpression == null) return JsVar(name)
+            if (initExpression == null) return JsVar(assignable)
 
-            return JsVar(this.name, initExpression?.deepCopy()).withMetadataFrom(this)
+            return JsVar(assignable.deepCopy(), initExpression?.deepCopy()).withMetadataFrom(this)
         }
     }
 

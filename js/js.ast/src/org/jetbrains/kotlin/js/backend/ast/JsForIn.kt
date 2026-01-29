@@ -4,11 +4,9 @@
 
 package org.jetbrains.kotlin.js.backend.ast
 
-import org.jetbrains.kotlin.js.util.AstUtil
-
 class JsForIn(
     bindingVarVariant: JsVars.Variant?,
-    bindingVarName: JsName?,
+    private val bindingVarName: JsAssignable.Named?,
     bindingExpression: JsExpression?,
     iterableExpression: JsExpression,
     body: JsStatement,
@@ -18,10 +16,12 @@ class JsForIn(
     }
 
     override fun deepCopy(): JsStatement {
-        val bindingExprCopy = AstUtil.deepCopy(bindingExpression)
-        val iterableExprCopy = AstUtil.deepCopy(iterableExpression) ?: error("Non-nullable iterable expected")
-        val bodyCopy = AstUtil.deepCopy(body) ?: error("Non-nullable body expected")
-
-        return JsForIn(bindingVarVariant, bindingVarName, bindingExprCopy, iterableExprCopy, bodyCopy).withMetadataFrom(this)
+        return JsForIn(
+            bindingVarVariant,
+            bindingVarName,
+            bindingExpression?.deepCopy(),
+            iterableExpression.deepCopy(),
+            body.deepCopy()
+        ).withMetadataFrom(this)
     }
 }

@@ -810,6 +810,90 @@ public interface JavaScriptParserListener extends ParseTreeListener {
 	 */
 	void exitPropertyShorthand(JavaScriptParser.PropertyShorthandContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link JavaScriptParser#objectBindingPattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterObjectBindingPattern(JavaScriptParser.ObjectBindingPatternContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaScriptParser#objectBindingPattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitObjectBindingPattern(JavaScriptParser.ObjectBindingPatternContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code RegularPropertyBindingPattern}
+	 * labeled alternative in {@link JavaScriptParser#propertyBindingPattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterRegularPropertyBindingPattern(JavaScriptParser.RegularPropertyBindingPatternContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code RegularPropertyBindingPattern}
+	 * labeled alternative in {@link JavaScriptParser#propertyBindingPattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitRegularPropertyBindingPattern(JavaScriptParser.RegularPropertyBindingPatternContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code NamedPropertyBindingPattern}
+	 * labeled alternative in {@link JavaScriptParser#propertyBindingPattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterNamedPropertyBindingPattern(JavaScriptParser.NamedPropertyBindingPatternContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code NamedPropertyBindingPattern}
+	 * labeled alternative in {@link JavaScriptParser#propertyBindingPattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitNamedPropertyBindingPattern(JavaScriptParser.NamedPropertyBindingPatternContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaScriptParser#arrayBindingPattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayBindingPattern(JavaScriptParser.ArrayBindingPatternContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaScriptParser#arrayBindingPattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayBindingPattern(JavaScriptParser.ArrayBindingPatternContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaScriptParser#arrayItemList}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayItemList(JavaScriptParser.ArrayItemListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaScriptParser#arrayItemList}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayItemList(JavaScriptParser.ArrayItemListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaScriptParser#arrayItemBinding}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayItemBinding(JavaScriptParser.ArrayItemBindingContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaScriptParser#arrayItemBinding}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayItemBinding(JavaScriptParser.ArrayItemBindingContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaScriptParser#bindingElement}.
+	 * @param ctx the parse tree
+	 */
+	void enterBindingElement(JavaScriptParser.BindingElementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaScriptParser#bindingElement}.
+	 * @param ctx the parse tree
+	 */
+	void exitBindingElement(JavaScriptParser.BindingElementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaScriptParser#restBindingElement}.
+	 * @param ctx the parse tree
+	 */
+	void enterRestBindingElement(JavaScriptParser.RestBindingElementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaScriptParser#restBindingElement}.
+	 * @param ctx the parse tree
+	 */
+	void exitRestBindingElement(JavaScriptParser.RestBindingElementContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaScriptParser#propertyName}.
 	 * @param ctx the parse tree
 	 */

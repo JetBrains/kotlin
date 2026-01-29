@@ -251,6 +251,38 @@ public abstract class JsVisitorWithContext {
         endVisit((JsLoop) x, ctx);
     }
 
+    public void endVisit(@NotNull JsAssignable x, @NotNull JsContext ctx) {
+    }
+
+    public void endVisit(@NotNull JsAssignable.Named x, @NotNull JsContext ctx) {
+        endVisit((JsAssignable) x, ctx);
+    }
+
+    public void endVisit(@NotNull JsAssignable.ArrayPattern x, @NotNull JsContext ctx) {
+        endVisit((JsAssignable) x, ctx);
+    }
+
+    public void endVisit(@NotNull JsAssignable.ObjectPattern x, @NotNull JsContext ctx) {
+        endVisit((JsAssignable) x, ctx);
+    }
+
+    public void endVisit(@NotNull JsBindingProperty x, @NotNull JsContext ctx) {
+    }
+
+    public void endVisit(@NotNull JsBindingElement x, @NotNull JsContext ctx) {
+    }
+
+    public void endVisit(@NotNull JsBindingArrayItem x, @NotNull JsContext ctx) {
+    }
+
+    public void endVisit(@NotNull JsBindingArrayItem.Element x, @NotNull JsContext ctx) {
+        endVisit((JsBindingArrayItem) x, ctx);
+    }
+
+    public void endVisit(@NotNull JsBindingArrayItem.Hole x, @NotNull JsContext ctx) {
+        endVisit((JsBindingArrayItem) x, ctx);
+    }
+
     public boolean visit(@NotNull JsArrayAccess x, @NotNull JsContext ctx) {
         return true;
     }
@@ -484,6 +516,42 @@ public abstract class JsVisitorWithContext {
 
     public boolean visit(@NotNull JsSpread x, @NotNull JsContext ctx) {
         return true;
+    }
+
+    public boolean visit(@NotNull JsAssignable x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsAssignable.Named x, @NotNull JsContext ctx) {
+        return visit((JsAssignable) x, ctx);
+    }
+
+    public boolean visit(@NotNull JsAssignable.ArrayPattern x, @NotNull JsContext ctx) {
+        return visit((JsAssignable) x, ctx);
+    }
+
+    public boolean visit(@NotNull JsAssignable.ObjectPattern x, @NotNull JsContext ctx) {
+        return visit((JsAssignable) x, ctx);
+    }
+
+    public boolean visit(@NotNull JsBindingProperty x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsBindingElement x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsBindingArrayItem x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsBindingArrayItem.Element x, @NotNull JsContext ctx) {
+        return visit((JsBindingArrayItem) x, ctx);
+    }
+
+    public boolean visit(@NotNull JsBindingArrayItem.Hole x, @NotNull JsContext ctx) {
+        return visit((JsBindingArrayItem) x, ctx);
     }
 
     protected abstract  <T extends JsNode> T doAccept(T node);

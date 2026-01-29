@@ -299,7 +299,7 @@ private class JsIrAstSerializer {
                 writeByte(StatementIds.TRY)
                 writeBlock(x.tryBlock)
                 writeCollection(x.catches) { c ->
-                    writeInt(internalizeName(c.parameter.name))
+                    writeExpression(c.parameter.assignable)
                     writeBlock(c.body)
                 }
                 ifNotNull(x.finallyBlock) { writeBlock(it) }
@@ -588,6 +588,35 @@ private class JsIrAstSerializer {
                 writeByte(ExpressionIds.SPREAD)
                 writeExpression(spread.expression)
             }
+
+            override fun visitNamedAssignable(assignable: JsAssignable.Named) {
+                writeByte(ExpressionIds.ASSIGNABLE_NAMED)
+                writeInt(internalizeName(assignable.name))
+            }
+
+            override fun visitArrayPatternAssignable(pattern: JsAssignable.ArrayPattern) {
+                writeByte(ExpressionIds.ASSIGNABLE_ARRAY_PATTERN)
+                writeCollection(pattern.elements) {
+                    when (it) {
+                        is JsBindingArrayItem.Element -> {
+                            writeByte(ArrayPatternItemKinds.ARRAY_PATTERN_ELEMENT)
+                            writeBindingElement(it.element)
+                        }
+                        is JsBindingArrayItem.Hole ->
+                            writeByte(ArrayPatternItemKinds.ARRAY_PATTERN_HOLE)
+                    }
+                }
+            }
+
+            override fun visitObjectPatternAssignable(pattern: JsAssignable.ObjectPattern) {
+                writeByte(ExpressionIds.ASSIGNABLE_OBJECT_PATTERN)
+                writeCollection(pattern.properties) {
+                    ifNotNull(it.propertyName) { name ->
+                        writeExpression(name)
+                    }
+                    writeBindingElement(it.element)
+                }
+            }
         }
 
         withComments(expression) {
@@ -611,8 +640,8 @@ private class JsIrAstSerializer {
         ifNotNull(x.bindingVarVariant) {
             writeInt(it.ordinal)
         }
-        ifNotNull(x.bindingVarName) {
-            writeInt(internalizeName(it))
+        ifNotNull(x.bindingAssignable) {
+            writeExpression(it)
         }
         ifNotNull(x.bindingExpression) { writeExpression(it) }
         writeExpression(x.iterableExpression)
@@ -634,7 +663,7 @@ private class JsIrAstSerializer {
     }
 
     private fun DataWriter.writeParameter(parameter: JsParameter) {
-        writeInt(internalizeName(parameter.name))
+        writeExpression(parameter.assignable)
         ifNotNull(parameter.defaultValue) {
             writeExpression(it)
         }
@@ -656,11 +685,17 @@ private class JsIrAstSerializer {
         writeBoolean(vars.isMultiline)
         writeCollection(vars.vars) { varDecl ->
             withLocation(varDecl) {
-                writeInt(internalizeName(varDecl.name))
+                writeExpression(varDecl.assignable)
                 ifNotNull(varDecl.initExpression) { writeExpression(it) }
             }
         }
         ifNotNull(vars.exportedPackage) { writeInt(internalizeString(it)) }
+    }
+
+    private fun DataWriter.writeBindingElement(bindingElement: JsBindingElement) {
+        writeExpression(bindingElement.target)
+        ifNotNull(bindingElement.defaultValue) { writeExpression(it) }
+        writeBoolean(bindingElement.isSpread)
     }
 
     private fun internalizeName(name: JsName): Int = nameMap.getOrPut(name) {

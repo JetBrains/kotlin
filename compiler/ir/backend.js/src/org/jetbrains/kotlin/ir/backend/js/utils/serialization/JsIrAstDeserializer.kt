@@ -219,7 +219,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         FOR_IN -> {
                             JsForIn(
                                 ifTrue { jsVarVariants[readInt()] },
-                                ifTrue { nameTable[readInt()] },
+                                ifTrue { readExpression() as JsAssignable.Named },
                                 ifTrue { readExpression() },
                                 readExpression(),
                                 readStatement()
@@ -228,7 +228,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         FOR_OF -> {
                             JsForOf(
                                 ifTrue { jsVarVariants[readInt()] },
-                                ifTrue { nameTable[readInt()] },
+                                ifTrue { readExpression() as JsAssignable },
                                 ifTrue { readExpression() },
                                 readExpression(),
                                 readStatement()
@@ -238,7 +238,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                             JsTry(
                                 readBlock(),
                                 readList {
-                                    JsCatch(nameTable[readInt()]).apply {
+                                    JsCatch(readExpression() as JsAssignable).apply {
                                         body = readBlock()
                                     }
                                 },
@@ -446,6 +446,23 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         SPREAD -> {
                             JsSpread(readExpression())
                         }
+                        ASSIGNABLE_NAMED -> {
+                            JsAssignable.Named(nameTable[readInt()])
+                        }
+                        ASSIGNABLE_ARRAY_PATTERN -> {
+                            JsAssignable.ArrayPattern(readList {
+                                when (val id = readByte().toInt()) {
+                                    ArrayPatternItemKinds.ARRAY_PATTERN_ELEMENT -> JsBindingArrayItem.Element(readBindingElement())
+                                    ArrayPatternItemKinds.ARRAY_PATTERN_HOLE -> JsBindingArrayItem.Hole()
+                                    else -> error("Unknown array pattern element id: $id")
+                                }
+                            })
+                        }
+                        ASSIGNABLE_OBJECT_PATTERN -> {
+                            JsAssignable.ObjectPattern(readList {
+                                JsBindingProperty(ifTrue { readExpression() }, readBindingElement())
+                            })
+                        }
                         else -> error("Unknown expression id: $id")
                     }
                 }
@@ -477,7 +494,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
     }
 
     private fun readParameter(): JsParameter {
-        return JsParameter(nameTable[readInt()], ifTrue { readExpression() }, readBoolean()).apply {
+        return JsParameter(readExpression() as JsAssignable, ifTrue { readExpression() }, readBoolean()).apply {
             hasDefaultValue = readBoolean()
         }
     }
@@ -499,11 +516,19 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         return JsVars(variant, readBoolean()).apply {
             readRepeated {
                 vars += withLocation {
-                    JsVars.JsVar(nameTable[readInt()], ifTrue { readExpression() })
+                    JsVars.JsVar(readExpression() as JsAssignable, ifTrue { readExpression() })
                 }
             }
             ifTrue { exportedPackage = stringTable[readInt()] }
         }
+    }
+
+    private fun readBindingElement(): JsBindingElement {
+        return JsBindingElement(
+            readExpression() as JsAssignable,
+            ifTrue { readExpression() },
+            readBoolean()
+        )
     }
 
     private val specialFunctionValues get() = SpecialFunction.entries

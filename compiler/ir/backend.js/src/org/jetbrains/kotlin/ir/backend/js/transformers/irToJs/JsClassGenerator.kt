@@ -73,26 +73,26 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun JsCompositeBlock.wrapInFunction(): JsStatement {
-        val classHolder = JsVar(JsName("${className.ident}Class", true))
+        val classHolderName = JsAssignable.Named(JsName("${className.ident}Class", true))
         val functionWrapper = JsFunction(emptyScope, JsBlock(), "lazy wrapper for classes in per-file").apply {
             name = className
             with(body.statements) {
                 add(
                     JsIf(
-                        JsAstUtils.equality(classHolder.name.makeRef(), jsUndefined),
+                        JsAstUtils.equality(classHolderName.name.makeRef(), jsUndefined),
                         JsBlock(
                             classModel.preDeclarationBlock.statements + statements + classModel.postDeclarationBlock.statements +
-                                    JsAstUtils.assignment(classHolder.name.makeRef(), classNameRef).makeStmt()
+                                    JsAstUtils.assignment(classHolderName.name.makeRef(), classNameRef).makeStmt()
                         )
                     )
                 )
-                add(JsReturn(classHolder.name.makeRef()))
+                add(JsReturn(classHolderName.name.makeRef()))
             }
         }
 
         return JsCompositeBlock(
             interfaceDefaultsBlock.statements + listOf(
-                JsVars(JsVars.Variant.Var, classHolder),
+                JsVars(JsVars.Variant.Var, JsVar(classHolderName)),
                 functionWrapper.makeStmt()
             )
         ).also {

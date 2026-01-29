@@ -362,6 +362,40 @@ propertyAssignment
     | identifierName                                                     # PropertyShorthand
     ;
 
+objectBindingPattern
+    : '{' '}'
+    | '{' restBindingElement ','? '}'
+    | '{' propertyBindingPattern (',' propertyBindingPattern)* (',' restBindingElement)? ','? '}'
+    ;
+
+propertyBindingPattern
+    : identifierName initializer?                                        # RegularPropertyBindingPattern
+    | propertyName ':' bindingElement                                    # NamedPropertyBindingPattern
+    ;
+
+arrayBindingPattern
+    : '[' ']'
+    | '[' restBindingElement ','? ']'
+    | '[' arrayItemList (',' restBindingElement)? ','?']'
+    ;
+
+arrayItemList
+    : bindingElement (',' arrayItemBinding)*               // starts with an element
+    | ',' arrayItemBinding (',' arrayItemBinding)*         // starts with a hole (consumes a comma)
+    ;
+
+arrayItemBinding
+    : bindingElement? // Nullable because of the array pattern holes we need to preserve during parsing
+    ;
+
+bindingElement
+    : assignable initializer?
+    ;
+
+restBindingElement
+    : Ellipsis identifierName
+    ;
+
 propertyName
     : identifierName
     | StringLiteral
@@ -449,8 +483,8 @@ initializer
 assignable
     : identifier
     | keyword
-    | arrayLiteral
-    | objectLiteral
+    | arrayBindingPattern
+    | objectBindingPattern
     ;
 
 objectLiteral

@@ -79,9 +79,17 @@ object ExpressionIds {
     const val TEMPLATE_ELEMENT_STRING = 28
     const val TEMPLATE_ELEMENT_INTERPOLATION = 29
     const val SPREAD = 30
+    const val ASSIGNABLE_NAMED = 31
+    const val ASSIGNABLE_ARRAY_PATTERN = 32
+    const val ASSIGNABLE_OBJECT_PATTERN = 33
 }
 
 object PropertyInitializerKinds {
     const val KEY_VALUE = 0
     const val SPREAD = 1
+}
+
+object ArrayPatternItemKinds {
+    const val ARRAY_PATTERN_ELEMENT = 0
+    const val ARRAY_PATTERN_HOLE = 1
 }

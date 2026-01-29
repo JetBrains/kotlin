@@ -5,24 +5,24 @@
 
 package org.jetbrains.kotlin.js.backend.ast
 
-import org.jetbrains.kotlin.js.util.AstUtil
-
 class JsForOf(
     bindingVarVariant: JsVars.Variant?,
-    bindingVarName: JsName?,
+    bindingAssignable: JsAssignable?,
     bindingExpression: JsExpression?,
     iterableExpression: JsExpression,
     body: JsStatement,
-) : JsIterableLoop(bindingVarVariant, bindingVarName, bindingExpression, iterableExpression, body) {
+) : JsIterableLoop(bindingVarVariant, bindingAssignable, bindingExpression, iterableExpression, body) {
     override fun accept(visitor: JsVisitor) {
         visitor.visitForOf(this)
     }
 
     override fun deepCopy(): JsStatement {
-        val bindingExprCopy = AstUtil.deepCopy(bindingExpression)
-        val iterableExprCopy = AstUtil.deepCopy(iterableExpression) ?: error("Non-nullable iterable expected")
-        val bodyCopy = AstUtil.deepCopy(body) ?: error("Non-nullable body expected")
-
-        return JsForOf(bindingVarVariant, bindingVarName, bindingExprCopy, iterableExprCopy, bodyCopy).withMetadataFrom(this)
+        return JsForOf(
+            bindingVarVariant,
+            bindingAssignable?.deepCopy(),
+            bindingExpression?.deepCopy(),
+            iterableExpression.deepCopy(),
+            body.deepCopy()
+        ).withMetadataFrom(this)
     }
 }

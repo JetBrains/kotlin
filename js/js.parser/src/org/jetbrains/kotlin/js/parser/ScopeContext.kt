@@ -38,8 +38,8 @@ class ScopeContext(scope: JsScope) {
         exitScope()
     }
 
-    fun enterCatch(ident: String): JsCatch {
-        val jsCatch = JsCatch(currentScope, ident)
+    fun enterCatch(assignable: JsAssignable): JsCatch {
+        val jsCatch = JsCatch(currentScope, assignable)
         enterScope(jsCatch.scope)
         return jsCatch
     }
