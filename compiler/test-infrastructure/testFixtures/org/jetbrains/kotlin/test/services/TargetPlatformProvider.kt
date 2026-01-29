@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.model.TestModule
  * It allows configuring how the target platform is determined for a module based on default settings, directives and module name
  */
 abstract class TargetPlatformProvider : TestService {
+    // TODO(KT-83996): Drop the `allowMultiplatform` parameter and use `!module.isLeafModuleInHmppStructure()` in the implementation instead
     abstract fun getTargetPlatform(module: TestModule, allowMultiplatform: Boolean = false): TargetPlatform
 }
 
