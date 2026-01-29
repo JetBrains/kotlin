@@ -198,11 +198,11 @@ class BinaryJavaClass(
 
         val type = signatureParser.parseTypeString(StringCharacterIterator(signature ?: desc), context)
         val processedValue = processValue(value, type)
-        val filed = BinaryJavaField(Name.identifier(name), access, this, access.isSet(Opcodes.ACC_ENUM), type, processedValue)
+        val field = BinaryJavaField(Name.identifier(name), access, this, access.isSet(Opcodes.ACC_ENUM), type, processedValue)
 
-        fields.add(filed)
+        fields.add(field)
 
-        return AnnotationsCollectorFieldVisitor(filed, context, signatureParser)
+        return AnnotationsCollectorFieldVisitor(field, context, signatureParser)
     }
 
 
