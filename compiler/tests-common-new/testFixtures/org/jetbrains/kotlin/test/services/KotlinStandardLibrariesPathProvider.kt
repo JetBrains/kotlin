@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_REFLE
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_SCRIPT_RUNTIME_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_TEST_JAR_PATH
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_WEB_STDLIB_KLIB_PATH
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
@@ -107,6 +108,8 @@ interface KotlinStandardLibrariesPathProvider : TestService {
      * kotlin-test-js.jar
      */
     fun kotlinTestJsKLib(): File
+
+    fun webStdlibForTests(): File
 
     /**
      * kotlin-stdlib-common.klib
@@ -249,6 +252,8 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
 
     override fun commonStdlibForTests(): File = extractFromPropertyFirst(KOTLIN_COMMON_STDLIB_PATH) { "kotlin-stdlib-common.klib".distCommon() }
 
+    override fun webStdlibForTests(): File = extractFromPropertyFirst(KOTLIN_WEB_STDLIB_KLIB_PATH) { "kotlin-stdlib-web.klib".distCommon() }
+
     private inline fun extractFromPropertyFirst(prop: String, onMissingProperty: () -> String): File {
         val path = System.getProperty(prop, null) ?: onMissingProperty()
         assert(File(path).exists()) { "$path not found; property: $prop" }
@@ -310,6 +315,7 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     override fun defaultJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
     override fun kotlinTestJsKLib(): File = getFile(KOTLIN_TEST_JS_PROP)
     override fun commonStdlibForTests(): File = getFile(KOTLIN_COMMON_STDLIB_PATH)
+    override fun webStdlibForTests(): File = TODO("Not implemented")
     override fun scriptingPluginFilesForTests(): Collection<File> {
         TODO("KT-67573")
     }
