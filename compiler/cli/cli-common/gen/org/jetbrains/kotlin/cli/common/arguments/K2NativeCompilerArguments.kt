@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
+import org.jetbrains.kotlin.config.LanguageFeature
 
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/NativeCompilerArguments.kt
@@ -220,6 +221,7 @@ The default value is 1.""",
         value = "-Xexport-kdoc",
         description = "Export KDoc entries in the framework header.",
     )
+    @Enables(LanguageFeature.ExportKDocDocumentationToKlib)
     var exportKDoc: Boolean = false
         set(value) {
             checkFrozen()

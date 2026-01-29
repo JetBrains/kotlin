@@ -55,7 +55,6 @@ object KonanConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.bac
     val OUTPUT by key<String>()
     val OVERRIDE_CLANG_OPTIONS by key<List<String>>()
     val ALLOCATION_MODE by key<AllocationMode>()
-    val EXPORT_KDOC by key<Boolean>("Export KDoc into klib and framework.")
     val PRINT_BITCODE by key<Boolean>()
     val PRINT_IR by key<Boolean>()
     val PRINT_FILES by key<Boolean>()

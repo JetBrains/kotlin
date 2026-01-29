@@ -121,7 +121,6 @@ private fun runJsKlibCallCheckers(
         configuration,
         firOutputs,
         fir2IrActualizedResult,
-        exportKDoc = false,
         produceHeaderKlib = false,
     )
     val cleanFiles = configuration.incrementalDataProvider?.getSerializedData(fir2KlibMetadataSerializer.sourceFiles).orEmpty()

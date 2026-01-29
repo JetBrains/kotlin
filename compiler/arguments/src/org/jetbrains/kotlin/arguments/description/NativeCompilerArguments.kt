@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
+import org.jetbrains.kotlin.cli.common.arguments.Enables
+import org.jetbrains.kotlin.config.LanguageFeature
 
 val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.nativeArguments) {
     compilerArgument {
@@ -594,6 +596,7 @@ The default value is 1.""".asReleaseDependent()
         compilerName = "exportKDoc"
         description = "Export KDoc entries in the framework header.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        additionalAnnotations(Enables(LanguageFeature.ExportKDocDocumentationToKlib))
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,

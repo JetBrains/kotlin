@@ -77,7 +77,6 @@ object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, Js
                 moduleStructure.compilerConfiguration,
                 frontendOutput.outputs,
                 fir2IrResult,
-                exportKDoc = false,
                 produceHeaderKlib = false,
             )
         }

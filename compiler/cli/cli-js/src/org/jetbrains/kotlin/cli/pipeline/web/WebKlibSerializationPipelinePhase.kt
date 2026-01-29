@@ -34,7 +34,6 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             moduleStructure.compilerConfiguration,
             firOutputs = firResult.outputs,
             fir2IrActualizedResult = fir2IrResult,
-            exportKDoc = false,
             produceHeaderKlib = false,
         )
         val icData =

@@ -158,10 +158,6 @@ object KonanConfigKeys {
     @JvmField
     val ALLOCATION_MODE = CompilerConfigurationKey.create<AllocationMode>("ALLOCATION_MODE")
 
-    // Export KDoc into klib and framework.
-    @JvmField
-    val EXPORT_KDOC = CompilerConfigurationKey.create<Boolean>("EXPORT_KDOC")
-
     @JvmField
     val PRINT_BITCODE = CompilerConfigurationKey.create<Boolean>("PRINT_BITCODE")
 
@@ -447,10 +443,6 @@ var CompilerConfiguration.overrideClangOptions: List<String>
 var CompilerConfiguration.allocationMode: AllocationMode?
     get() = get(KonanConfigKeys.ALLOCATION_MODE)
     set(value) { put(KonanConfigKeys.ALLOCATION_MODE, requireNotNull(value) { "nullable values are not allowed" }) }
-
-var CompilerConfiguration.exportKdoc: Boolean
-    get() = getBoolean(KonanConfigKeys.EXPORT_KDOC)
-    set(value) { put(KonanConfigKeys.EXPORT_KDOC, value) }
 
 var CompilerConfiguration.printBitcode: Boolean
     get() = getBoolean(KonanConfigKeys.PRINT_BITCODE)

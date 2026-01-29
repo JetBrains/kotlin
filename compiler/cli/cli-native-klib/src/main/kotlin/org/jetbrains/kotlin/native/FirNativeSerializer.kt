@@ -47,7 +47,8 @@ private fun PhaseContext.firSerializerBase(
 
     val irModuleFragment = fir2IrOutput?.fir2irActualizedResult?.irModuleFragment
     val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
-    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
+    val languageVersionSettings = configuration.languageVersionSettings
+    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), languageVersionSettings)
     val serializerOutput = serializeModuleIntoKlib(
             moduleName = irModuleFragment?.name?.asString() ?: firResult.outputs.last().session.moduleData.name.asString(),
             irModuleFragment = irModuleFragment,
@@ -57,7 +58,6 @@ private fun PhaseContext.firSerializerBase(
                 configuration,
                 firResult.outputs,
                 fir2IrOutput?.fir2irActualizedResult,
-                exportKDoc = config.configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC),
                 produceHeaderKlib = produceHeaderKlib,
             ),
             cleanFiles = emptyList(),
