@@ -1,6 +1,7 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlinx.dataframe.api.pathOf
 import org.jetbrains.kotlinx.dataframe.api.rename
 import org.jetbrains.kotlinx.dataframe.api.renameToCamelCase
 import org.jetbrains.kotlinx.dataframe.api.toCamelCase
@@ -60,7 +61,12 @@ class RenameMapping : AbstractSchemaModificationInterpreter() {
 
         val expectedColumns = object : ColumnsResolver {
             override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
-                return mappings.flatMap { stringApiColumnResolver(it.first, session.builtinTypes.nullableAnyType.coneType).resolve(df) }
+                return mappings.flatMap {
+                    stringApiColumnResolver(
+                        pathOf(it.first),
+                        session.builtinTypes.nullableAnyType.coneType
+                    ).resolve(df)
+                }
             }
         }
         return receiver.asDataFrame(impliedColumnsResolver = expectedColumns).rename(*mappings.toTypedArray()).toPluginDataFrameSchema()
