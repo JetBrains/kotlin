@@ -2196,7 +2196,7 @@ internal class CodeGeneratorVisitor(
                 }
             }
 
-            assert(value.type.isUnit())
+            require(value is IrInlinedFunctionBlock || value.type.isUnit())
             return codegen.theUnitInstanceRef.llvm
         }
     }
