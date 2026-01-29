@@ -80,6 +80,7 @@ abstract class PodBuildTask @Inject constructor(
         .matching {
             it.include("**/${pod.get().schemeName}.*/")
             it.include("**/${pod.get().schemeName}/")
+            it.exclude("XCBuildData/**")
         }
 
     @get:Internal
