@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
+import org.jetbrains.kotlin.backend.common.lower.inline.SignaturesComputationLowering
+import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -45,6 +47,15 @@ class FirWasmJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices
             outputName = outputFile.name.removeSuffix(".klib")
         }
 
+        val preSerializationLoweringContext = WasmPreSerializationLoweringContext(
+            irBuiltIns = inputArtifact.irBuiltIns,
+            configuration = configuration,
+            diagnosticReporter = irDiagnosticReporter
+        )
+        SignaturesComputationLowering(
+            preSerializationLoweringContext
+        ).lower(inputArtifact.irModuleFragment)
+
         serializeModuleIntoKlib(
             moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
             configuration = configuration,
@@ -58,6 +69,7 @@ class FirWasmJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices
             jsOutputName = null,
             builtInsPlatform = BuiltInsPlatform.WASM,
             wasmTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS),
+            declarationTable = preSerializationLoweringContext.declarationTable
         )
 
         return BinaryArtifacts.KLib(outputFile, diagnosticReporter)
