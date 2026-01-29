@@ -346,10 +346,6 @@ interface KotlinTargetWithGenericJsDsl {
      * Enables 'generic' as the execution environment for this target,
      * so the project can be used running JavaScript code in generic environments.
      *
-     * When enabled, Kotlin Gradle plugin will download and install
-     * the required environment and dependencies for running and testing
-     * using Node.js.
-     *
      * For more information, see https://kotl.in/kotlin-js-execution-environments
      *
      * @see KotlinJsGenericDsl
@@ -531,7 +527,7 @@ interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
 }
 
 /**
- * Generic execution environment options for Kotlin JS Wasm targets.
+ * Generic execution environment options for Kotlin JS targets.
  *
  * For more information about execution environments, see
  * https://kotl.in/kotlin-js-execution-environments
