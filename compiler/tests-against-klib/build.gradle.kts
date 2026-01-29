@@ -18,6 +18,7 @@ dependencies {
     testCompileOnly(libs.junit4)
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly(toolsJarApi())
 }
 
 sourceSets {
@@ -31,6 +32,7 @@ projectTests {
     // - compiler/testData/codegen/boxKlib/simple.kt
     testData(project(":compiler").isolated, "testData/codegen/boxKlib")
     testData(project(":compiler").isolated, "testData/codegen/jklib")
+    testData(project(":compiler").isolated, "testData/ir/irText")
 
     withJvmStdlibAndReflect()
 
@@ -44,20 +46,21 @@ val stdlibJvmIr by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
-
-val stdlibJs by configurations.creating {
+val kotlinReflect by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+val kotlinStdlibDependency by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
 
 val syncStdlib = tasks.register<Sync>("copyStdlib") {
     from(stdlibJvmIr)
-    from(stdlibJs)
     into(layout.buildDirectory.dir("stdlib-for-test"))
     rename { name ->
         when {
-            name.contains("js") && name.endsWith(".klib") -> "stdlib-js.klib"
-            !name.contains("js") && name.endsWith(".klib") -> "stdlib.klib"
+            name.endsWith(".klib") -> "stdlib.klib"
             name.endsWith(".jar") -> "stdlib.jar"
             else -> name
         }
@@ -65,10 +68,9 @@ val syncStdlib = tasks.register<Sync>("copyStdlib") {
 }
 
 dependencies {
-    //stdlibJvmIr(project(":kotlin-stdlib-jklib-for-test", configuration = "distJKlib"))
     stdlibJvmIr(project(":kotlin-stdlib-jklib-for-test", configuration = "distMinimalJKlib"))
-    
-    stdlibJs(project(":kotlin-stdlib", configuration = "distJsKlib"))
+    kotlinReflect(project(":kotlin-reflect")) { isTransitive = false }
+    add(kotlinStdlibDependency.name, kotlinStdlib()) { isTransitive = false }
     testRuntimeOnly(files(syncStdlib))
 }
 
@@ -77,16 +79,23 @@ tasks.named("generateTestsWriteClassPath") {
 }
 
 tasks.withType<Test>().configureEach {
-    // Register the task's output as an input. 
-    // This tells Gradle (and the security plugin) that we read these files.
     inputs.files(syncStdlib)
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .withPropertyName("stdlibArtifacts")
+    inputs.files(kotlinReflect)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("kotlinReflect")
+    inputs.files(kotlinStdlibDependency)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("kotlinStdlib")
 
     val stdlibDir = layout.buildDirectory.dir("stdlib-for-test")
+    val kotlinReflectFiles: FileCollection = kotlinReflect
+    val kotlinStdlibFiles: FileCollection = kotlinStdlibDependency
     doFirst {
-        //systemProperty("kotlin.stdlib.jvm.ir.klib", stdlibDir.get().file("stdlib-js.klib").asFile.absolutePath)
         systemProperty("kotlin.stdlib.jvm.ir.klib", stdlibDir.get().file("stdlib.klib").asFile.absolutePath)
         systemProperty("kotlin.stdlib.jvm.ir.jar", stdlibDir.get().file("stdlib.jar").asFile.absolutePath)
+        systemProperty("kotlin.reflect.jar", kotlinReflectFiles.singleFile.absolutePath)
+        systemProperty("kotlin.stdlib.jar", kotlinStdlibFiles.singleFile.absolutePath)
     }
 }
