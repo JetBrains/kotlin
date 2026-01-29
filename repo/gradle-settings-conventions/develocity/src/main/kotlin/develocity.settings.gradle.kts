@@ -4,15 +4,18 @@ plugins {
 }
 
 val buildProperties = settings.kotlinBuildProperties
-val buildScanServer = buildProperties.buildScanServer.orNull
 
-if (!buildScanServer.isNullOrEmpty()) {
+if (buildProperties.buildScanServer.isPresent) {
     plugins.apply("com.gradle.common-custom-user-data-gradle-plugin")
 }
 
 develocity {
-    server.set(buildProperties.buildScanServer)
+    val buildScanServer = buildProperties.buildScanServer
+    server.set(buildScanServer)
     buildScan {
+        publishing {
+            onlyIf { buildScanServer.isPresent }
+        }
         val isTeamcityBuild = buildProperties.isTeamcityBuild
         val overriddenUsername = buildProperties.stringProperty("kotlin.build.scan.username").map { it.trim() }
         val overriddenHostname = buildProperties.stringProperty("kotlin.build.scan.hostname").map { it.trim() }
