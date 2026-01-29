@@ -48,6 +48,22 @@ to only run a subset of groups.
 Excepting `swiftinterop` (see [the corresponding](swiftinterop/README.md) documentation),
 all the benchmarks are written using `kotlinx-benchmark`.
 
-## kotlinx-benchmark
+### kotlinx-benchmark
+
+See [the official documentation](https://github.com/Kotlin/kotlinx-benchmark/blob/master/docs/writing-benchmarks.md)
+on how to write benchmarks using `kotlinx-benchmark`.
+
+**NOTE**: there's an ongoing migration to `kotlinx-benchmark` from the previous custom solution; some of the existing
+benchmarks therefore don't follow best-practices:
+* in order to preserve existing names some benchmark suites (or packages, where benchmark suites are located) have a `HideName`
+  suffix. This is used during report postprocessing to remove a name component from the final name.
+  For example, `my.packageHideName.main.BenchmarkSuiteHideName.bench` will be named `my.main.bench`
+* `org.jetbrains.benchmarksLauncher.Random` from `benchmarksKotlinxAdapter` subproject is used instead of `Random` from stdlib.
+  Migration to stdlib `Random` should be considered, but the randomness should be kept reproducible
+* `org.jetbrains.benchmarksLauncher.Blackhole` from `benchmarksKotlinxAdapter` subproject is used instead of `Blackhole` from `kotlinx-benchmark`.
+  Migration should be done, but there are significant differences seriously affecting the benchmarks performance:
+  * `org.jetbrains.benchmarksLauncher.Blackhole` is a thread-local, while the other is passed as an argument to the benchmarks
+  * `org.jetbrains.benchmarksLauncher.Blackhole` has a single `consume(Any)` method, which forces boxing, while the other
+    has several overloads with primitive types
 
 **TODO**
