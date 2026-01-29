@@ -262,6 +262,18 @@ constructor(
         body(nodejs)
     }
 
+    private val genericLazyDelegate = lazy {
+        addSubTarget(KotlinGenericJsIr::class.java) {
+            configureSubTarget()
+        }
+    }
+
+    override val generic: KotlinJsGenericDsl by genericLazyDelegate
+
+    override fun generic(body: KotlinJsGenericDsl.() -> Unit) {
+        body(generic)
+    }
+
     //d8
     @OptIn(ExperimentalWasmDsl::class)
     private val d8LazyDelegate = lazy {
