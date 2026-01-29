@@ -860,7 +860,7 @@ class ClangFile(val cxFile: CXFile, val line: Int? = null, val column: Int? = nu
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        return other is ClangFile && (clang_File_isEqual(cxFile, other.cxFile) != 0) && this.offset == other.offset
+        return other is ClangFile && (clang_File_isEqual(cxFile, other.cxFile) != 0) // && this.offset == other.offset
     }
 
     override fun hashCode(): Int = cValue<CXFileUniqueID> {
