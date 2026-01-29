@@ -221,7 +221,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val jsCatch = aTry.catches.singleOrNull()?.let {
             val name = context.getNameForValueDeclaration(it.catchParameter)
             val jsCatchBlock = it.result.accept(this, context)
-            JsCatch(emptyScope, name.ident, jsCatchBlock).withSource(it, context)
+            JsCatch(emptyScope, JsAssignable.Named(name), jsCatchBlock).withSource(it, context)
         }
 
         val jsFinallyBlock = aTry.finallyExpression?.accept(this, context)?.asBlock()

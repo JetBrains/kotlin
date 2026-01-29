@@ -454,7 +454,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print(CHARS_CATCH);
         space();
         leftParen();
-        nameDef(x.getParameter().getName());
+        accept(x.getParameter().getAssignable());
 
         rightParen();
         space();
@@ -686,15 +686,15 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         space();
         leftParen();
 
-        JsName name = x.getBindingVarName();
+        JsAssignable assignable = x.getBindingAssignable();
         JsVars.Variant variant = x.getBindingVarVariant();
         JsExpression bindingExpression = x.getBindingExpression();
         JsExpression iterableExpression = x.getIterableExpression();
 
-        if (name != null && variant != null) {
+        if (assignable != null && variant != null) {
             varModifier(variant);
             space();
-            nameDef(name);
+            accept(assignable);
 
             if (bindingExpression != null) {
                 space();
@@ -1165,7 +1165,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             ellipsis();
         }
 
-        nameOf(x);
+        accept(x.getAssignable());
 
         JsExpression defaultValue = x.getDefaultValue();
         if (defaultValue != null) {
@@ -1385,7 +1385,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         pushSourceInfo(var.getSource());
         printCommentsBeforeNode(var);
 
-        nameOf(var);
+        accept(var.getAssignable());
         JsExpression initExpr = var.getInitExpression();
         if (initExpr != null) {
             space();
@@ -1608,6 +1608,82 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         p.print(javaScriptString(jsImport.getModule()));
+    }
+
+    @Override
+    public void visitNamedAssignable(@NotNull JsAssignable.Named assignable) {
+        nameDef(assignable.getName());
+    }
+
+    @Override
+    public void visitArrayPatternAssignable(@NotNull JsAssignable.ArrayPattern pattern) {
+        pushSourceInfo(pattern.getSource());
+        printCommentsBeforeNode(pattern);
+
+        p.print('[');
+
+        boolean notFirst = false;
+        for (JsBindingArrayItem item : pattern.getElements()) {
+            notFirst = sepCommaSpace(notFirst);
+
+            if (item instanceof JsBindingArrayItem.Hole) {
+                continue;
+            }
+
+            JsBindingElement element = ((JsBindingArrayItem.Element) item).getElement();
+            visitBindingElement(element);
+        }
+
+        p.print(']');
+
+        printCommentsAfterNode(pattern);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitObjectPatternAssignable(@NotNull JsAssignable.ObjectPattern pattern) {
+        pushSourceInfo(pattern.getSource());
+        printCommentsBeforeNode(pattern);
+
+        p.print('{');
+
+        boolean notFirst = false;
+        for (JsBindingProperty property : pattern.getProperties()) {
+            notFirst = sepCommaSpace(notFirst);
+
+            JsExpression propertyName = property.getPropertyName();
+            JsBindingElement element = property.getElement();
+
+            if (propertyName != null) {
+                propertyName.accept(this);
+                _colon();
+                space();
+            }
+
+            visitBindingElement(element);
+        }
+
+        p.print('}');
+
+        printCommentsAfterNode(pattern);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitBindingElement(@NotNull JsBindingElement element) {
+        if (element.isSpread()) {
+            ellipsis();
+        }
+
+        element.getTarget().accept(this);
+
+        JsExpression defaultValue = element.getDefaultValue();
+        if (defaultValue != null) {
+            space();
+            assignment();
+            space();
+            accept(defaultValue);
+        }
     }
 
     private void newline() {

@@ -37,7 +37,7 @@ sealed class JsPropertyInitializer : SourceInfoAwareJsNode() {
             return KeyValue(
                 labelExpr.deepCopy(),
                 valueExpr.deepCopy()
-            ).withMetadataFrom<KeyValue>(this)
+            ).withMetadataFrom(this)
         }
 
         override fun toString() = "$labelExpr: $valueExpr"
@@ -65,7 +65,7 @@ sealed class JsPropertyInitializer : SourceInfoAwareJsNode() {
         override fun deepCopy(): Spread {
             return Spread(
                 expression.deepCopy(),
-            ).withMetadataFrom<Spread>(this)
+            ).withMetadataFrom(this)
         }
 
         override fun toString() = "...$expression"

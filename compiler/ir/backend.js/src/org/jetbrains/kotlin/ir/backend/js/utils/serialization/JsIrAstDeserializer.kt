@@ -219,7 +219,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         FOR_IN -> {
                             JsForIn(
                                 ifTrue { jsVarVariants[readInt()] },
-                                ifTrue { nameTable[readInt()] },
+                                ifTrue { readAssignable() as JsAssignable.Named },
                                 ifTrue { readExpression() },
                                 readExpression(),
                                 readStatement()
@@ -228,7 +228,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         FOR_OF -> {
                             JsForOf(
                                 ifTrue { jsVarVariants[readInt()] },
-                                ifTrue { nameTable[readInt()] },
+                                ifTrue { readAssignable() },
                                 ifTrue { readExpression() },
                                 readExpression(),
                                 readStatement()
@@ -238,7 +238,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                             JsTry(
                                 readBlock(),
                                 readList {
-                                    JsCatch(nameTable[readInt()]).apply {
+                                    JsCatch(readAssignable()).apply {
                                         body = readBlock()
                                     }
                                 },
@@ -477,7 +477,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
     }
 
     private fun readParameter(): JsParameter {
-        return JsParameter(nameTable[readInt()], ifTrue { readExpression() }, readBoolean()).apply {
+        return JsParameter(readAssignable(), ifTrue { readExpression() }, readBoolean()).apply {
             hasDefaultValue = readBoolean()
         }
     }
@@ -499,11 +499,42 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         return JsVars(variant, readBoolean()).apply {
             readRepeated {
                 vars += withLocation {
-                    JsVars.JsVar(nameTable[readInt()], ifTrue { readExpression() })
+                    JsVars.JsVar(readAssignable(), ifTrue { readExpression() })
                 }
             }
             ifTrue { exportedPackage = stringTable[readInt()] }
         }
+    }
+
+    private fun readAssignable(): JsAssignable {
+        return when (val id = readByte().toInt()) {
+            AssignableIds.NAMED -> {
+                JsAssignable.Named(nameTable[readInt()])
+            }
+            AssignableIds.ARRAY_PATTERN -> {
+                JsAssignable.ArrayPattern(readList {
+                    when (val id = readByte().toInt()) {
+                        ArrayPatternItemKinds.ELEMENT -> JsBindingArrayItem.Element(readBindingElement())
+                        ArrayPatternItemKinds.HOLE -> JsBindingArrayItem.Hole()
+                        else -> error("Unknown array pattern element id: $id")
+                    }
+                })
+            }
+            AssignableIds.OBJECT_PATTERN -> {
+                JsAssignable.ObjectPattern(readList {
+                    JsBindingProperty(ifTrue { readExpression() }, readBindingElement())
+                })
+            }
+            else -> error("Unknown assignable id: $id")
+        }
+    }
+
+    private fun readBindingElement(): JsBindingElement {
+        return JsBindingElement(
+            readAssignable(),
+            ifTrue { readExpression() },
+            readBoolean()
+        )
     }
 
     private val specialFunctionValues get() = SpecialFunction.entries

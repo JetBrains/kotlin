@@ -351,15 +351,19 @@ class JsScopesCollector : RecursiveJsVisitor() {
     override fun visitVars(x: JsVars) {
         super.visitVars(x)
         val currentScope = functionsStack.last()
-        x.vars.forEach { currentScope.add(it.name.ident) }
+        x.vars.flatMap { it.assignable.names }.forEach { name ->
+            currentScope.add(name.ident)
+        }
     }
 
     override fun visitFunction(x: JsFunction) {
         val parentScope = functionsStack.last()
         val newScope = Scope(parentScope).apply {
-            val name = x.name?.ident
-            if (name != null) add(name)
-            x.parameters.forEach { add(it.name.ident) }
+            val funcName = x.name?.ident
+            if (funcName != null) add(funcName)
+            x.parameters.flatMap { it.assignable.names }.forEach { name ->
+                add(name.ident)
+            }
         }
         functionsStack.push(newScope)
         functionalScopes[x] = newScope

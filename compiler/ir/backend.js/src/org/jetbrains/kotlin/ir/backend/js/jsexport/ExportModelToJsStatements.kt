@@ -102,19 +102,21 @@ class ExportModelToJsStatements(
                 when {
                     namespace == null -> {
                         val property = declaration.generateTopLevelGetters()
+                        val name = property.name ?: error("Name is expected to bet set")
                         val exportStatement = if (declaration.attributes.contains(ExportedAttribute.DefaultExport)) {
-                            JsExport(JsExport.Subject.Default(property.name.makeRef()))
+                            JsExport(JsExport.Subject.Default(name.makeRef()))
                         } else {
-                            JsExport(property.name.makeRef(), JsName(declaration.name, false))
+                            JsExport(name.makeRef(), JsName(declaration.name, false))
                         }
 
                         listOf(JsVars(JsVars.Variant.Var, property), exportStatement)
                     }
                     declaration.isDefaultImplementation -> {
                         val property = declaration.generateTopLevelGetters()
+                        val propertyName = property.name ?: error("Name is expected to bet set")
                         listOf(
                             JsVars(JsVars.Variant.Var, property),
-                            jsAssignment(jsElementAccess(declaration.name, namespace), property.name.makeRef()).makeStmt()
+                            jsAssignment(jsElementAccess(declaration.name, namespace), propertyName.makeRef()).makeStmt()
                         )
                     }
                     else -> {
