@@ -720,7 +720,7 @@ internal class StringInvokeUntyped : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.receiver: String by arg()
 
     override fun Arguments.interpret(): ColumnsResolver {
-        return stringApiColumnResolver(name = receiver, session.builtinTypes.nullableAnyType.coneType)
+        return stringApiColumnResolver(path = pathOf(receiver), session.builtinTypes.nullableAnyType.coneType)
     }
 }
 
@@ -729,11 +729,38 @@ internal class StringInvokeTyped : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.typeArg0 by type()
 
     override fun Arguments.interpret(): ColumnsResolver {
-        return stringApiColumnResolver(name = receiver, typeArg0.coneType)
+        return stringApiColumnResolver(path = pathOf(receiver), typeArg0.coneType)
     }
 }
 
-fun Arguments.stringApiColumnResolver(name: String, type: ConeKotlinType): SingleColumnApproximation {
+internal class ColumnPathInvokeTyped : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: ColumnPath by arg()
+    val Arguments.typeArg0 by type()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return stringApiColumnResolver(receiver, typeArg0.coneType)
+    }
+}
+
+internal class StringGetColumn : AbstractInterpreter<ColumnPath>() {
+    val Arguments.receiver: String by arg()
+    val Arguments.column: String by arg()
+
+    override fun Arguments.interpret(): ColumnPath {
+        return pathOf(receiver, column)
+    }
+}
+
+internal class ColumnPathGetColumn : AbstractInterpreter<ColumnPath>() {
+    val Arguments.receiver: ColumnPath by arg()
+    val Arguments.column: String by arg()
+
+    override fun Arguments.interpret(): ColumnPath {
+        return receiver + column
+    }
+}
+
+fun Arguments.stringApiColumnResolver(path: ColumnPath, type: ConeKotlinType): SingleColumnApproximation {
     return object : ColumnsResolverAdapter(), SingleColumnApproximation {
         // we want to help users gradually introduce typed information to their dataframe
         // if they refer to a column by String API once, let's apply logic similar to smart cast and
@@ -741,23 +768,23 @@ fun Arguments.stringApiColumnResolver(name: String, type: ConeKotlinType): Singl
         // over time all callers of columns() and asDataFrame() should be migrated to correctly use impliedColumnsResolver
         override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
             val df = df.asDataFrame()
-            val col = df.getColumnOrNull(name)
-                ?.let { ColumnWithPathApproximation(pathOf(name), it.asSimpleColumn(), isImpliedColumn = false) }
-                ?: createImpliedColumn(name, type)
+            val col = df.getColumnOrNull(path)
+                ?.let { ColumnWithPathApproximation(path, it.asSimpleColumn(), isImpliedColumn = false) }
+                ?: createImpliedColumn(path, type)
             return listOf(col)
         }
 
-        private fun createImpliedColumn(name: String, type: ConeKotlinType): ColumnWithPathApproximation {
-            return ColumnWithPathApproximation(pathOf(name), simpleColumnOf(name, type), isImpliedColumn = true)
+        private fun createImpliedColumn(path: ColumnPath, type: ConeKotlinType): ColumnWithPathApproximation {
+            return ColumnWithPathApproximation(path, simpleColumnOf(path.name(), type), isImpliedColumn = true)
         }
 
         override fun rename(newName: String): ColumnReference<Any?> {
-            return stringApiColumnResolver(newName, type)
+            return stringApiColumnResolver(path.rename(newName), type)
         }
 
-        override fun name(): String = name
+        override fun name(): String = path.name()
 
-        override val path: ColumnPath = ColumnPath(name)
+        override val path: ColumnPath = path
 
         override fun resolve(context: ColumnResolutionContext): List<ColumnWithPath<Any?>> {
             return resolve(context.df.cast<ConeTypesAdapter>().toPluginDataFrameSchema())

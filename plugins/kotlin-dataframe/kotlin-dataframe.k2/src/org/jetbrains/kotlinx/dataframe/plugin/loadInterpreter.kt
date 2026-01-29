@@ -102,6 +102,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfPairs
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathGetColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathInvokeTyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnRange
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConcatWithKeys
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsColumn
@@ -281,6 +283,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformIntoRow
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformInward0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Std0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Std1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringGetColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeTyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeUntyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum0
@@ -658,6 +661,9 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "DataFrameUnfold" -> DataFrameUnfold()
         "StringInvokeUntyped" -> StringInvokeUntyped()
         "StringInvokeTyped" -> StringInvokeTyped()
+        "ColumnPathInvokeTyped" -> ColumnPathInvokeTyped()
+        "StringGetColumn" -> StringGetColumn()
+        "ColumnPathGetColumn" -> ColumnPathGetColumn()
         else -> if (isTest) error(this) else null
     }
 }
