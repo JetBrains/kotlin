@@ -24,6 +24,7 @@ class KotlinObjectStubImpl(
     override val isTopLevel: Boolean,
     override val isLocal: Boolean,
     override val isObjectLiteral: Boolean,
+    override val kdocText: String?
 ) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {
     override fun getName(): String? = name?.string
     override val superNames: List<String>
@@ -39,5 +40,6 @@ class KotlinObjectStubImpl(
         isTopLevel = isTopLevel,
         isLocal = isLocal,
         isObjectLiteral = isObjectLiteral,
+        kdocText = kdocText,
     )
 }

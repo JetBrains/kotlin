@@ -54,6 +54,9 @@ class KotlinEnumEntryStubImpl(
             return listOf(enumClassName)
         }
 
+    override val kdocText: String?
+        get() = null
+
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinEnumEntryStubImpl = KotlinEnumEntryStubImpl(
         parent = newParent,

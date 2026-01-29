@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
+import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.StubUtils.createNestedClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId
@@ -48,6 +49,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             isClsStubCompiledToJvmDefaultImplementation = false,
             isLocal = isLocal,
             isTopLevel = isTopLevel,
+            kdocText = null,
             valueClassRepresentation = null,
         )
     }
@@ -62,6 +64,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
         dataStream.writeBoolean(stub.isClsStubCompiledToJvmDefaultImplementation)
         dataStream.writeBoolean(stub.isLocal)
         dataStream.writeBoolean(stub.isTopLevel)
+        StubUtils.serializeKdocText(dataStream, stub.kdocText)
 
         val superNames = stub.superNames
         dataStream.writeVarInt(superNames.size)
@@ -83,6 +86,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
         val isClsStubCompiledToJvmDefaultImplementation = dataStream.readBoolean()
         val isLocal = dataStream.readBoolean()
         val isTopLevel = dataStream.readBoolean()
+        val kdocText = StubUtils.deserializeKdocText(dataStream)
 
         val superCount = dataStream.readVarInt()
         val superNames = StringRef.createArray(superCount)
@@ -107,6 +111,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             isClsStubCompiledToJvmDefaultImplementation = isClsStubCompiledToJvmDefaultImplementation,
             isLocal = isLocal,
             isTopLevel = isTopLevel,
+            kdocText = kdocText,
             valueClassRepresentation = representation,
         )
     }

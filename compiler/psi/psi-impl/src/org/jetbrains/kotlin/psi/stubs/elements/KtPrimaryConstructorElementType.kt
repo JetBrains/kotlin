@@ -11,6 +11,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
+import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPrimaryConstructorStubImpl
 import java.io.IOException
 
@@ -27,19 +28,23 @@ class KtPrimaryConstructorElementType(@NonNls debugName: String) :
     ): KotlinPrimaryConstructorStubImpl = KotlinPrimaryConstructorStubImpl(
         parent = parentStub,
         containingClassName = StringRef.fromString(psi.name),
+        kdocText = null,
     )
 
     @Throws(IOException::class)
     override fun serialize(stub: KotlinPrimaryConstructorStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.name)
+        StubUtils.serializeKdocText(dataStream, stub.kdocText)
     }
 
     @Throws(IOException::class)
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinPrimaryConstructorStubImpl {
         val name = dataStream.readName()
+        val kdocText = StubUtils.deserializeKdocText(dataStream)
         return KotlinPrimaryConstructorStubImpl(
             parent = parentStub,
             containingClassName = name,
+            kdocText = kdocText,
         )
     }
 }

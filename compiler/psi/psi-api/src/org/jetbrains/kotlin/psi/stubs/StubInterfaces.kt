@@ -66,6 +66,7 @@ interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub<T>
     val isLocal: Boolean get() = classId == null
     val superNames: List<String>
     val isTopLevel: Boolean
+    val kdocText: String?
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -228,6 +229,7 @@ interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
 interface KotlinCallableStubBase<TDeclaration : KtCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
     val isTopLevel: Boolean
     val isExtension: Boolean
+    val kdocText: String?
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)

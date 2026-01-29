@@ -25,6 +25,7 @@ class KotlinFunctionStubImpl(
     override val hasBody: Boolean,
     override val hasTypeParameterListBeforeFunctionName: Boolean,
     override val mayHaveContract: Boolean,
+    override val kdocText: String?,
     val contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?,
     val origin: KotlinStubOrigin?,
 ) : KotlinStubBaseImpl<KtNamedFunction>(parent, KtStubElementTypes.FUNCTION), KotlinFunctionStub {
@@ -47,6 +48,7 @@ class KotlinFunctionStubImpl(
         hasBody = hasBody,
         hasTypeParameterListBeforeFunctionName = hasTypeParameterListBeforeFunctionName,
         mayHaveContract = mayHaveContract,
+        kdocText = kdocText,
         contract = contract,
         origin = origin,
     )

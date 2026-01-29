@@ -34,6 +34,19 @@ object StubUtils {
     }
 
     @JvmStatic
+    fun serializeKdocText(dataStream: StubOutputStream, kdocText: String?) {
+        dataStream.writeBoolean(kdocText != null)
+        if (kdocText != null) {
+            dataStream.writeUTFFast(kdocText)
+        }
+    }
+
+    @JvmStatic
+    fun deserializeKdocText(dataStream: StubInputStream): String? {
+        return if (dataStream.readBoolean()) dataStream.readUTFFast() else null
+    }
+
+    @JvmStatic
     @Suppress("DEPRECATION") // KT-78356
     fun createNestedClassId(parentStub: StubElement<*>, currentDeclaration: KtClassLikeDeclaration): ClassId? {
         if (currentDeclaration is KtObjectDeclaration && currentDeclaration.isObjectLiteral()) {

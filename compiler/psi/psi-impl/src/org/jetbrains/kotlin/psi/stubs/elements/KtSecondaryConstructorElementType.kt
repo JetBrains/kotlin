@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
+import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinSecondaryConstructorStubImpl
 import java.io.IOException
 
@@ -40,6 +41,7 @@ class KtSecondaryConstructorElementType(@NonNls debugName: String) :
             isDelegatedCallToThis = isDelegatedCallToThis,
             isExplicitDelegationCall = isExplicitDelegationCall,
             mayHaveContract = mayHaveContract,
+            kdocText = null,
         )
     }
 
@@ -50,6 +52,7 @@ class KtSecondaryConstructorElementType(@NonNls debugName: String) :
         dataStream.writeBoolean(stub.isDelegatedCallToThis)
         dataStream.writeBoolean(stub.isExplicitDelegationCall)
         dataStream.writeBoolean(stub.mayHaveContract)
+        StubUtils.serializeKdocText(dataStream, stub.kdocText)
     }
 
     @Throws(IOException::class)
@@ -59,6 +62,7 @@ class KtSecondaryConstructorElementType(@NonNls debugName: String) :
         val isDelegatedCallToThis = dataStream.readBoolean()
         val isExplicitDelegationCall = dataStream.readBoolean()
         val mayHaveContract = dataStream.readBoolean()
+        val kdocText = StubUtils.deserializeKdocText(dataStream)
         return KotlinSecondaryConstructorStubImpl(
             parent = parentStub,
             containingClassName = name,
@@ -66,6 +70,7 @@ class KtSecondaryConstructorElementType(@NonNls debugName: String) :
             isDelegatedCallToThis = isDelegatedCallToThis,
             isExplicitDelegationCall = isExplicitDelegationCall,
             mayHaveContract = mayHaveContract,
+            kdocText = kdocText,
         )
     }
 }

@@ -52,6 +52,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
                 (StubElement<?>) parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
                 isExtension, hasNoExpressionBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
                 psi.mayHaveContract(),
+                /* kdocText = */ null,
                 /* contract = */ null,
                 /* origin = */ null
         );
@@ -76,6 +77,8 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
             StubUtils.writeContract$psi_impl(dataStream, stub.getContract());
         }
 
+        StubUtils.serializeKdocText(dataStream, stub.getKdocText());
+
         KotlinStubOrigin.serialize(stub.getOrigin(), dataStream);
     }
 
@@ -93,9 +96,11 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
         boolean hasBody = dataStream.readBoolean();
         boolean hasTypeParameterListBeforeFunctionName = dataStream.readBoolean();
         boolean mayHaveContract = dataStream.readBoolean();
+        String kdocText = StubUtils.deserializeKdocText(dataStream);
         return new KotlinFunctionStubImpl(
                 (StubElement<?>) parentStub, name, isTopLevel, fqName, isExtension, hasNoExpressionBody, hasBody,
                 hasTypeParameterListBeforeFunctionName, mayHaveContract,
+                kdocText,
                 mayHaveContract ? StubUtils.readContract$psi_impl(dataStream) : null,
                 KotlinStubOrigin.deserialize(dataStream)
         );
