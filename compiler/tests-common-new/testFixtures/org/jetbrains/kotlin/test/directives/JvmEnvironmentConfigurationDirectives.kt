@@ -22,8 +22,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val WITH_REFLECT by directive("Add Kotlin reflect to classpath")
     val NO_RUNTIME by directive("Don't add any runtime libs to classpath")
 
-    val WITH_FOREIGN_ANNOTATIONS by directive("Add foreign nullability annotations to classpath")
-
     val WITH_JSR305_TEST_ANNOTATIONS by directive(
         description = """
             Add test nullability annotations based on JSR-305 annotations
