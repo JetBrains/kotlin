@@ -27,7 +27,7 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
                 val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
                 val kotlinToolchainV1Adapter =
                     @Suppress("DEPRECATION_ERROR")
-                    if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) < KotlinToolingVersion(2, 4, 0, null)) {
+                    if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) <= KotlinToolingVersion(2, 4, 255, null)) {
                         val asKotlinToolchainsMethod =
                             btaClassloader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1AdapterKt")
                                 .getDeclaredMethod("asKotlinToolchains", org.jetbrains.kotlin.buildtools.api.CompilationService::class.java)
