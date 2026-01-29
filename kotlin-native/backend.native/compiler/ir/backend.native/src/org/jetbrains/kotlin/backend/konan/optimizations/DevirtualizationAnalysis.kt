@@ -684,19 +684,6 @@ internal object DevirtualizationAnalysis {
         private fun DataFlowIR.Node.VirtualCall.debugString() =
                 irCallSite?.let { ir2stringWhole(it).trimEnd() } ?: this.toString()
 
-        // To properly place devirtualized call sites to IR call sites and use them after inlining.
-        private fun resetCallSitesAttributeOwnerIds() {
-            irModule.acceptChildrenVoid(object : IrVisitorVoid() {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitCall(expression: IrCall) {
-                    expression.acceptChildrenVoid(this)
-                }
-            })
-        }
-
         private fun propagateVirtualType(directEdges: IntArray) {
             val processedVirtualNodes = CustomBitSet()
 
@@ -765,8 +752,6 @@ internal object DevirtualizationAnalysis {
         }
 
         fun analyze() {
-            resetCallSitesAttributeOwnerIds()
-
             val functions = moduleDFG.functions
             assert(DataFlowIR.Type.Virtual !in symbolTable.classMap.values) {
                 "DataFlowIR.Type.Virtual cannot be in symbolTable.classMap"
