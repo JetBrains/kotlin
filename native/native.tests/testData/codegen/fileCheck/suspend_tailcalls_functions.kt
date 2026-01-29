@@ -21,6 +21,11 @@ suspend fun sInt(): Int = suspendCoroutineUninterceptedOrReturn { x ->
     COROUTINE_SUSPENDED
 }
 
+suspend fun <T : Any> sGeneric(): T = suspendCoroutineUninterceptedOrReturn { x ->
+    x.resume("zzz" as T)
+    COROUTINE_SUSPENDED
+}
+
 // CHECK-LABEL: define ptr @"kfun:#s1#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s1() {
     // CHECK-NOT: call void @"kfun:$s1COROUTINE${{[0-9]*}}#<init>
@@ -284,6 +289,15 @@ suspend fun s24() {
 }
 // CHECK-LABEL: epilogue:
 
+class Data(val x: Int)
+
+// CHECK-LABEL: define ptr @"kfun:#s25#suspend(kotlin.coroutines.Continuation<Data>){}kotlin.Any
+suspend fun s25(): Data {
+    // CHECK: call void @"kfun:$s25COROUTINE${{[0-9]*}}.<init>#internal
+    return sGeneric<Data>()
+}
+// CHECK-LABEL: epilogue:
+
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
@@ -315,6 +329,7 @@ fun box(): String {
         s22()
         s23(true)
         s24()
+        s25().x
     }
     return "OK"
 }
