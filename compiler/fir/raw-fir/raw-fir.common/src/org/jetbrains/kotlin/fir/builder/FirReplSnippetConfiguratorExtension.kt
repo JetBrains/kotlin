@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
@@ -39,7 +40,7 @@ abstract class FirReplSnippetConfiguratorExtension(
      * it is created. For example, this can be used to turn the last expression of the body into a
      * property to persist the result of the snippet.
      */
-    abstract fun MutableList<FirStatement>.configure(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>)
+    abstract fun MutableList<FirElement>.configure(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>)
 }
 
 val FirExtensionService.replSnippetConfigurators: List<FirReplSnippetConfiguratorExtension> by FirExtensionService.registeredExtensions()

@@ -88,7 +88,7 @@ class FirReplSnippetConfiguratorExtensionImpl(
         }
     }
 
-    override fun MutableList<FirStatement>.configure(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>) {
+    override fun MutableList<FirElement>.configure(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>) {
         val configuration = getOrLoadConfiguration(session, sourceFile!!)?.valueOrNull() ?: run {
             // TODO: add error or log, if necessary (see implementation for scripts) (KT-74742)
             return
