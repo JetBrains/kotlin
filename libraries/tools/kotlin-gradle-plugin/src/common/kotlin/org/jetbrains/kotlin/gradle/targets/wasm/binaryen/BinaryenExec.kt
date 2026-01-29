@@ -5,26 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.*
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.AbstractExecTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
 import javax.inject.Inject
@@ -36,41 +26,50 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     @get:Inject
     abstract val fs: FileSystemOperations
 
-    init {
-        onlyIf {
-            !inputFileProperty.isPresent || inputFileProperty.asFile.map { it.exists() }.get()
-        }
-    }
-
     @Input
     var binaryenArgs: MutableList<String> = BinaryenConfig.binaryenArgs.toMutableList()
 
-    @PathSensitive(PathSensitivity.RELATIVE)
-    @InputFile
-    @NormalizeLineEndings
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:NormalizeLineEndings
+    @get:SkipWhenEmpty
+    abstract val inputFiles: ConfigurableFileCollection
+
+    @Deprecated("Use inputFiles instead", replaceWith = ReplaceWith("inputFiles"))
+    @get:Internal
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
+    @Deprecated("BinaryenExec can now work with multiple files, so outputFileName is not used anymore")
     @get:Input
+    @get:Optional
     abstract val outputFileName: Property<String>
 
+    @Suppress("DEPRECATION")
+    @Deprecated("Use outputDirectory instead", replaceWith = ReplaceWith("outputDirectory"))
     @Internal
-    val outputFileProperty: Provider<RegularFile> = project.provider {
-        outputDirectory.file(outputFileName).get()
+    val outputFileProperty: Provider<RegularFile> = outputDirectory.zip(outputFileName) { dir: Directory, fileName: String ->
+        dir.file(fileName)
     }
 
     override fun exec() {
-        val inputFile = inputFileProperty.asFile.get()
-        val newArgs = mutableListOf<String>()
-        newArgs.addAll(binaryenArgs)
-        newArgs.add(inputFile.absolutePath)
-        newArgs.add("-o")
-        newArgs.add(outputDirectory.file(outputFileName).get().asFile.absolutePath)
-        workingDir = inputFile.parentFile
-        this.args = newArgs
-        super.exec()
+        @Suppress("DEPRECATION")
+        if (inputFileProperty.isPresent) {
+            inputFiles.from(inputFileProperty)
+        }
+
+        inputFiles.forEach { inputFile ->
+            val newArgs = mutableListOf<String>()
+            newArgs.addAll(binaryenArgs)
+            newArgs.add(inputFile.absolutePath)
+            newArgs.add("-o")
+            newArgs.add(outputDirectory.file(inputFile.name).getFile().absolutePath)
+            workingDir = inputFile.parentFile
+            args = newArgs
+            super.exec()
+        }
     }
 
     companion object {
