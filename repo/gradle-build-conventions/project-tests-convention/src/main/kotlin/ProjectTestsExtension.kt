@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -58,6 +58,9 @@ abstract class ProjectTestsExtension(val project: Project) {
     val scriptingPluginForTests: Configuration = project.configurations.create("scriptingPluginForTests") {
         isTransitive = false
     }
+    val stdlibWebRuntimeForTests: Configuration = project.configurations.create("stdlibWebRuntimeForTests") {
+        isTransitive = false
+    }
     val stdlibJsRuntimeForTests: Configuration = project.configurations.create("stdlibJsRuntimeForTests") {
         isTransitive = false
     }
@@ -114,6 +117,10 @@ abstract class ProjectTestsExtension(val project: Project) {
 
     fun withAnnotations() {
         add(kotlinAnnotationsForTests) { project(":kotlin-annotations-jvm") }
+    }
+
+    fun withStdlibWeb() {
+        add(stdlibWebRuntimeForTests) { project(":kotlin-stdlib", "webMainMetadataElements") }
     }
 
     fun withJsRuntime() {
