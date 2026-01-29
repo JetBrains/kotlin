@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
@@ -50,6 +51,7 @@ class HackGradleSerialization(
 }
 
 
+@DisableCachingByDefault(because = "Abstract base class for parallel task execution")
 abstract class ParallelTask : DefaultTask(), Serializable {
 
     @get:Inject
