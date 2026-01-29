@@ -37,7 +37,9 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.psi.markAsReplSnippet
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
@@ -229,7 +231,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         ).also { moduleDataHistory.add(it) }
 }
 
-@OptIn(LegacyK2CliPipeline::class, SessionConfiguration::class, K1SpecificScriptingServiceAccessor::class)
+@OptIn(LegacyK2CliPipeline::class, SessionConfiguration::class, K1SpecificScriptingServiceAccessor::class, KtNonPublicApi::class)
 private fun compileImpl(
     state: K2ReplCompilationState,
     snippet: SourceCode,
@@ -260,6 +262,7 @@ private fun compileImpl(
         getScriptKtFile(snippet, initialScriptCompilationConfiguration, project, messageCollector).valueOr {
             return it
         }
+    snippetKtFile.script?.markAsReplSnippet()
 
     // TODO: ensure that currentLineId passing is only used for single snippet compilation
     val priority = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.repl.currentLineId]?.no

@@ -183,6 +183,15 @@ open class PsiRawFirBuilder(
             }
         }
 
+    @OptIn(KtExperimentalApi::class)
+    override fun isReplSnippet(
+        script: PsiElement,
+        fileBuilder: FirFileBuilder,
+    ): Boolean {
+        return (script as? KtScript)?.isReplSnippet == true ||
+                super.isReplSnippet(script, fileBuilder)
+    }
+
     override fun convertScript(
         script: PsiElement,
         scriptSource: KtSourceElement,
