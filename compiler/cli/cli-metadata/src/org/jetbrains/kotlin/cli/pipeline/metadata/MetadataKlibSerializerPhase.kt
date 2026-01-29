@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.metadata.buildKotlinMetadataLibrary
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.fir.moduleData
@@ -47,7 +48,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
                     actualizedExpectDeclarations = null,
                     FirKLibSerializerExtension(
                         session, scopeSession, session.firProvider, metadataVersion,
-                        exportKDoc = false,
+                        exportKDoc = languageVersionSettings.supportsFeature(LanguageFeature.ExportKDocDocumentationToKlib),
                         additionalMetadataProvider = null
                     ),
                     languageVersionSettings,

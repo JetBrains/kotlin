@@ -1,0 +1,8 @@
+-Xwasm
+-Xexport-kdoc
+-ir-output-name
+exportKDoc
+-ir-output-dir
+$TEMP_DIR$
+-libraries
+$STDLIB_WASM_JS$

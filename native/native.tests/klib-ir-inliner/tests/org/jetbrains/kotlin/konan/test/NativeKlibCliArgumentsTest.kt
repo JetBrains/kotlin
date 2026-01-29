@@ -14,6 +14,13 @@ import org.jetbrains.kotlin.konan.test.blackbox.compileToLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.parsePackageFragment
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -130,6 +137,58 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
                 assertTrue(cte.reason.contains("error: invalid metadata version")) { "Unexpected error message: ${cte.reason}" }
             }
         }
+    }
+
+    @Test
+    @DisplayName("Test -Xexport-kdoc argument")
+    fun testExportKdocArgument() {
+        val sourcesDir = buildDir.resolve("sources").apply { createDirectory() }
+
+        val packageName = "test"
+
+        sourcesDir.resolve("source.kt").apply {
+            writeText(
+                """
+                    package $packageName
+                    
+                    /**
+                     * I'm the main function!
+                     */
+                    fun main() {}
+                """.trimIndent()
+            )
+        }
+
+        val binariesDir = buildDir.resolve("binaries")
+
+        val klibFile = compileToLibrary(
+            sourcesDir = sourcesDir,
+            outputDir = binariesDir,
+            freeCompilerArgs = TestCompilerArgs("-Xexport-kdoc"),
+            dependencies = emptyList(),
+        ).guessKlibArtifactFile()
+
+        assertTrue(klibFile.exists()) { "Klib file should exist" }
+
+        val kotlinLibrary = KlibLoader { libraryPaths(klibFile) }.load().librariesStdlibFirst.single()
+        val metadata = kotlinLibrary.metadata
+
+        val packageFragmentName = kotlinLibrary.metadata.getPackageFragmentNames(packageName).single()
+        val packageFragment = parsePackageFragment(metadata.getPackageFragment(packageName, packageFragmentName))
+        val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
+
+        val mainFunctionProto = packageFragment.`package`.functionList.single()
+        assertEquals("main", nameResolver.getName(mainFunctionProto.name).asString())
+
+        // Raw representation with the starting asterisks!
+        assertEquals(
+            """
+                /**
+                 * I'm the main function!
+                 */
+            """.trimIndent(),
+            mainFunctionProto.getExtensionOrNull(KlibMetadataProtoBuf.functionKdoc)
+        )
     }
 
     companion object {

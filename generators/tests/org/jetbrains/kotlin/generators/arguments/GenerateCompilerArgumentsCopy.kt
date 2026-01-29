@@ -143,6 +143,7 @@ fun generateConfigureLanguageFeatures(withPrinterToFile: (targetFile: File, Prin
     generateConfigureLanguageFeaturesImpl(CommonCompilerArguments::class.java, "Common", withPrinterToFile)
     generateConfigureLanguageFeaturesImpl(K2JVMCompilerArguments::class.java, "Jvm", withPrinterToFile)
     generateConfigureLanguageFeaturesImpl(K2JSCompilerArguments::class.java, "Js", withPrinterToFile)
+    generateConfigureLanguageFeaturesImpl(K2NativeCompilerArguments::class.java, "Native", withPrinterToFile)
 }
 
 private fun generateConfigureLanguageFeaturesImpl(

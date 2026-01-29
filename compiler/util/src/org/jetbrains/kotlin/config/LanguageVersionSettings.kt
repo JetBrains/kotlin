@@ -618,6 +618,7 @@ enum class LanguageFeature(
     ForbidExposingPackagePrivateInInternal(sinceVersion = null, enabledInProgressiveMode = true, "KTLC-271"),
     JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463"),
     TreatProvideDelegateAsConventionName(sinceVersion = null, "KT-83538"),
+    ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921"),
     ;
 
     constructor(

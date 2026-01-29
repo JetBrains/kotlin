@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.pipeline
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
@@ -29,7 +30,6 @@ class Fir2KlibMetadataSerializer(
     compilerConfiguration: CompilerConfiguration,
     private val firOutputs: List<SingleModuleFrontendOutput>,
     private val fir2IrActualizedResult: Fir2IrActualizedResult?,
-    private val exportKDoc: Boolean,
     private val produceHeaderKlib: Boolean,
 ) : KlibSingleFileMetadataSerializer<FirFile> {
 
@@ -49,6 +49,7 @@ class Fir2KlibMetadataSerializer(
     }
 
     private val languageVersionSettings = compilerConfiguration.languageVersionSettings
+    private val exportKDoc = languageVersionSettings.supportsFeature(LanguageFeature.ExportKDocDocumentationToKlib)
 
     private val metadataVersion = compilerConfiguration.klibMetadataVersionOrDefault()
 

@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/exportKDoc.kt
+-Xexport-kdoc
+-Xir-produce-klib-dir
+-libraries
+$STDLIB_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

@@ -291,7 +291,6 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
                 configuration,
                 input.frontendOutput.outputs,
                 fir2IrActualizedResult = fir2IrResult,
-                exportKDoc = false,
                 produceHeaderKlib = false,
             ),
         )

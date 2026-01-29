@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.native.pipeline.NativeFir2IrArtifact
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
-import org.jetbrains.kotlin.konan.config.konanExportKdoc
 import java.io.File
 
 class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
@@ -117,7 +116,6 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
                 configuration,
                 inputArtifact.fir2IrOutput.frontendOutput.outputs,
                 inputArtifact.result,
-                exportKDoc = configuration.konanExportKdoc,
                 produceHeaderKlib = false,
             ),
         )

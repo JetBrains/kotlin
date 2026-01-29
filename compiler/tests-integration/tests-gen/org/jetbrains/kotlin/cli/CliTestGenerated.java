@@ -1984,6 +1984,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/experimentalCheckers.args");
     }
 
+    @TestMetadata("exportKDoc.args")
+    public void testExportKDoc() {
+      runTest("compiler/testData/cli/js/exportKDoc.args");
+    }
+
     @TestMetadata("extraCheckers.args")
     public void testExtraCheckers() {
       runTest("compiler/testData/cli/js/extraCheckers.args");
@@ -2250,6 +2255,11 @@ public class CliTestGenerated extends AbstractCliTest {
 
     public void testAllFilesPresentInWasm() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/wasm"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("exportKDoc.args")
+    public void testExportKDoc() {
+      runTest("compiler/testData/cli/wasm/exportKDoc.args");
     }
 
     @TestMetadata("reportPerf2ndStage.args")

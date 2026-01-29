@@ -54,7 +54,6 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val KONAN_OUTPUT_PATH by key<String>()
     val OVERRIDE_CLANG_OPTIONS by key<List<String>>()
     val ALLOCATION_MODE by key<AllocationMode>()
-    val KONAN_EXPORT_KDOC by key<Boolean>("Export KDoc into klib and framework.")
     val KONAN_PRINT_BITCODE by key<Boolean>()
     val KONAN_PRINT_IR by key<Boolean>()
     val KONAN_PRINT_FILES by key<Boolean>()

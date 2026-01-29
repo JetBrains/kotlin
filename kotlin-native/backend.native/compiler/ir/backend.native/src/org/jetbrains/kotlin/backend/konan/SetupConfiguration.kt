@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.konanDontCompressKlib
 import org.jetbrains.kotlin.konan.config.konanEntryPoint
-import org.jetbrains.kotlin.konan.config.konanExportKdoc
 import org.jetbrains.kotlin.konan.config.konanFriendLibraries
 import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
 import org.jetbrains.kotlin.konan.config.konanIncludedBinaries
@@ -140,8 +139,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     })
     put(STATIC_FRAMEWORK, selectFrameworkType(this@setupFromArguments, arguments, outputKind))
     put(OVERRIDE_CLANG_OPTIONS, arguments.clangOptions.toNonNullList())
-
-    konanExportKdoc = arguments.exportKDoc
 
     konanPrintIr = arguments.printIr
     konanPrintBitcode = arguments.printBitCode

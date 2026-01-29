@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.konan.config.konanExportKdoc
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.config.konanPrintBitcode
 import org.jetbrains.kotlin.konan.config.konanPrintFiles
 import org.jetbrains.kotlin.konan.config.verifyBitcode
@@ -17,7 +17,7 @@ interface ConfigChecks {
 
     val config: NativeSecondStageCompilationConfig
 
-    fun shouldExportKDoc() = config.configuration.konanExportKdoc
+    fun shouldExportKDoc() = config.languageVersionSettings.supportsFeature(LanguageFeature.ExportKDocDocumentationToKlib)
 
     fun shouldVerifyBitCode() = config.configuration.verifyBitcode
 

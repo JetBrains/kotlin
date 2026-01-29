@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 
 class K2NativeCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfigurator() {
@@ -25,6 +26,16 @@ class K2NativeCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsCo
                 putAnalysisFlag(AnalysisFlags.metadataCompilation, true)
             }
         }
+    }
+
+    override fun configureLanguageFeatures(
+        arguments: CommonCompilerArguments,
+        reporter: Reporter
+    ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
+        require(this is K2NativeCompilerArguments)
+        val result = super.configureLanguageFeatures(arguments, reporter)
+        result.configureNativeLanguageFeatures(this)
+        return result
     }
 
     override fun isSecondStage(arguments: CommonCompilerArguments): Boolean = with(arguments) {

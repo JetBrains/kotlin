@@ -124,7 +124,6 @@ abstract class AbstractFir2IrResultsConverter(
                 compilerConfiguration,
                 firResult.outputs,
                 fir2irResult,
-                exportKDoc = false,
                 produceHeaderKlib = false,
             ),
         )
