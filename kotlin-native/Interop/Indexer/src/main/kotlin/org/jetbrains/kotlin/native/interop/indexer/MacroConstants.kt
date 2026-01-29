@@ -126,6 +126,10 @@ private fun tryExpandMacros(
 
     val result = mutableMapOf<String, MacroDef?>()
 
+    /**
+     * To discuss: maybe it's possible to just expand the cursors from index and not the entire translation unit
+     */
+    // println("Visit children PCM for tryExpandMacros")
     visitChildren(translationUnit) { cursor, _ ->
         if (cursor.kind == CXCursorKind.CXCursor_FunctionDecl) {
             val functionName = getCursorSpelling(cursor)
@@ -290,6 +294,10 @@ private fun collectMacroNames(nativeIndex: NativeIndexImpl, translationUnits: Li
     val result = mutableSetOf<String>()
 
     translationUnits.forEach {
+        // println("Visit children PCM for collectMacroNames: ${nativeIndex.tuToPCMPath[it]}")
+        /**
+         * To discuss: maybe it's possible to just expand the cursors from index and not the entire translation unit
+         */
         visitChildren(it) { cursor, _ ->
             val file = getContainingFile(cursor)
 
