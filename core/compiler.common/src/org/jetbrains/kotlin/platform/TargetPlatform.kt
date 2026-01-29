@@ -3,7 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalContracts::class)
+
 package org.jetbrains.kotlin.platform
+
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Core abstraction of Platform API, represents a collection of platforms.
@@ -90,17 +95,28 @@ interface TargetPlatformVersion {
 /**
  * Whether this is a [TargetPlatform] that targets multiple [SimplePlatform]s.
  */
-fun TargetPlatform?.isMultiPlatform(): Boolean = this != null && size > 1
+fun TargetPlatform?.isMultiPlatform(): Boolean {
+    contract { returns(true) implies (this@isMultiPlatform != null) }
+    return this != null && size > 1
+}
 
 /**
  * Whether this is "Common" platform in its classical sense (MPP v1).
  */
-fun TargetPlatform?.isCommon(): Boolean = isMultiPlatform() && this!!.iterator().let { i ->
-    val firstPlatformName = i.next().platformName
-    while (i.hasNext()) {
-        if (i.next().platformName != firstPlatformName) return@let true
+fun TargetPlatform?.isCommon(): Boolean {
+    contract { returns(true) implies (this@isCommon != null) }
+    return isMultiPlatform() && this.iterator().let { i ->
+        val firstPlatformName = i.next().platformName
+        while (i.hasNext()) {
+            if (i.next().platformName != firstPlatformName) return@let true
+        }
+        false
     }
-    false
+}
+
+fun TargetPlatform?.isMultiplatformWeb(): Boolean {
+    contract { returns(true) implies (this@isMultiplatformWeb != null) }
+    return isMultiPlatform() && all { it is PotentiallyWebPlatform && it.isWeb }
 }
 
 fun SimplePlatform.toTargetPlatform(): TargetPlatform = TargetPlatform(setOf(this))
