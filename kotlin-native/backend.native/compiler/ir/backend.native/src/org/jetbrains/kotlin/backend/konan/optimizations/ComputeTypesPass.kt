@@ -111,7 +111,6 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
     private fun IrTypeOperatorCall.tryShortcutToArgument(): IrType? {
         if (this.operator != IrTypeOperator.IMPLICIT_CAST) return null
         val dstClass = this.typeOperand.erasedUpperBound
-        if (dstClass.isInterface) return null
         if (!this.typeOperand.isNullable() && this.type.isNullable()) return null
         if (this.argument.type.erasedUpperBound.symbol.isSubtypeOfClass(dstClass.symbol))
             return (this.argument as? IrTypeOperatorCall)?.tryShortcutToArgument() ?: this.argument.type
@@ -450,7 +449,6 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
 
                     IrTypeOperator.IMPLICIT_CAST -> {
                         val dstClass = expression.typeOperand.erasedUpperBound
-                        if (dstClass.isInterface) return expression
                         if (!expression.typeOperand.isNullable() && expression.type.isNullable()) return expression
                         return if (expression.argument.type.erasedUpperBound.symbol.isSubtypeOfClass(dstClass.symbol))
                             expression.argument
