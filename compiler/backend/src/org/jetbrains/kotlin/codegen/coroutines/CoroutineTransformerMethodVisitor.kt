@@ -1125,6 +1125,9 @@ class CoroutineTransformerMethodVisitor(
             if (slot == continuationIndex || slot == dataIndex) continue
             // Do not spill $completion
             if (isForNamedFunction && slot == completionSlot) continue
+            // Do not spill fake inliner variables - they are always zero
+            if (methodNode.isFakeInlinerVariable(slot, suspensionCallBeginIndex)) continue
+
             val value = frame.getLocal(slot)
             if (value.type == null) continue
             val visibleByDebugger = methodNode.localVariables.any {
@@ -1160,6 +1163,16 @@ class CoroutineTransformerMethodVisitor(
             )
         }
         return variablesToSpill
+    }
+
+    private fun MethodNode.isFakeInlinerVariable(slot: Int, suspensionCallBeginIndex: Int): Boolean {
+        for (record in this.localVariables.filter { it.index == slot }) {
+            if (JvmAbi.isFakeLocalVariableForInline(record.name) &&
+                instructions.indexOf(record.start) < suspensionCallBeginIndex &&
+                suspensionCallBeginIndex < instructions.indexOf(record.end)
+            ) return true
+        }
+        return false
     }
 
     // When suspension point is inside finally block, its LVT record is split, but there is no store for the second half

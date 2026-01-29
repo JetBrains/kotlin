@@ -28,8 +28,6 @@ public final class LibKt$consumeEach$2 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class LibKt$filter$$inlined$source$1$1 {
     enclosing method LibKt$filter$$inlined$source$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-    field I$0: int
-    field I$1: int
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
