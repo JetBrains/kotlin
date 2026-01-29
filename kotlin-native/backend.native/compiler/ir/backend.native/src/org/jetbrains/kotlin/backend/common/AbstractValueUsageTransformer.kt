@@ -277,6 +277,15 @@ internal abstract class AbstractValueUsageTransformer(
         return expression
     }
 
+    override fun visitSuspensionPoint(expression: IrSuspensionPoint): IrExpression {
+        expression.transformChildrenVoid(this)
+
+        expression.result = expression.result.useAsResult(expression)
+        expression.resumeResult = expression.resumeResult.useAsResult(expression)
+
+        return expression
+    }
+
     // TODO: IrStringConcatenation, IrEnumEntry?
 
 }
