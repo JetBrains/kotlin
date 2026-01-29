@@ -1,31 +1,33 @@
 KtEnumEntrySuperclassReferenceExpression(127,127): ''
-  KaDelegatedConstructorCall:
-    argumentMapping = {
-      1 -> (KaVariableSignature:
-        name = i
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
+        returnType = EnumWithConstructor
+        symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
         contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = EnumWithConstructor
-      symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
-      valueParameters = [
-        KaVariableSignature:
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
+          callableId = null)
+      }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.modification
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 
 /**
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
  * [KotlinModificationTrackerByEventFactoryBase] can be inherited from to implement this platform component based on published modification
  * events.
  */
+@KaPlatformInterface
 public interface KotlinModificationTrackerFactory : KotlinPlatformComponent {
     /**
      * Creates a [ModificationTracker] which is incremented every time a Kotlin source file is affected by a modification, in any of the
@@ -38,6 +40,7 @@ public interface KotlinModificationTrackerFactory : KotlinPlatformComponent {
      */
     public fun createProjectWideLibraryModificationTracker(): ModificationTracker
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinModificationTrackerFactory = project.service()
     }
@@ -47,14 +50,16 @@ public interface KotlinModificationTrackerFactory : KotlinPlatformComponent {
  * Creates a [ModificationTracker] which is incremented every time a Kotlin source file is affected by a modification, in any of the
  * project's source modules.
  *
- * Such a modification can be any out-of-block code or project structure change affecting the analyzed source code. See
- * [KotlinModificationEvent] for a definition of out-of-block modification.
+ * Such a modification can be any [out-of-block][KaSourceModificationLocality.OutOfBlock] code or project structure change affecting the
+ * analyzed source code.
  */
+@KaPlatformInterface
 public fun Project.createProjectWideSourceModificationTracker(): ModificationTracker =
     KotlinModificationTrackerFactory.getInstance(this).createProjectWideSourceModificationTracker()
 
 /**
  * Creates a [ModificationTracker] which is incremented every time a library in the project is changed.
  */
+@KaPlatformInterface
 public fun Project.createProjectWideLibraryModificationTracker(): ModificationTracker =
     KotlinModificationTrackerFactory.getInstance(this).createProjectWideLibraryModificationTracker()

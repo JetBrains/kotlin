@@ -1,7 +1,7 @@
 KtCallExpression(71,80): 'Test<Bar>'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -15,5 +15,6 @@ KtCallExpression(71,80): 'Test<Bar>'
       typeArgumentsMapping = {
         T -> (test.Bar)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false

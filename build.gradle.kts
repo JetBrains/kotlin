@@ -65,7 +65,7 @@ plugins {
     signing
     id("org.jetbrains.kotlin.jvm") apply false
     id("org.jetbrains.kotlin.plugin.serialization") apply false
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         id("kotlin.native.build-tools-conventions") apply false
     }
     `jvm-toolchains`
@@ -121,12 +121,12 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = if (kotlinBuildProperties.isTeamcityBuild) {
+    extra["versions.kotlin-native"] = if (kotlinBuildProperties.isTeamcityBuild.get()) {
         kotlinVersion
-    } else if (kotlinBuildProperties.isKotlinNativeEnabled) {
-        kotlinBuildProperties.defaultSnapshotVersion
+    } else if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+        kotlinBuildProperties.defaultSnapshotVersion.get()
     } else {
-        "2.3.20-dev-4897"
+        "2.4.0-dev-169"
     }
 }
 
@@ -517,7 +517,10 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":kotlin-stdlib-jdk8",
     ":kotlin-reflect",
     ":kotlin-main-kts",
-    ":kotlin-dom-api-compat"
+    ":kotlin-dom-api-compat",
+    ":compiler:build-tools:kotlin-build-tools-api",
+    ":compiler:build-tools:kotlin-build-tools-impl",
+    ":compiler:build-tools:kotlin-build-tools-cri-impl",
 )
 
 val coreLibProjects by extra {
@@ -589,7 +592,7 @@ allprojects {
     if (!project.path.startsWith(":compiler:build-tools")) {
         pluginManager.apply("com.autonomousapps.dependency-analysis")
     }
-    if (kotlinBuildProperties.isInIdeaSync) {
+    if (kotlinBuildProperties.isInIdeaSync.get()) {
         afterEvaluate {
             configurations.all {
                 // Remove kotlin-compiler from dependencies during Idea import. KTI-1598
@@ -650,7 +653,7 @@ allprojects {
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
     repositories {
-        when (kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
+        when (kotlinBuildProperties.stringProperty("attachedIntellijVersion").orNull) {
             null -> {}
             "master" -> {
                 maven { setUrl("https://www.jetbrains.com/intellij-repository/snapshots") }
@@ -718,7 +721,7 @@ allprojects {
 
 gradle.taskGraph.whenReady {
     fun Boolean.toOnOff(): String = if (this) "on" else "off"
-    val profile = if (isTeamcityBuild) "CI" else "Local"
+    val profile = if (isTeamcityBuild.get()) "CI" else "Local"
 
     val proguardMessage = "proguard is ${kotlinBuildProperties.proguard.toOnOff()}"
     val jarCompressionMessage = "jar compression is ${kotlinBuildProperties.jarCompression.toOnOff()}"
@@ -765,7 +768,7 @@ tasks {
         )
         allprojects
             .filter {
-                excludedNativePrefixes.none(it.path::startsWith) || kotlinBuildProperties.isKotlinNativeEnabled
+                excludedNativePrefixes.none(it.path::startsWith) || kotlinBuildProperties.isKotlinNativeEnabled.get()
             }
             .forEach {
                 dependsOn(it.tasks.withType<KotlinCompilationTask<*>>())
@@ -851,7 +854,7 @@ tasks {
     register("wasmFirCompilerTest") {
         dependsOn(":wasm:wasm.tests:test")
         // Windows WABT release requires Visual C++ Redistributable
-        if (!kotlinBuildProperties.isTeamcityBuild || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
+        if (!kotlinBuildProperties.isTeamcityBuild.get() || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
             dependsOn(":wasm:wasm.ir:test")
         }
     }
@@ -890,7 +893,7 @@ tasks {
     // These are unit tests of Native compiler
     register("nativeCompilerUnitTest") {
         dependsOn(":native:kotlin-native-utils:check")
-        if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
             dependsOn(":kotlin-native:Interop:Indexer:check")
             dependsOn(":kotlin-native:Interop:StubGenerator:check")
             dependsOn(":kotlin-native:backend.native:check")
@@ -1092,7 +1095,7 @@ tasks {
     }
 
     named("checkBuild") {
-        if (kotlinBuildProperties.isTeamcityBuild) {
+        if (kotlinBuildProperties.isTeamcityBuild.get()) {
             val bootstrapKotlinVersion = bootstrapKotlinVersion
             doFirst {
                 println("##teamcity[setParameter name='bootstrap.kotlin.version' value='$bootstrapKotlinVersion']")
@@ -1146,7 +1149,7 @@ tasks {
     }
 
     // 'mvnPublish' is required for local bootstrap
-    if (!kotlinBuildProperties.isTeamcityBuild) {
+    if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         val localPublishTask = register("publish") {
             group = "publishing"
             finalizedBy(mvnPublishTask)
@@ -1271,7 +1274,7 @@ plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin:
     }
 }
 
-if (kotlinBuildProperties.isCacheRedirectorEnabled) {
+if (kotlinBuildProperties.isCacheRedirectorEnabled.get()) {
     configureJsCacheRedirector()
 }
 

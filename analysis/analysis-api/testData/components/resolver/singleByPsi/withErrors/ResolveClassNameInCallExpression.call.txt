@@ -2,7 +2,7 @@ KtNameReferenceExpression(327,331): 'Test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -16,5 +16,6 @@ KtNameReferenceExpression(327,331): 'Test'
         typeArgumentsMapping = {
           T -> (kotlin.Int)
         }
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

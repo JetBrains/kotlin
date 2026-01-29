@@ -2,7 +2,7 @@ KtCallExpression(45,58): 'Foo<String>()'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -22,5 +22,6 @@ KtCallExpression(45,58): 'Foo<String>()'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'>

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationPluginDeclarationChecker
-import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationConfigurationKeys.DISABLE_INTRINSIC
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationConfigurationKeys.SERIALIZATION_DISABLE_INTRINSIC
 import org.jetbrains.kotlinx.serialization.compiler.fir.FirSerializationExtensionRegistrar
 
 object SerializationPluginNames {
@@ -30,8 +30,9 @@ object SerializationPluginNames {
 }
 
 object SerializationConfigurationKeys {
-    val DISABLE_INTRINSIC: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create("Disable replacement of serializer<T>() call with direct serializer retrieval.")
+    // Disable replacement of serializer<T>() call with direct serializer retrieval.
+    val SERIALIZATION_DISABLE_INTRINSIC: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create("SERIALIZATION_DISABLE_INTRINSIC")
 }
 
 class SerializationPluginOptions : CommandLineProcessor {
@@ -47,7 +48,7 @@ class SerializationPluginOptions : CommandLineProcessor {
     override val pluginOptions = listOf(DISABLE_INTRINSIC_OPTION)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
-        DISABLE_INTRINSIC_OPTION -> configuration.put(DISABLE_INTRINSIC, value == "true")
+        DISABLE_INTRINSIC_OPTION -> configuration.put(SERIALIZATION_DISABLE_INTRINSIC, value == "true")
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
@@ -59,7 +60,7 @@ class SerializationComponentRegistrar : CompilerPluginRegistrar() {
     }
 
     private fun loadDisableIntrinsic(configuration: CompilerConfiguration) =
-        if (configuration.get(DISABLE_INTRINSIC) == true) SerializationIntrinsicsState.DISABLED else SerializationIntrinsicsState.NORMAL
+        if (configuration.get(SERIALIZATION_DISABLE_INTRINSIC) == true) SerializationIntrinsicsState.DISABLED else SerializationIntrinsicsState.NORMAL
 
     override val pluginId: String get() = SerializationPluginNames.PLUGIN_ID
 
@@ -82,7 +83,7 @@ class SerializationComponentRegistrar : CompilerPluginRegistrar() {
 
             StorageComponentContainerContributor.registerExtension(SerializationPluginComponentContainerContributor())
 
-            FirExtensionRegistrarAdapter.registerExtension(FirSerializationExtensionRegistrar())
+            FirExtensionRegistrar.registerExtension(FirSerializationExtensionRegistrar())
         }
 
         private fun registerProtoExtensions() {

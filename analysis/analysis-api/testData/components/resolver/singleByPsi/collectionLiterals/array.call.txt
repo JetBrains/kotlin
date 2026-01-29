@@ -1,24 +1,26 @@
 KtCollectionLiteralExpression(40,42): '[]'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Array<kotlin.Number>
-      symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-      valueParameters = [
-        KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.Number
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/arrayOf
-    typeArgumentsMapping = {
-      T -> (kotlin.Number)
-    }
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<kotlin.Number>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Number
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/arrayOf
+      typeArgumentsMapping = {
+        T -> (kotlin.Number)
+      }
+      valueArgumentMapping = {}

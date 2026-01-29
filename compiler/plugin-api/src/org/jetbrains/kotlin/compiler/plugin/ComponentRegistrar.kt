@@ -30,7 +30,7 @@ interface ComponentRegistrar {
     companion object {
         @Suppress("DEPRECATION_ERROR")
         val PLUGIN_COMPONENT_REGISTRARS: CompilerConfigurationKey<MutableList<ComponentRegistrar>> =
-            CompilerConfigurationKey.create("plugin component registrars")
+            CompilerConfigurationKey.create("PLUGIN_COMPONENT_REGISTRARS")
     }
 
     fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration)

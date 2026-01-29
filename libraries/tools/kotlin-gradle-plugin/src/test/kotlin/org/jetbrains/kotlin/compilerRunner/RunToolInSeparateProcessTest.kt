@@ -8,19 +8,17 @@ package org.jetbrains.kotlin.compilerRunner
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.util.GradleTestCapturingKotlinLogger
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.IOException
+import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class RunToolInSeparateProcessTest {
-    @Rule
-    @JvmField
-    var tmp: TemporaryFolder = TemporaryFolder.builder().assureDeletion().build();
+    @TempDir
+    lateinit var tmp: File
 
     @Test
     fun testWhitespacesInCompilerCliArgumentsWithJvmArgsFile() {
@@ -36,9 +34,7 @@ class RunToolInSeparateProcessTest {
 
     @Test
     fun testWhitespacesInCompilerCliArgumentsDefault() {
-        expectWindowsFailure {
-            doDummyCompilerTest(expectJvmArgsFile = false)
-        }
+        doDummyCompilerTest(expectJvmArgsFile = true)
     }
 
     @Suppress("DEPRECATION")
@@ -58,7 +54,7 @@ class RunToolInSeparateProcessTest {
 
     private fun doDummyCompilerTest(expectJvmArgsFile: Boolean, explicitJdk: Pair<File, Int>? = null) {
         val logger = GradleTestCapturingKotlinLogger()
-        val buildDir = tmp.newFolder()
+        val buildDir = tmp
         val args = listOf("argument 1", "argument 2")
         val currentClasspath = System.getProperty("java.class.path")
             .split(File.pathSeparator)

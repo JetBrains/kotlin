@@ -10,31 +10,32 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
 
 object ScriptingConfigurationKeys {
-
-    val SCRIPT_DEFINITIONS = CompilerConfigurationKey.create<List<ScriptDefinition>>("script definitions")
+    val SCRIPT_DEFINITIONS = CompilerConfigurationKey.create<List<ScriptDefinition>>("SCRIPT_DEFINITIONS")
 
     @Suppress("DEPRECATION") //KT-82551
     val SCRIPT_DEFINITIONS_SOURCES =
-        CompilerConfigurationKey.create<List<org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource>>("script definitions sources")
+        CompilerConfigurationKey.create<List<org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource>>("SCRIPT_DEFINITIONS_SOURCES")
 
     val DISABLE_SCRIPTING_PLUGIN_OPTION: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create("Disable scripting plugin")
+        CompilerConfigurationKey.create("DISABLE_SCRIPTING_PLUGIN_OPTION")
 
     val SCRIPT_DEFINITIONS_CLASSES: CompilerConfigurationKey<List<String>> =
-        CompilerConfigurationKey.create("Script definition classes")
+        CompilerConfigurationKey.create("SCRIPT_DEFINITIONS_CLASSES")
 
     val SCRIPT_DEFINITIONS_CLASSPATH: CompilerConfigurationKey<List<File>> =
-        CompilerConfigurationKey.create("Additional classpath for the script definitions")
+        CompilerConfigurationKey.create("SCRIPT_DEFINITIONS_CLASSPATH")
 
     val DISABLE_SCRIPT_DEFINITIONS_FROM_CLASSPATH_OPTION: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create("Do not extract script definitions from the compilation classpath")
+        CompilerConfigurationKey.create("DISABLE_SCRIPT_DEFINITIONS_FROM_CLASSPATH_OPTION")
 
+    // Do not automatically load compiler-supplied script definitions, like main-kts.
     val DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create("Do not automatically load compiler-supplied script definitions, like main-kts")
+        CompilerConfigurationKey.create("DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION")
 
     val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION: CompilerConfigurationKey<MutableMap<String, Any?>> =
-        CompilerConfigurationKey.create("Script resolver environment")
+        CompilerConfigurationKey.create("LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION")
 
+    // Enable additional IR generation which contains script expressions evaluation info.
     val ENABLE_SCRIPT_EXPLANATION_OPTION: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create("Enable additional IR generation which contains script expressions evaluation info")
+        CompilerConfigurationKey.create("ENABLE_SCRIPT_EXPLANATION_OPTION")
 }

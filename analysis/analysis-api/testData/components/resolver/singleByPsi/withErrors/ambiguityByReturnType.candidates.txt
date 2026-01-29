@@ -1,18 +1,7 @@
 KtCallExpression(208,319): 'sumOf { c ->'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { c ->
-                        println("Level 3: $c")
-                        gif(a + b + c > 50) 1L else 0
-                    } -> (KaVariableSignature:
-          name = selector
-          receiverType = null
-          returnType = (kotlin.Int) -> java.math.BigDecimal
-          symbol = selector: (T) -> java.math.BigDecimal
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -37,22 +26,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = (kotlin.Int) -> java.math.BigInteger
-          symbol = selector: (T) -> java.math.BigInteger
+          returnType = (kotlin.Int) -> java.math.BigDecimal
+          symbol = selector: (T) -> java.math.BigDecimal
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -77,22 +67,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = (kotlin.Int) -> kotlin.Double
-          symbol = selector: (T) -> kotlin.Double
+          returnType = (kotlin.Int) -> java.math.BigInteger
+          symbol = selector: (T) -> java.math.BigInteger
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -117,22 +108,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = (kotlin.Int) -> kotlin.Int
-          symbol = selector: (T) -> kotlin.Int
+          returnType = (kotlin.Int) -> kotlin.Double
+          symbol = selector: (T) -> kotlin.Double
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -157,22 +149,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = (kotlin.Int) -> kotlin.Long
-          symbol = selector: (T) -> kotlin.Long
+          returnType = (kotlin.Int) -> kotlin.Int
+          symbol = selector: (T) -> kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -197,22 +190,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = (kotlin.Int) -> kotlin.UInt
-          symbol = selector: (T) -> kotlin.UInt
+          returnType = (kotlin.Int) -> kotlin.Long
+          symbol = selector: (T) -> kotlin.Long
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -237,22 +231,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = (kotlin.Int) -> kotlin.ULong
-          symbol = selector: (T) -> kotlin.ULong
+          returnType = (kotlin.Int) -> kotlin.UInt
+          symbol = selector: (T) -> kotlin.UInt
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -276,5 +271,17 @@ KtCallExpression(208,319): 'sumOf { c ->'
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {
         T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        { c ->
+                        println("Level 3: $c")
+                        gif(a + b + c > 50) 1L else 0
+                    } -> (KaVariableSignature:
+          name = selector
+          receiverType = null
+          returnType = (kotlin.Int) -> kotlin.ULong
+          symbol = selector: (T) -> kotlin.ULong
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = false

@@ -1,14 +1,16 @@
 KtCallExpression(202,207): 'foo()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Int
-      symbol = r/foo(): kotlin.Int
-      valueParameters = []
-      contextParameters = []
-      callableId = r/foo
-    typeArgumentsMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = r/foo(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = r/foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

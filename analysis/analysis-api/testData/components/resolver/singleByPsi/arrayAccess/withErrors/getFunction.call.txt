@@ -2,15 +2,7 @@ KtArrayAccessExpression(44,48): '1[2]'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          2 -> (KaVariableSignature:
-            name = index
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = index: kotlin.Int
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -33,5 +25,14 @@ KtArrayAccessExpression(44,48): '1[2]'
           contextParameters = []
           callableId = /get
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          2 -> (KaVariableSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'fun Int.get(index: Int): Int'.>

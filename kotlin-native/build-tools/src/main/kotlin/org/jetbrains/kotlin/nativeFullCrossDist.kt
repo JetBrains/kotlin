@@ -107,9 +107,9 @@ fun getDarwinOnlyTargets(): Set<KonanTarget> {
 }
 
 private val Project.pathToDarwinDistProperty: String?
-    get() = kotlinBuildProperties.getOrNull(PATH_TO_DARWIN_DIST_PROPERTY) as? String
+    get() = kotlinBuildProperties.stringProperty(PATH_TO_DARWIN_DIST_PROPERTY).orNull
 private val Project.pathToHostDistProperty: String?
-    get() = kotlinBuildProperties.getOrNull(PATH_TO_HOST_DIST_PROPERTY) as? String
+    get() = kotlinBuildProperties.stringProperty(PATH_TO_HOST_DIST_PROPERTY).orNull
 
 private val Project.darwinDistFile: File
     get() = rootProject.rootDir.resolve(File(pathToDarwinDistProperty!!))

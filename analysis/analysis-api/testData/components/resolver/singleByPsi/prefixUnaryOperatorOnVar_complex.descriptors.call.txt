@@ -4,7 +4,7 @@ KtPrefixExpression(80,83): '++f'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
@@ -19,6 +19,7 @@ KtPrefixExpression(80,83): '++f'
             contextParameters = []
             callableId = /inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = PREFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []

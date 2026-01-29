@@ -414,7 +414,6 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                 configurations.create("${originalConfiguration.name}$FIXED_CONFIGURATION_SUFFIX") {
                     isCanBeResolved = originalConfiguration.isCanBeResolved
                     isCanBeConsumed = originalConfiguration.isCanBeConsumed
-                    isVisible = originalConfiguration.isVisible
                     setExtendsFrom(originalConfiguration.extendsFrom)
 
                     artifacts {
@@ -479,7 +478,12 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     originalConfiguration.attributes {
                         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("no-op"))
                     }
-                    originalConfiguration.isVisible = false
+
+                    @Suppress("DEPRECATION")
+                    if(GradleVersion.current() < GradleVersion.version("9.0.0")) {
+                        originalConfiguration.isVisible = false
+                    }
+
                     javaComponent.withVariantsFromConfiguration(originalConfiguration) {
                         skip()
                     }

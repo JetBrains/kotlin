@@ -49,15 +49,7 @@ KtNameReferenceExpression(31,34): 'Int'
 KtBinaryExpression(37,45): 'this - i'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = other: kotlin.Double
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -80,20 +72,21 @@ KtBinaryExpression(37,45): 'this - i'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = other: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = other: kotlin.Float
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -116,20 +109,21 @@ KtBinaryExpression(37,45): 'this - i'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = other: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -152,20 +146,21 @@ KtBinaryExpression(37,45): 'this - i'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -188,19 +183,20 @@ KtBinaryExpression(37,45): 'this - i'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -223,20 +219,21 @@ KtBinaryExpression(37,45): 'this - i'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -259,6 +256,15 @@ KtBinaryExpression(37,45): 'this - i'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
     isInBestCandidates = false
 
@@ -271,15 +277,7 @@ KtNameReferenceExpression(37,41): 'this'
 KtOperationReferenceExpression(42,43): '-'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = other: kotlin.Double
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -302,20 +300,21 @@ KtOperationReferenceExpression(42,43): '-'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = other: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = other: kotlin.Float
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -338,20 +337,21 @@ KtOperationReferenceExpression(42,43): '-'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = other: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -374,20 +374,21 @@ KtOperationReferenceExpression(42,43): '-'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -410,19 +411,20 @@ KtOperationReferenceExpression(42,43): '-'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -445,20 +447,21 @@ KtOperationReferenceExpression(42,43): '-'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = this
@@ -481,6 +484,15 @@ KtOperationReferenceExpression(42,43): '-'
         contextParameters = []
         callableId = kotlin/Int.minus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
     isInBestCandidates = false
 
@@ -529,15 +541,7 @@ KtProperty(79,117): 'val newParameter = parameter myMinus 5'
 KtBinaryExpression(98,117): 'parameter myMinus 5'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        5 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -560,6 +564,15 @@ KtBinaryExpression(98,117): 'parameter myMinus 5'
         contextParameters = []
         callableId = /myMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        5 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(98,107): 'parameter'
@@ -583,15 +596,7 @@ KtNameReferenceExpression(98,107): 'parameter'
 KtOperationReferenceExpression(108,115): 'myMinus'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        5 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -614,6 +619,15 @@ KtOperationReferenceExpression(108,115): 'myMinus'
         contextParameters = []
         callableId = /myMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        5 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(116,117): '5'
@@ -625,15 +639,7 @@ KtProperty(122,171): 'val oneMoreParameter = newParameter + 1 myMinus 4'
 KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        4 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -656,20 +662,21 @@ KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
         contextParameters = []
         callableId = /myMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtBinaryExpression(145,161): 'newParameter + 1'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = other: kotlin.Double
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -692,20 +699,21 @@ KtBinaryExpression(145,161): 'newParameter + 1'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = other: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = other: kotlin.Float
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -728,20 +736,21 @@ KtBinaryExpression(145,161): 'newParameter + 1'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = other: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -764,20 +773,21 @@ KtBinaryExpression(145,161): 'newParameter + 1'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -800,19 +810,20 @@ KtBinaryExpression(145,161): 'newParameter + 1'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -835,20 +846,21 @@ KtBinaryExpression(145,161): 'newParameter + 1'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -871,6 +883,15 @@ KtBinaryExpression(145,161): 'newParameter + 1'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
     isInBestCandidates = false
 
@@ -895,15 +916,7 @@ KtNameReferenceExpression(145,157): 'newParameter'
 KtOperationReferenceExpression(158,159): '+'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = other: kotlin.Double
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -926,20 +939,21 @@ KtOperationReferenceExpression(158,159): '+'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = other: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = other: kotlin.Float
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -962,20 +976,21 @@ KtOperationReferenceExpression(158,159): '+'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = other: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -998,20 +1013,21 @@ KtOperationReferenceExpression(158,159): '+'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1034,19 +1050,20 @@ KtOperationReferenceExpression(158,159): '+'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1069,20 +1086,21 @@ KtOperationReferenceExpression(158,159): '+'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1105,6 +1123,15 @@ KtOperationReferenceExpression(158,159): '+'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
     isInBestCandidates = false
 
@@ -1114,15 +1141,7 @@ KtConstantExpression(160,161): '1'
 KtOperationReferenceExpression(162,169): 'myMinus'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        4 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1145,6 +1164,15 @@ KtOperationReferenceExpression(162,169): 'myMinus'
         contextParameters = []
         callableId = /myMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(170,171): '4'
@@ -1156,15 +1184,7 @@ KtProperty(176,249): 'val explicitForm = newParameter.plus(parameter.myMinus(one
 KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreParameter))'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = other: kotlin.Double
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1187,20 +1207,21 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = other: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = other: kotlin.Float
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1223,20 +1244,21 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = other: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1259,20 +1281,21 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1295,19 +1318,20 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1330,20 +1354,21 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1366,6 +1391,15 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
     isInBestCandidates = false
 
@@ -1388,17 +1422,9 @@ KtNameReferenceExpression(195,207): 'newParameter'
     isInBestCandidates = true
 
 KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = other: kotlin.Double
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1421,20 +1447,21 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Float
-          symbol = other: kotlin.Float
+          returnType = kotlin.Double
+          symbol = other: kotlin.Double
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1457,20 +1484,21 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
+          returnType = kotlin.Float
+          symbol = other: kotlin.Float
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1493,20 +1521,21 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1529,19 +1558,20 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1564,20 +1594,21 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1600,21 +1631,22 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(208,212): 'plus'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = other: kotlin.Double
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1637,20 +1669,21 @@ KtNameReferenceExpression(208,212): 'plus'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = other: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = other: kotlin.Float
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1673,20 +1706,21 @@ KtNameReferenceExpression(208,212): 'plus'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = other: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1709,20 +1743,21 @@ KtNameReferenceExpression(208,212): 'plus'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1745,19 +1780,20 @@ KtNameReferenceExpression(208,212): 'plus'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1780,20 +1816,21 @@ KtNameReferenceExpression(208,212): 'plus'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = newParameter
@@ -1816,6 +1853,15 @@ KtNameReferenceExpression(208,212): 'plus'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        parameter.myMinus(oneMoreParameter) -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
     isInBestCandidates = false
 
@@ -1828,15 +1874,7 @@ KtValueArgument(213,248): 'parameter.myMinus(oneMoreParameter)'
 KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        oneMoreParameter -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1859,6 +1897,15 @@ KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
         contextParameters = []
         callableId = /myMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        oneMoreParameter -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(213,222): 'parameter'
@@ -1880,17 +1927,9 @@ KtNameReferenceExpression(213,222): 'parameter'
     isInBestCandidates = true
 
 KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        oneMoreParameter -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1913,20 +1952,21 @@ KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
         contextParameters = []
         callableId = /myMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        oneMoreParameter -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(223,230): 'myMinus'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        oneMoreParameter -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1949,6 +1989,15 @@ KtNameReferenceExpression(223,230): 'myMinus'
         contextParameters = []
         callableId = /myMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        oneMoreParameter -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(230,248): '(oneMoreParameter)'

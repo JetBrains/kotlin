@@ -4,7 +4,7 @@ KtPostfixExpression(182,190): 'm["a"]++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = m["a"]
@@ -19,17 +19,10 @@ KtPostfixExpression(182,190): 'm["a"]++'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       getterCall = KaSimpleFunctionCall:
-        argumentMapping = {
-          "a" -> (KaVariableSignature:
-            name = k
-            receiverType = null
-            returnType = kotlin.String
-            symbol = k: K1
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
@@ -52,19 +45,20 @@ KtPostfixExpression(182,190): 'm["a"]++'
           contextParameters = []
           callableId = /MyMap.get
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "a" -> (KaVariableSignature:
+            name = k
+            receiverType = null
+            returnType = kotlin.String
+            symbol = k: K1
+            contextParameters = []
+            callableId = null)
+        }
       indexArguments = [
         "a"
       ]
       setterCall = KaSimpleFunctionCall:
-        argumentMapping = {
-          "a" -> (KaVariableSignature:
-            name = v
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = v: V2
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Foo
@@ -98,4 +92,13 @@ KtPostfixExpression(182,190): 'm["a"]++'
         typeArgumentsMapping = {
           K2 -> (kotlin.String),
           V2 -> (kotlin.Int)
+        }
+        valueArgumentMapping = {
+          "a" -> (KaVariableSignature:
+            name = v
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = v: V2
+            contextParameters = []
+            callableId = null)
         }

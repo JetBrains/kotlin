@@ -305,10 +305,10 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| { LAZY_BLOCK }
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| = R|foo/explicitType|()
+            [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| = R|foo/explicitType|()
         }
 
 
@@ -331,11 +331,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localPropertyWithPropagatedTypeScript.kts
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0), ScriptTopLevelDeclaration=true] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| {
             ^explicitType Int(0)
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| = R|foo/explicitType|()
+            [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| = R|foo/explicitType|()
         }
 

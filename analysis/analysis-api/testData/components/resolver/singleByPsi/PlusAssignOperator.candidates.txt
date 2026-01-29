@@ -1,15 +1,7 @@
 KtOperationReferenceExpression(159,161): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        foo -> (KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = test.Foo
-          symbol = f: test.Foo
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = withOperator
@@ -32,4 +24,13 @@ KtOperationReferenceExpression(159,161): '+='
         contextParameters = []
         callableId = test/WithOperator.plusAssign
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        foo -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = test.Foo
+          symbol = f: test.Foo
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

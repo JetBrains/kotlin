@@ -1,15 +1,7 @@
 KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-          symbol = action: kotlin.Function1<T, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -34,20 +26,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+          symbol = action: kotlin.Function1<T, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -70,20 +63,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Byte, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Byte, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -106,20 +100,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Byte, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Byte, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -142,12 +137,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { } -> (KaVariableSignature:
           name = action
           receiverType = null
@@ -156,6 +146,12 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -178,20 +174,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/text/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Double, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Double, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -214,20 +211,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Double, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Double, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Float, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Float, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -250,20 +248,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Float, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Float, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -286,20 +285,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Long, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Long, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -322,20 +322,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Long, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Long, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Short, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Short, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -358,20 +359,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Short, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Short, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.UByte, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.UByte, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -394,20 +396,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.UByte, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.UByte, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.UInt, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.UInt, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -430,20 +433,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.UInt, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.UInt, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.ULong, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.ULong, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -466,20 +470,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.ULong, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.ULong, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.UShort, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.UShort, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -502,20 +507,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.UShort, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.UShort, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action: kotlin.Function1<T, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -540,19 +546,20 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<T, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = operation
-          receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-          symbol = operation: kotlin.Function1<T, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -577,20 +584,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = operation
+          receiverType = null
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+          symbol = operation: kotlin.Function1<T, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -613,19 +621,20 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         contextParameters = []
         callableId = /forEach
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -651,12 +660,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         K -> (ERROR_TYPE),
         V -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { } -> (KaVariableSignature:
           name = action
           receiverType = null
@@ -665,6 +669,12 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -690,20 +700,21 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         K -> (ERROR_TYPE),
         V -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-          symbol = action: kotlin.Function1<T, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -727,6 +738,15 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         callableId = kotlin/sequences/forEach
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+          symbol = action: kotlin.Function1<T, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false

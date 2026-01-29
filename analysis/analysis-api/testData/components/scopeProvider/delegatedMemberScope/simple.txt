@@ -19,7 +19,7 @@ KaKotlinPropertySymbol:
     isNotDefault: false
     isOverride: true
     location: PROPERTY
-    modality: ABSTRACT
+    modality: OPEN
     origin: DELEGATED
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
@@ -135,6 +135,7 @@ KaKotlinPropertySymbol:
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
       isActual: false
       isCrossinline: false
       isExpect: false
@@ -198,6 +199,7 @@ KaKotlinPropertySymbol:
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
+        hasSynthesizedName: false
         isActual: false
         isCrossinline: false
         isExpect: false
@@ -313,7 +315,7 @@ KaKotlinPropertySymbol:
     isNotDefault: false
     isOverride: true
     location: PROPERTY
-    modality: ABSTRACT
+    modality: OPEN
     origin: DELEGATED
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -461,7 +463,7 @@ KaKotlinPropertySymbol:
     isNotDefault: false
     isOverride: true
     location: PROPERTY
-    modality: ABSTRACT
+    modality: OPEN
     origin: DELEGATED
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -527,6 +529,7 @@ KaKotlinPropertySymbol:
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
       isActual: false
       isCrossinline: false
       isExpect: false
@@ -565,6 +568,7 @@ KaKotlinPropertySymbol:
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
+        hasSynthesizedName: false
         isActual: false
         isCrossinline: false
         isExpect: false
@@ -636,7 +640,7 @@ KaKotlinPropertySymbol:
     isNotDefault: false
     isOverride: true
     location: PROPERTY
-    modality: ABSTRACT
+    modality: OPEN
     origin: DELEGATED
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []

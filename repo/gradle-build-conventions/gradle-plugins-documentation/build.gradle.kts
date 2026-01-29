@@ -31,7 +31,7 @@ repositories {
 dependencies {
     api(project(":gradle-plugins-common"))
 
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
     implementation(libs.dokka.gradlePlugin)
     implementation(libs.downloadTask.gradlePlugin)
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api")
@@ -67,6 +67,14 @@ configurations.all {
         if (requested.group.startsWith("com.fasterxml.jackson")) {
             useVersion("2.16.0")
             because("CVE-2025-49128, CVE-2025-52999")
+        }
+    }
+}
+
+project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
+    resolutionStrategy {
+        eachDependency {
+            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
         }
     }
 }

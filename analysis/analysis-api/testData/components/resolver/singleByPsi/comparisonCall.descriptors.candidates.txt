@@ -1,15 +1,7 @@
 KtBinaryExpression(31,36): 'i < j'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        j -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -32,4 +24,13 @@ KtBinaryExpression(31,36): 'i < j'
         contextParameters = []
         callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        j -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

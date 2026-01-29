@@ -1,7 +1,7 @@
 KtDotQualifiedExpression(53,61): 's.action'
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = action
@@ -27,5 +27,6 @@ KtDotQualifiedExpression(53,61): 's.action'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNSAFE_IMPLICIT_INVOKE_CALL: Reference has a nullable type '(String.() -> Unit)?'. Use explicit '?.invoke' to make a function-like call instead.>
     isInBestCandidates = true

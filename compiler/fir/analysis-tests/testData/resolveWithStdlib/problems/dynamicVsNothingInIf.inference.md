@@ -43,7 +43,19 @@ parse#(R|<local>/data|)
 
 ##### Call Completion:
 
-1. Choose `TypeVariable(T)` with `FORBIDDEN`
+1. Choose `TypeVariable(T)` with `Readiness(
+   	false ALLOWED
+   	false HAS_PROPER_CONSTRAINTS
+   	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+   	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+   	false HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+   )`
 
 ### Call 3
 
@@ -77,13 +89,49 @@ when () {
 
 ##### Call Completion:
 
-1. Choose `TypeVariable(K)` with `READY_FOR_FIXATION_UPPER`
-    1. `TypeVariable(T)` is `READY_FOR_FIXATION_UPPER`
-2. `TypeVariable(K) == dynamic` _from Fix variable K_
-3. Combine `TypeVariable(T) <: TypeVariable(K)` with `TypeVariable(K) == dynamic`
-    1. `TypeVariable(T) <: dynamic`
-4. Choose `TypeVariable(T)` with `READY_FOR_FIXATION_UPPER`
-5. `TypeVariable(T) == dynamic` _from Fix variable T_
+1. Choose `TypeVariable(T)` with `Readiness(
+   	 true ALLOWED
+   	 true HAS_PROPER_CONSTRAINTS
+   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+   	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+   )`
+    1. `TypeVariable(K)` is `Readiness(
+       	 true ALLOWED
+       	 true HAS_PROPER_CONSTRAINTS
+       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+       )`
+2. `TypeVariable(T) == dynamic` _from Fix variable T_
+3. Combine `TypeVariable(T) == dynamic` with `TypeVariable(T) <: TypeVariable(K)`
+    1. `dynamic <: TypeVariable(K)`
+4. Choose `TypeVariable(K)` with `Readiness(
+   	 true ALLOWED
+   	 true HAS_PROPER_CONSTRAINTS
+   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+   	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+   )`
+5. `TypeVariable(K) == dynamic` _from Fix variable K_
 
 ### Call 4
 

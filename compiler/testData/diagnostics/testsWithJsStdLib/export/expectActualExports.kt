@@ -18,7 +18,7 @@ package sample
 @kotlin.js.JsExport expect class Foo
 @kotlin.js.JsExport expect class Bar
 @kotlin.js.JsExport expect class Baz {
-    <!WRONG_EXPORTED_DECLARATION("suspend function"), WRONG_EXPORTED_DECLARATION{METADATA}("suspend function")!>suspend fun foo(): Int<!>
+    suspend fun foo(): Int
 }
 @kotlin.js.JsExport expect class Nested {
     interface A
@@ -47,7 +47,7 @@ package sample
 actual class <!NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>Foo<!>
 
 @kotlin.js.JsExport actual class Bar {
-    <!WRONG_EXPORTED_DECLARATION("suspend function")!>suspend fun foo()<!> = 42
+    suspend fun foo() = 42
 }
 
 @kotlin.js.JsExport actual class Nested {

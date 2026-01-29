@@ -22,15 +22,7 @@ KtProperty(18,45): 'val value = "1" + "2" + "3"'
 KtBinaryExpression(30,45): '"1" + "2" + "3"'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "3" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "1" + "2"
@@ -53,13 +45,8 @@ KtBinaryExpression(30,45): '"1" + "2" + "3"'
         contextParameters = []
         callableId = kotlin/String.plus
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-KtBinaryExpression(30,39): '"1" + "2"'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "2" -> (KaVariableSignature:
+      valueArgumentMapping = {
+        "3" -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Any?
@@ -67,6 +54,12 @@ KtBinaryExpression(30,39): '"1" + "2"'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+KtBinaryExpression(30,39): '"1" + "2"'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "1"
@@ -89,6 +82,15 @@ KtBinaryExpression(30,39): '"1" + "2"'
         contextParameters = []
         callableId = kotlin/String.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtStringTemplateExpression(30,33): '"1"'
@@ -100,15 +102,7 @@ KtLiteralStringTemplateEntry(31,32): '1'
 KtOperationReferenceExpression(34,35): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "2" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "1"
@@ -131,6 +125,15 @@ KtOperationReferenceExpression(34,35): '+'
         contextParameters = []
         callableId = kotlin/String.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtStringTemplateExpression(36,39): '"2"'
@@ -142,15 +145,7 @@ KtLiteralStringTemplateEntry(37,38): '2'
 KtOperationReferenceExpression(40,41): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "3" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "1" + "2"
@@ -173,6 +168,15 @@ KtOperationReferenceExpression(40,41): '+'
         contextParameters = []
         callableId = kotlin/String.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "3" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtStringTemplateExpression(42,45): '"3"'

@@ -1,7 +1,7 @@
 KtBinaryExpression(17,24): '"dsd" +'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "dsd"
@@ -24,3 +24,4 @@ KtBinaryExpression(17,24): '"dsd" +'
         contextParameters = []
         callableId = kotlin/String.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

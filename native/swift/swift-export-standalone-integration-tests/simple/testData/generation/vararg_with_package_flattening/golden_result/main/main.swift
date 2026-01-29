@@ -6,12 +6,12 @@ import KotlinRuntimeSupport
 public func log(
     messages: Swift.String...
 ) -> Swift.Void {
-    return org_kotlin_foo_log__TypesOfArguments__Swift_Array_Swift_String___(messages)
+    return org_kotlin_foo_log__TypesOfArguments__Swift_Array_Swift_String__Vararg___(messages)
 }
 extension ExportedKotlinPackages.org.kotlin.foo {
     public static func log(
         messages: Swift.String...
     ) -> Swift.Void {
-        return org_kotlin_foo_log__TypesOfArguments__Swift_Array_Swift_String___(messages)
+        return org_kotlin_foo_log__TypesOfArguments__Swift_Array_Swift_String__Vararg___(messages)
     }
 }

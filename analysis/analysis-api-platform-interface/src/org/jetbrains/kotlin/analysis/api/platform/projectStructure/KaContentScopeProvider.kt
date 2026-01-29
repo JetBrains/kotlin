@@ -8,18 +8,21 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
  * An engine services which *must* be used to calculate a [KaModule]'s [content scope][KaModule.contentScope] lazily.
  */
+@KaPlatformInterface
 public interface KaContentScopeProvider : KaEngineService {
     /**
      * Calculates a [KaModule.contentScope] from [KaModule.baseContentScope] for the given [KaModule] using [KotlinContentScopeRefiner]s.
      */
     public fun getRefinedContentScope(module: KaModule): GlobalSearchScope
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KaContentScopeProvider = project.service()
     }

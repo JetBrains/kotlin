@@ -1,0 +1,19 @@
+KT element: KtNameReferenceExpression
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] explicitArgumentNameReference.kt
+    public final [ResolvedTo(STATUS)] class Regular : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Regular] constructor(): R|Regular| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun named([ResolvedTo(CONTRACTS)] regular: R|Regular|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|/named|(R|/Regular.Regular|())
+    }

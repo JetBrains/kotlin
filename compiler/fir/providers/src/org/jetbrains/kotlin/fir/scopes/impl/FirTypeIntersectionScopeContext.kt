@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -401,7 +402,7 @@ class FirTypeIntersectionScopeContext(
                 newReturnType = returnType,
                 newSource = dispatchReceiverType.toSymbol(session)?.source,
                 newSetterVisibility = setterVisibility,
-                explicitBackingFieldNewReturnType = fir.getExplicitBackingField()?.returnTypeRef?.coneType,
+                explicitBackingFieldNewReturnType = fir.getExplicitBackingField()?.returnTypeRef?.coneTypeSafe(),
             )
         }
     }
@@ -445,7 +446,11 @@ class FirTypeIntersectionScopeContext(
         // It's fine because in cases where the code becomes green due to not reporting this diagnostic,
         // the user is required to provide an explicit override of such a property in a non-abstract subclass.
         // See: compiler/testData/diagnostics/tests/varOverriddenByValThroughIntersection.kt.
-        val key = mostSpecific.find { it is FirPropertySymbol && it.isVar } as? S ?: mostSpecific.first() as S
+        // Picking a property with an explicit backing field preserves the field-related smartcasts,
+        // which is also fine for pretty much the same reason.
+        // See: compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldAndMultipleIntersectionWithVar.kt
+        val key = mostSpecific.find { it is FirPropertySymbol && (it.isVar || it.hasExplicitBackingField) } as? S
+            ?: mostSpecific.first() as S
         val keyFir = key.fir
         val callableId = CallableId(dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!, keyFir.name)
         val newSymbol = createIntersectionOverrideSymbol(callableId, overrides, containsMultipleNonSubsumed)
@@ -458,6 +463,7 @@ class FirTypeIntersectionScopeContext(
             originalForIntersectionOverrideAttr = keyFir
             getter?.originalForIntersectionOverrideAttr = keyFir.getter
             setter?.originalForIntersectionOverrideAttr = keyFir.setter
+            backingField?.originalForIntersectionOverrideAttr = keyFir.backingField
         }
         return newSymbol
     }

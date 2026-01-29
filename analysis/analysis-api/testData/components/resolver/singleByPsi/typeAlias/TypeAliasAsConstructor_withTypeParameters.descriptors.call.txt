@@ -1,15 +1,7 @@
 KtNameReferenceExpression(93,100): 'MyAlias'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "hello" -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = kotlin.String
-          symbol = t: TT
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -30,4 +22,13 @@ KtNameReferenceExpression(93,100): 'MyAlias'
         callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "hello" -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = kotlin.String
+          symbol = t: TT
+          contextParameters = []
+          callableId = null)
       }

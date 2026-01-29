@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.utils.androidExtension
-import org.junit.Test
+import kotlin.test.Test
 import java.util.*
 
 class IdeSourceSetConstraintTest {

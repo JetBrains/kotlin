@@ -632,9 +632,9 @@ KtProperty(797,808): 'var a = A()'
   NO_CANDIDATES
 
 KtCallExpression(805,808): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -646,12 +646,13 @@ KtCallExpression(805,808): 'A()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(805,806): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -663,6 +664,7 @@ KtNameReferenceExpression(805,806): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(806,808): '()'
@@ -672,9 +674,9 @@ KtProperty(813,838): 'var b = SimpleOperators()'
   NO_CANDIDATES
 
 KtCallExpression(821,838): 'SimpleOperators()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -686,12 +688,13 @@ KtCallExpression(821,838): 'SimpleOperators()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(821,836): 'SimpleOperators'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -703,15 +706,46 @@ KtNameReferenceExpression(821,836): 'SimpleOperators'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(836,838): '()'
   NO_CANDIDATES
 
 KtCallExpression(843,1229): 'with(A()){'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SimpleOperators
+        symbol = kotlin/with(receiver: T, block: T.() -> R): R
+        valueParameters = [
+          KaVariableSignature:
+            name = receiver
+            receiverType = null
+            returnType = A
+            symbol = receiver: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = A.() -> SimpleOperators
+            symbol = block: T.() -> R
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/with
+      typeArgumentsMapping = {
+        T -> (A),
+        R -> (SimpleOperators)
+      }
+      valueArgumentMapping = {
         A() -> (KaVariableSignature:
           name = receiver
           receiverType = null
@@ -750,42 +784,43 @@ KtCallExpression(843,1229): 'with(A()){'
           symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
-      }
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = SimpleOperators
-        symbol = kotlin/with(receiver: T, block: T.() -> R): R
-        valueParameters = [
-          KaVariableSignature:
-            name = receiver
-            receiverType = null
-            returnType = A
-            symbol = receiver: T
-            contextParameters = []
-            callableId = null,
-          KaVariableSignature:
-            name = block
-            receiverType = null
-            returnType = A.() -> SimpleOperators
-            symbol = block: T.() -> R
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/with
-      typeArgumentsMapping = {
-        T -> (A),
-        R -> (SimpleOperators)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(843,847): 'with'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SimpleOperators
+        symbol = kotlin/with(receiver: T, block: T.() -> R): R
+        valueParameters = [
+          KaVariableSignature:
+            name = receiver
+            receiverType = null
+            returnType = A
+            symbol = receiver: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = A.() -> SimpleOperators
+            symbol = block: T.() -> R
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/with
+      typeArgumentsMapping = {
+        T -> (A),
+        R -> (SimpleOperators)
+      }
+      valueArgumentMapping = {
         A() -> (KaVariableSignature:
           name = receiver
           receiverType = null
@@ -824,35 +859,6 @@ KtNameReferenceExpression(843,847): 'with'
           symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
-      }
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = SimpleOperators
-        symbol = kotlin/with(receiver: T, block: T.() -> R): R
-        valueParameters = [
-          KaVariableSignature:
-            name = receiver
-            receiverType = null
-            returnType = A
-            symbol = receiver: T
-            contextParameters = []
-            callableId = null,
-          KaVariableSignature:
-            name = block
-            receiverType = null
-            returnType = A.() -> SimpleOperators
-            symbol = block: T.() -> R
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/with
-      typeArgumentsMapping = {
-        T -> (A),
-        R -> (SimpleOperators)
       }
     isInBestCandidates = true
 
@@ -863,9 +869,9 @@ KtValueArgument(848,851): 'A()'
   NO_CANDIDATES
 
 KtCallExpression(848,851): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -877,12 +883,13 @@ KtCallExpression(848,851): 'A()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(848,849): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -894,6 +901,7 @@ KtNameReferenceExpression(848,849): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(849,851): '()'
@@ -923,7 +931,7 @@ KtNameReferenceExpression(877,881): 'this'
 KtPrefixExpression(890,899): '+thisProp'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -970,12 +978,13 @@ KtPrefixExpression(890,899): '+thisProp'
         ]
         callableId = /unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(890,891): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1022,6 +1031,7 @@ KtOperationReferenceExpression(890,891): '+'
         ]
         callableId = /unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(891,899): 'thisProp'
@@ -1045,7 +1055,7 @@ KtNameReferenceExpression(891,899): 'thisProp'
 KtPrefixExpression(908,910): '+a'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1092,12 +1102,13 @@ KtPrefixExpression(908,910): '+a'
         ]
         callableId = /unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(908,909): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1144,6 +1155,7 @@ KtOperationReferenceExpression(908,909): '+'
         ]
         callableId = /unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(909,910): 'a'
@@ -1167,15 +1179,7 @@ KtNameReferenceExpression(909,910): 'a'
 KtBinaryExpression(919,931): 'thisProp + 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1230,6 +1234,15 @@ KtBinaryExpression(919,931): 'thisProp + 1'
         ]
         callableId = /plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(919,927): 'thisProp'
@@ -1253,15 +1266,7 @@ KtNameReferenceExpression(919,927): 'thisProp'
 KtOperationReferenceExpression(928,929): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1316,15 +1321,7 @@ KtOperationReferenceExpression(928,929): '+'
         ]
         callableId = /plus
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-KtConstantExpression(930,931): '1'
-  NO_CANDIDATES
-
-KtBinaryExpression(940,945): 'a + 1'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -1333,6 +1330,15 @@ KtBinaryExpression(940,945): 'a + 1'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+KtConstantExpression(930,931): '1'
+  NO_CANDIDATES
+
+KtBinaryExpression(940,945): 'a + 1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1387,6 +1393,15 @@ KtBinaryExpression(940,945): 'a + 1'
         ]
         callableId = /plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(940,941): 'a'
@@ -1410,15 +1425,7 @@ KtNameReferenceExpression(940,941): 'a'
 KtOperationReferenceExpression(942,943): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1473,15 +1480,7 @@ KtOperationReferenceExpression(942,943): '+'
         ]
         callableId = /plus
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-KtConstantExpression(944,945): '1'
-  NO_CANDIDATES
-
-KtArrayAccessExpression(954,965): 'thisProp[1]'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -1490,6 +1489,15 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+KtConstantExpression(944,945): '1'
+  NO_CANDIDATES
+
+KtArrayAccessExpression(954,965): 'thisProp[1]'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1544,6 +1552,15 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
         ]
         callableId = /get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(954,962): 'thisProp'
@@ -1571,17 +1588,9 @@ KtConstantExpression(963,964): '1'
   NO_CANDIDATES
 
 KtArrayAccessExpression(974,978): 'a[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1636,6 +1645,15 @@ KtArrayAccessExpression(974,978): 'a[1]'
         ]
         callableId = /get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(974,975): 'a'
@@ -1665,22 +1683,7 @@ KtConstantExpression(976,977): '1'
 KtBinaryExpression(987,1004): 'thisProp[1] = A()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1742,27 +1745,28 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtArrayAccessExpression(987,998): 'thisProp[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1824,6 +1828,22 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(987,995): 'thisProp'
@@ -1853,22 +1873,7 @@ KtConstantExpression(996,997): '1'
 KtOperationReferenceExpression(999,1000): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -1930,12 +1935,28 @@ KtOperationReferenceExpression(999,1000): '='
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtCallExpression(1001,1004): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1947,12 +1968,13 @@ KtCallExpression(1001,1004): 'A()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1001,1002): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1964,6 +1986,7 @@ KtNameReferenceExpression(1001,1002): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(1002,1004): '()'
@@ -1972,22 +1995,7 @@ KtValueArgumentList(1002,1004): '()'
 KtBinaryExpression(1013,1023): 'a[1] = A()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2049,27 +2057,28 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtArrayAccessExpression(1013,1017): 'a[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2131,6 +2140,22 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1013,1014): 'a'
@@ -2160,22 +2185,7 @@ KtConstantExpression(1015,1016): '1'
 KtOperationReferenceExpression(1018,1019): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2237,12 +2247,28 @@ KtOperationReferenceExpression(1018,1019): '='
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtCallExpression(1020,1023): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2254,12 +2280,13 @@ KtCallExpression(1020,1023): 'A()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1020,1021): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2271,15 +2298,16 @@ KtNameReferenceExpression(1020,1021): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(1021,1023): '()'
   NO_CANDIDATES
 
 KtCallExpression(1032,1042): 'thisProp()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2326,6 +2354,7 @@ KtCallExpression(1032,1042): 'thisProp()'
         ]
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1032,1040): 'thisProp'
@@ -2350,9 +2379,9 @@ KtValueArgumentList(1040,1042): '()'
   NO_CANDIDATES
 
 KtCallExpression(1051,1054): 'a()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2399,6 +2428,7 @@ KtCallExpression(1051,1054): 'a()'
         ]
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1051,1052): 'a'
@@ -2425,15 +2455,7 @@ KtValueArgumentList(1052,1054): '()'
 KtBinaryExpression(1063,1076): 'thisProp += 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2488,6 +2510,15 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
         ]
         callableId = /plusAssign
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1063,1071): 'thisProp'
@@ -2511,15 +2542,7 @@ KtNameReferenceExpression(1063,1071): 'thisProp'
 KtOperationReferenceExpression(1072,1074): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2574,15 +2597,7 @@ KtOperationReferenceExpression(1072,1074): '+='
         ]
         callableId = /plusAssign
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-KtConstantExpression(1075,1076): '1'
-  NO_CANDIDATES
-
-KtBinaryExpression(1085,1091): 'a += 1'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -2591,6 +2606,15 @@ KtBinaryExpression(1085,1091): 'a += 1'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+KtConstantExpression(1075,1076): '1'
+  NO_CANDIDATES
+
+KtBinaryExpression(1085,1091): 'a += 1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2645,6 +2669,15 @@ KtBinaryExpression(1085,1091): 'a += 1'
         ]
         callableId = /plusAssign
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1085,1086): 'a'
@@ -2668,15 +2701,7 @@ KtNameReferenceExpression(1085,1086): 'a'
 KtOperationReferenceExpression(1087,1089): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -2731,6 +2756,15 @@ KtOperationReferenceExpression(1087,1089): '+='
         ]
         callableId = /plusAssign
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(1090,1091): '1'
@@ -2742,7 +2776,7 @@ KtPostfixExpression(1100,1110): 'thisProp++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
@@ -2789,6 +2823,7 @@ KtPostfixExpression(1100,1110): 'thisProp++'
             ]
             callableId = /inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -2830,7 +2865,7 @@ KtOperationReferenceExpression(1108,1110): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
@@ -2877,6 +2912,7 @@ KtOperationReferenceExpression(1108,1110): '++'
             ]
             callableId = /inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -2957,7 +2993,7 @@ KtPostfixExpression(1123,1126): 'a++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
@@ -3004,6 +3040,7 @@ KtPostfixExpression(1123,1126): 'a++'
             ]
             callableId = /inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -3045,7 +3082,7 @@ KtOperationReferenceExpression(1124,1126): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
@@ -3092,6 +3129,7 @@ KtOperationReferenceExpression(1124,1126): '++'
             ]
             callableId = /inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -3112,15 +3150,7 @@ KtOperationReferenceExpression(1124,1126): '++'
 KtBinaryExpression(1136,1141): 'b + 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -3175,11 +3205,7 @@ KtBinaryExpression(1136,1141): 'b + 1'
         ]
         callableId = /SimpleOperators.plus
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -3188,6 +3214,11 @@ KtBinaryExpression(1136,1141): 'b + 1'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3218,6 +3249,15 @@ KtBinaryExpression(1136,1141): 'b + 1'
         ]
         callableId = /plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.plus(b: Int): Unit>
     isInBestCandidates = false
@@ -3243,15 +3283,7 @@ KtNameReferenceExpression(1136,1137): 'b'
 KtOperationReferenceExpression(1138,1139): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -3306,11 +3338,7 @@ KtOperationReferenceExpression(1138,1139): '+'
         ]
         callableId = /SimpleOperators.plus
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -3319,6 +3347,11 @@ KtOperationReferenceExpression(1138,1139): '+'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3349,6 +3382,15 @@ KtOperationReferenceExpression(1138,1139): '+'
         ]
         callableId = /plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.plus(b: Int): Unit>
     isInBestCandidates = false
@@ -3359,7 +3401,7 @@ KtConstantExpression(1140,1141): '1'
 KtPrefixExpression(1150,1152): '+b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -3406,11 +3448,12 @@ KtPrefixExpression(1150,1152): '+b'
         ]
         callableId = /SimpleOperators.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3433,6 +3476,7 @@ KtPrefixExpression(1150,1152): '+b'
         ]
         callableId = /unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.unaryPlus(): Unit>
     isInBestCandidates = false
@@ -3440,7 +3484,7 @@ KtPrefixExpression(1150,1152): '+b'
 KtOperationReferenceExpression(1150,1151): '+'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -3487,11 +3531,12 @@ KtOperationReferenceExpression(1150,1151): '+'
         ]
         callableId = /SimpleOperators.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3514,6 +3559,7 @@ KtOperationReferenceExpression(1150,1151): '+'
         ]
         callableId = /unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.unaryPlus(): Unit>
     isInBestCandidates = false
@@ -3537,17 +3583,9 @@ KtNameReferenceExpression(1151,1152): 'b'
     isInBestCandidates = true
 
 KtArrayAccessExpression(1161,1165): 'b[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -3602,11 +3640,7 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
         ]
         callableId = /SimpleOperators.get
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -3615,6 +3649,11 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3645,6 +3684,15 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
         ]
         callableId = /get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.get(b: Int): Unit>
     isInBestCandidates = false
@@ -3676,22 +3724,7 @@ KtConstantExpression(1163,1164): '1'
 KtBinaryExpression(1174,1184): 'b[1] = A()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -3753,11 +3786,7 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
         ]
         callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -3773,6 +3802,11 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3810,29 +3844,30 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.set(b: Int, x: A): Unit>
     isInBestCandidates = false
 
 KtArrayAccessExpression(1174,1178): 'b[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -3894,11 +3929,7 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
         ]
         callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -3914,6 +3945,11 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3951,6 +3987,22 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.set(b: Int, x: A): Unit>
     isInBestCandidates = false
@@ -3982,22 +4034,7 @@ KtConstantExpression(1176,1177): '1'
 KtOperationReferenceExpression(1179,1180): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -4059,11 +4096,7 @@ KtOperationReferenceExpression(1179,1180): '='
         ]
         callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -4079,6 +4112,11 @@ KtOperationReferenceExpression(1179,1180): '='
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4116,14 +4154,30 @@ KtOperationReferenceExpression(1179,1180): '='
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.set(b: Int, x: A): Unit>
     isInBestCandidates = false
 
 KtCallExpression(1181,1184): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -4135,12 +4189,13 @@ KtCallExpression(1181,1184): 'A()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1181,1182): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -4152,15 +4207,16 @@ KtNameReferenceExpression(1181,1182): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(1182,1184): '()'
   NO_CANDIDATES
 
 KtCallExpression(1193,1196): 'b()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -4207,11 +4263,12 @@ KtCallExpression(1193,1196): 'b()'
         ]
         callableId = /SimpleOperators.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4234,6 +4291,7 @@ KtCallExpression(1193,1196): 'b()'
         ]
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.invoke(): Unit>
     isInBestCandidates = false
@@ -4262,15 +4320,7 @@ KtValueArgumentList(1194,1196): '()'
 KtBinaryExpression(1205,1211): 'b += 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -4325,11 +4375,7 @@ KtBinaryExpression(1205,1211): 'b += 1'
         ]
         callableId = /SimpleOperators.plusAssign
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -4338,6 +4384,11 @@ KtBinaryExpression(1205,1211): 'b += 1'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4368,6 +4419,15 @@ KtBinaryExpression(1205,1211): 'b += 1'
         ]
         callableId = /plusAssign
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.plusAssign(b: Int): Unit>
     isInBestCandidates = false
@@ -4393,15 +4453,7 @@ KtNameReferenceExpression(1205,1206): 'b'
 KtOperationReferenceExpression(1207,1209): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -4456,11 +4508,7 @@ KtOperationReferenceExpression(1207,1209): '+='
         ]
         callableId = /SimpleOperators.plusAssign
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -4469,6 +4517,11 @@ KtOperationReferenceExpression(1207,1209): '+='
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4499,6 +4552,15 @@ KtOperationReferenceExpression(1207,1209): '+='
         ]
         callableId = /plusAssign
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.plusAssign(b: Int): Unit>
     isInBestCandidates = false
@@ -4512,7 +4574,7 @@ KtPostfixExpression(1220,1223): 'b++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
@@ -4559,6 +4621,7 @@ KtPostfixExpression(1220,1223): 'b++'
             ]
             callableId = /SimpleOperators.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -4600,7 +4663,7 @@ KtOperationReferenceExpression(1221,1223): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
@@ -4647,6 +4710,7 @@ KtOperationReferenceExpression(1221,1223): '++'
             ]
             callableId = /SimpleOperators.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -4677,9 +4741,9 @@ KtProperty(1260,1271): 'var a = A()'
   NO_CANDIDATES
 
 KtCallExpression(1268,1271): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -4691,12 +4755,13 @@ KtCallExpression(1268,1271): 'A()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1268,1269): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -4708,6 +4773,7 @@ KtNameReferenceExpression(1268,1269): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(1269,1271): '()'
@@ -4717,9 +4783,9 @@ KtProperty(1276,1301): 'var b = SimpleOperators()'
   NO_CANDIDATES
 
 KtCallExpression(1284,1301): 'SimpleOperators()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -4731,12 +4797,13 @@ KtCallExpression(1284,1301): 'SimpleOperators()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1284,1299): 'SimpleOperators'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -4748,6 +4815,7 @@ KtNameReferenceExpression(1284,1299): 'SimpleOperators'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(1299,1301): '()'
@@ -4756,7 +4824,7 @@ KtValueArgumentList(1299,1301): '()'
 KtPrefixExpression(1307,1309): '+a'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4779,13 +4847,14 @@ KtPrefixExpression(1307,1309): '+a'
         ]
         callableId = /unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1307,1308): '+'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4808,6 +4877,7 @@ KtOperationReferenceExpression(1307,1308): '+'
         ]
         callableId = /unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
@@ -4832,15 +4902,7 @@ KtNameReferenceExpression(1308,1309): 'a'
 KtBinaryExpression(1314,1319): 'a + 1'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4871,6 +4933,15 @@ KtBinaryExpression(1314,1319): 'a + 1'
         ]
         callableId = /plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
@@ -4895,15 +4966,7 @@ KtNameReferenceExpression(1314,1315): 'a'
 KtOperationReferenceExpression(1316,1317): '+'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4934,16 +4997,7 @@ KtOperationReferenceExpression(1316,1317): '+'
         ]
         callableId = /plus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
-    isInBestCandidates = true
-
-KtConstantExpression(1318,1319): '1'
-  NO_CANDIDATES
-
-KtArrayAccessExpression(1324,1328): 'a[1]'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -4952,6 +5006,16 @@ KtArrayAccessExpression(1324,1328): 'a[1]'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    isInBestCandidates = true
+
+KtConstantExpression(1318,1319): '1'
+  NO_CANDIDATES
+
+KtArrayAccessExpression(1324,1328): 'a[1]'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4982,6 +5046,15 @@ KtArrayAccessExpression(1324,1328): 'a[1]'
         ]
         callableId = /get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
@@ -5012,22 +5085,7 @@ KtConstantExpression(1326,1327): '1'
 KtBinaryExpression(1333,1343): 'a[1] = A()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -5065,28 +5123,29 @@ KtBinaryExpression(1333,1343): 'a[1] = A()'
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtArrayAccessExpression(1333,1337): 'a[1]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -5124,6 +5183,22 @@ KtArrayAccessExpression(1333,1337): 'a[1]'
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
@@ -5154,22 +5229,7 @@ KtConstantExpression(1335,1336): '1'
 KtOperationReferenceExpression(1338,1339): '='
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -5207,13 +5267,29 @@ KtOperationReferenceExpression(1338,1339): '='
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
 KtCallExpression(1340,1343): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -5225,12 +5301,13 @@ KtCallExpression(1340,1343): 'A()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1340,1341): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -5242,15 +5319,16 @@ KtNameReferenceExpression(1340,1341): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(1341,1343): '()'
   NO_CANDIDATES
 
 KtCallExpression(1348,1351): 'a()'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -5273,6 +5351,7 @@ KtCallExpression(1348,1351): 'a()'
         ]
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
@@ -5300,15 +5379,7 @@ KtValueArgumentList(1349,1351): '()'
 KtBinaryExpression(1356,1362): 'a += 1'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -5339,6 +5410,15 @@ KtBinaryExpression(1356,1362): 'a += 1'
         ]
         callableId = /plusAssign
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
@@ -5363,15 +5443,7 @@ KtNameReferenceExpression(1356,1357): 'a'
 KtOperationReferenceExpression(1358,1360): '+='
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -5402,6 +5474,15 @@ KtOperationReferenceExpression(1358,1360): '+='
         ]
         callableId = /plusAssign
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
@@ -5414,7 +5495,7 @@ KtPostfixExpression(1367,1370): 'a++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
@@ -5437,6 +5518,7 @@ KtPostfixExpression(1367,1370): 'a++'
             ]
             callableId = /inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -5478,7 +5560,7 @@ KtOperationReferenceExpression(1368,1370): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
@@ -5501,6 +5583,7 @@ KtOperationReferenceExpression(1368,1370): '++'
             ]
             callableId = /inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -5521,15 +5604,7 @@ KtOperationReferenceExpression(1368,1370): '++'
 KtBinaryExpression(1376,1381): 'b + 1'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -5560,12 +5635,7 @@ KtBinaryExpression(1376,1381): 'b + 1'
         ]
         callableId = /SimpleOperators.plus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -5574,6 +5644,12 @@ KtBinaryExpression(1376,1381): 'b + 1'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -5604,6 +5680,15 @@ KtBinaryExpression(1376,1381): 'b + 1'
         ]
         callableId = /plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.plus(b: Int): Unit>
     isInBestCandidates = false
@@ -5629,15 +5714,7 @@ KtNameReferenceExpression(1376,1377): 'b'
 KtOperationReferenceExpression(1378,1379): '+'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -5668,12 +5745,7 @@ KtOperationReferenceExpression(1378,1379): '+'
         ]
         callableId = /SimpleOperators.plus
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -5682,6 +5754,12 @@ KtOperationReferenceExpression(1378,1379): '+'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -5712,6 +5790,15 @@ KtOperationReferenceExpression(1378,1379): '+'
         ]
         callableId = /plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.plus(b: Int): Unit>
     isInBestCandidates = false
@@ -5722,7 +5809,7 @@ KtConstantExpression(1380,1381): '1'
 KtPrefixExpression(1386,1388): '+b'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -5745,12 +5832,13 @@ KtPrefixExpression(1386,1388): '+b'
         ]
         callableId = /SimpleOperators.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -5773,6 +5861,7 @@ KtPrefixExpression(1386,1388): '+b'
         ]
         callableId = /unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.unaryPlus(): Unit>
     isInBestCandidates = false
@@ -5780,7 +5869,7 @@ KtPrefixExpression(1386,1388): '+b'
 KtOperationReferenceExpression(1386,1387): '+'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -5803,12 +5892,13 @@ KtOperationReferenceExpression(1386,1387): '+'
         ]
         callableId = /SimpleOperators.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -5831,6 +5921,7 @@ KtOperationReferenceExpression(1386,1387): '+'
         ]
         callableId = /unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.unaryPlus(): Unit>
     isInBestCandidates = false
@@ -5854,17 +5945,9 @@ KtNameReferenceExpression(1387,1388): 'b'
     isInBestCandidates = true
 
 KtArrayAccessExpression(1393,1397): 'b[1]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -5895,12 +5978,7 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
         ]
         callableId = /SimpleOperators.get
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -5909,6 +5987,12 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -5939,6 +6023,15 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
         ]
         callableId = /get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.get(b: Int): Unit>
     isInBestCandidates = false
@@ -5970,22 +6063,7 @@ KtConstantExpression(1395,1396): '1'
 KtBinaryExpression(1402,1412): 'b[1] = A()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -6023,12 +6101,7 @@ KtBinaryExpression(1402,1412): 'b[1] = A()'
         ]
         callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -6044,6 +6117,12 @@ KtBinaryExpression(1402,1412): 'b[1] = A()'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -6081,29 +6160,30 @@ KtBinaryExpression(1402,1412): 'b[1] = A()'
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.set(b: Int, x: A): Unit>
     isInBestCandidates = false
 
 KtArrayAccessExpression(1402,1406): 'b[1]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -6141,12 +6221,7 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
         ]
         callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -6162,6 +6237,12 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -6199,6 +6280,22 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.set(b: Int, x: A): Unit>
     isInBestCandidates = false
@@ -6230,22 +6327,7 @@ KtConstantExpression(1404,1405): '1'
 KtOperationReferenceExpression(1407,1408): '='
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        A() -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = A
-          symbol = x: A
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -6283,12 +6365,7 @@ KtOperationReferenceExpression(1407,1408): '='
         ]
         callableId = /SimpleOperators.set
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -6304,6 +6381,12 @@ KtOperationReferenceExpression(1407,1408): '='
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -6341,14 +6424,30 @@ KtOperationReferenceExpression(1407,1408): '='
         ]
         callableId = /set
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        A() -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = A
+          symbol = x: A
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.set(b: Int, x: A): Unit>
     isInBestCandidates = false
 
 KtCallExpression(1409,1412): 'A()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -6360,12 +6459,13 @@ KtCallExpression(1409,1412): 'A()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1409,1410): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -6377,15 +6477,16 @@ KtNameReferenceExpression(1409,1410): 'A'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(1410,1412): '()'
   NO_CANDIDATES
 
 KtCallExpression(1417,1420): 'b()'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -6408,12 +6509,13 @@ KtCallExpression(1417,1420): 'b()'
         ]
         callableId = /SimpleOperators.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -6436,6 +6538,7 @@ KtCallExpression(1417,1420): 'b()'
         ]
         callableId = /invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.invoke(): Unit>
     isInBestCandidates = false
@@ -6464,15 +6567,7 @@ KtValueArgumentList(1418,1420): '()'
 KtBinaryExpression(1425,1431): 'b += 1'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -6503,12 +6598,7 @@ KtBinaryExpression(1425,1431): 'b += 1'
         ]
         callableId = /SimpleOperators.plusAssign
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -6517,6 +6607,12 @@ KtBinaryExpression(1425,1431): 'b += 1'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -6547,6 +6643,15 @@ KtBinaryExpression(1425,1431): 'b += 1'
         ]
         callableId = /plusAssign
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.plusAssign(b: Int): Unit>
     isInBestCandidates = false
@@ -6572,15 +6677,7 @@ KtNameReferenceExpression(1425,1426): 'b'
 KtOperationReferenceExpression(1427,1429): '+='
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -6611,12 +6708,7 @@ KtOperationReferenceExpression(1427,1429): '+='
         ]
         callableId = /SimpleOperators.plusAssign
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = b
           receiverType = null
@@ -6625,6 +6717,12 @@ KtOperationReferenceExpression(1427,1429): '+='
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -6655,6 +6753,15 @@ KtOperationReferenceExpression(1427,1429): '+='
         ]
         callableId = /plusAssign
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     context(a: A) fun A.plusAssign(b: Int): Unit>
     isInBestCandidates = false
@@ -6668,7 +6775,7 @@ KtPostfixExpression(1436,1439): 'b++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = b
@@ -6691,6 +6798,7 @@ KtPostfixExpression(1436,1439): 'b++'
             ]
             callableId = /SimpleOperators.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -6732,7 +6840,7 @@ KtOperationReferenceExpression(1437,1439): '++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = b
@@ -6755,6 +6863,7 @@ KtOperationReferenceExpression(1437,1439): '++'
             ]
             callableId = /SimpleOperators.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
       variableCall = KaSimpleVariableAccessCall:
         contextArguments = []

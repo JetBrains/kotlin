@@ -1,7 +1,7 @@
 KtNameReferenceExpression(75,78): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -13,4 +13,5 @@ KtNameReferenceExpression(75,78): 'bar'
         contextParameters = []
         callableId = kotlin/pckg/bar
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

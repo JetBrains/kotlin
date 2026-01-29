@@ -1,7 +1,7 @@
 KtNameReferenceExpression(174,180): 'stream'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = collection
@@ -16,3 +16,4 @@ KtNameReferenceExpression(174,180): 'stream'
         contextParameters = []
         callableId = kotlin/collections/Collection.stream
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

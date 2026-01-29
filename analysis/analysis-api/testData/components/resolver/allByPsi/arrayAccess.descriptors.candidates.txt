@@ -46,15 +46,7 @@ KtBlockExpression(34,193): '{'
 KtBinaryExpression(40,49): 'list += 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = element
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = element: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -78,6 +70,15 @@ KtBinaryExpression(40,49): 'list += 1'
         callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = element: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -102,15 +103,7 @@ KtNameReferenceExpression(40,44): 'list'
 KtOperationReferenceExpression(45,47): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = element
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = element: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -135,6 +128,15 @@ KtOperationReferenceExpression(45,47): '+='
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = element: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(48,49): '1'
@@ -144,17 +146,9 @@ KtProperty(54,81): 'val implicitIndex = list[0]'
   NO_CANDIDATES
 
 KtArrayAccessExpression(74,81): 'list[0]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -177,19 +171,20 @@ KtArrayAccessExpression(74,81): 'list[0]'
         contextParameters = []
         callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         0 -> (KaVariableSignature:
-          name = key
+          name = index
           receiverType = null
           returnType = kotlin.Int
-          symbol = key: K
+          symbol = index: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -215,20 +210,21 @@ KtArrayAccessExpression(74,81): 'list[0]'
         K -> (kotlin.Int),
         V -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         0 -> (KaVariableSignature:
-          name = name
+          name = key
           receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
+          returnType = kotlin.Int
+          symbol = key: K
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -251,6 +247,15 @@ KtArrayAccessExpression(74,81): 'list[0]'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     isInBestCandidates = false
 
@@ -284,15 +289,7 @@ KtProperty(86,129): 'val explicitIndex = list.get(implicitIndex)'
 KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        implicitIndex -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -315,19 +312,20 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
         contextParameters = []
         callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        implicitIndex -> (KaVariableSignature:
+          name = index
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = index: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        implicitIndex -> (KaVariableSignature:
-          name = key
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = key: K
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -353,20 +351,21 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
         K -> (kotlin.Int),
         V -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        implicitIndex -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        implicitIndex -> (KaVariableSignature:
-          name = name
-          receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -389,6 +388,15 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        implicitIndex -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     isInBestCandidates = false
 
@@ -411,17 +419,9 @@ KtNameReferenceExpression(106,110): 'list'
     isInBestCandidates = true
 
 KtCallExpression(111,129): 'get(implicitIndex)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        implicitIndex -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -444,19 +444,20 @@ KtCallExpression(111,129): 'get(implicitIndex)'
         contextParameters = []
         callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         implicitIndex -> (KaVariableSignature:
-          name = key
+          name = index
           receiverType = null
           returnType = kotlin.Int
-          symbol = key: K
+          symbol = index: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -482,20 +483,21 @@ KtCallExpression(111,129): 'get(implicitIndex)'
         K -> (kotlin.Int),
         V -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         implicitIndex -> (KaVariableSignature:
-          name = name
+          name = key
           receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
+          returnType = kotlin.Int
+          symbol = key: K
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -518,21 +520,22 @@ KtCallExpression(111,129): 'get(implicitIndex)'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        implicitIndex -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     isInBestCandidates = false
 
 KtNameReferenceExpression(111,114): 'get'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        implicitIndex -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -555,19 +558,20 @@ KtNameReferenceExpression(111,114): 'get'
         contextParameters = []
         callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        implicitIndex -> (KaVariableSignature:
+          name = index
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = index: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        implicitIndex -> (KaVariableSignature:
-          name = key
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = key: K
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -593,20 +597,21 @@ KtNameReferenceExpression(111,114): 'get'
         K -> (kotlin.Int),
         V -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        implicitIndex -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        implicitIndex -> (KaVariableSignature:
-          name = name
-          receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -629,6 +634,15 @@ KtNameReferenceExpression(111,114): 'get'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        implicitIndex -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
 
@@ -659,15 +673,7 @@ KtNameReferenceExpression(115,128): 'implicitIndex'
 KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list[1]
@@ -690,6 +696,15 @@ KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtParenthesizedExpression(134,167): '(@Suppress("SOME_ERROR") list[1])'
@@ -699,17 +714,9 @@ KtAnnotatedExpression(135,166): '@Suppress("SOME_ERROR") list[1]'
   NO_CANDIDATES
 
 KtAnnotationEntry(135,158): '@Suppress("SOME_ERROR")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "SOME_ERROR" -> (KaVariableSignature:
-          name = names
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg names: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -729,20 +736,21 @@ KtAnnotationEntry(135,158): '@Suppress("SOME_ERROR")'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "SOME_ERROR" -> (KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(136,144): 'Suppress'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "SOME_ERROR" -> (KaVariableSignature:
-          name = names
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg names: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -762,6 +770,15 @@ KtConstructorCalleeExpression(136,144): 'Suppress'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "SOME_ERROR" -> (KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtTypeReference(136,144): 'Suppress'
@@ -773,15 +790,7 @@ KtUserType(136,144): 'Suppress'
 KtNameReferenceExpression(136,144): 'Suppress'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
-      argumentMapping = {
-        "SOME_ERROR" -> (KaVariableSignature:
-          name = names
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg names: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -801,6 +810,15 @@ KtNameReferenceExpression(136,144): 'Suppress'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "SOME_ERROR" -> (KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(144,158): '("SOME_ERROR")'
@@ -816,17 +834,9 @@ KtLiteralStringTemplateEntry(146,156): 'SOME_ERROR'
   NO_CANDIDATES
 
 KtArrayAccessExpression(159,166): 'list[1]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -849,19 +859,20 @@ KtArrayAccessExpression(159,166): 'list[1]'
         contextParameters = []
         callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
-          name = key
+          name = index
           receiverType = null
           returnType = kotlin.Int
-          symbol = key: K
+          symbol = index: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -887,20 +898,21 @@ KtArrayAccessExpression(159,166): 'list[1]'
         K -> (kotlin.Int),
         V -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
-          name = name
+          name = key
           receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
+          returnType = kotlin.Int
+          symbol = key: K
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -923,6 +935,15 @@ KtArrayAccessExpression(159,166): 'list[1]'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     isInBestCandidates = false
 
@@ -953,15 +974,7 @@ KtConstantExpression(164,165): '1'
 KtOperationReferenceExpression(168,170): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list[1]
@@ -984,6 +997,15 @@ KtOperationReferenceExpression(168,170): '+='
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(171,172): '2'
@@ -992,15 +1014,7 @@ KtConstantExpression(171,172): '2'
 KtBinaryExpression(177,191): '(list[2]) += 3'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list[2]
@@ -1023,23 +1037,24 @@ KtBinaryExpression(177,191): '(list[2]) += 3'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtParenthesizedExpression(177,186): '(list[2])'
   NO_CANDIDATES
 
 KtArrayAccessExpression(178,185): 'list[2]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -1062,19 +1077,20 @@ KtArrayAccessExpression(178,185): 'list[2]'
         contextParameters = []
         callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         2 -> (KaVariableSignature:
-          name = key
+          name = index
           receiverType = null
           returnType = kotlin.Int
-          symbol = key: K
+          symbol = index: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1100,20 +1116,21 @@ KtArrayAccessExpression(178,185): 'list[2]'
         K -> (kotlin.Int),
         V -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         2 -> (KaVariableSignature:
-          name = name
+          name = key
           receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
+          returnType = kotlin.Int
+          symbol = key: K
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1136,6 +1153,15 @@ KtArrayAccessExpression(178,185): 'list[2]'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     isInBestCandidates = false
 
@@ -1166,15 +1192,7 @@ KtConstantExpression(183,184): '2'
 KtOperationReferenceExpression(187,189): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list[2]
@@ -1197,6 +1215,15 @@ KtOperationReferenceExpression(187,189): '+='
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(190,191): '3'
@@ -1251,24 +1278,9 @@ KtBlockExpression(235,279): '{'
   NO_CANDIDATES
 
 KtCallExpression(241,261): 'foo(--list[i], list)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        --list[i] -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        list -> (KaVariableSignature:
-          name = list
-          receiverType = null
-          returnType = kotlin.collections.MutableList<kotlin.Int>
-          symbol = list: kotlin.collections.MutableList<kotlin.Int>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1295,27 +1307,28 @@ KtCallExpression(241,261): 'foo(--list[i], list)'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        --list[i] -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        list -> (KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = kotlin.collections.MutableList<kotlin.Int>
+          symbol = list: kotlin.collections.MutableList<kotlin.Int>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(241,244): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        --list[i] -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null),
-        list -> (KaVariableSignature:
-          name = list
-          receiverType = null
-          returnType = kotlin.collections.MutableList<kotlin.Int>
-          symbol = list: kotlin.collections.MutableList<kotlin.Int>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1342,6 +1355,22 @@ KtNameReferenceExpression(241,244): 'foo'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        --list[i] -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        list -> (KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = kotlin.collections.MutableList<kotlin.Int>
+          symbol = list: kotlin.collections.MutableList<kotlin.Int>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(244,261): '(--list[i], list)'
@@ -1356,7 +1385,7 @@ KtPrefixExpression(245,254): '--list[i]'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = list[i]
@@ -1371,9 +1400,10 @@ KtPrefixExpression(245,254): '--list[i]'
             contextParameters = []
             callableId = kotlin/Int.dec
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = PREFIX
       getterCall = KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
@@ -1396,11 +1426,12 @@ KtPrefixExpression(245,254): '--list[i]'
           contextParameters = []
           callableId = kotlin/collections/MutableList.get
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
       indexArguments = [
         i
       ]
       setterCall = KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
@@ -1430,6 +1461,7 @@ KtPrefixExpression(245,254): '--list[i]'
           contextParameters = []
           callableId = kotlin/collections/MutableList.set
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(245,247): '--'
@@ -1438,7 +1470,7 @@ KtOperationReferenceExpression(245,247): '--'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = list[i]
@@ -1453,9 +1485,10 @@ KtOperationReferenceExpression(245,247): '--'
             contextParameters = []
             callableId = kotlin/Int.dec
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = PREFIX
       getterCall = KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
@@ -1478,11 +1511,12 @@ KtOperationReferenceExpression(245,247): '--'
           contextParameters = []
           callableId = kotlin/collections/MutableList.get
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
       indexArguments = [
         i
       ]
       setterCall = KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
@@ -1512,20 +1546,13 @@ KtOperationReferenceExpression(245,247): '--'
           contextParameters = []
           callableId = kotlin/collections/MutableList.set
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtArrayAccessExpression(247,254): 'list[i]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        i -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -1548,19 +1575,20 @@ KtArrayAccessExpression(247,254): 'list[i]'
         contextParameters = []
         callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         i -> (KaVariableSignature:
-          name = key
+          name = index
           receiverType = null
           returnType = kotlin.Int
-          symbol = key: K
+          symbol = index: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1586,20 +1614,21 @@ KtArrayAccessExpression(247,254): 'list[i]'
         K -> (kotlin.Int),
         V -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         i -> (KaVariableSignature:
-          name = name
+          name = key
           receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
+          returnType = kotlin.Int
+          symbol = key: K
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1622,6 +1651,15 @@ KtArrayAccessExpression(247,254): 'list[i]'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        i -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     isInBestCandidates = false
 
@@ -1688,7 +1726,7 @@ KtNameReferenceExpression(256,260): 'list'
 KtPrefixExpression(266,277): '++(list[2])'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = (list[2])
@@ -1703,12 +1741,13 @@ KtPrefixExpression(266,277): '++(list[2])'
         contextParameters = []
         callableId = kotlin/Int.inc
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(266,268): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = (list[2])
@@ -1723,23 +1762,16 @@ KtOperationReferenceExpression(266,268): '++'
         contextParameters = []
         callableId = kotlin/Int.inc
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtParenthesizedExpression(268,277): '(list[2])'
   NO_CANDIDATES
 
 KtArrayAccessExpression(269,276): 'list[2]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -1762,19 +1794,20 @@ KtArrayAccessExpression(269,276): 'list[2]'
         contextParameters = []
         callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         2 -> (KaVariableSignature:
-          name = key
+          name = index
           receiverType = null
           returnType = kotlin.Int
-          symbol = key: K
+          symbol = index: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1800,20 +1833,21 @@ KtArrayAccessExpression(269,276): 'list[2]'
         K -> (kotlin.Int),
         V -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         2 -> (KaVariableSignature:
-          name = name
+          name = key
           receiverType = null
-          returnType = kotlin.String
-          symbol = name: kotlin.String
+          returnType = kotlin.Int
+          symbol = key: K
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1836,6 +1870,15 @@ KtArrayAccessExpression(269,276): 'list[2]'
         contextParameters = []
         callableId = kotlin/text/get
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     isInBestCandidates = false
 

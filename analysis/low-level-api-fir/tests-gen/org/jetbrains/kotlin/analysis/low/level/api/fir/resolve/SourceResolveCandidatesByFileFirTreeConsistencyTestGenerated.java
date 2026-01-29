@@ -139,6 +139,12 @@ public class SourceResolveCandidatesByFileFirTreeConsistencyTestGenerated extend
   }
 
   @Test
+  @TestMetadata("explicitContextArguments.kt")
+  public void testExplicitContextArguments() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/explicitContextArguments.kt");
+  }
+
+  @Test
   @TestMetadata("forWithIterator.kt")
   public void testForWithIterator() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/forWithIterator.kt");

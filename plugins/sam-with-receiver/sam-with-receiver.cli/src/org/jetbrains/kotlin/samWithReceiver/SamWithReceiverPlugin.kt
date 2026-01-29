@@ -12,21 +12,23 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.SUPPORTED_PRESETS
-import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.ANNOTATION
-import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.PRESET
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.SAM_WITH_RECEIVER_ANNOTATION
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.SAM_WITH_RECEIVER_PRESET
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.ANNOTATION_OPTION_NAME
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.PLUGIN_ID
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.PRESET_OPTION_NAME
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.samWithReceiver.k2.FirSamWithReceiverExtensionRegistrar
 
 object SamWithReceiverConfigurationKeys {
-    val ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation qualified name")
+    val SAM_WITH_RECEIVER_ANNOTATION: CompilerConfigurationKey<List<String>> =
+        CompilerConfigurationKey.create("SAM_WITH_RECEIVER_ANNOTATION")
 
-    val PRESET: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation preset")
+    val SAM_WITH_RECEIVER_PRESET: CompilerConfigurationKey<List<String>> =
+        CompilerConfigurationKey.create("SAM_WITH_RECEIVER_PRESET")
 }
 
 class SamWithReceiverCommandLineProcessor : CommandLineProcessor {
@@ -46,22 +48,22 @@ class SamWithReceiverCommandLineProcessor : CommandLineProcessor {
     override val pluginOptions = listOf(ANNOTATION_OPTION)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
-        ANNOTATION_OPTION -> configuration.appendList(ANNOTATION, value)
-        PRESET_OPTION -> configuration.appendList(PRESET, value)
+        ANNOTATION_OPTION -> configuration.appendList(SAM_WITH_RECEIVER_ANNOTATION, value)
+        PRESET_OPTION -> configuration.appendList(SAM_WITH_RECEIVER_PRESET, value)
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
 
 class SamWithReceiverComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        val annotations = configuration.get(ANNOTATION)?.toMutableList() ?: mutableListOf()
-        configuration.get(PRESET)?.forEach { preset ->
+        val annotations = configuration.get(SAM_WITH_RECEIVER_ANNOTATION)?.toMutableList() ?: mutableListOf()
+        configuration.get(SAM_WITH_RECEIVER_PRESET)?.forEach { preset ->
             SUPPORTED_PRESETS[preset]?.let { annotations += it }
         }
         if (annotations.isEmpty()) return
 
         StorageComponentContainerContributor.registerExtension(CliSamWithReceiverComponentContributor(annotations))
-        FirExtensionRegistrarAdapter.registerExtension(FirSamWithReceiverExtensionRegistrar(annotations))
+        FirExtensionRegistrar.registerExtension(FirSamWithReceiverExtensionRegistrar(annotations))
     }
 
     override val pluginId: String get() = PLUGIN_ID

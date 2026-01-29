@@ -388,6 +388,7 @@ object FirFakeOverrideGenerator {
             explicitBackingFieldCopySubstitutionForTypeUpdater = explicitBackingFieldCopySubstitutionForTypeUpdater,
         ).apply {
             originalForSubstitutionOverrideAttr = baseProperty
+            backingField?.originalForSubstitutionOverrideAttr = baseProperty.backingField
         }
         return symbolForSubstitutionOverride
     }
@@ -443,16 +444,20 @@ object FirFakeOverrideGenerator {
         )
         deprecationsProvider = baseProperty.deprecationsProvider
 
-        getter = baseProperty.getter?.buildCopyIfNeeded(
-            moduleData = session.nullableModuleData ?: baseProperty.moduleData,
-            origin = origin,
-            propertyReturnTypeRef = this@buildProperty.returnTypeRef,
-            propertySymbol = newSymbol,
-            dispatchReceiverType = dispatchReceiverType,
-            derivedClassLookupTag = derivedClassLookupTag,
-            baseProperty = baseProperty,
-            newSource = newSource ?: baseProperty.getter?.source,
-        )
+        getter = baseProperty.getter?.let { getter ->
+            getter.buildCopyIfNeeded(
+                moduleData = session.nullableModuleData ?: baseProperty.moduleData,
+                origin = origin,
+                propertyReturnTypeRef = this@buildProperty.returnTypeRef,
+                propertySymbol = newSymbol,
+                dispatchReceiverType = dispatchReceiverType,
+                derivedClassLookupTag = derivedClassLookupTag,
+                baseProperty = baseProperty,
+                newSource = newSource ?: getter.source,
+                newVisibility = newVisibility ?: getter.visibility,
+                newModality = newModality ?: getter.modality,
+            )
+        }
 
         setter = baseProperty.setter?.let { setter ->
             setter.buildCopyIfNeeded(
@@ -464,7 +469,8 @@ object FirFakeOverrideGenerator {
                 derivedClassLookupTag = derivedClassLookupTag,
                 baseProperty = baseProperty,
                 newSource = newSource ?: baseProperty.setter?.source,
-                newSetterVisibility ?: setter.visibility,
+                newVisibility = newSetterVisibility ?: setter.visibility,
+                newModality = newModality ?: setter.modality,
             )
         }
 
@@ -503,9 +509,12 @@ object FirFakeOverrideGenerator {
         baseProperty: FirProperty,
         newSource: KtSourceElement? = source,
         newVisibility: Visibility = visibility,
+        newModality: Modality? = modality,
     ) = when {
         annotations.isNotEmpty() || newVisibility != baseProperty.visibility ||
-                origin == FirDeclarationOrigin.Delegated || origin is FirDeclarationOrigin.SubstitutionOverride -> buildCopy(
+                origin == FirDeclarationOrigin.Delegated ||
+                origin is FirDeclarationOrigin.SubstitutionOverride ||
+                origin is FirDeclarationOrigin.IntersectionOverride -> buildCopy(
             moduleData,
             origin,
             propertyReturnTypeRef,
@@ -515,6 +524,7 @@ object FirFakeOverrideGenerator {
             baseProperty,
             newSource,
             newVisibility,
+            newModality,
         )
         else -> null
     }
@@ -529,6 +539,7 @@ object FirFakeOverrideGenerator {
         baseProperty: FirProperty,
         newSource: KtSourceElement? = source,
         newVisibility: Visibility = visibility,
+        newModality: Modality? = modality,
     ) = when (this) {
         is FirDefaultPropertyGetter -> FirDefaultPropertyGetter(
             source = newSource,
@@ -537,7 +548,7 @@ object FirFakeOverrideGenerator {
             propertyTypeRef = propertyReturnTypeRef,
             visibility = newVisibility,
             propertySymbol = propertySymbol,
-            modality = modality,
+            modality = newModality,
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
             isOverride = true,

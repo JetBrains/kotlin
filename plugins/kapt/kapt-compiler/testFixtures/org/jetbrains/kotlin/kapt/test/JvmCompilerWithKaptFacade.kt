@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt.test
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
@@ -32,14 +33,17 @@ class JvmCompilerWithKaptFacade(
     override fun transform(module: TestModule, inputArtifact: ResultingArtifact.Source): KaptContextBinaryArtifact {
         val configurationProvider = testServices.compilerConfigurationProvider
         val project = configurationProvider.getProject(module)
+        val compilerConfiguration = configurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
         if (additionalPluginExtension != null) {
-            IrGenerationExtension.registerExtension(project, additionalPluginExtension)
+            with(compilerConfiguration.extensionsStorage!!) {
+                IrGenerationExtension.registerExtension(additionalPluginExtension)
+            }
         }
         val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project, findViaVfs = true).values.toList()
         val classBuilderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
         val (generationState, bindingContext) = GenerationUtils.compileFiles(
             ktFiles,
-            configurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST),
+            compilerConfiguration,
             classBuilderFactory,
             configurationProvider.getPackagePartProviderFactory(module)
         )

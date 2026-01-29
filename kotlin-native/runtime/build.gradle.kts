@@ -18,24 +18,34 @@ val kotlinVersion: String by rootProject.extra
 plugins {
     id("base")
     id("compile-to-bitcode")
-    id("runtime-testing")
 }
 
 repositories {
     githubTag("google", "breakpad")
+    githubCommit("google", "googletest")
 }
 
 val breakpad = configurations.dependencyScope("breakpad")
 val breakpadClasspath = configurations.resolvable("breakpadClasspath") {
     extendsFrom(breakpad.get())
 }
+val googletest = configurations.dependencyScope("googletest")
+val googletestClasspath = configurations.resolvable("googletestClasspath") {
+    extendsFrom(googletest.get())
+}
 dependencies {
     breakpad("google:breakpad:2024.02.16@zip")
+    // GTest 1.10.0 doesn't properly register skipped tests in an XML-report.
+    // Therefore we use a fixed commit form the master branch where this problem is already fixed.
+    // https://github.com/google/googletest/commit/07f4869221012b16b7f9ee685d94856e1fc9f361
+    googletest("google:googletest:07f4869221012b16b7f9ee685d94856e1fc9f361@zip")
 }
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
     project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
+
+val breakpadLocationNoDependency = layout.buildDirectory.dir("breakpad")
 
 val unpackBreakpad = tasks.register<Sync>("unpackBreakpad") {
     from(breakpadClasspath.map { zipTree(it.singleFile) })
@@ -43,7 +53,6 @@ val unpackBreakpad = tasks.register<Sync>("unpackBreakpad") {
         relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
     }
     includeEmptyDirs = false
-    val breakpadLocationNoDependency = layout.buildDirectory.dir("breakpad")
     into(breakpadLocationNoDependency)
 }
 
@@ -60,15 +69,29 @@ artifacts {
     add(breakpadSources.name, unpackBreakpad)
 }
 
-googletest {
-    revision = project.property("gtestRevision") as String
-    refresh = project.hasProperty("refresh-gtest")
+val googletestLocationNoDependency = layout.buildDirectory.dir("googletest")
+
+val unpackGoogletest = tasks.register<Sync>("unpackGoogletest") {
+    from(googletestClasspath.map { zipTree(it.singleFile) })
+    eachFile {
+        relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
+    }
+    includeEmptyDirs = false
+    into(googletestLocationNoDependency)
 }
 
 val targetList = enabledTargets(extensions.getByType<PlatformManager>())
 
 // NOTE: the list of modules is duplicated in `RuntimeModule.kt`
 bitcode {
+    // Cannot use output of `unpackGoogletest` to support Gradle Configuration Cache working before `unpackGoogletest`
+    // actually had a chance to run.
+    googleTestHeadersNoDependency.from(
+            googletestLocationNoDependency.map { it.dir("googletest/include") },
+            googletestLocationNoDependency.map { it.dir("googlemock/include") }
+    )
+    googleTestHeadersDependency.set(unpackGoogletest.name)
+
     allTargets {
         val fixBrokenMacroExpansionInXcode15_3: List<String> = when (target) {
             KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
@@ -378,6 +401,61 @@ bitcode {
             }
         }
 
+        module("googletest") {
+            srcRoot.fileProvider(unpackGoogletest.map { it.destinationDir.resolve("googletest") })
+            sourceSets {
+                testFixtures {
+                    inputFiles.from(srcRoot.dir("src"))
+                    // That's how googletest/CMakeLists.txt builds gtest library.
+                    inputFiles.include("gtest-all.cc")
+                    // Cannot use output of `unpackGoogletest` to support Gradle Configuration Cache working before `unpackGoogletest`
+                    // actually had a chance to run.
+                    headersDirs.setFrom(
+                            googletestLocationNoDependency.map { it.dir("googletest") },
+                            googletestLocationNoDependency.map { it.dir("googletest/include") },
+                    )
+                    // `inputFiles` above is a `ConfigurableFileTree`. It gets resolved into a `FileCollection` during configuration phase
+                    // in order to become an input for the `ClangFrontend` task. At configuration phase the result of `unpackGoogletest` is
+                    // not yet available. Therefore, `inputFiles` expands into an empty list. To make it work correctly, we have to manually
+                    // override the sources for the `ClangFrontend` task  here.
+                    compileTask.configure {
+                        inputFiles.setFrom(srcRoot.dir("src/gtest-all.cc"))
+                    }
+                }
+            }
+            compilerArgs.set(listOf("-std=c++17", "-O2"))
+            // Make sure googletest sources are downloaded when building the corresponding compilation database entry
+            dependencies.add(unpackGoogletest)
+        }
+
+        module("googlemock") {
+            srcRoot.fileProvider(unpackGoogletest.map { it.destinationDir.resolve("googlemock") })
+            sourceSets {
+                testFixtures {
+                    inputFiles.from(srcRoot.dir("src"))
+                    // That's how googlemock/CMakeLists.txt builds gtest library.
+                    inputFiles.include("gmock-all.cc")
+                    // Cannot use output of `unpackGoogletest` to support Gradle Configuration Cache working before `unpackGoogletest`
+                    // actually had a chance to run.
+                    headersDirs.setFrom(
+                            googletestLocationNoDependency.map { it.dir("googlemock") },
+                            googletestLocationNoDependency.map { it.dir("googlemock/include") },
+                            googletestLocationNoDependency.map { it.dir("googletest/include") },
+                    )
+                    // `inputFiles` above is a `ConfigurableFileTree`. It gets resolved into a `FileCollection` during configuration phase
+                    // in order to become an input for the `ClangFrontend` task. At configuration phase the result of `unpackGoogletest` is
+                    // not yet available. Therefore, `inputFiles` expands into an empty list. To make it work correctly, we have to manually
+                    // override the sources for the `ClangFrontend` task  here.
+                    compileTask.configure {
+                        inputFiles.setFrom(srcRoot.dir("src/gmock-all.cc"))
+                    }
+                }
+            }
+            compilerArgs.set(listOf("-std=c++17", "-O2"))
+            // Make sure googletest sources are downloaded when building the corresponding compilation database entry
+            dependencies.add(unpackGoogletest)
+        }
+
         module("test_support") {
             headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
@@ -549,9 +627,9 @@ bitcode {
         if (!project.hasProperty("disableBreakpad")) {
             module("impl_crashHandler") {
                 srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
-                // Cannot use output of `downloadBreakpad` to support Gradle Configuration Cache working before `downloadBreakpad`
+                // Cannot use output of `unpackBreakpad` to support Gradle Configuration Cache working before `unpackBreakpad`
                 // actually had a chance to run.
-                headersDirs.from("src/main/cpp", "src/breakpad/cpp", unpackBreakpad.map { it.destinationDir.resolve("src") })
+                headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocationNoDependency.get().dir("src"))
                 sourceSets {
                     main {
                         // This task depends on breakpad headers being present.
@@ -661,7 +739,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
     group = BasePlugin.BUILD_GROUP
     description = "Build the Kotlin/Native standard library"
 
-    this.compilerDistribution.set(nativeBootstrapDistribution)
+    this.compilerDistributionRoot.set(nativeBootstrapDistribution.map { it.root })
 
     this.outputDirectory.set(
             layout.buildDirectory.dir("stdlib/${HostManager.hostName}/stdlib")
@@ -734,7 +812,7 @@ cacheableTargetNames.forEach { targetName ->
         val dist = nativeDistribution
 
         // Requires Native distribution with stdlib klib and runtime modules for `targetName`.
-        this.compilerDistribution.set(dist)
+        this.compilerDistributionRoot.set(dist.map { it.root })
         dependsOn(":kotlin-native:distCompiler")
         dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
         inputs.dir(dist.map { it.runtime(targetName) }) // manually depend on runtime modules (stdlib cache links these modules in)

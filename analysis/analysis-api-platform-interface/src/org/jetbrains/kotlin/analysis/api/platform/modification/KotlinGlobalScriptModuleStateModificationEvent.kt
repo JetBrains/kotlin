@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 
 /**
  * This event signals that Kotlin script module settings or structure are changing possibly globally.
@@ -17,4 +18,5 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModu
  *
  * See [KotlinModificationEvent] for important contracts common to all modification events.
  */
+@KaPlatformInterface
 public object KotlinGlobalScriptModuleStateModificationEvent : KotlinModificationEvent

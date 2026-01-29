@@ -68,7 +68,7 @@ fun lambda() {
 val inProjection: MutableList<in @TypeAnnotation(<!EVALUATED("InProjectionAnno")!>"InProjection" + "Anno"<!>) String> = mutableListOf()
 val outProjection: MutableList<out @TypeAnnotation(<!EVALUATED("OutProjectionAnno")!>"OutProjection" + "Anno"<!>) String> = mutableListOf()
 
-// MODULE: main
+// MODULE: main(lib)
 // FILE: main.kt
 
 fun box(): String {

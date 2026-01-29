@@ -1,15 +1,7 @@
 KtNameReferenceExpression(127,136): 'dummyTest'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Test() -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = test.Test
-          symbol = value: test.Test
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,4 +21,13 @@ KtNameReferenceExpression(127,136): 'dummyTest'
         contextParameters = []
         callableId = test/dummyTest
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Test() -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = test.Test
+          symbol = value: test.Test
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

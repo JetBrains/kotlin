@@ -1,15 +1,7 @@
 KtPostfixExpression(24,27): 'a!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        a -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -30,5 +22,14 @@ KtPostfixExpression(24,27): 'a!!'
         callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.Any)
+      }
+      valueArgumentMapping = {
+        a -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true

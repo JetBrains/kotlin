@@ -140,8 +140,27 @@ class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val artifacts = artifactResolutionStrategy.createArtifactView(sourceSet.internal)?.artifacts ?: return emptySet()
 
+        // Safe handle for gradle bug https://github.com/gradle/gradle/issues/36284
+        fun Throwable.safeWrap(): Throwable {
+            val maybeMessage = runCatching { message }
+            return if (maybeMessage.isFailure) {
+                RuntimeException(
+                    "Got ${this.javaClass} error when trying to resolve Artifact, but explanation message can't be displayed because it " +
+                            "failed with ${maybeMessage.exceptionOrNull()!!.javaClass}. For details please visit https://github.com/gradle/gradle/issues/36284",
+                    maybeMessage.exceptionOrNull()!!
+                )
+            } else {
+                this
+            }
+        }
+
         val unresolvedDependencies = artifacts.failures
-            .onEach { reason -> sourceSet.project.logger.info("Failed to resolve platform dependency on ${sourceSet.name}", reason) }
+            .onEach { reason ->
+                sourceSet.project.logger.info(
+                    "Failed to resolve platform dependency on ${sourceSet.name}",
+                    reason.safeWrap()
+                )
+            }
             .mapNotNull { reason ->
                 val selector = (reason as? ModuleVersionResolveException)?.selector
 
@@ -149,8 +168,7 @@ class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
                 if (selector is ModuleComponentSelector)
                     return@mapNotNull IdeaKotlinUnresolvedBinaryDependency(
                         coordinates = IdeaKotlinBinaryCoordinates(selector.group, selector.module, selector.version, null),
-                        // Gradle sometimes throws NPE when building error message: https://github.com/gradle/gradle/issues/36284
-                        cause = runCatching { reason.message }.getOrNull()?.takeIf { it.isNotBlank() },
+                        cause = reason.safeWrap().message,
                         extras = mutableExtrasOf()
                     )
 

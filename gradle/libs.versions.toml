@@ -2,7 +2,7 @@
 dexMemberList = "4.1.1"
 dokka = "2.0.0"
 gradle-custom-user-data = "2.4.0"
-develocity = "4.1.1"
+develocity = "4.2.2"
 gradle-plugin-publish = "1.2.1"
 # The version for foojay should be synced with the version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "0.9.0"
@@ -74,6 +74,7 @@ schema-kenerator = "2.1.2"
 kotlinpoet = "2.2.0"
 antlr = "4.13.2"
 org-tukaani-xz = "1.10"
+slf4j = "2.0.17"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -179,6 +180,8 @@ antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 
 org-tukaani-xz = { module = "org.tukaani:xz", version.ref = "org-tukaani-xz"}
+
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }

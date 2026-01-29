@@ -2,7 +2,7 @@ KtCallExpression(64,75): 'ALE<String>'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -16,5 +16,6 @@ KtCallExpression(64,75): 'ALE<String>'
         typeArgumentsMapping = {
           T -> (kotlin.String)
         }
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

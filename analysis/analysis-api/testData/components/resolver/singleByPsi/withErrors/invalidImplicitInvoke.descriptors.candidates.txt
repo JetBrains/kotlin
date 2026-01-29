@@ -1,7 +1,7 @@
 KtDotQualifiedExpression(53,61): 's.action'
   KaInapplicableCallCandidateInfo:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = action
@@ -19,5 +19,6 @@ KtDotQualifiedExpression(53,61): 's.action'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: UNSAFE_CALL_ERROR with invoke>
     isInBestCandidates = true

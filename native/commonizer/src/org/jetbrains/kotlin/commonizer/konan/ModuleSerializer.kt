@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.commonizer.konan
 
-import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
+import org.jetbrains.kotlin.commonizer.CommonizerParameters
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.ResultsConsumer
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import java.io.File
-import java.util.Properties
 
 internal class ModuleSerializer(
     private val destination: File,
@@ -33,17 +36,15 @@ private fun writeLibrary(
     manifestData: NativeSensitiveManifestData,
     libraryDestination: File
 ) {
-    buildKotlinLibrary(
-        metadata = metadata,
-        ir = null,
-        versions = manifestData.versions,
-        output = libraryDestination.absolutePath,
-        moduleName = manifestData.uniqueName,
-        nopack = true,
-        manifestProperties = Properties().apply { addNativeSensitiveManifestProperties(manifestData) },
-        builtInsPlatform = BuiltInsPlatform.NATIVE,
-        nativeTargets = manifestData.nativeTargets.toList(),
-    )
+    KlibWriter {
+        manifest {
+            moduleName(manifestData.uniqueName)
+            versions(manifestData.versions)
+            platformAndTargets(BuiltInsPlatform.NATIVE, manifestData.nativeTargets)
+            customProperties { addNativeSensitiveManifestProperties(manifestData) }
+        }
+        includeMetadata(metadata)
+    }.writeTo(libraryDestination.absolutePath)
 }
 
 /**

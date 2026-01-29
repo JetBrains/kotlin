@@ -110,17 +110,9 @@ KtBlockExpression(270,317): '{'
   NO_CANDIDATES
 
 KtCallExpression(276,293): 'lEnum(EnumValue1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lEnum
@@ -143,6 +135,15 @@ KtCallExpression(276,293): 'lEnum(EnumValue1)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(276,281): 'lEnum'
@@ -191,17 +192,9 @@ KtNameReferenceExpression(282,292): 'EnumValue1'
     isInBestCandidates = true
 
 KtCallExpression(298,315): 'lEnum(EnumValue2)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        EnumValue2 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = lEnum
@@ -224,6 +217,15 @@ KtCallExpression(298,315): 'lEnum(EnumValue2)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue2 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(298,303): 'lEnum'
@@ -317,17 +319,9 @@ KtBlockExpression(381,501): '{'
   NO_CANDIDATES
 
 KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { EnumValue1 } -> (KaVariableSignature:
-          name = l
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = l: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -348,21 +342,22 @@ KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
         callableId = /receiveLambda
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        { EnumValue1 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = l: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(387,400): 'receiveLambda'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { EnumValue1 } -> (KaVariableSignature:
-          name = l
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = l: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -383,6 +378,15 @@ KtNameReferenceExpression(387,400): 'receiveLambda'
         callableId = /receiveLambda
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        { EnumValue1 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = l: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -435,17 +439,9 @@ KtNameReferenceExpression(411,421): 'EnumValue1'
     isInBestCandidates = true
 
 KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { EnumValue3 } -> (KaVariableSignature:
-          name = l
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = l: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -466,21 +462,22 @@ KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
         callableId = /receiveLambda
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        { EnumValue3 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = l: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(428,441): 'receiveLambda'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { EnumValue3 } -> (KaVariableSignature:
-          name = l
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = l: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -501,6 +498,15 @@ KtNameReferenceExpression(428,441): 'receiveLambda'
         callableId = /receiveLambda
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        { EnumValue3 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = l: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -553,17 +559,9 @@ KtNameReferenceExpression(452,462): 'EnumValue3'
     isInBestCandidates = true
 
 KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { prop } -> (KaVariableSignature:
-          name = l
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = l: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -584,6 +582,15 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
         callableId = /receiveLambda
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        { prop } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = l: () -> T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> receiveLambda(l: () -> T): Unit>
     isInBestCandidates = true
@@ -591,15 +598,7 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
 KtNameReferenceExpression(469,482): 'receiveLambda'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { prop } -> (KaVariableSignature:
-          name = l
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = l: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -620,6 +619,15 @@ KtNameReferenceExpression(469,482): 'receiveLambda'
         callableId = /receiveLambda
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        { prop } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = l: () -> T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> receiveLambda(l: () -> T): Unit>
     isInBestCandidates = true

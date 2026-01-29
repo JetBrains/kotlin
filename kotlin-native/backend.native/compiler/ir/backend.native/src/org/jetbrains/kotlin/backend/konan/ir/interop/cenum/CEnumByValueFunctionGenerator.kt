@@ -5,7 +5,7 @@
 package org.jetbrains.kotlin.backend.konan.ir.interop.cenum
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.findDeclarationByName
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CEnumByValueFunctionGenerator(
         context: GeneratorContext,
-        private val symbols: KonanSymbols
+        private val symbols: BackendNativeSymbols
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns

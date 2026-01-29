@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.backend.jvm.extensions
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.codegen.extensions.ClassGeneratorExtensionAdapter
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
@@ -29,18 +29,15 @@ import org.jetbrains.org.objectweb.asm.RecordComponentVisitor
 @Suppress("unused") // Used reflectively in GenerationState.
 internal object ClassBuilderExtensionAdapter {
     @JvmStatic
-    @Suppress("DEPRECATION_ERROR")
-    fun getExtensions(project: Project): List<org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension> =
-        ClassGeneratorExtension.getInstances(project).map(::ExtensionAdapter)
+    fun getExtensions(configuration: CompilerConfiguration): List<ClassGeneratorExtensionAdapter> {
+        return configuration.getCompilerExtensions(ClassGeneratorExtension)
+            .map(::ClassGeneratorExtensionAdapterImpl)
+    }
 }
 
-@Suppress("DEPRECATION_ERROR")
-private class ExtensionAdapter(private val extension: ClassGeneratorExtension) :
-    org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension {
+class ClassGeneratorExtensionAdapterImpl(private val extension: ClassGeneratorExtension) : ClassGeneratorExtensionAdapter {
     override fun interceptClassBuilderFactory(
         interceptedFactory: ClassBuilderFactory,
-        bindingContext: BindingContext,
-        diagnostics: DiagnosticSink,
     ): ClassBuilderFactory = object : DelegatingClassBuilderFactory(interceptedFactory) {
         override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
             val classBuilder = interceptedFactory.newClassBuilder(origin)

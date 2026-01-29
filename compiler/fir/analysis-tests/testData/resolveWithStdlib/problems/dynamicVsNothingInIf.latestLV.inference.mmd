@@ -121,11 +121,10 @@ flowchart TD
 	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
 	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
 	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	false HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
 	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-	false REIFIED
 	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
 	false HAS_PROPER_NON_ILT_CONSTRAINT
+	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
 )</tt></pre>"]
     class variableReadiness21 nowrapClass;
     class variableReadiness21 readinessStyle;
@@ -196,7 +195,7 @@ flowchart TD
 
     stage32 ~~~ variableReadiness33
 
-    variableReadiness33["Choose <tt>TypeVariable(K)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness33["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -204,21 +203,24 @@ flowchart TD
 	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
 	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-	false REIFIED
 	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
 	 true HAS_PROPER_NON_ILT_CONSTRAINT
+	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
 )</tt></pre>"]
     class variableReadiness33 nowrapClass;
     class variableReadiness33 readinessStyle;
-    constraint35["<tt>TypeVariable(K) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable K</tt></pre></i>"]
+    constraint35["<tt>TypeVariable(T) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
     class constraint35 nowrapClass;
     variableReadiness33 ~~~ constraint35
+    constraint36["<tt>dynamic &lt;: TypeVariable(K)</tt>"]
+    class constraint36 nowrapClass;
+    constraint35 --> constraint36
+    constraint28 --> constraint36
 
-    constraint35 ~~~ variableReadiness34
+    constraint36 ~~~ variableReadiness34
 
-    variableReadiness34["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness34["Choose <tt>TypeVariable(K)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -226,39 +228,38 @@ flowchart TD
 	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
 	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-	false REIFIED
 	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
 	 true HAS_PROPER_NON_ILT_CONSTRAINT
+	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
 )</tt></pre>"]
     class variableReadiness34 nowrapClass;
     class variableReadiness34 readinessStyle;
-    constraint36["<tt>TypeVariable(T) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
-    class constraint36 nowrapClass;
-    variableReadiness34 ~~~ constraint36
+    constraint37["<tt>TypeVariable(K) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable K</tt></pre></i>"]
+    class constraint37 nowrapClass;
+    variableReadiness34 ~~~ constraint37
 
-    constraint36 ~~~ call37
+    constraint37 ~~~ call38
 
-    call37["Call 4<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TODO#()</tt></pre>"]
-    class call37 nowrapClass;
-    class call37 callStyle;
+    call38["Call 4<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TODO#()</tt></pre>"]
+    class call38 nowrapClass;
+    class call38 callStyle;
 
-    call37 --> candidate38
+    call38 --> candidate39
 
-    candidate38["Candidate 1: <tt>FirNamedFunctionSymbol kotlin/TODO</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>@InlineOnly() fun TODO(): Nothing
+    candidate39["Candidate 1: <tt>FirNamedFunctionSymbol kotlin/TODO</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>@InlineOnly() fun TODO(): Nothing
 </tt></pre>"]
-    class candidate38 nowrapClass;
-    class candidate38 candidateStyle;
+    class candidate39 nowrapClass;
+    class candidate39 candidateStyle;
 
-    candidate38 --> stage39
+    candidate39 --> stage40
 
-    stage39["Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
-    class stage39 nowrapClass;
-    class stage39 stageStyle;
-    constraint40["<tt>Nothing &lt;: T</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
-    class constraint40 nowrapClass;
-    stage39 ~~~ constraint40
+    stage40["Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
+    class stage40 nowrapClass;
+    class stage40 stageStyle;
+    constraint41["<tt>Nothing &lt;: T</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
+    class constraint41 nowrapClass;
+    stage40 ~~~ constraint41
 
     linkStyle 4 stroke:#990000
     linkStyle 7 stroke:#009999
@@ -271,7 +272,9 @@ flowchart TD
     linkStyle 32 stroke:#950099
     linkStyle 33 stroke:#992400
     linkStyle 36 stroke:#007499
+    linkStyle 37 stroke:#039900
     linkStyle 38 stroke:#279900
+    linkStyle 40 stroke:#710099
     style constraint4 stroke:#990000;
     style constraint8 stroke:#009999;
     style constraint11 stroke:#4c9900;
@@ -283,3 +286,4 @@ flowchart TD
     style constraint31 stroke:#992400;
     style constraint35 stroke:#007499;
     style constraint36 stroke:#279900;
+    style constraint37 stroke:#710099;

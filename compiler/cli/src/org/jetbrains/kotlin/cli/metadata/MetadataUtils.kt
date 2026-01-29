@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import java.io.File
 
@@ -23,15 +24,12 @@ fun buildKotlinMetadataLibrary(configuration: CompilerConfiguration, serializedM
         metadataVersion = configuration.klibMetadataVersionOrDefault()
     )
 
-    buildKotlinLibrary(
-        serializedMetadata,
-        null,
-        versions,
-        destDir.absolutePath,
-        configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-        nopack = true,
-        manifestProperties = null,
-        builtInsPlatform = BuiltInsPlatform.COMMON,
-        nativeTargets = emptyList()
-    )
+    KlibWriter {
+        manifest {
+            moduleName(configuration[CommonConfigurationKeys.MODULE_NAME]!!)
+            versions(versions)
+            platformAndTargets(BuiltInsPlatform.COMMON)
+        }
+        includeMetadata(serializedMetadata)
+    }.writeTo(destDir.absolutePath)
 }

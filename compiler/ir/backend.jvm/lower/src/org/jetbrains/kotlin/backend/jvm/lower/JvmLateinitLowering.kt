@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.BackendSymbols
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.UninitializedPropertyAccessExceptionThrower
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -23,7 +23,7 @@ class JvmLateinitLowering(context: CommonBackendContext) :
     }
 }
 
-open class JvmUninitializedPropertyAccessExceptionThrower(symbols: Symbols) : UninitializedPropertyAccessExceptionThrower(symbols) {
+open class JvmUninitializedPropertyAccessExceptionThrower(symbols: BackendSymbols) : UninitializedPropertyAccessExceptionThrower(symbols) {
     override fun build(builder: IrBuilderWithScope, name: String): IrExpression =
         builder.irBlock {
             +super.build(builder, name)

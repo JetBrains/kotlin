@@ -401,7 +401,7 @@ tasks.register("crossDist") {
 }
 
 tasks.register("distInvalidateStaleCaches", InvalidateStaleCaches) {
-    distributionAsDirectory.set(nativeDistribution.map { it.root })
+    distributionRoot.set(nativeDistribution.map { it.root })
     // If the build graph includes any of the fingerprint updates, this task must run after them.
     // However, it shouldn't force any of the fingerprints to be computed (e.g. when building :kotlin-native:dist
     // this task should run after compiler and host runtime fingerprint updates, but shouldn't force fingerprint from an iOS simulator

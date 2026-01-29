@@ -29,7 +29,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.security.DigestInputStream
 import java.security.MessageDigest
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
@@ -686,32 +685,60 @@ internal fun getHeaderId(library: NativeLibrary, header: ClangFile?): HeaderId {
     return library.headerToIdMapper.getHeaderId(filePath)
 }
 
-class NativeLibraryHeaders<Header>(val ownHeaders: Set<Header>, val importedHeaders: Set<Header>)
+class NativeLibraryHeaders<Header>(val ownHeaders: Set<Header>, val importedHeaders: Set<Header>, val mainFile: Header)
 data class NativeLibraryHeadersAndUnits(val headers: NativeLibraryHeaders<ClangFile?>, val ownTranslationUnits: Set<CXTranslationUnit>)
+
+/**
+ * A small utility class for collecting outputs of [filterHeadersByName] and [filterHeadersByPredefined].
+ */
+private class FilterHeadersOutput {
+    val ownTranslationUnits = mutableSetOf<CXTranslationUnit>()
+    val ownHeaders = mutableSetOf<ClangFile?>()
+    val allHeaders = mutableSetOf<ClangFile?>(null)
+
+    /**
+     * The indexer generally operates by creating a temporary source file with all includes etc. See [createTempSource].
+     * This file is used as the starting point for libclang, and the latter reports it as the "main file".
+     * Note: there can be only one main file. But it is easier to collect a list and then check there is only one.
+     */
+    val mainFiles = mutableListOf<ClangFile>()
+}
 
 internal fun getHeadersAndUnits(
         library: NativeLibrary,
         index: CXIndex,
         translationUnit: CXTranslationUnit,
         unitsHolder: UnitsHolder
-): NativeLibraryHeadersAndUnits {
-    val ownTranslationUnits = mutableSetOf<CXTranslationUnit>()
-    val ownHeaders = mutableSetOf<ClangFile?>()
-    val allHeaders = mutableSetOf<ClangFile?>(null)
-
+): NativeLibraryHeadersAndUnits = with(FilterHeadersOutput()) {
     val filter = library.headerFilter
 
     when (filter) {
         is NativeLibraryHeaderFilter.NameBased ->
-            filterHeadersByName(library, filter, index, translationUnit, ownTranslationUnits, ownHeaders, allHeaders, unitsHolder)
+            filterHeadersByName(library, filter, index, translationUnit, unitsHolder)
 
         is NativeLibraryHeaderFilter.Predefined ->
-            filterHeadersByPredefined(filter, index, translationUnit, ownTranslationUnits, ownHeaders, allHeaders, unitsHolder)
+            filterHeadersByPredefined(filter, index, translationUnit, unitsHolder)
     }
+
+    val mainFile = mainFiles.singleOrNull()
+            ?: error("Expected exactly one main file, but found ${mainFiles.map { it.path }}")
+
+    // Technically, the main file is not a header. But it should be treated as one in most cases,
+    // e.g. because it contains declarations listed after `---` in the `.def` file.
+    // So it is easier to keep it there.
+    ownHeaders += mainFile
+    allHeaders += mainFile
 
     ownHeaders.removeAll { library.headerExclusionPolicy.excludeAll(getHeaderId(library, it)) }
 
-    return NativeLibraryHeadersAndUnits(NativeLibraryHeaders(ownHeaders, allHeaders - ownHeaders), ownTranslationUnits)
+    NativeLibraryHeadersAndUnits(
+            NativeLibraryHeaders(
+                    ownHeaders = ownHeaders,
+                    importedHeaders = allHeaders - ownHeaders,
+                    mainFile = mainFile
+            ),
+            ownTranslationUnits
+    )
 }
 
 class UnitsHolder(val index: CXIndex) : Disposable {
@@ -751,18 +778,14 @@ fun CXTranslationUnit.getFile(fileName: String): ClangFile? = clang_getFile(this
 fun CXIdxIncludedFileInfo.getFile(): ClangFile? = this.file?.asClangFile()
 fun CXIdxImportedASTFileInfo.getFile(): ClangFile? = this.file?.asClangFile()
 
-private fun filterHeadersByName(
+private fun FilterHeadersOutput.filterHeadersByName(
         compilation: Compilation,
         filter: NativeLibraryHeaderFilter.NameBased,
         index: CXIndex,
         translationUnit: CXTranslationUnit,
-        ownTranslationUnits: MutableSet<CXTranslationUnit>,
-        ownHeaders: MutableSet<ClangFile?>,
-        allHeaders: MutableSet<ClangFile?>,
         unitsHolder: UnitsHolder
 ) {
     val topLevelFiles = mutableSetOf<ClangFile>()
-    var mainFile: ClangFile? = null
     val translationUnits = mutableListOf(translationUnit)
 
     // The *name* of the header here is the path relative to the include path element., e.g. `curl/curl.h`.
@@ -774,8 +797,7 @@ private fun filterHeadersByName(
 
         indexTranslationUnit(index, curUnit, 0, object : Indexer {
             override fun enteredMainFile(file: ClangFile) {
-                mainFile = file
-                allHeaders += file
+                mainFiles += file
             }
 
             override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
@@ -845,17 +867,12 @@ private fun filterHeadersByName(
             ownHeaders.add(null)
         }
     }
-
-    ownHeaders.add(mainFile!!)
 }
 
-private fun filterHeadersByPredefined(
+private fun FilterHeadersOutput.filterHeadersByPredefined(
         filter: NativeLibraryHeaderFilter.Predefined,
         index: CXIndex,
         translationUnit: CXTranslationUnit,
-        ownTranslationUnits: MutableSet<CXTranslationUnit>,
-        ownHeaders: MutableSet<ClangFile?>,
-        allHeaders: MutableSet<ClangFile?>,
         unitsHolder: UnitsHolder
 ) {
     val translationUnits = mutableListOf(translationUnit)
@@ -864,8 +881,7 @@ private fun filterHeadersByPredefined(
     while (curUnitIndex < translationUnits.size) {
         indexTranslationUnit(index, translationUnits[curUnitIndex++], 0, object : Indexer {
             override fun enteredMainFile(file: ClangFile) {
-                ownHeaders += file
-                allHeaders += file
+                mainFiles += file
             }
 
             override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
@@ -919,7 +935,10 @@ fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
             fun getPath(file: ClangFile?) = if (file == null) "<builtins>" else file.canonicalPath
             return NativeLibraryHeaders(
                     headers.ownHeaders.map(::getPath).toSet(),
-                    headers.importedHeaders.map(::getPath).toSet()
+                    headers.importedHeaders.map(::getPath).toSet(),
+                    // Note: the path to the main file makes little sense (because it is a temporary file),
+                    // and ideally shouldn't be included there, within `ownHeaders`/`importedHeaders` as well.
+                    getPath(headers.mainFile)
             )
         } finally {
             clang_disposeTranslationUnit(translationUnit)

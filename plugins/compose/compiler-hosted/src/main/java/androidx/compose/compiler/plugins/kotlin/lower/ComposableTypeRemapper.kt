@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -178,15 +178,7 @@ internal class ComposableTypeTransformer(
                             )
                     )
         ) {
-            val realParams = containingClass.typeParameters.size - 1
-            // with composer and changed
-            val newArgsSize = realParams + 1 + changedParamCount(realParams, 0)
-            val newFnClass = context.irBuiltIns.functionN(newArgsSize)
-
-            val newFn = newFnClass
-                .functions
-                .first { it.name == ownerFn.name }
-
+            val newFn = containingClass.underlyingFunctionForComposable(ownerFn)
             return super.visitCall(
                 IrCallImpl(
                     expression.startOffset,
@@ -294,6 +286,44 @@ internal class ComposableTypeTransformer(
     override fun visitClassReference(expression: IrClassReference): IrExpression {
         expression.classType = expression.classType.remapType()
         return super.visitClassReference(expression)
+    }
+
+    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        expression.reflectionTarget = expression.reflectionTarget?.let { targetSymbol ->
+            val containingClass = targetSymbol.owner.parentClassOrNull
+            val ownerFn = targetSymbol.owner
+            if (
+                ownerFn is IrSimpleFunction &&
+                    containingClass != null &&
+                    containingClass.defaultType.isSyntheticComposableFunction()
+            ) {
+                val newFn = containingClass.underlyingFunctionForComposable(ownerFn)
+                newFn.symbol
+            } else if (ownerFn.needsComposableRemapping()) {
+                val newFn = ownerFn.transform(this, null) as IrFunction
+                newFn.symbol
+            } else {
+                targetSymbol
+            }
+        }
+        return super.visitFunctionReference(expression)
+    }
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        if (expression.overriddenFunctionSymbol.owner.needsComposableRemapping()) {
+            expression.overriddenFunctionSymbol.owner.transform(this, null)
+        }
+        return super.visitRichFunctionReference(expression)
+    }
+
+    private fun IrClass.underlyingFunctionForComposable(invokeFn: IrSimpleFunction): IrSimpleFunction {
+        val realParams = typeParameters.size - /* return type */ 1
+        val newArgsSize = realParams + /* composer */ 1 + changedParamCount(realParams, 0)
+        val newFnClass = context.irBuiltIns.functionN(newArgsSize)
+
+        return newFnClass
+            .functions
+            .first { it.name == invokeFn.name }
     }
 
     private fun IrType.remapType() = typeRemapper.remapType(this)

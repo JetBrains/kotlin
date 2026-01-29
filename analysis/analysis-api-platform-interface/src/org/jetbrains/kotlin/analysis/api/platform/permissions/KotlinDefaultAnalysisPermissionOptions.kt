@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.permissions
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
+
+@KaPlatformInterface
 public class KotlinDefaultAnalysisPermissionOptions : KotlinAnalysisPermissionOptions {
     override val defaultIsAnalysisAllowedOnEdt: Boolean get() = false
     override val defaultIsAnalysisAllowedInWriteAction: Boolean get() = false

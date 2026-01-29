@@ -1,38 +1,40 @@
 KtCallExpression(51,56): 'foo()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = KaSmartCastedReceiverValue:
-      original = KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Public
-          contextReceivers: []
-          isActual: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isVal: true
-          location: LOCAL
-          modality: FINAL
-          name: <receiver>
-          origin: SOURCE
-          owningCallableSymbol: KaNamedFunctionSymbol(/test)
-          receiverParameter: null
-          returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotations: []
-            typeArguments: []
-            type: kotlin/Any
-          visibility: PUBLIC
-        type = kotlin.Any
-      type = kotlin.String
-    signature = KaFunctionSignature:
-      receiverType = kotlin.String
-      returnType = kotlin.Unit
-      symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = /foo
-    typeArgumentsMapping = {}
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any
+            visibility: PUBLIC
+          type = kotlin.Any
+        type = kotlin.String
+      signature = KaFunctionSignature:
+        receiverType = kotlin.String
+        returnType = kotlin.Unit
+        symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

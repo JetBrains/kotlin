@@ -45,8 +45,9 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
-import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.util.toKlibMetadataVersion
 import java.io.File
@@ -133,20 +134,21 @@ object KlibTestUtil {
 
         val serializedMetadata = serializer.serializeModule(module)
 
-        buildKotlinLibrary(
-            metadata = serializedMetadata,
-            ir = null,
-            versions = KotlinLibraryVersioning(
-                compilerVersion = null,
-                abiVersion = null,
-                metadataVersion = LanguageVersionSettingsImpl.DEFAULT.languageVersion.toKlibMetadataVersion(),
-            ),
-            output = klibFile.path,
-            moduleName = libraryName,
-            nopack = false,
-            manifestProperties = null,
-            builtInsPlatform = BuiltInsPlatform.COMMON,
-        )
+        KlibWriter {
+            format(KlibFormat.ZipArchive)
+            manifest {
+                moduleName(libraryName)
+                versions(
+                    KotlinLibraryVersioning(
+                        compilerVersion = null,
+                        abiVersion = null,
+                        metadataVersion = LanguageVersionSettingsImpl.DEFAULT.languageVersion.toKlibMetadataVersion(),
+                    )
+                )
+                platformAndTargets(BuiltInsPlatform.COMMON)
+            }
+            includeMetadata(serializedMetadata)
+        }.writeTo(klibFile.path)
     }
 
     fun deserializeKlibToCommonModule(klibFile: File): ModuleDescriptorImpl {

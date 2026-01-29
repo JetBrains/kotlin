@@ -3,8 +3,7 @@
 // SAM_CONVERSIONS: INDY
 
 // CHECK_BYTECODE_TEXT
-// 0 java/lang/invoke/LambdaMetafactory
-// 1 final synthetic class AdaptedFunRefWithVarargKt\$box\$[0-9]+
+// 1 java/lang/invoke/LambdaMetafactory
 
 // FILE: adaptedFunRefWithVararg.kt
 var ok = "Failed"

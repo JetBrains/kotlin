@@ -1,0 +1,3 @@
+warning: lombok.config file not found: $TMP_DIR$/lombok.config
+warning: lombok Kotlin compiler plugin is an experimental feature. See: https://kotlinlang.org/docs/components-stability.html.
+OK

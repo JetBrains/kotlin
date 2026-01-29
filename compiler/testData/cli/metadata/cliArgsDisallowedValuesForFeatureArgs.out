@@ -1,0 +1,6 @@
+error: no value is expected for argument '-Xwhen-guards'.
+error: no value is expected for argument '-Xnested-type-aliases'.
+error: incorrect value for argument '-Xname-based-destructuring'. Actual value: 'asdf', but allowed values: 'only-syntax', 'name-mismatch', 'complete'.
+error: incorrect value for argument '-Xannotation-default-target'. Actual value: '', but allowed values: 'first-only-warn', 'param-property', 'first-only'.
+info: use -help for more information
+COMPILATION_ERROR

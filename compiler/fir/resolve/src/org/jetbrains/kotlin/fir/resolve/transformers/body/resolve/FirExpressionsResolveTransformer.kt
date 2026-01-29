@@ -1560,9 +1560,25 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             dataFlowAnalyzer.exitAnnotation()
             if (result == null) return annotationCall
             callCompleter.completeCall(result, ContextIndependent)
-            (result.argumentList as FirResolvedArgumentList).let { annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping()) }
+            (result.argumentList as FirResolvedArgumentList).let {
+                annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping())
+                evaluateAndReplaceArgumentMapping(annotationCall)
+            }
             annotationCall
         }
+    }
+
+    private fun evaluateAndReplaceArgumentMapping(annotationCall: FirAnnotationCall) {
+        val evaluationResult = FirExpressionEvaluator.evaluateAnnotationArguments(annotationCall, session)
+        annotationCall.replaceArgumentMapping(
+            buildAnnotationArgumentMapping {
+                source = annotationCall.argumentMapping.source
+                mapping.putAll(annotationCall.argumentMapping.mapping)
+                for ((name, result) in evaluationResult) {
+                    mapping[name] = result.unwrapOr<FirExpression> { } ?: continue
+                }
+            }
+        )
     }
 
     override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ResolutionMode): FirStatement {

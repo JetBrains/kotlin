@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class CompilerConfiguration {
     public static CompilerConfiguration EMPTY = new CompilerConfiguration();
 
@@ -162,7 +162,27 @@ public class CompilerConfiguration {
 
     @Override
     public String toString() {
-        return map.toString();
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<Key, Object> entry : map.entrySet()) {
+            Object value = entry.getValue();
+            sb.append(entry.getKey()).append(":");
+            if (value instanceof Collection) {
+                sb.append("\n");
+                for (Object o : (Collection<?>) value) {
+                    sb.append("  ").append(o).append("\n");
+                }
+            }
+            else if (value instanceof Map) {
+                sb.append("\n");
+                for (Map.Entry<?, ?> e : ((Map<?, ?>) value).entrySet()) {
+                    sb.append("  ").append(e.getKey()).append("=").append(e.getValue()).append("\n");
+                }
+            }
+            else {
+                sb.append(" ").append(value).append("\n");
+            }
+        }
+        return sb.toString().trim();
     }
 
     private static <T> void checkForNullElements(Collection<T> values) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
@@ -1043,7 +1044,10 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
     @GradleTest
     fun `KT-81973_npe_when_strange_dependency_is-added`(gradleVersions: GradleVersion) {
-        project("empty", gradleVersions) {
+        // it covers this bug https://github.com/gradle/gradle/issues/36284
+        // info is needed to check case when the "bad" error is logged out
+        val withLogLevelInfo = defaultBuildOptions.copy(logLevel = LogLevel.INFO)
+        project("empty", gradleVersions, buildOptions = withLogLevelInfo) {
             plugins { kotlin("multiplatform") }
             buildScriptInjection {
                 kotlinMultiplatform.jvm()
@@ -1053,6 +1057,8 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 }
             }
         }.resolveIdeDependencies { dependencies ->
+            val cause = "Got class org.gradle.internal.resolve.ModuleVersionResolveException error when trying to resolve Artifact, but explanation message can't be displayed because it failed with class java.lang.NullPointerException. For details please visit https://github.com/gradle/gradle/issues/36284"
+            assertOutputContains(cause)
             dependencies["commonTest"].assertMatches(
                 kotlinStdlibDependencies,
                 jetbrainsAnnotationDependencies,
@@ -1066,7 +1072,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 IdeaKotlinDependencyMatcher("Unresolved androidx.room:room-sqlite-wrapper:2.8.3") { dependency ->
                     dependency is IdeaKotlinUnresolvedBinaryDependency
                             && dependency.coordinates.toString() == "androidx.room:room-sqlite-wrapper:2.8.3"
-                            && dependency.cause == null // will become not null when this is fixed https://github.com/gradle/gradle/issues/36284
+                            && dependency.cause == cause
                 },
             )
         }

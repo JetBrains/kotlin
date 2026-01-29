@@ -231,7 +231,7 @@ abstract class ProjectTestsExtension(val project: Project) {
         skipInLocalBuild: Boolean,
         body: Test.() -> Unit = {},
     ): TaskProvider<out Task> {
-        if (skipInLocalBuild && !project.kotlinBuildProperties.isTeamcityBuild) {
+        if (skipInLocalBuild && !project.kotlinBuildProperties.isTeamcityBuild.get()) {
             return project.tasks.register(taskName)
         }
         if (jUnitMode == JUnitMode.JUnit5 && parallel != null) {

@@ -378,6 +378,12 @@
             "major": 2,
             "minor": 3,
             "patch": 20
+        },
+        {
+            "name": "2.4.0",
+            "major": 2,
+            "minor": 4,
+            "patch": 0
         }
     ],
     "types": {
@@ -514,7 +520,7 @@
                     "name": "2.4",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.2.20",
-                        "stabilizedVersion": null,
+                        "stabilizedVersion": "2.4.0",
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
@@ -3022,6 +3028,37 @@
                         }
                     },
                     {
+                        "name": "Xprint-configuration",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Print compiler configuration.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.4.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
                         "name": "Xprofile-phases",
                         "shortName": null,
                         "deprecatedName": null,
@@ -5147,6 +5184,37 @@
                                 }
                             },
                             {
+                                "name": "Xno-fallback-to-default-module-name",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Throw exception when generating calls to symbols from a module with no name, instead of falling back to 'main'.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.3.20",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                }
+                            },
+                            {
                                 "name": "Xno-new-java-annotation-targets",
                                 "shortName": null,
                                 "deprecatedName": null,
@@ -7111,6 +7179,37 @@
                                         },
                                         "releaseVersionsMetadata": {
                                             "introducedVersion": "2.3.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
+                                        "name": "Xwasm-internal-local-variable-prefix",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Prefix to use for internally generated local variables.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": "~",
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.4.0",
                                             "stabilizedVersion": null,
                                             "deprecatedVersion": null,
                                             "removedVersion": null

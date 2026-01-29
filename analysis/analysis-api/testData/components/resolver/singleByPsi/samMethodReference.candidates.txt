@@ -1,15 +1,7 @@
 KtCallExpression(146,166): 'test(this::uiMethod)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        this::uiMethod -> (KaVariableSignature:
-          name = foo
-          receiverType = null
-          returnType = Test.Foo
-          symbol = foo: Test.Foo
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = /Test
@@ -31,4 +23,13 @@ KtCallExpression(146,166): 'test(this::uiMethod)'
         contextParameters = []
         callableId = /Test.test
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        this::uiMethod -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = Test.Foo
+          symbol = foo: Test.Foo
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

@@ -1,15 +1,7 @@
 KtBinaryExpression(75,81): '1 to 2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: B
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -34,5 +26,14 @@ KtBinaryExpression(75,81): '1 to 2'
       typeArgumentsMapping = {
         A -> (kotlin.Int),
         B -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: B
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true

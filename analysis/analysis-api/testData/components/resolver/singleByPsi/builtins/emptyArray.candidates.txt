@@ -1,7 +1,7 @@
 KtNameReferenceExpression(31,41): 'emptyArray'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -15,4 +15,5 @@ KtNameReferenceExpression(31,41): 'emptyArray'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
+      valueArgumentMapping = {}
     isInBestCandidates = true

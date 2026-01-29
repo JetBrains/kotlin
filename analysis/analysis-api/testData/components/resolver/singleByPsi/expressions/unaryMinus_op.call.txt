@@ -1,7 +1,7 @@
 KtOperationReferenceExpression(191,192): '-'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = variable
@@ -16,3 +16,4 @@ KtOperationReferenceExpression(191,192): '-'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

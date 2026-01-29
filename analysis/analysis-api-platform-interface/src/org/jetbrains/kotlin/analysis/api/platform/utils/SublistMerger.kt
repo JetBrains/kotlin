@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.utils
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
  * The purpose of [SublistMerger] is to merge multiple different types of elements from a single origin list without the need for
  * intermediate list management and [partitionIsInstance] boilerplate.
  */
+@KaPlatformInterface
 public class SublistMerger<A : Any>(
     initialElements: List<A>,
     public val destination: MutableList<A>,
@@ -33,6 +35,7 @@ public class SublistMerger<A : Any>(
     }
 }
 
+@KaPlatformInterface
 public fun <A : Any> List<A>.mergeInto(destination: MutableList<A>, f: SublistMerger<A>.() -> Unit) {
     SublistMerger(this, destination).apply {
         f()
@@ -40,8 +43,10 @@ public fun <A : Any> List<A>.mergeInto(destination: MutableList<A>, f: SublistMe
     }
 }
 
+@KaPlatformInterface
 public fun <A : Any> List<A>.mergeWith(f: SublistMerger<A>.() -> Unit): List<A> =
     mutableListOf<A>().also { destination -> mergeInto(destination, f) }
 
+@KaPlatformInterface
 public inline fun <A : Any, reified R : A> List<A>.mergeOnly(crossinline create: (List<R>) -> A?): List<A> =
     mergeWith { merge<R>(create) }

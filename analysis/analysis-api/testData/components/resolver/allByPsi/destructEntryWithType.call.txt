@@ -143,15 +143,7 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
   KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
-        argumentMapping = {
-          0 + constant -> (KaVariableSignature:
-            name = str
-            receiverType = null
-            returnType = kotlin.String
-            symbol = str: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -171,6 +163,15 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          0 + constant -> (KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
@@ -178,15 +179,7 @@ KtConstructorCalleeExpression(160,164): 'Anno'
   KaErrorCallInfo:
     candidateCalls = [
       KaAnnotationCall:
-        argumentMapping = {
-          0 + constant -> (KaVariableSignature:
-            name = str
-            receiverType = null
-            returnType = kotlin.String
-            symbol = str: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -206,6 +199,15 @@ KtConstructorCalleeExpression(160,164): 'Anno'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          0 + constant -> (KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
@@ -229,15 +231,7 @@ KtValueArgument(165,177): '0 + constant'
 KtBinaryExpression(165,177): '0 + constant'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        constant -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 0
@@ -260,6 +254,15 @@ KtBinaryExpression(165,177): '0 + constant'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        constant -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtConstantExpression(165,166): '0'
   null
@@ -267,15 +270,7 @@ KtConstantExpression(165,166): '0'
 KtOperationReferenceExpression(167,168): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        constant -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 0
@@ -298,6 +293,15 @@ KtOperationReferenceExpression(167,168): '+'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        constant -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(169,177): 'constant'
   KaSuccessCallInfo:
@@ -338,15 +342,7 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
   KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
-        argumentMapping = {
-          1 + constant -> (KaVariableSignature:
-            name = str
-            receiverType = null
-            returnType = kotlin.String
-            symbol = str: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -366,6 +362,15 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          1 + constant -> (KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
@@ -373,15 +378,7 @@ KtConstructorCalleeExpression(185,189): 'Anno'
   KaErrorCallInfo:
     candidateCalls = [
       KaAnnotationCall:
-        argumentMapping = {
-          1 + constant -> (KaVariableSignature:
-            name = str
-            receiverType = null
-            returnType = kotlin.String
-            symbol = str: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -401,6 +398,15 @@ KtConstructorCalleeExpression(185,189): 'Anno'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          1 + constant -> (KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
@@ -424,15 +430,7 @@ KtValueArgument(190,202): '1 + constant'
 KtBinaryExpression(190,202): '1 + constant'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        constant -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -455,6 +453,15 @@ KtBinaryExpression(190,202): '1 + constant'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        constant -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtConstantExpression(190,191): '1'
   null
@@ -462,15 +469,7 @@ KtConstantExpression(190,191): '1'
 KtOperationReferenceExpression(192,193): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        constant -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
@@ -493,6 +492,15 @@ KtOperationReferenceExpression(192,193): '+'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        constant -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(194,202): 'constant'
   KaSuccessCallInfo:
@@ -533,15 +541,7 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
   KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
-        argumentMapping = {
-          2 + constant -> (KaVariableSignature:
-            name = str
-            receiverType = null
-            returnType = kotlin.String
-            symbol = str: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -561,6 +561,15 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          2 + constant -> (KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
@@ -568,15 +577,7 @@ KtConstructorCalleeExpression(210,214): 'Anno'
   KaErrorCallInfo:
     candidateCalls = [
       KaAnnotationCall:
-        argumentMapping = {
-          2 + constant -> (KaVariableSignature:
-            name = str
-            receiverType = null
-            returnType = kotlin.String
-            symbol = str: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -596,6 +597,15 @@ KtConstructorCalleeExpression(210,214): 'Anno'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          2 + constant -> (KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
@@ -619,15 +629,7 @@ KtValueArgument(215,227): '2 + constant'
 KtBinaryExpression(215,227): '2 + constant'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        constant -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 2
@@ -650,6 +652,15 @@ KtBinaryExpression(215,227): '2 + constant'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        constant -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtConstantExpression(215,216): '2'
   null
@@ -657,15 +668,7 @@ KtConstantExpression(215,216): '2'
 KtOperationReferenceExpression(217,218): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        constant -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 2
@@ -688,6 +691,15 @@ KtOperationReferenceExpression(217,218): '+'
         contextParameters = []
         callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        constant -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(219,227): 'constant'
   KaSuccessCallInfo:

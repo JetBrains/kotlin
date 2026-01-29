@@ -104,6 +104,7 @@ callables: 5
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
+        hasSynthesizedName: false
         isActual: false
         isCrossinline: false
         isExpect: false
@@ -196,6 +197,7 @@ callables: 5
       isExpect: false
       isExtension: false
       isExternal: false
+      isNotDefault: false
       isVal: true
       location: PROPERTY
       modality: FINAL
@@ -277,6 +279,7 @@ callables: 5
       isExpect: false
       isExtension: false
       isExternal: false
+      isNotDefault: false
       isVal: false
       location: PROPERTY
       modality: FINAL
@@ -364,6 +367,7 @@ callables: 5
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
+        hasSynthesizedName: false
         isActual: false
         isCrossinline: false
         isExpect: false
@@ -397,6 +401,7 @@ callables: 5
           generatedPrimaryConstructorProperty: null
           hasDeclaredDefaultValue: false
           hasDefaultValue: false
+          hasSynthesizedName: false
           isActual: false
           isCrossinline: false
           isExpect: false
@@ -435,6 +440,7 @@ callables: 5
       isExpect: false
       isExtension: false
       isExternal: false
+      isNotDefault: false
       isVal: true
       location: PROPERTY
       modality: FINAL

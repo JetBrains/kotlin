@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
@@ -45,7 +46,7 @@ fun PhaseContext.fir2Ir(
     val actualizedResult = input.firResult.convertToIrAndActualize(
         NativeFir2IrExtensions,
         fir2IrConfiguration,
-        IrGenerationExtension.getInstances(config.project),
+        config.configuration.getCompilerExtensions(IrGenerationExtension),
         irMangler = KonanManglerIr,
         visibilityConverter = Fir2IrVisibilityConverter.Default,
         kotlinBuiltIns = DefaultBuiltIns.Instance,
@@ -117,6 +118,6 @@ fun PhaseContext.fir2Ir(
 
 private fun PhaseContext.createKonanSymbols(
         irBuiltIns: IrBuiltIns,
-): KonanSymbols {
-    return KonanSymbols(this, irBuiltIns, this.config.configuration)
+): BackendNativeSymbols {
+    return BackendNativeSymbols(this, irBuiltIns, this.config.configuration)
 }

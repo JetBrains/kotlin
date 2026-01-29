@@ -142,6 +142,12 @@ public class FirIdeNormalAnalysisSourceModuleContainingDeclarationProviderByPsiT
   }
 
   @Test
+  @TestMetadata("forLoopVariable.kt")
+  public void testForLoopVariable() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/forLoopVariable.kt");
+  }
+
+  @Test
   @TestMetadata("functions.kt")
   public void testFunctions() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/functions.kt");

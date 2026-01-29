@@ -671,7 +671,7 @@ internal class TestProcessor(
     override fun lower(irFile: IrFile) {
         // This can happen when exporting a klib to an older ABI version. (KT-82530)
         // In this scenario the symbol cannot be found in the stdlib during the 1st stage, and the lowering is postponed to the 2nd stage.
-        if (symbols.testsProcessed == null) return // KT-83151 Restore non-nullability of symbols available since 2.3
+        if (symbols.testsProcessed == null) return // KT-83807 Restore non-nullability of symbols not available in 2.3.0 stdlib
 
         // TODO: uses descriptors.
         if (shouldSkipFile(irFile)) return

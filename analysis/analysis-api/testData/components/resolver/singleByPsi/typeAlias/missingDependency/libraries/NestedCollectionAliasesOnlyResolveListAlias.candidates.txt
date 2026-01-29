@@ -1,15 +1,7 @@
 KtNameReferenceExpression(165,170): 'check'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        emptyList() -> (KaVariableSignature:
-          name = list
-          receiverType = null
-          returnType = {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
-          symbol = list: {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m
@@ -32,4 +24,13 @@ KtNameReferenceExpression(165,170): 'check'
         contextParameters = []
         callableId = library4/MyInterface.check
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        emptyList() -> (KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
+          symbol = list: {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

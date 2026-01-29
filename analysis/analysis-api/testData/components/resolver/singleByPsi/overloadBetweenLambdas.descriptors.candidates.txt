@@ -1,15 +1,7 @@
 KtNameReferenceExpression(129,133): 'post'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {} -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-          symbol = action: kotlin.Function1<T, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -31,20 +23,21 @@ KtNameReferenceExpression(129,133): 'post'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        {} -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+          symbol = action: kotlin.Function1<T, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with post>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {} -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Unit, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Unit, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -64,4 +57,13 @@ KtNameReferenceExpression(129,133): 'post'
         contextParameters = []
         callableId = test/post
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {} -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Unit, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Unit, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

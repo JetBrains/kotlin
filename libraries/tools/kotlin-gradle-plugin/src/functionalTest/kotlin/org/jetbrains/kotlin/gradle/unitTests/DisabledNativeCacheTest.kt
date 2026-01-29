@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion
@@ -28,22 +27,24 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.unitTests.fus.collectedFusConfigurationTimeMetrics
 import org.jetbrains.kotlin.gradle.unitTests.fus.enableFusOnCI
-import org.jetbrains.kotlin.gradle.unitTests.utils.MockKonanHomeRule
-import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.unitTests.utils.MockKonanHomeExtension
+import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
+import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import org.junit.Assume
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.extension.RegisterExtension
 import java.net.URI
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class DisabledNativeCacheTest {
-    @get:Rule
-    val mockKonan = MockKonanHomeRule()
+    @JvmField
+    @RegisterExtension
+    val mockKonan = MockKonanHomeExtension()
 
     @Test
     fun `test deprecated native cache property`() {
@@ -87,7 +88,7 @@ class DisabledNativeCacheTest {
 
     @Test
     fun `test native cache is enabled by default`() {
-        Assume.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
+        Assumptions.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
         with(mppProjectWithFakeKonan(mockKonan)) {
             kotlin {
                 createCacheableTargets().forEach { target ->
@@ -145,7 +146,7 @@ class DisabledNativeCacheTest {
 
     @Test
     fun `test native cache is disabled`() {
-        Assume.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
+        Assumptions.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
         with(mppProjectWithFakeKonan(mockKonan)) {
             kotlin {
                 createCacheableTargets().forEach { target ->
@@ -209,7 +210,7 @@ class DisabledNativeCacheTest {
 
     @Test
     fun `test native cache is disabled for particular buildType`() {
-        Assume.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
+        Assumptions.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
         with(mppProjectWithFakeKonan(mockKonan)) {
             kotlin {
                 val target = if (HostManager.hostIsMac) macosArm64() else linuxX64()
@@ -360,7 +361,7 @@ private fun ProjectInternal.konanCacheKind(linkTask: String): Provider<NativeCac
     tasks.named(linkTask, KotlinNativeLink::class.java).flatMap { it.konanCacheKind }
 
 private fun mppProjectWithFakeKonan(
-    fakeKonanRule: MockKonanHomeRule,
+    fakeKonanRule: MockKonanHomeExtension,
     copyKonanProperties: Boolean = true,
     projectBuilder: ProjectBuilder.() -> Unit = { },
     preApplyCode: Project.() -> Unit = {},

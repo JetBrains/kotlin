@@ -8,7 +8,7 @@ dependencies {
     api(project(":core:compiler.common"))
     api(project(":compiler:fir:cones"))
 
-    if (kotlinBuildProperties.isInIdeaSync) {
+    if (kotlinBuildProperties.isInIdeaSync.get()) {
         compileOnly(project("tree-generator")) // Provided, so that IDEA can recognize references to this module in KDoc.
     }
 

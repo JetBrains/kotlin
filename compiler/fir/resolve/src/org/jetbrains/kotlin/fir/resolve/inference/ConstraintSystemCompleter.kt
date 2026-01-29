@@ -206,9 +206,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
             break
         }
-        if (completionMode == ConstraintSystemCompletionMode.FULL) {
-            inferenceComponents.session.inferenceLogger?.assignFixedToInFixationLogs(this)
-        }
     }
 
     private fun ConstraintSystemCompletionContext.findFirstVariableForFixation(

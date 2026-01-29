@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isFacadeClass
@@ -101,7 +101,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override val factory: IrFactory
         get() = super<AbstractFir2IrLazyDeclaration>.factory
 
-    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> {
+    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrAnnotation>> {
         return super<AbstractFir2IrLazyDeclaration>.createLazyAnnotations()
     }
 

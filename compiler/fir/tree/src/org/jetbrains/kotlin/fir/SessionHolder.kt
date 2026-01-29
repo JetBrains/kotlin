@@ -16,3 +16,22 @@ interface ScopeSessionHolder {
 }
 
 interface SessionAndScopeSessionHolder : SessionHolder, ScopeSessionHolder
+
+inline fun <R> withSession(session: FirSession, block: context(SessionHolder) () -> R): R {
+    val holder = object : SessionHolder {
+        override val session: FirSession
+            get() = session
+    }
+    return block(holder)
+}
+
+inline fun <R> withSession(session: FirSession, scopeSession: ScopeSession, block: context(SessionHolder) () -> R): R {
+    val holder = object : SessionAndScopeSessionHolder {
+        override val session: FirSession
+            get() = session
+
+        override val scopeSession: ScopeSession
+            get() = scopeSession
+    }
+    return block(holder)
+}

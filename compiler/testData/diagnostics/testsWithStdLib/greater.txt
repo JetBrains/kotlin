@@ -3,9 +3,9 @@ package
 public fun foo(/*0*/ countExpr: Expression<kotlin.Long>): kotlin.Unit
 public fun </*0*/ T : kotlin.Comparable<T>, /*1*/ S : T?> Expression<in S>.greater(/*0*/ other: T): GreaterOp
 
-public final class Expression</*0*/ T> {
-    public constructor Expression</*0*/ T>(/*0*/ x: T)
-    public final val x: T
+public final class Expression</*0*/ M> {
+    public constructor Expression</*0*/ M>(/*0*/ x: M)
+    public final val x: M
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

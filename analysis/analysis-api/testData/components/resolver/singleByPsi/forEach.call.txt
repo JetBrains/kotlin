@@ -1,15 +1,7 @@
 KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = (kotlin.Int) -> kotlin.Unit
-          symbol = action: (T) -> kotlin.Unit
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -33,4 +25,13 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         callableId = kotlin/collections/forEach
       typeArgumentsMapping = {
         T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = (kotlin.Int) -> kotlin.Unit
+          symbol = action: (T) -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
       }

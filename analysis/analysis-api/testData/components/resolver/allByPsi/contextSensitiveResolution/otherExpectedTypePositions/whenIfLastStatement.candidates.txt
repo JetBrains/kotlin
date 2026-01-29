@@ -23,9 +23,9 @@ KtSuperTypeList(128,137): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(128,137): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -38,12 +38,13 @@ KtSuperTypeCallEntry(128,137): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(128,135): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -56,6 +57,7 @@ KtConstructorCalleeExpression(128,135): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(128,135): 'MyClass'
@@ -92,9 +94,9 @@ KtNameReferenceExpression(187,194): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(197,206): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -106,12 +108,13 @@ KtCallExpression(197,206): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(197,204): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -123,6 +126,7 @@ KtNameReferenceExpression(197,204): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(204,206): '()'
@@ -152,7 +156,7 @@ KtParameterList(273,275): '()'
 KtNameReferenceExpression(278,293): 'NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -164,6 +168,7 @@ KtNameReferenceExpression(278,293): 'NestedInheritor'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -173,7 +178,7 @@ KtProperty(303,349): 'val ClassMemberAlias = MyClass.NestedInheritor'
 KtDotQualifiedExpression(326,349): 'MyClass.NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -185,13 +190,14 @@ KtDotQualifiedExpression(326,349): 'MyClass.NestedInheritor'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(326,333): 'MyClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -203,13 +209,14 @@ KtNameReferenceExpression(326,333): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(334,349): 'NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -221,6 +228,7 @@ KtNameReferenceExpression(334,349): 'NestedInheritor'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -294,9 +302,9 @@ KtNameReferenceExpression(400,401): 'T'
   NO_CANDIDATES
 
 KtCallExpression(404,407): 'b()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = b
@@ -311,6 +319,7 @@ KtCallExpression(404,407): 'b()'
         contextParameters = []
         callableId = kotlin/Function0.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(404,405): 'b'
@@ -376,15 +385,7 @@ KtContainerNode(467,473): 'i == 0'
 KtBinaryExpression(467,473): 'i == 0'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -407,6 +408,15 @@ KtBinaryExpression(467,473): 'i == 0'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(467,468): 'i'
@@ -430,15 +440,7 @@ KtNameReferenceExpression(467,468): 'i'
 KtOperationReferenceExpression(469,471): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -461,6 +463,15 @@ KtOperationReferenceExpression(469,471): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(472,473): '0'
@@ -478,7 +489,7 @@ KtNameReferenceExpression(489,504): 'NestedInheritor'
 KtNameReferenceExpression(517,532): 'NestedInheritor'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -490,6 +501,7 @@ KtNameReferenceExpression(517,532): 'NestedInheritor'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -505,15 +517,7 @@ KtContainerNode(560,566): 'i == 1'
 KtBinaryExpression(560,566): 'i == 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -536,6 +540,15 @@ KtBinaryExpression(560,566): 'i == 1'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(560,561): 'i'
@@ -559,15 +572,7 @@ KtNameReferenceExpression(560,561): 'i'
 KtOperationReferenceExpression(562,564): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -590,6 +595,15 @@ KtOperationReferenceExpression(562,564): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(565,566): '1'
@@ -667,15 +681,7 @@ KtContainerNode(693,699): 'i == 2'
 KtBinaryExpression(693,699): 'i == 2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -698,6 +704,15 @@ KtBinaryExpression(693,699): 'i == 2'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(693,694): 'i'
@@ -721,15 +736,7 @@ KtNameReferenceExpression(693,694): 'i'
 KtOperationReferenceExpression(695,697): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -752,6 +759,15 @@ KtOperationReferenceExpression(695,697): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(698,699): '2'
@@ -809,9 +825,31 @@ KtNameReferenceExpression(772,788): 'ClassMemberAlias'
     isInBestCandidates = true
 
 KtCallExpression(794,1278): 'receive<MyClass>('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyClass
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      valueArgumentMapping = {
         if (i == 0) {
                     NestedInheritor
                     NestedInheritor
@@ -838,34 +876,35 @@ KtCallExpression(794,1278): 'receive<MyClass>('
           symbol = e: T
           contextParameters = []
           callableId = null)
-      }
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /receive(e: T): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = e
-            receiverType = null
-            returnType = MyClass
-            symbol = e: T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyClass)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(794,801): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyClass
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      valueArgumentMapping = {
         if (i == 0) {
                     NestedInheritor
                     NestedInheritor
@@ -892,27 +931,6 @@ KtNameReferenceExpression(794,801): 'receive'
           symbol = e: T
           contextParameters = []
           callableId = null)
-      }
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /receive(e: T): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = e
-            receiverType = null
-            returnType = MyClass
-            symbol = e: T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyClass)
       }
     isInBestCandidates = true
 
@@ -946,15 +964,7 @@ KtContainerNode(824,830): 'i == 0'
 KtBinaryExpression(824,830): 'i == 0'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -977,6 +987,15 @@ KtBinaryExpression(824,830): 'i == 0'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(824,825): 'i'
@@ -1000,15 +1019,7 @@ KtNameReferenceExpression(824,825): 'i'
 KtOperationReferenceExpression(826,828): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1031,6 +1042,15 @@ KtOperationReferenceExpression(826,828): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(829,830): '0'
@@ -1060,15 +1080,7 @@ KtContainerNode(941,947): 'i == 1'
 KtBinaryExpression(941,947): 'i == 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1091,6 +1103,15 @@ KtBinaryExpression(941,947): 'i == 1'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(941,942): 'i'
@@ -1114,15 +1135,7 @@ KtNameReferenceExpression(941,942): 'i'
 KtOperationReferenceExpression(943,945): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1145,6 +1158,15 @@ KtOperationReferenceExpression(943,945): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(946,947): '1'
@@ -1174,15 +1196,7 @@ KtContainerNode(1050,1056): 'i == 2'
 KtBinaryExpression(1050,1056): 'i == 2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1205,6 +1219,15 @@ KtBinaryExpression(1050,1056): 'i == 2'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1050,1051): 'i'
@@ -1228,15 +1251,7 @@ KtNameReferenceExpression(1050,1051): 'i'
 KtOperationReferenceExpression(1052,1054): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1259,6 +1274,15 @@ KtOperationReferenceExpression(1052,1054): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(1055,1056): '2'
@@ -1300,15 +1324,7 @@ KtContainerNode(1153,1159): 'i == 3'
 KtBinaryExpression(1153,1159): 'i == 3'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1331,6 +1347,15 @@ KtBinaryExpression(1153,1159): 'i == 3'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1153,1154): 'i'
@@ -1354,15 +1379,7 @@ KtNameReferenceExpression(1153,1154): 'i'
 KtOperationReferenceExpression(1155,1157): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1385,6 +1402,15 @@ KtOperationReferenceExpression(1155,1157): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(1158,1159): '3'
@@ -1424,29 +1450,9 @@ KtNameReferenceExpression(1256,1272): 'ClassMemberAlias'
     isInBestCandidates = true
 
 KtCallExpression(1284,1555): 'run<MyClass> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (i == 0) {
-                    NestedInheritor
-                    NestedInheritor
-                    // KT-76400
-                }
-                else if (i == 1) {
-                    myClassProp
-                    myClassProp
-                    // KT-76400
-                }
-                else ClassMemberAlias
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyClass
-          symbol = b: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1468,11 +1474,7 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {
                 if (i == 0) {
                     NestedInheritor
@@ -1486,13 +1488,18 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
                 }
                 else ClassMemberAlias
             } -> (KaVariableSignature:
-          name = block
+          name = b
           receiverType = null
           returnType = () -> MyClass
-          symbol = block: () -> R
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1513,33 +1520,34 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
         callableId = kotlin/run
       typeArgumentsMapping = {
         R -> (MyClass)
+      }
+      valueArgumentMapping = {
+        {
+                if (i == 0) {
+                    NestedInheritor
+                    NestedInheritor
+                    // KT-76400
+                }
+                else if (i == 1) {
+                    myClassProp
+                    myClassProp
+                    // KT-76400
+                }
+                else ClassMemberAlias
+            } -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = () -> MyClass
+          symbol = block: () -> R
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = false
 
 KtNameReferenceExpression(1284,1287): 'run'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (i == 0) {
-                    NestedInheritor
-                    NestedInheritor
-                    // KT-76400
-                }
-                else if (i == 1) {
-                    myClassProp
-                    myClassProp
-                    // KT-76400
-                }
-                else ClassMemberAlias
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyClass
-          symbol = b: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1561,11 +1569,7 @@ KtNameReferenceExpression(1284,1287): 'run'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {
                 if (i == 0) {
                     NestedInheritor
@@ -1579,13 +1583,18 @@ KtNameReferenceExpression(1284,1287): 'run'
                 }
                 else ClassMemberAlias
             } -> (KaVariableSignature:
-          name = block
+          name = b
           receiverType = null
           returnType = () -> MyClass
-          symbol = block: () -> R
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1606,6 +1615,27 @@ KtNameReferenceExpression(1284,1287): 'run'
         callableId = kotlin/run
       typeArgumentsMapping = {
         R -> (MyClass)
+      }
+      valueArgumentMapping = {
+        {
+                if (i == 0) {
+                    NestedInheritor
+                    NestedInheritor
+                    // KT-76400
+                }
+                else if (i == 1) {
+                    myClassProp
+                    myClassProp
+                    // KT-76400
+                }
+                else ClassMemberAlias
+            } -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = () -> MyClass
+          symbol = block: () -> R
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = false
 
@@ -1645,15 +1675,7 @@ KtContainerNode(1311,1317): 'i == 0'
 KtBinaryExpression(1311,1317): 'i == 0'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1676,6 +1698,15 @@ KtBinaryExpression(1311,1317): 'i == 0'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1311,1312): 'i'
@@ -1699,15 +1730,7 @@ KtNameReferenceExpression(1311,1312): 'i'
 KtOperationReferenceExpression(1313,1315): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1730,6 +1753,15 @@ KtOperationReferenceExpression(1313,1315): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(1316,1317): '0'
@@ -1759,15 +1791,7 @@ KtContainerNode(1428,1434): 'i == 1'
 KtBinaryExpression(1428,1434): 'i == 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1790,6 +1814,15 @@ KtBinaryExpression(1428,1434): 'i == 1'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1428,1429): 'i'
@@ -1813,15 +1846,7 @@ KtNameReferenceExpression(1428,1429): 'i'
 KtOperationReferenceExpression(1430,1432): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1844,6 +1869,15 @@ KtOperationReferenceExpression(1430,1432): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(1433,1434): '1'

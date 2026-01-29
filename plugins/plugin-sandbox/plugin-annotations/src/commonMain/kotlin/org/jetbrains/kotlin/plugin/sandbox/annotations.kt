@@ -87,3 +87,6 @@ annotation class GenerateBodyUsingEmittedMetadata
  * in the annotated function
  */
 annotation class CallSpecifiedFunction(val functionName: String)
+
+annotation class GenerateFunctionWithAnnotatedParameters
+annotation class AnnotationWithStringValue(val value: String)

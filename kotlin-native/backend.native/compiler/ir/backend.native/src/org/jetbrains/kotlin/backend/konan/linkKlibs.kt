@@ -8,15 +8,10 @@ import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializerFactory
-import org.jetbrains.kotlin.backend.konan.serialization.KonanInteropModuleDeserializer
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
-import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
+import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -67,7 +62,7 @@ internal class LinkKlibsOutput(
         val irModules: Map<String, IrModuleFragment>,
         val irModule: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
-        val symbols: KonanSymbols,
+        val symbols: BackendNativeSymbols,
         val symbolTable: ReferenceSymbolTable,
         val irLinker: KonanIrLinker,
 ) : KotlinBackendIrHolder {
@@ -92,7 +87,12 @@ internal fun LinkKlibsContext.linkKlibs(
             Psi2IrConfiguration(ignoreErrors = false, partialLinkageConfig.isEnabled),
             messageCollector::checkNoUnboundSymbols
     )
-    val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
+    val generatorContext = translator.createGeneratorContext(
+            moduleDescriptor,
+            bindingContext,
+            config.configuration,
+            symbolTable
+    )
 
     val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
@@ -114,7 +114,7 @@ internal fun LinkKlibsContext.linkKlibs(
     val irBuiltInsOverDescriptors = generatorContext.irBuiltIns as IrBuiltInsOverDescriptors
     val functionIrClassFactory = BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
-    val symbols = KonanSymbols(
+    val symbols = BackendNativeSymbols(
             this,
             generatorContext.irBuiltIns,
             this.config.configuration

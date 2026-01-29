@@ -60,6 +60,12 @@ public class IrBlackBoxCodegenTestForLombokGenerated extends AbstractIrBlackBoxC
   }
 
   @Test
+  @TestMetadata("builderCtorWithParams.kt")
+  public void testBuilderCtorWithParams() {
+    runTest("plugins/lombok/testData/box/builderCtorWithParams.kt");
+  }
+
+  @Test
   @TestMetadata("builderGuava.kt")
   public void testBuilderGuava() {
     runTest("plugins/lombok/testData/box/builderGuava.kt");
@@ -99,6 +105,18 @@ public class IrBlackBoxCodegenTestForLombokGenerated extends AbstractIrBlackBoxC
   @TestMetadata("builderWithInnerBuilder.kt")
   public void testBuilderWithInnerBuilder() {
     runTest("plugins/lombok/testData/box/builderWithInnerBuilder.kt");
+  }
+
+  @Test
+  @TestMetadata("builderWithSuperBuilder.kt")
+  public void testBuilderWithSuperBuilder() {
+    runTest("plugins/lombok/testData/box/builderWithSuperBuilder.kt");
+  }
+
+  @Test
+  @TestMetadata("buildersOnGenericClasses.kt")
+  public void testBuildersOnGenericClasses() {
+    runTest("plugins/lombok/testData/box/buildersOnGenericClasses.kt");
   }
 
   @Test

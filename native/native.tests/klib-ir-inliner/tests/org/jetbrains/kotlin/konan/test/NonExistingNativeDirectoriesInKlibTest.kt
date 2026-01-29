@@ -12,15 +12,19 @@ import org.jetbrains.kotlin.library.components.KlibNativeConstants.KLIB_TARGETS_
 import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesConstants.KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.library.components.nativeIncludedBinaries
-import org.jetbrains.kotlin.konan.library.impl.buildLibrary
+import org.jetbrains.kotlin.konan.library.writer.includeBitcode
+import org.jetbrains.kotlin.konan.library.writer.includeNativeIncludedBinaries
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -83,24 +87,22 @@ class NonExistingNativeDirectoriesInKlibTest {
 
         val klibDir = KFile(tmpDir.resolve("uncompressed")).absoluteFile
 
-        buildLibrary(
-            natives = bitcodeFileNames.map(::createEmptyFile),
-            included = includedBinaryFileNames.map(::createEmptyFile),
-            linkDependencies = emptyList(),
-            metadata = SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray()),
-            ir = null,
-            versions = KotlinLibraryVersioning(
-                abiVersion = KotlinAbiVersion.CURRENT, // does not matter
-                compilerVersion = KotlinCompilerVersion.getVersion(), // does not matter
-                metadataVersion = MetadataVersion.INSTANCE, // does not matter
-            ),
-            target = TEST_TARGET,
-            output = klibDir.path,
-            moduleName = TEST_MODULE_NAME,
-            nopack = true,
-            shortName = null,
-            manifestProperties = null,
-        )
+        KlibWriter {
+            manifest {
+                moduleName(TEST_MODULE_NAME)
+                versions(
+                    KotlinLibraryVersioning(
+                        abiVersion = KotlinAbiVersion.CURRENT, // does not matter
+                        compilerVersion = KotlinCompilerVersion.getVersion(), // does not matter
+                        metadataVersion = MetadataVersion.INSTANCE, // does not matter
+                    )
+                )
+                platformAndTargets(BuiltInsPlatform.NATIVE, TEST_TARGET.name)
+            }
+            includeMetadata(SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray()))
+            includeBitcode(TEST_TARGET, bitcodeFileNames.map(::createEmptyFile))
+            includeNativeIncludedBinaries(TEST_TARGET, includedBinaryFileNames.map(::createEmptyFile))
+        }.writeTo(klibDir.path)
 
         return klibDir
     }

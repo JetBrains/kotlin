@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10AnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
@@ -31,11 +32,17 @@ internal class KaFe10DescSyntheticFieldSymbol(
     val descriptor: SyntheticFieldDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KaBackingFieldSymbol(), KaFe10Symbol, KaFe10AnnotatedSymbol {
+    override val psi: PsiElement?
+        get() = withValidityAssertion { null }
+
     override val owningProperty: KaKotlinPropertySymbol
         get() = withValidityAssertion {
             val kotlinProperty = descriptor.propertyDescriptor as PropertyDescriptorImpl
             KaFe10DescKotlinPropertySymbol(kotlinProperty, analysisContext)
         }
+
+    override val isNotDefault: Boolean
+        get() = withValidityAssertion { false }
 
     override val annotationsObject: Annotations
         get() = withValidityAssertion { descriptor.annotations }

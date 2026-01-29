@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
-// USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
 
 import kotlin.reflect.*
 

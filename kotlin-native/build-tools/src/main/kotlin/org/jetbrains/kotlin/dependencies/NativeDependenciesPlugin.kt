@@ -71,7 +71,7 @@ abstract class NativeDependenciesExtension @Inject constructor(private val proje
     val nativeDependenciesRoot: File
         get() {
             // Can't use `BuildPropertiesExt` from `native-build-tools`
-            val konanDataDir = project.kotlinBuildProperties.getOrNull("konan.data.dir") as String?
+            val konanDataDir = project.kotlinBuildProperties.stringProperty("konan.data.dir").orNull
             return DependencyDirectories.getDependenciesRoot(konanDataDir)
         }
 

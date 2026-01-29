@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.BackendSymbols
 import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -190,7 +190,7 @@ class ProgressionHeaderInfo(
  */
 class IndexedGetHeaderInfo(
     irBuiltIns: IrBuiltIns,
-    symbols: Symbols,
+    symbols: BackendSymbols,
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,

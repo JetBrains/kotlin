@@ -14,13 +14,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.get
-import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.StringDirective
-import org.jetbrains.kotlin.test.directives.model.ValueDirective
 
 private val TARGET_FAMILY = "targetFamily"
 private val TARGET_ARCHITECTURE = "targetArchitecture"
@@ -38,77 +35,37 @@ private val ARCHITECTURE_NAMES = Architecture.entries.map { it.name }
 private val BOOLEAN_NAMES = listOf(true.toString(), false.toString())
 private val KLIB_IR_INLINER_NAMES = KlibIrInlinerMode.entries.map { it.name }
 
-// Note: this method would accept DISABLED_NATIVE without parameters as an unconditional test exclusion: don't even try to compile
-internal fun Settings.isDisabledNative(directives: Directives) =
-    evaluate(
-        getDirectiveValues(
-            TestDirectives.DISABLE_NATIVE,
-            { directives.contains(it.name) },
-            { directives.listValues(it.name) },
-        )
-    )
-
-// Note: this method would ignore DISABLED_NATIVE without parameters, since it would be not a StringDirective, but new SimpleDirective
-internal fun Settings.isDisabledNative(registeredDirectives: RegisteredDirectives) =
-    evaluate(
-        getDirectiveValues(
-            TestDirectives.DISABLE_NATIVE,
-            { registeredDirectives.contains(it) },
-            { registeredDirectives.get(it) },
-        )
-    )
-
-// Note: this method would treat IGNORE_NATIVE without parameters as an unconditional "test must fail on any config". Same as // IGNORE_BACKEND: NATIVE
-internal fun Settings.isIgnoredWithIGNORE_NATIVE(directives: Directives) =
-    evaluate(
-        getDirectiveValues(
-            TestDirectives.IGNORE_NATIVE,
-            { directives.contains(it.name) },
-            { directives.listValues(it.name) },
-        )
-    )
-
-// Note: this method would ignore IGNORE_NATIVE without parameters, since it would be not a StringDirective, but new SimpleDirective
-internal fun Settings.isIgnoredWithIGNORE_NATIVE(registeredDirectives: RegisteredDirectives) =
-    evaluate(
-        getDirectiveValues(
-            TestDirectives.IGNORE_NATIVE,
-            { registeredDirectives.contains(it) },
-            { registeredDirectives.get(it) },
-        )
-    )
-
-// Note: this method would treat IGNORE_NATIVE without parameters as an unconditional "test must fail on any config". Same as // IGNORE_BACKEND: NATIVE
-internal fun Settings.isIgnoredTarget(directives: Directives): Boolean {
-    return isIgnoredWithIGNORE_NATIVE(directives) || isIgnoredWithIGNORE_BACKEND(directives::get)
-}
-
-// Note: this method would ignore IGNORE_NATIVE without parameters, since it would be not a StringDirective, but new SimpleDirective
-internal fun Settings.isIgnoredTarget(registeredDirectives: RegisteredDirectives): Boolean {
-    return isIgnoredWithIGNORE_NATIVE(registeredDirectives) || isIgnoredWithIGNORE_BACKEND(registeredDirectives::get)
-}
-
 internal val List<TargetBackend>.containsNativeOrAny: Boolean
     get() = TargetBackend.NATIVE in this || TargetBackend.ANY in this
 
+internal fun Settings.isIgnoredTarget(registeredDirectives: RegisteredDirectives): Boolean {
+    return isIgnoredWithIGNORE_NATIVE(registeredDirectives) || isIgnoredWithIGNORE_BACKEND(registeredDirectives)
+}
+
 // Mimics `InTextDirectivesUtils.isIgnoredTarget(NATIVE, file)` but does not require file contents, but only already parsed directives.
-private fun Settings.isIgnoredWithIGNORE_BACKEND(listValues: (ValueDirective<TargetBackend>) -> List<TargetBackend>): Boolean {
-
-    if (listValues(CodegenTestDirectives.IGNORE_BACKEND).containsNativeOrAny)
+private fun Settings.isIgnoredWithIGNORE_BACKEND(registeredDirectives: RegisteredDirectives): Boolean {
+    if (registeredDirectives[CodegenTestDirectives.IGNORE_BACKEND].containsNativeOrAny)
         return true
-    if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K2).containsNativeOrAny)
+    if (registeredDirectives[CodegenTestDirectives.IGNORE_BACKEND_K2].containsNativeOrAny)
         return true
-
     return false
 }
 
+internal fun Settings.isIgnoredWithIGNORE_NATIVE(registeredDirectives: RegisteredDirectives) =
+    evaluate(registeredDirectives, TestDirectives.IGNORE_NATIVE)
+
+internal fun Settings.isDisabledNative(registeredDirectives: RegisteredDirectives) =
+    evaluate(registeredDirectives, TestDirectives.DISABLE_NATIVE)
 
 // Evaluation of conjunction of boolean expressions like `property1=value1 && property2=value2`.
 // Any null element makes whole result as `true`.
-internal fun Settings.evaluate(directiveValues: List<String?>): Boolean {
+internal fun Settings.evaluate(registeredDirectives: RegisteredDirectives, directive: StringDirective): Boolean {
+    val directiveValues = registeredDirectives[directive]
+    if (directiveValues.isEmpty() && directive in registeredDirectives) {
+        return true  // Directive without value is treated as unconditional
+    }
+
     directiveValues.forEach {
-        if (it == null)
-            return true  // Directive without value is treated as unconditional
         val split = it.split("&&")
         val booleanList = split.map {
             val matchResult = "(.+)=(.+)".toRegex().find(it.trim())
@@ -144,15 +101,4 @@ internal fun Settings.evaluate(directiveValues: List<String?>): Boolean {
             return true
     }
     return false
-}
-
-// Returns list of relevant directive values.
-// Null is added to result list in case the directive given without value.
-internal fun Settings.getDirectiveValues(
-    directive: StringDirective,
-    isSpecified: (StringDirective) -> Boolean,
-    listValues: (StringDirective) -> List<String>?,
-): List<String?> = buildList {
-    if (isSpecified(directive))
-        listValues(directive)?.let { addAll(it) } ?: add(null)
 }

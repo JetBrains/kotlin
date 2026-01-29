@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// LATEST_LV_DIFFERENCE
 class MutableVector<T>(
     var content: Array<T>,
 ) {
@@ -14,7 +13,7 @@ interface Consumer<T> {
 }
 
 fun f(c: Consumer<in String>) {
-    c.accept(<!ARGUMENT_TYPE_MISMATCH!>c.accept(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!>)
+    c.accept(c.accept(<!NULL_FOR_NONNULL_TYPE!>null<!>))
 }
 
 fun test(mapper: Mapper.Impl<*, *>, out: Out<*>) {

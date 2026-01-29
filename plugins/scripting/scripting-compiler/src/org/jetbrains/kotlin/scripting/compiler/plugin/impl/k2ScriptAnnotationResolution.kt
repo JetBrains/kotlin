@@ -149,13 +149,7 @@ internal fun FirAnnotationCall.toAnnotationObjectIfMatches(
             ctor,
             evalRes.map { (name, result) ->
                 val argName = name.asString()
-                when (result) {
-                    is FirEvaluatorResult.Evaluated -> argName to result.result.toArgument(argName)
-                    else -> {
-                        reportError("Error while evaluating annotation arguments: ${result::class.simpleName}")
-                        null to null
-                    }
-                }
+                argName to result.toArgument(argName)
             }
         )
     if (mapping == null) {
@@ -171,7 +165,7 @@ internal fun FirAnnotationCall.toAnnotationObjectIfMatches(
     }
 }
 
-private fun FirAnnotationCall.evaluateArguments(session: FirSession, firFile: FirFile): Map<Name, FirEvaluatorResult>? {
+private fun FirAnnotationCall.evaluateArguments(session: FirSession, firFile: FirFile): Map<Name, FirExpression> {
     val scopeSession = ScopeSession()
     createImportingScopes(firFile, session, scopeSession)
 
@@ -194,7 +188,7 @@ private fun FirAnnotationCall.evaluateArguments(session: FirSession, firFile: Fi
                 transformer.transformAnnotationCall(this, ResolutionMode.ContextDependent) as FirAnnotationCall
             }
         }
-    return FirExpressionEvaluator.evaluateAnnotationArguments(resolvedAnnotation, session)
+    return resolvedAnnotation.argumentMapping.mapping
 }
 
 // TODO: implement. Probably need to change SourceCode.Position to accept offsets and then remap them later on reporting

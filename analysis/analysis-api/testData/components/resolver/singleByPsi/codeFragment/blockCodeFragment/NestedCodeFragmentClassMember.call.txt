@@ -1,7 +1,7 @@
 KtNameReferenceExpression(156,161): 'Local'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -13,3 +13,4 @@ KtNameReferenceExpression(156,161): 'Local'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

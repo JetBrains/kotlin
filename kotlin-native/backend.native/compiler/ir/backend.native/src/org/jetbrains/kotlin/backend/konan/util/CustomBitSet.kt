@@ -9,7 +9,9 @@ package org.jetbrains.kotlin.backend.konan.util
  * Provides some bulk operations needed for devirtualization
  */
 internal class CustomBitSet private constructor(size: Int, data: LongArray) {
-    private var size = size
+    var size = size
+        private set
+
     private var data = data
 
     constructor() : this(0, EMPTY)
@@ -71,6 +73,11 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
                 block(idx + t.countTrailingZeroBits())
             }
         }
+    }
+
+    inline fun forEachWord(block: (Long) -> Unit) {
+        for (i in 0..<size)
+            block(data[i])
     }
 
     fun clear() {
@@ -142,6 +149,32 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
         }
     }
 
+    fun intersects(another: CustomBitSet): Boolean {
+        val adata = another.data
+        val minSize = kotlin.math.min(size, another.size)
+        for (i in 0..<minSize) {
+            if (data[i] and adata[i] != 0L) return true
+        }
+
+        return false
+    }
+
+    operator fun contains(another: CustomBitSet): Boolean {
+        // Check if [another] is a subset of [this]
+        val adata = another.data
+        val asize = another.size
+        val minSize = kotlin.math.min(size, asize)
+        for (i in 0..<minSize) {
+            val otherWord = adata[i]
+            val word = data[i]
+            if ((otherWord and word.inv()) != 0L) return false
+        }
+        for (i in size..<asize) {
+            if (adata[i] != 0L) return false
+        }
+        return true
+    }
+
     fun copy(): CustomBitSet {
         return CustomBitSet(size, data.copyOf())
     }
@@ -156,5 +189,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
 
     companion object {
         private val EMPTY = LongArray(0)
+
+        fun valueOf(data: LongArray) = CustomBitSet(data.size, data)
     }
 }

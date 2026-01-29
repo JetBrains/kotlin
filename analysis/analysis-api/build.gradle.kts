@@ -1,7 +1,9 @@
+import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
     kotlin("jvm")
+    id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
     id("project-tests-convention")
 }
 
@@ -33,6 +35,15 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:tests-common")))
 }
 
+private val stableNonPublicMarkers = listOf(
+    "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+    "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+    "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+    "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+    "org.jetbrains.kotlin.analysis.api.KaPlatformInterface", // Platform interface is not stable yet
+    "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
+)
+
 kotlin {
     explicitApi()
 
@@ -41,14 +52,7 @@ kotlin {
         enabled.set(true)
 
         filters {
-            exclude.annotatedWith.addAll(
-                "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
-                "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
-                "org.jetbrains.kotlin.analysis.api.KaIdeApi",
-                "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
-                "org.jetbrains.kotlin.analysis.api.KaPlatformInterface", // Platform interface is not stable yet
-                "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
-            )
+            exclude.annotatedWith.addAll(stableNonPublicMarkers)
         }
     }
 }
@@ -67,4 +71,9 @@ projectTests {
     }
 
     withJvmStdlibAndReflect()
+}
+
+val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+    outputFile = file("api/analysis-api.foreign")
+    nonPublicMarkers.addAll(stableNonPublicMarkers)
 }

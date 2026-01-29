@@ -280,6 +280,7 @@ public abstract interface class org/jetbrains/kotlin/kdoc/psi/api/KDoc : com/int
 	public abstract fun findSectionByTag (Lorg/jetbrains/kotlin/kdoc/parser/KDocKnownTag;Ljava/lang/String;)Lorg/jetbrains/kotlin/kdoc/psi/impl/KDocSection;
 	public abstract fun getAllSections ()Ljava/util/List;
 	public abstract fun getDefaultSection ()Lorg/jetbrains/kotlin/kdoc/psi/impl/KDocSection;
+	public synthetic fun getOwner ()Lcom/intellij/psi/PsiElement;
 	public abstract fun getOwner ()Lorg/jetbrains/kotlin/psi/KtDeclaration;
 }
 

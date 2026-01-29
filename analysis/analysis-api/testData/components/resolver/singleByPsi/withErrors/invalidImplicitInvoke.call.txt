@@ -2,7 +2,7 @@ KtDotQualifiedExpression(53,61): 's.action'
   KaErrorCallInfo:
     candidateCalls = [
       KaImplicitInvokeCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action
@@ -28,5 +28,6 @@ KtDotQualifiedExpression(53,61): 's.action'
           contextParameters = []
           callableId = kotlin/Function1.invoke
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<FUNCTION_CALL_EXPECTED: Function invocation 'action(...)' expected.>

@@ -33,7 +33,7 @@ tasks.validatePlugins.configure {
 
 sourceSets["main"].kotlin {
     srcDir("src/main/kotlin")
-    srcDir("../../tools/benchmarks/shared/src/main/kotlin/report")
+    srcDir("../reports/src/main/kotlin/report")
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
@@ -54,7 +54,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
     compileOnly(gradleApi())
     val kotlinVersion = project.bootstrapKotlinVersion
     val slackApiVersion = "1.2.0"
@@ -80,21 +80,9 @@ gradlePlugin {
             id = "benchmarking"
             implementationClass = "org.jetbrains.kotlin.benchmark.KotlinNativeBenchmarkingPlugin"
         }
-        create("compileBenchmarking") {
-            id = "compile-benchmarking"
-            implementationClass = "org.jetbrains.kotlin.benchmark.CompileBenchmarkingPlugin"
-        }
         create("swiftBenchmarking") {
             id = "swift-benchmarking"
             implementationClass = "org.jetbrains.kotlin.benchmark.SwiftBenchmarkingPlugin"
-        }
-        create("compileToBitcode") {
-            id = "compile-to-bitcode"
-            implementationClass = "CompileToBitcodePlugin"
-        }
-        create("runtimeTesting") {
-            id = "runtime-testing"
-            implementationClass = "RuntimeTestingPlugin"
         }
     }
 }

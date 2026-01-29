@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.lombok.k2.generators
 
 import com.intellij.psi.PsiField
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -20,7 +21,8 @@ class AllArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructor
     override fun getConstructorInfo(classSymbol: FirClassSymbol<*>): AllArgsConstructor? {
         return lombokService.getAllArgsConstructor(classSymbol)
             ?: runIf(!containsExplicitConstructor(classSymbol)) {
-                lombokService.getValue(classSymbol)?.asAllArgsConstructor()
+                lombokService.getBuilder(classSymbol)?.let { AllArgsConstructor(JavaVisibilities.PackageVisibility) }
+                    ?: lombokService.getValue(classSymbol)?.asAllArgsConstructor()
             }
     }
 

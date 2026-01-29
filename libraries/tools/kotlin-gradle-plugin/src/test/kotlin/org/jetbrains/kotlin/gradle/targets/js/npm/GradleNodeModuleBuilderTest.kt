@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.junit.Test
+import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertNotNull
 

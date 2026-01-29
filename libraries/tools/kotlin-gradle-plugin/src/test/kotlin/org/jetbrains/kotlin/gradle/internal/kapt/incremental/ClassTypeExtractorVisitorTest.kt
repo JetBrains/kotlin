@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
+import org.jetbrains.kotlin.gradle.testing.WithTemporaryFolder
+import org.jetbrains.kotlin.gradle.testing.newTempDirectory
 import org.jetbrains.kotlin.gradle.util.compileSources
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.junit.Assert.assertEquals
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
-class ClassTypeExtractorVisitorTest {
-    @Rule
-    @JvmField
-    var tmp = TemporaryFolder()
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class ClassTypeExtractorVisitorTest : WithTemporaryFolder {
+    @field:TempDir
+    override lateinit var temporaryFolder: Path
 
     @Test
     fun testSupertypes() {
@@ -122,12 +124,12 @@ class ClassTypeExtractorVisitorTest {
     }
 
     private fun extractTypesFor(source: String, className: String = "A"): Pair<Set<String>, Set<String>> {
-        val src = tmp.newFolder().resolve("$className.java")
+        val src = newTempDirectory().resolve("$className.java").toFile()
         src.writeText(source)
 
-        val output = tmp.newFolder()
+        val output = newTempDirectory().toFile()
         compileSources(listOf(src), output)
-        val classFile = output.walk().filter { it.name == "$className.class" }.single()
+        val classFile = output.walk().first { it.name == "$className.class" }
         val extractor = ClassTypeExtractorVisitor(object : ClassVisitor(Opcodes.API_VERSION) {})
 
         classFile.inputStream().use {

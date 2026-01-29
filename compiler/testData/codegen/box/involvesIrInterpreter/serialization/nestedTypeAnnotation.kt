@@ -18,7 +18,7 @@ annotation class NestedArray(val a: Array<TypeAnnotation>)
 val a: @Nested(TypeAnnotation(<!EVALUATED("IntAnno")!>"Int" + "Anno"<!>)) Int = 1
 val b: @NestedArray([TypeAnnotation(<!EVALUATED("Element1Anno")!>"Element1" + "Anno"<!>), TypeAnnotation(<!EVALUATED("Element2Anno")!>"Element2" + "Anno"<!>)]) Int = 1
 
-// MODULE: main
+// MODULE: main(lib)
 // FILE: main.kt
 
 fun box(): String {

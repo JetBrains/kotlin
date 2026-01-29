@@ -1,22 +1,24 @@
 KtCallableReferenceExpression(69,82): 'Foo<Int>::foo'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /Foo.foo(<dispatch receiver>: Foo<T>, value: T): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = value: T
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /Foo.foo
-    typeArgumentsMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /Foo.foo(<dispatch receiver>: Foo<T>, value: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /Foo.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

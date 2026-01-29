@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.isBoolean
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImplWithShape
 import org.jetbrains.kotlin.ir.symbols.*
@@ -127,15 +126,15 @@ class Fir2IrBuiltinSymbolsContainer(
     val throwableClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Throwable) }
     val throwableType: IrType get() = throwableClass.defaultTypeWithoutArguments
 
-    val extensionFunctionTypeAnnotationCall: IrConstructorCall? by lazy {
-        generateAnnotationCall(StandardClassIds.Annotations.ExtensionFunctionType)
+    val extensionFunctionTypeAnnotation: IrAnnotation? by lazy {
+        generateAnnotation(StandardClassIds.Annotations.ExtensionFunctionType)
     }
 
-    val noInferAnnotationCall: IrConstructorCall? by lazy {
-        generateAnnotationCall(StandardClassIds.Annotations.NoInfer)
+    val noInferAnnotation: IrAnnotation? by lazy {
+        generateAnnotation(StandardClassIds.Annotations.NoInfer)
     }
 
-    private fun generateAnnotationCall(classId: ClassId): IrAnnotationImpl? {
+    private fun generateAnnotation(classId: ClassId): IrAnnotationImpl? {
         val firSymbol =
             session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
                 ?: return null

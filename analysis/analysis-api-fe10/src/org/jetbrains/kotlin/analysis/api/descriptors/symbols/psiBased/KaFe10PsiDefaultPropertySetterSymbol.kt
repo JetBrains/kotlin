@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -131,6 +131,9 @@ internal class KaFe10PsiDefaultPropertySetterSymbol(
         override val analysisContext: Fe10AnalysisContext,
     ) : KaValueParameterSymbol(), KaFe10Symbol {
         override val hasDefaultValue: Boolean
+            get() = withValidityAssertion { false }
+
+        override val hasSynthesizedName: Boolean
             get() = withValidityAssertion { false }
 
         override val hasDeclaredDefaultValue: Boolean

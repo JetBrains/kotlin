@@ -149,10 +149,9 @@ public class TestFiles {
                                       expectedText.substring(start, end);
 
 
-                    String expectedText1 = firstFileProcessed ? commonPrefixOrWholeFile + fileText : fileText;
                     testFiles.add(factory.createFile(module, fileName, fileText,
                                                      parseDirectivesPerFile ?
-                                                     parseDirectives(expectedText1)
+                                                     parseDirectives(fileText)
                                                                             : allFilesOrCommonPrefixDirectives));
                     processedChars = end;
                     firstFileProcessed = true;

@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.gradle.targets.native.toolchain
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributesSchema
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat.attribute
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
-import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
 
 /**
  * This class provides functionality for setting up attributes matching strategy and
@@ -26,7 +25,6 @@ internal object KotlinNativeBundleArtifactFormat {
         Attribute.of("kotlin.native.bundle.type", KotlinNativeBundleArtifactsTypes::class.java)
 
     internal enum class KotlinNativeBundleArtifactsTypes {
-        ARCHIVE,
         DIRECTORY
     }
 
@@ -39,47 +37,11 @@ internal object KotlinNativeBundleArtifactFormat {
         attributesSchema.attribute(attribute)
     }
 
-    /**
-     * Sets up the necessary transformations for handling artifact types "tar.gz" and "zip" in the given project.
-     *
-     * @param project The project in which to set up the transformations.
-     */
-    internal fun setupTransform(project: Project) {
-        val tarGz = project.dependencies.artifactTypes.maybeCreate("tar.gz").also { artifactType ->
-            artifactType.attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.ARCHIVE)
-        }
-
-        project.dependencies.registerTransformForArtifactType(
-            UnzipTransformationAction::class.java,
-            fromArtifactType = tarGz.name,
-            toArtifactType = ArtifactTypeDefinition.DIRECTORY_TYPE,
-        ) { transform ->
-            transform.from.attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.ARCHIVE)
-            transform.to.attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.DIRECTORY)
-        }
-
-        val zip = project.dependencies.artifactTypes.maybeCreate("zip").also { artifactType ->
-            artifactType.attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.ARCHIVE)
-        }
-
-        project.dependencies.registerTransformForArtifactType(
-            UnzipTransformationAction::class.java,
-            fromArtifactType = zip.name,
-            toArtifactType = ArtifactTypeDefinition.DIRECTORY_TYPE,
-        ) { transform ->
-            transform.from.attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.ARCHIVE)
-            transform.to.attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.DIRECTORY)
-        }
-    }
-
     internal fun addKotlinNativeBundleConfiguration(project: Project) {
         project.configurations
             .maybeCreateResolvable(KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME) {
                 defaultDependencies {
                     it.add(project.dependencies.create(NativeCompilerDownloader.getCompilerDependencyNotation(project)))
-                }
-                if (!attributes.contains(attribute)) {
-                    attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.DIRECTORY)
                 }
             }
     }

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.moduleKind
-import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.JS_MODULE_KIND
@@ -25,11 +24,13 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import java.io.File
 
-abstract class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+abstract class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices),
+    KlibBasedEnvironmentConfigurator
+{
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(JsEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
 
-    companion object : KlibBasedEnvironmentConfiguratorUtils {
+    companion object {
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData"
         const val OLD_MODULE_SUFFIX = "_old"
 
@@ -58,7 +59,7 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
         }
 
         fun getJsModuleArtifactName(testServices: TestServices, moduleName: String): String {
-            return getKlibArtifactSimpleName(testServices, moduleName) + "_v5"
+            return testServices.klibEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, moduleName) + "_v5"
         }
 
         fun getJsArtifactsOutputDir(testServices: TestServices, translationMode: TranslationMode = TranslationMode.FULL_DEV): File {

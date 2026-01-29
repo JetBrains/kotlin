@@ -1,7 +1,7 @@
 KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -15,20 +15,13 @@ KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <T> sequenceOf(): Sequence<T>'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "1" -> (KaVariableSignature:
-          name = element
-          receiverType = null
-          returnType = kotlin.String
-          symbol = element: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -50,12 +43,43 @@ KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
+      valueArgumentMapping = {
+        "1" -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.String
+          symbol = element: T
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <T> sequenceOf(element: T): Sequence<T>'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.sequences.Sequence<kotlin.String>
+        symbol = kotlin/sequences/sequenceOf(vararg elements: T): kotlin.sequences.Sequence<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/sequences/sequenceOf
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
         "1" -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -77,26 +101,5 @@ KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
           symbol = vararg elements: T
           contextParameters = []
           callableId = null)
-      }
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.sequences.Sequence<kotlin.String>
-        symbol = kotlin/sequences/sequenceOf(vararg elements: T): kotlin.sequences.Sequence<T>
-        valueParameters = [
-          KaVariableSignature:
-            name = elements
-            receiverType = null
-            returnType = kotlin.String
-            symbol = vararg elements: T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/sequences/sequenceOf
-      typeArgumentsMapping = {
-        T -> (kotlin.String)
       }
     isInBestCandidates = true

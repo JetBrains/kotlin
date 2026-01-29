@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 
 interface JvmGeneratorExtensions {
-    fun generateRawTypeAnnotationCall(): IrConstructorCall?
+    fun generateRawTypeAnnotation(): IrAnnotation?
 
     val cachedFields: CachedFieldsForObjectInstances
 }

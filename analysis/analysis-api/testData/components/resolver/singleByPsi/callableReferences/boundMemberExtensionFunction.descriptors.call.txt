@@ -1,44 +1,46 @@
 KtCallableReferenceExpression(230,238): 'Bar::foo'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = KaReceiverParameterSymbol:
-        annotations: []
-        callableId: null
-        compilerVisibility: Local
-        contextReceivers: []
-        isActual: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isVal: true
-        location: LOCAL
-        modality: FINAL
-        name: <receiver>
-        origin: SOURCE
-        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-        receiverParameter: null
-        returnType: KaUsualClassType:
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
           annotations: []
-          typeArguments: []
-          type: Foo
-        visibility: LOCAL
-      type = Foo
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = Bar
-      returnType = kotlin.Unit
-      symbol = /Foo.foo(<extension receiver>: Bar, <dispatch receiver>: Foo, a: kotlin.Int): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /Foo.foo
-    typeArgumentsMapping = {}
+          callableId: null
+          compilerVisibility: Local
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: Foo
+          visibility: LOCAL
+        type = Foo
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = Bar
+        returnType = kotlin.Unit
+        symbol = /Foo.foo(<extension receiver>: Bar, <dispatch receiver>: Foo, a: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /Foo.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

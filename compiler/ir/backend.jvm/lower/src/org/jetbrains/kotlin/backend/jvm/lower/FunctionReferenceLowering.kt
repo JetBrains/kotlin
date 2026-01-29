@@ -7,36 +7,49 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
+import org.jetbrains.kotlin.backend.common.lower.LAMBDA_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
+import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.declarationsAtFunctionReferenceLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmSymbols
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.indy.*
 import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrStarProjection
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
+
+
+private sealed class BoundValue {
+    class StoredInVariable(val symbol: IrVariable) : BoundValue()
+    class StoredInField(val symbol: IrField): BoundValue()
+}
 
 /**
  * Constructs instances of anonymous KFunction subclasses for function references.
@@ -44,20 +57,19 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 internal class FunctionReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     private val crossinlineLambdas = HashSet<IrSimpleFunction>()
 
-    private val IrFunctionReference.isIgnored: Boolean
-        get() = (!type.isFunctionOrKFunction() && !isSuspendFunctionReference()) || origin == IrStatementOrigin.INLINE_LAMBDA
+    private val IrRichFunctionReference.isInlineLambda: Boolean
+        get() = origin == IrStatementOrigin.INLINE_LAMBDA
 
-    // `suspend` function references are the same as non-`suspend` ones, just with an extra continuation parameter;
-    // however, suspending lambdas require different generation implemented in SuspendLambdaLowering
-    // because they are also their own continuation classes.
-    // TODO: Currently, origin of callable references explicitly written in source code is null. Do we need to create one?
-    private fun IrFunctionReference.isSuspendFunctionReference(): Boolean = isSuspend &&
-            (origin == null || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.SUSPEND_CONVERSION)
+    private val IrRichFunctionReference.isSuspendLambda: Boolean
+        get() = invokeFunction.isSuspend && origin.isLambda && type.isSuspendFunctionOrKFunction()
+
+    private val IrRichFunctionReference.isIgnored: Boolean
+        get() = isSuspendLambda || isInlineLambda
 
     override fun lower(irFile: IrFile) {
-        irFile.findInlineLambdas(context) { argument, _, parameter, _ ->
+        irFile.findRichInlineLambdas(context) { argument, _, parameter, _ ->
             if (parameter.isCrossinline) {
-                crossinlineLambdas.add(argument.symbol.owner as IrSimpleFunction)
+                crossinlineLambdas.add(argument.invokeFunction)
             }
         }
         withinScope(irFile) {
@@ -81,52 +93,51 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     private val isJavaSamConversionWithEqualsHashCode =
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
-    override fun visitBlock(expression: IrBlock): IrExpression {
-        return processBlock(expression, forceSerializability = false)
-    }
+    private fun IrRichFunctionReference.isSamConversion(): Boolean =
+        !type.isFunctionOrKFunction() && !type.isSuspendFunctionOrKFunction()
 
-    private fun processBlock(expression: IrBlock, forceSerializability: Boolean): IrExpression {
-        if (!expression.origin.isLambda)
-            return super.visitBlock(expression)
-
-        val reference = expression.statements.last() as IrFunctionReference
-        if (reference.isIgnored)
-            return super.visitBlock(expression)
-
-        expression.statements.dropLast(1).forEach { it.transform(this, null) }
-        reference.transformChildrenVoid(this)
-
-        if (shouldGenerateIndyLambdas) {
-            val lambdaMetafactoryArguments =
-                LambdaMetafactoryArgumentsBuilder(context, crossinlineLambdas)
-                    .getLambdaMetafactoryArguments(reference, reference.type, plainLambda = true, forceSerializability)
-            if (lambdaMetafactoryArguments is LambdaMetafactoryArguments) {
-                return wrapLambdaReferenceWithIndySamConversion(expression, reference, lambdaMetafactoryArguments)
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        expression.transformChildrenVoid(this)
+        if (expression.isIgnored) return expression
+        for (parameter in expression.invokeFunction.parameters) {
+            // this origin affects how name in bytecode would be generated. We need this change only for inline lambdas,
+            // so let's drop it for everything else.
+            if (parameter.origin == LAMBDA_EXTENSION_RECEIVER) {
+                parameter.origin = IrDeclarationOrigin.DEFINED
             }
-            // TODO MetafactoryArgumentsResult.Failure.FunctionHazard?
+        }
+        if (shouldGenerateIndyLambdas && expression.origin.isLambda && !expression.isSamConversion()) {
+            if (setIndyDataIfPossible(expression, plainLambda = true)) return expression
+        }
+        if (shouldGenerateIndySamConversions && expression.isSamConversion()) {
+            if (setIndyDataIfPossible(expression, plainLambda = false)) return expression
         }
 
-        return FunctionReferenceBuilder(reference).build()
+        val samSuperType = runIf(expression.isSamConversion()) { expression.type.erasedUpperBound.rawType(context) }
+
+        return FunctionReferenceBuilder(expression, samSuperType).build()
     }
 
-    private fun wrapLambdaReferenceWithIndySamConversion(
-        expression: IrBlock,
-        reference: IrFunctionReference,
-        lambdaMetafactoryArguments: LambdaMetafactoryArguments,
-    ): IrBlock {
-        val indySamConversion = wrapWithIndySamConversion(reference.type, lambdaMetafactoryArguments)
-        expression.statements[expression.statements.size - 1] = indySamConversion
-        expression.type = indySamConversion.type
-        return expression
+    override fun visitClassNew(declaration: IrClass): IrStatement {
+        if (declaration.isFun || declaration.symbol.isSuspendFunction() || declaration.symbol.isKSuspendFunction()) {
+            declaration.declarationsAtFunctionReferenceLowering = declaration.declarations.toList()
+        }
+        declaration.transformChildrenVoid()
+        return declaration
     }
 
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        expression.transformChildrenVoid(this)
-        return if (expression.isIgnored)
-            expression
-        else
-            FunctionReferenceBuilder(expression).build()
+    private fun setIndyDataIfPossible(expression: IrRichFunctionReference, plainLambda: Boolean): Boolean {
+        val lambdaMetafactoryArguments =
+            LambdaMetafactoryArgumentsBuilder(context, crossinlineLambdas)
+                .getLambdaMetafactoryArguments(expression, plainLambda = plainLambda, forceSerializability = false)
+        return if (lambdaMetafactoryArguments is LambdaMetafactoryArguments) {
+            expression.indyCallData = IndyCallData(lambdaMetafactoryArguments.shouldBeSerializable, plainLambda)
+            true
+        } else {
+            false
+        }
     }
+
 
     private fun getDeclarationParentForDelegatingLambda(): IrDeclarationParent {
         for (s in allScopes.asReversed()) {
@@ -141,307 +152,60 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         )
     }
 
-    // Handle SAM conversions which wrap a function reference:
-    //     class sam$n(private val receiver: R) : Interface { override fun method(...) = receiver.target(...) }
-    //
-    // This avoids materializing an invokable KFunction representing, thus producing one less class.
-    // This is actually very common, as `Interface { something }` is a local function + a SAM-conversion
-    // of a reference to it into an implementation.
+    // Handle SAM conversions which wrap neither a function reference nor a lambda.
+    // The case of function reference or lambda was already covered by [UpgradeCallableReferenceLowering]
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+        expression.transformChildrenVoid()
         if (expression.operator != IrTypeOperator.SAM_CONVERSION) {
-            return super.visitTypeOperator(expression)
+            return expression
         }
 
         val samSuperType = expression.typeOperand
-
         val invokable = expression.argument
-        val reference = if (invokable is IrFunctionReference) {
-            invokable
-        } else if (invokable is IrBlock && invokable.origin.isLambda && invokable.statements.last() is IrFunctionReference) {
-            invokable.statements.dropLast(1).forEach { it.transform(this, null) }
-            invokable.statements.last() as IrFunctionReference
-        } else if (shouldGenerateIndySamConversions && canGenerateIndySamConversionOnFunctionalExpression(samSuperType, invokable)) {
+
+        if (shouldGenerateIndySamConversions && canGenerateIndySamConversionOnFunctionalExpression(samSuperType)) {
             val lambdaBlock = SamDelegatingLambdaBuilder(context)
                 .build(invokable, samSuperType, currentScope!!.scope.scopeOwnerSymbol, getDeclarationParentForDelegatingLambda())
-            val lambdaMetafactoryArguments = LambdaMetafactoryArgumentsBuilder(context, crossinlineLambdas)
-                .getLambdaMetafactoryArguments(lambdaBlock.ref, samSuperType, plainLambda = false, forceSerializability = false)
 
-            if (lambdaMetafactoryArguments !is LambdaMetafactoryArguments) {
-                // TODO MetafactoryArgumentsResult.Failure.FunctionHazard?
-                return super.visitTypeOperator(expression)
-            }
-
-            // This is what IR contains if SAM-converted argument needs additional cast
-            // See ArgumentsGenerationUtilsKt.castArgumentToFunctionalInterfaceForSamType (K1)
-            // or AdapterGenerator.castArgumentToFunctionalInterfaceForSamType (K2)
-            // In this case we should propagate serialization flag from the SAM type regardless of delegating lambda type (see KT-70306)
-            if (invokable is IrTypeOperatorCall && invokable.operator == IrTypeOperator.IMPLICIT_CAST && invokable.argument is IrBlock) {
-                invokable.argument = processBlock(invokable.argument as IrBlock, lambdaMetafactoryArguments.shouldBeSerializable)
-            } else {
-                invokable.transformChildrenVoid()
-            }
-
-            return wrapSamDelegatingLambdaWithIndySamConversion(samSuperType, lambdaBlock, lambdaMetafactoryArguments)
-        } else {
-            return super.visitTypeOperator(expression)
-        }
-
-        reference.transformChildrenVoid()
-
-        if (shouldGenerateIndySamConversions) {
-            val lambdaMetafactoryArguments =
-                LambdaMetafactoryArgumentsBuilder(context, crossinlineLambdas)
-                    .getLambdaMetafactoryArguments(reference, samSuperType, plainLambda = false, forceSerializability = false)
-            if (lambdaMetafactoryArguments is LambdaMetafactoryArguments) {
-                return wrapSamConversionArgumentWithIndySamConversion(expression) { samType ->
-                    wrapWithIndySamConversion(samType, lambdaMetafactoryArguments, expression.startOffset, expression.endOffset)
-                }
-            } else if (lambdaMetafactoryArguments is MetafactoryArgumentsResult.Failure.FunctionHazard) {
-                // Try wrapping function with a proxy local function and see if that helps.
-                val proxyLocalFunBlock = createProxyLocalFunctionForIndySamConversion(reference)
-                val proxyLocalFunRef = proxyLocalFunBlock.statements[proxyLocalFunBlock.statements.size - 1] as IrFunctionReference
-                val proxyLambdaMetafactoryArguments = LambdaMetafactoryArgumentsBuilder(context, crossinlineLambdas)
-                    .getLambdaMetafactoryArguments(proxyLocalFunRef, samSuperType, plainLambda = false, forceSerializability = false)
-                if (proxyLambdaMetafactoryArguments is LambdaMetafactoryArguments) {
-                    return wrapSamConversionArgumentWithIndySamConversion(expression) { samType ->
-                        proxyLocalFunBlock.statements[proxyLocalFunBlock.statements.size - 1] =
-                            wrapWithIndySamConversion(samType, proxyLambdaMetafactoryArguments)
-                        proxyLocalFunBlock.type = samType
-                        proxyLocalFunBlock
+            // Do not convert if it's not possible to do with indy.
+            // This case is handled more optimally by SingleAbstractMethodLowering
+            if (setIndyDataIfPossible(lambdaBlock.ref, plainLambda = false)) {
+                if (lambdaBlock.ref.indyCallData?.forceSerializability == true) {
+                    if (invokable is IrTypeOperatorCall && invokable.operator == IrTypeOperator.IMPLICIT_CAST) {
+                        val argument = invokable.argument
+                        if (argument is IrRichFunctionReference) {
+                            argument.indyCallData = argument.indyCallData?.copy(forceSerializability = true)
+                        }
                     }
                 }
+                return lambdaBlock.rootExpression
             }
         }
-
-        // Erase generic arguments in the SAM type, because they are not easy to approximate correctly otherwise,
-        // and LambdaMetafactory also uses erased type.
-        val erasedSamSuperType = samSuperType.erasedUpperBound.rawType(context)
-
-        return FunctionReferenceBuilder(reference, erasedSamSuperType).build()
+        return expression
     }
 
-    private fun createProxyLocalFunctionForIndySamConversion(reference: IrFunctionReference): IrBlock {
-        val startOffset = reference.startOffset
-        val endOffset = reference.endOffset
-        val targetFun = reference.symbol.owner
-
-        // For a function reference with possibly bound value parameters
-        //      [ dispatchReceiver = ..., extensionReceiver = ..., ... ]::foo
-        // create a proxy wrapper:
-        //      {
-        //          val tmp_proxy_0 = <bound_argument_value_0>
-        //          ...
-        //          val tmp_proxy_N = <bound_argument_value_N>
-        //          fun `$proxy`(p_0: TP_0, ..., p_M: TP_M): TR =
-        //              foo(... arg_J ...)
-        //              // here for each J arg_J is either 'tmp_proxy_K' or 'p_K' for some K
-        //          ::`$proxy`
-        //      }
-
-        val temporaryVals = ArrayList<IrVariable>()
-
-        val targetCall: IrFunctionAccessExpression =
-            when (targetFun) {
-                is IrSimpleFunction ->
-                    IrCallImpl.fromSymbolOwner(startOffset, endOffset, targetFun.symbol)
-                is IrConstructor ->
-                    IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, targetFun.returnType, targetFun.symbol)
-            }
-
-        val proxyFun = context.irFactory.buildFun {
-            name = Name.identifier("${targetFun.name.asString()}__proxy")
-            returnType = targetFun.returnType.eraseTypeParameters()
-            visibility = DescriptorVisibilities.LOCAL
-            modality = Modality.FINAL
-            isSuspend = false
-            isInline = false
-            origin =
-                if (targetFun.isInline || targetFun.isArrayOf())
-                    JvmLoweredDeclarationOrigin.PROXY_FUN_FOR_METAFACTORY
-                else
-                    JvmLoweredDeclarationOrigin.SYNTHETIC_PROXY_FUN_FOR_METAFACTORY
-        }.also { proxyFun ->
-            proxyFun.parent = currentDeclarationParent
-                ?: throw AssertionError("No declaration parent when processing $reference")
-
-            var temporaryValIndex = 0
-            var proxyParameterIndex = 0
-
-            fun addAndGetTemporaryVal(initializer: IrExpression): IrGetValue {
-                val tmpVal = IrVariableImpl(
-                    startOffset, endOffset,
-                    IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                    IrVariableSymbolImpl(),
-                    Name.identifier("tmp_proxy_${temporaryValIndex++}"),
-                    initializer.type,
-                    isVar = false, isConst = false, isLateinit = false
-                )
-                tmpVal.initializer = initializer
-                tmpVal.parent = proxyFun.parent
-                temporaryVals.add(tmpVal)
-                return IrGetValueImpl(startOffset, endOffset, tmpVal.symbol)
-            }
-
-            fun addAndGetProxyValueParameter(originalParameter: IrValueParameter): IrGetValue {
-                val proxyParameter = buildValueParameter(proxyFun) {
-                    updateFrom(originalParameter)
-                    name = Name.identifier("p$proxyParameterIndex\$${originalParameter.name.asString()}")
-                    type = originalParameter.type.eraseTypeParameters()
-                    proxyParameterIndex++
-                    kind = IrParameterKind.Regular
-                }.apply {
-                    parent = proxyFun
-                }
-                proxyFun.parameters += proxyParameter
-                return IrGetValueImpl(startOffset, endOffset, proxyParameter.symbol)
-            }
-
-            fun getTargetCallArgument(boundValue: IrExpression?, originalParameter: IrValueParameter?): IrExpression? =
-                when {
-                    boundValue != null ->
-                        addAndGetTemporaryVal(boundValue)
-                    originalParameter != null ->
-                        addAndGetProxyValueParameter(originalParameter)
-                    else ->
-                        null
-                }
-
-            targetCall.arguments.assignFrom(reference.arguments zip targetFun.parameters) { (boundValue, parameter) ->
-                getTargetCallArgument(boundValue, parameter)
-            }
-
-            for (typeParameterIndex in targetFun.typeParameters.indices) {
-                targetCall.typeArguments[typeParameterIndex] = reference.typeArguments[typeParameterIndex]
-            }
-
-            val proxyFunBody = context.irFactory.createBlockBody(startOffset, endOffset).also { proxyFun.body = it }
-            when {
-                targetFun.returnType.isUnit() -> {
-                    proxyFunBody.statements.add(targetCall)
-                }
-                else -> {
-                    proxyFunBody.statements.add(
-                        IrReturnImpl(
-                            startOffset, endOffset,
-                            context.irBuiltIns.nothingType,
-                            proxyFun.symbol,
-                            targetCall
-                        )
-                    )
-                }
-            }
-        }
-
-        val proxyFunRef = IrFunctionReferenceImpl(
-            startOffset, endOffset,
-            reference.type,
-            proxyFun.symbol,
-            0 // TODO generic function reference?
-        )
-
-        return IrBlockImpl(
-            startOffset, endOffset,
-            reference.type,
-            origin = null,
-            temporaryVals + proxyFun + proxyFunRef
-        )
-    }
-
-    private fun canGenerateIndySamConversionOnFunctionalExpression(samSuperType: IrType, expression: IrExpression): Boolean {
+    private fun canGenerateIndySamConversionOnFunctionalExpression(samSuperType: IrType): Boolean {
         val samClass = samSuperType.classOrNull
             ?: throw AssertionError("Class type expected: ${samSuperType.render()}")
-        if (!samClass.owner.isFromJava() || isJavaSamConversionWithEqualsHashCode)
-            return false
-        if (expression is IrBlock && expression.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
-            return false
-        return true
+        return samClass.owner.isFromJava() && !isJavaSamConversionWithEqualsHashCode
     }
 
-    private fun wrapSamDelegatingLambdaWithIndySamConversion(
-        samSuperType: IrType,
-        lambdaBlock: SamDelegatingLambdaBlock,
-        lambdaMetafactoryArguments: LambdaMetafactoryArguments,
-    ): IrExpression {
-        val indySamConversion = wrapWithIndySamConversion(samSuperType, lambdaMetafactoryArguments)
-        lambdaBlock.replaceRefWith(indySamConversion)
-        return lambdaBlock.block
-    }
-
-    private fun wrapSamConversionArgumentWithIndySamConversion(
-        expression: IrTypeOperatorCall,
-        produceSamConversion: (IrType) -> IrExpression,
-    ): IrExpression {
-        val samType = expression.typeOperand
-        return when (val argument = expression.argument) {
-            is IrFunctionReference ->
-                produceSamConversion(samType)
-            is IrBlock ->
-                wrapFunctionReferenceInsideBlockWithIndySamConversion(samType, argument, produceSamConversion)
-            else -> throw AssertionError("Block or function reference expected: ${expression.render()}")
-        }
-    }
-
-    private fun wrapFunctionReferenceInsideBlockWithIndySamConversion(
-        samType: IrType,
-        block: IrBlock,
-        produceSamConversion: (IrType) -> IrExpression,
-    ): IrExpression {
-        val indySamConversion = produceSamConversion(samType)
-        block.statements[block.statements.size - 1] = indySamConversion
-        block.type = indySamConversion.type
-        return block
-    }
-
-    private val jvmIndyLambdaMetafactoryIntrinsic = context.symbols.indyLambdaMetafactoryIntrinsic
-
-    private val specialNullabilityAnnotationsFqNames =
-        setOf(
-            JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
-            JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION,
-        )
-
-    private fun wrapWithIndySamConversion(
-        samType: IrType,
-        lambdaMetafactoryArguments: LambdaMetafactoryArguments,
-        startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET,
-    ): IrCall {
-        val notNullSamType = samType.makeNotNull()
-            .removeAnnotations { it.type.classFqName in specialNullabilityAnnotationsFqNames }
-        return context.createJvmIrBuilder(currentScope!!, startOffset, endOffset).run {
-            // See [org.jetbrains.kotlin.backend.jvm.JvmSymbols::indyLambdaMetafactoryIntrinsic].
-            irCall(jvmIndyLambdaMetafactoryIntrinsic, notNullSamType).apply {
-                typeArguments[0] = notNullSamType
-                arguments[0] = irRawFunctionRef(lambdaMetafactoryArguments.samMethod)
-                arguments[1] = lambdaMetafactoryArguments.implMethodReference
-                arguments[2] = irRawFunctionRef(lambdaMetafactoryArguments.fakeInstanceMethod)
-                arguments[3] = irVarargOfRawFunctionRefs(lambdaMetafactoryArguments.extraOverriddenMethods)
-                arguments[4] = irBoolean(lambdaMetafactoryArguments.shouldBeSerializable)
-            }
-        }
-    }
-
-    private fun IrBuilderWithScope.irRawFunctionRef(irFun: IrFunction) =
-        irRawFunctionReference(context.irBuiltIns.anyType, irFun.symbol)
-
-    private fun IrBuilderWithScope.irVarargOfRawFunctionRefs(irFuns: List<IrFunction>) =
-        irVararg(context.irBuiltIns.anyType, irFuns.map { irRawFunctionRef(it) })
-
-    private inner class FunctionReferenceBuilder(val irFunctionReference: IrFunctionReference, val samSuperType: IrType? = null) {
+    private inner class FunctionReferenceBuilder(val irFunctionReference: IrRichFunctionReference, val samSuperType: IrType? = null) {
+        private val callee = irFunctionReference.invokeFunction
         private val isLambda = irFunctionReference.origin.isLambda
         private val isLightweightLambda = isLambda
                 && shouldGenerateLightweightLambdas
-                && !irFunctionReference.symbol.owner.hasAnnotation(JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME)
+                && !callee.hasAnnotation(JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME)
         private val isHeavyweightLambda = isLambda && !isLightweightLambda
-        private val callee = irFunctionReference.symbol.owner
+        private val isSuspend = irFunctionReference.overriddenFunctionSymbol.isSuspend
 
         // Only function references can bind a receiver and even then we can only bind either an extension or a dispatch receiver.
         // However, when we bind a value of an inline class type as a receiver, the receiver will turn into an argument of
         // the function in question. Yet we still need to record it as the "receiver" in CallableReference in order for reflection
         // to work correctly.
-        private val boundReceiver: Pair<IrValueParameter, IrExpression>? =
-            if (callee.isJvmStaticInObject()) createFakeBoundReceiverForJvmStaticInObject()
-            else irFunctionReference.getArgumentsWithIr().singleOrNull()
+        private val boundReceivers: Map<IrValueParameter, IrExpression> =
+            if (callee.isJvmStaticInObject()) mapOf(createFakeBoundReceiverForJvmStaticInObject())
+            else (irFunctionReference.invokeFunction.parameters zip irFunctionReference.boundValues).toMap()
 
         // The type of the reference is KFunction<in A1, ..., in An, out R>
         private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map {
@@ -451,43 +215,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
         }
         private val argumentTypes = parameterTypes.dropLast(1)
-        private val referenceReturnType = parameterTypes.last()
 
-        private val typeArgumentsMap = irFunctionReference.typeSubstitutionMap
-
-        private val functionSuperClass =
-            samSuperType?.classOrNull
-                ?: if (irFunctionReference.isSuspend)
-                    context.irBuiltIns.suspendFunctionN(argumentTypes.size).symbol
-                else
-                    context.irBuiltIns.functionN(argumentTypes.size).symbol
-        private val superMethod =
-            functionSuperClass.owner.getSingleAbstractMethod()
-                ?: throw AssertionError("Not a SAM class: ${functionSuperClass.owner.render()}")
-
-        private val adapteeCall: IrFunctionAccessExpression? =
-            if (callee.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
-                // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator
-                // applied to a call. That call's target is the original function which we need to get owner/name/signature.
-                val call = when (val statement = callee.body!!.statements.single()) {
-                    is IrTypeOperatorCall -> {
-                        assert(statement.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
-                            "Unexpected type operator in ADAPTER_FOR_CALLABLE_REFERENCE: ${callee.render()}"
-                        }
-                        statement.argument
-                    }
-                    is IrReturn -> statement.value
-                    else -> statement
-                }
-                if (call !is IrFunctionAccessExpression) {
-                    throw UnsupportedOperationException("Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE: ${callee.render()}")
-                }
-                call
-            } else {
-                null
-            }
-
-        private val adaptedReferenceOriginalTarget: IrFunction? = adapteeCall?.symbol?.owner
+        private val adaptedReferenceOriginalTarget: IrFunction? = irFunctionReference.reflectionTargetSymbol?.owner?.takeIf {
+            irFunctionReference.invokeFunction.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
+        }
         private val isFunInterfaceConstructorReference =
             callee.origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR
         private val constructedFunInterfaceSymbol: IrClassSymbol? =
@@ -497,7 +228,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             else
                 null
         private val isAdaptedReference =
-            isFunInterfaceConstructorReference || adaptedReferenceOriginalTarget != null
+            isFunInterfaceConstructorReference || callee.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
 
         private val samInterface = samSuperType?.getClass()
         private val isKotlinFunInterface = samInterface != null && !samInterface.isFromJava()
@@ -506,9 +237,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             (isKotlinFunInterface || isJavaSamConversionWithEqualsHashCode) &&
                     (isAdaptedReference || !isLambda)
 
-        private val superType =
-            samSuperType
-                ?: when {
+        private val superClass =
+            runIf(samSuperType == null) {
+                when {
                     isLightweightLambda -> context.irBuiltIns.anyClass
                     isHeavyweightLambda -> context.symbols.lambdaClass
                     isFunInterfaceConstructorReference -> context.symbols.funInterfaceConstructorReferenceClass
@@ -517,6 +248,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                         else -> context.symbols.functionReferenceImpl
                     }
                 }.defaultType
+            }
 
         private val functionReferenceClass = context.irFactory.buildClass {
             setSourceRange(irFunctionReference)
@@ -527,15 +259,23 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             name = SpecialNames.NO_NAME_PROVIDED
         }.apply {
             parent = currentDeclarationParent ?: error("No current declaration parent at ${irFunctionReference.dump()}")
-            superTypes = listOfNotNull(
-                superType,
-                if (samSuperType == null)
-                    functionSuperClass.typeWith(parameterTypes)
-                else null,
-                if (needToGenerateSamEqualsHashCodeMethods)
-                    context.symbols.functionAdapter.defaultType
-                else null,
-            )
+            superTypes = buildList {
+                addIfNotNull(this@FunctionReferenceBuilder.superClass)
+                if (samSuperType != null) {
+                    add(samSuperType)
+                } else {
+                    // we still need FunctionN if irFunctionReference.type is KFunctionN
+                    val functionClassSymbol = if (irFunctionReference.invokeFunction.isSuspend) {
+                        context.irBuiltIns.suspendFunctionN(argumentTypes.size).symbol
+                    } else {
+                        context.irBuiltIns.functionN(argumentTypes.size).symbol
+                    }
+                    add(functionClassSymbol.typeWith(parameterTypes))
+                }
+                if (needToGenerateSamEqualsHashCodeMethods) {
+                    add(context.symbols.functionAdapter.defaultType)
+                }
+            }
             if (samInterface != null && origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
                 // Old back-end generates formal type parameters as in SAM supertype.
                 // Here we create formal type parameters with same names and equivalent upper bounds.
@@ -547,7 +287,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             createThisReceiverParameter()
             copyAttributes(irFunctionReference)
             if (isHeavyweightLambda) {
-                metadata = irFunctionReference.symbol.owner.metadata
+                metadata = callee.metadata
             }
         }
 
@@ -572,27 +312,41 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!).run {
             irBlock(irFunctionReference.startOffset, irFunctionReference.endOffset) {
                 val constructor = createConstructor()
-                val boundReceiverVar =
-                    if (samSuperType != null && boundReceiver != null) {
-                        irTemporary(boundReceiver.second)
-                    } else null
-                createInvokeMethod(boundReceiverVar)
-
-                if (needToGenerateSamEqualsHashCodeMethods) {
-                    generateSamEqualsHashCodeMethods(boundReceiverVar)
-                }
-                if (isKotlinFunInterface) {
-                    functionReferenceClass.addFakeOverrides(backendContext.typeSystem)
-                }
-
+                require(irFunctionReference.boundValues.size <= 1) { "Function references with multiple bound values are not supported yet" }
                 +functionReferenceClass
-                +irCall(constructor.symbol).apply {
-                    if (constructor.parameters.isNotEmpty()) arguments[0] = boundReceiver!!.second
+
+                // For function references the bound receiver parameter is stored in a field of the superclass.
+                // For sam references, we just capture the value in a local variable, and LocalDeclarationsLowering
+                // will put it into a field.
+                if (samSuperType != null) {
+                    val boundValues = irFunctionReference.boundValues.map { BoundValue.StoredInVariable(irTemporary(it)) }
+                    createInvokeMethod(boundValues)
+                    if (needToGenerateSamEqualsHashCodeMethods) {
+                        generateSamEqualsHashCodeMethods(boundValues)
+                    }
+                    +irCall(constructor.symbol)
+                } else {
+                    val boundValues = irFunctionReference.boundValues.map {
+                        BoundValue.StoredInField(functionReferenceClass.getReceiverField(backendContext))
+                    }
+                    createInvokeMethod(boundValues)
+                    +irCall(constructor.symbol).apply {
+                        arguments.assignFrom(irFunctionReference.boundValues)
+                    }
+                }
+
+                if (isKotlinFunInterface) {
+                    functionReferenceClass.addFakeOverrides(
+                        backendContext.typeSystem,
+                        buildMap {
+                            samInterface?.declarationsAtFunctionReferenceLowering?.let { put(samInterface, it) }
+                        }
+                    )
                 }
             }
         }
 
-        private fun JvmIrBuilder.generateSamEqualsHashCodeMethods(boundReceiverVar: IrVariable?) {
+        private fun JvmIrBuilder.generateSamEqualsHashCodeMethods(boundReceiverVars: List<BoundValue.StoredInVariable>) {
             checkNotNull(samSuperType) { "equals/hashCode can only be generated for fun interface wrappers: ${callee.render()}" }
 
             SamEqualsHashCodeMethodsGenerator(backendContext, functionReferenceClass, samSuperType) {
@@ -601,11 +355,11 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     else -> backendContext.symbols.functionReferenceImpl
                 }
                 val constructor = internalClass.owner.constructors.single {
-                    // arity, [receiver], owner, name, signature, flags
-                    it.parameters.size == 1 + (if (boundReceiver != null) 1 else 0) + 4
+                    // arity, [receivers], owner, name, signature, flags
+                    it.parameters.size == 1 + boundReceivers.size + 4
                 }
                 irCallConstructor(constructor.symbol, emptyList()).apply {
-                    generateConstructorCallArguments(this) { irGet(boundReceiverVar!!) }
+                    generateConstructorCallArguments(this) { irGet(boundReceiverVars[it].symbol) }
                 }
             }.generate()
         }
@@ -616,8 +370,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 returnType = functionReferenceClass.defaultType
                 isPrimary = true
             }.apply {
-                if (samSuperType == null && boundReceiver != null) {
-                    addValueParameter("receiver", context.irBuiltIns.anyNType)
+                if (samSuperType == null) {
+                    for (index in boundReceivers.entries.indices) {
+                        addValueParameter("receiver$index", context.irBuiltIns.anyNType)
+                    }
                 }
 
                 // Super constructor:
@@ -639,8 +395,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                             val expectedArity =
                                 if (isLightweightLambda && !isAdaptedReference) 0
                                 else if (isHeavyweightLambda && !isAdaptedReference) 1
-                                else 1 + (if (boundReceiver != null) 1 else 0) + 4
-                            superType.getClass()!!.constructors.single {
+                                else 1 + boundReceivers.size + 4
+                            superClass?.getClass()!!.constructors.single {
                                 it.parameters.size == expectedArity
                             }
                         }
@@ -660,7 +416,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         private fun JvmIrBuilder.generateConstructorCallArguments(
             call: IrFunctionAccessExpression,
-            generateBoundReceiver: IrBuilder.() -> IrExpression,
+            generateBoundReceiver: IrBuilder.(Int) -> IrExpression,
         ) {
             if (isFunInterfaceConstructorReference) {
                 val funInterfaceKClassRef = kClassReference(constructedFunInterfaceSymbol!!.owner.defaultType)
@@ -669,13 +425,15 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             } else {
                 var index = 0
                 if (!isLightweightLambda) {
-                    call.arguments[index++] = irInt(argumentTypes.size + if (irFunctionReference.isSuspend) 1 else 0)
+                    call.arguments[index++] = irInt(irFunctionReference.invokeFunction.parameters.size - irFunctionReference.boundValues.size + if (isSuspend) 1 else 0)
                 }
-                if (boundReceiver != null) {
-                    call.arguments[index++] = generateBoundReceiver()
+                for (it in boundReceivers.entries.indices) {
+                    call.arguments[index++] = generateBoundReceiver(it)
                 }
                 if (!isLambda) {
-                    val callableReferenceTarget = adaptedReferenceOriginalTarget ?: callee
+                    val callableReferenceTarget = adaptedReferenceOriginalTarget
+                        ?: irFunctionReference.reflectionTargetSymbol?.owner
+                        ?: callee
                     val owner = calculateOwnerKClass(callableReferenceTarget.parent)
                     call.arguments[index++] = kClassToJavaClass(owner)
                     call.arguments[index++] = irString(callableReferenceTarget.originalName.asString())
@@ -694,184 +452,130 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private fun getAdaptedCallableReferenceFlags(): Int {
             if (adaptedReferenceOriginalTarget == null) return 0
 
-            val isVarargMappedToElementBit = if (hasVarargMappedToElement()) 1 else 0
-            val isSuspendConvertedBit = if (!adaptedReferenceOriginalTarget.isSuspend && callee.isSuspend) 1 else 0
-            val isCoercedToUnitBit = if (!adaptedReferenceOriginalTarget.returnType.isUnit() && callee.returnType.isUnit()) 1 else 0
+            val isVarargMappedToElementBit = if (irFunctionReference.hasVarargConversion) 1 else 0
+            val isSuspendConvertedBit = if (irFunctionReference.hasSuspendConversion) 1 else 0
+            val isCoercedToUnitBit = if (irFunctionReference.hasUnitConversion) 1 else 0
 
             return isVarargMappedToElementBit +
                     (isSuspendConvertedBit shl 1) +
                     (isCoercedToUnitBit shl 2)
         }
 
-        private fun hasVarargMappedToElement(): Boolean =
-            adapteeCall?.arguments.orEmpty().any { arg -> arg is IrVararg && arg.elements.any { it is IrGetValue } }
-
-        private fun createInvokeMethod(receiverVar: IrValueDeclaration?): IrSimpleFunction =
-            functionReferenceClass.addFunction {
-                setSourceRange(if (isLambda) callee else irFunctionReference)
-                name = superMethod.name
-                returnType = referenceReturnType
-                isSuspend = callee.isSuspend
+        /**
+         * This function is very similar to [org.jetbrains.kotlin.backend.common.lower.AbstractFunctionReferenceLowering.buildInvokeMethod].
+         * If you make any changes, don't forget to also change the other one.
+         */
+        private fun createInvokeMethod(
+            boundValues: List<BoundValue>
+        ): IrSimpleFunction {
+            val superFunction = irFunctionReference.overriddenFunctionSymbol.owner
+            val invokeFunction = irFunctionReference.invokeFunction
+            val isLambda = irFunctionReference.origin.isLambda
+            return functionReferenceClass.addFunction {
+                setSourceRange(if (isLambda) invokeFunction else irFunctionReference)
+                name = superFunction.name
+                returnType = invokeFunction.returnType
+                isOperator = superFunction.isOperator
+                isSuspend = superFunction.isSuspend
             }.apply {
+                if (irFunctionReference.origin == JvmLoweredStatementOrigin.DEFAULT_VALUE_OF_INLINABLE_PARAMETER) {
+                    origin = JvmLoweredDeclarationOrigin.INVOKE_OF_DEFAULT_VALUE_OF_INLINABLE_PARAMETER
+                }
+                annotations = invokeFunction.annotations
                 metadata = functionReferenceClass.metadata
-                overriddenSymbols += superMethod.symbol
-                parameters = listOf(buildReceiverParameter {
-                    origin = IrDeclarationOrigin.INSTANCE_RECEIVER
-                    type = functionReferenceClass.symbol.defaultType
-                })
 
-                when {
-                    isLambda ->
-                        createLambdaInvokeMethod()
-                    isFunInterfaceConstructorReference ->
-                        createFunInterfaceConstructorInvokeMethod()
-                    else ->
-                        createFunctionReferenceInvokeMethod(receiverVar)
+                parameters += createDispatchReceiverParameterWithClassParent()
+                require(superFunction.typeParameters.isEmpty()) { "Fun interface abstract function can't have type parameters" }
+
+                val typeSubstitutor = if (samSuperType == null) {
+                    IrTypeSubstitutor(
+                        extractTypeParameters(irFunctionReference.type.classOrFail.owner).map { it.symbol },
+                        (irFunctionReference.type as IrSimpleType).arguments.map {
+                            when (it) {
+                                // it can be "in Nothing" in case of strange intersections
+                                // if we keep it as Nothing, this can cause CCE on java.lang.Void
+                                // this happens only in K1 in tests, so maybe it's just a K1 bug, but let's be conservative in that case–
+                                is IrTypeProjection if it.type.isNothing() -> context.irBuiltIns.anyNType
+                                is IrTypeProjection -> it.type
+                                is IrStarProjection -> context.irBuiltIns.anyNType
+                            }
+                        },
+                        allowEmptySubstitution = true
+                    )
+                } else {
+                    val typeParameters = extractTypeParameters(samSuperType.classOrFail.owner)
+                    IrTypeSubstitutor(
+                        typeParameters.map { it.symbol },
+                        typeParameters.map { it.erasedUpperBound.rawType(context) },
+                        allowEmptySubstitution = true
+                    )
                 }
-            }
 
-        // Inline the body of an anonymous function into the generated lambda subclass.
-        private fun IrSimpleFunction.createLambdaInvokeMethod() {
-            annotations += callee.annotations
-            val valueParameterMap = callee.parameters.associate { param ->
-                param to param.copyTo(this, kind = IrParameterKind.Regular)
-            }
-            parameters += valueParameterMap.values
-            body = callee.moveBodyTo(this, valueParameterMap)
-        }
-
-        private fun IrSimpleFunction.createFunInterfaceConstructorInvokeMethod() {
-            val adapterValueParameter = callee.parameters.singleOrNull()
-                ?: throw AssertionError("Single value parameter expected: ${callee.render()}")
-            val invokeValueParameter = adapterValueParameter.copyTo(this)
-            val valueParameterMap = mapOf(adapterValueParameter to invokeValueParameter)
-            parameters += invokeValueParameter
-            body = callee.moveBodyTo(this, valueParameterMap)
-            callee.body = null
-        }
-
-        private fun IrSimpleFunction.createFunctionReferenceInvokeMethod(receiver: IrValueDeclaration?) {
-            for ((index, argumentType) in argumentTypes.withIndex()) {
-                addValueParameter {
-                    name = Name.identifier("p$index")
-                    type = argumentType
+                val nonDispatchParameters = superFunction.nonDispatchParameters.mapIndexed { i, superParameter ->
+                    val oldParameter = invokeFunction.parameters[i + irFunctionReference.boundValues.size]
+                    superParameter.copyTo(
+                        this,
+                        startOffset = if (isLambda) oldParameter.startOffset else UNDEFINED_OFFSET,
+                        endOffset = if (isLambda) oldParameter.endOffset else UNDEFINED_OFFSET,
+                        name = oldParameter.name,
+                        origin = oldParameter.origin,
+                        type = typeSubstitutor.substitute(superParameter.type)
+                            .mergeNullability(invokeFunction.parameters[i + boundValues.size].type),
+                        defaultValue = null,
+                    ).apply { copyAnnotationsFrom(oldParameter) }
                 }
-            }
+                this.parameters += nonDispatchParameters
+                overriddenSymbols += superFunction.symbol
 
-            body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
-                var unboundIndex = 0
-                val call = irCall(callee.symbol, referenceReturnType).apply {
-                    for (typeParameter in irFunctionReference.symbol.owner.allTypeParameters) {
-                        typeArguments[typeParameter.index] = typeArgumentsMap[typeParameter.symbol]
-                    }
-
-                    for (parameter in callee.parameters) {
-                        when {
-                            boundReceiver?.first == parameter ->
-                                // Bound receiver parameter. For function references, this is stored in a field of the superclass.
-                                // For sam references, we just capture the value in a local variable and LocalDeclarationsLowering
-                                // will put it into a field.
-                                if (samSuperType == null)
+                val builder = context.createIrBuilder(symbol).applyIf(isLambda) { at(invokeFunction.body!!) }
+                body = builder.irBlockBody {
+                    val variablesMapping = buildMap {
+                        for ((index, capturedValue) in boundValues.withIndex()) {
+                            val invokeParameter = invokeFunction.parameters[index]
+                            val capturedValueLocal = when (capturedValue) {
+                                is BoundValue.StoredInVariable -> capturedValue.symbol
+                                is BoundValue.StoredInField -> irTemporary(
                                     irImplicitCast(
                                         irGetField(
                                             irGet(dispatchReceiverParameter!!),
-                                            functionReferenceClass.getReceiverField(backendContext)
+                                            capturedValue.symbol
                                         ),
-                                        boundReceiver.second.type
+                                        invokeParameter.type,
                                     )
-                                else
-                                    irGet(receiver!!)
+                                )
+                            }
+                            put(invokeParameter, capturedValueLocal)
+                        }
+                        for ((index, parameter) in nonDispatchParameters.withIndex()) {
+                            val invokeParameter = invokeFunction.parameters[index + boundValues.size]
+                            if (parameter.type != invokeParameter.type) {
+                                put(invokeParameter, irTemporary(irGet(parameter).implicitCastTo(invokeParameter.type)))
+                            } else {
+                                put(invokeParameter, parameter)
+                            }
+                        }
+                    }
+                    val transformedBody = invokeFunction.body!!.transform(object : VariableRemapper(variablesMapping) {
+                        override fun visitReturn(expression: IrReturn): IrExpression {
+                            if (expression.returnTargetSymbol == invokeFunction.symbol) {
+                                expression.returnTargetSymbol = this@apply.symbol
+                            }
+                            return super.visitReturn(expression)
+                        }
 
-                            unboundIndex >= argumentTypes.size ->
-                                // Default value argument (this pass doesn't handle suspend functions, otherwise
-                                // it could also be the continuation argument)
-                                null
-
-                            else ->
-                                irGet(nonDispatchParameters[unboundIndex++])
-                        }?.let { arguments[parameter] = it }
+                        override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
+                            if (declaration.parent == invokeFunction)
+                                declaration.parent = this@apply
+                            return super.visitDeclaration(declaration)
+                        }
+                    }, null)
+                    when (transformedBody) {
+                        is IrBlockBody -> +transformedBody.statements
+                        is IrExpressionBody -> +irReturn(transformedBody.expression)
+                        else -> error("Unexpected body type: ${transformedBody::class.simpleName}")
                     }
                 }
-                irExprBody(
-                    inlineAdapterCallIfPossible(call, this@createFunctionReferenceInvokeMethod)
-                )
             }
-        }
-
-        private fun inlineAdapterCallIfPossible(
-            expression: IrFunctionAccessExpression,
-            invokeMethod: IrSimpleFunction,
-        ): IrExpression {
-            val irCall = expression as? IrCall
-                ?: return expression
-            val callee = irCall.symbol.owner
-            if (callee.origin != IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE)
-                return expression
-
-            // TODO fix testSuspendUnitConversion
-            if (callee.isSuspend) return expression
-
-            // Callable reference adapter is a simple function that delegates to callable reference target,
-            // adapting its signature for required functional type.
-            // Usually it simply forwards arguments to target function.
-            // It also passes 'receiver' field for bound references, with downcast to the actual receiver type.
-            // In any case, adapter itself is synthetic and is not necessarily debuggable, so we can reuse variables freely.
-            // Inlining adapter into 'invoke' saves us two methods (adapter & synthetic accessor).
-            val adapterBody = callee.body as? IrBlockBody
-            if (adapterBody == null || adapterBody.statements.size != 1)
-                throw AssertionError("Unexpected adapter body: ${callee.dump()}")
-            val resultStatement = adapterBody.statements[0]
-            val resultExpression: IrExpression =
-                when {
-                    resultStatement is IrReturn ->
-                        resultStatement.value
-                    resultStatement is IrTypeOperatorCall && resultStatement.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT ->
-                        resultStatement
-                    resultStatement is IrCall ->
-                        resultStatement
-                    resultStatement is IrConstructorCall ->
-                        resultStatement
-                    else ->
-                        throw AssertionError("Unexpected adapter body: ${callee.dump()}")
-                }
-
-            val startOffset = irCall.startOffset
-            val endOffset = irCall.endOffset
-
-            val callArguments = LinkedHashMap<IrValueParameter, IrValueDeclaration>()
-            val inlinedAdapterBlock = IrBlockImpl(startOffset, endOffset, irCall.type, origin = null)
-            var tmpVarIndex = 0
-
-            fun wrapIntoTemporaryVariableIfNecessary(expression: IrExpression): IrValueDeclaration {
-                if (expression is IrGetValue)
-                    return expression.symbol.owner
-                if (expression !is IrTypeOperatorCall || expression.argument !is IrGetField)
-                    throw AssertionError("Unexpected adapter argument:\n${expression.dump()}")
-                val temporaryVar = IrVariableImpl(
-                    startOffset, endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                    IrVariableSymbolImpl(),
-                    Name.identifier("tmp_${tmpVarIndex++}"),
-                    expression.type,
-                    isVar = false, isConst = false, isLateinit = false
-                )
-                temporaryVar.parent = invokeMethod
-                temporaryVar.initializer = expression
-                inlinedAdapterBlock.statements.add(temporaryVar)
-                return temporaryVar
-            }
-
-            for (parameter in callee.parameters) {
-                callArguments[parameter] = wrapIntoTemporaryVariableIfNecessary(
-                    irCall.arguments[parameter]
-                        ?: throw AssertionError("No value argument #${parameter.indexInParameters} in adapter call: ${irCall.dump()}")
-                )
-            }
-
-            val inlinedAdapterResult = resultExpression.transform(VariableRemapper(callArguments), null)
-            inlinedAdapterBlock.statements.add(inlinedAdapterResult)
-
-            callee.body = null
-            return inlinedAdapterBlock.patchDeclarationParents(invokeMethod)
         }
 
         private val IrFunction.originalName: Name
@@ -879,7 +583,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         private fun JvmIrBuilder.generateSignature(target: IrFunctionSymbol): IrExpression =
             irCall(backendContext.symbols.signatureStringIntrinsic).apply {
-                //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
                 arguments[0] = IrRawFunctionReferenceImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target
                 )
@@ -921,3 +624,11 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
     }
 }
+
+data class IndyCallData(
+    val forceSerializability: Boolean,
+    val plainLambda: Boolean
+)
+
+var IrRichFunctionReference.indyCallData by irAttribute<_, IndyCallData>(copyByDefault = true)
+    private set

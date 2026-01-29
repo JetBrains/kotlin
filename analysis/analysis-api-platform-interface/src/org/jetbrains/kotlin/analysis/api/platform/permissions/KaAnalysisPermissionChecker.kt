@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.permissions
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 
 /**
@@ -22,11 +23,13 @@ import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
  * - Analysis can also be explicitly forbidden via [forbidAnalysis][org.jetbrains.kotlin.analysis.api.permissions.forbidAnalysis], which in
  *   contrast to the above points cannot be controlled with [KotlinAnalysisPermissionOptions].
  */
+@KaPlatformInterface
 public interface KaAnalysisPermissionChecker : KaEngineService {
     public fun isAnalysisAllowed(): Boolean
 
     public fun getRejectionReason(): String
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KaAnalysisPermissionChecker = project.service()
     }

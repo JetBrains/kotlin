@@ -268,6 +268,12 @@ public actual interface List<out E> : Collection<E> {
     // List Iterators
     /**
      * Returns a list iterator over the elements in this list (in proper sequence).
+     *
+     * If the list needs to be iterated starting from a specific index,
+     * a [listIterator] overload accepting the [Int] parameter could be used instead
+     * of using this function and manually iterating until the required index is reached.
+     *
+     * @sample samples.collections.Collections.Lists.listIterator
      */
     public actual fun listIterator(): ListIterator<E>
 
@@ -275,6 +281,7 @@ public actual interface List<out E> : Collection<E> {
      * Returns a list iterator over the elements in this list (in proper sequence), starting at the specified [index].
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than [size] of this list.
+     * @sample samples.collections.Collections.Lists.listIteratorWithIndex
      */
     public actual fun listIterator(index: Int): ListIterator<E>
 

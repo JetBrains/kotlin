@@ -122,9 +122,9 @@ KtSuperTypeList(186,195): 'Base<C>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(186,195): 'Base<C>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -137,12 +137,13 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(186,193): 'Base<C>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -155,6 +156,7 @@ KtConstructorCalleeExpression(186,193): 'Base<C>'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(186,193): 'Base<C>'
@@ -166,7 +168,7 @@ KtUserType(186,193): 'Base<C>'
 KtNameReferenceExpression(186,190): 'Base'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -179,6 +181,7 @@ KtNameReferenceExpression(186,190): 'Base'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeArgumentList(190,193): '<C>'
@@ -350,9 +353,9 @@ KtNameReferenceExpression(378,389): 'NestedClass'
   NO_CANDIDATES
 
 KtCallExpression(392,405): 'NestedClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -364,12 +367,13 @@ KtCallExpression(392,405): 'NestedClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(392,403): 'NestedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -381,6 +385,7 @@ KtNameReferenceExpression(392,403): 'NestedClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(403,405): '()'
@@ -392,7 +397,7 @@ KtProperty(410,432): 'val inner = c1.Inner()'
 KtDotQualifiedExpression(422,432): 'c1.Inner()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = c1
@@ -407,6 +412,7 @@ KtDotQualifiedExpression(422,432): 'c1.Inner()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(422,424): 'c1'
@@ -428,9 +434,9 @@ KtNameReferenceExpression(422,424): 'c1'
     isInBestCandidates = true
 
 KtCallExpression(425,432): 'Inner()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = c1
@@ -445,12 +451,13 @@ KtCallExpression(425,432): 'Inner()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(425,430): 'Inner'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = c1
@@ -465,6 +472,7 @@ KtNameReferenceExpression(425,430): 'Inner'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(430,432): '()'

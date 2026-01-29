@@ -29,6 +29,10 @@
         interface="org.jetbrains.kotlin.analysis.api.symbols.KaAdditionalKDocResolutionProvider"
         dynamic="true"
     />
+
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.irGenerationExtension"
+                    interface="org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension"
+                    area="IDEA_PROJECT" dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">

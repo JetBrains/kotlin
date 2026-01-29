@@ -122,6 +122,16 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         }
     }
 
+    /**
+     * Since the ABI version is bumped after the language version, it may happen that after bumping the language version
+     * [KotlinAbiVersion.CURRENT] != [LanguageVersion.LATEST_STABLE]. This can cause issues in library compatibility tests: for example,
+     * when exporting a klib to the previous ABI version, we may use a 2.X compiler while the previous ABI version is 2.(X − 2).
+     * Since this is only a temporary situation (the ABI version is usually bumped shortly after the language version),
+     * we simply ignore these tests when this happens.
+     */
+    override fun shouldRunTest(): Boolean =
+        LanguageVersion.LATEST_STABLE.major == KotlinAbiVersion.CURRENT.major && LanguageVersion.LATEST_STABLE.minor == KotlinAbiVersion.CURRENT.minor
+
     private fun compileDummyLibrary(
         libraryVersion: TestVersion?,
         compilerVersion: TestVersion?,

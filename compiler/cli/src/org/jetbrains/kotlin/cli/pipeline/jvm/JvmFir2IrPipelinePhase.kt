@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActua
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -22,7 +23,7 @@ object JvmFir2IrPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFi
     postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: JvmFrontendPipelineArtifact): JvmFir2IrPipelineArtifact? =
-        executePhase(input, IrGenerationExtension.Companion.getInstances(input.environment.project))
+        executePhase(input, input.configuration.getCompilerExtensions(IrGenerationExtension))
 
     fun executePhase(input: JvmFrontendPipelineArtifact, irGenerationExtensions: List<IrGenerationExtension>): JvmFir2IrPipelineArtifact? {
         val (firResult, configuration, environment, diagnosticCollector, sourceFiles) = input

@@ -106,6 +106,11 @@ projectTests {
         dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
         workingDir = rootDir
 
+        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
+            // Ensure golden tests run first since some LL tests are complementary for the surface tests
+            mustRunAfter(":analysis:analysis-api-fir:test")
+        }
+
         val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
         doFirst {
             systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
@@ -138,7 +143,7 @@ tasks.register("analysisLowLevelApiFirAllTests") {
         ":analysis:low-level-api-fir:test",
     )
 
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         dependsOn(
             ":analysis:low-level-api-fir:low-level-api-fir-native:llFirNativeTests",
         )

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.C
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
+import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
@@ -48,8 +49,6 @@ class ScriptingGradleSubplugin : Plugin<Project> {
         fun configureForSourceSet(project: Project, sourceSetName: String) {
             val discoveryConfiguration = project.configurations
                 .maybeCreateDependencyScope(getDiscoveryClasspathConfigurationName(sourceSetName)) {
-                    @Suppress("DEPRECATED")
-                    isVisible = false
                     description = "Script filename extensions discovery classpath configuration"
                 }
             project.logger.info("$SCRIPTING_LOG_PREFIX created the scripting discovery configuration: ${discoveryConfiguration.name}")
@@ -127,6 +126,7 @@ private fun configureDiscoveryTransformation(
     discoveryResultsConfigurationName: String
 ) {
     project.configurations.maybeCreateResolvable(discoveryResultsConfigurationName).apply {
+        setInvisibleIfSupported()
         attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, scriptFilesExtensions)
         extendsFrom(discoveryConfiguration)
     }

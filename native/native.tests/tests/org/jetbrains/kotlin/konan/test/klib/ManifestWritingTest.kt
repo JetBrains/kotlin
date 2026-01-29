@@ -46,14 +46,14 @@ private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-comp
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 class ManifestWritingTest : AbstractNativeSimpleTest() {
     @Test
-    @TestMetadata("simpleManifest")
-    fun testSimpleManifest(testInfo: TestInfo) {
+    @TestMetadata("regular_compilation")
+    fun `Manifest of regular compilation`(testInfo: TestInfo) {
         doManifestTest(testInfo)
     }
 
     @Test
-    @TestMetadata("nativeTargetsOverwrite")
-    fun testNativeTargetsOverwrite(testInfo: TestInfo) {
+    @TestMetadata("regular_compilation_overridden_targets")
+    fun `Manifest of regular compilation (overridden targets)`(testInfo: TestInfo) {
         doManifestTest(
             testInfo,
             // note some leading and trailing spaces
@@ -62,10 +62,40 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    @TestMetadata("nativeTargetsOverwriteUnknownTarget")
-    fun testNativeTargetsOverwriteUnknownTargetName(testInfo: TestInfo) {
+    @TestMetadata("regular_compilation_overridden_unknown_target")
+    fun `Manifest of regular compilation (overridden unknown target)`(testInfo: TestInfo) {
         doManifestTest(
             testInfo,
+            "-Xmanifest-native-targets=ios_arm64,ios_x64, unknown_target"
+        )
+    }
+
+    @Test
+    @TestMetadata("metadata_compilation")
+    fun `Manifest of metadata compilation`(testInfo: TestInfo) {
+        doManifestTest(
+            testInfo,
+            "-Xmetadata-klib",
+        )
+    }
+
+    @Test
+    @TestMetadata("metadata_compilation_overridden_targets")
+    fun `Manifest of metadata compilation (overridden targets)`(testInfo: TestInfo) {
+        doManifestTest(
+            testInfo,
+            "-Xmetadata-klib",
+            // note some leading and trailing spaces
+            "-Xmanifest-native-targets=ios_arm64, ios_x64,linux_x64 ,mingw_x64,macos_x64,macos_arm64",
+        )
+    }
+
+    @Test
+    @TestMetadata("metadata_compilation_overridden_unknown_target")
+    fun `Manifest of metadata compilation (overridden unknown target)`(testInfo: TestInfo) {
+        doManifestTest(
+            testInfo,
+            "-Xmetadata-klib",
             "-Xmanifest-native-targets=ios_arm64,ios_x64, unknown_target"
         )
     }

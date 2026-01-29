@@ -1,33 +1,35 @@
 KtArrayAccessExpression(182,188): 'm["a"]'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      "a" -> (KaVariableSignature:
-        name = k
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MyMap<kotlin.String, kotlin.Int>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.String
-        symbol = k: K1
+        returnType = kotlin.Int
+        symbol = /MyMap.get(<dispatch receiver>: MyMap<K1, V1>, k: K1): V1
+        valueParameters = [
+          KaVariableSignature:
+            name = k
+            receiverType = null
+            returnType = kotlin.String
+            symbol = k: K1
+            contextParameters = []
+            callableId = null
+        ]
         contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = m
-      isSafeNavigation = false
-      type = MyMap<kotlin.String, kotlin.Int>
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Int
-      symbol = /MyMap.get(<dispatch receiver>: MyMap<K1, V1>, k: K1): V1
-      valueParameters = [
-        KaVariableSignature:
+        callableId = /MyMap.get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "a" -> (KaVariableSignature:
           name = k
           receiverType = null
           returnType = kotlin.String
           symbol = k: K1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /MyMap.get
-    typeArgumentsMapping = {}
+          callableId = null)
+      }

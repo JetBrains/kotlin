@@ -97,7 +97,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
     // If a property is annotated with @JvmStatic, we generate static accessors.
     // Thus, we should expose the accessors. The easiest way to do so is to copy @JvmStatic annotation.
-    private fun IrSimpleFunction.copyPropagatedJvmStaticAnnotation(): List<IrConstructorCall> {
+    private fun IrSimpleFunction.copyPropagatedJvmStaticAnnotation(): List<IrAnnotation> {
         if (!isPropertyAccessor) return emptyList()
         if (hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return emptyList()
         if (!propertyIfAccessor.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return emptyList()
@@ -587,7 +587,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         }
     }
 
-    private fun List<IrConstructorCall>.withoutJvmNameAnnotation(): List<IrConstructorCall> =
+    private fun List<IrAnnotation>.withoutJvmNameAnnotation(): List<IrAnnotation> =
         this.toMutableList().apply {
             removeAll {
                 it.symbol.owner.returnType.classOrNull?.owner?.hasEqualFqName(JVM_NAME_ANNOTATION_FQ_NAME) == true

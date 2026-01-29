@@ -7,8 +7,9 @@ package org.jetbrains.kotlinx.jspo.compiler.cli
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlinx.jspo.compiler.backend.JsPlainObjectsLoweringExtension
 import org.jetbrains.kotlinx.jspo.compiler.fir.JsPlainObjectsExtensionRegistrar
 
@@ -22,7 +23,7 @@ class JsPlainObjectsComponentRegistrar : CompilerPluginRegistrar() {
 
     companion object {
         fun registerExtensions(extensionStorage: ExtensionStorage) = with(extensionStorage) {
-            FirExtensionRegistrarAdapter.registerExtension(JsPlainObjectsExtensionRegistrar())
+            FirExtensionRegistrar.registerExtension(JsPlainObjectsExtensionRegistrar())
             IrGenerationExtension.registerExtension(JsPlainObjectsLoweringExtension())
         }
     }

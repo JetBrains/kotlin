@@ -2,7 +2,7 @@ KtDotQualifiedExpression(59,66): 'a.foo()'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = a
@@ -17,5 +17,6 @@ KtDotQualifiedExpression(59,66): 'a.foo()'
           contextParameters = []
           callableId = /A.foo
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'foo': it is private in 'A'>

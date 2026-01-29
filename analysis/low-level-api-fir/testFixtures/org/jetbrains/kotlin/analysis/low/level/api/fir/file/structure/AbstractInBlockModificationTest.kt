@@ -114,7 +114,7 @@ private fun doTestInBlockModification(
             "The declaration before and after modification must be in the same state, because changes in not flushed yet"
         }
 
-        modificationService.flushModifications()
+        modificationService.flushDeferredModifications()
         true
     }
 
@@ -165,7 +165,7 @@ private fun LLFirDeclarationModificationService.modifyElement(element: PsiElemen
             }
         )
 
-        elementModified(element, modificationType = KaElementModificationType.Unknown)
+        handleElementModification(element, KaElementModificationType.Unknown)
     } finally {
         Disposer.dispose(disposable)
     }

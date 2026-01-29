@@ -17,7 +17,7 @@ internal val lazyAsmApiVersion = lazy {
     try {
         val field = Opcodes::class.java.getField("API_VERSION")
         field.get(null) as Int
-    } catch(e: Throwable) {
+    } catch (e: Throwable) {
         Opcodes.API_VERSION
     }
 }
@@ -29,7 +29,7 @@ class ClassAbiExtractor(private val writer: ClassWriter) : ClassVisitor(lazyAsmA
         name: String?,
         desc: String?,
         signature: String?,
-        exceptions: Array<out String>?
+        exceptions: Array<out String>?,
     ): MethodVisitor? {
         return if (access.isAbi()) {
             super.visitMethod(access, name, desc, signature, exceptions)
@@ -52,6 +52,10 @@ class ClassAbiExtractor(private val writer: ClassWriter) : ClassVisitor(lazyAsmA
         } else {
             null
         }
+    }
+
+    override fun visitNestMember(nestMember: String?) {
+        // Ignore 'NESTMEMBER', ABI is captured by visitInnerClass
     }
 
     override fun visitInnerClass(name: String?, outerName: String?, innerName: String?, access: Int) {

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.readText
@@ -211,7 +212,12 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
 
             build("compileDevelopmentExecutableKotlinJs") {
                 // Check the dependency was there and has been removed
-                assertOutputContains("lib/build/classes/kotlin/js/main/default/ir/bodies.knb has been removed")
+                val regexPathSeparator = if (OS.WINDOWS.isCurrentOs) {
+                    "\\\\"
+                } else {
+                    "/"
+                }
+                assertOutputContains("lib${regexPathSeparator}.*bodies\\.knb has been removed".toRegex())
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
             }
         }

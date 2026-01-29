@@ -226,6 +226,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("localBackingFieldWithAnnotatedType.kt")
+    public void testLocalBackingFieldWithAnnotatedType() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/localBackingFieldWithAnnotatedType.kt");
+    }
+
+    @Test
     @TestMetadata("localCompilerRequiredAnnotation.kt")
     public void testLocalCompilerRequiredAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/localCompilerRequiredAnnotation.kt");
@@ -573,6 +579,42 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     @TestMetadata("contextParameterTypeSubstitutionFunction.kt")
     public void testContextParameterTypeSubstitutionFunction() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/contextParameterTypeSubstitutionFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitArgument.kt")
+    public void testExplicitArgument() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitArgumentName.kt")
+    public void testExplicitArgumentName() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitArgumentName.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitArgumentNameReference.kt")
+    public void testExplicitArgumentNameReference() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitArgumentNameReference.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitContextArgument.kt")
+    public void testExplicitContextArgument() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitContextArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitContextArgumentName.kt")
+    public void testExplicitContextArgumentName() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitContextArgumentName.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitContextArgumentNameReference.kt")
+    public void testExplicitContextArgumentNameReference() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/explicitContextArgumentNameReference.kt");
     }
 
     @Test

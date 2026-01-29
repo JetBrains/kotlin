@@ -429,7 +429,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectAccessorsScript.kts
         }
 
         [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
-            @R|low/Anno|[Types](position = <strcat>(String(setter parameter type ), R|low/prop|)) Q|kotlin/collections/List|<R|@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|))  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|))  kotlin/String>|>
+            @R|low/Anno|[Types](position = String(setter parameter type str)) Q|kotlin/collections/List|<R|@R|low/Anno|(position = String(setter nested parameter type str))  kotlin/collections/Collection<@R|low/Anno|(position = String(setter nested nested parameter type str))  kotlin/String>|>
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: value> = <Unresolved name: value>#

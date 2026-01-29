@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
-import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.logMultiple
+import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -28,23 +28,14 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.copy
-import org.jetbrains.kotlin.utils.forEachBit
 import java.util.*
 
 internal val STATEMENT_ORIGIN_NO_CAST_NEEDED = IrStatementOriginImpl("NO_CAST_NEEDED")
-
-private val theUnsafe = sun.misc.Unsafe::class.java.getDeclaredField("theUnsafe")
-        .apply { isAccessible = true }
-        .get(null) as sun.misc.Unsafe
-
-private val wordsOffset = theUnsafe.objectFieldOffset(BitSet::class.java.getDeclaredField("words"))
-
-private fun BitSet.getWords(): LongArray = theUnsafe.getObject(this, wordsOffset) as LongArray
 
 private data class LeafIndexWithValue(val index: Int, val value: Boolean) {
     val bitIndex: Int get() = index * 2 + (if (value) 0 else 1)
@@ -74,7 +65,7 @@ private sealed class SimpleTerm(val variable: IrValueDeclaration) : LeafTerm() {
     }
 }
 
-private class Disjunction(val terms: BitSet) {
+private class Disjunction(val terms: CustomBitSet) {
     val size = terms.cardinality()
 
     init {
@@ -101,21 +92,7 @@ private class Disjunction(val terms: BitSet) {
     }
 
     // (a | b) & (a) = a
-    infix fun followsFrom(other: Disjunction): Boolean {
-        // Check if [other] is a subset of [this]. Seems weird why there is no such function in BitSet.
-        val words = terms.getWords()
-        val otherWords = other.terms.getWords()
-        for (i in otherWords.indices) {
-            val otherWord = otherWords[i]
-            if (i >= words.size) {
-                if (otherWord != 0L) return false
-            } else {
-                val word = words[i]
-                if (word != word or otherWord) return false
-            }
-        }
-        return true
-    }
+    infix fun followsFrom(other: Disjunction) = other.terms in terms
 }
 
 private sealed class Predicate {
@@ -146,7 +123,7 @@ private class DivergingAnalysisError(message: String) : Throwable(message)
 @Suppress("ConvertArgumentToSet")
 private object Predicates {
     fun disjunctionOf(vararg terms: LeafIndexWithValue): Predicate =
-            Conjunction(listOf(Disjunction(BitSet().apply { terms.forEach { set(it.bitIndex) } })))
+            Conjunction(listOf(Disjunction(CustomBitSet().apply { terms.forEach { set(it.bitIndex) } })))
 
     fun isSubtypeOf(
             variable: IrValueDeclaration, type: IrType,
@@ -192,7 +169,7 @@ private object Predicates {
      * we know that x is A inside the else clause (the full predicate is (!foo(..) & (x is A))).
      * In this case the call to foo(..) can be optimized away after the full if/else clause have been handled.
      */
-    fun optimizeAwayComplexTerms(predicate: Predicate, complexTermsMask: BitSet): Predicate {
+    fun optimizeAwayComplexTerms(predicate: Predicate, complexTermsMask: CustomBitSet): Predicate {
         val conjunction = predicate as? Conjunction ?: return predicate
         val terms = conjunction.terms.filterNot { disjunction -> disjunction.terms.intersects(complexTermsMask) }
         return if (terms.isEmpty()) Predicate.Empty else Conjunction(terms)
@@ -201,10 +178,9 @@ private object Predicates {
     // 010101...010101 in binary.
     private const val CHECKERS_MASK = 0x5555555555555555L
 
-    fun someTermBothTrueAndFalse(terms: BitSet): Boolean {
-        val words = terms.getWords()
-        for (word in words) {
-            if (word == 0L) continue
+    fun someTermBothTrueAndFalse(terms: CustomBitSet): Boolean {
+        terms.forEachWord { word ->
+            if (word == 0L) return@forEachWord
             val trueTerms = word and CHECKERS_MASK
             val falseTerms = (word shr 1) and CHECKERS_MASK
             if (trueTerms and falseTerms != 0L) return true
@@ -213,20 +189,19 @@ private object Predicates {
         return false
     }
 
-    fun invertTerms(terms: BitSet): BitSet {
-        val words = terms.getWords()
-        val resultWords = LongArray(words.size)
-        for (index in words.indices) {
-            val word = words[index]
+    fun invertTerms(terms: CustomBitSet): CustomBitSet {
+        val resultWords = LongArray(terms.size)
+        var index = 0
+        terms.forEachWord { word ->
             val trueTerms = word and CHECKERS_MASK
             val falseTerms = (word shr 1) and CHECKERS_MASK
-            resultWords[index] = (trueTerms shl 1) or falseTerms
+            resultWords[index++] = (trueTerms shl 1) or falseTerms
         }
 
-        return BitSet.valueOf(resultWords)
+        return CustomBitSet.valueOf(resultWords)
     }
 
-    private val removedMarker = Disjunction(BitSet().apply { set(0) })
+    private val removedMarker = Disjunction(CustomBitSet().apply { set(0) })
     private val removedMarkerSingletonList = listOf(removedMarker)
 
     // TODO: Support type hierarchy here (KT-77671).
@@ -296,7 +271,7 @@ private object Predicates {
 
         // (a | b) & (!a) = b & !a
         // (a1 | a2 | b) & !a1 & !a2 = (a1 | b) & !a1 & !a2 = b & !a1 & !a2
-        val allSingleTerms = BitSet()
+        val allSingleTerms = CustomBitSet()
         for (term in (leftPredicate as Conjunction).terms) {
             if (term.size == 1)
                 allSingleTerms.or(term.terms)
@@ -357,7 +332,7 @@ private object Predicates {
             predicate.terms.size == 1 -> {
                 val terms = mutableListOf<Disjunction>()
                 predicate.terms.first().terms.forEachBit { bit ->
-                    terms.add(Disjunction(BitSet().apply { set(bit xor 1 /* invert the term */) }))
+                    terms.add(Disjunction(CustomBitSet().apply { set(bit xor 1 /* invert the term */) }))
                 }
                 Conjunction(terms)
             }
@@ -508,7 +483,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             val leafTerms = mutableListOf<LeafTerm>()
             val simpleTermsMap = mutableMapOf<Pair<IrValueDeclaration, IrClass?>, Int>()
             val complexTermsMap = mutableMapOf<IrElement, Int>()
-            val complexTermsMask = BitSet()
+            val complexTermsMask = CustomBitSet()
 
             // It's convenient to think of the predicate as a stack of sub-predicates which get anded to get the result.
             val upperLevelPredicates = mutableListOf<Predicate>()

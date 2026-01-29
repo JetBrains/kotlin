@@ -30,8 +30,7 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
         open var abiVersion: KotlinAbiVersion? = null
         var customManifestProperties: List<Pair<String, String>> = emptyList()
         var nopack: Boolean = true
-        open var ir: Collection<SerializedIrFile>? = null
-        open var irOfInlinableFunctions: SerializedIrFile? = null
+        open var ir: SerializedIrModule? = null
 
         // Note: There is always some randomly generated metadata. Because there is no way to generate a klib without metadata.
         val metadata: SerializedMetadata = KlibMockDSL.generateRandomMetadata()
@@ -108,8 +107,10 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
         for (mainIrFiles in 0..5) {
             listOf(true, false).forEach { includeInlinableFunctions ->
                 runTestWithParameters {
-                    ir = List(mainIrFiles) { KlibMockDSL.generateRandomIrFile() }
-                    irOfInlinableFunctions = if (includeInlinableFunctions) KlibMockDSL.generateRandomIrFile() else null
+                    ir = SerializedIrModule(
+                        files = List(mainIrFiles) { KlibMockDSL.generateRandomIrFile() },
+                        fileWithPreparedInlinableFunctions = if (includeInlinableFunctions) KlibMockDSL.generateRandomIrFile() else null
+                    )
                 }
             }
         }
@@ -123,8 +124,9 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
 
         val mockKlib = KlibMockDSL.mockKlib(createNewKlibDir()) {
             metadata(parameters.metadata)
-            parameters.ir?.let { ir(it) }
-            parameters.irOfInlinableFunctions?.let { irInlinableFunctions(it) }
+            parameters.ir?.let { serializedIrModule ->
+                irModule(serializedIrModule)
+            }
             resources()
             manifest(
                 uniqueName = parameters.uniqueName,

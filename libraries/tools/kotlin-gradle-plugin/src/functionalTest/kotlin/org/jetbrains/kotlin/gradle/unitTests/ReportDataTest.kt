@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.report.TaskRecord
 import org.jetbrains.kotlin.gradle.report.prepareData
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import kotlin.test.Test
 import java.util.concurrent.TimeUnit
 import kotlin.math.sign
 import kotlin.test.assertEquals
@@ -111,7 +111,7 @@ class ReportDataTest {
         assertTrue(statisticData.getBuildTimesMetrics().containsKey(RESTORE_OUTPUT_FROM_BACKUP))
     }
 
-    @Ignore //temporary ignore flaky test
+    @Disabled //temporary ignore flaky test
     @Test
     fun testCalculatedMetrics() {
         val startGradleTask = 20L

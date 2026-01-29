@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.parentEnumClassOrNull
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -62,10 +62,10 @@ class ExcludeSyntheticDeclarationsFromExportLowering(val context: JsIrBackendCon
     }
 
     private fun IrDeclaration.excludeFromJsExport() {
-        annotations += generateJsExportIgnoreCall()
+        annotations += generateJsExportIgnoreAnnotation()
     }
 
-    private fun generateJsExportIgnoreCall(): IrConstructorCall {
+    private fun generateJsExportIgnoreAnnotation(): IrAnnotation {
         return JsIrBuilder.buildAnnotation(context.symbols.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol)
     }
 

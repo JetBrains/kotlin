@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -40,7 +41,7 @@ fun compileModuleToAnalyzedFirViaLightTreeIncrementally(
     return MinimizedFrontendContext(
         projectEnvironment,
         messageCollector,
-        FirExtensionRegistrar.getInstances(projectEnvironment.project),
+        compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar),
         compilerConfiguration
     ).compileModuleToAnalyzedFirViaLightTreeIncrementally(
         input,

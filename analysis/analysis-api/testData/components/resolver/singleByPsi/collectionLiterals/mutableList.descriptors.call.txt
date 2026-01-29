@@ -2,7 +2,7 @@ KtCollectionLiteralExpression(46,48): '[]'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -24,5 +24,6 @@ KtCollectionLiteralExpression(46,48): '[]'
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
         }
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>

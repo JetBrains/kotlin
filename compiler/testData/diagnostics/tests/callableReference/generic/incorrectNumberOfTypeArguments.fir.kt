@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-56186
+// LANGUAGE: -ProperSupportOfInnerClassesInCallableReferenceLHS
 
 class Foo<I, J : Number, K> {
     val value: String = "OK"
@@ -9,9 +10,9 @@ class Foo<I, J : Number, K> {
 
 fun test_1() {
     val a = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Foo<!>::value
-    val b = Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>::value
+    val b = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Foo<String><!>::value
     val c = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Foo<!>::genericValue
-    val d = Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>::genericValue
+    val d = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Foo<String><!>::genericValue
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, localProperty, nullableType,

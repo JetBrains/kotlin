@@ -1,7 +1,7 @@
 KtCallableReferenceExpression(141,150): 'list::add'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = list
@@ -24,4 +24,5 @@ KtCallableReferenceExpression(141,150): 'list::add'
         contextParameters = []
         callableId = kotlin/collections/MutableList.add
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

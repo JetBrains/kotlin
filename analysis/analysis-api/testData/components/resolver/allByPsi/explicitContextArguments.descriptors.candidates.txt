@@ -1,0 +1,1864 @@
+KtFile: 'explicitContextArguments.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(0,14): 'class Implicit'
+  NO_CANDIDATES
+
+KtClass(15,29): 'class Explicit'
+  NO_CANDIDATES
+
+KtNamedFunction(31,103): 'context(_: Implicit, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(31,71): 'context(_: Implicit, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtContextReceiverList(31,71): 'context(_: Implicit, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtParameter(39,50): '_: Implicit'
+  NO_CANDIDATES
+
+KtTypeReference(42,50): 'Implicit'
+  NO_CANDIDATES
+
+KtUserType(42,50): 'Implicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(42,50): 'Implicit'
+  NO_CANDIDATES
+
+KtParameter(52,70): 'explicit: Explicit'
+  NO_CANDIDATES
+
+KtTypeReference(62,70): 'Explicit'
+  NO_CANDIDATES
+
+KtUserType(62,70): 'Explicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(62,70): 'Explicit'
+  NO_CANDIDATES
+
+KtParameterList(83,100): '(regular: String)'
+  NO_CANDIDATES
+
+KtParameter(84,99): 'regular: String'
+  NO_CANDIDATES
+
+KtTypeReference(93,99): 'String'
+  NO_CANDIDATES
+
+KtUserType(93,99): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(93,99): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(101,103): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(105,175): 'context(s: String, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(105,143): 'context(s: String, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtContextReceiverList(105,143): 'context(s: String, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtParameter(113,122): 's: String'
+  NO_CANDIDATES
+
+KtTypeReference(116,122): 'String'
+  NO_CANDIDATES
+
+KtUserType(116,122): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(116,122): 'String'
+  NO_CANDIDATES
+
+KtParameter(124,142): 'explicit: Explicit'
+  NO_CANDIDATES
+
+KtTypeReference(134,142): 'Explicit'
+  NO_CANDIDATES
+
+KtUserType(134,142): 'Explicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(134,142): 'Explicit'
+  NO_CANDIDATES
+
+KtParameterList(155,172): '(regular: String)'
+  NO_CANDIDATES
+
+KtParameter(156,171): 'regular: String'
+  NO_CANDIDATES
+
+KtTypeReference(165,171): 'String'
+  NO_CANDIDATES
+
+KtUserType(165,171): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(165,171): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(173,175): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(177,254): 'context(implicit: Implicit, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(177,224): 'context(implicit: Implicit, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtContextReceiverList(177,224): 'context(implicit: Implicit, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtParameter(185,203): 'implicit: Implicit'
+  NO_CANDIDATES
+
+KtTypeReference(195,203): 'Implicit'
+  NO_CANDIDATES
+
+KtUserType(195,203): 'Implicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(195,203): 'Implicit'
+  NO_CANDIDATES
+
+KtParameter(205,223): 'explicit: Explicit'
+  NO_CANDIDATES
+
+KtTypeReference(215,223): 'Explicit'
+  NO_CANDIDATES
+
+KtUserType(215,223): 'Explicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(215,223): 'Explicit'
+  NO_CANDIDATES
+
+KtParameterList(234,251): '(regular: String)'
+  NO_CANDIDATES
+
+KtParameter(235,250): 'regular: String'
+  NO_CANDIDATES
+
+KtTypeReference(244,250): 'String'
+  NO_CANDIDATES
+
+KtUserType(244,250): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(244,250): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(252,254): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(256,324): 'context(s: String, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(256,294): 'context(s: String, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtContextReceiverList(256,294): 'context(s: String, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtParameter(264,273): 's: String'
+  NO_CANDIDATES
+
+KtTypeReference(267,273): 'String'
+  NO_CANDIDATES
+
+KtUserType(267,273): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(267,273): 'String'
+  NO_CANDIDATES
+
+KtParameter(275,293): 'explicit: Explicit'
+  NO_CANDIDATES
+
+KtTypeReference(285,293): 'Explicit'
+  NO_CANDIDATES
+
+KtUserType(285,293): 'Explicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(285,293): 'Explicit'
+  NO_CANDIDATES
+
+KtParameterList(304,321): '(regular: String)'
+  NO_CANDIDATES
+
+KtParameter(305,320): 'regular: String'
+  NO_CANDIDATES
+
+KtTypeReference(314,320): 'String'
+  NO_CANDIDATES
+
+KtUserType(314,320): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(314,320): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(322,324): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(326,627): 'context(_: Implicit, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(326,366): 'context(_: Implicit, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtContextReceiverList(326,366): 'context(_: Implicit, explicit: Explicit)'
+  NO_CANDIDATES
+
+KtParameter(334,345): '_: Implicit'
+  NO_CANDIDATES
+
+KtTypeReference(337,345): 'Implicit'
+  NO_CANDIDATES
+
+KtUserType(337,345): 'Implicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(337,345): 'Implicit'
+  NO_CANDIDATES
+
+KtParameter(347,365): 'explicit: Explicit'
+  NO_CANDIDATES
+
+KtTypeReference(357,365): 'Explicit'
+  NO_CANDIDATES
+
+KtUserType(357,365): 'Explicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(357,365): 'Explicit'
+  NO_CANDIDATES
+
+KtParameterList(386,388): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(389,627): '{'
+  NO_CANDIDATES
+
+KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(395,402): 'unnamed'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(422,440): '(regular = "str2")'
+  NO_CANDIDATES
+
+KtValueArgument(423,439): 'regular = "str2"'
+  NO_CANDIDATES
+
+KtValueArgumentName(423,430): 'regular'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(423,430): 'regular'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(433,439): '"str2"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(434,438): 'str2'
+  NO_CANDIDATES
+
+KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(445,450): 'named'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(470,488): '(regular = "str2")'
+  NO_CANDIDATES
+
+KtValueArgument(471,487): 'regular = "str2"'
+  NO_CANDIDATES
+
+KtValueArgumentName(471,478): 'regular'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(471,478): 'regular'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(481,487): '"str2"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(482,486): 'str2'
+  NO_CANDIDATES
+
+KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with unnamed>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with unnamed>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(494,501): 'unnamed'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with unnamed>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with unnamed>
+    isInBestCandidates = true
+
+KtValueArgumentList(517,558): '(explicit = Explicit(), regular = "str3")'
+  NO_CANDIDATES
+
+KtValueArgument(518,539): 'explicit = Explicit()'
+  NO_CANDIDATES
+
+KtValueArgumentName(518,526): 'explicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(518,526): 'explicit'
+  NO_CANDIDATES
+
+KtCallExpression(529,539): 'Explicit()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Explicit
+        symbol = <constructor>(): Explicit
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(529,537): 'Explicit'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Explicit
+        symbol = <constructor>(): Explicit
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(537,539): '()'
+  NO_CANDIDATES
+
+KtValueArgument(541,557): 'regular = "str3"'
+  NO_CANDIDATES
+
+KtValueArgumentName(541,548): 'regular'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(541,548): 'regular'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(551,557): '"str3"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(552,556): 'str3'
+  NO_CANDIDATES
+
+KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with named>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with named>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(563,568): 'named'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with named>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with named>
+    isInBestCandidates = true
+
+KtValueArgumentList(584,625): '(explicit = Explicit(), regular = "str3")'
+  NO_CANDIDATES
+
+KtValueArgument(585,606): 'explicit = Explicit()'
+  NO_CANDIDATES
+
+KtValueArgumentName(585,593): 'explicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(585,593): 'explicit'
+  NO_CANDIDATES
+
+KtCallExpression(596,606): 'Explicit()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Explicit
+        symbol = <constructor>(): Explicit
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(596,604): 'Explicit'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Explicit
+        symbol = <constructor>(): Explicit
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(604,606): '()'
+  NO_CANDIDATES
+
+KtValueArgument(608,624): 'regular = "str3"'
+  NO_CANDIDATES
+
+KtValueArgumentName(608,615): 'regular'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(608,615): 'regular'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(618,624): '"str3"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(619,623): 'str3'
+  NO_CANDIDATES
+
+KtNamedFunction(629,933): 'fun Implicit.receiverUsage() {'
+  NO_CANDIDATES
+
+KtTypeReference(633,641): 'Implicit'
+  NO_CANDIDATES
+
+KtUserType(633,641): 'Implicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(633,641): 'Implicit'
+  NO_CANDIDATES
+
+KtParameterList(655,657): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(658,933): '{'
+  NO_CANDIDATES
+
+KtCallExpression(664,794): 'with(Explicit()) {'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+        valueParameters = [
+          KaVariableSignature:
+            name = receiver
+            receiverType = null
+            returnType = Explicit
+            symbol = receiver: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = kotlin.Function1<Explicit, kotlin.Unit>
+            symbol = block: kotlin.Function1<T, R>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/with
+      typeArgumentsMapping = {
+        T -> (Explicit),
+        R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = receiver
+          receiverType = null
+          returnType = Explicit
+          symbol = receiver: T
+          contextParameters = []
+          callableId = null),
+        {
+                unnamed/*explicit regular*/(regular = "str2")
+                named/*explicit regular*/(regular = "str2")
+            } -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = kotlin.Function1<Explicit, kotlin.Unit>
+          symbol = block: kotlin.Function1<T, R>
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(664,668): 'with'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+        valueParameters = [
+          KaVariableSignature:
+            name = receiver
+            receiverType = null
+            returnType = Explicit
+            symbol = receiver: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = kotlin.Function1<Explicit, kotlin.Unit>
+            symbol = block: kotlin.Function1<T, R>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/with
+      typeArgumentsMapping = {
+        T -> (Explicit),
+        R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        Explicit() -> (KaVariableSignature:
+          name = receiver
+          receiverType = null
+          returnType = Explicit
+          symbol = receiver: T
+          contextParameters = []
+          callableId = null),
+        {
+                unnamed/*explicit regular*/(regular = "str2")
+                named/*explicit regular*/(regular = "str2")
+            } -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = kotlin.Function1<Explicit, kotlin.Unit>
+          symbol = block: kotlin.Function1<T, R>
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(668,680): '(Explicit())'
+  NO_CANDIDATES
+
+KtValueArgument(669,679): 'Explicit()'
+  NO_CANDIDATES
+
+KtCallExpression(669,679): 'Explicit()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Explicit
+        symbol = <constructor>(): Explicit
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(669,677): 'Explicit'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Explicit
+        symbol = <constructor>(): Explicit
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(677,679): '()'
+  NO_CANDIDATES
+
+KtLambdaArgument(681,794): '{'
+  NO_CANDIDATES
+
+KtLambdaExpression(681,794): '{'
+  NO_CANDIDATES
+
+KtFunctionLiteral(681,794): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(691,788): 'unnamed/*explicit regular*/(regular = "str2")'
+  NO_CANDIDATES
+
+KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(691,698): 'unnamed'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(718,736): '(regular = "str2")'
+  NO_CANDIDATES
+
+KtValueArgument(719,735): 'regular = "str2"'
+  NO_CANDIDATES
+
+KtValueArgumentName(719,726): 'regular'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(719,726): 'regular'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(729,735): '"str2"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(730,734): 'str2'
+  NO_CANDIDATES
+
+KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(745,750): 'named'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str2" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(770,788): '(regular = "str2")'
+  NO_CANDIDATES
+
+KtValueArgument(771,787): 'regular = "str2"'
+  NO_CANDIDATES
+
+KtValueArgumentName(771,778): 'regular'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(771,778): 'regular'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(781,787): '"str2"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(782,786): 'str2'
+  NO_CANDIDATES
+
+KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with unnamed>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with unnamed>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(800,807): 'unnamed'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with unnamed>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /unnamed(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /unnamed
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with unnamed>
+    isInBestCandidates = true
+
+KtValueArgumentList(823,864): '(explicit = Explicit(), regular = "str3")'
+  NO_CANDIDATES
+
+KtValueArgument(824,845): 'explicit = Explicit()'
+  NO_CANDIDATES
+
+KtValueArgumentName(824,832): 'explicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(824,832): 'explicit'
+  NO_CANDIDATES
+
+KtCallExpression(835,845): 'Explicit()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Explicit
+        symbol = <constructor>(): Explicit
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(835,843): 'Explicit'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Explicit
+        symbol = <constructor>(): Explicit
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(843,845): '()'
+  NO_CANDIDATES
+
+KtValueArgument(847,863): 'regular = "str3"'
+  NO_CANDIDATES
+
+KtValueArgumentName(847,854): 'regular'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(847,854): 'regular'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(857,863): '"str3"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(858,862): 'str3'
+  NO_CANDIDATES
+
+KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with named>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with named>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(869,874): 'named'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with named>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /named(regular: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = regular
+            receiverType = null
+            returnType = kotlin.String
+            symbol = regular: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /named
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str3" -> (KaVariableSignature:
+          name = regular
+          receiverType = null
+          returnType = kotlin.String
+          symbol = regular: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with named>
+    isInBestCandidates = true
+
+KtValueArgumentList(890,931): '(explicit = Explicit(), regular = "str3")'
+  NO_CANDIDATES
+
+KtValueArgument(891,912): 'explicit = Explicit()'
+  NO_CANDIDATES
+
+KtValueArgumentName(891,899): 'explicit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(891,899): 'explicit'
+  NO_CANDIDATES
+
+KtCallExpression(902,912): 'Explicit()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Explicit
+        symbol = <constructor>(): Explicit
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(902,910): 'Explicit'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Explicit
+        symbol = <constructor>(): Explicit
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(910,912): '()'
+  NO_CANDIDATES
+
+KtValueArgument(914,930): 'regular = "str3"'
+  NO_CANDIDATES
+
+KtValueArgumentName(914,921): 'regular'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(914,921): 'regular'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(924,930): '"str3"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(925,929): 'str3'
+  NO_CANDIDATES

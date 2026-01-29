@@ -17008,6 +17008,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("av24_wrapped_correct_fqName.kt")
+        public void testAv24_wrapped_correct_fqName() {
+          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av24_wrapped_correct_fqName.kt");
+        }
+
+        @Test
         @TestMetadata("correctContinuation.kt")
         public void testCorrectContinuation() {
           runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/correctContinuation.kt");
@@ -18057,6 +18063,22 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @TestMetadata("kt14357.kt")
     public void testKt14357() {
       runTest("compiler/testData/codegen/box/deadCodeElimination/kt14357.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/debugExperience")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DebugExperience {
+    @Test
+    public void testAllFilesPresentInDebugExperience() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/debugExperience"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("internalLocalsAreRenamed.kt")
+    public void testInternalLocalsAreRenamed() {
+      runTest("compiler/testData/codegen/box/debugExperience/internalLocalsAreRenamed.kt");
     }
   }
 
@@ -28308,6 +28330,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("coercionToUnitBoxing.kt")
+    public void testCoercionToUnitBoxing() {
+      runTest("compiler/testData/codegen/box/inline/coercionToUnitBoxing.kt");
+    }
+
+    @Test
     @TestMetadata("correctOrderFunctionReference.kt")
     public void testCorrectOrderFunctionReference() {
       runTest("compiler/testData/codegen/box/inline/correctOrderFunctionReference.kt");
@@ -28527,18 +28555,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @TestMetadata("inlineCtor.kt")
     public void testInlineCtor() {
       runTest("compiler/testData/codegen/box/inline/inlineCtor.kt");
-    }
-
-    @Test
-    @TestMetadata("inlineFunctionOverridesAbstractMethodWithDefaultValue.kt")
-    public void testInlineFunctionOverridesAbstractMethodWithDefaultValue() {
-      runTest("compiler/testData/codegen/box/inline/inlineFunctionOverridesAbstractMethodWithDefaultValue.kt");
-    }
-
-    @Test
-    @TestMetadata("inlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationEnabled.kt")
-    public void testInlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationEnabled() {
-      runTest("compiler/testData/codegen/box/inline/inlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationEnabled.kt");
     }
 
     @Test
@@ -34942,6 +34958,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("inCallableReferenceLHS.kt")
+    public void testInCallableReferenceLHS() {
+      runTest("compiler/testData/codegen/box/innerClass/inCallableReferenceLHS.kt");
+    }
+
+    @Test
     @TestMetadata("inheritanceMultipleModules1.kt")
     public void testInheritanceMultipleModules1() {
       runTest("compiler/testData/codegen/box/innerClass/inheritanceMultipleModules1.kt");
@@ -35445,6 +35467,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @TestMetadata("interface0.kt")
     public void testInterface0() {
       runTest("compiler/testData/codegen/box/interfaceCallsNCasts/interface0.kt");
+    }
+
+    @Test
+    @TestMetadata("kt83308.kt")
+    public void testKt83308() {
+      runTest("compiler/testData/codegen/box/interfaceCallsNCasts/kt83308.kt");
     }
   }
 
@@ -36201,15 +36229,33 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("adaptedFunRefWithCoercionToUnitClassSam.kt")
+        public void testAdaptedFunRefWithCoercionToUnitClassSam() {
+          runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/adaptedFunRefWithCoercionToUnitClassSam.kt");
+        }
+
+        @Test
         @TestMetadata("adaptedFunRefWithDefaultParameters.kt")
         public void testAdaptedFunRefWithDefaultParameters() {
           runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/adaptedFunRefWithDefaultParameters.kt");
         }
 
         @Test
+        @TestMetadata("adaptedFunRefWithDefaultParametersClassSam.kt")
+        public void testAdaptedFunRefWithDefaultParametersClassSam() {
+          runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/adaptedFunRefWithDefaultParametersClassSam.kt");
+        }
+
+        @Test
         @TestMetadata("adaptedFunRefWithVararg.kt")
         public void testAdaptedFunRefWithVararg() {
           runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/adaptedFunRefWithVararg.kt");
+        }
+
+        @Test
+        @TestMetadata("adaptedFunRefWithVarargClassSam.kt")
+        public void testAdaptedFunRefWithVarargClassSam() {
+          runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/adaptedFunRefWithVarargClassSam.kt");
         }
 
         @Test
@@ -39142,12 +39188,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
-    @TestMetadata("lambdaWithoutNonLocalControlflow.kt")
-    public void testLambdaWithoutNonLocalControlflow() {
-      runTest("compiler/testData/codegen/box/js/lambdaWithoutNonLocalControlflow.kt");
-    }
-
-    @Test
     @TestMetadata("MultiDollarInterpolation.kt")
     public void testMultiDollarInterpolation() {
       runTest("compiler/testData/codegen/box/js/MultiDollarInterpolation.kt");
@@ -41773,6 +41813,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @TestMetadata("defaultParameterInConstructor.kt")
     public void testDefaultParameterInConstructor() {
       runTest("compiler/testData/codegen/box/localClasses/defaultParameterInConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("inCallableReferenceLHS.kt")
+    public void testInCallableReferenceLHS() {
+      runTest("compiler/testData/codegen/box/localClasses/inCallableReferenceLHS.kt");
     }
 
     @Test
@@ -60452,6 +60498,18 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("samWithAbstractToString2.kt")
+    public void testSamWithAbstractToString2() {
+      runTest("compiler/testData/codegen/box/sam/samWithAbstractToString2.kt");
+    }
+
+    @Test
+    @TestMetadata("samWithAbstractToString3.kt")
+    public void testSamWithAbstractToString3() {
+      runTest("compiler/testData/codegen/box/sam/samWithAbstractToString3.kt");
+    }
+
+    @Test
     @TestMetadata("smartCastSamConversion.kt")
     public void testSmartCastSamConversion() {
       runTest("compiler/testData/codegen/box/sam/smartCastSamConversion.kt");
@@ -66604,6 +66662,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("kt83740.kt")
+    public void testKt83740() {
+      runTest("compiler/testData/codegen/box/when/kt83740.kt");
+    }
+
+    @Test
     @TestMetadata("longCondition.kt")
     public void testLongCondition() {
       runTest("compiler/testData/codegen/box/when/longCondition.kt");
@@ -66625,6 +66689,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @TestMetadata("multipleEntries.kt")
     public void testMultipleEntries() {
       runTest("compiler/testData/codegen/box/when/multipleEntries.kt");
+    }
+
+    @Test
+    @TestMetadata("noCachingFunctionCallBetweenIfBranches.kt")
+    public void testNoCachingFunctionCallBetweenIfBranches() {
+      runTest("compiler/testData/codegen/box/when/noCachingFunctionCallBetweenIfBranches.kt");
     }
 
     @Test

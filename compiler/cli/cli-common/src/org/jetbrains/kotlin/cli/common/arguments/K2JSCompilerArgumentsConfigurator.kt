@@ -28,8 +28,8 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
             )
         }
 
-        super.configureAnalysisFlags(arguments, collector, languageVersion).also {
-            it[allowFullyQualifiedNameInKClass] = wasm && wasmKClassFqn //Only enabled WASM BE supports this flag
+        super.configureAnalysisFlags(arguments, collector, languageVersion).apply {
+            putAnalysisFlag(allowFullyQualifiedNameInKClass, wasm && wasmKClassFqn) //Only enabled WASM BE supports this flag
         }
     }
 

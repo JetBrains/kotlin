@@ -2,22 +2,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
   KaCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
-        argumentMapping = {
-          i -> (KaVariableSignature:
-            name = i
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = i: kotlin.Int
-            contextParameters = []
-            callableId = null),
-          j -> (KaVariableSignature:
-            name = j
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = j: kotlin.Int
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -44,17 +29,25 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           ]
           contextParameters = []
           callableId = null
-        typeArgumentsMapping = {},
-      KaDelegatedConstructorCall:
-        argumentMapping = {
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           i -> (KaVariableSignature:
-            name = p
+            name = i
             receiverType = null
             returnType = kotlin.Int
-            symbol = p: kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null),
+          j -> (KaVariableSignature:
+            name = j
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = j: kotlin.Int
             contextParameters = []
             callableId = null)
-        }
+        },
+      KaDelegatedConstructorCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -75,6 +68,15 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          i -> (KaVariableSignature:
+            name = p
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p: kotlin.Int
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     public constructor Sub(p: Int) defined in Sub

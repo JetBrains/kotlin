@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.kapt.test
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
@@ -92,12 +92,15 @@ class KaptEnvironmentConfigurator(
 }
 
 class KaptRegularExtensionForTestConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
+    override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration,
+    ) {
         val analysisExtension = object : PartialAnalysisHandlerExtension() {
             override val analyzeDefaultParameterValues: Boolean
                 get() = testServices.kaptOptionsProvider[module][KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
         }
-        AnalysisHandlerExtension.registerExtension(project, analysisExtension)
-        StorageComponentContainerContributor.registerExtension(project, KaptComponentRegistrar.KaptComponentContributor(analysisExtension))
+        AnalysisHandlerExtension.registerExtension(analysisExtension)
+        StorageComponentContainerContributor.registerExtension(KaptComponentRegistrar.KaptComponentContributor(analysisExtension))
     }
 }

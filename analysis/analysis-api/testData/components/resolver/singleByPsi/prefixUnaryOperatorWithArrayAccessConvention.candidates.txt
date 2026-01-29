@@ -4,7 +4,7 @@ KtPrefixExpression(128,136): '++m["a"]'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationCall = KaSimpleFunctionCall:
-          argumentMapping = {}
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = m["a"]
@@ -19,17 +19,10 @@ KtPrefixExpression(128,136): '++m["a"]'
             contextParameters = []
             callableId = kotlin/Int.inc
           typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = PREFIX
       getterCall = KaSimpleFunctionCall:
-        argumentMapping = {
-          "a" -> (KaVariableSignature:
-            name = k
-            receiverType = null
-            returnType = kotlin.String
-            symbol = k: K
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
@@ -52,19 +45,20 @@ KtPrefixExpression(128,136): '++m["a"]'
           contextParameters = []
           callableId = /MyMap.get
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "a" -> (KaVariableSignature:
+            name = k
+            receiverType = null
+            returnType = kotlin.String
+            symbol = k: K
+            contextParameters = []
+            callableId = null)
+        }
       indexArguments = [
         "a"
       ]
       setterCall = KaSimpleFunctionCall:
-        argumentMapping = {
-          "a" -> (KaVariableSignature:
-            name = v
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = v: V
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
@@ -94,4 +88,13 @@ KtPrefixExpression(128,136): '++m["a"]'
           contextParameters = []
           callableId = /MyMap.set
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "a" -> (KaVariableSignature:
+            name = v
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = v: V
+            contextParameters = []
+            callableId = null)
+        }
     isInBestCandidates = true

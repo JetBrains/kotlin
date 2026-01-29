@@ -304,7 +304,7 @@ KtProperty(393,418): 'val foo = JavaClass.foo()'
 KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -316,29 +316,15 @@ KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
         contextParameters = []
         callableId = /JavaClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(403,412): 'JavaClass'
   null
 
 KtCallExpression(413,418): 'foo()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MySealed!
-      symbol = /JavaClass.foo(): MySealed!
-      valueParameters = []
-      contextParameters = []
-      callableId = /JavaClass.foo
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(413,416): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -350,6 +336,24 @@ KtNameReferenceExpression(413,416): 'foo'
         contextParameters = []
         callableId = /JavaClass.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(413,416): 'foo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed!
+        symbol = /JavaClass.foo(): MySealed!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(416,418): '()'
   null

@@ -53,9 +53,9 @@ KtSuperTypeList(150,168): 'SealedGeneric<T>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -70,12 +70,13 @@ KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
       typeArgumentsMapping = {
         T -> (T)
       }
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -90,6 +91,7 @@ KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
       typeArgumentsMapping = {
         T -> (T)
       }
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(150,166): 'SealedGeneric<T>'
@@ -150,9 +152,9 @@ KtSuperTypeList(209,227): 'SealedGeneric<T>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -167,12 +169,13 @@ KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
       typeArgumentsMapping = {
         T -> (T)
       }
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -187,6 +190,7 @@ KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
       typeArgumentsMapping = {
         T -> (T)
       }
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(209,225): 'SealedGeneric<T>'

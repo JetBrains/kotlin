@@ -97,6 +97,10 @@ fun loweringsOfTheFirstPhase(
             this += ::createInlineFunctionSerializationPreProcessing
             this += ::RedundantCastsRemoverLowering
             this += ::createValidateIrAfterInliningAllFunctionsPhase
+        } else {
+            // Drawback: without IR Inliner, no invocation of PreSerializationPrivateFunctionInlining happens,
+            //           so InlineDeclarationCheckerLowering won't report any *CASCADING* diagnostics.
+            this += ::InlineDeclarationCheckerLowering
         }
     }
 }

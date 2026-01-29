@@ -2,15 +2,7 @@ KtCallExpression(153,177): 'Annotation(["v1", "v2"])'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          ["v1", "v2"] -> (KaVariableSignature:
-            name = strings
-            receiverType = null
-            returnType = kotlin.String
-            symbol = vararg strings: kotlin.String
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -30,5 +22,14 @@ KtCallExpression(153,177): 'Annotation(["v1", "v2"])'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          ["v1", "v2"] -> (KaVariableSignature:
+            name = strings
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg strings: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Array<String>', but 'String' was expected.>

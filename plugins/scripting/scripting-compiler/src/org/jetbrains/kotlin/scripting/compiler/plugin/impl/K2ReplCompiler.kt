@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -126,7 +127,7 @@ class K2ReplCompiler(
             }
             compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
             val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
-            val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
+            val extensionRegistrars = compilerContext.environment.configuration.getCompilerExtensions(FirExtensionRegistrar)
             val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
 
             val moduleDataProvider = ReplModuleDataProvider(classpath.map(File::toPath))
@@ -314,7 +315,7 @@ private fun compileImpl(
         state.compilerContext.environment.updateClasspath(newClassPath.map { JvmClasspathRoot(it.toFile()) })
     }
 
-    val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
+    val extensionRegistrars = compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar)
     if (libModuleData != null) {
         val projectEnvironment = state.sessionFactoryContext.projectEnvironment
         val searchScope = state.moduleDataProvider.getModuleDataPaths(libModuleData)?.let { paths ->

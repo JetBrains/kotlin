@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 object KotlinToJVMBytecodeCompiler {
-    var customClassBuilderFactory = CompilerConfigurationKey.create<ClassBuilderFactory>("Custom ClassBuilderFactory")
+    val customClassBuilderFactory = CompilerConfigurationKey.create<ClassBuilderFactory>("customClassBuilderFactory")
 
     internal fun compileModules(
         environment: KotlinCoreEnvironment,
@@ -280,7 +280,6 @@ object KotlinToJVMBytecodeCompiler {
         val codegenFactory = JvmIrCodegenFactory(configuration)
         val backendInput = environment.configuration.perfManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             codegenFactory.convertToIr(
-                environment.project,
                 environment.getSourceFiles(),
                 configuration,
                 result.moduleDescriptor,

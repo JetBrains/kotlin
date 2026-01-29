@@ -35,25 +35,9 @@ KtSuperTypeList(189,199): 'MySealed()'
   null
 
 KtSuperTypeCallEntry(189,199): 'MySealed()'
-  KaDelegatedConstructorCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MySealed
-      symbol = <constructor>(): MySealed
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(189,197): 'MySealed'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -66,6 +50,25 @@ KtConstructorCalleeExpression(189,197): 'MySealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstructorCalleeExpression(189,197): 'MySealed'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed
+        symbol = <constructor>(): MySealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(189,197): 'MySealed'
   null
@@ -76,7 +79,7 @@ KtUserType(189,197): 'MySealed'
 KtNameReferenceExpression(189,197): 'MySealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -89,6 +92,7 @@ KtNameReferenceExpression(189,197): 'MySealed'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(197,199): '()'
   null
@@ -163,24 +167,7 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = receiver
-            receiverType = null
-            returnType = MyEnum
-            symbol = receiver: T
-            contextParameters = []
-            callableId = null),
-          {
-                  foo()
-              } -> (KaVariableSignature:
-            name = block
-            receiverType = null
-            returnType = kotlin.Function1<MyEnum, kotlin.Unit>
-            symbol = block: kotlin.Function1<T, R>
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -209,6 +196,24 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
         typeArgumentsMapping = {
           T -> (MyEnum),
           R -> (kotlin.Unit)
+        }
+        valueArgumentMapping = {
+          EnumValue1 -> (KaVariableSignature:
+            name = receiver
+            receiverType = null
+            returnType = MyEnum
+            symbol = receiver: T
+            contextParameters = []
+            callableId = null),
+          {
+                  foo()
+              } -> (KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = kotlin.Function1<MyEnum, kotlin.Unit>
+            symbol = block: kotlin.Function1<T, R>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
@@ -217,24 +222,7 @@ KtNameReferenceExpression(299,303): 'with'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = receiver
-            receiverType = null
-            returnType = MyEnum
-            symbol = receiver: T
-            contextParameters = []
-            callableId = null),
-          {
-                  foo()
-              } -> (KaVariableSignature:
-            name = block
-            receiverType = null
-            returnType = kotlin.Function1<MyEnum, kotlin.Unit>
-            symbol = block: kotlin.Function1<T, R>
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -263,6 +251,24 @@ KtNameReferenceExpression(299,303): 'with'
         typeArgumentsMapping = {
           T -> (MyEnum),
           R -> (kotlin.Unit)
+        }
+        valueArgumentMapping = {
+          EnumValue1 -> (KaVariableSignature:
+            name = receiver
+            receiverType = null
+            returnType = MyEnum
+            symbol = receiver: T
+            contextParameters = []
+            callableId = null),
+          {
+                  foo()
+              } -> (KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = kotlin.Function1<MyEnum, kotlin.Unit>
+            symbol = block: kotlin.Function1<T, R>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
@@ -321,20 +327,7 @@ KtCallExpression(339,344): 'foo()'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = /foo
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -346,6 +339,21 @@ KtCallExpression(339,344): 'foo()'
           contextParameters = []
           callableId = /foo
         typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public fun foo(): Unit defined in root package in file contextParameters.kt
@@ -355,20 +363,7 @@ KtNameReferenceExpression(339,342): 'foo'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = /foo
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -380,6 +375,21 @@ KtNameReferenceExpression(339,342): 'foo'
           contextParameters = []
           callableId = /foo
         typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public fun foo(): Unit defined in root package in file contextParameters.kt
@@ -392,24 +402,7 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          InheritorObject -> (KaVariableSignature:
-            name = receiver
-            receiverType = null
-            returnType = MySealed
-            symbol = receiver: T
-            contextParameters = []
-            callableId = null),
-          {
-                  foo()
-              } -> (KaVariableSignature:
-            name = block
-            receiverType = null
-            returnType = kotlin.Function1<MySealed, kotlin.Unit>
-            symbol = block: kotlin.Function1<T, R>
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -438,6 +431,24 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
         typeArgumentsMapping = {
           T -> (MySealed),
           R -> (kotlin.Unit)
+        }
+        valueArgumentMapping = {
+          InheritorObject -> (KaVariableSignature:
+            name = receiver
+            receiverType = null
+            returnType = MySealed
+            symbol = receiver: T
+            contextParameters = []
+            callableId = null),
+          {
+                  foo()
+              } -> (KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = kotlin.Function1<MySealed, kotlin.Unit>
+            symbol = block: kotlin.Function1<T, R>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
@@ -446,24 +457,7 @@ KtNameReferenceExpression(356,360): 'with'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          InheritorObject -> (KaVariableSignature:
-            name = receiver
-            receiverType = null
-            returnType = MySealed
-            symbol = receiver: T
-            contextParameters = []
-            callableId = null),
-          {
-                  foo()
-              } -> (KaVariableSignature:
-            name = block
-            receiverType = null
-            returnType = kotlin.Function1<MySealed, kotlin.Unit>
-            symbol = block: kotlin.Function1<T, R>
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -492,6 +486,24 @@ KtNameReferenceExpression(356,360): 'with'
         typeArgumentsMapping = {
           T -> (MySealed),
           R -> (kotlin.Unit)
+        }
+        valueArgumentMapping = {
+          InheritorObject -> (KaVariableSignature:
+            name = receiver
+            receiverType = null
+            returnType = MySealed
+            symbol = receiver: T
+            contextParameters = []
+            callableId = null),
+          {
+                  foo()
+              } -> (KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = kotlin.Function1<MySealed, kotlin.Unit>
+            symbol = block: kotlin.Function1<T, R>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
@@ -550,20 +562,7 @@ KtCallExpression(403,408): 'foo()'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = /foo
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -575,6 +574,21 @@ KtCallExpression(403,408): 'foo()'
           contextParameters = []
           callableId = /foo
         typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public fun foo(): Unit defined in root package in file contextParameters.kt
@@ -584,20 +598,7 @@ KtNameReferenceExpression(403,406): 'foo'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = /foo
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -609,6 +610,21 @@ KtNameReferenceExpression(403,406): 'foo'
           contextParameters = []
           callableId = /foo
         typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public fun foo(): Unit defined in root package in file contextParameters.kt
@@ -678,24 +694,7 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = receiver
-            receiverType = null
-            returnType = MyEnum
-            symbol = receiver: T
-            contextParameters = []
-            callableId = null),
-          {
-                  "".a
-              } -> (KaVariableSignature:
-            name = block
-            receiverType = null
-            returnType = kotlin.Function1<MyEnum, kotlin.Unit>
-            symbol = block: kotlin.Function1<T, R>
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -724,6 +723,24 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
         typeArgumentsMapping = {
           T -> (MyEnum),
           R -> (kotlin.Unit)
+        }
+        valueArgumentMapping = {
+          EnumValue1 -> (KaVariableSignature:
+            name = receiver
+            receiverType = null
+            returnType = MyEnum
+            symbol = receiver: T
+            contextParameters = []
+            callableId = null),
+          {
+                  "".a
+              } -> (KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = kotlin.Function1<MyEnum, kotlin.Unit>
+            symbol = block: kotlin.Function1<T, R>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
@@ -732,24 +749,7 @@ KtNameReferenceExpression(507,511): 'with'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = receiver
-            receiverType = null
-            returnType = MyEnum
-            symbol = receiver: T
-            contextParameters = []
-            callableId = null),
-          {
-                  "".a
-              } -> (KaVariableSignature:
-            name = block
-            receiverType = null
-            returnType = kotlin.Function1<MyEnum, kotlin.Unit>
-            symbol = block: kotlin.Function1<T, R>
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -778,6 +778,24 @@ KtNameReferenceExpression(507,511): 'with'
         typeArgumentsMapping = {
           T -> (MyEnum),
           R -> (kotlin.Unit)
+        }
+        valueArgumentMapping = {
+          EnumValue1 -> (KaVariableSignature:
+            name = receiver
+            receiverType = null
+            returnType = MyEnum
+            symbol = receiver: T
+            contextParameters = []
+            callableId = null),
+          {
+                  "".a
+              } -> (KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = kotlin.Function1<MyEnum, kotlin.Unit>
+            symbol = block: kotlin.Function1<T, R>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>

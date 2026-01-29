@@ -59,6 +59,8 @@ where advanced options include:
   -Xwasm-generate-wat        Generate a .wat file.
   -Xwasm-ic-cache-readonly   Do not commit IC cache updates.
   -Xwasm-included-module-only Compile only a module passed using `-include` option.
+  -Xwasm-internal-local-variable-prefix
+                             Prefix to use for internally generated local variables.
   -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
   -Xwasm-no-jstag            Don't use WebAssembly.JSTag for throwing and catching exceptions
   -Xwasm-preserve-ic-order   Preserve wasm file structure between IC runs.
@@ -196,6 +198,7 @@ where advanced options include:
   -Xphases-to-validate-after Validate the backend's state after these phases.
   -Xphases-to-validate-before Validate the backend's state before these phases.
   -Xplugin=<path>            Load plugins from the given classpath.
+  -Xprint-configuration      Print compiler configuration.
   -Xprofile-phases           Profile backend phases.
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.

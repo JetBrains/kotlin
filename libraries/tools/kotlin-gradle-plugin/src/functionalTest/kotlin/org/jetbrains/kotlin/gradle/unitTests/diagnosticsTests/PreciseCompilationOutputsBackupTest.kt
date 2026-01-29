@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
-import org.junit.Test
+import kotlin.test.Test
 
 class PreciseCompilationOutputsBackupTest {
     @Test

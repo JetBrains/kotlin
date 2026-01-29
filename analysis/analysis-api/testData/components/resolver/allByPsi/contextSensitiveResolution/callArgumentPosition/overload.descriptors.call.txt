@@ -23,25 +23,9 @@ KtSuperTypeList(143,152): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(143,152): 'MyClass()'
-  KaDelegatedConstructorCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    kind = SUPER_CALL
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(143,150): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -54,6 +38,25 @@ KtConstructorCalleeExpression(143,150): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstructorCalleeExpression(143,150): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(143,150): 'MyClass'
   null
@@ -64,7 +67,7 @@ KtUserType(143,150): 'MyClass'
 KtNameReferenceExpression(143,150): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -77,6 +80,7 @@ KtNameReferenceExpression(143,150): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(150,152): '()'
   null
@@ -257,48 +261,9 @@ KtBlockExpression(402,429): '{ println("Enum version") }'
   null
 
 KtCallExpression(404,427): 'println("Enum version")'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      "Enum version" -> (KaVariableSignature:
-        name = message
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = message: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/io/println
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(404,411): 'println'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -318,6 +283,48 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(404,411): 'println'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = message: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/io/println
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(411,427): '("Enum version")'
   null
@@ -341,48 +348,9 @@ KtBlockExpression(446,486): '{ println("Without arguments version") }'
   null
 
 KtCallExpression(448,484): 'println("Without arguments version")'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      "Without arguments version" -> (KaVariableSignature:
-        name = message
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = message: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/io/println
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(448,455): 'println'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -402,6 +370,48 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(448,455): 'println'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = message: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/io/println
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(455,484): '("Without arguments version")'
   null
@@ -425,48 +435,9 @@ KtBlockExpression(500,529): '{'
   null
 
 KtCallExpression(506,527): 'overload2(EnumValue1)'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      EnumValue1 -> (KaVariableSignature:
-        name = arg
-        receiverType = null
-        returnType = MyEnum
-        symbol = arg: MyEnum
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /overload2(arg: MyEnum): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /overload2
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(506,515): 'overload2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -486,6 +457,48 @@ KtNameReferenceExpression(506,515): 'overload2'
         contextParameters = []
         callableId = /overload2
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(506,515): 'overload2'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /overload2(arg: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyEnum
+            symbol = arg: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /overload2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(515,527): '(EnumValue1)'
   null
@@ -520,48 +533,9 @@ KtBlockExpression(557,584): '{ println("Enum version") }'
   null
 
 KtCallExpression(559,582): 'println("Enum version")'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      "Enum version" -> (KaVariableSignature:
-        name = message
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = message: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/io/println
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(559,566): 'println'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -581,6 +555,48 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(559,566): 'println'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = message: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/io/println
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(566,582): '("Enum version")'
   null
@@ -631,48 +647,9 @@ KtBlockExpression(628,659): '{ println("With 2 arguments") }'
   null
 
 KtCallExpression(630,657): 'println("With 2 arguments")'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      "With 2 arguments" -> (KaVariableSignature:
-        name = message
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = message: kotlin.Any?
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/io/println
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(630,637): 'println'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -692,6 +669,48 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(630,637): 'println'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = message: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/io/println
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(637,657): '("With 2 arguments")'
   null
@@ -715,48 +734,9 @@ KtBlockExpression(673,702): '{'
   null
 
 KtCallExpression(679,700): 'overload3(EnumValue1)'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      EnumValue1 -> (KaVariableSignature:
-        name = arg
-        receiverType = null
-        returnType = MyEnum
-        symbol = arg: MyEnum
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /overload3(arg: MyEnum): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /overload3
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(679,688): 'overload3'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -776,6 +756,48 @@ KtNameReferenceExpression(679,688): 'overload3'
         contextParameters = []
         callableId = /overload3
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(679,688): 'overload3'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /overload3(arg: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyEnum
+            symbol = arg: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /overload3
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(688,700): '(EnumValue1)'
   null

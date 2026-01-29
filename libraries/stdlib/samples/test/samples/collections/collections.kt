@@ -458,6 +458,66 @@ class Collections {
             assertEquals(-1, list.lastIndexOf('e'))
         }
 
+        @Sample
+        fun listIterator() {
+            val list = listOf('a', 'b')
+            val iterator = list.listIterator()
+
+            // "Cursor" is at the beginning of the list,
+            // so there is no previous element, only a next one
+            assertFalse(iterator.hasPrevious())
+            assertTrue(iterator.hasNext())
+
+            // Let's scan the list in a forward direction
+            assertPrints(iterator.next(), "a")
+            assertPrints(iterator.next(), "b")
+
+            // Cursor is past the end of the list,
+            // so there is no next element, only a previous one
+            assertTrue(iterator.hasPrevious())
+            assertFalse(iterator.hasNext())
+
+            // Let's scan the list backwards, starting from the end
+            assertPrints(iterator.previous(), "b")
+            assertPrints(iterator.previous(), "a")
+
+            // We ran out of elements
+            assertFailsWith<NoSuchElementException> { iterator.previous() }
+
+            // Empty list has an empty iterator
+            val emptyListIterator = emptyList<String>().listIterator()
+            assertFalse(emptyListIterator.hasNext())
+            assertFalse(emptyListIterator.hasPrevious())
+        }
+
+        @Sample
+        fun listIteratorWithIndex() {
+            val list = listOf('a', 'b', 'c')
+
+            // The iterator will scan elements starting from 'c' (the element at the index = 2)
+            val sublistIterator = list.listIterator(index = 2)
+            // However, previous elements are also accessible
+            assertTrue(sublistIterator.hasPrevious())
+            // One step forward
+            assertPrints(sublistIterator.next(), "c")
+            // Two steps backward
+            assertPrints(sublistIterator.previous(), "c")
+            assertPrints(sublistIterator.previous(), "b")
+
+            // If the index is equal to the length of the list,
+            // the iterator's "cursor" will point past the last element and only previous elements
+            // will be accessible
+            val pastLastIterator = list.listIterator(index = 3)
+            assertTrue(pastLastIterator.hasPrevious())
+            assertFalse(pastLastIterator.hasNext())
+            assertPrints(pastLastIterator.previous(), "c")
+            assertPrints(pastLastIterator.previous(), "b")
+
+            // It's an error to use indices outside of list bounds
+            assertFailsWith<IndexOutOfBoundsException> { list.listIterator(-1) }
+            assertFailsWith<IndexOutOfBoundsException> { list.listIterator(list.size + 1) }
+        }
+
         class ArrayList {
 
             @Sample

@@ -48,7 +48,7 @@ private fun Project.ideModuleVersion(forIde: Boolean) = when (IdeVersionConfigur
 }
 
 fun Project.intellijSdkVersionForIde(): String? {
-    val majorVersion = kotlinBuildProperties.getOrNull("attachedIntellijVersion") as? String ?: return null
+    val majorVersion = kotlinBuildProperties.stringProperty("attachedIntellijVersion").orNull
     return rootProject.findProperty("versions.intellijSdk.forIde.$majorVersion") as? String
 }
 

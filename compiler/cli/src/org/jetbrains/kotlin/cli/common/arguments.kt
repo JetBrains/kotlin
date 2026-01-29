@@ -19,9 +19,6 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.javaField
 
 fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
@@ -126,40 +123,38 @@ fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompiler
 
 private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompilerArguments) {
     val languageVersion = languageVersionSettings.languageVersion
-    val defaultArguments = arguments::class.primaryConstructor!!.callBy(emptyMap())
 
-    propertiesLoop@ for (property in arguments::class.memberProperties) {
-        val propertyValue = property.getter.call(arguments)
-        val defaultPropertyValue = property.getter.call(defaultArguments)
+    propertiesLoop@ for ((explicitArgument, values) in arguments.explicitArguments) {
+        if (!explicitArgument.changesLanguageFeatures) continue@propertiesLoop
 
-        // Check if a user explicitly sets the value
-        if (propertyValue == defaultPropertyValue) continue
+        for (actualPropertyValue in values) {
+            fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
+                // At first, check if the annotation is relevant. Only Boolean and String types are allowed
+                when {
+                    // Language features can't be disabled, so it's expected if the value is changed, it's always `true`
+                    ifValueIs.isEmpty() -> require(actualPropertyValue as Boolean)
+                    else -> if (actualPropertyValue as String != ifValueIs) return false
+                }
 
-        var hasEnablesDisablesAnnotation = false
+                // At second check the necessity
+                return (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
+            }
 
-        fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
-            hasEnablesDisablesAnnotation = true
-            // At first make sure the annotation is relevant and at second check the necessity
-            return (ifValueIs.isEmpty() || ifValueIs == propertyValue.toString()) &&
-                    (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
+            explicitArgument.enablesAnnotations.forEach {
+                if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
+            }
+            explicitArgument.disablesAnnotations.forEach {
+                if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
+            }
+
+            val argValue = if (actualPropertyValue is String) "=$actualPropertyValue" else ""
+            reportDiagnostic(
+                CliDiagnostics.REDUNDANT_CLI_ARG,
+                "The argument '${explicitArgument.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
+            )
+
+            continue@propertiesLoop
         }
-
-        val javaField = property.javaField!!
-        javaField.getAnnotationsByType(Enables::class.java).forEach {
-            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
-        }
-        javaField.getAnnotationsByType(Disables::class.java).forEach {
-            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
-        }
-
-        // The checker currently supports only `Enables`, `Disables` annotations (at least one should be specified)
-        if (!hasEnablesDisablesAnnotation) continue
-
-        val argValue = if (propertyValue is String) "=$propertyValue" else ""
-        reportDiagnostic(
-            CliDiagnostics.REDUNDANT_CLI_ARG,
-            "The argument '${property.argumentAnnotation.value}${argValue}' is redundant for the current language version $languageVersion.",
-        )
     }
 }
 
@@ -186,6 +181,15 @@ fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonComp
 }
 
 fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
+    for ((key, values) in arguments.explicitArguments) {
+        if (values.size > 1) {
+            val argName = key.argument.value
+            val valuesString = values.joinToString("', '")
+            val message = "Argument '$argName' is passed multiple times: '$valuesString'. The last value will be used."
+            report(CompilerMessageSeverity.STRONG_WARNING, message)
+        }
+    }
+
     val errors = arguments.errors ?: return
     for (flag in errors.unknownExtraFlags) {
         report(CompilerMessageSeverity.STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
@@ -195,9 +199,6 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
             CompilerMessageSeverity.STRONG_WARNING,
             "Advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: $argument=..."
         )
-    }
-    for ((key, value) in errors.duplicateArguments) {
-        report(CompilerMessageSeverity.STRONG_WARNING, "Argument $key is passed multiple times. Only the last value will be used: $value")
     }
     for ((deprecatedName, newName) in errors.deprecatedArguments) {
         report(CompilerMessageSeverity.STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")

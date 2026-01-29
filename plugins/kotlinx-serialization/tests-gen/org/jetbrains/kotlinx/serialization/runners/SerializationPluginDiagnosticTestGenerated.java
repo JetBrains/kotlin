@@ -42,6 +42,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
   }
 
   @Test
+  @TestMetadata("directAccessOfGeneratedCompanion.kt")
+  public void testDirectAccessOfGeneratedCompanion() {
+    runTest("plugins/kotlinx-serialization/testData/diagnostics/directAccessOfGeneratedCompanion.kt");
+  }
+
+  @Test
   @TestMetadata("DuplicateSerialName.kt")
   public void testDuplicateSerialName() {
     runTest("plugins/kotlinx-serialization/testData/diagnostics/DuplicateSerialName.kt");

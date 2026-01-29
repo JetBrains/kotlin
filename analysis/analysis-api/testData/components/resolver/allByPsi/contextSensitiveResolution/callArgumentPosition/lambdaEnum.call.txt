@@ -109,38 +109,40 @@ KtBlockExpression(270,317): '{'
   null
 
 KtCallExpression(276,293): 'lEnum(EnumValue1)'
-  KaImplicitInvokeCall:
-    argumentMapping = {
-      EnumValue1 -> (KaVariableSignature:
-        name = arg
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lEnum
+        isSafeNavigation = false
+        type = (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
         receiverType = null
-        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
-        symbol = p1: P1
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
         contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = lEnum
-      isSafeNavigation = false
-      type = (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
           name = arg
           receiverType = null
           returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
+          callableId = null)
+      }
 
 KtNameReferenceExpression(276,281): 'lEnum'
   KaSuccessCallInfo:
@@ -186,38 +188,40 @@ KtNameReferenceExpression(282,292): 'EnumValue1'
       typeArgumentsMapping = {}
 
 KtCallExpression(298,315): 'lEnum(EnumValue2)'
-  KaImplicitInvokeCall:
-    argumentMapping = {
-      EnumValue2 -> (KaVariableSignature:
-        name = arg
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lEnum
+        isSafeNavigation = false
+        type = (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
         receiverType = null
-        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
-        symbol = p1: P1
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
         contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = lEnum
-      isSafeNavigation = false
-      type = (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-      valueParameters = [
-        KaVariableSignature:
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue2 -> (KaVariableSignature:
           name = arg
           receiverType = null
           returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
           symbol = p1: P1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
+          callableId = null)
+      }
 
 KtNameReferenceExpression(298,303): 'lEnum'
   KaSuccessCallInfo:
@@ -308,50 +312,9 @@ KtBlockExpression(381,501): '{'
   null
 
 KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      { EnumValue1 } -> (KaVariableSignature:
-        name = l
-        receiverType = null
-        returnType = () -> MyEnum
-        symbol = l: () -> T
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /receiveLambda(l: () -> T): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = l
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = l: () -> T
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /receiveLambda
-    typeArgumentsMapping = {
-      T -> (MyEnum)
-    }
-
-KtNameReferenceExpression(387,400): 'receiveLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        { EnumValue1 } -> (KaVariableSignature:
-          name = l
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = l: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -372,6 +335,50 @@ KtNameReferenceExpression(387,400): 'receiveLambda'
         callableId = /receiveLambda
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        { EnumValue1 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = l: () -> T
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(387,400): 'receiveLambda'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receiveLambda(l: () -> T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = l
+            receiverType = null
+            returnType = () -> MyEnum
+            symbol = l: () -> T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receiveLambda
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        { EnumValue1 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = l: () -> T
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(400,408): '<MyEnum>'
@@ -422,50 +429,9 @@ KtNameReferenceExpression(411,421): 'EnumValue1'
       typeArgumentsMapping = {}
 
 KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      { EnumValue3 } -> (KaVariableSignature:
-        name = l
-        receiverType = null
-        returnType = () -> MyEnum
-        symbol = l: () -> T
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /receiveLambda(l: () -> T): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = l
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = l: () -> T
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /receiveLambda
-    typeArgumentsMapping = {
-      T -> (MyEnum)
-    }
-
-KtNameReferenceExpression(428,441): 'receiveLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        { EnumValue3 } -> (KaVariableSignature:
-          name = l
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = l: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -486,6 +452,50 @@ KtNameReferenceExpression(428,441): 'receiveLambda'
         callableId = /receiveLambda
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        { EnumValue3 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = l: () -> T
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(428,441): 'receiveLambda'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receiveLambda(l: () -> T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = l
+            receiverType = null
+            returnType = () -> MyEnum
+            symbol = l: () -> T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receiveLambda
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        { EnumValue3 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = l: () -> T
+          contextParameters = []
+          callableId = null)
       }
 
 KtTypeArgumentList(441,449): '<MyEnum>'
@@ -539,15 +549,7 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          { prop } -> (KaVariableSignature:
-            name = l
-            receiverType = null
-            returnType = () -> MyEnum
-            symbol = l: () -> T
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -568,6 +570,15 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
           callableId = /receiveLambda
         typeArgumentsMapping = {
           T -> (MyEnum)
+        }
+        valueArgumentMapping = {
+          { prop } -> (KaVariableSignature:
+            name = l
+            receiverType = null
+            returnType = () -> MyEnum
+            symbol = l: () -> T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
@@ -576,15 +587,7 @@ KtNameReferenceExpression(469,482): 'receiveLambda'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          { prop } -> (KaVariableSignature:
-            name = l
-            receiverType = null
-            returnType = () -> MyEnum
-            symbol = l: () -> T
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -605,6 +608,15 @@ KtNameReferenceExpression(469,482): 'receiveLambda'
           callableId = /receiveLambda
         typeArgumentsMapping = {
           T -> (MyEnum)
+        }
+        valueArgumentMapping = {
+          { prop } -> (KaVariableSignature:
+            name = l
+            receiverType = null
+            returnType = () -> MyEnum
+            symbol = l: () -> T
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>

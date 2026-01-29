@@ -3,22 +3,21 @@ package org.jetbrains.kotlin.gradle.unitTests.uklibs
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.appleMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import kotlin.test.Test
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import kotlin.test.assertEquals
 
 class KT77539UklibSkikoResolution {
 
-    @get:Rule
-    val temporaryFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var temporaryFolder: File
 
     /** See [org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.workaroundLegacySkikoResolutionKT77539] */
     @Test

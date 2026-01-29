@@ -125,7 +125,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
 
         for ((i, param) in declaration.valueParameters.withIndex()) {
             val versionAnnotation = param.getAnnotationByClassId(StandardClassIds.Annotations.IntroducedAt, context.session)
-            val version = versionAnnotation?.getStringArgument(versionArgument, context.session)?.let(::MavenComparableVersion)
+            val version = versionAnnotation?.getStringArgument(versionArgument)?.let(::MavenComparableVersion)
 
             // after one @IntroducedAt, only trailing lambdas may not be optional
             if (version == null) {

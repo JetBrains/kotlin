@@ -1,12 +1,12 @@
-@R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>
+@R|Anno|(position = String(parameter type str))  kotlin/collections/List<@R|Anno|(position = String(nested parameter type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested parameter type str))  kotlin/String>>
   context -> FirNamedFunctionSymbol /bar
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>
+@R|Anno|(position = String(nested parameter type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested parameter type str))  kotlin/String>
   context -> FirNamedFunctionSymbol /bar
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /foo]
 
-@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String
+@R|Anno|(position = String(nested nested parameter type str))  kotlin/String
   context -> FirNamedFunctionSymbol /bar
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /foo]
 
@@ -22,11 +22,11 @@ FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypePropagation.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /foo]] fun bar(): R|@R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /foo]] fun bar(): R|@R|Anno|(position = String(parameter type str))  kotlin/collections/List<@R|Anno|(position = String(nested parameter type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested parameter type str))  kotlin/String>>| {
         ^bar R|/foo|()
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|@R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>| = @Anno[Unresolved](<strcat>(String(defaultValue ), prop#)) [ResolvedTo(RAW_FIR)] fun <anonymous>([ResolvedTo(RAW_FIR)] i: @Anno[Unresolved](<strcat>(String(anonymousFunction parameter type ), prop#)) Int): @Anno[Unresolved](<strcat>(String(anonymousFunction return type ), prop#)) Int <inline=Unknown>  {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|@R|Anno|(position = String(parameter type str))  kotlin/collections/List<@R|Anno|(position = String(nested parameter type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested parameter type str))  kotlin/String>>| = @Anno[Unresolved](<strcat>(String(defaultValue ), prop#)) [ResolvedTo(RAW_FIR)] fun <anonymous>([ResolvedTo(RAW_FIR)] i: @Anno[Unresolved](<strcat>(String(anonymousFunction parameter type ), prop#)) Int): @Anno[Unresolved](<strcat>(String(anonymousFunction return type ), prop#)) Int <inline=Unknown>  {
     }
-    ): R|@R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>| {
+    ): R|@R|Anno|(position = String(parameter type str))  kotlin/collections/List<@R|Anno|(position = String(nested parameter type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested parameter type str))  kotlin/String>>| {
         ^foo R|<local>/param|
     }

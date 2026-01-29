@@ -18,7 +18,6 @@ import kotlin.reflect.typeOf
 
 sealed class Key {
     abstract val name: String
-    abstract val description: String
     abstract val importsToAdd: List<String>
     abstract val accessorName: String
     abstract val comment: String?
@@ -26,19 +25,21 @@ sealed class Key {
     abstract val typeString: String
     abstract val types: List<KType>
 
+    abstract val optIns: List<Annotation>
+
     val capitalizedAccessorName: String
         get() = accessorName.capitalizeAsciiOnly()
 }
 
 class SimpleKey(
     override val name: String,
-    override val description: String,
     val type: KType,
     val defaultValue: String?,
     override val importsToAdd: List<String>,
     override val accessorName: String,
     override val comment: String?,
     val throwOnNull: Boolean,
+    override val optIns: List<Annotation>,
 ) : Key() {
     override val typeString: String
         get() = type.name
@@ -47,18 +48,15 @@ class SimpleKey(
         get() = listOf(type)
 }
 
-sealed class CollectionKey : Key() {
-    val mutableTypeString: String
-        get() = "Mutable$typeString"
-}
+sealed class CollectionKey : Key()
 
 class ListKey(
     override val name: String,
-    override val description: String,
     val elementType: KType,
     override val importsToAdd: List<String>,
     override val accessorName: String,
     override val comment: String?,
+    override val optIns: List<Annotation>,
 ) : CollectionKey() {
     override val typeString: String
         get() = "List<${elementType.name}>"
@@ -69,12 +67,12 @@ class ListKey(
 
 class MapKey(
     override val name: String,
-    override val description: String,
     val keyType: KType,
     val valueType: KType,
     override val importsToAdd: List<String>,
     override val accessorName: String,
     override val comment: String?,
+    override val optIns: List<Annotation>,
 ) : CollectionKey() {
     override val typeString: String
         get() = "Map<${keyType.name}, ${valueType.name}>"
@@ -90,9 +88,8 @@ class DeprecatedKey(
     override val comment: String?,
     val deprecation: Deprecated,
     val initializer: String,
+    override val optIns: List<Annotation>,
 ) : Key() {
-    override val description: String
-        get() = shouldNotBeCalled()
     override val accessorName: String
         get() = shouldNotBeCalled()
     override val typeString: String
@@ -112,12 +109,12 @@ abstract class KeysContainer(val packageName: String, val className: String) {
 
     @OptIn(PrivateForInline::class)
     inline fun <reified T : Any> key(
-        description: String,
+        comment: String? = null,
         defaultValue: String? = null,
         importsToAdd: List<String> = emptyList(),
         accessorName: String? = null,
-        comment: String? = null,
         throwOnNull: Boolean = true,
+        optIns: List<Annotation> = emptyList(),
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, Key>> {
         return PropertyDelegateProvider { _, property ->
             val name = property.name
@@ -125,32 +122,32 @@ abstract class KeysContainer(val packageName: String, val className: String) {
             val key = when (T::class.qualifiedName) {
                 "kotlin.collections.List" -> ListKey(
                     name,
-                    description,
                     elementType = type.arguments[0].type!!,
                     importsToAdd,
                     accessorName ?: name.toCamelCase(),
                     comment,
+                    optIns,
                 )
                 "kotlin.collections.Map" -> {
                     MapKey(
                         name,
-                        description,
                         keyType = type.arguments[0].type!!,
                         valueType = type.arguments[1].type!!,
                         importsToAdd,
                         accessorName ?: name.toCamelCase(),
                         comment,
+                        optIns,
                     )
                 }
                 else -> SimpleKey(
                     name,
-                    description,
                     type,
                     defaultValue,
                     importsToAdd,
                     accessorName ?: name.toCamelCase(),
                     comment,
-                    throwOnNull
+                    throwOnNull,
+                    optIns
                 )
             }
             _keys += key
@@ -164,6 +161,7 @@ abstract class KeysContainer(val packageName: String, val className: String) {
         deprecation: Deprecated,
         importsToAdd: List<String> = emptyList(),
         comment: String? = null,
+        optIns: List<Annotation> = emptyList(),
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, Key>> {
         return PropertyDelegateProvider { _, property ->
             val name = property.name
@@ -174,7 +172,8 @@ abstract class KeysContainer(val packageName: String, val className: String) {
                 importsToAdd,
                 comment,
                 deprecation,
-                initializer
+                initializer,
+                optIns,
             )
             _keys += key
             ReadOnlyProperty<Any?, Key> { _, _ -> key }

@@ -9,12 +9,7 @@ package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
-import org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION
-import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
-import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -64,7 +59,6 @@ import java.io.Serializable
 import java.net.URLClassLoader
 import java.nio.file.Path
 import java.rmi.RemoteException
-import kotlin.io.path.absolutePathString
 
 internal class JvmCompilationOperationImpl private constructor(
     override val options: Options = Options(JvmCompilationOperation::class),
@@ -127,6 +121,11 @@ internal class JvmCompilationOperationImpl private constructor(
         return org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl()
     }
 
+    @Deprecated(
+        "The shrunkClasspathSnapshot parameter is no longer required.",
+        replaceWith = ReplaceWith("snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles)"),
+        level = DeprecationLevel.WARNING
+    )
     override fun snapshotBasedIcConfigurationBuilder(
         workingDirectory: Path,
         sourcesChanges: SourcesChanges,
@@ -138,6 +137,24 @@ internal class JvmCompilationOperationImpl private constructor(
             sourcesChanges,
             dependenciesSnapshotFiles,
             shrunkClasspathSnapshot
+        )
+    }
+
+    override fun snapshotBasedIcConfigurationBuilder(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+    ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
+        return JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
+            workingDirectory,
+            sourcesChanges,
+            dependenciesSnapshotFiles,
+            /**
+             * The filename "shrunk-classpath-snapshot.bin" is a placeholder.
+             * ClasspathSnapshotFiles uses only the parent directory (workingDirectory) to create the actual file.
+             * This logic will be cleaned up with KT-83937.
+             */
+            workingDirectory.resolve("shrunk-classpath-snapshot.bin")
         )
     }
 
@@ -244,7 +261,7 @@ internal class JvmCompilationOperationImpl private constructor(
                     shutdownDelayMilliseconds = shutdownDelay
                 }
 
-                runFilesPath = executionPolicy[DAEMON_RUN_DIR_PATH].absolutePathString()
+                runFilesPath = executionPolicy[DAEMON_RUN_DIR_PATH].absolutePathStringOrThrow()
                 additionalJvmArguments += "D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=$runFilesPath"
             })
 
@@ -284,8 +301,8 @@ internal class JvmCompilationOperationImpl private constructor(
             checkJvmFirRequirements(compilerArguments)
         }
         val arguments = compilerArguments.toCompilerArguments()
-        arguments.freeArgs += sources.map { it.absolutePathString() } // TODO: pass the sources explicitly KT-62759
-        arguments.destination = destinationDirectory.absolutePathString()
+        arguments.freeArgs += sources.map { it.absolutePathStringOrThrow() } // TODO: pass the sources explicitly KT-62759
+        arguments.destination = destinationDirectory.absolutePathStringOrThrow()
         val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION) as? JvmSnapshotBasedIncrementalCompilationConfiguration
         val aggregatedIcConfigurationOptions = aggregatedIcConfiguration?.toOptions()
         val rootProjectDir = aggregatedIcConfigurationOptions?.get(ROOT_PROJECT_DIR)
@@ -329,7 +346,7 @@ internal class JvmCompilationOperationImpl private constructor(
         loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
         setupIdeaStandaloneExecution()
         val arguments = compilerArguments.toCompilerArguments().also { compilerArguments ->
-            compilerArguments.destination = destinationDirectory.absolutePathString()
+            compilerArguments.destination = destinationDirectory.absolutePathStringOrThrow()
         }
         val kotlinFilenameExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
         return when (val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION)) {
@@ -350,7 +367,7 @@ internal class JvmCompilationOperationImpl private constructor(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
     ): CompilationResult {
         val compiler = K2JVMCompiler()
-        arguments.freeArgs += sources.map { it.absolutePathString() }
+        arguments.freeArgs += sources.map { it.absolutePathStringOrThrow() }
         val services = Services.Builder().apply {
             register(CompilationCanceledStatus::class.java, cancellationHandle)
             get(LOOKUP_TRACKER)?.let { tracker: CompilerLookupTracker ->
@@ -379,7 +396,7 @@ internal class JvmCompilationOperationImpl private constructor(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
         kotlinFilenameExtensions: Set<String>,
     ): CompilationResult {
-        arguments.freeArgs += sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
+        arguments.freeArgs += sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathStringOrThrow() }
 
         val aggregatedIcConfigurationOptions = toOptions()
         val projectDir = aggregatedIcConfigurationOptions[ROOT_PROJECT_DIR]?.toFile()

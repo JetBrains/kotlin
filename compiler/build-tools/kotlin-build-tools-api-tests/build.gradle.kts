@@ -105,7 +105,7 @@ testing {
         var configuredIdeaSourceSets = false
         for (implVersion in compatibilityTestsVersions) {
             register<JvmTestSuite>("testCompatibility${implVersion}") {
-                if (!kotlinBuildProperties.isInIdeaSync || !configuredIdeaSourceSets) {
+                if (!kotlinBuildProperties.isInIdeaSync.get() || !configuredIdeaSourceSets) {
                     sources.configureCompatibilitySourceDirectories("testCompatibility")
                 }
                 dependencies {
@@ -140,7 +140,7 @@ testing {
                 }
             }
             register<JvmTestSuite>("testIsolatedCompiler${implVersion}") {
-                if (!kotlinBuildProperties.isInIdeaSync || !configuredIdeaSourceSets) {
+                if (!kotlinBuildProperties.isInIdeaSync.get() || !configuredIdeaSourceSets) {
                     sources.configureCompatibilitySourceDirectories("testIsolatedCompiler")
                 }
 

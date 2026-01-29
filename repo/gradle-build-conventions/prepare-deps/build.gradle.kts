@@ -183,7 +183,7 @@ fun prepareDeps(
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
         isZip64 = true
-        if (!kotlinBuildProperties.isTeamcityBuild) {
+        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             from(provider { sources.map(::zipTree) })
         }
         destinationDirectory.set(File(repoDir, sources.name))
@@ -226,7 +226,7 @@ fun prepareDeps(
     }
 }
 
-when (kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
+when (kotlinBuildProperties.stringProperty("attachedIntellijVersion").orNull) {
     null -> {}
     "master" -> {} // for intellij/kt-master, intellij maven artifacts are used instead of manual unpacked dependencies
     else -> {
@@ -424,7 +424,7 @@ fun skipToplevelDirectory(path: String) = path.substringAfter('/')
 fun skipContentsDirectory(path: String) = path.substringAfter("Contents/")
 
 fun Project.intellijSdkVersionForIde(): String? {
-    val majorVersion = kotlinBuildProperties.getOrNull("attachedIntellijVersion") as? String ?: return null
+    val majorVersion = kotlinBuildProperties.stringProperty("attachedIntellijVersion").orNull ?: return null
     return rootProject.findProperty("versions.intellijSdk.forIde.$majorVersion") as? String
 }
 
@@ -478,5 +478,13 @@ class XMLWriter(private val outputStreamWriter: OutputStreamWriter) : Closeable 
         xmlStreamWriter.flush()
         xmlStreamWriter.close()
         outputStreamWriter.close()
+    }
+}
+
+project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
+    resolutionStrategy {
+        eachDependency {
+            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
+        }
     }
 }

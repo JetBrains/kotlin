@@ -680,7 +680,7 @@ object PositioningStrategies {
                 is KtParameter -> markElement(element.valOrVarKeyword ?: element)
                 is KtProperty -> markElement(element.valOrVarKeyword)
                 is KtDestructuringDeclaration -> markElement(element.valOrVarKeyword ?: element)
-                else -> error("Declaration is neither a parameter nor a property: " + element.getElementTextWithContext())
+                else -> markElement(element)
             }
         }
     }
@@ -1253,6 +1253,19 @@ object PositioningStrategies {
     val TYPE_ARGUMENT_LIST_OR_SELF = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             ((element as? KtQualifiedExpression)?.selectorExpression ?: element).getChildOfType<KtTypeArgumentList>()?.let {
+                return markElement(it)
+            }
+            return super.mark(element)
+        }
+    }
+
+    val TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            val selector = (element as? KtQualifiedExpression)?.selectorExpression
+            (selector ?: element).getChildOfType<KtTypeArgumentList>()?.let {
+                return markElement(it)
+            }
+            selector?.let {
                 return markElement(it)
             }
             return super.mark(element)

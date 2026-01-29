@@ -721,4 +721,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override val isK2: Boolean
         get() = true
+
+    override val lexicographicVariableReadinessCalculation: Boolean
+        get() = session.languageVersionSettings.supportsFeature(LanguageFeature.LexicographicVariableReadinessCalculation)
 }

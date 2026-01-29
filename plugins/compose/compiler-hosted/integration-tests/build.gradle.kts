@@ -5,7 +5,7 @@ plugins {
 }
 
 repositories {
-    if (!kotlinBuildProperties.isTeamcityBuild) {
+    if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
     androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
@@ -97,7 +97,7 @@ tasks.withType(Test::class.java).configureEach {
     this.jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
     // ensure that debugger tests don't launch a separate window
     this.systemProperty("java.awt.headless", "true")
-    this.environment("CI", kotlinBuildProperties.isTeamcityBuild)
+    this.environment("CI", kotlinBuildProperties.isTeamcityBuild.get())
     if (project.providers.gradleProperty("generate.golden").orElse("false").get().toBooleanStrict()) {
         this.environment("GENERATE_GOLDEN", "true")
     }

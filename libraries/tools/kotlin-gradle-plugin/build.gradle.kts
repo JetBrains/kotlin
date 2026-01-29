@@ -62,9 +62,11 @@ tasks.test {
     }
 }
 
-tasks.register<Test>("lincheckTest") {
-    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+tasks.withType<Test>().configureEach {
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_21_0))
+}
 
+tasks.register<Test>("lincheckTest") {
     jvmArgs(
         "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
         "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
@@ -111,6 +113,7 @@ val unpublishedCompilerRuntimeDependencies = listOf(
     // TODO: remove in KT-70247
     ":compiler:cli", // for MessageRenderer, related to MessageCollector usage
     ":compiler:cli-common", // for compiler arguments setup, for logging via MessageCollector, CompilerSystemProperties, ExitCode
+    ":compiler:arguments.common", // for compiler arguments parser setup (using `@Enables`, `@Disables` and other annotations)
     ":compiler:compiler.version", // for user projects buildscripts, `loadCompilerVersion`
     ":compiler:config", // for CommonCompilerArguments initialization
     ":compiler:config.jvm", // for K2JVMCompilerArguments initialization
@@ -223,13 +226,16 @@ dependencies {
     testImplementation(testFixtures(project(":kotlin-build-common")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(project(":kotlin-compiler-runner"))
-    testImplementation(kotlin("test-junit", coreDepsVersion))
+    testImplementation(kotlin("test-junit5", coreDepsVersion))
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
 
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(libs.lincheck)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testImplementation(libs.slf4j.api)
+
 }
 
 configurations.commonCompileClasspath.get().exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
@@ -439,7 +445,7 @@ tasks.named("validatePlugins") {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         workingDir = rootDir
     }
 }
@@ -541,6 +547,7 @@ sourceSets.getByName("testFixtures") {
     dependencies {
         add(implementationConfigurationName, commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
         add(implementationConfigurationName, gradleApi())
+        add(implementationConfigurationName, libs.junit.jupiter.api)
     }
 }
 
@@ -577,6 +584,7 @@ functionalTestCompilation.associateWith(testFixturesCompilation)
 tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("konanProperties", rootDir.resolve("kotlin-native/konan/konan.properties"))
+    useJUnitPlatform()
 }
 
 tasks.register<Test>("functionalUnitTest") {
@@ -605,9 +613,6 @@ tasks.withType<Test>().configureEach {
     testClassesDirs = functionalTestSourceSet.output.classesDirs
     classpath = functionalTestSourceSet.runtimeClasspath
     workingDir = projectDir
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    })
     dependsOnKotlinGradlePluginInstall()
     androidSdkProvisioner {
         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
@@ -654,6 +659,7 @@ dependencies {
     implementation(project(":compose-compiler-gradle-plugin"))
     implementation(libs.kotlinx.serialization.json)
     implementation(intellijPlatformUtil())
+    implementation(libs.junit.jupiter.engine)
 }
 
 tasks.named("check") {

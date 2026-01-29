@@ -2,7 +2,7 @@ KtConstructorCalleeExpression(31,32): 'A'
   KaErrorCallInfo:
     candidateCalls = [
       KaDelegatedConstructorCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -15,5 +15,6 @@ KtConstructorCalleeExpression(31,32): 'A'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>

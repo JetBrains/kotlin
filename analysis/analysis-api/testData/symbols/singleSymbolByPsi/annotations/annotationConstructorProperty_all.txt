@@ -37,6 +37,7 @@ KaValueParameterSymbol:
       isExpect: false
       isExtension: false
       isExternal: false
+      isNotDefault: false
       isVal: true
       location: PROPERTY
       modality: FINAL
@@ -140,6 +141,7 @@ KaValueParameterSymbol:
     importableFqName: null
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
+  hasSynthesizedName: false
   isActual: false
   isCrossinline: false
   isExpect: false

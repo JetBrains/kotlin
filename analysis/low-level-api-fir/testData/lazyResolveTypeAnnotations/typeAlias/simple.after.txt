@@ -1,12 +1,12 @@
-@R|TypeAnnWithArg|(arg = <strcat>(String(type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|))  kotlin/Int>>
+@R|TypeAnnWithArg|(arg = String(type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int>>
   context -> FirTypeAliasSymbol MyTypeAlias
   anchor -> [FirTypeAliasSymbol MyTypeAlias]
 
-@R|TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|))  kotlin/Int>
+@R|TypeAnnWithArg|(arg = String(nested type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int>
   context -> FirTypeAliasSymbol MyTypeAlias
   anchor -> [FirTypeAliasSymbol MyTypeAlias]
 
-@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|))  kotlin/Int
+@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int
   context -> FirTypeAliasSymbol MyTypeAlias
   anchor -> [FirTypeAliasSymbol MyTypeAlias]
 
@@ -22,4 +22,4 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(arg = <strcat>(String(type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|))  kotlin/Int>>|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(arg = String(type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int>>|

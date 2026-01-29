@@ -1,22 +1,7 @@
 KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> value }) { (idx, _) -> idx }'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { (_, value) -> value } -> (KaVariableSignature:
-          name = keySelector
-          receiverType = null
-          returnType = (kotlin.collections.IndexedValue<kotlin.Int>) -> kotlin.Int
-          symbol = keySelector: (T) -> K
-          contextParameters = []
-          callableId = null),
-        { (idx, _) -> idx } -> (KaVariableSignature:
-          name = valueTransform
-          receiverType = null
-          returnType = (kotlin.collections.IndexedValue<kotlin.Int>) -> kotlin.Int
-          symbol = valueTransform: (T) -> V
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -50,19 +35,27 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
         K -> (kotlin.Int),
         V -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { (_, value) -> value } -> (KaVariableSignature:
           name = keySelector
           receiverType = null
           returnType = (kotlin.collections.IndexedValue<kotlin.Int>) -> kotlin.Int
           symbol = keySelector: (T) -> K
           contextParameters = []
+          callableId = null),
+        { (idx, _) -> idx } -> (KaVariableSignature:
+          name = valueTransform
+          receiverType = null
+          returnType = (kotlin.collections.IndexedValue<kotlin.Int>) -> kotlin.Int
+          symbol = valueTransform: (T) -> V
+          contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -88,27 +81,21 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
         T -> (kotlin.collections.IndexedValue<kotlin.Int>),
         K -> (kotlin.Int)
       }
+      valueArgumentMapping = {
+        { (_, value) -> value } -> (KaVariableSignature:
+          name = keySelector
+          receiverType = null
+          returnType = (kotlin.collections.IndexedValue<kotlin.Int>) -> kotlin.Int
+          symbol = keySelector: (T) -> K
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>>'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { (_, value) -> value } -> (KaVariableSignature:
-          name = keySelector
-          receiverType = null
-          returnType = (kotlin.Pair<kotlin.Int, kotlin.Int>) -> kotlin.collections.IndexedValue<kotlin.Int>
-          symbol = keySelector: (kotlin.Pair<kotlin.Int, kotlin.Int>) -> K
-          contextParameters = []
-          callableId = null),
-        { (idx, _) -> idx } -> (KaVariableSignature:
-          name = valueTransform
-          receiverType = null
-          returnType = (kotlin.Pair<kotlin.Int, kotlin.Int>) -> kotlin.Int
-          symbol = valueTransform: (kotlin.Pair<kotlin.Int, kotlin.Int>) -> kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -139,6 +126,22 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
         callableId = /groupBy
       typeArgumentsMapping = {
         K -> (kotlin.collections.IndexedValue<kotlin.Int>)
+      }
+      valueArgumentMapping = {
+        { (_, value) -> value } -> (KaVariableSignature:
+          name = keySelector
+          receiverType = null
+          returnType = (kotlin.Pair<kotlin.Int, kotlin.Int>) -> kotlin.collections.IndexedValue<kotlin.Int>
+          symbol = keySelector: (kotlin.Pair<kotlin.Int, kotlin.Int>) -> K
+          contextParameters = []
+          callableId = null),
+        { (idx, _) -> idx } -> (KaVariableSignature:
+          name = valueTransform
+          receiverType = null
+          returnType = (kotlin.Pair<kotlin.Int, kotlin.Int>) -> kotlin.Int
+          symbol = valueTransform: (kotlin.Pair<kotlin.Int, kotlin.Int>) -> kotlin.Int
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     fun <K> List<Pair<Int, Int>>.groupBy(keySelector: (Pair<Int, Int>) -> K, valueTransform: (Pair<Int, Int>) -> Int): Map<K, List<Int>>>

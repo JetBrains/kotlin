@@ -27,9 +27,7 @@ class KotlinBuildProperties internal constructor(
         name: String,
         defaultValue: Provider<Boolean>,
     ): Provider<Boolean> = propertiesBuildService.flatMap {
-        it.property(name)
-            .toBoolean()
-            .orElse(defaultValue)
+        it.property(name).toBoolean(defaultValue)
     }
 
     fun intProperty(name: String): Provider<Int> = propertiesBuildService.flatMap {

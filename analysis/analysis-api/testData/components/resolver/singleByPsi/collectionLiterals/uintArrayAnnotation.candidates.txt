@@ -1,15 +1,7 @@
 KtCollectionLiteralExpression(51,55): '[1u]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1u -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.UInt
-          symbol = vararg elements: kotlin.UInt
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,4 +21,13 @@ KtCollectionLiteralExpression(51,55): '[1u]'
         contextParameters = []
         callableId = kotlin/uintArrayOf
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1u -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.UInt
+          symbol = vararg elements: kotlin.UInt
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

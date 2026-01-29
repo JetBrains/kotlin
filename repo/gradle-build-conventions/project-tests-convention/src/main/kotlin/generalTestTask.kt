@@ -277,7 +277,7 @@ internal fun Project.createGeneralTestTask(
                     ?: forks.coerceIn(1, Runtime.getRuntime().availableProcessors())
         }
 
-        if (!kotlinBuildProperties.isTeamcityBuild) {
+        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             defineJDKEnvVariables.forEach { version ->
                 val jdkHome = project.getToolchainJdkHomeFor(version).orNull ?: error("Can't find toolchain for $version")
                 environment(version.envName, jdkHome)

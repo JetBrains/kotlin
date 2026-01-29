@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support
 
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ENTRY_POINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.KIND
@@ -17,13 +15,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DA
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_REGEX
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNNER
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.WITH_PLATFORM_LIBS
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedPaths
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLibs
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.ReplLLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -35,7 +29,7 @@ import kotlin.time.Duration
 object TestDirectives : SimpleDirectivesContainer() {
     val KIND by enumDirective<TestKind>(
         description = """
-            Usage: // KIND: [REGULAR, STANDALONE, STANDALONE_NO_TR, STANDALONE_LLDB]
+            Usage: // KIND: [REGULAR, STANDALONE, STANDALONE_NO_TR, STANDALONE_LLDB, STANDALONE_STEPPING]
             Declares the kind of the test:
 
             - REGULAR (the default) - include this test into the shared test binary.
@@ -47,7 +41,9 @@ object TestDirectives : SimpleDirectivesContainer() {
             - STANDALONE_NO_TR - compile the test to a separate binary that is supposed to have main entry point.
               The entry point can be customized Note that @kotlin.Test annotations are ignored.
 
-            - STANDALONE_LLDB - compile the test to a separate binary and debug with LLDB.
+            - STANDALONE_LLDB - compile the test to a separate binary and debug with LLDB, by executing specific LLDB commands.
+            
+            - STANDALONE_STEPPING - compile the test to a separate binary and debug with LLDB, by stepping through the entire program.
         """.trimIndent()
     )
 
@@ -160,14 +156,16 @@ object TestDirectives : SimpleDirectivesContainer() {
     )
 
     val DISABLE_NATIVE by stringDirective(
-        description = "Test is not compiled/run with and marked as disabled(GRAY)."
+        description = "Test is not compiled/run with and marked as disabled(GRAY).",
+        multiLine = true
     )
 
     val IGNORE_NATIVE by stringDirective(
         """
             Usage: // IGNORE_NATIVE: property1=value1[ && property2=value2][ && property3=value3]
             Declares this test is expected to fail in described run configuration
-        """.trimIndent()
+        """.trimIndent(),
+        multiLine = true
     )
 
     val PROGRAM_ARGS by stringDirective(
@@ -191,6 +189,10 @@ object TestDirectives : SimpleDirectivesContainer() {
             Add all available Kotlin/Native platform libs for the Kotlin/Native target in effect to the classpath.
         """.trimIndent()
     )
+
+    val NATIVE_STANDALONE by directive(
+        description = "Forces the Kotlin/Native test to run in a standalone mode (see also TestKind)."
+    )
 }
 
 // mimics class `JVMAssertionsMode`
@@ -211,7 +213,8 @@ enum class TestKind {
     REGULAR,
     STANDALONE,
     STANDALONE_NO_TR,
-    STANDALONE_LLDB;
+    STANDALONE_LLDB,
+    STANDALONE_STEPPING;
 }
 
 enum class TestRunnerType {
@@ -221,8 +224,6 @@ enum class TestRunnerType {
 }
 
 internal val CINTEROP_SOURCE_EXTENSIONS = setOf("c", "cpp", "m", "mm")
-internal val CINTEROP_DEFINITION_EXTENSIONS = setOf("def", "h")
-internal val KNOWN_EXTENSIONS = setOf("kt") + CINTEROP_DEFINITION_EXTENSIONS + CINTEROP_SOURCE_EXTENSIONS
 
 internal class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs(emptyList(), cinteropArgs) {
     constructor(vararg cinteropArgs: String) : this(cinteropArgs.asList())
@@ -293,45 +294,45 @@ open class TestCompilerArgs(
     }
 }
 
-internal fun parseTestKind(registeredDirectives: RegisteredDirectives, location: Location): TestKind? {
+internal fun parseTestKind(registeredDirectives: RegisteredDirectives): TestKind? {
     if (KIND !in registeredDirectives)
         return null // The default is determined by TEST_KIND global property
 
     val values = registeredDirectives[KIND]
-    return values.singleOrNull() ?: fail { "$location: Exactly one test kind expected in $KIND directive: $values" }
+    return values.singleOrNull() ?: fail { "Exactly one test kind expected in $KIND directive: $values" }
 }
 
-internal fun parseTestRunner(registeredDirectives: RegisteredDirectives, location: Location): TestRunnerType {
+internal fun parseTestRunner(registeredDirectives: RegisteredDirectives): TestRunnerType {
     if (TEST_RUNNER !in registeredDirectives)
         return TestRunnerType.DEFAULT // The default one.
 
     val values = registeredDirectives[TEST_RUNNER]
-    return values.singleOrNull() ?: fail { "$location: Exactly one test runner type expected in $TEST_RUNNER directive: $values" }
+    return values.singleOrNull() ?: fail { "Exactly one test runner type expected in $TEST_RUNNER directive: $values" }
 }
 
-internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, location: Location): String {
+internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives): String {
     if (ENTRY_POINT !in registeredDirectives)
         return "main" // The default one.
 
     val values = registeredDirectives[ENTRY_POINT]
-    val entryPoint = values.singleOrNull() ?: fail { "$location: Exactly one entry point expected in $ENTRY_POINT directive: $values" }
-    assertTrue(entryPoint.isNotEmpty()) { "$location: Invalid entry point in $ENTRY_POINT directive: $entryPoint" }
+    val entryPoint = values.singleOrNull() ?: fail { "Exactly one entry point expected in $ENTRY_POINT directive: $values" }
+    assertTrue(entryPoint.isNotEmpty()) { "Invalid entry point in $ENTRY_POINT directive: $entryPoint" }
 
     return entryPoint
 }
 
-internal fun parseLLDBSpec(testDataFile: File): LLDBSessionSpec {
+internal fun parseReplLLDBSpec(testDataFile: File): ReplLLDBSessionSpec {
     val specFilePathWithoutExtension = testDataFile.absolutePath.removeSuffix(testDataFile.extension)
     val specFileLocation = "${specFilePathWithoutExtension}txt"
     val specFile = File(specFileLocation)
     return try {
-        LLDBSessionSpec.parse(specFile.readText())
+        ReplLLDBSessionSpec.parse(specFile.readText())
     } catch (e: Exception) {
         Assertions.fail<Nothing>("${testDataFile.absolutePath}: Cannot parse LLDB session specification: " + e.message, e)
     }
 }
 
-internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): TestModule.Exclusive {
+internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective): TestModule.Exclusive {
     val module = parsedDirective.values.singleOrNull()?.toString()?.let(TEST_MODULE_REGEX::matchEntire)?.let { match ->
         val name = match.groupValues[1]
         val directDependencySymbols = match.groupValues[3].split(',').filter(String::isNotEmpty).toSet()
@@ -340,7 +341,7 @@ internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirec
 
         val friendsThatAreNotDependencies = directFriendSymbols - directDependencySymbols
         assertTrue(friendsThatAreNotDependencies.isEmpty()) {
-            "$location: Found friends that are not dependencies: $friendsThatAreNotDependencies"
+            "Found friends that are not dependencies: $friendsThatAreNotDependencies"
         }
 
         TestModule.Exclusive(name, directDependencySymbols, directFriendSymbols, directDependsOnSymbols)
@@ -348,7 +349,7 @@ internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirec
 
     return module ?: fail {
         """
-            $location: Invalid contents of ${parsedDirective.directive} directive: ${parsedDirective.values}
+            Invalid contents of ${parsedDirective.directive} directive: ${parsedDirective.values}
             ${parsedDirective.directive.description}
         """.trimIndent()
     }
@@ -360,91 +361,49 @@ private val TEST_MODULE_REGEX = Regex("^([a-zA-Z0-9_]+)(" +          // name
                                               "(\\(([a-zA-Z0-9_,]*)\\))?" + // dependsOn
                                               ")?$")
 
-internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): String {
-    val fileName = parsedDirective.values.singleOrNull()?.toString()
-        ?: fail {
-            """
-                $location: Exactly one file name expected in ${parsedDirective.directive} directive: ${parsedDirective.values}
-                ${parsedDirective.directive.description}
-            """.trimIndent()
-        }
-
-    val fileExtension = fileName.split(".").last()
-    if (fileExtension in KNOWN_EXTENSIONS)
-        assertTrue(fileName.length > 3 && '/' !in fileName && '\\' !in fileName) {
-            "$location: Invalid file name with extension $fileExtension in ${parsedDirective.directive} directive: $fileName"
-        }
-    else
-        assertTrue(false) {
-            "$location: Invalid file extension .$fileExtension in ${parsedDirective.directive} directive: $fileName"
-        }
-
-    return fileName
-}
-
-internal fun parseExpectedTimeoutFailure(registeredDirectives: RegisteredDirectives, location: Location): Duration? =
+internal fun parseExpectedTimeoutFailure(registeredDirectives: RegisteredDirectives): Duration? =
     if (EXPECTED_TIMEOUT_FAILURE in registeredDirectives) {
         val value = registeredDirectives.singleOrZeroValue(EXPECTED_TIMEOUT_FAILURE)
-            ?: fail { "$location: Exactly one timeout value expected in $EXPECTED_TIMEOUT_FAILURE directive" }
+            ?: fail { "Exactly one timeout value expected in $EXPECTED_TIMEOUT_FAILURE directive" }
         Duration.parseOrNull(value)
-            ?: fail { "$location: Unexpected value for timeout: $value" }
+            ?: fail { "Unexpected value for timeout: $value" }
     } else {
         null
     }
 
-internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives, location: Location): TestRunCheck.ExitCode {
+internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives): TestRunCheck.ExitCode {
     if (EXIT_CODE !in registeredDirectives)
         return TestRunCheck.ExitCode.Expected(0)
 
     val values = registeredDirectives[EXIT_CODE]
     val exitCode = values.singleOrNull()
-        ?: fail { "$location: Exactly one exit code expected in $EXIT_CODE directive: $values" }
+        ?: fail { "Exactly one exit code expected in $EXIT_CODE directive: $values" }
 
     return when (exitCode) {
         "!0" -> TestRunCheck.ExitCode.AnyNonZero
         else -> exitCode.toIntOrNull()?.let(TestRunCheck.ExitCode::Expected)
-            ?: fail { "$location: Invalid exit code specified in $EXIT_CODE directive: $exitCode" }
+            ?: fail { "Invalid exit code specified in $EXIT_CODE directive: $exitCode" }
     }
 }
 
-internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, location: Location, settings: Settings): TestCompilerArgs {
-    val assertionsMode = registeredDirectives.singleOrZeroValue(ASSERTIONS_MODE) ?: AssertionsMode.DEFAULT
-    val freeCInteropArgs = registeredDirectives[FREE_CINTEROP_ARGS]
-    val rawFreeCompilerArgs = registeredDirectives[FREE_COMPILER_ARGS]
-    val freeCompilerArgs = rawFreeCompilerArgs.map { PredefinedPaths.substitutePlaceholders(it, settings) }
-    if (freeCompilerArgs.isNotEmpty()) {
-        val forbiddenCompilerArgs = TestCompilerArgs.findForbiddenArgs(freeCompilerArgs)
-        assertTrue(forbiddenCompilerArgs.isEmpty()) {
-            """
-            $location: Forbidden compiler arguments found in $FREE_COMPILER_ARGS directive: $forbiddenCompilerArgs
-            All arguments: $freeCompilerArgs
-        """.trimIndent()
-        }
-    }
-    val noDefaultLibsArgs =
-        if (settings.withPlatformLibs || WITH_PLATFORM_LIBS in registeredDirectives) emptyList() else listOf("-no-default-libs")
-    return TestCompilerArgs(freeCompilerArgs + noDefaultLibsArgs, freeCInteropArgs, assertionsMode)
-}
+internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives): OutputDataFile? =
+    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives)?.let { OutputDataFile(file = it) }
 
-internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): OutputDataFile? =
-    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives, location)?.let { OutputDataFile(file = it) }
-
-internal fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): File? =
-    parseFileBasedDirective(baseDir, INPUT_DATA_FILE, registeredDirectives, location)
+internal fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives): File? =
+    parseFileBasedDirective(baseDir, INPUT_DATA_FILE, registeredDirectives)
 
 private fun parseFileBasedDirective(
     baseDir: File,
     directive: StringDirective,
-    registeredDirectives: RegisteredDirectives,
-    location: Location
+    registeredDirectives: RegisteredDirectives
 ): File? {
     if (directive !in registeredDirectives)
         return null
 
     val values = registeredDirectives[directive]
     val file = values.singleOrNull()?.let { baseDir.resolve(it) }
-        ?: fail { "$location: Exactly one file expected in $directive directive: $values" }
-    assertTrue(file.isFile) { "$location: File specified in $directive directive does not exist or is not a file: $file" }
+        ?: fail { "Exactly one file expected in $directive directive: $values" }
+    assertTrue(file.isFile) { "File specified in $directive directive does not exist or is not a file: $file" }
 
     return file
 }
@@ -465,22 +424,11 @@ internal fun parseOutputRegex(registeredDirectives: RegisteredDirectives): TestR
     }
 }
 
-internal class Location(private val testDataFile: File, val lineNumber: Int? = null) {
-    override fun toString() = buildString {
-        append(testDataFile.path)
-        if (lineNumber != null) append(':').append(lineNumber + 1)
-    }
-}
-
 fun TestModule.shouldBeExportedToSwift(): Boolean = (this as? TestModule.Exclusive)?.shouldBeExportedToSwift() ?: false
-fun TestModule.Exclusive.shouldBeExportedToSwift(): Boolean = markedExportedToSwift() || swiftExportConfigMap() != null
+fun TestModule.Exclusive.shouldBeExportedToSwift(): Boolean =
+    TestDirectives.EXPORT_TO_SWIFT in directives || TestDirectives.SWIFT_EXPORT_CONFIG in directives
 
-fun TestModule.Exclusive.swiftExportConfigMap(): Map<String, String>? = @Suppress("UNCHECKED_CAST") (directives
-    .firstOrNull { it.directive.name == TestDirectives.SWIFT_EXPORT_CONFIG.name }
-    ?.values as? List<Pair<String, String>>)
-    ?.toMap()
-
-private fun TestModule.Exclusive.markedExportedToSwift(): Boolean = directives
-    .any { it.directive.name == TestDirectives.EXPORT_TO_SWIFT.name }
+fun TestModule.Exclusive.swiftExportConfigMap(): Map<String, String> =
+    directives[TestDirectives.SWIFT_EXPORT_CONFIG].toMap()
 
 private fun String.splitByEqualitySymbolIntoPairs(): Pair<String, String> = split("=").let { Pair(it.first(), it.last()) }

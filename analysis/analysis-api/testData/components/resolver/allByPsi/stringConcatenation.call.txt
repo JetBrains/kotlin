@@ -22,15 +22,7 @@ KtProperty(18,45): 'val value = "1" + "2" + "3"'
 KtBinaryExpression(30,45): '"1" + "2" + "3"'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "3" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "1" + "2"
@@ -53,12 +45,8 @@ KtBinaryExpression(30,45): '"1" + "2" + "3"'
         contextParameters = []
         callableId = kotlin/String.plus
       typeArgumentsMapping = {}
-
-KtBinaryExpression(30,39): '"1" + "2"'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "2" -> (KaVariableSignature:
+      valueArgumentMapping = {
+        "3" -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Any?
@@ -66,6 +54,11 @@ KtBinaryExpression(30,39): '"1" + "2"'
           contextParameters = []
           callableId = null)
       }
+
+KtBinaryExpression(30,39): '"1" + "2"'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "1"
@@ -88,6 +81,15 @@ KtBinaryExpression(30,39): '"1" + "2"'
         contextParameters = []
         callableId = kotlin/String.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtStringTemplateExpression(30,33): '"1"'
   null
@@ -98,15 +100,7 @@ KtLiteralStringTemplateEntry(31,32): '1'
 KtOperationReferenceExpression(34,35): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "2" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "1"
@@ -129,6 +123,15 @@ KtOperationReferenceExpression(34,35): '+'
         contextParameters = []
         callableId = kotlin/String.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtStringTemplateExpression(36,39): '"2"'
   null
@@ -139,15 +142,7 @@ KtLiteralStringTemplateEntry(37,38): '2'
 KtOperationReferenceExpression(40,41): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "3" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = "1" + "2"
@@ -170,6 +165,15 @@ KtOperationReferenceExpression(40,41): '+'
         contextParameters = []
         callableId = kotlin/String.plus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "3" -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
 
 KtStringTemplateExpression(42,45): '"3"'
   null

@@ -1,7 +1,7 @@
 KtCallExpression(76,88): 'javaMethod()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = javaClass
@@ -16,4 +16,5 @@ KtCallExpression(76,88): 'javaMethod()'
         contextParameters = []
         callableId = /JavaClass.javaMethod
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

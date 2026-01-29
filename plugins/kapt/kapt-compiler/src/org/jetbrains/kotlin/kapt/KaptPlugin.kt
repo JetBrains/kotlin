@@ -57,7 +57,7 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.util.*
 
-val KAPT_OPTIONS = CompilerConfigurationKey.create<KaptOptions.Builder>("Kapt options")
+val KAPT_OPTIONS = CompilerConfigurationKey.create<KaptOptions.Builder>("KAPT_OPTIONS")
 
 class KaptCommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID

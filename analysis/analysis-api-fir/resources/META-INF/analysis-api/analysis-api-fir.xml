@@ -101,4 +101,10 @@
         topic="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationListener"
     />
   </projectListeners>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar"
+                    interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"
+                    area="IDEA_PROJECT"/>
+  </extensionPoints>
 </idea-plugin>

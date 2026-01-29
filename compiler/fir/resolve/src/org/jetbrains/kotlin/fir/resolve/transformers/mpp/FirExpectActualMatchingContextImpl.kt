@@ -492,8 +492,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         return areFirAnnotationsEqual(
             expectAnnotation.getFirAnnotation(),
             actualAnnotation.getFirAnnotation(),
-            collectionArgumentsCompatibilityCheckStrategy,
-            actualSession
+            collectionArgumentsCompatibilityCheckStrategy
         )
     }
 

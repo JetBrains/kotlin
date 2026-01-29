@@ -130,7 +130,7 @@ KtDotQualifiedExpression(292,306): 'MyEnum.Option1'
 KtNameReferenceExpression(292,298): 'MyEnum'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -142,6 +142,7 @@ KtNameReferenceExpression(292,298): 'MyEnum'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -193,7 +194,7 @@ KtDotQualifiedExpression(326,340): 'MyEnum.Option2'
 KtNameReferenceExpression(326,332): 'MyEnum'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -205,6 +206,7 @@ KtNameReferenceExpression(326,332): 'MyEnum'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 

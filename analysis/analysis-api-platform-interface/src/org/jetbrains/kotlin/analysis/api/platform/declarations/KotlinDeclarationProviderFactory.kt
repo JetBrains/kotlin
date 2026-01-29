@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.declarations
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -21,9 +22,11 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  *
  * @see KotlinDeclarationProvider
  */
+@KaPlatformInterface
 public interface KotlinDeclarationProviderFactory : KotlinPlatformComponent {
     public fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinDeclarationProviderFactory = project.service()
     }
@@ -42,7 +45,9 @@ public interface KotlinDeclarationProviderFactory : KotlinPlatformComponent {
  * The provider merger should consider merging scopes with [KaGlobalSearchScopeMerger][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger]
  * if there is a useful implementation provided by the platform.
  */
+@KaPlatformInterface
 public interface KotlinDeclarationProviderMerger : KotlinComposableProviderMerger<KotlinDeclarationProvider>, KotlinPlatformComponent {
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinDeclarationProviderMerger = project.service()
     }
@@ -56,8 +61,10 @@ public interface KotlinDeclarationProviderMerger : KotlinComposableProviderMerge
  * functionality such as package set computation may also depend on the contextual module, as the declaration provider may require
  * additional information not available in the [scope].
  */
+@KaPlatformInterface
 public fun Project.createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider =
     KotlinDeclarationProviderFactory.getInstance(this).createDeclarationProvider(scope, contextualModule)
 
+@KaPlatformInterface
 public fun Project.mergeDeclarationProviders(declarationProviders: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
     KotlinDeclarationProviderMerger.getInstance(this).merge(declarationProviders)

@@ -137,9 +137,9 @@ KtNameReferenceExpression(253,254): 'S'
   NO_CANDIDATES
 
 KtCallExpression(257,263): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -151,11 +151,12 @@ KtCallExpression(257,263): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -175,13 +176,14 @@ KtCallExpression(257,263): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(257,261): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -193,11 +195,12 @@ KtNameReferenceExpression(257,261): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -217,6 +220,7 @@ KtNameReferenceExpression(257,261): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
@@ -245,20 +249,9 @@ KtBlockExpression(284,492): '{'
   NO_CANDIDATES
 
 KtCallExpression(290,340): 'generate {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                yield(m)
-                yield(X)
-            } -> (KaVariableSignature:
-          name = g
-          receiverType = null
-          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -279,24 +272,25 @@ KtCallExpression(290,340): 'generate {'
         callableId = /generate
       typeArgumentsMapping = {
         S -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                yield(m)
+                yield(X)
+            } -> (KaVariableSignature:
+          name = g
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(290,298): 'generate'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                yield(m)
-                yield(X)
-            } -> (KaVariableSignature:
-          name = g
-          receiverType = null
-          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -317,6 +311,18 @@ KtNameReferenceExpression(290,298): 'generate'
         callableId = /generate
       typeArgumentsMapping = {
         S -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                yield(m)
+                yield(X)
+            } -> (KaVariableSignature:
+          name = g
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -333,17 +339,9 @@ KtBlockExpression(309,334): 'yield(m)'
   NO_CANDIDATES
 
 KtCallExpression(309,317): 'yield(m)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        m -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -390,20 +388,21 @@ KtCallExpression(309,317): 'yield(m)'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(309,314): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        m -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -450,6 +449,15 @@ KtNameReferenceExpression(309,314): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(314,317): '(m)'
@@ -477,17 +485,9 @@ KtNameReferenceExpression(315,316): 'm'
     isInBestCandidates = true
 
 KtCallExpression(326,334): 'yield(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -534,20 +534,21 @@ KtCallExpression(326,334): 'yield(X)'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(326,331): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -594,6 +595,15 @@ KtNameReferenceExpression(326,331): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(331,334): '(X)'
@@ -622,20 +632,9 @@ KtNameReferenceExpression(332,333): 'X'
     isInBestCandidates = true
 
 KtCallExpression(346,396): 'generate {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                yield(X)
-                yield(m)
-            } -> (KaVariableSignature:
-          name = g
-          receiverType = null
-          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -656,24 +655,25 @@ KtCallExpression(346,396): 'generate {'
         callableId = /generate
       typeArgumentsMapping = {
         S -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                yield(X)
+                yield(m)
+            } -> (KaVariableSignature:
+          name = g
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(346,354): 'generate'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                yield(X)
-                yield(m)
-            } -> (KaVariableSignature:
-          name = g
-          receiverType = null
-          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -694,6 +694,18 @@ KtNameReferenceExpression(346,354): 'generate'
         callableId = /generate
       typeArgumentsMapping = {
         S -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                yield(X)
+                yield(m)
+            } -> (KaVariableSignature:
+          name = g
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -710,17 +722,9 @@ KtBlockExpression(365,390): 'yield(X)'
   NO_CANDIDATES
 
 KtCallExpression(365,373): 'yield(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -767,20 +771,21 @@ KtCallExpression(365,373): 'yield(X)'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(365,370): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -827,6 +832,15 @@ KtNameReferenceExpression(365,370): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(370,373): '(X)'
@@ -855,17 +869,9 @@ KtNameReferenceExpression(371,372): 'X'
     isInBestCandidates = true
 
 KtCallExpression(382,390): 'yield(m)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        m -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -912,20 +918,21 @@ KtCallExpression(382,390): 'yield(m)'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(382,387): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        m -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -972,6 +979,15 @@ KtNameReferenceExpression(382,387): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(387,390): '(m)'
@@ -1011,19 +1027,9 @@ KtNameReferenceExpression(409,415): 'MyEnum'
   NO_CANDIDATES
 
 KtCallExpression(418,451): 'generate {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                yield(X)
-            } -> (KaVariableSignature:
-          name = g
-          receiverType = null
-          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1044,23 +1050,24 @@ KtCallExpression(418,451): 'generate {'
         callableId = /generate
       typeArgumentsMapping = {
         S -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                yield(X)
+            } -> (KaVariableSignature:
+          name = g
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(418,426): 'generate'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                yield(X)
-            } -> (KaVariableSignature:
-          name = g
-          receiverType = null
-          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
-          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1081,6 +1088,17 @@ KtNameReferenceExpression(418,426): 'generate'
         callableId = /generate
       typeArgumentsMapping = {
         S -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                yield(X)
+            } -> (KaVariableSignature:
+          name = g
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction1<Controller<MyEnum>, kotlin.Unit>
+          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1097,17 +1115,9 @@ KtBlockExpression(437,445): 'yield(X)'
   NO_CANDIDATES
 
 KtCallExpression(437,445): 'yield(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -1154,20 +1164,21 @@ KtCallExpression(437,445): 'yield(X)'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(437,442): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = MyEnum
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -1214,6 +1225,15 @@ KtNameReferenceExpression(437,442): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = MyEnum
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(442,445): '(X)'
@@ -1226,19 +1246,9 @@ KtNameReferenceExpression(443,444): 'X'
   NO_CANDIDATES
 
 KtCallExpression(457,490): 'generate {'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                yield(X)
-            } -> (KaVariableSignature:
-          name = g
-          receiverType = null
-          returnType = kotlin.coroutines.SuspendFunction1<Controller<ERROR_TYPE>, kotlin.Unit>
-          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1259,6 +1269,17 @@ KtCallExpression(457,490): 'generate {'
         callableId = /generate
       typeArgumentsMapping = {
         S -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        {
+                yield(X)
+            } -> (KaVariableSignature:
+          name = g
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction1<Controller<ERROR_TYPE>, kotlin.Unit>
+          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generate>
     isInBestCandidates = true
@@ -1266,17 +1287,7 @@ KtCallExpression(457,490): 'generate {'
 KtNameReferenceExpression(457,465): 'generate'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                yield(X)
-            } -> (KaVariableSignature:
-          name = g
-          receiverType = null
-          returnType = kotlin.coroutines.SuspendFunction1<Controller<ERROR_TYPE>, kotlin.Unit>
-          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1297,6 +1308,17 @@ KtNameReferenceExpression(457,465): 'generate'
         callableId = /generate
       typeArgumentsMapping = {
         S -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        {
+                yield(X)
+            } -> (KaVariableSignature:
+          name = g
+          receiverType = null
+          returnType = kotlin.coroutines.SuspendFunction1<Controller<ERROR_TYPE>, kotlin.Unit>
+          symbol = g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generate>
     isInBestCandidates = true
@@ -1314,17 +1336,9 @@ KtBlockExpression(476,484): 'yield(X)'
   NO_CANDIDATES
 
 KtCallExpression(476,484): 'yield(X)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = TypeVariable(S)
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -1371,20 +1385,21 @@ KtCallExpression(476,484): 'yield(X)'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = TypeVariable(S)
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(476,481): 'yield'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = TypeVariable(S)
-          symbol = t: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -1431,6 +1446,15 @@ KtNameReferenceExpression(476,481): 'yield'
         contextParameters = []
         callableId = /Controller.yield
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        X -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = TypeVariable(S)
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(481,484): '(X)'

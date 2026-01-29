@@ -1,7 +1,7 @@
 KtCollectionLiteralExpression(40,42): '[]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -23,4 +23,5 @@ KtCollectionLiteralExpression(40,42): '[]'
       typeArgumentsMapping = {
         T -> (kotlin.Number)
       }
+      valueArgumentMapping = {}
     isInBestCandidates = true

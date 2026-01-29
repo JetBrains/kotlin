@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.asKtFilesList
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -73,11 +74,12 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
 
         val sourceFiles: List<KtSourceFile>
 
+        val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val outputs = if (isLightTree) {
             val projectEnvironment = environment.toVfsBasedProjectEnvironment()
             var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
             val groupedSources = collectSources(configuration, projectEnvironment, messageCollector)
-            val extensionRegistrars = FirExtensionRegistrar.Companion.getInstances(projectEnvironment.project)
+
             val ltFiles = groupedSources.let { it.commonSources + it.platformSources }.toList().also {
                 sourceFiles = it
             }
@@ -108,7 +110,6 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         } else {
             val projectEnvironment = environment.toVfsBasedProjectEnvironment()
             var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-            val extensionRegistrars = FirExtensionRegistrar.Companion.getInstances(projectEnvironment.project)
             val ktFiles = environment.getSourceFiles().also { ktFiles ->
                 perfManager?.addSourcesStats(ktFiles.size, environment.countLinesOfCode(ktFiles))
                 sourceFiles = ktFiles.map { KtPsiSourceFile(it) }

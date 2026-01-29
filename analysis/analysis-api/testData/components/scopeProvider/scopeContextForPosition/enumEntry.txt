@@ -72,6 +72,7 @@ scopes:
           isExpect: false
           isExtension: false
           isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -241,6 +242,7 @@ scopes:
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
             isActual: false
             isCrossinline: false
             isExpect: false
@@ -301,6 +303,7 @@ scopes:
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
             isActual: false
             isCrossinline: false
             isExpect: false
@@ -400,6 +403,7 @@ scopes:
           isExpect: false
           isExtension: false
           isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -477,6 +481,7 @@ scopes:
           isExpect: false
           isExtension: false
           isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -732,6 +737,7 @@ scopes:
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
             isActual: false
             isCrossinline: false
             isExpect: false
@@ -897,6 +903,7 @@ scopes:
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
             isActual: false
             isCrossinline: false
             isExpect: false

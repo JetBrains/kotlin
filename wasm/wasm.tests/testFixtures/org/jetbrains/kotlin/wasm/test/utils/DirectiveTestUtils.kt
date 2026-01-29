@@ -22,6 +22,7 @@ object DirectiveTestUtils {
     }
 
     private val FUNCTION_CONTAINS_NO_CALLS = createSimpleDirectiveHandler("WASM_CHECK_CONTAINS_NO_CALLS") { module, arguments ->
+        val functionName = arguments.getNamedArgument("inFunction")
         val exceptNames = mutableSetOf<String>()
         val exceptNamesArg = arguments.findNamedArgument("except")
         if (exceptNamesArg != null) {
@@ -29,44 +30,44 @@ object DirectiveTestUtils {
                 exceptNames.add(exceptName.trim())
             }
         }
-        checkFunctionContainsNoCalls(module, arguments.getFirst(), exceptNames)
+        checkFunctionContainsNoCalls(module, functionName, exceptNames)
     }
 
-    private val FUNCTION_CALLED_IN_SCOPE = createSimpleDirectiveHandler("WASM_CHECK_CALLED_IN_SCOPE") { module, arguments ->
+    private val FUNCTION_CALLED_IN_FUNCTION = createSimpleDirectiveHandler("WASM_CHECK_CALLED_IN_FUNCTION") { module, arguments ->
         checkCalledInScope(
             module,
-            arguments.getNamedArgument("function"),
-            arguments.getNamedArgument("scope_function"),
+            arguments.getNamedArgument("shouldBeCalled"),
+            arguments.getNamedArgument("inFunction"),
         )
     }
 
-    private val INSTRUCTION_IN_SCOPE = createSimpleDirectiveHandler("WASM_CHECK_INSTRUCTION_IN_SCOPE") { module, arguments ->
+    private val INSTRUCTION_IN_FUNCTION = createSimpleDirectiveHandler("WASM_CHECK_INSTRUCTION_IN_FUNCTION") { module, arguments ->
         checkInstructionInScope(
             module,
             arguments.getNamedArgument("instruction"),
-            arguments.getNamedArgument("scope_function"),
+            arguments.getNamedArgument("inFunction"),
         )
     }
 
-    private val FUNCTION_NOT_CALLED_IN_SCOPE = createSimpleDirectiveHandler("WASM_CHECK_NOT_CALLED_IN_SCOPE") { module, arguments ->
+    private val FUNCTION_NOT_CALLED_IN_FUNCTION = createSimpleDirectiveHandler("WASM_CHECK_NOT_CALLED_IN_FUNCTION") { module, arguments ->
         checkNotCalledInScope(
             module,
-            arguments.getNamedArgument("function"),
-            arguments.getNamedArgument("scope_function"),
+            arguments.getNamedArgument("shouldNotBeCalled"),
+            arguments.getNamedArgument("inFunction"),
         )
     }
 
-    private val INSTRUCTION_NOT_IN_SCOPE = createSimpleDirectiveHandler("WASM_CHECK_INSTRUCTION_NOT_IN_SCOPE") { module, arguments ->
+    private val INSTRUCTION_NOT_IN_FUNCTION = createSimpleDirectiveHandler("WASM_CHECK_INSTRUCTION_NOT_IN_FUNCTION") { module, arguments ->
         checkInstructionNotInScope(
             module,
             arguments.getNamedArgument("instruction"),
-            arguments.getNamedArgument("scope_function"),
+            arguments.getNamedArgument("inFunction"),
         )
     }
 
-    private val COUNT_INSTRUCTION_IN_SCOPE = createSimpleDirectiveHandler("WASM_COUNT_INSTRUCTION_IN_SCOPE") { module, arguments ->
+    private val COUNT_INSTRUCTION_IN_FUNCTION = createSimpleDirectiveHandler("WASM_COUNT_INSTRUCTION_IN_FUNCTION") { module, arguments ->
         val instruction = arguments.getNamedArgument("instruction")
-        val scopeFunctionName = arguments.getNamedArgument("scope_function")
+        val scopeFunctionName = arguments.getNamedArgument("inFunction")
         val expectedCount = arguments.getNamedArgument("count").toInt()
 
         val operator = WasmOp.entries.find { it.mnemonic == instruction }!!
@@ -74,6 +75,35 @@ object DirectiveTestUtils {
         val actualCount = WasmIrCheckUtils.countInstOperator(scopeFunction, operator)
 
         assertEquals("Count mismatch for instruction `$instruction` in function `$scopeFunctionName`", expectedCount, actualCount)
+    }
+
+    private val LOCAL_IN_FUNCTION = createSimpleDirectiveHandler("WASM_CHECK_LOCAL_IN_FUNCTION") { module, arguments ->
+        checkLocalInScope(module, arguments, true)
+    }
+
+    private val LOCAL_NOT_IN_FUNCTION = createSimpleDirectiveHandler("WASM_CHECK_LOCAL_NOT_IN_FUNCTION") { module, arguments ->
+        checkLocalInScope(module, arguments, false)
+    }
+
+    private fun checkLocalInScope(module: WasmModule, arguments: ArgumentsHelper, expectExists: Boolean) {
+        val localName = arguments.getNamedArgument("name")
+        val scopeFunctionName = arguments.getNamedArgument("inFunction")
+
+        val scopeFunction = WasmIrCheckUtils.getDefinedFunction(module, scopeFunctionName)
+
+        var locals = scopeFunction.locals
+
+        // add locals of any (nested) lambdas
+        // there will be quite a bit of unnecessary ones in here, but we only need to get the real ones as well.
+        // TODO(review): would be nicer to have a more robust solution here than text search. Somehow getting from the name of the local that holds the lambda, to the lambda's invoke function, that has the actual locals we're searching for
+        module.definedFunctions.filter { it.name.contains(Regex("$scopeFunctionName(\\\$lambda)+\\.invoke")) }.forEach { lambda -> locals += lambda.locals }
+
+        val local = locals.find { it.name == localName }
+
+        if(expectExists)
+            assertNotNull("Local variable `$localName` *not* found in function `${scopeFunction.name}`", local)
+        else
+            assertNull("Local variable `$localName` found in function `${scopeFunction.name}`", local)
     }
 
     private fun checkFunctionContainsNoCalls(module: WasmModule, functionName: String, exceptFunctionNames: Set<String>) {
@@ -144,11 +174,13 @@ object DirectiveTestUtils {
 
     private val DIRECTIVE_HANDLERS = listOf(
         FUNCTION_CONTAINS_NO_CALLS,
-        FUNCTION_CALLED_IN_SCOPE,
-        INSTRUCTION_IN_SCOPE,
-        FUNCTION_NOT_CALLED_IN_SCOPE,
-        INSTRUCTION_NOT_IN_SCOPE,
-        COUNT_INSTRUCTION_IN_SCOPE,
+        FUNCTION_CALLED_IN_FUNCTION,
+        INSTRUCTION_IN_FUNCTION,
+        FUNCTION_NOT_CALLED_IN_FUNCTION,
+        INSTRUCTION_NOT_IN_FUNCTION,
+        COUNT_INSTRUCTION_IN_FUNCTION,
+        LOCAL_IN_FUNCTION,
+        LOCAL_NOT_IN_FUNCTION
     )
 
     @Throws(Exception::class)
@@ -226,6 +258,7 @@ object DirectiveTestUtils {
         override fun toString(): String = directive
     }
 
+    // TODO would be nice to share/replace the old js DiretiveTestUtils.java, as this is also a bit out of place here
     private class ArgumentsHelper(
         val entry: String,
     ) {

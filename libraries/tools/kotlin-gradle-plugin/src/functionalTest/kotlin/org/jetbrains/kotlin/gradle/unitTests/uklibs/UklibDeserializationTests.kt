@@ -16,19 +16,19 @@ import org.jetbrains.kotlin.gradle.testing.PrettyPrint
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.assertIsInstance
 import org.jetbrains.kotlin.incremental.createDirectory
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import kotlin.test.Test
+import java.io.File
 import kotlin.test.assertEquals
 
 class UklibDeserializationTests {
 
-    @get:Rule
-    val temporaryFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var temporaryFolder: File
 
     @Test
     fun `forward incompatibility exception - is raised - even if the rest of the json is invalid`() {
-        val uklib = temporaryFolder.newFolder("uklib")
+        val uklib = temporaryFolder.resolve("uklib").also { it.mkdirs() }
         uklib.resolve(Uklib.UMANIFEST_FILE_NAME).writeText(
             """{ "manifestVersion": "banana" }"""
         )
@@ -46,8 +46,8 @@ class UklibDeserializationTests {
 
     @Test
     fun `uklib back and forth serialization`() {
-        val temporaryDirectory = temporaryFolder.newFolder("temporary")
-        val outputUklibArchive = temporaryFolder.newFolder("uklib").resolve("output.uklib")
+        val temporaryDirectory = temporaryFolder.resolve("temporary").also { it.mkdirs() }
+        val outputUklibArchive = temporaryFolder.resolve("uklib").also { it.mkdirs() }.resolve("output.uklib")
 
         Uklib(
             UklibModule(
@@ -81,10 +81,10 @@ class UklibDeserializationTests {
             manifestVersion = Uklib.MAXIMUM_COMPATIBLE_UMANIFEST_VERSION,
         ).serializeToZipArchive(
             outputZip = outputUklibArchive,
-            temporariesDirectory = temporaryFolder.newFolder("temporaries")
+            temporariesDirectory = temporaryFolder.resolve("temporaries").also { it.mkdirs() }
         )
 
-        val uklibDirectory = temporaryFolder.newFolder("unzippedUklib")
+        val uklibDirectory = temporaryFolder.resolve("unzippedUklib").also { it.mkdirs() }
         unzipTo(
             uklibDirectory,
             outputUklibArchive

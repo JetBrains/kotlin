@@ -1,7 +1,7 @@
 KtNameReferenceExpression(556,560): 'Test'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -14,3 +14,4 @@ KtNameReferenceExpression(556,560): 'Test'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

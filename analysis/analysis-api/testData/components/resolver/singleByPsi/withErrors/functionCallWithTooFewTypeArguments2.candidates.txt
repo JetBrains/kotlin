@@ -1,29 +1,7 @@
 KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "a" -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.String
-          symbol = a: A
-          contextParameters = []
-          callableId = null),
-        "b" -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.String
-          symbol = b: B
-          contextParameters = []
-          callableId = null),
-        "c" -> (KaVariableSignature:
-          name = c
-          receiverType = null
-          returnType = kotlin.String
-          symbol = c: C
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -60,6 +38,29 @@ KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
         A -> (kotlin.String),
         B -> (kotlin.String),
         C -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "a" -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.String
+          symbol = a: A
+          contextParameters = []
+          callableId = null),
+        "b" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: B
+          contextParameters = []
+          callableId = null),
+        "c" -> (KaVariableSignature:
+          name = c
+          receiverType = null
+          returnType = kotlin.String
+          symbol = c: C
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A, B, C> generic(a: A, b: B, c: C): Unit>
     isInBestCandidates = true

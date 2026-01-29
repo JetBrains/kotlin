@@ -1,22 +1,7 @@
 KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> value }) { (idx, _) -> idx }'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        { (_, value) -> value } -> (KaVariableSignature:
-          name = keySelector
-          receiverType = null
-          returnType = (kotlin.collections.IndexedValue<kotlin.Int>) -> kotlin.Int
-          symbol = keySelector: (T) -> K
-          contextParameters = []
-          callableId = null),
-        { (idx, _) -> idx } -> (KaVariableSignature:
-          name = valueTransform
-          receiverType = null
-          returnType = (kotlin.collections.IndexedValue<kotlin.Int>) -> kotlin.Int
-          symbol = valueTransform: (T) -> V
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -49,4 +34,20 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
         T -> (kotlin.collections.IndexedValue<kotlin.Int>),
         K -> (kotlin.Int),
         V -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        { (_, value) -> value } -> (KaVariableSignature:
+          name = keySelector
+          receiverType = null
+          returnType = (kotlin.collections.IndexedValue<kotlin.Int>) -> kotlin.Int
+          symbol = keySelector: (T) -> K
+          contextParameters = []
+          callableId = null),
+        { (idx, _) -> idx } -> (KaVariableSignature:
+          name = valueTransform
+          receiverType = null
+          returnType = (kotlin.collections.IndexedValue<kotlin.Int>) -> kotlin.Int
+          symbol = valueTransform: (T) -> V
+          contextParameters = []
+          callableId = null)
       }

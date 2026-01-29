@@ -1,22 +1,7 @@
 KtCallExpression(157,168): 'call(1, "")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
-          symbol = a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
-          contextParameters = []
-          callableId = null),
-        "" -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
-          symbol = b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -43,4 +28,20 @@ KtCallExpression(157,168): 'call(1, "")'
         contextParameters = []
         callableId = /call
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
+          symbol = a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
+          contextParameters = []
+          callableId = null),
+        "" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+          symbol = b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

@@ -1,0 +1,14 @@
+$TESTDATA_DIR$/cliArgs.kt
+-d
+$TEMP_DIR$
+-cp
+$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
+-Xtarget-platform=JVM,JS
+-Xtarget-platform=WasmJs,WasmWasi,Native
+
+-Xuse-fir-lt=false
+-Xuse-fir-lt=true
+-kotlin-home=$TESTDATA_DIR$
+-kotlin-home=
+-Xannotation-default-target=param-property
+-Xannotation-default-target=first-only-warn

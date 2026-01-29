@@ -1,0 +1,66 @@
+FILE: simple.kt
+    public abstract class Outer<X> : R|kotlin/Any| {
+        public constructor<X>(): R|Outer<X>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner<Outer(X)> : R|kotlin/Any| {
+            public Outer<X>.constructor(x: R|X|): R|Outer.Inner<X>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val x: R|X| = R|<local>/x|
+                public get(): R|X|
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+            public final val bar: R|kotlin/Int| = Int(42)
+                public get(): R|kotlin/Int|
+
+            public final inner class Innermost<Outer(X)> : R|kotlin/Any| {
+                public Outer.Inner<X>.constructor(): R|Outer.Inner.Innermost<X>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final fun foo(): R|kotlin/Unit| {
+                    lval refX: R|Outer.Inner<X>.() -> X| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
+                    lval kRefX: R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Any?>| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
+                }
+
+            }
+
+        }
+
+        public final val refFoo: R|Outer.Inner<X>.() -> kotlin/Unit| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.foo: R|kotlin/Unit|>|
+            public get(): R|Outer.Inner<X>.() -> kotlin/Unit|
+
+        public final val refBar: R|Outer.Inner<X>.() -> kotlin/Int| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.bar: R|kotlin/Int|>|
+            public get(): R|Outer.Inner<X>.() -> kotlin/Int|
+
+        public final val refX: R|Outer.Inner<X>.() -> X| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
+            public get(): R|Outer.Inner<X>.() -> X|
+
+        public final val kRefFoo: R|kotlin/reflect/KFunction1<Outer.Inner<*>, kotlin/Unit>| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.foo: R|kotlin/Unit|>|
+            public get(): R|kotlin/reflect/KFunction1<Outer.Inner<*>, kotlin/Unit>|
+
+        public final val kRefBar: R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Int>| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.bar: R|kotlin/Int|>|
+            public get(): R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Int>|
+
+        public final val kRefX: R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Any?>| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
+            public get(): R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Any?>|
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|Outer.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val refX: R|ERROR CLASS: Type arguments should be specified for an outer class.() -> ERROR CLASS: Symbol not found for X| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
+                public get(): R|ERROR CLASS: Type arguments should be specified for an outer class.() -> ERROR CLASS: Symbol not found for X|
+
+            public final val kRefX: R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Any?>| = Q|Outer.Inner|::R|SubstitutionOverride</Outer.Inner.x: R|CapturedType(*)|>|
+                public get(): R|kotlin/reflect/KProperty1<Outer.Inner<*>, kotlin/Any?>|
+
+        }
+
+    }

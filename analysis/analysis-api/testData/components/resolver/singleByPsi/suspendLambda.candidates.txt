@@ -1,15 +1,7 @@
 KtNameReferenceExpression(78,85): 'suspend'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {} -> (KaVariableSignature:
-          name = block
-          receiverType = null
-          returnType = suspend () -> kotlin.Unit
-          symbol = block: suspend () -> R
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -30,5 +22,14 @@ KtNameReferenceExpression(78,85): 'suspend'
         callableId = kotlin/suspend
       typeArgumentsMapping = {
         R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        {} -> (KaVariableSignature:
+          name = block
+          receiverType = null
+          returnType = suspend () -> kotlin.Unit
+          symbol = block: suspend () -> R
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true

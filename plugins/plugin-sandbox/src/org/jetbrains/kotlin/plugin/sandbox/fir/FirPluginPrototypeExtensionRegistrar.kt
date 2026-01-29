@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.plugin.sandbox.fir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.plugin.sandbox.fir.generators.*
 import org.jetbrains.kotlin.plugin.sandbox.fir.supertypeswithoverrides.MissingOverrideStatusTransformer
 import org.jetbrains.kotlin.plugin.sandbox.fir.supertypeswithoverrides.SimpleAddSupertypeExtension
@@ -41,6 +41,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::TopLevelPrivateSuspendFunctionGenerator
         +::ExternalClassGenerator
         +::AdditionalMembersGenerator
+        +::MemberFunctionWithAnnotatedParametersGenerator
         +::CompanionGenerator
         +::MembersOfSerializerGenerator
         +::DataFrameLikeTypeMembersGenerator
@@ -63,7 +64,7 @@ class FirPluginPrototypeComponentRegistrar : CompilerPluginRegistrar() {
         get() = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        FirExtensionRegistrarAdapter.registerExtension(FirPluginPrototypeExtensionRegistrar())
+        FirExtensionRegistrar.registerExtension(FirPluginPrototypeExtensionRegistrar())
         IrGenerationExtension.registerExtension(GeneratedDeclarationsIrBodyFiller())
     }
 }

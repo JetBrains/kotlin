@@ -1,7 +1,7 @@
 KtNameReferenceExpression(589,592): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Foo
@@ -16,4 +16,5 @@ KtNameReferenceExpression(589,592): 'bar'
         contextParameters = []
         callableId = pkg/Foo.bar
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

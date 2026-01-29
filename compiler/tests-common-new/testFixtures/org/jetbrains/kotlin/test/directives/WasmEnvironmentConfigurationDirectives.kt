@@ -33,6 +33,10 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Don't use WebAssembly.JSTag for throwing and catching exceptions",
     )
 
+    val WASM_INTERNAL_LOCAL_VARIABLE_PREFIX by stringDirective(
+        description = "Prefix to use for internally generated local variables",
+    )
+
     val WASM_DISABLE_FQNAME_IN_KCLASS by directive(
         description = "Disable 'KClass::qualifiedName' for wasm target",
     )

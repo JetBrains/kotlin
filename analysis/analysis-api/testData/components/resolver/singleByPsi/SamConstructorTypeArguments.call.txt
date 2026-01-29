@@ -1,15 +1,7 @@
 KtNameReferenceExpression(18,28): 'Comparator'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        { x, y -> 1 } -> (KaVariableSignature:
-          name = function
-          receiverType = null
-          returnType = (ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=null) kotlin.Int!, ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=null) kotlin.Int!) -> kotlin.Int
-          symbol = function: (T!, T!) -> kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -30,4 +22,13 @@ KtNameReferenceExpression(18,28): 'Comparator'
         callableId = java/util/Comparator
       typeArgumentsMapping = {
         T -> (ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=null) kotlin.Int!)
+      }
+      valueArgumentMapping = {
+        { x, y -> 1 } -> (KaVariableSignature:
+          name = function
+          receiverType = null
+          returnType = (ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=null) kotlin.Int!, ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=null) kotlin.Int!) -> kotlin.Int
+          symbol = function: (T!, T!) -> kotlin.Int
+          contextParameters = []
+          callableId = null)
       }

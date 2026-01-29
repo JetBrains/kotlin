@@ -1,15 +1,7 @@
 KtNameReferenceExpression(74,81): 'valueOf'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "" -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.String
-          symbol = value: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = RetentionPolicy
@@ -32,4 +24,13 @@ KtNameReferenceExpression(74,81): 'valueOf'
         contextParameters = []
         callableId = java/lang/annotation/RetentionPolicy.valueOf
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "" -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.String
+          symbol = value: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

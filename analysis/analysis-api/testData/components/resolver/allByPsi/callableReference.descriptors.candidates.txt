@@ -59,9 +59,9 @@ KtSuperTypeList(118,127): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(118,127): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -74,12 +74,13 @@ KtSuperTypeCallEntry(118,127): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(118,125): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -92,6 +93,7 @@ KtConstructorCalleeExpression(118,125): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(118,125): 'MyClass'
@@ -103,7 +105,7 @@ KtUserType(118,125): 'MyClass'
 KtNameReferenceExpression(118,125): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -116,6 +118,7 @@ KtNameReferenceExpression(118,125): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(125,127): '()'
@@ -182,9 +185,9 @@ KtSuperTypeList(258,282): 'ClassWithType<MyClass>()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(258,282): 'ClassWithType<MyClass>()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -197,12 +200,13 @@ KtSuperTypeCallEntry(258,282): 'ClassWithType<MyClass>()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(258,280): 'ClassWithType<MyClass>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -215,6 +219,7 @@ KtConstructorCalleeExpression(258,280): 'ClassWithType<MyClass>'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(258,280): 'ClassWithType<MyClass>'
@@ -226,7 +231,7 @@ KtUserType(258,280): 'ClassWithType<MyClass>'
 KtNameReferenceExpression(258,271): 'ClassWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -239,6 +244,7 @@ KtNameReferenceExpression(258,271): 'ClassWithType'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeArgumentList(271,280): '<MyClass>'
@@ -376,15 +382,7 @@ KtBlockExpression(491,995): '{'
 KtDotQualifiedExpression(497,538): 'MyClass::memberFunction.invoke(MyClass())'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        MyClass() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass::memberFunction
@@ -407,12 +405,21 @@ KtDotQualifiedExpression(497,538): 'MyClass::memberFunction.invoke(MyClass())'
         contextParameters = []
         callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        MyClass() -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = pack.MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtCallableReferenceExpression(497,520): 'MyClass::memberFunction'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -424,6 +431,7 @@ KtCallableReferenceExpression(497,520): 'MyClass::memberFunction'
         contextParameters = []
         callableId = pack/MyClass.memberFunction
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(497,504): 'MyClass'
@@ -432,7 +440,7 @@ KtNameReferenceExpression(497,504): 'MyClass'
 KtNameReferenceExpression(506,520): 'memberFunction'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -444,20 +452,13 @@ KtNameReferenceExpression(506,520): 'memberFunction'
         contextParameters = []
         callableId = pack/MyClass.memberFunction
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtCallExpression(521,538): 'invoke(MyClass())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        MyClass() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass::memberFunction
@@ -480,20 +481,21 @@ KtCallExpression(521,538): 'invoke(MyClass())'
         contextParameters = []
         callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        MyClass() -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = pack.MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(521,527): 'invoke'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        MyClass() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass::memberFunction
@@ -516,6 +518,15 @@ KtNameReferenceExpression(521,527): 'invoke'
         contextParameters = []
         callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        MyClass() -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = pack.MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(527,538): '(MyClass())'
@@ -525,9 +536,9 @@ KtValueArgument(528,537): 'MyClass()'
   NO_CANDIDATES
 
 KtCallExpression(528,537): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -539,12 +550,13 @@ KtCallExpression(528,537): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(528,535): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -556,6 +568,7 @@ KtNameReferenceExpression(528,535): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(535,537): '()'
@@ -583,7 +596,7 @@ KtDotQualifiedExpression(543,571): 'MyClass::memberProperty.name'
     isInBestCandidates = true
 
 KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -645,15 +658,7 @@ KtNameReferenceExpression(567,571): 'name'
 KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Child() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.Child
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Child::memberFunction
@@ -676,12 +681,21 @@ KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
         contextParameters = []
         callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Child() -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = pack.Child
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtCallableReferenceExpression(577,598): 'Child::memberFunction'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -693,6 +707,7 @@ KtCallableReferenceExpression(577,598): 'Child::memberFunction'
         contextParameters = []
         callableId = pack/MyClass.memberFunction
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(577,582): 'Child'
@@ -701,7 +716,7 @@ KtNameReferenceExpression(577,582): 'Child'
 KtNameReferenceExpression(584,598): 'memberFunction'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -713,20 +728,13 @@ KtNameReferenceExpression(584,598): 'memberFunction'
         contextParameters = []
         callableId = pack/MyClass.memberFunction
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtCallExpression(599,614): 'invoke(Child())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Child() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.Child
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Child::memberFunction
@@ -749,20 +757,21 @@ KtCallExpression(599,614): 'invoke(Child())'
         contextParameters = []
         callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Child() -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = pack.Child
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(599,605): 'invoke'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Child() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.Child
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Child::memberFunction
@@ -785,6 +794,15 @@ KtNameReferenceExpression(599,605): 'invoke'
         contextParameters = []
         callableId = kotlin/reflect/KFunction1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Child() -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = pack.Child
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(605,614): '(Child())'
@@ -794,9 +812,9 @@ KtValueArgument(606,613): 'Child()'
   NO_CANDIDATES
 
 KtCallExpression(606,613): 'Child()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -808,12 +826,13 @@ KtCallExpression(606,613): 'Child()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(606,611): 'Child'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -825,6 +844,7 @@ KtNameReferenceExpression(606,611): 'Child'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(611,613): '()'
@@ -852,7 +872,7 @@ KtDotQualifiedExpression(619,645): 'Child::memberProperty.name'
     isInBestCandidates = true
 
 KtCallableReferenceExpression(619,640): 'Child::memberProperty'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -915,9 +935,9 @@ KtProperty(651,690): 'val f = pack.MyClass::extensionFunction'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(659,690): 'pack.MyClass::extensionFunction'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -929,6 +949,7 @@ KtCallableReferenceExpression(659,690): 'pack.MyClass::extensionFunction'
         contextParameters = []
         callableId = pack/extensionFunction
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtDotQualifiedExpression(659,671): 'pack.MyClass'
@@ -943,7 +964,7 @@ KtNameReferenceExpression(664,671): 'MyClass'
 KtNameReferenceExpression(673,690): 'extensionFunction'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -955,13 +976,14 @@ KtNameReferenceExpression(673,690): 'extensionFunction'
         contextParameters = []
         callableId = pack/extensionFunction
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtProperty(695,729): 'val p = MyClass::extensionProperty'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1003,9 +1025,9 @@ KtProperty(735,768): 'val cF = Child::extensionFunction'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(744,768): 'Child::extensionFunction'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1017,6 +1039,7 @@ KtCallableReferenceExpression(744,768): 'Child::extensionFunction'
         contextParameters = []
         callableId = pack/extensionFunction
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(744,749): 'Child'
@@ -1025,7 +1048,7 @@ KtNameReferenceExpression(744,749): 'Child'
 KtNameReferenceExpression(751,768): 'extensionFunction'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1037,13 +1060,14 @@ KtNameReferenceExpression(751,768): 'extensionFunction'
         contextParameters = []
         callableId = pack/extensionFunction
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtProperty(773,811): 'val cP = pack.Child::extensionProperty'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1109,9 +1133,9 @@ KtDotQualifiedExpression(817,853): 'ChildWithType::functionWithType.name'
     isInBestCandidates = true
 
 KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1123,6 +1147,7 @@ KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
         contextParameters = []
         callableId = pack/ChildWithType.functionWithType
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(817,830): 'ChildWithType'
@@ -1131,7 +1156,7 @@ KtNameReferenceExpression(817,830): 'ChildWithType'
 KtNameReferenceExpression(832,848): 'functionWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1143,6 +1168,7 @@ KtNameReferenceExpression(832,848): 'functionWithType'
         contextParameters = []
         callableId = pack/ChildWithType.functionWithType
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(849,853): 'name'
@@ -1169,15 +1195,7 @@ KtNameReferenceExpression(849,853): 'name'
 KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(ChildWithType())'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        ChildWithType() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.ChildWithType
-          symbol = p1: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = ChildWithType::propertyWithType
@@ -1200,10 +1218,19 @@ KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(Child
         contextParameters = []
         callableId = kotlin/reflect/KMutableProperty1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        ChildWithType() -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = pack.ChildWithType
+          symbol = p1: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1242,17 +1269,9 @@ KtNameReferenceExpression(873,889): 'propertyWithType'
     isInBestCandidates = true
 
 KtCallExpression(890,913): 'invoke(ChildWithType())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        ChildWithType() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.ChildWithType
-          symbol = p1: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = ChildWithType::propertyWithType
@@ -1275,20 +1294,21 @@ KtCallExpression(890,913): 'invoke(ChildWithType())'
         contextParameters = []
         callableId = kotlin/reflect/KMutableProperty1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        ChildWithType() -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = pack.ChildWithType
+          symbol = p1: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(890,896): 'invoke'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        ChildWithType() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.ChildWithType
-          symbol = p1: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = ChildWithType::propertyWithType
@@ -1311,6 +1331,15 @@ KtNameReferenceExpression(890,896): 'invoke'
         contextParameters = []
         callableId = kotlin/reflect/KMutableProperty1.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        ChildWithType() -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = pack.ChildWithType
+          symbol = p1: T
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(896,913): '(ChildWithType())'
@@ -1320,9 +1349,9 @@ KtValueArgument(897,912): 'ChildWithType()'
   NO_CANDIDATES
 
 KtCallExpression(897,912): 'ChildWithType()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1334,12 +1363,13 @@ KtCallExpression(897,912): 'ChildWithType()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(897,910): 'ChildWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1351,15 +1381,16 @@ KtNameReferenceExpression(897,910): 'ChildWithType'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(910,912): '()'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(919,937): '::topLevelFunction'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1379,12 +1410,13 @@ KtCallableReferenceExpression(919,937): '::topLevelFunction'
         contextParameters = []
         callableId = pack/topLevelFunction
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(921,937): 'topLevelFunction'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1404,10 +1436,11 @@ KtNameReferenceExpression(921,937): 'topLevelFunction'
         contextParameters = []
         callableId = pack/topLevelFunction
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtCallableReferenceExpression(942,960): '::topLevelVariable'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1446,7 +1479,7 @@ KtDotQualifiedExpression(966,993): '::lateinitVar.isInitialized'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(966,979): '::lateinitVar'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1536,9 +1569,9 @@ KtBlockExpression(1057,1223): '{'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = classWithType
@@ -1553,6 +1586,7 @@ KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
         contextParameters = []
         callableId = pack/ClassWithType.functionWithType
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1063,1076): 'classWithType'
@@ -1576,7 +1610,7 @@ KtNameReferenceExpression(1063,1076): 'classWithType'
 KtNameReferenceExpression(1078,1094): 'functionWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = classWithType
@@ -1591,10 +1625,11 @@ KtNameReferenceExpression(1078,1094): 'functionWithType'
         contextParameters = []
         callableId = pack/ClassWithType.functionWithType
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1687,9 +1722,9 @@ KtConstantExpression(1165,1169): 'null'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = t!!
@@ -1704,20 +1739,13 @@ KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
         contextParameters = []
         callableId = pack/ClassWithType.functionWithType
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtPostfixExpression(1174,1177): 't!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1738,6 +1766,15 @@ KtPostfixExpression(1174,1177): 't!!'
         callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
+      }
+      valueArgumentMapping = {
+        t -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = pack.ClassWithType<kotlin.Int>?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1762,15 +1799,7 @@ KtNameReferenceExpression(1174,1175): 't'
 KtOperationReferenceExpression(1175,1177): '!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1792,12 +1821,21 @@ KtOperationReferenceExpression(1175,1177): '!!'
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
       }
+      valueArgumentMapping = {
+        t -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = pack.ClassWithType<kotlin.Int>?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1179,1195): 'functionWithType'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = t!!
@@ -1812,10 +1850,11 @@ KtNameReferenceExpression(1179,1195): 'functionWithType'
         contextParameters = []
         callableId = pack/ClassWithType.functionWithType
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1838,15 +1877,7 @@ KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
 KtPostfixExpression(1200,1203): 't!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1867,6 +1898,15 @@ KtPostfixExpression(1200,1203): 't!!'
         callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
+      }
+      valueArgumentMapping = {
+        t -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = pack.ClassWithType<kotlin.Int>?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1891,15 +1931,7 @@ KtNameReferenceExpression(1200,1201): 't'
 KtOperationReferenceExpression(1201,1203): '!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1920,6 +1952,15 @@ KtOperationReferenceExpression(1201,1203): '!!'
         callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
       typeArgumentsMapping = {
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
+      }
+      valueArgumentMapping = {
+        t -> (KaVariableSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = pack.ClassWithType<kotlin.Int>?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 

@@ -23,9 +23,9 @@ KtSuperTypeList(143,152): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(143,152): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -38,12 +38,13 @@ KtSuperTypeCallEntry(143,152): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(143,150): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -56,6 +57,7 @@ KtConstructorCalleeExpression(143,150): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(143,150): 'MyClass'
@@ -164,17 +166,9 @@ KtBlockExpression(271,374): '{'
   NO_CANDIDATES
 
 KtCallExpression(277,297): 'overload(EnumValue1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -194,19 +188,20 @@ KtCallExpression(277,297): 'overload(EnumValue1)'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         EnumValue1 -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
+          returnType = MyClass
+          symbol = arg: MyClass
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -226,20 +221,21 @@ KtCallExpression(277,297): 'overload(EnumValue1)'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(277,285): 'overload'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -259,19 +255,20 @@ KtNameReferenceExpression(277,285): 'overload'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -291,6 +288,15 @@ KtNameReferenceExpression(277,285): 'overload'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(285,297): '(EnumValue1)'
@@ -315,17 +321,9 @@ KtNameReferenceExpression(311,317): 'MyEnum'
   NO_CANDIDATES
 
 KtCallExpression(320,340): 'overload(EnumValue1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -345,19 +343,20 @@ KtCallExpression(320,340): 'overload(EnumValue1)'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         EnumValue1 -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
+          returnType = MyClass
+          symbol = arg: MyClass
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -377,20 +376,21 @@ KtCallExpression(320,340): 'overload(EnumValue1)'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(320,328): 'overload'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -410,19 +410,20 @@ KtNameReferenceExpression(320,328): 'overload'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -442,6 +443,15 @@ KtNameReferenceExpression(320,328): 'overload'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(328,340): '(EnumValue1)'
@@ -454,17 +464,9 @@ KtNameReferenceExpression(329,339): 'EnumValue1'
   NO_CANDIDATES
 
 KtCallExpression(346,371): 'overload(InheritorObject)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -484,19 +486,20 @@ KtCallExpression(346,371): 'overload(InheritorObject)'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
+          returnType = MyClass
+          symbol = arg: MyClass
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -516,20 +519,21 @@ KtCallExpression(346,371): 'overload(InheritorObject)'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(346,354): 'overload'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyClass
-          symbol = arg: MyClass
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -549,19 +553,20 @@ KtNameReferenceExpression(346,354): 'overload'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = arg: MyClass
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -581,6 +586,15 @@ KtNameReferenceExpression(346,354): 'overload'
         contextParameters = []
         callableId = /overload
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(354,371): '(InheritorObject)'
@@ -614,9 +628,9 @@ KtBlockExpression(402,429): '{ println("Enum version") }'
   NO_CANDIDATES
 
 KtCallExpression(404,427): 'println("Enum version")'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -628,20 +642,13 @@ KtCallExpression(404,427): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -661,19 +668,20 @@ KtCallExpression(404,427): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Boolean
-          symbol = message: kotlin.Boolean
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -693,20 +701,21 @@ KtCallExpression(404,427): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Byte
-          symbol = message: kotlin.Byte
+          returnType = kotlin.Boolean
+          symbol = message: kotlin.Boolean
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -726,20 +735,21 @@ KtCallExpression(404,427): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Char
-          symbol = message: kotlin.Char
+          returnType = kotlin.Byte
+          symbol = message: kotlin.Byte
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -759,20 +769,21 @@ KtCallExpression(404,427): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.CharArray
-          symbol = message: kotlin.CharArray
+          returnType = kotlin.Char
+          symbol = message: kotlin.Char
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -792,20 +803,21 @@ KtCallExpression(404,427): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Double
-          symbol = message: kotlin.Double
+          returnType = kotlin.CharArray
+          symbol = message: kotlin.CharArray
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -825,20 +837,21 @@ KtCallExpression(404,427): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Float
-          symbol = message: kotlin.Float
+          returnType = kotlin.Double
+          symbol = message: kotlin.Double
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -858,20 +871,21 @@ KtCallExpression(404,427): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
+          returnType = kotlin.Float
+          symbol = message: kotlin.Float
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -891,20 +905,21 @@ KtCallExpression(404,427): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Long
-          symbol = message: kotlin.Long
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -924,20 +939,21 @@ KtCallExpression(404,427): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Short
-          symbol = message: kotlin.Short
+          returnType = kotlin.Long
+          symbol = message: kotlin.Long
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -957,13 +973,22 @@ KtCallExpression(404,427): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = message: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(404,411): 'println'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -975,20 +1000,13 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1008,19 +1026,20 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = message: kotlin.Boolean
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1040,20 +1059,21 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = message: kotlin.Boolean
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = message: kotlin.Byte
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1073,20 +1093,21 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = message: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Char
-          symbol = message: kotlin.Char
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1106,20 +1127,21 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = message: kotlin.Char
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.CharArray
-          symbol = message: kotlin.CharArray
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1139,20 +1161,21 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.CharArray
+          symbol = message: kotlin.CharArray
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = message: kotlin.Double
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1172,20 +1195,21 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = message: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = message: kotlin.Float
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1205,20 +1229,21 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = message: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1238,20 +1263,21 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = message: kotlin.Long
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1271,20 +1297,21 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = message: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = message: kotlin.Short
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1304,6 +1331,15 @@ KtNameReferenceExpression(404,411): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = message: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = false
 
@@ -1329,9 +1365,9 @@ KtBlockExpression(446,486): '{ println("Without arguments version") }'
   NO_CANDIDATES
 
 KtCallExpression(448,484): 'println("Without arguments version")'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1343,20 +1379,13 @@ KtCallExpression(448,484): 'println("Without arguments version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1376,19 +1405,20 @@ KtCallExpression(448,484): 'println("Without arguments version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Boolean
-          symbol = message: kotlin.Boolean
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1408,20 +1438,21 @@ KtCallExpression(448,484): 'println("Without arguments version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Byte
-          symbol = message: kotlin.Byte
+          returnType = kotlin.Boolean
+          symbol = message: kotlin.Boolean
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1441,20 +1472,21 @@ KtCallExpression(448,484): 'println("Without arguments version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Char
-          symbol = message: kotlin.Char
+          returnType = kotlin.Byte
+          symbol = message: kotlin.Byte
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1474,20 +1506,21 @@ KtCallExpression(448,484): 'println("Without arguments version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.CharArray
-          symbol = message: kotlin.CharArray
+          returnType = kotlin.Char
+          symbol = message: kotlin.Char
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1507,20 +1540,21 @@ KtCallExpression(448,484): 'println("Without arguments version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Double
-          symbol = message: kotlin.Double
+          returnType = kotlin.CharArray
+          symbol = message: kotlin.CharArray
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1540,20 +1574,21 @@ KtCallExpression(448,484): 'println("Without arguments version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Float
-          symbol = message: kotlin.Float
+          returnType = kotlin.Double
+          symbol = message: kotlin.Double
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1573,20 +1608,21 @@ KtCallExpression(448,484): 'println("Without arguments version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
+          returnType = kotlin.Float
+          symbol = message: kotlin.Float
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1606,20 +1642,21 @@ KtCallExpression(448,484): 'println("Without arguments version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Long
-          symbol = message: kotlin.Long
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1639,20 +1676,21 @@ KtCallExpression(448,484): 'println("Without arguments version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Without arguments version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Short
-          symbol = message: kotlin.Short
+          returnType = kotlin.Long
+          symbol = message: kotlin.Long
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1672,13 +1710,22 @@ KtCallExpression(448,484): 'println("Without arguments version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = message: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(448,455): 'println'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1690,20 +1737,13 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1723,19 +1763,20 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = message: kotlin.Boolean
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1755,20 +1796,21 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = message: kotlin.Boolean
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = message: kotlin.Byte
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1788,20 +1830,21 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = message: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Char
-          symbol = message: kotlin.Char
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1821,20 +1864,21 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = message: kotlin.Char
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.CharArray
-          symbol = message: kotlin.CharArray
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1854,20 +1898,21 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.CharArray
+          symbol = message: kotlin.CharArray
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = message: kotlin.Double
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1887,20 +1932,21 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = message: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = message: kotlin.Float
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1920,20 +1966,21 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = message: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1953,20 +2000,21 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = message: kotlin.Long
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1986,20 +2034,21 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = message: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Without arguments version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = message: kotlin.Short
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2019,6 +2068,15 @@ KtNameReferenceExpression(448,455): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Without arguments version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = message: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = false
 
@@ -2044,9 +2102,9 @@ KtBlockExpression(500,529): '{'
   NO_CANDIDATES
 
 KtCallExpression(506,527): 'overload2(EnumValue1)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2058,20 +2116,13 @@ KtCallExpression(506,527): 'overload2(EnumValue1)'
         contextParameters = []
         callableId = /overload2
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun overload2(): Unit'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2091,12 +2142,21 @@ KtCallExpression(506,527): 'overload2(EnumValue1)'
         contextParameters = []
         callableId = /overload2
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(506,515): 'overload2'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2108,20 +2168,13 @@ KtNameReferenceExpression(506,515): 'overload2'
         contextParameters = []
         callableId = /overload2
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun overload2(): Unit'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2141,6 +2194,15 @@ KtNameReferenceExpression(506,515): 'overload2'
         contextParameters = []
         callableId = /overload2
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(515,527): '(EnumValue1)'
@@ -2192,9 +2254,9 @@ KtBlockExpression(557,584): '{ println("Enum version") }'
   NO_CANDIDATES
 
 KtCallExpression(559,582): 'println("Enum version")'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2206,20 +2268,13 @@ KtCallExpression(559,582): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2239,19 +2294,20 @@ KtCallExpression(559,582): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Boolean
-          symbol = message: kotlin.Boolean
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2271,20 +2327,21 @@ KtCallExpression(559,582): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Byte
-          symbol = message: kotlin.Byte
+          returnType = kotlin.Boolean
+          symbol = message: kotlin.Boolean
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2304,20 +2361,21 @@ KtCallExpression(559,582): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Char
-          symbol = message: kotlin.Char
+          returnType = kotlin.Byte
+          symbol = message: kotlin.Byte
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2337,20 +2395,21 @@ KtCallExpression(559,582): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.CharArray
-          symbol = message: kotlin.CharArray
+          returnType = kotlin.Char
+          symbol = message: kotlin.Char
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2370,20 +2429,21 @@ KtCallExpression(559,582): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Double
-          symbol = message: kotlin.Double
+          returnType = kotlin.CharArray
+          symbol = message: kotlin.CharArray
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2403,20 +2463,21 @@ KtCallExpression(559,582): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Float
-          symbol = message: kotlin.Float
+          returnType = kotlin.Double
+          symbol = message: kotlin.Double
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2436,20 +2497,21 @@ KtCallExpression(559,582): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
+          returnType = kotlin.Float
+          symbol = message: kotlin.Float
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2469,20 +2531,21 @@ KtCallExpression(559,582): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Long
-          symbol = message: kotlin.Long
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2502,20 +2565,21 @@ KtCallExpression(559,582): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "Enum version" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Short
-          symbol = message: kotlin.Short
+          returnType = kotlin.Long
+          symbol = message: kotlin.Long
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2535,13 +2599,22 @@ KtCallExpression(559,582): 'println("Enum version")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = message: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(559,566): 'println'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2553,20 +2626,13 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2586,19 +2652,20 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = message: kotlin.Boolean
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2618,20 +2685,21 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = message: kotlin.Boolean
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = message: kotlin.Byte
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2651,20 +2719,21 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = message: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Char
-          symbol = message: kotlin.Char
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2684,20 +2753,21 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = message: kotlin.Char
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.CharArray
-          symbol = message: kotlin.CharArray
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2717,20 +2787,21 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.CharArray
+          symbol = message: kotlin.CharArray
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = message: kotlin.Double
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2750,20 +2821,21 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = message: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = message: kotlin.Float
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2783,20 +2855,21 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = message: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2816,20 +2889,21 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = message: kotlin.Long
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2849,20 +2923,21 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = message: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Enum version" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = message: kotlin.Short
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2882,6 +2957,15 @@ KtNameReferenceExpression(559,566): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Enum version" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = message: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = false
 
@@ -2934,9 +3018,9 @@ KtBlockExpression(628,659): '{ println("With 2 arguments") }'
   NO_CANDIDATES
 
 KtCallExpression(630,657): 'println("With 2 arguments")'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2948,20 +3032,13 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2981,19 +3058,20 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Boolean
-          symbol = message: kotlin.Boolean
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3013,20 +3091,21 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Byte
-          symbol = message: kotlin.Byte
+          returnType = kotlin.Boolean
+          symbol = message: kotlin.Boolean
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3046,20 +3125,21 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Char
-          symbol = message: kotlin.Char
+          returnType = kotlin.Byte
+          symbol = message: kotlin.Byte
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3079,20 +3159,21 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.CharArray
-          symbol = message: kotlin.CharArray
+          returnType = kotlin.Char
+          symbol = message: kotlin.Char
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3112,20 +3193,21 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Double
-          symbol = message: kotlin.Double
+          returnType = kotlin.CharArray
+          symbol = message: kotlin.CharArray
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3145,20 +3227,21 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Float
-          symbol = message: kotlin.Float
+          returnType = kotlin.Double
+          symbol = message: kotlin.Double
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3178,20 +3261,21 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
+          returnType = kotlin.Float
+          symbol = message: kotlin.Float
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3211,20 +3295,21 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Long
-          symbol = message: kotlin.Long
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3244,20 +3329,21 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "With 2 arguments" -> (KaVariableSignature:
           name = message
           receiverType = null
-          returnType = kotlin.Short
-          symbol = message: kotlin.Short
+          returnType = kotlin.Long
+          symbol = message: kotlin.Long
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3277,13 +3363,22 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = message: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(630,637): 'println'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3295,20 +3390,13 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun println(): Unit'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = message: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3328,19 +3416,20 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = message: kotlin.Boolean
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3360,20 +3449,21 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = message: kotlin.Boolean
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Byte
-          symbol = message: kotlin.Byte
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3393,20 +3483,21 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = message: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Char
-          symbol = message: kotlin.Char
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3426,20 +3517,21 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = message: kotlin.Char
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Char' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.CharArray
-          symbol = message: kotlin.CharArray
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3459,20 +3551,21 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.CharArray
+          symbol = message: kotlin.CharArray
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'CharArray' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Double
-          symbol = message: kotlin.Double
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3492,20 +3585,21 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = message: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = message: kotlin.Float
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3525,20 +3619,21 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = message: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3558,20 +3653,21 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = message: kotlin.Long
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3591,20 +3687,21 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = message: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "With 2 arguments" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = message: kotlin.Short
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3624,6 +3721,15 @@ KtNameReferenceExpression(630,637): 'println'
         contextParameters = []
         callableId = kotlin/io/println
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "With 2 arguments" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = message: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = false
 
@@ -3649,17 +3755,9 @@ KtBlockExpression(673,702): '{'
   NO_CANDIDATES
 
 KtCallExpression(679,700): 'overload3(EnumValue1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3679,11 +3777,7 @@ KtCallExpression(679,700): 'overload3(EnumValue1)'
         contextParameters = []
         callableId = /overload3
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         EnumValue1 -> (KaVariableSignature:
           name = arg
           receiverType = null
@@ -3692,6 +3786,11 @@ KtCallExpression(679,700): 'overload3(EnumValue1)'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3718,20 +3817,21 @@ KtCallExpression(679,700): 'overload3(EnumValue1)'
         contextParameters = []
         callableId = /overload3
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = false
 
 KtNameReferenceExpression(679,688): 'overload3'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3751,11 +3851,7 @@ KtNameReferenceExpression(679,688): 'overload3'
         contextParameters = []
         callableId = /overload3
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         EnumValue1 -> (KaVariableSignature:
           name = arg
           receiverType = null
@@ -3764,6 +3860,11 @@ KtNameReferenceExpression(679,688): 'overload3'
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -3790,6 +3891,15 @@ KtNameReferenceExpression(679,688): 'overload3'
         contextParameters = []
         callableId = /overload3
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = false
 
 KtValueArgumentList(688,700): '(EnumValue1)'

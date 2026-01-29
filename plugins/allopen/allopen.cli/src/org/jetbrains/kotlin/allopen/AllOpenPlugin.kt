@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.allopen
 
-import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.ANNOTATION
-import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.PRESET
+import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.ALLOPEN_ANNOTATION
+import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.ALLOPEN_PRESET
 import org.jetbrains.kotlin.allopen.AllOpenPluginNames.ANNOTATION_OPTION_NAME
 import org.jetbrains.kotlin.allopen.AllOpenPluginNames.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.allopen.fir.FirAllOpenExtensionRegistrar
@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
 object AllOpenConfigurationKeys {
-    val ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation qualified name")
-    val PRESET: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation preset")
+    val ALLOPEN_ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("ALLOPEN_ANNOTATION")
+    val ALLOPEN_PRESET: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("ALLOPEN_PRESET")
 }
 
 class AllOpenCommandLineProcessor : CommandLineProcessor {
@@ -38,22 +38,22 @@ class AllOpenCommandLineProcessor : CommandLineProcessor {
     override val pluginOptions = listOf(ANNOTATION_OPTION, PRESET_OPTION)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
-        ANNOTATION_OPTION -> configuration.appendList(ANNOTATION, value)
-        PRESET_OPTION -> configuration.appendList(PRESET, value)
+        ANNOTATION_OPTION -> configuration.appendList(ALLOPEN_ANNOTATION, value)
+        PRESET_OPTION -> configuration.appendList(ALLOPEN_PRESET, value)
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
 
 class AllOpenComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        val annotations = configuration.get(ANNOTATION)?.toMutableList() ?: mutableListOf()
-        configuration.get(PRESET)?.forEach { preset ->
+        val annotations = configuration.get(ALLOPEN_ANNOTATION)?.toMutableList() ?: mutableListOf()
+        configuration.get(ALLOPEN_PRESET)?.forEach { preset ->
             SUPPORTED_PRESETS[preset]?.let { annotations += it }
         }
         if (annotations.isEmpty()) return
 
         DeclarationAttributeAltererExtension.registerExtension(CliAllOpenDeclarationAttributeAltererExtension(annotations))
-        FirExtensionRegistrarAdapter.registerExtension(FirAllOpenExtensionRegistrar(annotations))
+        FirExtensionRegistrar.registerExtension(FirAllOpenExtensionRegistrar(annotations))
     }
 
     override val pluginId: String get() = AllOpenPluginNames.PLUGIN_ID

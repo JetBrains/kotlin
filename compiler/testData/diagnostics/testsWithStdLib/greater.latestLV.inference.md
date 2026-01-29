@@ -6,18 +6,18 @@
 Expression#(R|<local>/other|)
 ```
 
-#### Candidate 1: `FirConstructorSymbol /Expression.Expression` --- `constructor<T>(x: T): Expression<T>`
+#### Candidate 1: `FirConstructorSymbol /Expression.Expression` --- `constructor<M>(x: M): Expression<M>`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
-1. New `TypeVariable(T)` for `FirRegularClassSymbol Expression`s parameter 0
+1. New `TypeVariable(M)` for `FirRegularClassSymbol Expression`s parameter 0
 
 ##### Resolution Stages > CheckArguments:
 
-1. `T <: TypeVariable(T)` _from Argument R|<local>/other|_
+1. `T <: TypeVariable(M)` _from Argument R|<local>/other|_
 
 ##### Call Completion:
 
-1. Choose `TypeVariable(T)` with `Readiness(
+1. Choose `TypeVariable(M)` with `Readiness(
    	false ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -25,11 +25,10 @@ Expression#(R|<local>/other|)
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	false HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
 
 ### Call 2
@@ -42,7 +41,7 @@ GreaterOp#(this@R|/greater|, R?C|/Expression.Expression|(R|<local>/other|))
 ##### Resolution Stages > CheckArguments:
 
 1. `Expression<CapturedType(in S)> <: Expression<*>` _from Argument this|/greater|_
-2. `Expression<TypeVariable(T)> <: Expression<*>` _from Argument R?C|/Expression.Expression|(R|<local>/other|)_
+2. `Expression<TypeVariable(M)> <: Expression<*>` _from Argument R?C|/Expression.Expression|(R|<local>/other|)_
 
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
@@ -50,7 +49,7 @@ GreaterOp#(this@R|/greater|, R?C|/Expression.Expression|(R|<local>/other|))
 
 ##### Call Completion:
 
-1. Choose `TypeVariable(T)` with `Readiness(
+1. Choose `TypeVariable(M)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -58,13 +57,12 @@ GreaterOp#(this@R|/greater|, R?C|/Expression.Expression|(R|<local>/other|))
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
-2. `TypeVariable(T) == T` _from Fix variable T_
+2. `TypeVariable(M) == T` _from Fix variable M_
 
 ### Call 3
 
@@ -115,11 +113,10 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
     1. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -129,11 +126,10 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
        	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        )`
 2. `TypeVariable(S) == kotlin/Long` _from Fix variable S_
 3. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: TypeVariable(T)?`
@@ -156,11 +152,10 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
 
 ### Call 4
@@ -212,11 +207,10 @@ R|<local>/countExpr|.greater#(String(0))
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
     1. `TypeVariable(S)` is `Readiness(
        	 true ALLOWED
@@ -226,11 +220,10 @@ R|<local>/countExpr|.greater#(String(0))
        	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        )`
 2. `TypeVariable(T) == kotlin/String` _from Fix variable T_
 3. Combine `TypeVariable(S) & Any <: TypeVariable(T)` with `TypeVariable(T) == kotlin/String`
@@ -248,11 +241,10 @@ R|<local>/countExpr|.greater#(String(0))
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
 7. __InferredEmptyIntersectionWarning__
 8. `TypeVariable(S) == it(kotlin/Long & kotlin/String)` _from Fix variable S_
@@ -306,7 +298,7 @@ R|<local>/countExpr|.greater#<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
 
 ##### Call Completion:
 
-1. Choose `TypeVariable(T)` with `Readiness(
+1. Choose `TypeVariable(S)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -314,13 +306,12 @@ R|<local>/countExpr|.greater#<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
-    1. `TypeVariable(S)` is `Readiness(
+    1. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
        	 true HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -328,21 +319,19 @@ R|<local>/countExpr|.greater#<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
        	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        )`
-2. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-3. Combine `TypeVariable(S) & Any <: TypeVariable(T)` with `TypeVariable(T) == kotlin/String`
-    1. `TypeVariable(S) <: kotlin/String?`
-4. Combine `TypeVariable(T) == kotlin/String` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
-    1. `TypeVariable(T) <: kotlin/String`
-    2. `TypeVariable(T) <: kotlin/Comparable<kotlin/String>`
-5. Combine `TypeVariable(T) == kotlin/String` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
-    1. `TypeVariable(S) <: kotlin/Comparable<kotlin/String>?`
-6. Choose `TypeVariable(S)` with `Readiness(
+2. `TypeVariable(S) == kotlin/Nothing` _from Fix variable S_
+3. Combine `TypeVariable(S) == kotlin/Nothing` with `TypeVariable(S) <: TypeVariable(T)?`
+    1. `kotlin/Nothing <: TypeVariable(T)`
+4. Combine `TypeVariable(S) == kotlin/Nothing` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(S) & Any>`
+    1. `TypeVariable(T) <: kotlin/Comparable<kotlin/Nothing>`
+5. Combine `TypeVariable(S) == kotlin/Nothing` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
+    1. `TypeVariable(S) <: kotlin/Comparable<kotlin/Nothing>?`
+6. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -350,12 +339,12 @@ R|<local>/countExpr|.greater#<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    )`
-7. `TypeVariable(S) == kotlin/Nothing` _from Fix variable S_
-8. Combine `TypeVariable(S) == kotlin/Nothing` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
-    1. `TypeVariable(S) <: kotlin/Comparable<kotlin/Nothing>?`
+7. `TypeVariable(T) == kotlin/String` _from Fix variable T_
+8. Combine `TypeVariable(T) == kotlin/String` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
+    1. `TypeVariable(T) <: kotlin/String`
+    2. `TypeVariable(T) <: kotlin/Comparable<kotlin/String>`

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.InitialConstraint
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -37,13 +38,36 @@ abstract class InferenceLogger {
         val chosen: TypeVariableMarker?,
     ) {
         var fixedTo: KotlinTypeMarker? = null
+            set(value) {
+                field = value
+                map.values.forEach { it.freezeConstraintsAfterFixation() }
+            }
     }
 
     class FixationLogVariableInfo<Readiness : Any>(
         val readiness: Readiness,
         val constraints: List<Constraint>,
     ) {
-        val constraintsBeforeFixationCount = constraints.size
+        val formattedConstraintsBeforeFixation = constraints.associateWith(::formatConstraintForFixation)
+        var formattedConstraintsAfterFixation: List<String>? = null
+
+        fun freezeConstraintsAfterFixation(): List<String> = formattedConstraintsAfterFixation
+            ?: constraints
+                .map { it to formatConstraintForFixation(it) }
+                .filter { (constraint, formatted) ->
+                    constraint !in formattedConstraintsBeforeFixation || formatted != formattedConstraintsBeforeFixation[constraint]
+                }
+                .map { it.second }
+                .also { formattedConstraintsAfterFixation = it }
+
+        private fun formatConstraintForFixation(constraint: Constraint): String {
+            val operator = when (constraint.kind) {
+                ConstraintKind.LOWER -> ">:"
+                ConstraintKind.UPPER -> "<:"
+                ConstraintKind.EQUALITY -> "="
+            }
+            return "$operator ${constraint.type}"
+        }
     }
 
     abstract fun logReadiness(
@@ -62,6 +86,8 @@ abstract class InferenceLogger {
         constraint2: Constraint,
         block: () -> T,
     ): T
+
+    abstract fun logFixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, system: ConstraintSystemMarker)
 
     /**
      * Exists to satisfy K1's dependency injection as it doesn't support `null` values.
@@ -87,6 +113,12 @@ abstract class InferenceLogger {
         override fun logNewVariable(
             variable: TypeVariableMarker,
             system: ConstraintSystemMarker
+        ) = error("Should never be called")
+
+        override fun logFixVariable(
+            variable: TypeVariableMarker,
+            resultType: KotlinTypeMarker,
+            system: ConstraintSystemMarker,
         ) = error("Should never be called")
 
         override fun logReadiness(

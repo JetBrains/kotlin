@@ -55,4 +55,5 @@ fun TestConfigurationBuilder.enableLombok() {
     useConfigurators(::LombokEnvironmentConfigurator)
     useAdditionalSourceProviders(::LombokAdditionalSourceFileProvider)
     useCustomRuntimeClasspathProviders(::LombokRuntimeClassPathProvider)
+    useSourcePreprocessor()
 }

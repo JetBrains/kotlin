@@ -23,9 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureSourcesPublica
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.named
-import org.jetbrains.kotlin.gradle.utils.newInstance
 
 /**
  * Creates an adhoc/external Kotlin Target which can be maintained and evolved outside the kotlin.git repository.
@@ -45,25 +42,21 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
     val sourcesElementsConfiguration = project.configurations
         .maybeCreateConsumable(lowerCamelCaseName(descriptor.targetName, "sourcesElements"))
 
-    fun Configuration.notVisible() = apply {
-        @Suppress("DEPRECATION")
-        isVisible = false
-    }
     val apiElementsPublishedConfiguration = project.configurations
-        .maybeCreateDependencyScope(lowerCamelCaseName(descriptor.targetName, "apiElements-published"))
-        .notVisible()
+        .maybeCreateDependencyScope(lowerCamelCaseName(descriptor.targetName, "apiElements-published")).apply {
+            setInvisibleIfSupported()
+        }
 
     val runtimeElementsPublishedConfiguration = project.configurations
-        .maybeCreateDependencyScope(lowerCamelCaseName(descriptor.targetName, "runtimeElements-published"))
-        .notVisible()
+        .maybeCreateDependencyScope(lowerCamelCaseName(descriptor.targetName, "runtimeElements-published")).apply {
+            setInvisibleIfSupported()
+        }
 
     val sourcesElementsPublishedConfiguration = project.configurations
         .maybeCreateDependencyScope(lowerCamelCaseName(descriptor.targetName, "sourcesElements-published"))
-        .notVisible()
 
     val resourcesElementsPublishedConfiguration = project.configurations
         .maybeCreateDependencyScope(lowerCamelCaseName(descriptor.targetName, "resourcesElements-published"))
-        .notVisible()
 
     val kotlinTargetComponent = ExternalKotlinTargetComponent(
         ExternalKotlinTargetComponent.TargetProvider.byTargetName(this, descriptor.targetName)

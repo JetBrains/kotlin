@@ -21,5 +21,5 @@ import java.lang.RuntimeException
  * @since 2.3.20
  */
 @ExperimentalBuildToolsApi
-public class OperationCancelledException(message: String = "Operation has been cancelled.", cause: Throwable? = null) :
-    RuntimeException(message, cause)
+public class OperationCancelledException() :
+    RuntimeException("Operation has been cancelled.")

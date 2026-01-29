@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
@@ -57,10 +56,28 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
      */
     public abstract val owningProperty: KaKotlinPropertySymbol
 
+    /**
+     * Whether the backing field [is not default](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0430-explicit-backing-fields.md#declaration-site).
+     *
+     * #### Example
+     *
+     * The following property has an implicitly defined, default backing field:
+     *
+     * ```kotlin
+     * var names: Int = 10
+     * ```
+     *
+     * This property has an explicit, non-default backing field:
+     *
+     * ```kotlin
+     * val names: List<String>
+     *     field: MutableList<String> = mutableListOf()
+     * ```
+     */
+    public abstract val isNotDefault: Boolean
+
     final override val name: Name get() = withValidityAssertion { StandardNames.BACKING_FIELD }
 
-    /** PSI may be not-null in the case of explicit backing field ([KEEP-278](https://github.com/Kotlin/KEEP/issues/278)) */
-    final override val psi: PsiElement? get() = withValidityAssertion { null }
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.PROPERTY }
     override val origin: KaSymbolOrigin get() = withValidityAssertion { KaSymbolOrigin.PROPERTY_BACKING_FIELD }
     final override val callableId: CallableId? get() = withValidityAssertion { null }
@@ -534,6 +551,26 @@ public abstract class KaValueParameterSymbol : KaParameterSymbol() {
      * The names of the value parameters for `invoke()` are "item" and "p2" (its default parameter name).
      */
     abstract override val name: Name
+
+    /**
+     * Whether the compiler synthesized the value parameter name.
+     *
+     * This flag is meaningful only for value parameters of binary Java methods since they
+     * might not have names in the bytecode.
+     *
+     * ### Example
+     *
+     * ```java
+     * public JavaClass {
+     *   public void foo(int meaningfulName1, String meaningfulName2) { ... }
+     * }
+     * ```
+     *
+     * The bytecode don't have to have `meaningfulName1` and `meaningfulName2` information, so the compiler
+     * will generate `p0` and `p1` names for the parameters instead.
+     */
+    @KaExperimentalApi
+    public abstract val hasSynthesizedName: Boolean
 
     /**
      * Whether the value parameter is marked as [`noinline`](https://kotlinlang.org/docs/inline-functions.html#noinline).

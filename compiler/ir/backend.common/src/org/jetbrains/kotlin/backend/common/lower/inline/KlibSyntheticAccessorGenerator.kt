@@ -61,7 +61,7 @@ class KlibSyntheticAccessorGenerator(
 
             accessor.addValueParameter(
                 CONSTRUCTOR_MARKER_PARAMETER_NAME.synthesizedString,
-                context.symbols.syntheticConstructorMarker!!.defaultType.makeNullable(),
+                context.symbols.syntheticConstructorMarker.defaultType.makeNullable(),
                 IrDeclarationOrigin.SYNTHETIC_CONSTRUCTOR_MARKER,
             )
 
@@ -106,7 +106,7 @@ class KlibSyntheticAccessorGenerator(
     }
 
     override fun createAccessorMarkerArgument(): IrConst =
-        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.symbols.syntheticConstructorMarker!!.defaultType.makeNullable())
+        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.symbols.syntheticConstructorMarker.defaultType.makeNullable())
 
     private fun AccessorNameBuilder.contributeTopLevelDeclarationSuffix(declaration: IrDeclaration) {
         val parent = declaration.parent

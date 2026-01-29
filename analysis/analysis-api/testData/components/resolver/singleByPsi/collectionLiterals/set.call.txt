@@ -1,32 +1,34 @@
 KtCollectionLiteralExpression(55,58): '[1]'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      1 -> (KaVariableSignature:
-        name = element
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Int
-        symbol = element: T
+        returnType = kotlin.collections.Set<kotlin.Int>
+        symbol = kotlin/collections/setOf(element: T): kotlin.collections.Set<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = element: T
+            contextParameters = []
+            callableId = null
+        ]
         contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.collections.Set<kotlin.Int>
-      symbol = kotlin/collections/setOf(element: T): kotlin.collections.Set<T>
-      valueParameters = [
-        KaVariableSignature:
+        callableId = kotlin/collections/setOf
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = element
           receiverType = null
           returnType = kotlin.Int
           symbol = element: T
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = kotlin/collections/setOf
-    typeArgumentsMapping = {
-      T -> (kotlin.Int)
-    }
+          callableId = null)
+      }

@@ -1,7 +1,7 @@
 KtConstructorDelegationReferenceExpression(76,80): 'this'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -14,20 +14,13 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        "2" -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -48,20 +41,21 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         "2" -> (KaVariableSignature:
-          name = b
+          name = a
           receiverType = null
-          returnType = kotlin.String
-          symbol = b: kotlin.String
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -82,4 +76,13 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

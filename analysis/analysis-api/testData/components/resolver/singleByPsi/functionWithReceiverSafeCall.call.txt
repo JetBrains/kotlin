@@ -1,33 +1,35 @@
 KtCallExpression(56,67): 'function(1)'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      1 -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = a: kotlin.Int
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = "str"
+        isSafeNavigation = true
+        type = kotlin.String
+      signature = KaFunctionSignature:
+        receiverType = kotlin.String
+        returnType = kotlin.Unit
+        symbol = /function(<extension receiver>: kotlin.String, a: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
         contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = "str"
-      isSafeNavigation = true
-      type = kotlin.String
-    signature = KaFunctionSignature:
-      receiverType = kotlin.String
-      returnType = kotlin.Unit
-      symbol = /function(<extension receiver>: kotlin.String, a: kotlin.Int): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+        callableId = /function
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /function
-    typeArgumentsMapping = {}
+          callableId = null)
+      }

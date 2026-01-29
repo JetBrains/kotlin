@@ -1,28 +1,30 @@
 KtCallExpression(134,137): 'c()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = [
-      KaImplicitReceiverValue:
-        symbol = /Foo
-        type = Receiver
-    ]
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = /Foo
-      type = Container
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /Container.c(<dispatch receiver>: Container): kotlin.Unit
-      valueParameters = []
-      contextParameters = [
-        KaVariableSignature:
-          name = $context_receiver_0
-          receiverType = null
-          returnType = Receiver
-          symbol = $context_receiver_0: Receiver
-          contextParameters = []
-          callableId = null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = /Foo
+          type = Receiver
       ]
-      callableId = /Container.c
-    typeArgumentsMapping = {}
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = /Foo
+        type = Container
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /Container.c(<dispatch receiver>: Container): kotlin.Unit
+        valueParameters = []
+        contextParameters = [
+          KaVariableSignature:
+            name = $context_receiver_0
+            receiverType = null
+            returnType = Receiver
+            symbol = $context_receiver_0: Receiver
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /Container.c
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

@@ -1,7 +1,7 @@
 KtNameReferenceExpression(100,109): 'asDynamic'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -16,3 +16,4 @@ KtNameReferenceExpression(100,109): 'asDynamic'
         contextParameters = []
         callableId = kotlin/js/asDynamic
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterForExportedSuspendFunction
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterWithDefaultForExportedSuspendFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
@@ -506,7 +506,7 @@ internal fun translateNonDispatchCallArguments(
     return function.nonDispatchParameters
         .map { parameter ->
             val argument = expression.arguments[parameter.indexInParameters]
-            if (argument == null && !(validWithNullArgs || parameter.isBoxParameter || parameter.isProxyParameterForExportedSuspendFunction)) {
+            if (argument == null && !(validWithNullArgs || parameter.isBoxParameter || parameter.isProxyParameterWithDefaultForExportedSuspendFunction)) {
                 compilationException("Argument for parameter ${parameter.name} cannot be null", expression)
             }
             var jsArgument = when {

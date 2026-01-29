@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleS
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModules
 import org.jetbrains.kotlin.gradle.util.resourcesRoot
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Test
+import kotlin.test.Test
 import java.io.File
 import java.nio.file.Path
 import kotlin.test.assertEquals

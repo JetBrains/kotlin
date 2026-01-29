@@ -1,30 +1,32 @@
 KtCallExpression(110,117): 'x(true)'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      true -> (KaVariableSignature:
-        name = b
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Boolean
-        symbol = b: kotlin.Boolean
+        returnType = kotlin.Unit
+        symbol = x(b: kotlin.Boolean): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = b: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
         contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = x(b: kotlin.Boolean): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        true -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Boolean
           symbol = b: kotlin.Boolean
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
+          callableId = null)
+      }

@@ -127,15 +127,7 @@ KtContainerNode(304,329): 'settings == BasicSettings'
 KtBinaryExpression(304,329): 'settings == BasicSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        BasicSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = settings
@@ -158,6 +150,15 @@ KtBinaryExpression(304,329): 'settings == BasicSettings'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        BasicSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(304,312): 'settings'
@@ -181,15 +182,7 @@ KtNameReferenceExpression(304,312): 'settings'
 KtOperationReferenceExpression(313,315): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        BasicSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = settings
@@ -212,6 +205,15 @@ KtOperationReferenceExpression(313,315): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        BasicSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(316,329): 'BasicSettings'
@@ -221,17 +223,9 @@ KtContainerNodeForControlStructureBody(331,344): 'work("Basic")'
   NO_CANDIDATES
 
 KtCallExpression(331,344): 'work("Basic")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Basic" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -251,20 +245,21 @@ KtCallExpression(331,344): 'work("Basic")'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Basic" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(331,335): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Basic" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -284,6 +279,15 @@ KtNameReferenceExpression(331,335): 'work'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Basic" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(335,344): '("Basic")'
@@ -307,15 +311,7 @@ KtContainerNode(354,387): 'basicSettings == SpecificSettings'
 KtBinaryExpression(354,387): 'basicSettings == SpecificSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        SpecificSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -338,6 +334,15 @@ KtBinaryExpression(354,387): 'basicSettings == SpecificSettings'
         contextParameters = []
         callableId = /Settings.BasicSettings.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        SpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(354,367): 'basicSettings'
@@ -361,15 +366,7 @@ KtNameReferenceExpression(354,367): 'basicSettings'
 KtOperationReferenceExpression(368,370): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        SpecificSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -392,6 +389,15 @@ KtOperationReferenceExpression(368,370): '=='
         contextParameters = []
         callableId = /Settings.BasicSettings.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        SpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(371,387): 'SpecificSettings'
@@ -401,17 +407,9 @@ KtContainerNodeForControlStructureBody(389,405): 'work("Specific")'
   NO_CANDIDATES
 
 KtCallExpression(389,405): 'work("Specific")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -431,20 +429,21 @@ KtCallExpression(389,405): 'work("Specific")'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(389,393): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -464,6 +463,15 @@ KtNameReferenceExpression(389,393): 'work'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(393,405): '("Specific")'
@@ -487,15 +495,7 @@ KtContainerNode(414,456): 'basicSettings == Settings.SpecificSettings'
 KtBinaryExpression(414,456): 'basicSettings == Settings.SpecificSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Settings.SpecificSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -518,6 +518,15 @@ KtBinaryExpression(414,456): 'basicSettings == Settings.SpecificSettings'
         contextParameters = []
         callableId = /Settings.BasicSettings.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Settings.SpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(414,427): 'basicSettings'
@@ -541,15 +550,7 @@ KtNameReferenceExpression(414,427): 'basicSettings'
 KtOperationReferenceExpression(428,430): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Settings.SpecificSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -572,6 +573,15 @@ KtOperationReferenceExpression(428,430): '=='
         contextParameters = []
         callableId = /Settings.BasicSettings.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Settings.SpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtDotQualifiedExpression(431,456): 'Settings.SpecificSettings'
@@ -587,17 +597,9 @@ KtContainerNodeForControlStructureBody(458,474): 'work("Specific")'
   NO_CANDIDATES
 
 KtCallExpression(458,474): 'work("Specific")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -617,20 +619,21 @@ KtCallExpression(458,474): 'work("Specific")'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(458,462): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -650,6 +653,15 @@ KtNameReferenceExpression(458,462): 'work'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(462,474): '("Specific")'
@@ -683,9 +695,9 @@ KtSuperTypeList(540,554): 'OpenSettings()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(540,554): 'OpenSettings()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -698,12 +710,13 @@ KtSuperTypeCallEntry(540,554): 'OpenSettings()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(540,552): 'OpenSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -716,6 +729,7 @@ KtConstructorCalleeExpression(540,552): 'OpenSettings'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(540,552): 'OpenSettings'
@@ -727,7 +741,7 @@ KtUserType(540,552): 'OpenSettings'
 KtNameReferenceExpression(540,552): 'OpenSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -740,6 +754,7 @@ KtNameReferenceExpression(540,552): 'OpenSettings'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(552,554): '()'
@@ -755,9 +770,9 @@ KtSuperTypeList(594,608): 'OpenSettings()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(594,608): 'OpenSettings()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -770,12 +785,13 @@ KtSuperTypeCallEntry(594,608): 'OpenSettings()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(594,606): 'OpenSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -788,6 +804,7 @@ KtConstructorCalleeExpression(594,606): 'OpenSettings'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(594,606): 'OpenSettings'
@@ -799,7 +816,7 @@ KtUserType(594,606): 'OpenSettings'
 KtNameReferenceExpression(594,606): 'OpenSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -812,6 +829,7 @@ KtNameReferenceExpression(594,606): 'OpenSettings'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(606,608): '()'
@@ -865,15 +883,7 @@ KtContainerNode(707,736): 'settings == OpenBasicSettings'
 KtBinaryExpression(707,736): 'settings == OpenBasicSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        OpenBasicSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = settings
@@ -896,6 +906,15 @@ KtBinaryExpression(707,736): 'settings == OpenBasicSettings'
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        OpenBasicSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(707,715): 'settings'
@@ -919,15 +938,7 @@ KtNameReferenceExpression(707,715): 'settings'
 KtOperationReferenceExpression(716,718): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        OpenBasicSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = settings
@@ -950,6 +961,15 @@ KtOperationReferenceExpression(716,718): '=='
         contextParameters = []
         callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        OpenBasicSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(719,736): 'OpenBasicSettings'
@@ -959,17 +979,9 @@ KtContainerNodeForControlStructureBody(738,751): 'work("Basic")'
   NO_CANDIDATES
 
 KtCallExpression(738,751): 'work("Basic")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Basic" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -989,20 +1001,21 @@ KtCallExpression(738,751): 'work("Basic")'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Basic" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(738,742): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Basic" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1022,6 +1035,15 @@ KtNameReferenceExpression(738,742): 'work'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Basic" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(742,751): '("Basic")'
@@ -1045,15 +1067,7 @@ KtContainerNode(761,798): 'basicSettings == OpenSpecificSettings'
 KtBinaryExpression(761,798): 'basicSettings == OpenSpecificSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        OpenSpecificSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -1076,6 +1090,15 @@ KtBinaryExpression(761,798): 'basicSettings == OpenSpecificSettings'
         contextParameters = []
         callableId = /OpenSettings.OpenBasicSettings.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        OpenSpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(761,774): 'basicSettings'
@@ -1099,15 +1122,7 @@ KtNameReferenceExpression(761,774): 'basicSettings'
 KtOperationReferenceExpression(775,777): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        OpenSpecificSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -1130,6 +1145,15 @@ KtOperationReferenceExpression(775,777): '=='
         contextParameters = []
         callableId = /OpenSettings.OpenBasicSettings.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        OpenSpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(778,798): 'OpenSpecificSettings'
@@ -1139,17 +1163,9 @@ KtContainerNodeForControlStructureBody(800,816): 'work("Specific")'
   NO_CANDIDATES
 
 KtCallExpression(800,816): 'work("Specific")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1169,20 +1185,21 @@ KtCallExpression(800,816): 'work("Specific")'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(800,804): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1202,6 +1219,15 @@ KtNameReferenceExpression(800,804): 'work'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(804,816): '("Specific")'
@@ -1225,15 +1251,7 @@ KtContainerNode(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
 KtBinaryExpression(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        OpenSettings.OpenSpecificSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -1256,6 +1274,15 @@ KtBinaryExpression(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings
         contextParameters = []
         callableId = /OpenSettings.OpenBasicSettings.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        OpenSettings.OpenSpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(825,838): 'basicSettings'
@@ -1279,15 +1306,7 @@ KtNameReferenceExpression(825,838): 'basicSettings'
 KtOperationReferenceExpression(839,841): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        OpenSettings.OpenSpecificSettings -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = basicSettings
@@ -1310,6 +1329,15 @@ KtOperationReferenceExpression(839,841): '=='
         contextParameters = []
         callableId = /OpenSettings.OpenBasicSettings.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        OpenSettings.OpenSpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtDotQualifiedExpression(842,875): 'OpenSettings.OpenSpecificSettings'
@@ -1325,17 +1353,9 @@ KtContainerNodeForControlStructureBody(877,893): 'work("Specific")'
   NO_CANDIDATES
 
 KtCallExpression(877,893): 'work("Specific")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1355,20 +1375,21 @@ KtCallExpression(877,893): 'work("Specific")'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(877,881): 'work'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1388,6 +1409,15 @@ KtNameReferenceExpression(877,881): 'work'
         contextParameters = []
         callableId = /work
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(881,893): '("Specific")'

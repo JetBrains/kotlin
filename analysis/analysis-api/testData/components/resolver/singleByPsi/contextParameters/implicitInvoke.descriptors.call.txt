@@ -1,17 +1,19 @@
 KtCallExpression(117,127): 'thisProp()'
-  KaImplicitInvokeCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = KaExplicitReceiverValue:
-      expression = thisProp
-      isSafeNavigation = false
-      type = A
-    signature = KaFunctionSignature:
-      receiverType = A
-      returnType = kotlin.Unit
-      symbol = /invoke(<extension receiver>: A): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = /invoke
-    typeArgumentsMapping = {}
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = thisProp
+        isSafeNavigation = false
+        type = A
+      signature = KaFunctionSignature:
+        receiverType = A
+        returnType = kotlin.Unit
+        symbol = /invoke(<extension receiver>: A): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

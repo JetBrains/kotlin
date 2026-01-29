@@ -16,7 +16,7 @@ dependencies {
     api(project(":kotlin-tooling-core"))
     api(project(":native:base"))
 
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         testImplementation(project(":kotlin-native:Interop:Indexer"))
         testImplementation(project(":native:kotlin-native-utils"))
         testImplementation(project(":kotlin-native:Interop:StubGenerator"))

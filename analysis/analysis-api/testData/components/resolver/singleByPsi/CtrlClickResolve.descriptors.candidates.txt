@@ -1,15 +1,7 @@
 KtNameReferenceExpression(202,210): 'IntArray'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        array("1", "2", "3") -> (KaVariableSignature:
-          name = content
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg content: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,19 +21,20 @@ KtNameReferenceExpression(202,210): 'IntArray'
         contextParameters = []
         callableId = ctrl_click/IntArray
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        array("1", "2", "3") -> (KaVariableSignature:
+          name = content
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg content: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        array("1", "2", "3") -> (KaVariableSignature:
-          name = size
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = size: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -61,12 +54,7 @@ KtNameReferenceExpression(202,210): 'IntArray'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         array("1", "2", "3") -> (KaVariableSignature:
           name = size
           receiverType = null
@@ -75,6 +63,12 @@ KtNameReferenceExpression(202,210): 'IntArray'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -101,5 +95,14 @@ KtNameReferenceExpression(202,210): 'IntArray'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        array("1", "2", "3") -> (KaVariableSignature:
+          name = size
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = size: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'init'>
     isInBestCandidates = false

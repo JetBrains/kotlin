@@ -1,33 +1,35 @@
 KtArrayAccessExpression(205,209): 'a[2]'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      2 -> (KaVariableSignature:
-        name = i
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = test.B
+      extensionReceiver = null
+      signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
+        returnType = test.B
+        symbol = test/B.get(<dispatch receiver>: test.B, i: kotlin.Int): test.B
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
         contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = a
-      isSafeNavigation = false
-      type = test.B
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = test.B
-      symbol = test/B.get(<dispatch receiver>: test.B, i: kotlin.Int): test.B
-      valueParameters = [
-        KaVariableSignature:
+        callableId = test/B.get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = test/B.get
-    typeArgumentsMapping = {}
+          callableId = null)
+      }

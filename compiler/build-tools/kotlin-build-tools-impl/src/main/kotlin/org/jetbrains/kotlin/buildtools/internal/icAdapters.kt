@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
-import kotlin.io.path.exists
 
 internal val SourcesChanges.asChangedFiles
     get() = when (this) {
@@ -38,7 +37,7 @@ internal val AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilat
         val params = parameters
         val snapshotFiles = ClasspathSnapshotFiles(params.newClasspathSnapshotFiles, params.shrunkClasspathSnapshot.parentFile)
         return when {
-            !params.shrunkClasspathSnapshot.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
+            !snapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
                 snapshotFiles
             )
             options.forcedNonIncrementalMode -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(
@@ -65,13 +64,14 @@ internal fun JvmSnapshotBasedIncrementalCompilationConfiguration.extractIncremen
     )
 }
 
+@Suppress("DEPRECATION")
 internal val JvmSnapshotBasedIncrementalCompilationConfiguration.classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled
     get() {
         val options = toOptions()
         val snapshotFiles =
             ClasspathSnapshotFiles(dependenciesSnapshotFiles.map { it.toFile() }, shrunkClasspathSnapshot.toFile().parentFile)
         return when {
-            !shrunkClasspathSnapshot.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
+            !snapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
                 snapshotFiles
             )
             options[FORCE_RECOMPILATION] -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(

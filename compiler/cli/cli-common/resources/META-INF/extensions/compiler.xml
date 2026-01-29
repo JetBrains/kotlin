@@ -23,17 +23,8 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.assignResolutionAltererExtension"
                         interface="org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.irGenerationExtension"
-                        interface="org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension"
-                        area="IDEA_PROJECT" dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.simpleNameReferenceExtension"
                         interface="org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension"
-                        area="IDEA_PROJECT" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.classBuilderFactoryInterceptorExtension"
-                        interface="org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension"
-                        area="IDEA_PROJECT" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.classGeneratorExtension"
-                        interface="org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.packageFragmentProviderExtension"
                         interface="org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension"
@@ -44,9 +35,6 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.extraImportsProviderExtension"
                         interface="org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar"
-                        interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"
-                        area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.DescriptorSerializerPlugin"
                         interface="org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin"
                         area="IDEA_PROJECT"/>

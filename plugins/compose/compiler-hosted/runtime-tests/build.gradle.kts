@@ -15,7 +15,7 @@ plugins {
 // Error: Project directory '?/plugins/compose/compiler-hosted/runtime-tests' is not part of the build defined by the settings file
 
 repositories {
-    if (!kotlinBuildProperties.isTeamcityBuild) {
+    if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
     androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())

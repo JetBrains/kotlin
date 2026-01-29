@@ -1,16 +1,18 @@
 KtCollectionLiteralExpression(46,48): '[]'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.collections.MutableList<kotlin.String>
-      symbol = kotlin/collections/mutableListOf(): kotlin.collections.MutableList<T>
-      valueParameters = []
-      contextParameters = []
-      callableId = kotlin/collections/mutableListOf
-    typeArgumentsMapping = {
-      T -> (kotlin.String)
-    }
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.MutableList<kotlin.String>
+        symbol = kotlin/collections/mutableListOf(): kotlin.collections.MutableList<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/collections/mutableListOf
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {}

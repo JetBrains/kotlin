@@ -175,7 +175,7 @@ KtDotQualifiedExpression(349,363): 'MyEnum.Option1'
 KtNameReferenceExpression(349,355): 'MyEnum'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -187,6 +187,7 @@ KtNameReferenceExpression(349,355): 'MyEnum'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -338,17 +339,9 @@ KtOperationReferenceExpression(491,493): '!!'
   NO_CANDIDATES
 
 KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Option1!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyEnum
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -369,21 +362,22 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        Option1!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(499,506): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        Option1!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyEnum
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -404,6 +398,15 @@ KtNameReferenceExpression(499,506): 'receive'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        Option1!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -456,17 +459,9 @@ KtOperationReferenceExpression(522,524): '!!'
   NO_CANDIDATES
 
 KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        enumProp!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyEnum
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -487,21 +482,22 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        enumProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(530,537): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        enumProp!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyEnum
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -522,6 +518,15 @@ KtNameReferenceExpression(530,537): 'receive'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        enumProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -574,17 +579,9 @@ KtOperationReferenceExpression(554,556): '!!'
   NO_CANDIDATES
 
 KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        stringProp!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyEnum
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -605,6 +602,15 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        stringProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> receive(e: T): Unit>
     isInBestCandidates = true
@@ -612,15 +618,7 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
 KtNameReferenceExpression(562,569): 'receive'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        stringProp!! -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyEnum
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -641,6 +639,15 @@ KtNameReferenceExpression(562,569): 'receive'
         callableId = /receive
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        stringProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> receive(e: T): Unit>
     isInBestCandidates = true

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
@@ -60,7 +60,7 @@ object ComposeConfiguration {
         CompilerConfigurationKey<Boolean>(
             "Enabled optimization to remove groups around non-skipping functions"
         )
-    val SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK = CompilerConfigurationKey<String?>(
+    val SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK = CompilerConfigurationKey<String>(
         "Deprecated. Version of Kotlin for which version compatibility check should be suppressed"
     )
     val DECOYS_ENABLED_KEY =
@@ -665,7 +665,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                     composeDescriptorSerializerContext?.classStabilityInferredCollection
                 )
             )
-            FirExtensionRegistrarAdapter.registerExtension(ComposeFirExtensionRegistrar())
+            FirExtensionRegistrar.registerExtension(ComposeFirExtensionRegistrar())
         }
 
         fun ExtensionStorage.registerNativeExtensions(

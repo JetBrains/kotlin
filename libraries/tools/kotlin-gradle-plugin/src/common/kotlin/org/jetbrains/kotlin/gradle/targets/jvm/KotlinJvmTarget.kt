@@ -16,12 +16,14 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
@@ -32,9 +34,6 @@ import org.jetbrains.kotlin.gradle.targets.jvm.tasks.registerMainRunTask
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
-import org.jetbrains.kotlin.gradle.utils.future
 import java.util.concurrent.Callable
 import javax.inject.Inject
 
@@ -136,6 +135,13 @@ abstract class KotlinJvmTarget @Inject constructor(
         @Suppress("DEPRECATION")
         if (withJavaEnabled)
             return
+
+        /*
+        .withJava() is not supported anymore with Gradle 9, we return early and only show the above diagnostic
+         */
+        if (GradleVersion.current() >= GradleVersion.version("9.0.0")) {
+            return
+        }
 
         project.multiplatformExtension.targets.find {
             @Suppress("DEPRECATION")

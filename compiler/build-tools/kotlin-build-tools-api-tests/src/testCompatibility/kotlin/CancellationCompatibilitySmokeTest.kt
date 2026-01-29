@@ -5,16 +5,13 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests
 
-import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.OperationCancelledException
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.MODULE_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_REFLECT
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_STDLIB
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.JvmModule
@@ -34,19 +31,13 @@ import java.nio.file.Path
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.thread
-import kotlin.io.path.createFile
-import kotlin.io.path.createTempDirectory
-import kotlin.io.path.deleteExisting
-import kotlin.io.path.deleteIfExists
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.pathString
-import kotlin.io.path.walk
+import kotlin.io.path.*
 
 class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
 
-    @DisplayName("Non-incremental compilation test with cancellation")
+    @DisplayName("Non-incremental in-process compilation test with cancellation")
     @Test
-    fun nonIncrementalWithCancellation() {
+    fun nonIncrementalInProcessWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
         val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
         project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
@@ -65,9 +56,9 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
 
 
     @OptIn(ExperimentalAtomicApi::class)
-    @DisplayName("Daemon compilation test with cancellation")
+    @DisplayName("Non-incremental daemon compilation test with cancellation")
     @Test
-    fun daemonWithCancellation() {
+    fun nonIncrementalDaemonWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
         val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
         val daemonRunPath: Path = createTempDirectory("test-daemon-files")
@@ -140,9 +131,9 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
         } while (tries-- > 0)
     }
 
-    @DisplayName("Incremental compilation test with cancellation")
+    @DisplayName("Incremental in-process compilation test with cancellation")
     @Test
-    fun incrementalWithCancellation() {
+    fun incrementalInProcessWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
         val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
         project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
@@ -156,6 +147,62 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
         }
     }
 
+    @OptIn(ExperimentalAtomicApi::class)
+    @DisplayName("Incremental daemon compilation test with cancellation")
+    @Test
+    fun incrementalDaemonWithCancellation() {
+        val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
+        val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
+        val daemonRunPath: Path = createTempDirectory("test-daemon-files-incremental")
+        assumeTrue(hasCancellationSupport)
+        val daemonPolicy = kotlinToolchains.daemonExecutionPolicyBuilder().apply {
+            this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = listOf(
+                "-Dkotlin.daemon.wait.before.compilation.for.tests=true"
+            )
+            @OptIn(DelicateBuildToolsApi::class)
+            this[ExecutionPolicy.WithDaemon.DAEMON_RUN_DIR_PATH] = daemonRunPath
+            this[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 0
+        }.build()
+
+        project(kotlinToolchains, daemonPolicy) {
+            val module1 = module("jvm-module-1") as JvmModule
+            val operationWasCancelled = AtomicBoolean(false)
+            with(module1) {
+                val allowedExtensions = setOf("kt", "kts", "java")
+                val compilationOperation = kotlinToolchain.jvm.jvmCompilationOperationBuilder(
+                    sourcesDirectory.walk().filter { path -> path.pathString.run { allowedExtensions.any { endsWith(".$it") } } }.toList(),
+                    outputDirectory
+                )
+                moduleCompilationConfigAction(compilationOperation)
+                compilationOperation.compilerArguments[NO_REFLECT] = true
+                compilationOperation.compilerArguments[NO_STDLIB] = true
+                compilationOperation.compilerArguments[CLASSPATH] = compileClasspath
+                compilationOperation.compilerArguments[MODULE_NAME] = moduleName
+
+                val snapshotIcConfig = compilationOperation.snapshotBasedIcConfigurationBuilder(
+                    icCachesDir,
+                    SourcesChanges.Unknown,
+                    emptyList(),
+                )
+                compilationOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = snapshotIcConfig.build()
+
+                val logger = TestKotlinLogger()
+                val operation = compilationOperation.build()
+                val thread = thread {
+                    try {
+                        buildSession.executeOperation(operation, daemonPolicy, logger)
+                    } catch (_: OperationCancelledException) {
+                        operationWasCancelled.store(true)
+                    }
+                }
+                operation.cancel()
+                daemonRunPath.resolve("daemon-test-start").createFile().toFile().deleteOnExit()
+                thread.join()
+                assertTrue { operationWasCancelled.load() }
+            }
+        }
+        attemptCleanupDaemon(daemonRunPath)
+    }
 
     @DisplayName("Sample non-incremental compilation test without cancellation support")
     @Test

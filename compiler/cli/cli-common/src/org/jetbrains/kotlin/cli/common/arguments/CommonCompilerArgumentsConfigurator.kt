@@ -9,46 +9,52 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 
 open class CommonCompilerArgumentsConfigurator {
-    @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(
         arguments: CommonCompilerArguments,
         collector: MessageCollector,
         languageVersion: LanguageVersion,
-    ): MutableMap<AnalysisFlag<*>, Any> {
-        return with(arguments) {
-            HashMap<AnalysisFlag<*>, Any>().apply {
-                put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
-                put(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
-                put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
-                put(AnalysisFlags.optIn, optIn?.toList().orEmpty())
-                put(AnalysisFlags.skipExpectedActualDeclarationChecker, metadataKlib)
-                put(AnalysisFlags.explicitApiVersion, apiVersion != null)
-                ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(
+    ): MutableMap<AnalysisFlag<*>, Any> = with(arguments) {
+        HashMap<AnalysisFlag<*>, Any>().apply {
+            putAnalysisFlag(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
+            putAnalysisFlag(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
+            putAnalysisFlag(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
+            putAnalysisFlag(AnalysisFlags.optIn, optIn?.toList().orEmpty())
+            putAnalysisFlag(AnalysisFlags.skipExpectedActualDeclarationChecker, metadataKlib)
+            putAnalysisFlag(AnalysisFlags.explicitApiVersion, apiVersion != null)
+            ExplicitApiMode.fromString(explicitApi)?.also { putAnalysisFlag(AnalysisFlags.explicitApiMode, it) }
+                ?: collector.report(
                     CompilerMessageSeverity.ERROR,
                     "Unknown value for parameter -Xexplicit-api: '$explicitApi'. Value should be one of ${ExplicitApiMode.availableValues()}"
                 )
-                ExplicitApiMode.fromString(explicitReturnTypes)?.also { put(AnalysisFlags.explicitReturnTypes, it) } ?: collector.report(
+            ExplicitApiMode.fromString(explicitReturnTypes)?.also { putAnalysisFlag(AnalysisFlags.explicitReturnTypes, it) }
+                ?: collector.report(
                     CompilerMessageSeverity.ERROR,
                     "Unknown value for parameter -XXexplicit-return-types: '$explicitReturnTypes'. Value should be one of ${ExplicitApiMode.availableValues()}"
                 )
-                put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
-                put(AnalysisFlags.stdlibCompilation, stdlibCompilation)
-                put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
-                put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
-                put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
-                put(AnalysisFlags.lenientMode, lenientMode)
-                put(AnalysisFlags.headerMode, headerMode)
-                put(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
-                fillWarningLevelMap(arguments, collector)
-                ReturnValueCheckerMode.fromString(returnValueChecker)?.also { put(AnalysisFlags.returnValueCheckerMode, it) }
-                    ?: collector.report(
-                        CompilerMessageSeverity.ERROR,
-                        "Unknown value for parameter -Xreturn-value-checker: '$returnValueChecker'. Value should be one of ${ReturnValueCheckerMode.availableValues()}"
-                    )
-            }
+            putAnalysisFlag(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
+            putAnalysisFlag(AnalysisFlags.stdlibCompilation, stdlibCompilation)
+            putAnalysisFlag(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
+            putAnalysisFlag(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
+            putAnalysisFlag(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
+            putAnalysisFlag(AnalysisFlags.lenientMode, lenientMode)
+            putAnalysisFlag(AnalysisFlags.headerMode, headerMode)
+            putAnalysisFlag(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
+            fillWarningLevelMap(arguments, collector)
+            ReturnValueCheckerMode.fromString(returnValueChecker)?.also { putAnalysisFlag(AnalysisFlags.returnValueCheckerMode, it) }
+                ?: collector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "Unknown value for parameter -Xreturn-value-checker: '$returnValueChecker'. Value should be one of ${ReturnValueCheckerMode.availableValues()}"
+                )
+        }
+    }
+
+    protected fun MutableMap<AnalysisFlag<*>, Any>.putAnalysisFlag(flag: AnalysisFlag<*>, value: Any) {
+        if (value == flag.defaultValue) {
+            remove(flag)
+        } else {
+            this[flag] = value
         }
     }
 
@@ -199,7 +205,7 @@ open class CommonCompilerArgumentsConfigurator {
                 }
             }
         }
-        put(AnalysisFlags.warningLevels, result)
+        putAnalysisFlag(AnalysisFlags.warningLevels, result)
     }
 }
 

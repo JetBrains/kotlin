@@ -109,7 +109,7 @@ tasks.register<JavaExec>("runBenchmark") {
     mainClass.set("-jar")
 
     doLast {
-        if (project.kotlinBuildProperties.isTeamcityBuild) {
+        if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
             val jsonArray = com.google.gson.JsonParser.parseString(resultFilePath.get().asFile.readText()).asJsonArray
             jsonArray.forEach {
                 val benchmark = it.asJsonObject

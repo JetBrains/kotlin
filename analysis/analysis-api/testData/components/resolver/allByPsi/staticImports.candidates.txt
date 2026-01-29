@@ -175,7 +175,7 @@ KtProperty(302,348): 'val explicitTopObject = one.two.TopLevelObject'
 KtDotQualifiedExpression(326,348): 'one.two.TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -187,6 +187,7 @@ KtDotQualifiedExpression(326,348): 'one.two.TopLevelObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -202,7 +203,7 @@ KtNameReferenceExpression(330,333): 'two'
 KtNameReferenceExpression(334,348): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -214,6 +215,7 @@ KtNameReferenceExpression(334,348): 'TopLevelObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -223,7 +225,7 @@ KtProperty(353,391): 'val importedTopObject = TopLevelObject'
 KtNameReferenceExpression(377,391): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -235,6 +237,7 @@ KtNameReferenceExpression(377,391): 'TopLevelObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -244,7 +247,7 @@ KtProperty(397,435): 'val explicitFoo = TopLevelObject.foo()'
 KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject
@@ -259,12 +262,13 @@ KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
         contextParameters = []
         callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(415,429): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -276,13 +280,14 @@ KtNameReferenceExpression(415,429): 'TopLevelObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtCallExpression(430,435): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject
@@ -297,12 +302,13 @@ KtCallExpression(430,435): 'foo()'
         contextParameters = []
         callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(430,433): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject
@@ -317,6 +323,7 @@ KtNameReferenceExpression(430,433): 'foo'
         contextParameters = []
         callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(433,435): '()'
@@ -326,9 +333,9 @@ KtProperty(440,463): 'val importedFoo = foo()'
   NO_CANDIDATES
 
 KtCallExpression(458,463): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/two/TopLevelObject
@@ -342,12 +349,13 @@ KtCallExpression(458,463): 'foo()'
         contextParameters = []
         callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(458,461): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/two/TopLevelObject
@@ -361,6 +369,7 @@ KtNameReferenceExpression(458,461): 'foo'
         contextParameters = []
         callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(461,463): '()'
@@ -393,7 +402,7 @@ KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
 KtNameReferenceExpression(487,501): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -405,6 +414,7 @@ KtNameReferenceExpression(487,501): 'TopLevelObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -458,7 +468,7 @@ KtProperty(537,591): 'val explicitNestedObject = TopLevelObject.NestedObject'
 KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -470,13 +480,14 @@ KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(564,578): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -488,13 +499,14 @@ KtNameReferenceExpression(564,578): 'TopLevelObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(579,591): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -506,6 +518,7 @@ KtNameReferenceExpression(579,591): 'NestedObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -515,7 +528,7 @@ KtProperty(596,635): 'val importedNestedObject = NestedObject'
 KtNameReferenceExpression(623,635): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -527,6 +540,7 @@ KtNameReferenceExpression(623,635): 'NestedObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -536,7 +550,7 @@ KtProperty(641,692): 'val explicitBaz = TopLevelObject.NestedObject.baz()'
 KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject.NestedObject
@@ -551,12 +565,13 @@ KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -568,13 +583,14 @@ KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(659,673): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -586,13 +602,14 @@ KtNameReferenceExpression(659,673): 'TopLevelObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(674,686): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -604,13 +621,14 @@ KtNameReferenceExpression(674,686): 'NestedObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtCallExpression(687,692): 'baz()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject.NestedObject
@@ -625,12 +643,13 @@ KtCallExpression(687,692): 'baz()'
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(687,690): 'baz'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = TopLevelObject.NestedObject
@@ -645,6 +664,7 @@ KtNameReferenceExpression(687,690): 'baz'
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(690,692): '()'
@@ -656,7 +676,7 @@ KtProperty(697,739): 'val explicitNestedBaz = NestedObject.baz()'
 KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = NestedObject
@@ -671,12 +691,13 @@ KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(721,733): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -688,13 +709,14 @@ KtNameReferenceExpression(721,733): 'NestedObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtCallExpression(734,739): 'baz()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = NestedObject
@@ -709,12 +731,13 @@ KtCallExpression(734,739): 'baz()'
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(734,737): 'baz'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = NestedObject
@@ -729,6 +752,7 @@ KtNameReferenceExpression(734,737): 'baz'
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(737,739): '()'
@@ -738,9 +762,9 @@ KtProperty(744,767): 'val importedBaz = baz()'
   NO_CANDIDATES
 
 KtCallExpression(762,767): 'baz()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/two/TopLevelObject.NestedObject
@@ -754,12 +778,13 @@ KtCallExpression(762,767): 'baz()'
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(762,765): 'baz'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/two/TopLevelObject.NestedObject
@@ -773,6 +798,7 @@ KtNameReferenceExpression(762,765): 'baz'
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(765,767): '()'
@@ -805,7 +831,7 @@ KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
 KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -817,13 +843,14 @@ KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(791,805): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -835,13 +862,14 @@ KtNameReferenceExpression(791,805): 'TopLevelObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtNameReferenceExpression(806,818): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -853,6 +881,7 @@ KtNameReferenceExpression(806,818): 'NestedObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -904,7 +933,7 @@ KtDotQualifiedExpression(851,867): 'NestedObject.doo'
 KtNameReferenceExpression(851,863): 'NestedObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -916,6 +945,7 @@ KtNameReferenceExpression(851,863): 'NestedObject'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 

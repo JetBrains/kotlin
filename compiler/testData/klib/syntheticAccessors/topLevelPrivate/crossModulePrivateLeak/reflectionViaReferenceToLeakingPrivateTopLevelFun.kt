@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 // TARGET_BACKEND: NATIVE, JS_IR, WASM
 // ^^^ JVM has a similar but distinct behavior w.r.t. references to unreferencable callables
 

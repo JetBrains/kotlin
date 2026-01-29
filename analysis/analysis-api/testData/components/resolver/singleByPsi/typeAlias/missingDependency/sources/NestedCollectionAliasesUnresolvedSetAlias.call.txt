@@ -1,15 +1,7 @@
 KtNameReferenceExpression(187,192): 'check'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        emptyList() -> (KaVariableSignature:
-          name = list
-          receiverType = null
-          returnType = {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
-          symbol = list: {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = m
@@ -32,3 +24,12 @@ KtNameReferenceExpression(187,192): 'check'
         contextParameters = []
         callableId = dependency4/MyInterface.check
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        emptyList() -> (KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
+          symbol = list: {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
+          contextParameters = []
+          callableId = null)
+      }

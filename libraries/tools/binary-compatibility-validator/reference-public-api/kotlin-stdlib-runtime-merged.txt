@@ -2562,9 +2562,11 @@ public final class kotlin/collections/MapsKt {
 	public static final fun flatMapSequenceTo (Ljava/util/Map;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun flatMapTo (Ljava/util/Map;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun forEach (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)V
+	public static final fun getOrDefaultImpl (Ljava/util/Map;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun getOrImplicitDefaultNullable (Ljava/util/Map;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun getOrPut (Ljava/util/Map;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static final fun getOrPut (Ljava/util/concurrent/ConcurrentMap;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	public static final fun getOrPutIfNullImpl (Ljava/util/concurrent/ConcurrentMap;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun getValue (Ljava/util/Map;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun hashMapOf ([Lkotlin/Pair;)Ljava/util/HashMap;
 	public static final fun linkedMapOf ([Lkotlin/Pair;)Ljava/util/LinkedHashMap;
@@ -3275,6 +3277,10 @@ public abstract interface annotation class kotlin/experimental/ExperimentalObjCR
 }
 
 public abstract interface annotation class kotlin/experimental/ExperimentalTypeInference : java/lang/annotation/Annotation {
+}
+
+public final class kotlin/internal/ConstantsKt {
+	public static final field MISSING_VALUE Ljava/lang/Object;
 }
 
 public final class kotlin/internal/PlatformImplementationsKt {

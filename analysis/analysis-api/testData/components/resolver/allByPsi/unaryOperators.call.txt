@@ -28,7 +28,7 @@ KtProperty(34,53): 'val negative = -one'
 KtPrefixExpression(49,53): '-one'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = one
@@ -43,11 +43,12 @@ KtPrefixExpression(49,53): '-one'
         contextParameters = []
         callableId = kotlin/Int.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtOperationReferenceExpression(49,50): '-'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = one
@@ -62,6 +63,7 @@ KtOperationReferenceExpression(49,50): '-'
         contextParameters = []
         callableId = kotlin/Int.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(50,53): 'one'
   KaSuccessCallInfo:
@@ -86,7 +88,7 @@ KtProperty(58,77): 'val positive = +one'
 KtPrefixExpression(73,77): '+one'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = one
@@ -101,11 +103,12 @@ KtPrefixExpression(73,77): '+one'
         contextParameters = []
         callableId = kotlin/Int.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtOperationReferenceExpression(73,74): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = one
@@ -120,6 +123,7 @@ KtOperationReferenceExpression(73,74): '+'
         contextParameters = []
         callableId = kotlin/Int.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(74,77): 'one'
   KaSuccessCallInfo:
@@ -141,7 +145,7 @@ KtNameReferenceExpression(74,77): 'one'
 KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = +(-MyClass().unaryMinus().not())
@@ -156,11 +160,12 @@ KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
         contextParameters = []
         callableId = /MyClass.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtOperationReferenceExpression(83,84): '!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = +(-MyClass().unaryMinus().not())
@@ -175,6 +180,7 @@ KtOperationReferenceExpression(83,84): '!'
         contextParameters = []
         callableId = /MyClass.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtParenthesizedExpression(84,118): '(+(-MyClass().unaryMinus().not()))'
   null
@@ -182,7 +188,7 @@ KtParenthesizedExpression(84,118): '(+(-MyClass().unaryMinus().not()))'
 KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = -MyClass().unaryMinus().not()
@@ -197,11 +203,12 @@ KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
         contextParameters = []
         callableId = /MyClass.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtOperationReferenceExpression(85,86): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = -MyClass().unaryMinus().not()
@@ -216,6 +223,7 @@ KtOperationReferenceExpression(85,86): '+'
         contextParameters = []
         callableId = /MyClass.unaryPlus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtParenthesizedExpression(86,117): '(-MyClass().unaryMinus().not())'
   null
@@ -223,7 +231,7 @@ KtParenthesizedExpression(86,117): '(-MyClass().unaryMinus().not())'
 KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass().unaryMinus().not()
@@ -238,11 +246,12 @@ KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtOperationReferenceExpression(87,88): '-'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass().unaryMinus().not()
@@ -257,11 +266,12 @@ KtOperationReferenceExpression(87,88): '-'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass().unaryMinus()
@@ -276,11 +286,12 @@ KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
         contextParameters = []
         callableId = /MyClass.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass()
@@ -295,26 +306,12 @@ KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtCallExpression(88,97): 'MyClass()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(88,95): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -326,32 +323,32 @@ KtNameReferenceExpression(88,95): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(88,95): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(95,97): '()'
   null
 
 KtCallExpression(98,110): 'unaryMinus()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = MyClass()
-      isSafeNavigation = false
-      type = MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = /MyClass.unaryMinus
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(98,108): 'unaryMinus'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass()
@@ -366,32 +363,35 @@ KtNameReferenceExpression(98,108): 'unaryMinus'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(98,108): 'unaryMinus'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyClass()
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = /MyClass.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(108,110): '()'
   null
 
 KtCallExpression(111,116): 'not()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = MyClass().unaryMinus()
-      isSafeNavigation = false
-      type = MyClass
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = /MyClass.not
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(111,114): 'not'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyClass().unaryMinus()
@@ -406,6 +406,27 @@ KtNameReferenceExpression(111,114): 'not'
         contextParameters = []
         callableId = /MyClass.not
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(111,114): 'not'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyClass().unaryMinus()
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = /MyClass.not
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(114,116): '()'
   null

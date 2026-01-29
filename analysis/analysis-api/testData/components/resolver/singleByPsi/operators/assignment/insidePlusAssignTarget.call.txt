@@ -1,7 +1,7 @@
 KtNameReferenceExpression(87,100): 'mutableListOf'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -15,3 +15,4 @@ KtNameReferenceExpression(87,100): 'mutableListOf'
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
+      valueArgumentMapping = {}

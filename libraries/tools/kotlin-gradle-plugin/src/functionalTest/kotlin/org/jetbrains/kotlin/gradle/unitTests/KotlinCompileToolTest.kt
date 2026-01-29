@@ -10,22 +10,21 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.buildProject
-import org.junit.Before
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KotlinCompileToolTest {
 
-    @get:Rule
-    val tmpDir = TemporaryFolder()
+    @field:TempDir
+    lateinit var tmpDir: File
 
     private lateinit var project: Project
     private lateinit var kotlinJvmFactory: KotlinJvmFactory
 
-    @Before
+    @BeforeEach
     fun setUpProject() {
         project = buildProject {}
         kotlinJvmFactory = project.plugins.apply(KotlinApiPlugin::class.java)
@@ -135,7 +134,7 @@ class KotlinCompileToolTest {
     }
 
     private fun testKotlinSourceFiles(): List<File> {
-        val kotlinDir = tmpDir.newFolder("kotlin")
+        val kotlinDir = tmpDir.resolve("kotlin").also { it.mkdirs() }
         return listOf(
             kotlinDir.resolveCreating("a.kt"),
             kotlinDir.resolveCreating("b.kt"),
@@ -144,7 +143,7 @@ class KotlinCompileToolTest {
     }
 
     private fun testJavaSourceFiles(): List<File> {
-        val javaDir = tmpDir.newFolder("java")
+        val javaDir = tmpDir.resolve("java").also { it.mkdirs() }
         return listOf(
             javaDir.resolveCreating("A.java"),
             javaDir.resolveCreating("B.java"),
@@ -153,7 +152,7 @@ class KotlinCompileToolTest {
     }
 
     private fun testScriptingSourceFiles(): List<File> {
-        val scriptsDir = tmpDir.newFolder("scripts")
+        val scriptsDir = tmpDir.resolve("scripts").also { it.mkdirs() }
         return listOf(
             scriptsDir.resolveCreating("a.kts"),
             scriptsDir.resolveCreating("b.kts"),

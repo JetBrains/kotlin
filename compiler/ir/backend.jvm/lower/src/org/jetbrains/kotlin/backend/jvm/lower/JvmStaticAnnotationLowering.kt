@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -153,29 +152,11 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
         val callee = expression.symbol.owner
-        return when {
-            shouldReplaceWithStaticCall(callee) -> {
-                val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(callee)
-                expression.makeStatic(context.irBuiltIns, staticProxy)
-            }
-            callee.symbol == context.symbols.indyLambdaMetafactoryIntrinsic -> {
-                // TODO change after KT-78719
-                val implFunRef = expression.arguments[1] as? IrFunctionReference
-                    ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${expression.dump()}")
-                val implFun = implFunRef.symbol.owner
-                if (implFunRef.dispatchReceiver != null && implFun is IrSimpleFunction && shouldReplaceWithStaticCall(implFun)) {
-                    val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(implFun)
-                    expression.arguments[1] = IrFunctionReferenceImpl(
-                        implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
-                        staticProxy.symbol,
-                        staticProxy.typeParameters.size,
-                        implFunRef.reflectionTarget, implFunRef.origin
-                    )
-                }
-                expression
-            }
-            else ->
-                expression
+        return if (shouldReplaceWithStaticCall(callee)) {
+            val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(callee)
+            expression.makeStatic(context.irBuiltIns, staticProxy)
+        } else {
+            expression
         }
     }
 

@@ -68,9 +68,9 @@ KtSuperTypeList(257,266): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(257,266): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -83,12 +83,13 @@ KtSuperTypeCallEntry(257,266): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(257,264): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -101,6 +102,7 @@ KtConstructorCalleeExpression(257,264): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(257,264): 'MyClass'
@@ -112,7 +114,7 @@ KtUserType(257,264): 'MyClass'
 KtNameReferenceExpression(257,264): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -125,6 +127,7 @@ KtNameReferenceExpression(257,264): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(264,266): '()'
@@ -155,9 +158,9 @@ KtSuperTypeList(332,341): 'MyClass()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(332,341): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -170,12 +173,13 @@ KtSuperTypeCallEntry(332,341): 'MyClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(332,339): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -188,6 +192,7 @@ KtConstructorCalleeExpression(332,339): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(332,339): 'MyClass'
@@ -199,7 +204,7 @@ KtUserType(332,339): 'MyClass'
 KtNameReferenceExpression(332,339): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -212,6 +217,7 @@ KtNameReferenceExpression(332,339): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(339,341): '()'
@@ -248,9 +254,9 @@ KtSuperTypeList(428,435): 'Super()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(428,435): 'Super()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -263,12 +269,13 @@ KtSuperTypeCallEntry(428,435): 'Super()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(428,433): 'Super'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -281,6 +288,7 @@ KtConstructorCalleeExpression(428,433): 'Super'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(428,433): 'Super'
@@ -292,7 +300,7 @@ KtUserType(428,433): 'Super'
 KtNameReferenceExpression(428,433): 'Super'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -305,6 +313,7 @@ KtNameReferenceExpression(428,433): 'Super'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(433,435): '()'
@@ -326,9 +335,9 @@ KtNameReferenceExpression(463,470): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(473,479): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -340,11 +349,12 @@ KtCallExpression(473,479): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -364,13 +374,14 @@ KtCallExpression(473,479): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(473,477): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -382,11 +393,12 @@ KtNameReferenceExpression(473,477): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -406,6 +418,7 @@ KtNameReferenceExpression(473,477): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
@@ -425,9 +438,9 @@ KtNameReferenceExpression(512,526): 'InheritorClass'
   NO_CANDIDATES
 
 KtCallExpression(529,545): 'InheritorClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -439,12 +452,13 @@ KtCallExpression(529,545): 'InheritorClass()'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(529,543): 'InheritorClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -456,6 +470,7 @@ KtNameReferenceExpression(529,543): 'InheritorClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(543,545): '()'
@@ -525,17 +540,9 @@ KtPropertyDelegate(713,725): 'by lazy {""}'
   NO_CANDIDATES
 
 KtCallExpression(716,725): 'lazy {""}'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<ERROR_TYPE>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -564,12 +571,7 @@ KtCallExpression(716,725): 'lazy {""}'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
@@ -578,6 +580,12 @@ KtCallExpression(716,725): 'lazy {""}'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -606,20 +614,21 @@ KtCallExpression(716,725): 'lazy {""}'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode'>
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
+          returnType = kotlin.Function0<ERROR_TYPE>
           symbol = initializer: kotlin.Function0<T>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode'>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -640,21 +649,22 @@ KtCallExpression(716,725): 'lazy {""}'
         callableId = kotlin/lazy
       typeArgumentsMapping = {
         T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.String>
+          symbol = initializer: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(716,720): 'lazy'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<ERROR_TYPE>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -683,12 +693,7 @@ KtNameReferenceExpression(716,720): 'lazy'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
@@ -697,6 +702,12 @@ KtNameReferenceExpression(716,720): 'lazy'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -725,20 +736,21 @@ KtNameReferenceExpression(716,720): 'lazy'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = kotlin.Function0<ERROR_TYPE>
+          symbol = initializer: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode'>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -759,6 +771,15 @@ KtNameReferenceExpression(716,720): 'lazy'
         callableId = kotlin/lazy
       typeArgumentsMapping = {
         T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        {""} -> (KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.String>
+          symbol = initializer: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -808,9 +829,9 @@ KtNameReferenceExpression(789,796): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(799,805): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -822,11 +843,12 @@ KtCallExpression(799,805): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -846,13 +868,14 @@ KtCallExpression(799,805): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
 KtNameReferenceExpression(799,803): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -864,11 +887,12 @@ KtNameReferenceExpression(799,803): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -888,6 +912,7 @@ KtNameReferenceExpression(799,803): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
     isInBestCandidates = false
 
@@ -952,17 +977,9 @@ KtBlockExpression(927,1304): '{'
   NO_CANDIDATES
 
 KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = MyEnum
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = anonymousEnumConsumer
@@ -985,19 +1002,20 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaImplicitInvokeCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         EnumValue1 -> (KaVariableSignature:
-          name = value
+          name = p1
           receiverType = null
-          returnType = ERROR_TYPE
-          symbol = value: T
+          returnType = MyEnum
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1022,6 +1040,15 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is (MyEnum) -> Unit but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false
@@ -1054,17 +1081,9 @@ KtNameReferenceExpression(955,965): 'EnumValue1'
   NO_CANDIDATES
 
 KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = anonymousConsumer
@@ -1087,19 +1106,20 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaImplicitInvokeCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
-          name = value
+          name = p1
           receiverType = null
-          returnType = ERROR_TYPE
-          symbol = value: T
+          returnType = MyClass
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1124,6 +1144,15 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is (MyClass) -> Unit but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false
@@ -1156,17 +1185,9 @@ KtNameReferenceExpression(990,1005): 'InheritorObject'
   NO_CANDIDATES
 
 KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        propMyClass -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = anonymousConsumer
@@ -1189,19 +1210,20 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaImplicitInvokeCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         propMyClass -> (KaVariableSignature:
-          name = value
+          name = p1
           receiverType = null
-          returnType = ERROR_TYPE
-          symbol = value: T
+          returnType = MyClass
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1226,6 +1248,15 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        propMyClass -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is (MyClass) -> Unit but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false
@@ -1258,17 +1289,9 @@ KtNameReferenceExpression(1029,1040): 'propMyClass'
   NO_CANDIDATES
 
 KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        prop -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = anonymousConsumer
@@ -1291,19 +1314,20 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaImplicitInvokeCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         prop -> (KaVariableSignature:
-          name = value
+          name = p1
           receiverType = null
-          returnType = ERROR_TYPE
-          symbol = value: T
+          returnType = MyClass
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1328,6 +1352,15 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        prop -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is (MyClass) -> Unit but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false
@@ -1360,17 +1393,9 @@ KtNameReferenceExpression(1065,1069): 'prop'
   NO_CANDIDATES
 
 KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        constProp -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = anonymousConsumer
@@ -1393,19 +1418,20 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaImplicitInvokeCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         constProp -> (KaVariableSignature:
-          name = value
+          name = p1
           receiverType = null
-          returnType = ERROR_TYPE
-          symbol = value: T
+          returnType = MyClass
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1430,6 +1456,15 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        constProp -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is (MyClass) -> Unit but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false
@@ -1462,17 +1497,9 @@ KtNameReferenceExpression(1093,1102): 'constProp'
   NO_CANDIDATES
 
 KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        lazyProp -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = anonymousConsumer
@@ -1495,19 +1522,20 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaImplicitInvokeCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         lazyProp -> (KaVariableSignature:
-          name = value
+          name = p1
           receiverType = null
-          returnType = ERROR_TYPE
-          symbol = value: T
+          returnType = MyClass
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1532,6 +1560,15 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        lazyProp -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is (MyClass) -> Unit but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false
@@ -1564,17 +1601,9 @@ KtNameReferenceExpression(1126,1134): 'lazyProp'
   NO_CANDIDATES
 
 KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        lambdaProp -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = anonymousConsumer
@@ -1597,19 +1626,20 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaImplicitInvokeCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         lambdaProp -> (KaVariableSignature:
-          name = value
+          name = p1
           receiverType = null
-          returnType = ERROR_TYPE
-          symbol = value: T
+          returnType = MyClass
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1634,6 +1664,15 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        lambdaProp -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is (MyClass) -> Unit but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false
@@ -1666,17 +1705,9 @@ KtNameReferenceExpression(1158,1168): 'lambdaProp'
   NO_CANDIDATES
 
 KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        superProp -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = anonymousConsumer
@@ -1699,19 +1730,20 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaImplicitInvokeCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         superProp -> (KaVariableSignature:
-          name = value
+          name = p1
           receiverType = null
-          returnType = ERROR_TYPE
-          symbol = value: T
+          returnType = MyClass
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1736,6 +1768,15 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        superProp -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is (MyClass) -> Unit but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false
@@ -1768,17 +1809,9 @@ KtNameReferenceExpression(1192,1201): 'superProp'
   NO_CANDIDATES
 
 KtCallExpression(1208,1233): 'anonymousConsumer(func())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        func() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = anonymousConsumer
@@ -1801,19 +1834,20 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaImplicitInvokeCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         func() -> (KaVariableSignature:
-          name = value
+          name = p1
           receiverType = null
-          returnType = ERROR_TYPE
-          symbol = value: T
+          returnType = MyClass
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1838,6 +1872,15 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        func() -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is (MyClass) -> Unit but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false
@@ -1876,17 +1919,9 @@ KtValueArgumentList(1230,1232): '()'
   NO_CANDIDATES
 
 KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        superFunc() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = anonymousConsumer
@@ -1909,19 +1944,20 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaImplicitInvokeCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         superFunc() -> (KaVariableSignature:
-          name = value
+          name = p1
           receiverType = null
-          returnType = ERROR_TYPE
-          symbol = value: T
+          returnType = MyClass
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1946,6 +1982,15 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        superFunc() -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is (MyClass) -> Unit but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false
@@ -1984,17 +2029,9 @@ KtValueArgumentList(1265,1267): '()'
   NO_CANDIDATES
 
 KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
-      argumentMapping = {
-        lambdaProp -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = anonymousConsumer
@@ -2017,19 +2054,20 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
         contextParameters = []
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaImplicitInvokeCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         lambdaProp -> (KaVariableSignature:
-          name = value
+          name = p1
           receiverType = null
-          returnType = ERROR_TYPE
-          symbol = value: T
+          returnType = MyClass
+          symbol = p1: P1
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2054,6 +2092,15 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        lambdaProp -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is (MyClass) -> Unit but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
     isInBestCandidates = false

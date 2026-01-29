@@ -2,15 +2,7 @@ KtCallExpression(128,139): 'function(1)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          1 -> (KaVariableSignature:
-            name = t
-            receiverType = null
-            returnType = TypeVariable(T)
-            symbol = t: T
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -36,17 +28,18 @@ KtCallExpression(128,139): 'function(1)'
           ]
           contextParameters = []
           callableId = /function
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
-            name = u
+            name = t
             receiverType = null
-            returnType = TypeVariable(U)
-            symbol = u: U
+            returnType = TypeVariable(T)
+            symbol = t: T
             contextParameters = []
             callableId = null)
-        }
+        },
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -72,17 +65,18 @@ KtCallExpression(128,139): 'function(1)'
           ]
           contextParameters = []
           callableId = /function
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
-            name = v
+            name = u
             receiverType = null
-            returnType = TypeVariable(V)
-            symbol = v: V
+            returnType = TypeVariable(U)
+            symbol = u: U
             contextParameters = []
             callableId = null)
-        }
+        },
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -109,6 +103,15 @@ KtCallExpression(128,139): 'function(1)'
           contextParameters = []
           callableId = /function
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          1 -> (KaVariableSignature:
+            name = v
+            receiverType = null
+            returnType = TypeVariable(V)
+            symbol = v: V
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     public fun <T> function(t: TypeVariable(T), a: Char): Unit defined in root package in file ambiguousWithInferredTypeParameters.kt

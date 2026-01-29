@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 class A {
     private fun privateFun() = "OK"
 

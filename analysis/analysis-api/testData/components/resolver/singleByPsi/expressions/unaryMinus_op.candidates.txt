@@ -1,7 +1,7 @@
 KtOperationReferenceExpression(191,192): '-'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = variable
@@ -16,4 +16,5 @@ KtOperationReferenceExpression(191,192): '-'
         contextParameters = []
         callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

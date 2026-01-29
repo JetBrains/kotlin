@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -46,8 +47,10 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.includeIr
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -438,6 +441,7 @@ private fun preparePsi2Ir(
     return psi2Ir.createGeneratorContext(
         analysisResult.moduleDescriptor,
         analysisResult.bindingContext,
+        modulesStructure.compilerConfiguration,
         symbolTable
     )
 }
@@ -462,7 +466,7 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         linker = irLinker,
         messageCollector = messageCollector,
     )
-    for (extension in IrGenerationExtension.getInstances(project)) {
+    for (extension in compilerConfiguration.getCompilerExtensions(IrGenerationExtension)) {
         psi2Ir.addPostprocessingStep { module ->
             val old = stubGenerator?.unboundSymbolGeneration
             try {
@@ -586,10 +590,6 @@ fun serializeModuleIntoKlib(
         if (jsOutputName != null) {
             p.setProperty(KLIB_PROPERTY_JS_OUTPUT_NAME, jsOutputName)
         }
-        val wasmTargets = listOfNotNull(/* in the future there might be multiple WASM targets */ wasmTarget)
-        if (wasmTargets.isNotEmpty()) {
-            p.setProperty(KLIB_PROPERTY_WASM_TARGETS, wasmTargets.joinToString(" ") { it.alias })
-        }
 
         val fingerprints = fullSerializedIr.files.sortedBy { it.path }.map { SerializedIrFileFingerprint(it) }
         p.setProperty(KLIB_PROPERTY_SERIALIZED_IR_FILE_FINGERPRINTS, fingerprints.joinIrFileFingerprints())
@@ -599,16 +599,23 @@ fun serializeModuleIntoKlib(
     }
 
     performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
-        buildKotlinLibrary(
-            ir = fullSerializedIr,
-            metadata = serializerOutput.serializedMetadata ?: error("expected serialized metadata"),
-            manifestProperties = properties,
-            moduleName = moduleName,
-            nopack = nopack,
-            output = klibPath,
-            versions = versions,
-            builtInsPlatform = builtInsPlatform
-        )
+        KlibWriter {
+            format(if (nopack) KlibFormat.Directory else KlibFormat.ZipArchive)
+            manifest {
+                moduleName(moduleName)
+                versions(versions)
+                platformAndTargets(
+                    builtInsPlatform = builtInsPlatform,
+                    targetNames = if (builtInsPlatform == BuiltInsPlatform.WASM)
+                        listOfNotNull(/* in the future there might be multiple WASM targets */wasmTarget?.alias)
+                    else
+                        emptyList()
+                )
+                customProperties { this += properties }
+            }
+            includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
+            includeIr(fullSerializedIr)
+        }.writeTo(klibPath)
     }
 }
 

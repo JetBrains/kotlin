@@ -7,41 +7,49 @@ package test;
  *   public constructor()
  *
  *   // field: c:Ltest/A$B$C;
+ *   @field:kotlin/jvm/JvmField
  *   public final lateinit var c: test/A$B.C
  *     public final get
  *     public final set
  *
  *   // field: de:Ltest/A$B$D$E;
+ *   @field:kotlin/jvm/JvmField
  *   public final lateinit var de: test/A$B.D$E
  *     public final get
  *     public final set
  *
  *   // field: dee:Ltest/A$B$D$$E;
+ *   @field:kotlin/jvm/JvmField
  *   public final lateinit var dee: test/A$B.D$$E
  *     public final get
  *     public final set
  *
  *   // field: deee:Ltest/A$B$D$$$E;
+ *   @field:kotlin/jvm/JvmField
  *   public final lateinit var deee: test/A$B.D$$$E
  *     public final get
  *     public final set
  *
  *   // field: jc:Ltest/J$B$C;
+ *   @field:kotlin/jvm/JvmField
  *   public final lateinit var jc: test/J$B.C
  *     public final get
  *     public final set
  *
  *   // field: jde:Ltest/J$B$D$E;
+ *   @field:kotlin/jvm/JvmField
  *   public final lateinit var jde: test/J$B.D$E
  *     public final get
  *     public final set
  *
  *   // field: jdee:Ltest/J$B$D$$E;
+ *   @field:kotlin/jvm/JvmField
  *   public final lateinit var jdee: test/J$B.D$$E
  *     public final get
  *     public final set
  *
  *   // field: jdeee:Ltest/J$B$D$$$E;
+ *   @field:kotlin/jvm/JvmField
  *   public final lateinit var jdeee: test/J$B.D$$$E
  *     public final get
  *     public final set
@@ -138,21 +146,25 @@ public final class A$B {
      *   public constructor()
      *
      *   // field: f:Ltest/A$B$D$E$F;
+     *   @field:kotlin/jvm/JvmField
      *   public final lateinit var f: test/A$B.D$E.F
      *     public final get
      *     public final set
      *
      *   // field: fg:Ltest/A$B$D$E$F$G;
+     *   @field:kotlin/jvm/JvmField
      *   public final lateinit var fg: test/A$B.D$E.F$G
      *     public final get
      *     public final set
      *
      *   // field: jf:Ltest/J$B$D$E$F;
+     *   @field:kotlin/jvm/JvmField
      *   public final lateinit var jf: test/J$B.D$E.F
      *     public final get
      *     public final set
      *
      *   // field: jfg:Ltest/J$B$D$E$F$G;
+     *   @field:kotlin/jvm/JvmField
      *   public final lateinit var jfg: test/J$B.D$E.F$G
      *     public final get
      *     public final set
@@ -241,6 +253,7 @@ public final class Experiment {
 
     @test.Experiment.Type()
     /**
+     * @test/Experiment.Type
      * public final data class test/Experiment.Group : kotlin/Any {
      *
      *   // signature: <init>(Ljava/lang/String;)V
@@ -450,6 +463,7 @@ public abstract interface IFoo {
 
         @test.IFoo.IBar.Anno(value = {test.IFoo.IBar.IZoo.class})
         /**
+         * @test/IFoo.IBar.Anno(value = [test/IFoo.IBar.IZoo::class])
          * public abstract interface test/IFoo.IBar.IZoo : kotlin/Any {
          *
          *   // module name: main
@@ -509,6 +523,7 @@ package test;
 
 @test.IFoo.IBar.Anno(value = {test.IFoo.IBar.IZoo.class, test.Foo.Bar.class})
 /**
+ * @test/IFoo.IBar.Anno(value = [test/IFoo.IBar.IZoo::class, test/Foo.Bar::class])
  * public final class test/Test1 : test/Foo.Bar, test/IFoo.IBar, test/IFoo.IBar.IZoo {
  *
  *   // signature: <init>(Ltest/Foo$Bar$Zoo;)V

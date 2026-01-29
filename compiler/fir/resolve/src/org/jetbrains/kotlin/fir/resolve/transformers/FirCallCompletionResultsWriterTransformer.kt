@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReferenc
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallableReferenceInfo
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
@@ -757,6 +758,11 @@ class FirCallCompletionResultsWriterTransformer(
         val initialType = calleeReference.candidate.substitutor.substituteOrSelf(callableReferenceAccess.resolvedType)
         val finalType = finallySubstituteOrSelf(initialType)
 
+        subCandidate.ifLHSResolvedToType { lhs ->
+            (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)
+                ?.replaceResolvedLHSTypeForCallableReferenceOrNull(lhs.type)
+        }
+
         callableReferenceAccess.replaceConeTypeOrNull(finalType)
         callableReferenceAccess.replaceTypeArguments(typeArguments)
         session.lookupTracker?.recordTypeResolveAsLookup(
@@ -1470,20 +1476,29 @@ internal fun Candidate.doesResolutionResultOverrideOtherToPreserveCompatibility(
 
 internal fun FirQualifiedAccessExpression.addNonFatalDiagnostics(candidate: Candidate) {
     val newNonFatalDiagnostics = mutableListOf<ConeDiagnostic>()
+    candidate.ifLHSResolvedToType { lhs ->
+        lhs.diagnostic?.let { newNonFatalDiagnostics.add(it) }
+    }
 
     if (candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
         newNonFatalDiagnostics += ConeResolutionResultOverridesOtherToPreserveCompatibility
     }
 
     for (diagnostic in candidate.diagnostics) {
-        when (diagnostic) {
-            is CallToDeprecatedOverrideOfHidden -> newNonFatalDiagnostics += ConeCallToDeprecatedOverrideOfHidden
-            else -> null
+        if (diagnostic is CallToDeprecatedOverrideOfHidden) {
+            newNonFatalDiagnostics += ConeCallToDeprecatedOverrideOfHidden
         }
     }
 
     if (newNonFatalDiagnostics.isNotEmpty()) {
         replaceNonFatalDiagnostics(nonFatalDiagnostics + newNonFatalDiagnostics)
+    }
+}
+
+internal inline fun Candidate.ifLHSResolvedToType(block: (DoubleColonLHS.Type) -> Unit) {
+    val callableReferenceInfo = callInfo as? CallableReferenceInfo ?: return
+    (callableReferenceInfo.lhs as? DoubleColonLHS.Type)?.let {
+        block(it)
     }
 }
 

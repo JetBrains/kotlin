@@ -30,12 +30,14 @@ import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializa
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeLoadCompiledKotlinTest
+import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     val k1BoxTestDir = listOf("multiplatform/k1")
     val testsRoot = args[0]
+    val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
     generateTestGroupSuiteWithJUnit5(args) {
         // irText tests
@@ -54,29 +56,29 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "PsiNativeKlibDiagnosticsTestGenerated",
                 annotations = listOf(klib())
             ) {
-                model("klibSerializationTests")
+                model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests")
+                model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractLightTreeNativeDiagnosticsWithBackendTestBase>(
                 suiteTestClassName = "LightTreeNativeKlibDiagnosticsTestGenerated",
                 annotations = listOf(klib())
             ) {
-                model("klibSerializationTests")
+                model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests")
-                model("testsWithAnyBackend")
+                model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
+                model("testsWithAnyBackend", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase>(
                 suiteTestClassName = "NativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated",
                 annotations = listOf(klib())
             ) {
-                model("klibSerializationTests")
+                model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests")
-                model("testsWithAnyBackend")
+                model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
+                model("testsWithAnyBackend", excludedPattern = excludedCustomTestdataPattern)
             }
         }
 

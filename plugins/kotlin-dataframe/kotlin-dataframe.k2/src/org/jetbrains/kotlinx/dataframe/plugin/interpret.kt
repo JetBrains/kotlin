@@ -39,7 +39,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ResolvedDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.DataFrameCallableId
@@ -384,7 +384,7 @@ private fun KotlinTypeFacade.columnWithPathApproximations(propertyAccess: FirPro
                 }
             }
         }
-        SingleColumnApproximation(
+        ResolvedDataColumn(
             ColumnWithPathApproximation(
                 path = ColumnPathApproximation(path(propertyAccess)),
                 column

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.validateKgpMode
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UklibFromKGPFragmentsTests {

@@ -1,15 +1,7 @@
 KtNameReferenceExpression(331,351): 'serializeFirstTarget'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        target -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = test.FirstTarget
-          symbol = x: test.FirstTarget
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = serializer
@@ -32,3 +24,12 @@ KtNameReferenceExpression(331,351): 'serializeFirstTarget'
         contextParameters = []
         callableId = test/Serializer.serializeFirstTarget
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        target -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = test.FirstTarget
+          symbol = x: test.FirstTarget
+          contextParameters = []
+          callableId = null)
+      }

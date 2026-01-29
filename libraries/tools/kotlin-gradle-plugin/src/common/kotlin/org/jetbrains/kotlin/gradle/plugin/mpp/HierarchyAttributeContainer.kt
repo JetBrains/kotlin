@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.Named
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import java.util.*
 
@@ -20,6 +22,7 @@ import java.util.*
  */
 class HierarchyAttributeContainer(
     val parent: AttributeContainer?,
+    private val objectFactory: ObjectFactory,
     val filterParentAttributes: (Attribute<*>) -> Boolean = { true }
 ) : AttributeContainer {
     // The order of the query should be local first:
@@ -54,6 +57,10 @@ class HierarchyAttributeContainer(
             attributesMap.keys +
             otherContainerAttributes.fold(mutableSetOf()) { acc, container -> acc.apply { addAll(container.keySet()) }} +
             parent?.keySet().orEmpty().toSet().filter(filterParentAttributes)
+
+    override fun <T : Named?> named(type: Class<T>, name: String): T {
+        return objectFactory.named(type, name)
+    }
 
     override fun <T : Any> attribute(key: Attribute<T>, value: T): AttributeContainer {
         val checkedValue = requireNotNull(value as Any?) { "null values for attributes are not supported" }

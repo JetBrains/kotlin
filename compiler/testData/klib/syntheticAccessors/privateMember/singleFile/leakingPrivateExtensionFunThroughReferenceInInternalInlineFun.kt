@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 private fun Int.privateExtensionFun(s: String) = s
 
 internal inline fun internalInlineFunction() = Int::privateExtensionFun

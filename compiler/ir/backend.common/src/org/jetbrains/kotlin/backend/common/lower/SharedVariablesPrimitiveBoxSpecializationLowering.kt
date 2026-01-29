@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationKlibSymbols
-import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
+import org.jetbrains.kotlin.backend.common.ir.BackendKlibSymbols
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrStatement
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 @PhasePrerequisites(SharedVariablesLowering::class)
 class SharedVariablesPrimitiveBoxSpecializationLowering(
     private val context: CommonBackendContext,
-    private val symbols: KlibSymbols,
+    private val symbols: BackendKlibSymbols,
 ) : BodyLoweringPass {
     private val genericSharedVariableBox = symbols.genericSharedVariableBox
 

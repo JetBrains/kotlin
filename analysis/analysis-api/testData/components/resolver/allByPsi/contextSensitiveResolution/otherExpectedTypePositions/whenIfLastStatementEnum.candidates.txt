@@ -116,9 +116,9 @@ KtNameReferenceExpression(200,201): 'T'
   NO_CANDIDATES
 
 KtCallExpression(204,210): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -130,11 +130,12 @@ KtCallExpression(204,210): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -154,13 +155,14 @@ KtCallExpression(204,210): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(204,208): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -172,11 +174,12 @@ KtNameReferenceExpression(204,208): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -196,6 +199,7 @@ KtNameReferenceExpression(204,208): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
 
@@ -236,9 +240,9 @@ KtNameReferenceExpression(230,231): 'X'
   NO_CANDIDATES
 
 KtCallExpression(234,240): 'TODO()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -250,11 +254,12 @@ KtCallExpression(234,240): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -274,13 +279,14 @@ KtCallExpression(234,240): 'TODO()'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(234,238): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -292,11 +298,12 @@ KtNameReferenceExpression(234,238): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -316,6 +323,7 @@ KtNameReferenceExpression(234,238): 'TODO'
         contextParameters = []
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
 
@@ -382,7 +390,7 @@ KtDotQualifiedExpression(285,293): 'MyEnum.X'
 KtNameReferenceExpression(285,291): 'MyEnum'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -394,6 +402,7 @@ KtNameReferenceExpression(285,291): 'MyEnum'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -556,15 +565,7 @@ KtContainerNode(439,445): 'i == 0'
 KtBinaryExpression(439,445): 'i == 0'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -587,6 +588,15 @@ KtBinaryExpression(439,445): 'i == 0'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(439,440): 'i'
@@ -610,15 +620,7 @@ KtNameReferenceExpression(439,440): 'i'
 KtOperationReferenceExpression(441,443): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -641,6 +643,15 @@ KtOperationReferenceExpression(441,443): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(444,445): '0'
@@ -682,15 +693,7 @@ KtContainerNode(466,472): 'i == 1'
 KtBinaryExpression(466,472): 'i == 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -713,6 +716,15 @@ KtBinaryExpression(466,472): 'i == 1'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(466,467): 'i'
@@ -736,15 +748,7 @@ KtNameReferenceExpression(466,467): 'i'
 KtOperationReferenceExpression(468,470): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -767,6 +771,15 @@ KtOperationReferenceExpression(468,470): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(471,472): '1'
@@ -868,7 +881,7 @@ KtWhenExpression(561,633): 'when (i.hashCode()) {'
 KtDotQualifiedExpression(567,579): 'i.hashCode()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -883,6 +896,7 @@ KtDotQualifiedExpression(567,579): 'i.hashCode()'
         contextParameters = []
         callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(567,568): 'i'
@@ -904,9 +918,9 @@ KtNameReferenceExpression(567,568): 'i'
     isInBestCandidates = true
 
 KtCallExpression(569,579): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -921,12 +935,13 @@ KtCallExpression(569,579): 'hashCode()'
         contextParameters = []
         callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(569,577): 'hashCode'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -941,6 +956,7 @@ KtNameReferenceExpression(569,577): 'hashCode'
         contextParameters = []
         callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(577,579): '()'
@@ -1055,23 +1071,9 @@ KtNameReferenceExpression(689,690): 'L'
     isInBestCandidates = true
 
 KtCallExpression(702,833): 'foo('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        when (i) {
-                    0 -> X
-                    1 -> {
-                        Y
-                    }
-                    else -> L
-                } -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyEnum
-          symbol = a: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1091,26 +1093,27 @@ KtCallExpression(702,833): 'foo('
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        when (i) {
+                    0 -> X
+                    1 -> {
+                        Y
+                    }
+                    else -> L
+                } -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = a: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(702,705): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        when (i) {
-                    0 -> X
-                    1 -> {
-                        Y
-                    }
-                    else -> L
-                } -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyEnum
-          symbol = a: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1130,6 +1133,21 @@ KtNameReferenceExpression(702,705): 'foo'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        when (i) {
+                    0 -> X
+                    1 -> {
+                        Y
+                    }
+                    else -> L
+                } -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = a: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(705,833): '('
@@ -1244,21 +1262,9 @@ KtNameReferenceExpression(816,817): 'L'
     isInBestCandidates = true
 
 KtCallExpression(839,937): 'foo('
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        if (i == 0) X
-                else if (i == 1) {
-                    Y
-                }
-                else L -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyEnum
-          symbol = a: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1278,24 +1284,25 @@ KtCallExpression(839,937): 'foo('
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        if (i == 0) X
+                else if (i == 1) {
+                    Y
+                }
+                else L -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = a: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(839,842): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        if (i == 0) X
-                else if (i == 1) {
-                    Y
-                }
-                else L -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyEnum
-          symbol = a: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1315,6 +1322,19 @@ KtNameReferenceExpression(839,842): 'foo'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        if (i == 0) X
+                else if (i == 1) {
+                    Y
+                }
+                else L -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = a: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtValueArgumentList(842,937): '('
@@ -1332,15 +1352,7 @@ KtContainerNode(856,862): 'i == 0'
 KtBinaryExpression(856,862): 'i == 0'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1363,6 +1375,15 @@ KtBinaryExpression(856,862): 'i == 0'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(856,857): 'i'
@@ -1386,15 +1407,7 @@ KtNameReferenceExpression(856,857): 'i'
 KtOperationReferenceExpression(858,860): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1417,6 +1430,15 @@ KtOperationReferenceExpression(858,860): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(861,862): '0'
@@ -1458,15 +1480,7 @@ KtContainerNode(883,889): 'i == 1'
 KtBinaryExpression(883,889): 'i == 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1489,6 +1503,15 @@ KtBinaryExpression(883,889): 'i == 1'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(883,884): 'i'
@@ -1512,15 +1535,7 @@ KtNameReferenceExpression(883,884): 'i'
 KtOperationReferenceExpression(885,887): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1543,6 +1558,15 @@ KtOperationReferenceExpression(885,887): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(888,889): '1'
@@ -1597,25 +1621,9 @@ KtNameReferenceExpression(930,931): 'L'
     isInBestCandidates = true
 
 KtCallExpression(943,1087): 'myRunWithMyEnum {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                when (i) {
-                    0 -> X
-                    1 -> {
-                        Y
-                    }
-                    else -> L
-                }
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = b: () -> MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1635,28 +1643,29 @@ KtCallExpression(943,1087): 'myRunWithMyEnum {'
         contextParameters = []
         callableId = /myRunWithMyEnum
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                when (i) {
+                    0 -> X
+                    1 -> {
+                        Y
+                    }
+                    else -> L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = b: () -> MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(943,958): 'myRunWithMyEnum'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                when (i) {
-                    0 -> X
-                    1 -> {
-                        Y
-                    }
-                    else -> L
-                }
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = b: () -> MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1676,6 +1685,23 @@ KtNameReferenceExpression(943,958): 'myRunWithMyEnum'
         contextParameters = []
         callableId = /myRunWithMyEnum
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                when (i) {
+                    0 -> X
+                    1 -> {
+                        Y
+                    }
+                    else -> L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = b: () -> MyEnum
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtLambdaArgument(959,1087): '{'
@@ -1796,28 +1822,9 @@ KtNameReferenceExpression(1070,1071): 'L'
     isInBestCandidates = true
 
 KtCallExpression(1093,1318): 'myRun<MyEnum> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                when (i) {
-                    0 -> when (i.hashCode()) {
-                        1 -> X
-                        else -> Y
-                    }
-                    1 -> {
-                        Y
-                    }
-                    else -> L
-                }
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = b: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1838,32 +1845,33 @@ KtCallExpression(1093,1318): 'myRun<MyEnum> {'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                when (i) {
+                    0 -> when (i.hashCode()) {
+                        1 -> X
+                        else -> Y
+                    }
+                    1 -> {
+                        Y
+                    }
+                    else -> L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = b: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1093,1098): 'myRun'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                when (i) {
-                    0 -> when (i.hashCode()) {
-                        1 -> X
-                        else -> Y
-                    }
-                    1 -> {
-                        Y
-                    }
-                    else -> L
-                }
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = b: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -1884,6 +1892,26 @@ KtNameReferenceExpression(1093,1098): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                when (i) {
+                    0 -> when (i.hashCode()) {
+                        1 -> X
+                        else -> Y
+                    }
+                    1 -> {
+                        Y
+                    }
+                    else -> L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = b: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -1950,7 +1978,7 @@ KtWhenExpression(1145,1229): 'when (i.hashCode()) {'
 KtDotQualifiedExpression(1151,1163): 'i.hashCode()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -1965,6 +1993,7 @@ KtDotQualifiedExpression(1151,1163): 'i.hashCode()'
         contextParameters = []
         callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1151,1152): 'i'
@@ -1986,9 +2015,9 @@ KtNameReferenceExpression(1151,1152): 'i'
     isInBestCandidates = true
 
 KtCallExpression(1153,1163): 'hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2003,12 +2032,13 @@ KtCallExpression(1153,1163): 'hashCode()'
         contextParameters = []
         callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1153,1161): 'hashCode'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2023,6 +2053,7 @@ KtNameReferenceExpression(1153,1161): 'hashCode'
         contextParameters = []
         callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(1161,1163): '()'
@@ -2137,25 +2168,9 @@ KtNameReferenceExpression(1301,1302): 'L'
     isInBestCandidates = true
 
 KtCallExpression(1324,1466): 'myRun<MyEnum> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                when (i) {
-                    0 -> X
-                    1 -> {
-                        Y
-                    }
-                    else -> L
-                }
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = b: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2176,29 +2191,30 @@ KtCallExpression(1324,1466): 'myRun<MyEnum> {'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                when (i) {
+                    0 -> X
+                    1 -> {
+                        Y
+                    }
+                    else -> L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = b: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1324,1329): 'myRun'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                when (i) {
-                    0 -> X
-                    1 -> {
-                        Y
-                    }
-                    else -> L
-                }
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = b: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2219,6 +2235,23 @@ KtNameReferenceExpression(1324,1329): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                when (i) {
+                    0 -> X
+                    1 -> {
+                        Y
+                    }
+                    else -> L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = b: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -2355,23 +2388,9 @@ KtNameReferenceExpression(1449,1450): 'L'
     isInBestCandidates = true
 
 KtCallExpression(1472,1581): 'myRun<MyEnum> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (i == 0) X
-                else if (i == 1) {
-                    Y
-                }
-                else L
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = b: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2392,27 +2411,28 @@ KtCallExpression(1472,1581): 'myRun<MyEnum> {'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                if (i == 0) X
+                else if (i == 1) {
+                    Y
+                }
+                else L
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = b: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1472,1477): 'myRun'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (i == 0) X
-                else if (i == 1) {
-                    Y
-                }
-                else L
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = b: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2433,6 +2453,21 @@ KtNameReferenceExpression(1472,1477): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                if (i == 0) X
+                else if (i == 1) {
+                    Y
+                }
+                else L
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = b: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -2472,15 +2507,7 @@ KtContainerNode(1500,1506): 'i == 0'
 KtBinaryExpression(1500,1506): 'i == 0'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2503,6 +2530,15 @@ KtBinaryExpression(1500,1506): 'i == 0'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1500,1501): 'i'
@@ -2526,15 +2562,7 @@ KtNameReferenceExpression(1500,1501): 'i'
 KtOperationReferenceExpression(1502,1504): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2557,6 +2585,15 @@ KtOperationReferenceExpression(1502,1504): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(1505,1506): '0'
@@ -2598,15 +2635,7 @@ KtContainerNode(1527,1533): 'i == 1'
 KtBinaryExpression(1527,1533): 'i == 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2629,6 +2658,15 @@ KtBinaryExpression(1527,1533): 'i == 1'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1527,1528): 'i'
@@ -2652,15 +2690,7 @@ KtNameReferenceExpression(1527,1528): 'i'
 KtOperationReferenceExpression(1529,1531): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2683,6 +2713,15 @@ KtOperationReferenceExpression(1529,1531): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(1532,1533): '1'
@@ -2737,23 +2776,9 @@ KtNameReferenceExpression(1574,1575): 'L'
     isInBestCandidates = true
 
 KtCallExpression(1587,1696): 'myRun<MyEnum> {'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (i == 0) X
-                else if (i == 1) {
-                    Y
-                }
-                else L
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = b: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2774,27 +2799,28 @@ KtCallExpression(1587,1696): 'myRun<MyEnum> {'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                if (i == 0) X
+                else if (i == 1) {
+                    Y
+                }
+                else L
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = b: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1587,1592): 'myRun'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                if (i == 0) X
-                else if (i == 1) {
-                    Y
-                }
-                else L
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = () -> MyEnum
-          symbol = b: () -> T
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -2815,6 +2841,21 @@ KtNameReferenceExpression(1587,1592): 'myRun'
         callableId = /myRun
       typeArgumentsMapping = {
         T -> (MyEnum)
+      }
+      valueArgumentMapping = {
+        {
+                if (i == 0) X
+                else if (i == 1) {
+                    Y
+                }
+                else L
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MyEnum
+          symbol = b: () -> T
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true
 
@@ -2854,15 +2895,7 @@ KtContainerNode(1615,1621): 'i == 0'
 KtBinaryExpression(1615,1621): 'i == 0'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2885,6 +2918,15 @@ KtBinaryExpression(1615,1621): 'i == 0'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1615,1616): 'i'
@@ -2908,15 +2950,7 @@ KtNameReferenceExpression(1615,1616): 'i'
 KtOperationReferenceExpression(1617,1619): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -2939,6 +2973,15 @@ KtOperationReferenceExpression(1617,1619): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(1620,1621): '0'
@@ -2980,15 +3023,7 @@ KtContainerNode(1642,1648): 'i == 1'
 KtBinaryExpression(1642,1648): 'i == 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -3011,6 +3046,15 @@ KtBinaryExpression(1642,1648): 'i == 1'
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(1642,1643): 'i'
@@ -3034,15 +3078,7 @@ KtNameReferenceExpression(1642,1643): 'i'
 KtOperationReferenceExpression(1644,1646): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i
@@ -3065,6 +3101,15 @@ KtOperationReferenceExpression(1644,1646): '=='
         contextParameters = []
         callableId = kotlin/Int.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true
 
 KtConstantExpression(1647,1648): '1'

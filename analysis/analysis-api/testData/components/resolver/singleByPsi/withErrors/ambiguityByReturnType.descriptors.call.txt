@@ -2,18 +2,7 @@ KtCallExpression(208,319): 'sumOf { c ->'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          { c ->
-                          println("Level 3: $c")
-                          gif(a + b + c > 50) 1L else 0
-                      } -> (KaVariableSignature:
-            name = selector
-            receiverType = null
-            returnType = kotlin.Function1<TypeVariable(T), kotlin.Int>
-            symbol = selector: kotlin.Function1<T, kotlin.Int>
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -35,20 +24,21 @@ KtCallExpression(208,319): 'sumOf { c ->'
           ]
           contextParameters = []
           callableId = kotlin/collections/sumOf
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           { c ->
                           println("Level 3: $c")
                           gif(a + b + c > 50) 1L else 0
                       } -> (KaVariableSignature:
             name = selector
             receiverType = null
-            returnType = kotlin.Function1<TypeVariable(T), kotlin.UInt>
-            symbol = selector: kotlin.Function1<T, kotlin.UInt>
+            returnType = kotlin.Function1<TypeVariable(T), kotlin.Int>
+            symbol = selector: kotlin.Function1<T, kotlin.Int>
             contextParameters = []
             callableId = null)
-        }
+        },
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -71,6 +61,18 @@ KtCallExpression(208,319): 'sumOf { c ->'
           contextParameters = []
           callableId = kotlin/collections/sumOf
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          { c ->
+                          println("Level 3: $c")
+                          gif(a + b + c > 50) 1L else 0
+                      } -> (KaVariableSignature:
+            name = selector
+            receiverType = null
+            returnType = kotlin.Function1<TypeVariable(T), kotlin.UInt>
+            symbol = selector: kotlin.Function1<T, kotlin.UInt>
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     public inline fun <T> Iterable<TypeVariable(T)>.sumOf(selector: (TypeVariable(T)) -> Int): Int defined in kotlin.collections

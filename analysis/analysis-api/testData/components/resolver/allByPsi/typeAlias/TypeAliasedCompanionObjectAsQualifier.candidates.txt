@@ -73,7 +73,7 @@ KtBlockExpression(161,253): '{'
 KtDotQualifiedExpression(167,185): 'MyAlias.function()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -88,12 +88,13 @@ KtDotQualifiedExpression(167,185): 'MyAlias.function()'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(167,174): 'MyAlias'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -105,13 +106,14 @@ KtNameReferenceExpression(167,174): 'MyAlias'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
 KtCallExpression(175,185): 'function()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -126,12 +128,13 @@ KtCallExpression(175,185): 'function()'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(175,183): 'function'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -146,6 +149,7 @@ KtNameReferenceExpression(175,183): 'function'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(183,185): '()'
@@ -175,7 +179,7 @@ KtDotQualifiedExpression(190,206): 'MyAlias.property'
 KtNameReferenceExpression(190,197): 'MyAlias'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -187,6 +191,7 @@ KtNameReferenceExpression(190,197): 'MyAlias'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -212,9 +217,9 @@ KtNameReferenceExpression(198,206): 'property'
     isInBestCandidates = true
 
 KtCallableReferenceExpression(212,229): 'MyAlias::function'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyAlias
@@ -229,12 +234,13 @@ KtCallableReferenceExpression(212,229): 'MyAlias::function'
         contextParameters = []
         callableId = test/MyClass.Companion.function
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(212,219): 'MyAlias'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -246,6 +252,7 @@ KtNameReferenceExpression(212,219): 'MyAlias'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
@@ -253,7 +260,7 @@ KtNameReferenceExpression(221,229): 'function'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(234,251): 'MyAlias::property'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -276,7 +283,7 @@ KtCallableReferenceExpression(234,251): 'MyAlias::property'
 KtNameReferenceExpression(234,241): 'MyAlias'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -288,6 +295,7 @@ KtNameReferenceExpression(234,241): 'MyAlias'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 

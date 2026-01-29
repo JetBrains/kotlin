@@ -136,7 +136,9 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
                             // The multi-call already renders all calls via other properties
                             !(klass.isSubclassOf(KaMultiCall::class) && property.name == KaMultiCall::calls.name) &&
                             /** The call is already covered as a part of [KaCompoundOperation.operationCall] */
-                            !(klass.isSubclassOf(KaCompoundAccessCall::class) && property.name == KaCompoundAccessCall::operationCall.name)
+                            !(klass.isSubclassOf(KaCompoundAccessCall::class) && property.name == KaCompoundAccessCall::operationCall.name) &&
+                            /** This is already covered by [KaFunctionCall.valueArgumentMapping] and [KaFunctionCall.contextArguments] */
+                            !(klass.isSubclassOf(KaFunctionCall::class) && property.name == KaFunctionCall<*>::combinedArgumentMapping.name)
                 }.ifNotEmpty {
                     joinTo(this@buildString, separator = "\n  ", prefix = ":\n  ") { property ->
                         val name = property.name
@@ -282,24 +284,24 @@ internal fun compareCalls(call1: KaCall, call2: KaCall): Int {
 context(_: KaSession)
 internal fun assertStableSymbolResult(
     testServices: TestServices,
-    firstCandidates: List<KaCallCandidateInfo>,
-    secondCandidates: List<KaCallCandidateInfo>,
+    firstCandidates: List<KaCallCandidate>,
+    secondCandidates: List<KaCallCandidate>,
 ) {
     val assertions = testServices.assertions
     assertions.assertEquals(firstCandidates.size, secondCandidates.size)
 
     for ((firstCandidate, secondCandidate) in firstCandidates.zip(secondCandidates)) {
         assertions.assertEquals(firstCandidate::class, secondCandidate::class)
-        assertStableResult(testServices, firstCandidate.candidate, secondCandidate.candidate)
+        assertStableResult(testServices, firstCandidate.candidate as KaCall, secondCandidate.candidate as KaCall)
         assertions.assertEquals(firstCandidate.isInBestCandidates, secondCandidate.isInBestCandidates)
 
         when (firstCandidate) {
-            is KaApplicableCallCandidateInfo -> {}
-            is KaInapplicableCallCandidateInfo -> {
+            is KaApplicableCallCandidate -> {}
+            is KaInapplicableCallCandidate -> {
                 assertStableResult(
                     testServices = testServices,
                     firstDiagnostic = firstCandidate.diagnostic,
-                    secondDiagnostic = (secondCandidate as KaInapplicableCallCandidateInfo).diagnostic,
+                    secondDiagnostic = (secondCandidate as KaInapplicableCallCandidate).diagnostic,
                 )
             }
         }
@@ -432,7 +434,6 @@ internal fun assertConsistency(testServices: TestServices, call: KaCall) {
     if (call !is KaCallableMemberCall<*, *>) return
 
     val assertions = testServices.assertions
-    val typeArgumentsMapping = call.typeArgumentsMapping
     val symbol = call.symbol
 
     if (call is KaSingleCall<*, *>) {
@@ -448,6 +449,23 @@ internal fun assertConsistency(testServices: TestServices, call: KaCall) {
         assertions.assertEquals(call is KaImplicitInvokeCall, call.isImplicitInvoke)
     }
 
+    if (call is KaFunctionCall<*>) {
+        val combinedArgumentMapping = call.combinedArgumentMapping.toMutableMap()
+        for ((expression, parameterFromSpecificMap) in call.valueArgumentMapping + call.contextArgumentMapping) {
+            val parameterFromCombinedMap = combinedArgumentMapping.remove(expression)
+            assertions.assertNotNull(parameterFromCombinedMap) {
+                "Value argument for $parameterFromSpecificMap is not found in ${call::combinedArgumentMapping.name}: $combinedArgumentMapping"
+            }
+
+            assertions.assertEquals(parameterFromCombinedMap, parameterFromSpecificMap)
+        }
+
+        assertions.assertEquals(combinedArgumentMapping.size, 0) {
+            "Extra elements found in ${call::combinedArgumentMapping.name}: $combinedArgumentMapping"
+        }
+    }
+
+    val typeArgumentsMapping = call.typeArgumentsMapping
     val typeParameters = symbol.typeParameters
     for (parameterSymbol in typeParameters) {
         val mappedType = typeArgumentsMapping[parameterSymbol]

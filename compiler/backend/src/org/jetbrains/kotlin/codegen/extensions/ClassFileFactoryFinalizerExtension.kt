@@ -6,15 +6,17 @@
 package org.jetbrains.kotlin.codegen.extensions
 
 import org.jetbrains.kotlin.codegen.ClassFileFactory
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 
 /**
  * Extension point which is called after the compiler outputs have been finalized,
  * which allows inspecting all output files, except for jar manifests.
  */
 interface ClassFileFactoryFinalizerExtension {
-    companion object : ProjectExtensionDescriptor<ClassFileFactoryFinalizerExtension>(
-        "org.jetbrains.kotlin.classFileFactoryFinalizerExtension", ClassFileFactoryFinalizerExtension::class.java)
+    companion object : ExtensionPointDescriptor<ClassFileFactoryFinalizerExtension>(
+        name = "org.jetbrains.kotlin.classFileFactoryFinalizerExtension",
+        extensionClass = ClassFileFactoryFinalizerExtension::class.java,
+    )
 
     fun finalizeClassFactory(factory: ClassFileFactory)
 }

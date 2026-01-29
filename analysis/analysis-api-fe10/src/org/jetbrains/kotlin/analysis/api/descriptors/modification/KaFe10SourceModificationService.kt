@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.analysis.api.descriptors.modification
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModificationType
+import org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationLocality
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationService
 
 internal class KaFe10SourceModificationService : KaSourceModificationService {
-    override fun handleElementModification(
-        element: PsiElement,
-        modificationType: KaElementModificationType,
-    ) {
+    override fun detectLocality(element: PsiElement, modificationType: KaElementModificationType): KaSourceModificationLocality {
+        throw UnsupportedOperationException("`${KaSourceModificationService::class.simpleName}` is not implemented in FE10.")
+    }
+
+    override fun handleInvalidation(element: PsiElement, modificationLocality: KaSourceModificationLocality) {
         throw UnsupportedOperationException("`${KaSourceModificationService::class.simpleName}` is not implemented in FE10.")
     }
 

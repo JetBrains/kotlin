@@ -73,7 +73,7 @@ internal abstract class SirAbstractVariableFromKtSymbol(
     }
     override val setter: SirSetter? by lazy {
         (ktSymbol as? KaPropertySymbol)
-            ?.takeIf { it.setter?.visibility != KaSymbolVisibility.PRIVATE }
+            ?.takeIf { it.setter?.visibility == KaSymbolVisibility.PUBLIC }
             ?.let {
                 it.setter?.let { SirSetterFromKtSymbol(it, sirSession) }
                     ?: if (!it.isVal) DefaultSetter(it, sirSession) else null

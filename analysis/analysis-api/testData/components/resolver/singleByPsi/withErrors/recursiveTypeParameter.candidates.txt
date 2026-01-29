@@ -1,15 +1,7 @@
 KtCallExpression(96,130): 'install(CoroutineModule.builder())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        CoroutineModule.builder() -> (KaVariableSignature:
-          name = builder
-          receiverType = null
-          returnType = AbstractModule.Builder<*>!
-          symbol = builder: AbstractModule.Builder<*>!
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = /RunnerModule
@@ -31,4 +23,13 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
         contextParameters = []
         callableId = /AbstractModule.install
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        CoroutineModule.builder() -> (KaVariableSignature:
+          name = builder
+          receiverType = null
+          returnType = AbstractModule.Builder<*>!
+          symbol = builder: AbstractModule.Builder<*>!
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

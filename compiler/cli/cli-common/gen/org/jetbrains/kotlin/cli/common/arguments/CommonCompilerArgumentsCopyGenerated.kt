@@ -80,6 +80,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.pluginConfigurations = from.pluginConfigurations?.copyOf()
     to.pluginOptions = from.pluginOptions?.copyOf()
     to.pluginOrderConstraints = from.pluginOrderConstraints?.copyOf()
+    to.printConfiguration = from.printConfiguration
     to.profilePhases = from.profilePhases
     to.progressiveMode = from.progressiveMode
     to.renderInternalDiagnosticNames = from.renderInternalDiagnosticNames

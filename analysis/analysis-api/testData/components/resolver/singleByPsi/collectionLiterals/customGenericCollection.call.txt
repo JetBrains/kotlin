@@ -1,49 +1,51 @@
 KtCollectionLiteralExpression(211,226): '["1", "2", "3"]'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      "1" -> (KaVariableSignature:
-        name = vals
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ["1", "2", "3"]
+        isSafeNavigation = false
+        type = MyList.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.String
-        symbol = vararg vals: T1
+        returnType = MyList<kotlin.String>
+        symbol = /MyList.Companion.of(<dispatch receiver>: MyList.Companion, vararg vals: T1): MyList<T1>
+        valueParameters = [
+          KaVariableSignature:
+            name = vals
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg vals: T1
+            contextParameters = []
+            callableId = null
+        ]
         contextParameters = []
-        callableId = null),
-      "2" -> (KaVariableSignature:
-        name = vals
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg vals: T1
-        contextParameters = []
-        callableId = null),
-      "3" -> (KaVariableSignature:
-        name = vals
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg vals: T1
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = KaExplicitReceiverValue:
-      expression = ["1", "2", "3"]
-      isSafeNavigation = false
-      type = MyList.Companion
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyList<kotlin.String>
-      symbol = /MyList.Companion.of(<dispatch receiver>: MyList.Companion, vararg vals: T1): MyList<T1>
-      valueParameters = [
-        KaVariableSignature:
+        callableId = /MyList.Companion.of
+      typeArgumentsMapping = {
+        T1 -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "1" -> (KaVariableSignature:
           name = vals
           receiverType = null
           returnType = kotlin.String
           symbol = vararg vals: T1
           contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /MyList.Companion.of
-    typeArgumentsMapping = {
-      T1 -> (kotlin.String)
-    }
+          callableId = null),
+        "2" -> (KaVariableSignature:
+          name = vals
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg vals: T1
+          contextParameters = []
+          callableId = null),
+        "3" -> (KaVariableSignature:
+          name = vals
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg vals: T1
+          contextParameters = []
+          callableId = null)
+      }

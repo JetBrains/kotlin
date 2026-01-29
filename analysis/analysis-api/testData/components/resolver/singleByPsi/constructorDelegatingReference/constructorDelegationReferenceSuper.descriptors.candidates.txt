@@ -1,15 +1,7 @@
 KtConstructorDelegationReferenceExpression(145,150): 'super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
-        ci -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -30,19 +22,20 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         ci -> (KaVariableSignature:
-          name = s
+          name = i
           receiverType = null
-          returnType = kotlin.String
-          symbol = s: kotlin.String
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -63,5 +56,14 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        ci -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false

@@ -121,7 +121,7 @@ KtWhenConditionWithExpression(230,230): ''
 KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = USELESS_IS_CHECK
@@ -136,6 +136,7 @@ KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -161,7 +162,7 @@ KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
 KtOperationReferenceExpression(231,232): '!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = USELESS_IS_CHECK
@@ -176,6 +177,7 @@ KtOperationReferenceExpression(231,232): '!'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -252,7 +254,7 @@ KtWhenConditionWithExpression(284,284): ''
 KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = REDUNDANT_ELSE_IN_WHEN
@@ -267,6 +269,7 @@ KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -292,7 +295,7 @@ KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
 KtOperationReferenceExpression(285,286): '!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = REDUNDANT_ELSE_IN_WHEN
@@ -307,6 +310,7 @@ KtOperationReferenceExpression(285,286): '!'
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:

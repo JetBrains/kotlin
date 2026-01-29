@@ -1,15 +1,7 @@
 KtNameReferenceExpression(129,133): 'post'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {} -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Unit, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Unit, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -29,3 +21,12 @@ KtNameReferenceExpression(129,133): 'post'
         contextParameters = []
         callableId = test/post
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {} -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Unit, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Unit, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }

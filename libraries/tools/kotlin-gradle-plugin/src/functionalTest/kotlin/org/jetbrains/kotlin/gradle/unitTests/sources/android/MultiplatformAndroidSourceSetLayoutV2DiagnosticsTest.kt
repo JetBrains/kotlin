@@ -13,7 +13,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.util.*
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertFalse
 
 class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {

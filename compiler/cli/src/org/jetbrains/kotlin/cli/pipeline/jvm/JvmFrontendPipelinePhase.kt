@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createEnvironmentAndSources
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -80,7 +82,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             return null
         }
 
-        FirAnalysisHandlerExtension.analyze(environment.project, configuration)?.let {
+        runAnalysisHandlerExtensions(environment.project, configuration)?.let {
             /*
              * If the analysis handler exception finishes successfully, we should stop the pipeline (as it doesn't produce the proper
              * fronted artifact), but we don't need to return the [ExitCode.COMPILATION_ERROR] (because the "compilation" finished
@@ -316,7 +318,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         fileBelongsToModule: (F, String) -> Boolean,
         createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
     ): List<SessionWithSources<F>> {
-        val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
+        val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
 
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
@@ -479,8 +481,26 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             }
         }
     }
-}
 
+    /**
+     * Applies [FirAnalysisHandlerExtension] instances to a project
+     * @param project the project to analyze
+     * @param configuration compiler configuration
+     * @return [null] if no applicable extensions were found, [true] if all applicable extensions returned [true] from [doAnalysis],
+     * [false] if any applicable extension returned [false]
+     *
+     * @see FirAnalysisHandlerExtension.isApplicable
+     * @see FirAnalysisHandlerExtension.doAnalysis
+     */
+
+    fun runAnalysisHandlerExtensions(project: Project, configuration: CompilerConfiguration): Boolean? {
+        val extensions = configuration.getCompilerExtensions(FirAnalysisHandlerExtension)
+            .filter { it.isApplicable(configuration) }
+            .takeIf { it.isNotEmpty() }
+            ?: return null
+        return extensions.all { it.doAnalysis(project, configuration) }
+    }
+}
 
 // Pretty-printing helpers for StAX writer
 private data class PrettyPrintDepth(var value: Int)

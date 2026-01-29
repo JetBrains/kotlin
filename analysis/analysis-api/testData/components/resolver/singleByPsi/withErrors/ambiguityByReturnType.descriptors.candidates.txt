@@ -1,18 +1,7 @@
 KtCallExpression(208,319): 'sumOf { c ->'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        { c ->
-                        println("Level 3: $c")
-                        gif(a + b + c > 50) 1L else 0
-                    } -> (KaVariableSignature:
-          name = selector
-          receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<T, java.math.BigDecimal>
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -37,23 +26,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<T, java.math.BigInteger>
+          returnType = kotlin.Function1<ERROR_TYPE, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<T, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -78,23 +68,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Double>
-          symbol = selector: kotlin.Function1<T, kotlin.Double>
+          returnType = kotlin.Function1<ERROR_TYPE, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<T, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -119,23 +110,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Int>
-          symbol = selector: kotlin.Function1<T, kotlin.Int>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Double>
+          symbol = selector: kotlin.Function1<T, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -160,23 +152,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Long>
-          symbol = selector: kotlin.Function1<T, kotlin.Long>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Int>
+          symbol = selector: kotlin.Function1<T, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -201,23 +194,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.UInt>
-          symbol = selector: kotlin.Function1<T, kotlin.UInt>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Long>
+          symbol = selector: kotlin.Function1<T, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -242,23 +236,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.ULong>
-          symbol = selector: kotlin.Function1<T, kotlin.ULong>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.UInt>
+          symbol = selector: kotlin.Function1<T, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -283,23 +278,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Boolean, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.Boolean, java.math.BigDecimal>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.ULong>
+          symbol = selector: kotlin.Function1<T, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -322,23 +318,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Boolean, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.Boolean, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.Boolean, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.Boolean, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -361,23 +358,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.Boolean, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.Boolean, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.Boolean, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -400,23 +398,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.Boolean, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.Boolean, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -439,23 +438,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.Boolean, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.Boolean, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -478,23 +478,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Boolean, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.Boolean, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.Boolean, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -517,23 +518,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Boolean, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.Boolean, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.Boolean, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.Boolean, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -556,23 +558,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Byte, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.Byte, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.Boolean, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.Boolean, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -595,23 +598,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Byte, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.Byte, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.Byte, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.Byte, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -634,23 +638,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Byte, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.Byte, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.Byte, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.Byte, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -673,23 +678,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Byte, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.Byte, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.Byte, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.Byte, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -712,23 +718,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Byte, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.Byte, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.Byte, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.Byte, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -751,23 +758,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Byte, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.Byte, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.Byte, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.Byte, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -790,23 +798,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Byte, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.Byte, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.Byte, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.Byte, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -829,23 +838,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.Char, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.Byte, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.Byte, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -868,23 +878,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.Char, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.Char, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.Char, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -907,23 +918,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.Char, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.Char, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -946,23 +958,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.Char, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -985,23 +998,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.Char, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1024,23 +1038,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.Char, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1063,23 +1078,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.Char, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1102,23 +1118,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.Char, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.Char, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1141,23 +1158,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/text/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.Char, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.Char, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.Char, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1180,23 +1198,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/text/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.Char, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.Char, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1219,23 +1238,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/text/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.Char, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1258,23 +1278,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/text/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.Char, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1297,23 +1318,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/text/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.Char, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1336,23 +1358,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/text/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Char, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.Char, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1375,23 +1398,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/text/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Double, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.Double, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.Char, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.Char, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1414,23 +1438,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Double, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.Double, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.Double, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.Double, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1453,23 +1478,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Double, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.Double, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.Double, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.Double, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1492,23 +1518,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Double, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.Double, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.Double, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.Double, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1531,23 +1558,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Double, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.Double, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.Double, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.Double, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1570,23 +1598,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Double, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.Double, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.Double, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.Double, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1609,23 +1638,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Double, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.Double, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.Double, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.Double, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1648,23 +1678,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Float, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.Float, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.Double, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.Double, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1687,23 +1718,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Float, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.Float, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.Float, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.Float, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1726,23 +1758,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Float, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.Float, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.Float, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.Float, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1765,23 +1798,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Float, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.Float, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.Float, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.Float, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1804,23 +1838,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Float, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.Float, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.Float, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.Float, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1843,23 +1878,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Float, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.Float, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.Float, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.Float, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1882,23 +1918,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Float, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.Float, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.Float, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.Float, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1921,23 +1958,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.Int, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.Float, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.Float, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1960,23 +1998,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.Int, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.Int, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.Int, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -1999,23 +2038,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.Int, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.Int, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.Int, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2038,23 +2078,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.Int, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.Int, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2077,23 +2118,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.Int, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.Int, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2116,23 +2158,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.Int, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.Int, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2155,23 +2198,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.Int, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.Int, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.Int, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2194,23 +2238,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Long, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.Long, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.Int, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.Int, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2233,23 +2278,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Long, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.Long, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.Long, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.Long, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2272,23 +2318,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Long, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.Long, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.Long, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.Long, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2311,23 +2358,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Long, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.Long, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.Long, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.Long, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2350,23 +2398,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Long, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.Long, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.Long, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.Long, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2389,23 +2438,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Long, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.Long, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.Long, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.Long, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2428,23 +2478,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Long, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.Long, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.Long, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.Long, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2467,23 +2518,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Short, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.Short, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.Long, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.Long, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2506,23 +2558,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Short, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.Short, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.Short, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.Short, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2545,23 +2598,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Short, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.Short, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.Short, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.Short, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2584,23 +2638,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Short, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.Short, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.Short, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.Short, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2623,23 +2678,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Short, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.Short, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.Short, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.Short, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2662,23 +2718,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Short, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.Short, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.Short, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.Short, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2701,23 +2758,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Short, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.Short, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.Short, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.Short, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2740,23 +2798,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UByte, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.UByte, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.Short, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.Short, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2779,23 +2838,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UByte, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.UByte, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.UByte, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.UByte, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2818,23 +2878,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UByte, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.UByte, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.UByte, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.UByte, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2857,23 +2918,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UByte, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.UByte, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.UByte, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.UByte, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2896,23 +2958,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UByte, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.UByte, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.UByte, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.UByte, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2935,23 +2998,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UByte, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.UByte, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.UByte, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.UByte, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -2974,23 +3038,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UByte, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.UByte, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.UByte, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.UByte, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3013,23 +3078,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UInt, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.UInt, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.UByte, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.UByte, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3052,23 +3118,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UInt, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.UInt, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.UInt, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.UInt, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3091,23 +3158,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UInt, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.UInt, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.UInt, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.UInt, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3130,23 +3198,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UInt, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.UInt, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.UInt, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.UInt, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3169,23 +3238,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UInt, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.UInt, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.UInt, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.UInt, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3208,23 +3278,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UInt, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.UInt, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.UInt, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.UInt, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3247,23 +3318,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UInt, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.UInt, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.UInt, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.UInt, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3286,23 +3358,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.ULong, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.ULong, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.UInt, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.UInt, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3325,23 +3398,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.ULong, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.ULong, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.ULong, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.ULong, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3364,23 +3438,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.ULong, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.ULong, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.ULong, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.ULong, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3403,23 +3478,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.ULong, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.ULong, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.ULong, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.ULong, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3442,23 +3518,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.ULong, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.ULong, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.ULong, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.ULong, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3481,23 +3558,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.ULong, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.ULong, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.ULong, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.ULong, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3520,23 +3598,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.ULong, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.ULong, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.ULong, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.ULong, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3559,23 +3638,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UShort, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<kotlin.UShort, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.ULong, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.ULong, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3598,23 +3678,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UShort, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<kotlin.UShort, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.UShort, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<kotlin.UShort, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3637,23 +3718,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UShort, kotlin.Double>
-          symbol = selector: kotlin.Function1<kotlin.UShort, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.UShort, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<kotlin.UShort, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3676,23 +3758,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UShort, kotlin.Int>
-          symbol = selector: kotlin.Function1<kotlin.UShort, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.UShort, kotlin.Double>
+          symbol = selector: kotlin.Function1<kotlin.UShort, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3715,23 +3798,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UShort, kotlin.Long>
-          symbol = selector: kotlin.Function1<kotlin.UShort, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.UShort, kotlin.Int>
+          symbol = selector: kotlin.Function1<kotlin.UShort, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3754,23 +3838,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UShort, kotlin.UInt>
-          symbol = selector: kotlin.Function1<kotlin.UShort, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.UShort, kotlin.Long>
+          symbol = selector: kotlin.Function1<kotlin.UShort, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3793,23 +3878,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.UShort, kotlin.ULong>
-          symbol = selector: kotlin.Function1<kotlin.UShort, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.UShort, kotlin.UInt>
+          symbol = selector: kotlin.Function1<kotlin.UShort, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3832,23 +3918,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
         contextParameters = []
         callableId = kotlin/collections/sumOf
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<T, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.UShort, kotlin.ULong>
+          symbol = selector: kotlin.Function1<kotlin.UShort, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3873,22 +3960,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<T, java.math.BigInteger>
+          returnType = kotlin.Function1<kotlin.Int, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<T, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3913,22 +4001,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Double>
-          symbol = selector: kotlin.Function1<T, kotlin.Double>
+          returnType = kotlin.Function1<kotlin.Int, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<T, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3953,22 +4042,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
-          symbol = selector: kotlin.Function1<T, kotlin.Int>
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Double>
+          symbol = selector: kotlin.Function1<T, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -3993,22 +4083,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Long>
-          symbol = selector: kotlin.Function1<T, kotlin.Long>
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
+          symbol = selector: kotlin.Function1<T, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4033,22 +4124,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.UInt>
-          symbol = selector: kotlin.Function1<T, kotlin.UInt>
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Long>
+          symbol = selector: kotlin.Function1<T, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4073,22 +4165,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.ULong>
-          symbol = selector: kotlin.Function1<T, kotlin.ULong>
+          returnType = kotlin.Function1<kotlin.Int, kotlin.UInt>
+          symbol = selector: kotlin.Function1<T, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4113,22 +4206,23 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, java.math.BigDecimal>
-          symbol = selector: kotlin.Function1<T, java.math.BigDecimal>
+          returnType = kotlin.Function1<kotlin.Int, kotlin.ULong>
+          symbol = selector: kotlin.Function1<T, kotlin.ULong>
           contextParameters = []
           callableId = null)
       }
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4153,23 +4247,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, java.math.BigInteger>
-          symbol = selector: kotlin.Function1<T, java.math.BigInteger>
+          returnType = kotlin.Function1<ERROR_TYPE, java.math.BigDecimal>
+          symbol = selector: kotlin.Function1<T, java.math.BigDecimal>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4194,23 +4289,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Double>
-          symbol = selector: kotlin.Function1<T, kotlin.Double>
+          returnType = kotlin.Function1<ERROR_TYPE, java.math.BigInteger>
+          symbol = selector: kotlin.Function1<T, java.math.BigInteger>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4235,23 +4331,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Int>
-          symbol = selector: kotlin.Function1<T, kotlin.Int>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Double>
+          symbol = selector: kotlin.Function1<T, kotlin.Double>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4276,23 +4373,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Long>
-          symbol = selector: kotlin.Function1<T, kotlin.Long>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Int>
+          symbol = selector: kotlin.Function1<T, kotlin.Int>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4317,23 +4415,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.UInt>
-          symbol = selector: kotlin.Function1<T, kotlin.UInt>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Long>
+          symbol = selector: kotlin.Function1<T, kotlin.Long>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4358,23 +4457,24 @@ KtCallExpression(208,319): 'sumOf { c ->'
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      valueArgumentMapping = {
         { c ->
                         println("Level 3: $c")
                         gif(a + b + c > 50) 1L else 0
                     } -> (KaVariableSignature:
           name = selector
           receiverType = null
-          returnType = kotlin.Function1<ERROR_TYPE, kotlin.ULong>
-          symbol = selector: kotlin.Function1<T, kotlin.ULong>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.UInt>
+          symbol = selector: kotlin.Function1<T, kotlin.UInt>
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
@@ -4398,6 +4498,18 @@ KtCallExpression(208,319): 'sumOf { c ->'
         callableId = kotlin/sequences/sumOf
       typeArgumentsMapping = {
         T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
+        { c ->
+                        println("Level 3: $c")
+                        gif(a + b + c > 50) 1L else 0
+                    } -> (KaVariableSignature:
+          name = selector
+          receiverType = null
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.ULong>
+          symbol = selector: kotlin.Function1<T, kotlin.ULong>
+          contextParameters = []
+          callableId = null)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with sumOf>
     isInBestCandidates = false

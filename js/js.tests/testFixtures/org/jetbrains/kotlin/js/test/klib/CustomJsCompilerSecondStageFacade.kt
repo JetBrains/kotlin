@@ -58,7 +58,7 @@ class CustomJsCompilerSecondStageFacade(
 
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
             val regularAndFriendDependencies = regularDependencies + friendDependencies
-            customJsCompilerSettings.customCompiler.callCompiler(
+            customJsCompilerSettings.customKlibCompiler.callCompiler(
                 output = printStream,
                 listOfNotNull(
                     K2JSCompilerArguments::irProduceJs.cliArgument,

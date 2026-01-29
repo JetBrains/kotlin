@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.platform.resolution
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.serviceOrNull
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 
 /**
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
  * [com.intellij.psi.impl.PsiFileEx.BATCH_REFERENCE_PROCESSING] directly in the Kotlin repository (KT-73649 as a reference).
  */
 @KaIdeApi
+@KaPlatformInterface
 public interface KaResolutionActivityTracker : KaEngineService {
     /**
      * Whether the thread is currently executing Kotlin resolution logic.
@@ -28,6 +29,7 @@ public interface KaResolutionActivityTracker : KaEngineService {
     public val isKotlinResolutionActive: Boolean
 
     @KaIdeApi
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(): KaResolutionActivityTracker? {
             return ApplicationManager.getApplication().serviceOrNull<KaResolutionActivityTracker>()

@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.gradle.util.provisionKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64
 import org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64
-import org.junit.Assume
-import org.junit.Before
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import kotlin.test.Test
 
 class IdeNativePlatformDependencyResolverTest {
     // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
-    @Before
+    @BeforeEach
     fun setUp() {
         provisionKotlinNativeDistribution()
     }
@@ -54,7 +54,7 @@ class IdeNativePlatformDependencyResolverTest {
 
     @Test
     fun `test - CoreFoundation on macos`() {
-        Assume.assumeTrue("Macos host required for this test", HostManager.hostIsMac)
+        Assumptions.assumeTrue(HostManager.hostIsMac, "Macos host required for this test")
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
         kotlin.applyDefaultHierarchyTemplate()

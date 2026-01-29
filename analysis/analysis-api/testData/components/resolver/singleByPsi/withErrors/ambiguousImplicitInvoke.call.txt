@@ -2,7 +2,7 @@ KtCallExpression(134,137): 'x()'
   KaCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -24,9 +24,10 @@ KtCallExpression(134,137): 'x()'
           ]
           contextParameters = []
           callableId = null
-        typeArgumentsMapping = {},
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
       KaImplicitInvokeCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
@@ -49,6 +50,7 @@ KtCallExpression(134,137): 'x()'
           contextParameters = []
           callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
     

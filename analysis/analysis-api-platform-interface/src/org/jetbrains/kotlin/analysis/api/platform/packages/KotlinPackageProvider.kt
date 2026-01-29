@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.packages
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
  *
  * [KotlinPackageProvider] has the same lifetime guarantees as [KotlinDeclarationProvider][org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider].
  */
+@KaPlatformInterface
 public interface KotlinPackageProvider : KotlinComposableProvider {
     /**
      * Checks if a package named [packageFqName] exists in the context of the given [platform]. This includes Kotlin packages as well as

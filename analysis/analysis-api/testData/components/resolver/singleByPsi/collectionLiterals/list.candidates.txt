@@ -1,7 +1,7 @@
 KtCollectionLiteralExpression(40,42): '[]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -15,11 +15,12 @@ KtCollectionLiteralExpression(40,42): '[]'
       typeArgumentsMapping = {
         T -> (kotlin.Boolean)
       }
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -41,12 +42,13 @@ KtCollectionLiteralExpression(40,42): '[]'
       typeArgumentsMapping = {
         T -> (kotlin.Boolean)
       }
+      valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'element'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -68,4 +70,5 @@ KtCollectionLiteralExpression(40,42): '[]'
       typeArgumentsMapping = {
         T -> (kotlin.Boolean)
       }
+      valueArgumentMapping = {}
     isInBestCandidates = false

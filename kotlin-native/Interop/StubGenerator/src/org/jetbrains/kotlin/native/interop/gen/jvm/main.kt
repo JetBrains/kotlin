@@ -23,7 +23,6 @@ import kotlinx.cli.default
 import kotlinx.cli.required
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibMetadataVersion
-import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinLibraryResolverImpl
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.native.interop.gen.*
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
@@ -523,26 +521,9 @@ private fun checkCCallModeCompatibility(
     }
 }
 
-// TODO (KT-81433): Reconsider how exactly the export in P.V. feature should work in further versions (ex: 2.4.0)
-//  if we decide to upgrade LLVM.
-private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments) {
-    val klibAbiCompatibilityLevel = cinteropArguments.klibAbiCompatibilityLevel
-    val cCallMode = cinteropArguments.cCallMode
-
-    when (klibAbiCompatibilityLevel) {
-        KlibAbiCompatibilityLevel.ABI_LEVEL_2_2 -> {
-            check(cCallMode == CCallMode.INDIRECT) {
-                "-$CCALL_MODE ${cCallMode.name.lowercase()} is not supported in combination with -$KLIB_ABI_COMPATIBILITY_LEVEL ${klibAbiCompatibilityLevel}\n" +
-                        "Please use -$KLIB_ABI_COMPATIBILITY_LEVEL ${KlibAbiCompatibilityLevel.LATEST_STABLE} or specify -$CCALL_MODE ${CCallMode.INDIRECT.name.lowercase()}"
-            }
-
-            warn("-$KLIB_ABI_COMPATIBILITY_LEVEL $klibAbiCompatibilityLevel will trigger generating KLIB compatible with KLIB ABI version $klibAbiCompatibilityLevel. This is an experimental feature.")
-        }
-
-        KlibAbiCompatibilityLevel.ABI_LEVEL_2_3 -> {
-            // No specific restrictions for now.
-        }
-    }
+private fun checkKlibAbiCompatibilityLevel(@Suppress("unused") cinteropArguments: CInteropArguments) {
+    // TODO (KT-81433, KT-78686): Reconsider how exactly the export in P.V. feature should work in further versions (ex: 2.4.0)
+    //  if we decide to upgrade LLVM.
 }
 
 private fun compileSources(

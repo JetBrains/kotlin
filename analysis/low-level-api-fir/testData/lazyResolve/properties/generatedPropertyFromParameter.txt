@@ -404,13 +404,13 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Sub : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = <strcat>(String(param), R|/stringConstant|)) prop: R|kotlin/Int|): R|Sub| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(paramstr 1)) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @PROPERTY:R|Anno|[Types](s = <strcat>(String(property), R|/stringConstant|)) field:@FIELD:R|Anno|[Types](s = <strcat>(String(field), R|/stringConstant|)) @R|FieldAnnotation|[Types](i = R|/konstant|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @PROPERTY_GETTER:R|Anno|[Types](s = <strcat>(String(get), R|/stringConstant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
-            @PROPERTY_SETTER:R|Anno|[Types](s = <strcat>(String(set), R|/stringConstant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](s = <strcat>(String(setparam), R|/stringConstant|)) value: R|kotlin/Int|): R|kotlin/Unit|
+        @PROPERTY:R|Anno|[Types](s = String(propertystr 1)) field:@FIELD:R|Anno|[Types](s = String(fieldstr 1)) @R|FieldAnnotation|[Types](i = Int(0)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @PROPERTY_GETTER:R|Anno|[Types](s = String(getstr 1)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Anno|[Types](s = String(setstr 1)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](s = String(setparamstr 1)) value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val konstant: R|kotlin/Int| = Int(0)
@@ -439,13 +439,13 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Sub : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = <strcat>(String(param), R|/stringConstant|)) prop: R|kotlin/Int|): R|Sub| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(paramstr 1)) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @PROPERTY:R|Anno|[Types](s = <strcat>(String(property), R|/stringConstant|)) field:@FIELD:R|Anno|[Types](s = <strcat>(String(field), R|/stringConstant|)) @R|FieldAnnotation|[Types](i = R|/konstant|) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @PROPERTY_GETTER:R|Anno|[Types](s = <strcat>(String(get), R|/stringConstant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
-            @PROPERTY_SETTER:R|Anno|[Types](s = <strcat>(String(set), R|/stringConstant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = <strcat>(String(setparam), R|/stringConstant|)) value: R|kotlin/Int|): R|kotlin/Unit|
+        @PROPERTY:R|Anno|[Types](s = String(propertystr 1)) field:@FIELD:R|Anno|[Types](s = String(fieldstr 1)) @R|FieldAnnotation|[Types](i = Int(0)) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @PROPERTY_GETTER:R|Anno|[Types](s = String(getstr 1)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Anno|[Types](s = String(setstr 1)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = String(setparamstr 1)) value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val konstant: R|kotlin/Int| = Int(0)
@@ -474,13 +474,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] generatedPropertyFromParameter.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class Sub : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = <strcat>(String(param), R|/stringConstant|)) prop: R|kotlin/Int|): R|Sub| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(paramstr 1)) prop: R|kotlin/Int|): R|Sub| {
             super<R|kotlin/Any|>()
         }
 
-        @PROPERTY:R|Anno|[Types](s = <strcat>(String(property), R|/stringConstant|)) field:@FIELD:R|Anno|[Types](s = <strcat>(String(field), R|/stringConstant|)) @R|FieldAnnotation|[Types](i = R|/konstant|) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @PROPERTY_GETTER:R|Anno|[Types](s = <strcat>(String(get), R|/stringConstant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
-            @PROPERTY_SETTER:R|Anno|[Types](s = <strcat>(String(set), R|/stringConstant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = <strcat>(String(setparam), R|/stringConstant|)) value: R|kotlin/Int|): R|kotlin/Unit|
+        @PROPERTY:R|Anno|[Types](s = String(propertystr 1)) field:@FIELD:R|Anno|[Types](s = String(fieldstr 1)) @R|FieldAnnotation|[Types](i = Int(0)) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @PROPERTY_GETTER:R|Anno|[Types](s = String(getstr 1)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Anno|[Types](s = String(setstr 1)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = String(setparamstr 1)) value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val konstant: R|kotlin/Int| = Int(0)

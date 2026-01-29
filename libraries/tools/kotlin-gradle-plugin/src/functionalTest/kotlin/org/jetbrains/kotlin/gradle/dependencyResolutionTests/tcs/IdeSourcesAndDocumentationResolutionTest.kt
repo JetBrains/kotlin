@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.util.provisionKotlinNativeDistribution
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import kotlin.test.Test
 import kotlin.test.fail
 import kotlin.text.Regex.Companion.escape
 
 class IdeSourcesAndDocumentationResolutionTest {
     // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
-    @Before
+    @BeforeEach
     fun setUp() {
         provisionKotlinNativeDistribution()
     }

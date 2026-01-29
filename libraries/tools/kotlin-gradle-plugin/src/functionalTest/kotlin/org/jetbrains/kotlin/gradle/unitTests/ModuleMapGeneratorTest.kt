@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ModuleMapGeneratorTest {

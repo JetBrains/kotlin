@@ -38,7 +38,7 @@ open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices
                 }
             }
 
-        private fun containsBoxMethod(fileContent: String): Boolean {
+        fun containsBoxMethod(fileContent: String): Boolean {
             return BOX_METHOD_REGEX.containsMatchIn(fileContent) || containsSuspendBoxMethod(fileContent)
         }
 

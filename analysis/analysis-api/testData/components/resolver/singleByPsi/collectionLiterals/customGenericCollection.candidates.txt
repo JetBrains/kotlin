@@ -1,29 +1,7 @@
 KtCollectionLiteralExpression(211,226): '["1", "2", "3"]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "1" -> (KaVariableSignature:
-          name = vals
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg vals: T1
-          contextParameters = []
-          callableId = null),
-        "2" -> (KaVariableSignature:
-          name = vals
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg vals: T1
-          contextParameters = []
-          callableId = null),
-        "3" -> (KaVariableSignature:
-          name = vals
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg vals: T1
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = ["1", "2", "3"]
@@ -47,5 +25,28 @@ KtCollectionLiteralExpression(211,226): '["1", "2", "3"]'
         callableId = /MyList.Companion.of
       typeArgumentsMapping = {
         T1 -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "1" -> (KaVariableSignature:
+          name = vals
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg vals: T1
+          contextParameters = []
+          callableId = null),
+        "2" -> (KaVariableSignature:
+          name = vals
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg vals: T1
+          contextParameters = []
+          callableId = null),
+        "3" -> (KaVariableSignature:
+          name = vals
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg vals: T1
+          contextParameters = []
+          callableId = null)
       }
     isInBestCandidates = true

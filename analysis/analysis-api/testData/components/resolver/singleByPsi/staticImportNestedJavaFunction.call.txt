@@ -1,16 +1,18 @@
 KtCallExpression(95,100): 'foo()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = KaImplicitReceiverValue:
-      symbol = /Dependency.Nested
-      type = kotlin.Unit
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /Dependency.Nested.foo(): kotlin.Unit
-      valueParameters = []
-      contextParameters = []
-      callableId = /Dependency.Nested.foo
-    typeArgumentsMapping = {}
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = /Dependency.Nested
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /Dependency.Nested.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /Dependency.Nested.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

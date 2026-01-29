@@ -20,71 +20,56 @@ import org.jetbrains.kotlin.util.PerformanceManager
 @Suppress("unused")
 object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.config", "CommonConfigurationKeys") {
     val LANGUAGE_VERSION_SETTINGS by key<LanguageVersionSettings>(
-        "language version settings",
         defaultValue = "LanguageVersionSettingsImpl.DEFAULT",
         importsToAdd = listOf("org.jetbrains.kotlin.config.LanguageVersionSettingsImpl")
     )
 
-    val DISABLE_INLINE by key<Boolean>("disable inline")
-    val MODULE_NAME by key<String>("module name")
-    val REPORT_OUTPUT_FILES by key<Boolean>("report output files")
-    val LOOKUP_TRACKER by key<LookupTracker>("lookup tracker", throwOnNull = false)
-    val EXPECT_ACTUAL_TRACKER by key<ExpectActualTracker>("expect actual tracker", throwOnNull = false)
-    val INLINE_CONST_TRACKER by key<InlineConstTracker>("inline constant tracker", throwOnNull = false)
-    val FILE_MAPPING_TRACKER by key<ICFileMappingTracker>("file mapping tracker", throwOnNull = false)
-    val ENUM_WHEN_TRACKER by key<EnumWhenTracker>("enum when tracker", throwOnNull = false)
-    val IMPORT_TRACKER by key<ImportTracker>("import tracker", throwOnNull = false)
-    val METADATA_VERSION by key<BinaryVersion>("metadata version")
-    val USE_FIR by key<Boolean>("front-end IR")
-    val USE_LIGHT_TREE by key<Boolean>("light tree")
-    val HMPP_MODULE_STRUCTURE by key<HmppCliModuleStructure>("HMPP module structure")
-    val METADATA_KLIB by key<Boolean>("Produce metadata klib")
-    val USE_FIR_EXTRA_CHECKERS by key<Boolean>("fir extra checkers")
-    val USE_FIR_EXPERIMENTAL_CHECKERS by key<Boolean>("fir not-public-ready checkers")
-    val DUMP_INFERENCE_LOGS by key<Boolean>("render the inference constraints dump file")
-    val PARALLEL_BACKEND_THREADS by key<Int>("Run codegen phase in parallel with N threads")
-    val DUMP_MODEL by key<String>("Dump compilation model")
-    val INCREMENTAL_COMPILATION by key<Boolean>("Enable incremental compilation")
-    val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS by key<Boolean>("Allow to compile any scripts along with regular Kotlin sources")
-    val IGNORE_CONST_OPTIMIZATION_ERRORS by key<Boolean>("Ignore errors from IrConstTransformer")
-    val EVALUATED_CONST_TRACKER by key<EvaluatedConstTracker>("Keeps track of all evaluated by IrInterpreter constants")
+    val DISABLE_INLINE by key<Boolean>()
+    val MODULE_NAME by key<String>()
+    val REPORT_OUTPUT_FILES by key<Boolean>()
+    val LOOKUP_TRACKER by key<LookupTracker>(throwOnNull = false)
+    val EXPECT_ACTUAL_TRACKER by key<ExpectActualTracker>(throwOnNull = false)
+    val INLINE_CONST_TRACKER by key<InlineConstTracker>(throwOnNull = false)
+    val FILE_MAPPING_TRACKER by key<ICFileMappingTracker>(throwOnNull = false)
+    val ENUM_WHEN_TRACKER by key<EnumWhenTracker>(throwOnNull = false)
+    val IMPORT_TRACKER by key<ImportTracker>(throwOnNull = false)
+    val METADATA_VERSION by key<BinaryVersion>()
+    val USE_FIR by key<Boolean>()
+    val USE_LIGHT_TREE by key<Boolean>()
+    val HMPP_MODULE_STRUCTURE by key<HmppCliModuleStructure>()
+    val METADATA_KLIB by key<Boolean>()
+    val USE_FIR_EXTRA_CHECKERS by key<Boolean>()
+    val USE_FIR_EXPERIMENTAL_CHECKERS by key<Boolean>("Enables FIR experimental (not ready for public use) checkers.")
+    val DUMP_INFERENCE_LOGS by key<Boolean>()
+    val PARALLEL_BACKEND_THREADS by key<Int>("Runs the codegen phase in parallel with N threads.")
+    val DUMP_MODEL by key<String>()
+    val INCREMENTAL_COMPILATION by key<Boolean>()
+    val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS by key<Boolean>()
+    val IGNORE_CONST_OPTIMIZATION_ERRORS by key<Boolean>()
+    val EVALUATED_CONST_TRACKER by key<EvaluatedConstTracker>("Keeps track of all constants evaluated by IrInterpreter.")
 
-    val MESSAGE_COLLECTOR_KEY by key<MessageCollector>(
-        "message collector",
-        defaultValue = "MessageCollector.NONE",
-        accessorName = "messageCollector",
-    )
+    val MESSAGE_COLLECTOR_KEY by key<MessageCollector>(defaultValue = "MessageCollector.NONE", accessorName = "messageCollector")
 
-    val VERIFY_IR by key<IrVerificationMode>("IR verification mode")
-    val ENABLE_IR_VISIBILITY_CHECKS by key<Boolean>("Check pre-lowering IR for visibility violations")
-    val ENABLE_IR_VARARG_TYPES_CHECKS by key<Boolean>("Check IR for vararg types mismatches")
-    val ENABLE_IR_NESTED_OFFSETS_CHECKS by key<Boolean>("Check that offsets of nested IR elements conform to offsets of their containers")
+    val VERIFY_IR by key<IrVerificationMode>()
+    val ENABLE_IR_VISIBILITY_CHECKS by key<Boolean>("Checks pre-lowering IR for visibility violations.")
+    val ENABLE_IR_VARARG_TYPES_CHECKS by key<Boolean>("Checks IR for vararg types mismatches.")
+    val ENABLE_IR_NESTED_OFFSETS_CHECKS by key<Boolean>("Checks that offsets of nested IR elements conform to offsets of their containers.")
 
-    val PHASE_CONFIG by key<PhaseConfig>("phase configuration")
+    val PHASE_CONFIG by key<PhaseConfig>()
 
-    val DONT_CREATE_SEPARATE_SESSION_FOR_SCRIPTS by key<Boolean>(
-        description = "don't create separate session for scripts",
-        comment = "Should be used only in tests, impossible to set via compiler arguments"
-    )
+    val DONT_CREATE_SEPARATE_SESSION_FOR_SCRIPTS by key<Boolean>("Should be used only in tests, impossible to set via compiler arguments.")
 
-    val DONT_SORT_SOURCE_FILES by key<Boolean>(
-        description = "don't sort source files in FS order",
-    )
+    val DONT_SORT_SOURCE_FILES by key<Boolean>()
 
-    val SCRIPTING_HOST_CONFIGURATION by key<Any>(
-        description = "scripting host configuration",
-        comment = "Internal for passing configuration in the scripting pipeline, impossible to set via compiler arguments"
-    )
+    val SCRIPTING_HOST_CONFIGURATION by key<Any>("Internal for passing configuration in the scripting pipeline, impossible to set via compiler arguments.")
 
     val PERF_MANAGER by key<PerformanceManager>(
-        description = "A helper that can be used to measure performance (compiler phases, JIT and GC info) or collect stats (e.g. number of lines in a project)",
-        comment = "It might be inaccurate if use in multithreading mode"
+        "A helper that can be used to measure performance (compiler phases, JIT and GC info) or collect stats (e.g. number of lines in a project). It might be inaccurate if use in multithreading mode."
     )
 
     val DETAILED_PERF by key<Boolean>(
-        description = "Enables detailed performance stats that might slow down the general compiler performance",
-        comment = "See the description of `-Xdetailed-perf` for more details"
+        "Enables detailed performance stats that might slow down the general compiler performance. See the description of `-Xdetailed-perf` for more details."
     )
 
-    val TARGET_PLATFORM by key<TargetPlatform>("target platform")
+    val TARGET_PLATFORM by key<TargetPlatform>()
 }

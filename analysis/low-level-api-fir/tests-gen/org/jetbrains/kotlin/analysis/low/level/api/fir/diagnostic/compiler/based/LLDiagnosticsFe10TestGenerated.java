@@ -8088,6 +8088,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("contextAndExtensionTypesTogether.kt")
+      public void testContextAndExtensionTypesTogether() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/contextAndExtensionTypesTogether.kt");
+      }
+
+      @Test
       @TestMetadata("contextParameterOnPackageScript.kts")
       public void testContextParameterOnPackageScript() {
         runTest("compiler/testData/diagnostics/tests/contextParameters/contextParameterOnPackageScript.kts");
@@ -10837,12 +10843,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("dataInheritance.kt")
       public void testDataInheritance() {
         runTest("compiler/testData/diagnostics/tests/dataClasses/dataInheritance.kt");
-      }
-
-      @Test
-      @TestMetadata("dataObjectDisabled.kt")
-      public void testDataObjectDisabled() {
-        runTest("compiler/testData/diagnostics/tests/dataClasses/dataObjectDisabled.kt");
       }
 
       @Test
@@ -15908,6 +15908,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("constructorParameter.kt")
+      public void testConstructorParameter() {
+        runTest("compiler/testData/diagnostics/tests/external/constructorParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("enumEntry.kt")
+      public void testEnumEntry() {
+        runTest("compiler/testData/diagnostics/tests/external/enumEntry.kt");
+      }
+
+      @Test
       @TestMetadata("noExternalModifierInheritance.kt")
       public void testNoExternalModifierInheritance() {
         runTest("compiler/testData/diagnostics/tests/external/noExternalModifierInheritance.kt");
@@ -19803,6 +19815,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("approximateBeforeFixation2.kt")
+        public void testApproximateBeforeFixation2() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/approximateBeforeFixation2.kt");
+        }
+
+        @Test
         @TestMetadata("approximateContravariantCapturedTypes.kt")
         public void testApproximateContravariantCapturedTypes() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/approximateContravariantCapturedTypes.kt");
@@ -21204,6 +21222,22 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         @TestMetadata("substitutingSuperTypes2.kt")
         public void testSubstitutingSuperTypes2() {
           runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/substitutingSuperTypes2.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inference/fixationOrder")
+      @TestDataPath("$PROJECT_ROOT")
+      public class FixationOrder {
+        @Test
+        public void testAllFilesPresentInFixationOrder() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/fixationOrder"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("onesForOutputTypesPostponed.kt")
+        public void testOnesForOutputTypesPostponed() {
+          runTest("compiler/testData/diagnostics/tests/inference/fixationOrder/onesForOutputTypesPostponed.kt");
         }
       }
 
@@ -37919,6 +37953,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("kt30245.kt")
       public void testKt30245() {
         runTest("compiler/testData/diagnostics/tests/regressions/kt30245.kt");
+      }
+
+      @Test
+      @TestMetadata("kt30245_legacy.kt")
+      public void testKt30245_legacy() {
+        runTest("compiler/testData/diagnostics/tests/regressions/kt30245_legacy.kt");
       }
 
       @Test

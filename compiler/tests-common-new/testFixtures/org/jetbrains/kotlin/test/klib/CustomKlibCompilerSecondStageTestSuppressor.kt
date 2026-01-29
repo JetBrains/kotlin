@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KL
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.junit.jupiter.api.Assumptions
@@ -50,7 +51,7 @@ class CustomKlibCompilerSecondStageTestSuppressor(
                         else
                             listOf(wrappedException)
                     }
-                    is JsBinaryArtifactHandler -> processException(  // Execution error
+                    is BinaryArtifactHandler -> processException(  // Execution error
                         wrappedException,
                         IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE
                     )
@@ -62,6 +63,9 @@ class CustomKlibCompilerSecondStageTestSuppressor(
                         IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE
                     )
                     else -> processException(wrappedException, IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE)
+                }
+                is WrappedException.FromAfterAnalysisChecker -> {
+                    listOf(wrappedException)
                 }
                 else -> error("Yet unsupported wrapped exception type: ${wrappedException::class.qualifiedName} ")
             }

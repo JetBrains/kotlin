@@ -138,17 +138,7 @@ KtCallExpression(152,193): 'take {'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          {
-              lambdaParam: Foo.Bar.Baz. ->
-          } -> (KaVariableSignature:
-            name = action
-            receiverType = null
-            returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-            symbol = action: kotlin.Function1<T, kotlin.Unit>
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -169,6 +159,17 @@ KtCallExpression(152,193): 'take {'
           callableId = /take
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          {
+              lambdaParam: Foo.Bar.Baz. ->
+          } -> (KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+            symbol = action: kotlin.Function1<T, kotlin.Unit>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
@@ -177,17 +178,7 @@ KtNameReferenceExpression(152,156): 'take'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          {
-              lambdaParam: Foo.Bar.Baz. ->
-          } -> (KaVariableSignature:
-            name = action
-            receiverType = null
-            returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-            symbol = action: kotlin.Function1<T, kotlin.Unit>
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -208,6 +199,17 @@ KtNameReferenceExpression(152,156): 'take'
           callableId = /take
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
+          {
+              lambdaParam: Foo.Bar.Baz. ->
+          } -> (KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+            symbol = action: kotlin.Function1<T, kotlin.Unit>
+            contextParameters = []
+            callableId = null)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>

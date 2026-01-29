@@ -1,0 +1,36 @@
+@R|Anno|(position = String(type: 0))  MyList<@R|Anno|(position = String(nested type: 0))  MyList<@R|Anno|(position = String(nested nested type: 0))  kotlin/Int>>
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /A.prop
+  anchor -> [FirRegularPropertySymbol /A.prop]
+
+@R|Anno|(position = String(nested type: 0))  MyList<@R|Anno|(position = String(nested nested type: 0))  kotlin/Int>
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /A.prop
+  anchor -> [FirRegularPropertySymbol /A.prop]
+
+@R|Anno|(position = String(nested nested type: 0))  kotlin/Int
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /A.prop
+  anchor -> [FirRegularPropertySymbol /A.prop]
+
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithComplexType.kt
+    public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        field:@R|Anno|[Types](position = String(backing field: 0)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any|
+            @R|Anno|[Types](position = String(backing field: 0)) private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|@R|Anno|(position = String(type: 0))  MyList<@R|Anno|(position = String(nested type: 0))  MyList<@R|Anno|(position = String(nested nested type: 0))  kotlin/Int>>| = LAZY_EXPRESSION
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|kotlin/Any|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MyList<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|

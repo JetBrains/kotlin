@@ -1007,8 +1007,8 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/HasBinari
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/HierarchyAttributeContainer : org/gradle/api/attributes/AttributeContainer {
-	public fun <init> (Lorg/gradle/api/attributes/AttributeContainer;Lkotlin/jvm/functions/Function1;)V
-	public synthetic fun <init> (Lorg/gradle/api/attributes/AttributeContainer;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lorg/gradle/api/attributes/AttributeContainer;Lorg/gradle/api/model/ObjectFactory;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lorg/gradle/api/attributes/AttributeContainer;Lorg/gradle/api/model/ObjectFactory;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun addAllLater (Lorg/gradle/api/attributes/AttributeContainer;)Lorg/gradle/api/attributes/AttributeContainer;
 	public fun attribute (Lorg/gradle/api/attributes/Attribute;Ljava/lang/Object;)Lorg/gradle/api/attributes/AttributeContainer;
 	public fun attributeProvider (Lorg/gradle/api/attributes/Attribute;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/attributes/AttributeContainer;
@@ -1019,6 +1019,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/HierarchyAttributeCont
 	public final fun getParent ()Lorg/gradle/api/attributes/AttributeContainer;
 	public fun isEmpty ()Z
 	public fun keySet ()Ljava/util/Set;
+	public fun named (Ljava/lang/Class;Ljava/lang/String;)Lorg/gradle/api/Named;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/JointAndroidKotlinTargetComponent : org/jetbrains/kotlin/gradle/plugin/mpp/InternalKotlinTargetComponent, org/jetbrains/kotlin/gradle/plugin/mpp/KotlinTargetComponentWithCoordinatesAndPublication {
@@ -5400,14 +5401,6 @@ public final class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/Kot
 	public fun getToolOptionsConfigure ()Lkotlin/jvm/functions/Function1;
 	public fun isStatic ()Z
 	public fun registerAssembleTask (Lorg/gradle/api/Project;)V
-}
-
-public abstract class org/jetbrains/kotlin/gradle/targets/native/toolchain/UnzipTransformationAction : org/gradle/api/artifacts/transform/TransformAction {
-	public fun <init> ()V
-	public abstract fun getArchiveOperations ()Lorg/gradle/api/file/ArchiveOperations;
-	public abstract fun getFileSystemOperations ()Lorg/gradle/api/file/FileSystemOperations;
-	public abstract fun getInputArtifact ()Lorg/gradle/api/provider/Provider;
-	public fun transform (Lorg/gradle/api/artifacts/transform/TransformOutputs;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {

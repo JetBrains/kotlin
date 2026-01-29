@@ -573,6 +573,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Test
+    @TestMetadata("nestedObjectWithTypeArgumentsInCallableReferenceLHS.kt")
+    public void testNestedObjectWithTypeArgumentsInCallableReferenceLHS() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/nestedObjectWithTypeArgumentsInCallableReferenceLHS.kt");
+    }
+
+    @Test
     @TestMetadata("NestedOfAliasedType.kt")
     public void testNestedOfAliasedType() {
       runTest("compiler/fir/analysis-tests/testData/resolve/NestedOfAliasedType.kt");
@@ -930,6 +936,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("backingFieldWithAnnotatedType.kt")
+      public void testBackingFieldWithAnnotatedType() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotations/backingFieldWithAnnotatedType.kt");
+      }
+
+      @Test
       @TestMetadata("danglingModifierInsideEnumEntry.kt")
       public void testDanglingModifierInsideEnumEntry() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/danglingModifierInsideEnumEntry.kt");
@@ -975,6 +987,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       @TestMetadata("kt55286.kt")
       public void testKt55286() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/kt55286.kt");
+      }
+
+      @Test
+      @TestMetadata("localBackingFieldWithAnnotatedType.kt")
+      public void testLocalBackingFieldWithAnnotatedType() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotations/localBackingFieldWithAnnotatedType.kt");
       }
 
       @Test
@@ -3403,6 +3421,30 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("anonymousFunctions.kt")
+        public void testAnonymousFunctions() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/anonymousFunctions.kt");
+        }
+
+        @Test
+        @TestMetadata("argumentPassedTwice.kt")
+        public void testArgumentPassedTwice() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/argumentPassedTwice.kt");
+        }
+
+        @Test
+        @TestMetadata("contracts.kt")
+        public void testContracts() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/contracts.kt");
+        }
+
+        @Test
+        @TestMetadata("differentNamesInActual.kt")
+        public void testDifferentNamesInActual() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/differentNamesInActual.kt");
+        }
+
+        @Test
         @TestMetadata("differentNamesInOverride.kt")
         public void testDifferentNamesInOverride() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/differentNamesInOverride.kt");
@@ -3412,6 +3454,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         @TestMetadata("disabled.kt")
         public void testDisabled() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/disabled.kt");
+        }
+
+        @Test
+        @TestMetadata("genericOverloads.kt")
+        public void testGenericOverloads() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/genericOverloads.kt");
         }
 
         @Test
@@ -3448,6 +3496,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         @TestMetadata("postponedAtoms.kt")
         public void testPostponedAtoms() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/postponedAtoms.kt");
+        }
+
+        @Test
+        @TestMetadata("properties.kt")
+        public void testProperties() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/properties.kt");
         }
 
         @Test
@@ -7480,6 +7534,76 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/simple.kt");
       }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS")
+      @TestDataPath("$PROJECT_ROOT")
+      public class InCallableReferenceLHS {
+        @Test
+        public void testAllFilesPresentInInCallableReferenceLHS() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("fromSuperclass.kt")
+        public void testFromSuperclass() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/fromSuperclass.kt");
+        }
+
+        @Test
+        @TestMetadata("innerLocalClasses.kt")
+        public void testInnerLocalClasses() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/innerLocalClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("javaInner.kt")
+        public void testJavaInner() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/javaInner.kt");
+        }
+
+        @Test
+        @TestMetadata("misplacedArgumentsInChain.kt")
+        public void testMisplacedArgumentsInChain() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/misplacedArgumentsInChain.kt");
+        }
+
+        @Test
+        @TestMetadata("misplacedArgumentsInChainWithNested.kt")
+        public void testMisplacedArgumentsInChainWithNested() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/misplacedArgumentsInChainWithNested.kt");
+        }
+
+        @Test
+        @TestMetadata("misplacedArgumentsInInnerOnly.kt")
+        public void testMisplacedArgumentsInInnerOnly() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/misplacedArgumentsInInnerOnly.kt");
+        }
+
+        @Test
+        @TestMetadata("nullable.kt")
+        public void testNullable() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/nullable.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("upperBoundViolated.kt")
+        public void testUpperBoundViolated() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/upperBoundViolated.kt");
+        }
+
+        @Test
+        @TestMetadata("withProjections.kt")
+        public void testWithProjections() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/withProjections.kt");
+        }
+      }
     }
 
     @Nested
@@ -7565,6 +7689,28 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       @TestMetadata("typesFromSuperClasses.kt")
       public void testTypesFromSuperClasses() {
         runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/typesFromSuperClasses.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/localClasses/inCallableReferenceLHS")
+      @TestDataPath("$PROJECT_ROOT")
+      public class InCallableReferenceLHS {
+        @Test
+        public void testAllFilesPresentInInCallableReferenceLHS() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/localClasses/inCallableReferenceLHS"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("insideGenericClass.kt")
+        public void testInsideGenericClass() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/inCallableReferenceLHS/insideGenericClass.kt");
+        }
+
+        @Test
+        @TestMetadata("outerNestedFuncLocalInner.kt")
+        public void testOuterNestedFuncLocalInner() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/inCallableReferenceLHS/outerNestedFuncLocalInner.kt");
+        }
       }
     }
 
@@ -8805,6 +8951,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       @TestMetadata("smartcastsFromEquals_sameModule.kt")
       public void testSmartcastsFromEquals_sameModule() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastsFromEquals_sameModule.kt");
+      }
+
+      @Test
+      @TestMetadata("subjectVariableWithSmartcastedInitializer.kt")
+      public void testSubjectVariableWithSmartcastedInitializer() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/subjectVariableWithSmartcastedInitializer.kt");
       }
 
       @Test
@@ -11763,9 +11915,63 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldAndMultipleIntersection.kt")
+        public void testExplicitBackingFieldAndMultipleIntersection() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldAndMultipleIntersection.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldAndMultipleIntersectionWithVar.kt")
+        public void testExplicitBackingFieldAndMultipleIntersectionWithVar() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldAndMultipleIntersectionWithVar.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldAndPropertyIntersection.kt")
+        public void testExplicitBackingFieldAndPropertyIntersection() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldAndPropertyIntersection.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldAndUseSiteVariance.kt")
+        public void testExplicitBackingFieldAndUseSiteVariance() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldAndUseSiteVariance.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldDeclarationScope.kt")
         public void testExplicitBackingFieldDeclarationScope() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldDeclarationScope.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldGenericOutVariance.kt")
+        public void testExplicitBackingFieldGenericOutVariance() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldGenericOutVariance.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldGenericWithConstraints.kt")
+        public void testExplicitBackingFieldGenericWithConstraints() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldGenericWithConstraints.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldGenericWithDNN.kt")
+        public void testExplicitBackingFieldGenericWithDNN() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldGenericWithDNN.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldGenericWithInner.kt")
+        public void testExplicitBackingFieldGenericWithInner() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldGenericWithInner.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldGenericWithTypealias.kt")
+        public void testExplicitBackingFieldGenericWithTypealias() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldGenericWithTypealias.kt");
         }
 
         @Test
@@ -11778,6 +11984,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         @TestMetadata("explicitBackingFieldIntersectionOverrides.kt")
         public void testExplicitBackingFieldIntersectionOverrides() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldIntersectionOverrides.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldIntersectionOverridesUnresolvedElements.kt")
+        public void testExplicitBackingFieldIntersectionOverridesUnresolvedElements() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldIntersectionOverridesUnresolvedElements.kt");
         }
 
         @Test
@@ -11805,9 +12017,45 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldTypeVarianceProblem.kt")
+        public void testExplicitBackingFieldTypeVarianceProblem() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldTypeVarianceProblem.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldWithIntersectionAndGenerics.kt")
+        public void testExplicitBackingFieldWithIntersectionAndGenerics() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldWithIntersectionAndGenerics.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldWithIntersectionFromTypeConstraints.kt")
+        public void testExplicitBackingFieldWithIntersectionFromTypeConstraints() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldWithIntersectionFromTypeConstraints.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldWithIntersectionWithGenericsErased.kt")
+        public void testExplicitBackingFieldWithIntersectionWithGenericsErased() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldWithIntersectionWithGenericsErased.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldWithIntersectionWithIncompatibleTypes.kt")
+        public void testExplicitBackingFieldWithIntersectionWithIncompatibleTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldWithIntersectionWithIncompatibleTypes.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldWithJvmField.kt")
         public void testExplicitBackingFieldWithJvmField() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldWithJvmField.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldWithNestedSubstitution.kt")
+        public void testExplicitBackingFieldWithNestedSubstitution() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldWithNestedSubstitution.kt");
         }
 
         @Test

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.serializeToZipArchive
-import org.junit.rules.TemporaryFolder
+
 import org.w3c.dom.Document
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -138,11 +138,10 @@ class MavenComponent(
 }
 
 fun generateMockRepository(
-    temporaryFolder: TemporaryFolder,
+    repositoryRoot: File,
     gradleComponents: List<GradleComponent> = emptyList(),
     mavenComponents: List<MavenComponent> = emptyList(),
 ): File {
-    val repositoryRoot = temporaryFolder.newFolder()
     val repository = MockRepository(repositoryRoot)
     gradleComponents.forEach {
         repository.addGradleComponent(

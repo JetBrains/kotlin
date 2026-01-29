@@ -56,24 +56,9 @@ KtParameterList(163,165): '()'
   null
 
 KtCallExpression(168,177): 'MyClass()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass
-      symbol = <constructor>(): MyClass
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(168,175): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -85,6 +70,24 @@ KtNameReferenceExpression(168,175): 'MyClass'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(168,175): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(175,177): '()'
   null
@@ -123,15 +126,7 @@ KtCallExpression(228,244): 'foo(MyClass.bar)'
   KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          MyClass.bar -> (KaVariableSignature:
-            name = a
-            receiverType = null
-            returnType = MyClass
-            symbol = a: MyClass
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -151,6 +146,15 @@ KtCallExpression(228,244): 'foo(MyClass.bar)'
           contextParameters = []
           callableId = /foo
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          MyClass.bar -> (KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = MyClass
+            symbol = a: MyClass
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass2', but 'MyClass' was expected.>
 
@@ -158,15 +162,7 @@ KtNameReferenceExpression(228,231): 'foo'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
-          MyClass.bar -> (KaVariableSignature:
-            name = a
-            receiverType = null
-            returnType = MyClass
-            symbol = a: MyClass
-            contextParameters = []
-            callableId = null)
-        }
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
@@ -186,6 +182,15 @@ KtNameReferenceExpression(228,231): 'foo'
           contextParameters = []
           callableId = /foo
         typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          MyClass.bar -> (KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = MyClass
+            symbol = a: MyClass
+            contextParameters = []
+            callableId = null)
+        }
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass2', but 'MyClass' was expected.>
 
@@ -247,48 +252,9 @@ KtNameReferenceExpression(240,243): 'bar'
     val MyClass2.Companion.bar: MyClass2>
 
 KtCallExpression(249,257): 'foo(bar)'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      bar -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = MyClass
-        symbol = a: MyClass
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /foo(a: MyClass): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyClass
-          symbol = a: MyClass
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /foo
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(249,252): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        bar -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyClass
-          symbol = a: MyClass
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -308,6 +274,48 @@ KtNameReferenceExpression(249,252): 'foo'
         contextParameters = []
         callableId = /foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        bar -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyClass
+          symbol = a: MyClass
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(249,252): 'foo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(a: MyClass): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = MyClass
+            symbol = a: MyClass
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        bar -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyClass
+          symbol = a: MyClass
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(252,257): '(bar)'
   null
@@ -366,24 +374,9 @@ KtParameterList(342,344): '()'
   null
 
 KtCallExpression(347,357): 'MyClass2()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = MyClass2
-      symbol = <constructor>(): MyClass2
-      valueParameters = []
-      contextParameters = []
-      callableId = null
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(347,355): 'MyClass2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -395,6 +388,24 @@ KtNameReferenceExpression(347,355): 'MyClass2'
         contextParameters = []
         callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(347,355): 'MyClass2'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass2
+        symbol = <constructor>(): MyClass2
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(355,357): '()'
   null
@@ -430,48 +441,9 @@ KtBlockExpression(397,437): '{'
   null
 
 KtCallExpression(403,421): 'foo2(MyClass2.bar)'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      MyClass2.bar -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = MyClass2
-        symbol = a: MyClass2
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /foo2(a: MyClass2): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyClass2
-          symbol = a: MyClass2
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /foo2
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(403,407): 'foo2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        MyClass2.bar -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyClass2
-          symbol = a: MyClass2
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -491,6 +463,48 @@ KtNameReferenceExpression(403,407): 'foo2'
         contextParameters = []
         callableId = /foo2
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        MyClass2.bar -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyClass2
+          symbol = a: MyClass2
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(403,407): 'foo2'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo2(a: MyClass2): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = MyClass2
+            symbol = a: MyClass2
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        MyClass2.bar -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyClass2
+          symbol = a: MyClass2
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(407,421): '(MyClass2.bar)'
   null
@@ -542,48 +556,9 @@ KtNameReferenceExpression(417,420): 'bar'
       typeArgumentsMapping = {}
 
 KtCallExpression(426,435): 'foo2(bar)'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      bar -> (KaVariableSignature:
-        name = a
-        receiverType = null
-        returnType = MyClass2
-        symbol = a: MyClass2
-        contextParameters = []
-        callableId = null)
-    }
-    contextArguments = []
-    dispatchReceiver = null
-    extensionReceiver = null
-    signature = KaFunctionSignature:
-      receiverType = null
-      returnType = kotlin.Unit
-      symbol = /foo2(a: MyClass2): kotlin.Unit
-      valueParameters = [
-        KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyClass2
-          symbol = a: MyClass2
-          contextParameters = []
-          callableId = null
-      ]
-      contextParameters = []
-      callableId = /foo2
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(426,430): 'foo2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
-        bar -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyClass2
-          symbol = a: MyClass2
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -603,6 +578,48 @@ KtNameReferenceExpression(426,430): 'foo2'
         contextParameters = []
         callableId = /foo2
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        bar -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyClass2
+          symbol = a: MyClass2
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(426,430): 'foo2'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo2(a: MyClass2): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = MyClass2
+            symbol = a: MyClass2
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        bar -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyClass2
+          symbol = a: MyClass2
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(430,435): '(bar)'
   null

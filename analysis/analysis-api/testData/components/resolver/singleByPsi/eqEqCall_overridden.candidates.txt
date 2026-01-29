@@ -1,15 +1,7 @@
 KtBinaryExpression(121,129): 'a1 == a2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        a2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          contextParameters = []
-          callableId = null)
-      }
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = a1
@@ -32,4 +24,13 @@ KtBinaryExpression(121,129): 'a1 == a2'
         contextParameters = []
         callableId = /A.equals
       typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        a2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
     isInBestCandidates = true

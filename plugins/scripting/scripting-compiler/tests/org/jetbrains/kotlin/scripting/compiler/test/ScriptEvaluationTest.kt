@@ -86,54 +86,6 @@ class ScriptEvaluationTest {
         }
     }
 
-    // TODO: the test should be dropped while fixing KT-79107
-    @OptIn(SessionConfiguration::class)
-    @Test
-    fun testScriptWithDataframePlugin() {
-        if (!isK2) return
-        val dataFramePluginClasspath = System.getProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath")!!
-        val dataframe = runBlocking {
-            dependenciesResolver.resolve("org.jetbrains.kotlinx:dataframe-core:1.0.0-Beta2")
-        }.valueOrThrow()
-        val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
-            configureFirSession {
-                register(
-                    FirScriptResolutionHacksComponent::class,
-                    object : FirScriptResolutionHacksComponent() {
-                        override val skipTowerDataCleanupForTopLevelInitializers: Boolean = true
-                    }
-                )
-            }
-        }
-        val compiled = checkCompile(
-            """
-                import org.jetbrains.kotlinx.dataframe.api.*
-                import org.jetbrains.kotlinx.dataframe.*
-                
-                fun foo(): Int {
-                    val df = dataFrameOf("b" to columnOf(24))
-                    return df.b[0]
-                }
-
-                val df = dataFrameOf("a" to columnOf(42))
-                df.a[0]
-            """.trimIndent().toScriptSource(),
-            ScriptCompilationConfiguration {
-                set(ScriptCompilationConfiguration.dependencies, listOf(JvmDependency(dataframe)))
-                compilerOptions(
-                    "-Xplugin=$dataFramePluginClasspath"
-                )
-            },
-            hostConfiguration
-        )
-        assertTrue(compiled is ResultWithDiagnostics.Success)
-        val evaluator = BasicJvmScriptEvaluator()
-        val res = runBlocking {
-            evaluator.invoke(compiled.valueOrThrow()).valueOrThrow()
-        }
-        assertEquals(42, (res.returnValue as ResultValue.Value).value)
-    }
-
     private fun checkEvaluateAsError(script: SourceCode, expectedOutput: String): EvaluationResult {
         val res = checkEvaluate(script)
         assert(res.returnValue is ResultValue.Error)

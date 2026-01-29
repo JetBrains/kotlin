@@ -1,7 +1,7 @@
 KtNameReferenceExpression(60,69): 'JavaClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
@@ -15,3 +15,4 @@ KtNameReferenceExpression(60,69): 'JavaClass'
       typeArgumentsMapping = {
         TT -> (ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=null) kotlin.Int!)
       }
+      valueArgumentMapping = {}

@@ -18,148 +18,169 @@ import org.jetbrains.kotlin.modules.Module
 
 object JVMConfigurationKeys {
     @JvmField
-    val OUTPUT_DIRECTORY = CompilerConfigurationKey.create<File>("output directory")
+    val OUTPUT_DIRECTORY = CompilerConfigurationKey.create<File>("OUTPUT_DIRECTORY")
 
     @JvmField
-    val OUTPUT_JAR = CompilerConfigurationKey.create<File>("output .jar")
+    val OUTPUT_JAR = CompilerConfigurationKey.create<File>("OUTPUT_JAR")
+
+    // Include runtime to the resulting .jar file.
+    @JvmField
+    val INCLUDE_RUNTIME = CompilerConfigurationKey.create<Boolean>("INCLUDE_RUNTIME")
 
     @JvmField
-    val INCLUDE_RUNTIME = CompilerConfigurationKey.create<Boolean>("include runtime to the resulting .jar")
+    val JDK_HOME = CompilerConfigurationKey.create<File>("JDK_HOME")
 
     @JvmField
-    val JDK_HOME = CompilerConfigurationKey.create<File>("jdk home")
+    val NO_JDK = CompilerConfigurationKey.create<Boolean>("NO_JDK")
 
     @JvmField
-    val NO_JDK = CompilerConfigurationKey.create<Boolean>("no jdk")
+    val DISABLE_STANDARD_SCRIPT_DEFINITION = CompilerConfigurationKey.create<Boolean>("DISABLE_STANDARD_SCRIPT_DEFINITION")
 
     @JvmField
-    val DISABLE_STANDARD_SCRIPT_DEFINITION = CompilerConfigurationKey.create<Boolean>("Disable standard kotlin script support")
+    val DISABLE_CALL_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("DISABLE_CALL_ASSERTIONS")
 
     @JvmField
-    val DISABLE_CALL_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("disable not-null call assertions")
+    val DISABLE_RECEIVER_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("DISABLE_RECEIVER_ASSERTIONS")
 
     @JvmField
-    val DISABLE_RECEIVER_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("disable not-null call receiver assertions")
+    val DISABLE_PARAM_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("DISABLE_PARAM_ASSERTIONS")
 
     @JvmField
-    val DISABLE_PARAM_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("disable not-null parameter assertions")
+    val ASSERTIONS_MODE = CompilerConfigurationKey.create<JVMAssertionsMode>("ASSERTIONS_MODE")
 
     @JvmField
-    val ASSERTIONS_MODE = CompilerConfigurationKey.create<JVMAssertionsMode>("assertions mode")
+    val DISABLE_OPTIMIZATION = CompilerConfigurationKey.create<Boolean>("DISABLE_OPTIMIZATION")
 
     @JvmField
-    val DISABLE_OPTIMIZATION = CompilerConfigurationKey.create<Boolean>("disable optimization")
+    val USE_TYPE_TABLE = CompilerConfigurationKey.create<Boolean>("USE_TYPE_TABLE")
 
     @JvmField
-    val USE_TYPE_TABLE = CompilerConfigurationKey.create<Boolean>("use type table in serializer")
+    val JVM_TARGET = CompilerConfigurationKey.create<JvmTarget>("JVM_TARGET")
 
     @JvmField
-    val JVM_TARGET = CompilerConfigurationKey.create<JvmTarget>("JVM bytecode target version")
+    val PARAMETERS_METADATA = CompilerConfigurationKey.create<Boolean>("PARAMETERS_METADATA")
 
     @JvmField
-    val PARAMETERS_METADATA = CompilerConfigurationKey.create<Boolean>("Parameters metadata for java 1.8 reflection")
+    val INCREMENTAL_COMPILATION_COMPONENTS = CompilerConfigurationKey.create<IncrementalCompilationComponents>("INCREMENTAL_COMPILATION_COMPONENTS")
 
     @JvmField
-    val INCREMENTAL_COMPILATION_COMPONENTS = CompilerConfigurationKey.create<IncrementalCompilationComponents>("incremental cache provider")
+    val MODULE_XML_FILE = CompilerConfigurationKey.create<File>("MODULE_XML_FILE")
 
     @JvmField
-    val MODULE_XML_FILE = CompilerConfigurationKey.create<File>("path to module.xml")
+    val MODULES = CompilerConfigurationKey.create<List<Module>>("MODULES")
 
     @JvmField
-    val MODULES = CompilerConfigurationKey.create<List<Module>>("module data")
+    val FRIEND_PATHS = CompilerConfigurationKey.create<List<String>>("FRIEND_PATHS")
+
+    // Use a slower, PSI-based, class files reading implementation.
+    @JvmField
+    val USE_PSI_CLASS_FILES_READING = CompilerConfigurationKey.create<Boolean>("USE_PSI_CLASS_FILES_READING")
 
     @JvmField
-    val FRIEND_PATHS = CompilerConfigurationKey.create<List<String>>("friend module paths")
+    val USE_FAST_JAR_FILE_SYSTEM = CompilerConfigurationKey.create<Boolean>("USE_FAST_JAR_FILE_SYSTEM")
 
     @JvmField
-    val USE_PSI_CLASS_FILES_READING = CompilerConfigurationKey.create<Boolean>("use a slower (PSI-based) class files reading implementation")
+    val USE_JAVAC = CompilerConfigurationKey.create<Boolean>("USE_JAVAC")
 
     @JvmField
-    val USE_FAST_JAR_FILE_SYSTEM = CompilerConfigurationKey.create<Boolean>("use a faster JAR filesystem implementation")
+    val COMPILE_JAVA = CompilerConfigurationKey.create<Boolean>("COMPILE_JAVA")
 
     @JvmField
-    val USE_JAVAC = CompilerConfigurationKey.create<Boolean>("use javac [experimental]")
+    val ADDITIONAL_JAVA_MODULES = CompilerConfigurationKey.create<List<String>>("ADDITIONAL_JAVA_MODULES")
 
     @JvmField
-    val COMPILE_JAVA = CompilerConfigurationKey.create<Boolean>("compile java files [experimental]")
+    val EMIT_JVM_TYPE_ANNOTATIONS = CompilerConfigurationKey.create<Boolean>("EMIT_JVM_TYPE_ANNOTATIONS")
 
     @JvmField
-    val ADDITIONAL_JAVA_MODULES = CompilerConfigurationKey.create<List<String>>("additional Java modules")
+    val STRING_CONCAT = CompilerConfigurationKey.create<JvmStringConcat>("STRING_CONCAT")
 
     @JvmField
-    val EMIT_JVM_TYPE_ANNOTATIONS = CompilerConfigurationKey.create<Boolean>("Emit JVM type annotations in bytecode")
+    val JDK_RELEASE = CompilerConfigurationKey.create<Int>("JDK_RELEASE")
 
     @JvmField
-    val STRING_CONCAT = CompilerConfigurationKey.create<JvmStringConcat>("Specifies string concatenation scheme")
+    val SAM_CONVERSIONS = CompilerConfigurationKey.create<JvmClosureGenerationScheme>("SAM_CONVERSIONS")
 
     @JvmField
-    val JDK_RELEASE = CompilerConfigurationKey.create<Int>("Specifies JDK API version")
+    val LAMBDAS = CompilerConfigurationKey.create<JvmClosureGenerationScheme>("LAMBDAS")
+
+    // Paths to .klib libraries.
+    @JvmField
+    val KLIB_PATHS = CompilerConfigurationKey.create<List<String>>("KLIB_PATHS")
+
+    // ABI stability of class files produced by JVM IR and/or FIR.
+    @JvmField
+    val ABI_STABILITY = CompilerConfigurationKey.create<JvmAbiStability>("ABI_STABILITY")
+
+    // When using K1, do not clear BindingContext between psi2ir and lowerings.
+    @JvmField
+    val DO_NOT_CLEAR_BINDING_CONTEXT = CompilerConfigurationKey.create<Boolean>("DO_NOT_CLEAR_BINDING_CONTEXT")
 
     @JvmField
-    val SAM_CONVERSIONS = CompilerConfigurationKey.create<JvmClosureGenerationScheme>("SAM conversions code generation scheme")
+    val NO_RESET_JAR_TIMESTAMPS = CompilerConfigurationKey.create<Boolean>("NO_RESET_JAR_TIMESTAMPS")
+
+    // Use pre-1.4 exception types in null checks instead of java.lang.NPE.
+    @JvmField
+    val NO_UNIFIED_NULL_CHECKS = CompilerConfigurationKey.create<Boolean>("NO_UNIFIED_NULL_CHECKS")
+
+    // Do not generate @kotlin.jvm.internal.SourceDebugExtension annotation on a class with the copy of SMAP.
+    @JvmField
+    val NO_SOURCE_DEBUG_EXTENSION = CompilerConfigurationKey.create<Boolean>("NO_SOURCE_DEBUG_EXTENSION")
+
+    // Use old, 1.4 version of inline classes mangling scheme.
+    @JvmField
+    val USE_OLD_INLINE_CLASSES_MANGLING_SCHEME = CompilerConfigurationKey.create<Boolean>("USE_OLD_INLINE_CLASSES_MANGLING_SCHEME")
 
     @JvmField
-    val LAMBDAS = CompilerConfigurationKey.create<JvmClosureGenerationScheme>("Lambdas code generation scheme")
+    val ENABLE_JVM_PREVIEW = CompilerConfigurationKey.create<Boolean>("ENABLE_JVM_PREVIEW")
+
+    // Don't automatically include kotlin-reflect.jar into the output if the output is a jar.
+    @JvmField
+    val NO_REFLECT = CompilerConfigurationKey.create<Boolean>("NO_REFLECT")
+
+    // Which functions to serialize as IR to class metadata.
+    @JvmField
+    val SERIALIZE_IR = CompilerConfigurationKey.create<JvmSerializeIrMode>("SERIALIZE_IR")
 
     @JvmField
-    val KLIB_PATHS = CompilerConfigurationKey.create<List<String>>("Paths to .klib libraries")
+    val VALIDATE_BYTECODE = CompilerConfigurationKey.create<Boolean>("VALIDATE_BYTECODE")
+
+    // Link JVM IR symbols via signatures, instead of by descriptors on the K1 frontend.
+    @JvmField
+    val LINK_VIA_SIGNATURES = CompilerConfigurationKey.create<Boolean>("LINK_VIA_SIGNATURES")
 
     @JvmField
-    val ABI_STABILITY = CompilerConfigurationKey.create<JvmAbiStability>("ABI stability of class files produced by JVM IR and/or FIR")
+    val ENABLE_DEBUG_MODE = CompilerConfigurationKey.create<Boolean>("ENABLE_DEBUG_MODE")
+
+    // Mark compiled generated code in coroutines.
+    @JvmField
+    val ENHANCED_COROUTINES_DEBUGGING = CompilerConfigurationKey.create<Boolean>("ENHANCED_COROUTINES_DEBUGGING")
+
+    // Do not generate Java 1.8+ targets for Kotlin annotation classes.
+    @JvmField
+    val NO_NEW_JAVA_ANNOTATION_TARGETS = CompilerConfigurationKey.create<Boolean>("NO_NEW_JAVA_ANNOTATION_TARGETS")
+
+    // Use inline scopes numbers for inline marker variables.
+    @JvmField
+    val USE_INLINE_SCOPES_NUMBERS = CompilerConfigurationKey.create<Boolean>("USE_INLINE_SCOPES_NUMBERS")
+
+    // Enable internal mode which causes FIR2IR to skip function bodies, used in KAPT.
+    @JvmField
+    val SKIP_BODIES = CompilerConfigurationKey.create<Boolean>("SKIP_BODIES")
+
+    // Expression to evaluate in script mode.
+    @JvmField
+    val EXPRESSION_TO_EVALUATE = CompilerConfigurationKey.create<String>("EXPRESSION_TO_EVALUATE")
+
+    // Specifies generation scheme for type-checking 'when' expressions.
+    @JvmField
+    val WHEN_GENERATION_SCHEME = CompilerConfigurationKey.create<JvmWhenGenerationScheme>("WHEN_GENERATION_SCHEME")
+
+    // Annotations fqNames that shall be skipped while copying the annotations from the target to the bridge functions.
+    @JvmField
+    val IGNORED_ANNOTATIONS_FOR_BRIDGES = CompilerConfigurationKey.create<List<String>>("IGNORED_ANNOTATIONS_FOR_BRIDGES")
 
     @JvmField
-    val DO_NOT_CLEAR_BINDING_CONTEXT = CompilerConfigurationKey.create<Boolean>("When using the IR backend, do not clear BindingContext between psi2ir and lowerings")
-
-    @JvmField
-    val NO_RESET_JAR_TIMESTAMPS = CompilerConfigurationKey.create<Boolean>("Do not reset timestamps in jar entries")
-
-    @JvmField
-    val NO_UNIFIED_NULL_CHECKS = CompilerConfigurationKey.create<Boolean>("Use pre-1.4 exception types in null checks instead of java.lang.NPE")
-
-    @JvmField
-    val NO_SOURCE_DEBUG_EXTENSION = CompilerConfigurationKey.create<Boolean>("Do not generate @kotlin.jvm.internal.SourceDebugExtension annotation on a class with the copy of SMAP")
-
-    @JvmField
-    val USE_OLD_INLINE_CLASSES_MANGLING_SCHEME = CompilerConfigurationKey.create<Boolean>("Use old, 1.4 version of inline classes mangling scheme")
-
-    @JvmField
-    val ENABLE_JVM_PREVIEW = CompilerConfigurationKey.create<Boolean>("Enable Java language preview features")
-
-    @JvmField
-    val NO_REFLECT = CompilerConfigurationKey.create<Boolean>("Don't automatically include kotlin-reflect.jar into the output if the output is a jar")
-
-    @JvmField
-    val SERIALIZE_IR = CompilerConfigurationKey.create<JvmSerializeIrMode>("What functions to serialize as IR to class metadata")
-
-    @JvmField
-    val VALIDATE_BYTECODE = CompilerConfigurationKey.create<Boolean>("Validate generated JVM bytecode")
-
-    @JvmField
-    val LINK_VIA_SIGNATURES = CompilerConfigurationKey.create<Boolean>("Link JVM IR symbols via signatures, instead of by descriptors on the K1 frontend")
-
-    @JvmField
-    val ENABLE_DEBUG_MODE = CompilerConfigurationKey.create<Boolean>("Enable debug mode")
-
-    @JvmField
-    val ENHANCED_COROUTINES_DEBUGGING = CompilerConfigurationKey.create<Boolean>("Mark compiled generated code in coroutines")
-
-    @JvmField
-    val NO_NEW_JAVA_ANNOTATION_TARGETS = CompilerConfigurationKey.create<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes")
-
-    @JvmField
-    val USE_INLINE_SCOPES_NUMBERS = CompilerConfigurationKey.create<Boolean>("Use inline scopes numbers for inline marker variables")
-
-    @JvmField
-    val SKIP_BODIES = CompilerConfigurationKey.create<Boolean>("Enable internal mode which causes FIR2IR to skip function bodies, used in KAPT")
-
-    @JvmField
-    val EXPRESSION_TO_EVALUATE = CompilerConfigurationKey.create<String>("Expression to evaluate in script mode")
-
-    @JvmField
-    val WHEN_GENERATION_SCHEME = CompilerConfigurationKey.create<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions")
-
-    @JvmField
-    val IGNORED_ANNOTATIONS_FOR_BRIDGES = CompilerConfigurationKey.create<List<String>>("Annotations fqNames that shall be skipped while copying the annotations from the target to the bridge functions")
+    val NO_FALLBACK_TO_DEFAULT_MODULE_NAME = CompilerConfigurationKey.create<Boolean>("NO_FALLBACK_TO_DEFAULT_MODULE_NAME")
 
 }
 
@@ -354,4 +375,8 @@ var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
 var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
     get() = getList(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES)
     set(value) { put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, value) }
+
+var CompilerConfiguration.noFallbackToDefaultModuleName: Boolean
+    get() = getBoolean(JVMConfigurationKeys.NO_FALLBACK_TO_DEFAULT_MODULE_NAME)
+    set(value) { put(JVMConfigurationKeys.NO_FALLBACK_TO_DEFAULT_MODULE_NAME, value) }
 

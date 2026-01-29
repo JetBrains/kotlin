@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
 import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.createConsumable
-import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 /* Elements configuration */
@@ -103,9 +101,7 @@ internal suspend fun Project.locateOrCreateCommonizedCInteropDependencyConfigura
     configurations.findByName(configurationName)?.let { return it }
 
     val configuration = configurations.createResolvable(configurationName).also { configuration ->
-        @Suppress("DEPRECATION")
-        configuration.isVisible = false
-
+        configuration.setInvisibleIfSupported()
         // Extends from Metadata Configuration associated with given source set to ensure matching
         configuration.extendsFrom(sourceSet.internal.resolvableMetadataConfiguration)
         setupBasicCommonizedCInteropConfigurationAttributes(configuration, commonizerTarget)

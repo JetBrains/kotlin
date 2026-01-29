@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
@@ -21,22 +24,24 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_DISABLE_FQNAME_IN_KCLASS
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 abstract class WasmEnvironmentConfigurator(
     testServices: TestServices,
     protected val wasmTarget: WasmTarget,
-) : EnvironmentConfigurator(testServices) {
+) : EnvironmentConfigurator(testServices), KlibBasedEnvironmentConfigurator {
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(WasmEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
 
-    companion object : KlibBasedEnvironmentConfiguratorUtils {
+    companion object {
         fun getRuntimePathsForModule(target: WasmTarget): List<String> {
             return listOf(stdlibPath(target), kotlinTestPath(target))
         }
@@ -61,7 +66,7 @@ abstract class WasmEnvironmentConfigurator(
 
     override fun provideAdditionalAnalysisFlags(
         directives: RegisteredDirectives,
-        languageVersion: LanguageVersion
+        languageVersion: LanguageVersion,
     ): Map<AnalysisFlag<*>, Any?> {
         return super.provideAdditionalAnalysisFlags(directives, languageVersion).toMutableMap().also {
             it[allowFullyQualifiedNameInKClass] = WASM_DISABLE_FQNAME_IN_KCLASS !in directives
@@ -101,7 +106,7 @@ class WasmFirstStageEnvironmentConfigurator(
 
 open class WasmSecondStageEnvironmentConfigurator(
     testServices: TestServices,
-    wasmTarget: WasmTarget
+    wasmTarget: WasmTarget,
 ) : WasmEnvironmentConfigurator(testServices, wasmTarget) {
     override val compilationStage: CompilationStage
         get() = CompilationStage.SECOND
@@ -140,6 +145,10 @@ open class WasmSecondStageEnvironmentConfigurator(
 
         configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, useNewExceptions)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, WASM_NO_JS_TAG in registeredDirectives)
+        configuration.put(
+            WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX,
+            K2JSCompilerArguments().wasmInternalLocalVariablePrefix
+        )
         configuration.put(
             WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION,
             FORCE_DEBUG_FRIENDLY_COMPILATION in registeredDirectives

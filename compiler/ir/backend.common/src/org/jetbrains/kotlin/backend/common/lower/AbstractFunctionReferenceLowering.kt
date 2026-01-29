@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * This is needed to avoid creating fake overrides of declarations at later state.
  * @see org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder.buildFakeOverridesForClassUsingOverriddenSymbols for more details.
  */
-internal var IrClass.declarationsAtFunctionReferenceLowering: List<IrDeclaration>? by irAttribute(copyByDefault = true)
+var IrClass.declarationsAtFunctionReferenceLowering: List<IrDeclaration>? by irAttribute(copyByDefault = true)
 
 /**
  * This lowering transforms [IrRichFunctionReference] nodes to an anonymous class.
@@ -175,10 +174,10 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
             this.parent = parent
             createThisReceiverParameter()
         }
-        val superClass = getSuperClassType(functionReference)
+        val superClassType = getSuperClassType(functionReference)
         val superInterfaceType = functionReference.type.removeProjections()
         functionReferenceClass.superTypes =
-            listOf(superClass, superInterfaceType) memoryOptimizedPlus getAdditionalInterfaces(functionReference)
+            listOf(superClassType, superInterfaceType) memoryOptimizedPlus getAdditionalInterfaces(functionReference)
         val constructor = functionReferenceClass.addConstructor {
             origin = getConstructorOrigin(functionReference)
             isPrimary = true
@@ -193,7 +192,7 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
                 }
             } + getExtraConstructorParameters(this, functionReference)
             body = context.createIrBuilder(symbol, this.startOffset, this.endOffset).irBlockBody {
-                +generateSuperClassConstructorCall(this@apply, superClass, functionReference)
+                +generateSuperClassConstructorCall(this@apply, superClassType, functionReference)
                 +IrInstanceInitializerCallImpl(this.startOffset, this.endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
             }
         }
@@ -234,6 +233,10 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
         return functionReferenceClass
     }
 
+    /**
+     * This function is very similar to [org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.FunctionReferenceBuilder.createInvokeMethod].
+     * If you make any changes, don't forget to also change the other one.
+     */
     private fun buildInvokeMethod(
         functionReference: IrRichFunctionReference,
         functionReferenceClass: IrClass,
@@ -264,17 +267,23 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
             )
 
             val nonDispatchParameters = superFunction.nonDispatchParameters.mapIndexed { i, superParameter ->
+                val oldParameter = invokeFunction.parameters[i + boundFields.size]
                 superParameter.copyTo(
                     this,
-                    startOffset = if (isLambda) invokeFunction.parameters[i].startOffset else UNDEFINED_OFFSET,
-                    endOffset = if (isLambda) invokeFunction.parameters[i].endOffset else UNDEFINED_OFFSET,
-                    name = invokeFunction.parameters[i].name,
+                    startOffset = if (isLambda) oldParameter.startOffset else UNDEFINED_OFFSET,
+                    endOffset = if (isLambda) oldParameter.endOffset else UNDEFINED_OFFSET,
+                    name = oldParameter.name,
                     type = typeSubstitutor.substitute(superParameter.type),
                     defaultValue = null,
-                )
+                ).apply { copyAnnotationsFrom(oldParameter) }
             }
             this.parameters += nonDispatchParameters
-            overriddenSymbols += superFunction.symbol
+            val overriddenMethodOfAny = superFunction.findOverriddenMethodOfAny()
+            overriddenSymbols = if (overriddenMethodOfAny == null)
+                listOf(superFunction.symbol)
+            else functionReferenceClass.superTypes.mapNotNull { superType ->
+                superType.classOrFail.owner.functions.firstOrNull { it.overrides(overriddenMethodOfAny) }?.symbol
+            }
 
             val builder = context.createIrBuilder(symbol).applyIf(isLambda) { at(invokeFunction.body!!) }
             body = builder.irBlockBody {
