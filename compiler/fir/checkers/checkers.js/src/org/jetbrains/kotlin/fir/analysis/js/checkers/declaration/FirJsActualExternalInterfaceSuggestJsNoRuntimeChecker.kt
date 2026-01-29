@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.descriptors.isInterface
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * Warn when a regular expect interface is actualized on JS by an external interface without using @JsNoRuntime on expect.
@@ -32,11 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 object FirJsActualExternalInterfaceSuggestJsNoRuntimeChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
-        val member = declaration as? FirMemberDeclaration ?: return
-        if (!member.isActual) return
-
-        val expectMatch = member.symbol.expectForActual.orEmpty()[ExpectActualMatchingCompatibility.MatchedSuccessfully]
-            ?.singleOrNull() ?: return
+        val member = (declaration as? FirMemberDeclaration)?.takeIf { it.isActual } ?: return
 
         val actualSymbol: FirClassLikeSymbol<*> = when (member) {
             is FirTypeAlias -> member.expandedTypeRef.coneType.abbreviatedTypeOrSelf.toClassSymbol() ?: return
@@ -44,20 +42,28 @@ object FirJsActualExternalInterfaceSuggestJsNoRuntimeChecker : FirBasicDeclarati
             else -> return
         }
 
-        val actualFir = actualSymbol.fir
-        val actualIsExternalInterface = (actualFir as? FirClass)?.let { it.classKind.isInterface && it.isExternal } == true
-        if (!actualIsExternalInterface) return
+        val actualInterface = (actualSymbol.fir as? FirClass)?.takeIf { it.classKind.isInterface } ?: return
+        val expectInterface = member.symbol.expectForActual.orEmpty()[ExpectActualMatchingCompatibility.MatchedSuccessfully]
+            ?.singleOrNull()
+            ?.let { it.fir as? FirClass }
+            ?.takeIf { it.classKind.isInterface } ?: return
 
-        val expectFir = expectMatch.fir
-        val expectIsRegularInterface = (expectFir as? FirClass)?.let { it.classKind.isInterface && !it.isExternal } == true
-        if (!expectIsRegularInterface) return
-
-        val hasJsNoRuntime = expectFir.hasAnnotation(JsStandardClassIds.Annotations.JsNoRuntime, context.session)
-        if (hasJsNoRuntime) return
-
-        reporter.reportOn(
-            member.source,
-            FirJsErrors.JS_ACTUAL_EXTERNAL_INTERFACE_WITHOUT_JS_NO_RUNTIME,
-        )
+        if (actualInterface.isExternal) {
+            if (!expectInterface.hasJsNoRuntime()) {
+                reporter.reportOn(
+                    member.source,
+                    FirJsErrors.JS_ACTUAL_EXTERNAL_INTERFACE_WHILE_EXPECT_WITHOUT_JS_NO_RUNTIME,
+                )
+            }
+        } else if (expectInterface.hasJsNoRuntime() && !actualInterface.hasJsNoRuntime()) {
+            reporter.reportOn(
+                member.source,
+                FirJsErrors.JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
+            )
+        }
     }
+
+    context(context: CheckerContext)
+    private fun FirAnnotationContainer.hasJsNoRuntime(): Boolean =
+        hasAnnotation(JsStandardClassIds.Annotations.JsNoRuntime, context.session)
 }

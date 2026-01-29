@@ -232,7 +232,7 @@ public expect annotation class JsStatic()
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
-@SinceKotlin("2.3") // TODO: bump to 2.4 alongside @JsNoRuntime version change
+@SinceKotlin("2.3") // TODO(KT-84002): bump to 2.4 alongside @JsNoRuntime version change
 public annotation class ExperimentalJsNoRuntime
 
 /**
@@ -248,5 +248,5 @@ public annotation class ExperimentalJsNoRuntime
 @Target(CLASS)
 @MustBeDocumented
 @OptionalExpectation
-@SinceKotlin("2.3") // TODO: replace with 2.4
+@SinceKotlin("2.3") // TODO(KT-84002): replace with 2.4
 public expect annotation class JsNoRuntime()

@@ -147,10 +147,11 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val JS_NO_RUNTIME_FORBIDDEN_IS_CHECK by error<PsiElement>()
         val JS_NO_RUNTIME_FORBIDDEN_AS_CAST by error<PsiElement>()
         val JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE by error<PsiElement>()
-        val JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE by warning<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("typeArgument")
         }
-        val JS_ACTUAL_EXTERNAL_INTERFACE_WITHOUT_JS_NO_RUNTIME by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY)
+        val JS_ACTUAL_EXTERNAL_INTERFACE_WHILE_EXPECT_WITHOUT_JS_NO_RUNTIME by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY)
+        val JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY)
     }
 }
