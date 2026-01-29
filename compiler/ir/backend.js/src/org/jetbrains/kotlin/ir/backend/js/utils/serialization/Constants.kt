@@ -85,3 +85,14 @@ object PropertyInitializerKinds {
     const val KEY_VALUE = 0
     const val SPREAD = 1
 }
+
+object ArrayPatternItemKinds {
+    const val ELEMENT = 0
+    const val HOLE = 1
+}
+
+object AssignableIds {
+    const val NAMED = 0
+    const val ARRAY_PATTERN = 1
+    const val OBJECT_PATTERN = 2
+}

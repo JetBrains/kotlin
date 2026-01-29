@@ -155,7 +155,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 for (v in x.vars) {
                     val name = v.name
                     val value = v.initExpression
-                    if (name in localVariables) {
+                    if (name != null && name in localVariables) {
                         if (x.synthetic) {
                             temporary += name
                         }
@@ -252,9 +252,10 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
             override fun visitVars(x: JsVars) {
                 for (v in x.vars) {
+                    val name = v.name
                     val initializer = v.initExpression
-                    if (initializer != null) {
-                        handleDefinition(v.name, initializer, v)
+                    if (name != null && initializer != null) {
+                        handleDefinition(name, initializer, v)
                     }
                 }
             }
@@ -538,7 +539,9 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                     hasChanges = true
                 }
 
-                val ranges = x.vars.splitToRanges { shouldConsiderUnused(it.name) }
+                val ranges = x.vars.splitToRanges {
+                    it.name?.let { name -> shouldConsiderUnused(name) } ?: false
+                }
                 if (ranges.size == 1 && !ranges[0].second) return super.visit(x, ctx)
 
                 hasChanges = true

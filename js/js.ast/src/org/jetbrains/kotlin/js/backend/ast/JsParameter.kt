@@ -7,24 +7,28 @@ package org.jetbrains.kotlin.js.backend.ast
  * A JavaScript parameter.
  */
 class JsParameter(
-    private var name: JsName,
+    assignable: JsAssignable,
     defaultValue: JsExpression?,
     isRest: Boolean
 ) : SourceInfoAwareJsNode(), HasName {
+    var assignable: JsAssignable = assignable
+        private set
+
     var defaultValue: JsExpression? = defaultValue
         private set
 
     var isRest: Boolean = isRest
         private set
 
-    constructor(name: JsName) : this(name, null, false)
-    constructor(name: JsName, isRest: Boolean) : this(name, null, isRest)
-    constructor(name: JsName, defaultValue: JsExpression?) : this(name, defaultValue, false)
+    constructor(name: JsName) : this(JsAssignable.Named(name), null, false)
+    constructor(assignable: JsAssignable.Named, isRest: Boolean) : this(assignable, null, isRest)
+    constructor(assignable: JsAssignable) : this(assignable, null, false)
+    constructor(assignable: JsAssignable, defaultValue: JsExpression?) : this(assignable, defaultValue, false)
 
-    override fun getName() = name
+    override fun getName() = (assignable as? HasName)?.name
 
-    override fun setName(name: JsName) {
-        this.name = name
+    override fun setName(name: JsName?) {
+        (assignable as? HasName)?.name = name
     }
 
     override fun accept(v: JsVisitor) {
@@ -32,17 +36,19 @@ class JsParameter(
     }
 
     override fun acceptChildren(v: JsVisitor) {
+        v.accept(assignable)
         v.accept(defaultValue)
     }
 
     override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
         if (v.visit(this, ctx)) {
+            assignable = v.accept(assignable)
             defaultValue = v.accept(defaultValue)
         }
         v.endVisit(this, ctx)
     }
 
     override fun deepCopy(): JsParameter {
-        return JsParameter(name, defaultValue?.deepCopy(), isRest).withMetadataFrom(this)
+        return JsParameter(assignable.deepCopy(), defaultValue?.deepCopy(), isRest).withMetadataFrom(this)
     }
 }

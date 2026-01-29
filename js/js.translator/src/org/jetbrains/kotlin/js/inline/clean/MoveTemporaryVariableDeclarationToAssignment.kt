@@ -72,8 +72,11 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
 
             override fun visit(x: JsVars.JsVar) {
                 if (x.initExpression == null && x.couldBeMovedToAssignment) {
-                    varWithoutInitDeclarations += x.name
+                    x.name?.let { name ->
+                        varWithoutInitDeclarations += name
+                    }
                 }
+
                 super.visit(x)
             }
 
@@ -81,7 +84,9 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
                 if (x.couldBeMovedToAssignment) {
                     for (variable in x) {
                         if (variable.initExpression == null) {
-                            varWithoutInitDeclarations += variable.name
+                            variable.name?.let { name ->
+                                varWithoutInitDeclarations += name
+                            }
                         }
                     }
                 }
@@ -168,8 +173,9 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
             }
 
             override fun endVisit(x: JsVars.JsVar, ctx: JsContext<*>) {
-                if (canRemoveDeclarationWithoutInit(x.name)) {
-                    removedVarDeclarations[x.name] = x
+                val name = x.name
+                if (name != null && canRemoveDeclarationWithoutInit(name)) {
+                    removedVarDeclarations[name] = x
                     ctx.removeMe()
                     hasChanges = true
                 } else {

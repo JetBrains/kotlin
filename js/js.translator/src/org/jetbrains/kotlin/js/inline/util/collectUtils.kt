@@ -62,7 +62,7 @@ fun collectDefinedNames(scope: JsNode, skipLabelsAndCatches: Boolean): Set<JsNam
             if (initializer != null) {
                 accept(initializer)
             }
-            names += x.name
+            names += x.assignable.names
         }
 
         override fun visitExpressionStatement(x: JsExpressionStatement) {
@@ -85,7 +85,7 @@ fun collectDefinedNames(scope: JsNode, skipLabelsAndCatches: Boolean): Set<JsNam
 
         override fun visitCatch(x: JsCatch) {
             if (!skipLabelsAndCatches) {
-                names += x.parameter.name
+                names += x.parameter.assignable.names
             }
             super.visitCatch(x)
         }
@@ -98,9 +98,9 @@ fun collectDefinedNames(scope: JsNode, skipLabelsAndCatches: Boolean): Set<JsNam
     return names
 }
 
-fun JsFunction.collectFreeVariables() = collectUsedNames(body) - collectDefinedNames(body) - parameters.map { it.name }
+fun JsFunction.collectFreeVariables() = collectUsedNames(body) - collectDefinedNames(body) - parameters.mapNotNull { it.name }.toSet()
 
-fun JsFunction.collectLocalVariables(skipLabelsAndCatches: Boolean = false) = collectDefinedNames(body, skipLabelsAndCatches) + parameters.map { it.name }
+fun JsFunction.collectLocalVariables(skipLabelsAndCatches: Boolean = false) = collectDefinedNames(body, skipLabelsAndCatches) + parameters.mapNotNull { it.name }.toSet()
 
 fun collectNamedFunctions(scope: JsNode) = collectNamedFunctionsAndMetadata(scope).mapValues { it.value.first.function }
 
@@ -125,9 +125,9 @@ private fun collectNamedFunctionsAndMetadata(scope: JsNode): Map<JsName, Pair<Fu
         }
 
         override fun visit(x: JsVars.JsVar) {
-            val initializer = x.initExpression
             val name = x.name
-            if (initializer != null) {
+            val initializer = x.initExpression
+            if (name != null && initializer != null) {
                 extractFunction(initializer)?.let { function ->
                     namedFunctions[name] = Pair(function, initializer)
                 }

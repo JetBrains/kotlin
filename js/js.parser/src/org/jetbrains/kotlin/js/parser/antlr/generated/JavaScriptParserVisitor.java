@@ -491,6 +491,56 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPropertyShorthand(JavaScriptParser.PropertyShorthandContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#objectBindingPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitObjectBindingPattern(JavaScriptParser.ObjectBindingPatternContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code RegularPropertyBindingPattern}
+	 * labeled alternative in {@link JavaScriptParser#propertyBindingPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRegularPropertyBindingPattern(JavaScriptParser.RegularPropertyBindingPatternContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NamedPropertyBindingPattern}
+	 * labeled alternative in {@link JavaScriptParser#propertyBindingPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNamedPropertyBindingPattern(JavaScriptParser.NamedPropertyBindingPatternContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#arrayBindingPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayBindingPattern(JavaScriptParser.ArrayBindingPatternContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#arrayItemList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayItemList(JavaScriptParser.ArrayItemListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#arrayItemBinding}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayItemBinding(JavaScriptParser.ArrayItemBindingContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#bindingElement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBindingElement(JavaScriptParser.BindingElementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#restBindingElement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRestBindingElement(JavaScriptParser.RestBindingElementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link JavaScriptParser#propertyName}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

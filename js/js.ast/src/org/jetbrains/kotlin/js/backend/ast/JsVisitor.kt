@@ -210,6 +210,33 @@ abstract class JsVisitor {
     open fun visitSpread(spread: JsSpread): Unit =
         visitElement(spread)
 
+    open fun visitAssignable(assignable: JsAssignable): Unit =
+        visitElement(assignable)
+
+    open fun visitNamedAssignable(assignable: JsAssignable.Named): Unit =
+        visitAssignable(assignable)
+
+    open fun visitArrayPatternAssignable(pattern: JsAssignable.ArrayPattern): Unit =
+        visitAssignable(pattern)
+
+    open fun visitObjectPatternAssignable(pattern: JsAssignable.ObjectPattern): Unit =
+        visitAssignable(pattern)
+
+    open fun visitBindingProperty(property: JsBindingProperty): Unit =
+        visitElement(property)
+
+    open fun visitBindingElement(element: JsBindingElement): Unit =
+        visitElement(element)
+
+    open fun visitBindingArrayItem(item: JsBindingArrayItem): Unit =
+        visitElement(item)
+
+    open fun visitBindingArrayItemElement(element: JsBindingArrayItem.Element): Unit =
+        visitBindingArrayItem(element)
+
+    open fun visitBindingArrayItemHole(hole: JsBindingArrayItem.Hole): Unit =
+        visitBindingArrayItem(hole)
+
     protected open fun visitElement(node: JsNode) {
     }
 }
