@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: WASM_JS, WASM_WASI
+// FREE_COMPILER_ARGS: -Xbinary=preCodegenInlineThreshold=0
 // IGNORE_NATIVE: optimizationMode=DEBUG
 // IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_ONLY_DIST
 // IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_EVERYWHERE

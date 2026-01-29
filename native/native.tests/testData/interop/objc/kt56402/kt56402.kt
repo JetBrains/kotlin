@@ -45,7 +45,7 @@ class OnDestroyHookSub(onDestroy: (ULong) -> Unit) : OnDestroyHook(onDestroy)
 
 val aliveObjectIds = LockedSet<ULong>()
 
-fun alloc(ctor: ((ULong) -> Unit) -> ULong): ULong = autoreleasepool {
+@NoInline fun alloc(ctor: ((ULong) -> Unit) -> ULong): ULong = autoreleasepool {
     val id = ctor {
         aliveObjectIds.remove(it)
     }
