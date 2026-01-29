@@ -639,13 +639,22 @@ tasks {
     val allMetadataJar by existing(Jar::class) {
         archiveClassifier = "all"
     }
-    val metadataJar by registering(Jar::class) {
+    val commonMetadataJar by registering(Jar::class) {
         archiveAppendix.set("metadata")
         archiveExtension.set("klib")
     }
     kotlin.metadata().compilations.named { it == "commonMain" }.configureEach {
-        metadataJar.configure { from(output.allOutputs) }
+        commonMetadataJar.configure { from(output.allOutputs) }
     }
+
+    val webMetadataJar by registering(Jar::class) {
+        archiveAppendix.set("metadata-web")
+        archiveExtension.set("klib")
+    }
+    kotlin.metadata().compilations.named { it == "webMain" }.configureEach {
+        webMetadataJar.configure { from(output.allOutputs) }
+    }
+
     val sourcesJar by existing(Jar::class) {
         archiveAppendix.set("metadata")
     }
@@ -777,10 +786,12 @@ tasks {
         val distJsSourcesJar = configurations.create("distJsSourcesJar")
         val distJsKlib = configurations.create("distJsKlib")
         val commonMainMetadataElements by configurations.creating
+        val webMainMetadataElements by configurations.creating
 
         add(distJsSourcesJar.name, jsSourcesJar)
         add(distJsKlib.name, jsJar)
-        add(commonMainMetadataElements.name, metadataJar)
+        add(webMainMetadataElements.name, webMetadataJar)
+        add(commonMainMetadataElements.name, commonMetadataJar)
     }
 
 
