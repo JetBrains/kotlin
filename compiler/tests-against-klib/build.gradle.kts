@@ -65,8 +65,8 @@ val syncStdlib = tasks.register<Sync>("copyStdlib") {
 }
 
 dependencies {
-    //stdlibJvmIr(project(":kotlin-stdlib-jvm-ir-for-test", configuration = "distJKlib"))
-    stdlibJvmIr(project(":kotlin-stdlib-jvm-ir-for-test", configuration = "distMinimalJKlib"))
+    //stdlibJvmIr(project(":kotlin-stdlib-jklib-for-test", configuration = "distJKlib"))
+    stdlibJvmIr(project(":kotlin-stdlib-jklib-for-test", configuration = "distMinimalJKlib"))
     
     stdlibJs(project(":kotlin-stdlib", configuration = "distJsKlib"))
     testRuntimeOnly(files(syncStdlib))

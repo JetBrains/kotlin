@@ -778,7 +778,7 @@ include ":kotlin-stdlib-common",
         ":kotlin-stdlib-jdk8",
         ":kotlin-stdlib:samples",
         ":kotlin-stdlib-jvm-minimal-for-test",
-        ":kotlin-stdlib-jvm-ir-for-test",
+        ":kotlin-stdlib-jklib-for-test",
         ":tools:binary-compatibility-validator",
         ":tools:jdk-api-validator",
         ":tools:kotlin-stdlib-gen",
@@ -803,7 +803,7 @@ project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as 
 project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
 project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
 project(":kotlin-stdlib-jvm-minimal-for-test").projectDir = "$rootDir/libraries/stdlib/jvm-minimal-for-test" as File
-project(":kotlin-stdlib-jvm-ir-for-test").projectDir = "$rootDir/libraries/stdlib/jvm-ir-for-test" as File
+project(":kotlin-stdlib-jklib-for-test").projectDir = "$rootDir/libraries/stdlib/jklib-for-test" as File
 
 project(':tools').projectDir = "$rootDir/libraries/tools" as File
 project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
