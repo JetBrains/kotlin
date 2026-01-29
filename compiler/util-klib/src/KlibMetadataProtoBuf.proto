@@ -34,7 +34,6 @@ message Header {
   optional org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;
   repeated string package_fragment_name = 7;
   repeated string empty_package = 8;
-  repeated File file = 9;
 
   // TODO: Unused.
   // TODO: We need to have backend specific extension for versionings.
@@ -43,10 +42,8 @@ message Header {
 
   // WARNING: Don't occupy index 6 which was previously used for storing Annotations.
   // org.jetbrains.kotlin.metadata.Annotation annotation = 6;
-}
-
-message File {
-  required string name = 1;
+  // WARNING: Don't occupy index 9 which was previously used for storing file names.
+  // File file = 9;
 }
 
 message DescriptorUniqId {

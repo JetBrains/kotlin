@@ -124,12 +124,11 @@ class KlibModuleMetadata(
 
             val moduleHeaderProto = parseModuleHeader(library.moduleHeaderData)
             val moduleHeader = moduleHeaderProto.readHeader()
-            val fileIndex = SourceFileIndexReadExtension(moduleHeader.file)
             val moduleFragments = moduleHeader.packageFragmentName.flatMap { packageFqName ->
                 library.packageMetadataParts(packageFqName).map { part ->
                     val packageFragment = parsePackageFragment(library.packageMetadata(packageFqName, part))
                     val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
-                    packageFragment.toKmModuleFragment(nameResolver, listOf(fileIndex))
+                    packageFragment.toKmModuleFragment(nameResolver)
                 }.let(readStrategy::processModuleParts)
             }
             return KlibModuleMetadata(
@@ -160,27 +159,24 @@ class KlibModuleMetadata(
             error("Metadata read in lenient mode cannot be written back")
         }
 
-        val reverseIndex = ReverseSourceFileIndexWriteExtension()
-
         val groupedFragments = fragments
             .groupBy(KmModuleFragment::fqNameOrFail)
             .mapValues { writeStrategy.processPackageParts(it.value) }
 
         val header = KlibHeader(
             name,
-            reverseIndex.fileIndex,
             groupedFragments.map { it.key },
             groupedFragments.filter { it.value.all(KmModuleFragment::isEmpty) }.map { it.key },
         )
         val versionExt = KlibMetadataVersionWriteExtension(metadataVersion)
         val groupedProtos = groupedFragments.mapValues { (_, fragments) ->
             fragments.map { mf ->
-                val c = WriteContext(ApproximatingStringTable(), listOf(reverseIndex, versionExt))
+                val c = WriteContext(ApproximatingStringTable(), listOf(versionExt))
                 KlibModuleFragmentWriter(c.strings as ApproximatingStringTable, c.contextExtensions).also { it.writeModuleFragment(mf) }.write()
             }
         }
         // This context and string table is only required for module-level annotations.
-        val c = WriteContext(ApproximatingStringTable(), listOf(reverseIndex))
+        val c = WriteContext(ApproximatingStringTable())
         return SerializedKlibMetadata(
             header.writeHeader(c).build().toByteArray(),
             groupedProtos.map { it.value.map(ProtoBuf.PackageFragment::toByteArray) },
