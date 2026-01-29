@@ -63,7 +63,7 @@ class RuntimeState;
 // The runtimeStateHolder is freed with an at-thread-exit callback instead.
 // This callback will be triggered after TLS deallocation, thus
 // the runtimeStateHolder must be stored externally on the heap and not directly in TLS.
-THREAD_LOCAL_VARIABLE struct RtStateDestroyer {
+thread_local struct RtStateDestroyer {
     static void destroy(void* rtStateHolder) noexcept {
         delete reinterpret_cast<std::unique_ptr<RuntimeState>*>(rtStateHolder);
     }
