@@ -105,7 +105,7 @@ class ModularCinteropTest : AbstractNativeCInteropBaseTest() {
     }
 
     @Test
-    fun `KT-82766 external source symbol (or generated_declaration?) - see the original type`() {
+    fun `KT-82766 external source symbol (or generated_declaration) - see the original type`() {
         val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/externalSourceSymbolGeneratedDeclaration-KT-82766")
         val defFile = testPathFull.resolve("external_source_symbol.def")
         val goldenFile = testPathFull.resolve("output.txt")
