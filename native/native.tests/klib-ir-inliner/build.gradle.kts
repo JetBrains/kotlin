@@ -52,13 +52,11 @@ projectTests {
         // nativeTest sets workingDir to rootDir so here we need to override it
         workingDir = projectDir
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
-        // Specify K/N compiler to invoke in NativeCompilerSecondStageFacade in AbstractNativeCodegenBoxCoreTest
-        val distFolder = rootProject.projectDir.resolve("kotlin-native/dist")
-        systemProperty("kotlin.internal.native.test.compat.currentCompilerDist", distFolder)
 
         extensions.configure<TestInputsCheckExtension> {
             // add file permission for running native compiler backend from kotlin-native-compiler-embeddable.jar on CI
-            val embeddableCompiler = "$distFolder/konan/lib/kotlin-native-compiler-embeddable.jar"
+            // TODO consider using NativeArgsProvider.compilerClasspath instead of hardcoded path
+            val embeddableCompiler = rootProject.projectDir.resolve("kotlin-native/dist/konan/lib/kotlin-native-compiler-embeddable.jar")
             extraPermissions.add("""permission java.io.FilePermission "$embeddableCompiler", "read";""")
             // add link permission to load `libcallbacks.dylib`, via possible invocation of `JvmUtilsKt.createTempDirWithLibrary()` which invokes `Files.createLink()`
             extraPermissions.add("""permission java.nio.file.LinkPermission "hard";""")
