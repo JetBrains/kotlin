@@ -48,7 +48,8 @@ class MppDiagnosticsFunctionalTest {
             kotlin {
                 presetFunctions.configureOrCreate(
                     KotlinJvmWithJavaTargetPreset.PRESET_NAME,
-                    KotlinJvmWithJavaTargetPreset(project)
+                    KotlinJvmWithJavaTargetPreset(project),
+                    project,
                 )
             }
         }

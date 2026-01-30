@@ -16,5 +16,6 @@ internal val KotlinMetadataTargetSetupAction = KotlinProjectSetupAction {
     multiplatformExtension.presetFunctions.configureOrCreate(
         KotlinMetadataTarget.METADATA_TARGET_NAME,
         KotlinMetadataTargetPreset(project),
+        project,
     )
 }

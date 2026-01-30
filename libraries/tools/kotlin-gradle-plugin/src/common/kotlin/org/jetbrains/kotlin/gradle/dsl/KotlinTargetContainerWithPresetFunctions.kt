@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.dsl
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainer
@@ -476,12 +477,14 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 }
 
 internal fun ObjectFactory.DefaultKotlinTargetContainerWithPresetFunctions(
-    targets: NamedDomainObjectCollection<KotlinTarget>
-): DefaultKotlinTargetContainerWithPresetFunctions = newInstance<DefaultKotlinTargetContainerWithPresetFunctions>(targets)
+    targets: NamedDomainObjectCollection<KotlinTarget>,
+    project: Project,
+): DefaultKotlinTargetContainerWithPresetFunctions = newInstance<DefaultKotlinTargetContainerWithPresetFunctions>(targets, project)
 
 internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject constructor(
     objectFactory: ObjectFactory,
     override val targets: NamedDomainObjectCollection<KotlinTarget>,
+    private val project: Project,
 ) : KotlinTargetContainerWithPresetFunctions, KotlinTargetsContainer {
 
     val presets: NamedDomainObjectCollection<InternalKotlinTargetPreset<*>> =
@@ -494,6 +497,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("jvm") as KotlinJvmTargetPreset,
+            project,
             configure
         )
 
@@ -511,6 +515,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("android") as KotlinAndroidTargetPreset,
+            project,
             configure
         )
 
@@ -521,6 +526,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("androidNativeX64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -531,6 +537,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("androidNativeX86") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -541,6 +548,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("androidNativeArm32") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -551,6 +559,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("androidNativeArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -561,6 +570,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("iosArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -572,6 +582,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("iosX64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -582,6 +593,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("iosSimulatorArm64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -592,6 +604,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("watchosArm32") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -602,6 +615,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("watchosArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -613,6 +627,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("watchosX64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -623,6 +638,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("watchosSimulatorArm64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -633,6 +649,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("watchosDeviceArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -643,6 +660,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("tvosArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -654,6 +672,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("tvosX64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -664,6 +683,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("tvosSimulatorArm64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -674,6 +694,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("linuxX64") as KotlinNativeTargetWithHostTestsPreset,
+            project,
             configure
         )
 
@@ -684,6 +705,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("mingwX64") as KotlinNativeTargetWithHostTestsPreset,
+            project,
             configure
         )
 
@@ -695,6 +717,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("macosX64") as KotlinNativeTargetWithHostTestsPreset,
+            project,
             configure
         )
 
@@ -705,6 +728,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("macosArm64") as KotlinNativeTargetWithHostTestsPreset,
+            project,
             configure
         )
 
@@ -715,6 +739,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("linuxArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -726,6 +751,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("linuxArm32Hfp") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 

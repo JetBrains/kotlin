@@ -43,7 +43,7 @@ internal const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
 
 internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinBaseExtension>): KotlinBaseExtension {
     return when (extensionClass) {
-        KotlinMultiplatformExtension::class -> extensions.KotlinMultiplatformExtension(objects)
+        KotlinMultiplatformExtension::class -> extensions.KotlinMultiplatformExtension(objects, this)
         else -> extensions.create(KOTLIN_PROJECT_EXTENSION_NAME, extensionClass.java, this)
     }
 }
