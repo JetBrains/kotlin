@@ -37,9 +37,10 @@ import javax.inject.Inject
 
 internal fun ExtensionContainer.KotlinMultiplatformExtension(
     objectFactory: ObjectFactory,
+    project: Project,
 ): KotlinMultiplatformExtension {
     val targetsContainer = objectFactory.newInstance<DefaultKotlinTargetsContainer>()
-    val presetsContainer = objectFactory.DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets)
+    val presetsContainer = objectFactory.DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets, project)
     return create(
         KOTLIN_PROJECT_EXTENSION_NAME,
         KotlinMultiplatformExtension::class.java,
@@ -55,7 +56,7 @@ internal constructor(
     project: Project,
     private val targetsContainer: KotlinTargetsContainer,
     internal val presetFunctions: DefaultKotlinTargetContainerWithPresetFunctions = project.objects
-        .DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets),
+        .DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets, project),
 ) : KotlinTargetsContainer by targetsContainer,
     KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions by presetFunctions,

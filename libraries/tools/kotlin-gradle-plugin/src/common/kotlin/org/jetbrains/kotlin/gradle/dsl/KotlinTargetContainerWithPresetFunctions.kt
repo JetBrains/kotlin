@@ -3,9 +3,12 @@ package org.jetbrains.kotlin.gradle.dsl
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainer
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmTargetPreset
@@ -476,12 +479,14 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 }
 
 internal fun ObjectFactory.DefaultKotlinTargetContainerWithPresetFunctions(
-    targets: NamedDomainObjectCollection<KotlinTarget>
-): DefaultKotlinTargetContainerWithPresetFunctions = newInstance<DefaultKotlinTargetContainerWithPresetFunctions>(targets)
+    targets: NamedDomainObjectCollection<KotlinTarget>,
+    project: Project
+): DefaultKotlinTargetContainerWithPresetFunctions = newInstance<DefaultKotlinTargetContainerWithPresetFunctions>(targets, project)
 
 internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject constructor(
     objectFactory: ObjectFactory,
     override val targets: NamedDomainObjectCollection<KotlinTarget>,
+    private val project: Project,
 ) : KotlinTargetContainerWithPresetFunctions, KotlinTargetsContainer {
 
     val presets: NamedDomainObjectCollection<InternalKotlinTargetPreset<*>> =
@@ -507,12 +512,20 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
     override fun androidTarget(
         name: String,
         configure: KotlinAndroidTarget.() -> Unit
-    ): KotlinAndroidTarget =
-        configureOrCreate(
+    ): KotlinAndroidTarget {
+        if (targets.findByName(name) != null && project.plugins.hasPlugin("com.android.kotlin.multiplatform.library")) {
+            project.reportDiagnosticOncePerBuild(
+                KotlinToolingDiagnostics.KMPAndroidTargetIsIncompatibleWithTheNewAgpKMPPlugin(
+                    IllegalStateException("Invalid KMP 'androidTarget' target instantiation")
+                )
+            )
+        }
+        return configureOrCreate(
             name,
             presets.getByName("android") as KotlinAndroidTargetPreset,
             configure
         )
+    }
 
     override fun androidNativeX64(
         name: String,
