@@ -10,24 +10,17 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.join
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
 import java.io.IOException
 import kotlin.math.min
-
-fun checkKotlinPackageUsageForPsi(configuration: CompilerConfiguration, files: Collection<KtFile>): Boolean =
-    org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi(configuration, files)
 
 val K2JSCompilerArguments.targetVersion: EcmaVersion?
     get() {
@@ -128,18 +121,6 @@ internal fun calculateSourceMapSourceRoot(
     }
 
     return commonPath?.path ?: "."
-}
-
-internal fun reportCompiledSourcesList(messageCollector: MessageCollector, sourceFiles: List<KtFile>) {
-    val fileNames = sourceFiles.map { file ->
-        val virtualFile = file.virtualFile
-        if (virtualFile != null) {
-            MessageUtil.virtualFileToPath(virtualFile)
-        } else {
-            file.name + " (no virtual file)"
-        }
-    }
-    messageCollector.report(LOGGING, "Compiling source files: " + join(fileNames, ", "), null)
 }
 
 fun reportCollectedDiagnostics(

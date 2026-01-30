@@ -43,10 +43,7 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         return JsBackendPipelineArtifact(outputs, configuration.outputDir!!, configuration)
     }
 
-    /**
-     * This method is shared between K2 phased pipeline and [org.jetbrains.kotlin.cli.js.K2JsCompilerImpl.compileWithIC] for K1 CLI
-     */
-    internal fun compileIncrementally(
+    private fun compileIncrementally(
         icCaches: IcCachesArtifacts,
         configuration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration,
@@ -96,10 +93,7 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         configuration: CompilerConfiguration,
     ): JsBackendPipelineArtifact = intermediateResult
 
-    /**
-     * This method is shared between K2 phased pipeline and [org.jetbrains.kotlin.cli.js.K2JsCompilerImpl.compileNoIC] for K1 CLI
-     */
-    internal fun compileNonIncrementally(
+    private fun compileNonIncrementally(
         messageCollector: MessageCollector,
         ir2JsTransformer: Ir2JsTransformer,
         artifactConfiguration: WebArtifactConfiguration,

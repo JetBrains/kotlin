@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.common.list
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.js.K2JsCompilerImpl
 import org.jetbrains.kotlin.cli.js.initializeFinalArtifactConfiguration
 import org.jetbrains.kotlin.cli.js.moduleKindMap
 import org.jetbrains.kotlin.cli.js.targetVersion
@@ -45,11 +44,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         }
     }
 
-    /**
-     * This part of the configuration update is shared between phased K2 CLI and
-     * K1 implementation of [K2JsCompilerImpl.tryInitializeCompiler].
-     */
-    internal fun fillConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
+    private fun fillConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
         val messageCollector = configuration.messageCollector
         val targetVersion = initializeAndCheckTargetVersion(arguments, messageCollector)
         configuration.optimizeGeneratedJs = arguments.optimizeGeneratedJs
