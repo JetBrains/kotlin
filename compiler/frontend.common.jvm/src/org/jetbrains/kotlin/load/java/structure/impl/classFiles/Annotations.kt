@@ -24,24 +24,27 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.*
 import java.lang.reflect.Array
 
-internal class AnnotationsCollectorFieldVisitor(
-    private val field: BinaryJavaField,
-    private val context: ClassifierResolutionContext,
-    private val signatureParser: BinaryClassSignatureParser,
-) : FieldVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
-    override fun visitAnnotation(desc: String, visible: Boolean) =
-        BinaryJavaAnnotation.addAnnotation(field, desc, context, signatureParser)
+private abstract class AnnotationsCollectorMemberVisitor<out T>(
+    protected val member: T,
+    protected val context: ClassifierResolutionContext,
+    protected val signatureParser: BinaryClassSignatureParser,
+) where T : MutableJavaAnnotationOwner, T : JavaMember {
+    abstract val memberType: JavaType
+    abstract val typeReferencesSort: Int
 
-    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String?, visible: Boolean): AnnotationVisitor? {
+    fun visitAnnotation(desc: String): AnnotationVisitor =
+        BinaryJavaAnnotation.addAnnotation(member, desc, context, signatureParser)
+
+    fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String?): AnnotationVisitor? {
         if (descriptor == null) return null
 
         val typeReference = TypeReference(typeRef)
-        val targetType = if (typePath != null) computeTargetType(field.type, typePath) else field.type
+        val targetType = if (typePath != null) computeTargetType(memberType, typePath) else memberType
 
         if (targetType !is MutableJavaAnnotationOwner) return null
 
         return when (typeReference.sort) {
-            TypeReference.FIELD -> BinaryJavaAnnotation.addAnnotation(
+            typeReferencesSort -> BinaryJavaAnnotation.addAnnotation(
                 targetType, descriptor, context, signatureParser, isFreshlySupportedAnnotation = true
             )
             else -> null
@@ -49,29 +52,37 @@ internal class AnnotationsCollectorFieldVisitor(
     }
 }
 
-internal class AnnotationsCollectorRecordComponentVisitor(
-    private val recordComponent: BinaryJavaRecordComponent,
-    private val context: ClassifierResolutionContext,
-    private val signatureParser: BinaryClassSignatureParser,
-) : RecordComponentVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
-    override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor =
-        BinaryJavaAnnotation.addAnnotation(recordComponent, desc, context, signatureParser)
-
-    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String?, visible: Boolean): AnnotationVisitor? {
-        if (descriptor == null) return null
-
-        val typeReference = TypeReference(typeRef)
-        val targetType = if (typePath != null) computeTargetType(recordComponent.type, typePath) else recordComponent.type
-
-        if (targetType !is MutableJavaAnnotationOwner) return null
-
-        return when (typeReference.sort) {
-            TypeReference.METHOD_FORMAL_PARAMETER -> BinaryJavaAnnotation.addAnnotation(
-                targetType, descriptor, context, signatureParser, isFreshlySupportedAnnotation = true
-            )
-            else -> null
-        }
+internal class AnnotationsCollectorFieldVisitor(
+    field: BinaryJavaField,
+    context: ClassifierResolutionContext,
+    signatureParser: BinaryClassSignatureParser,
+) : FieldVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
+    private val collector = object : AnnotationsCollectorMemberVisitor<BinaryJavaField>(field, context, signatureParser) {
+        override val memberType: JavaType get() = member.type
+        override val typeReferencesSort: Int = TypeReference.FIELD
     }
+
+    override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor = collector.visitAnnotation(desc)
+
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String?, visible: Boolean): AnnotationVisitor? =
+        collector.visitTypeAnnotation(typeRef, typePath, descriptor)
+}
+
+internal class AnnotationsCollectorRecordComponentVisitor(
+    recordComponent: BinaryJavaRecordComponent,
+    context: ClassifierResolutionContext,
+    signatureParser: BinaryClassSignatureParser,
+) : RecordComponentVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
+    private val collector =
+        object : AnnotationsCollectorMemberVisitor<BinaryJavaRecordComponent>(recordComponent, context, signatureParser) {
+            override val memberType: JavaType get() = member.type
+            override val typeReferencesSort: Int = TypeReference.METHOD_FORMAL_PARAMETER
+        }
+
+    override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor = collector.visitAnnotation(desc)
+
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String?, visible: Boolean): AnnotationVisitor? =
+        collector.visitTypeAnnotation(typeRef, typePath, descriptor)
 }
 
 internal class AnnotationsAndParameterCollectorMethodVisitor(
