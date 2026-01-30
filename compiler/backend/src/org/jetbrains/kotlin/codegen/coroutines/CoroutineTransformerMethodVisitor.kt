@@ -1125,7 +1125,7 @@ class CoroutineTransformerMethodVisitor(
             if (slot == continuationIndex || slot == dataIndex) continue
             // Do not spill $completion
             if (isForNamedFunction && slot == completionSlot) continue
-            // Do not spill fake inliner variables - they are always zero
+            // Do not spill fake inliner variables - they are always zero, initialized for each state by initializeFakeInlinerVariables()
             if (methodNode.isFakeInlinerVariable(slot, suspensionCallBeginIndex)) continue
 
             val value = frame.getLocal(slot)
@@ -1167,10 +1167,11 @@ class CoroutineTransformerMethodVisitor(
 
     private fun MethodNode.isFakeInlinerVariable(slot: Int, suspensionCallBeginIndex: Int): Boolean {
         for (record in this.localVariables.filter { it.index == slot }) {
-            if (JvmAbi.isFakeLocalVariableForInline(record.name) &&
-                instructions.indexOf(record.start) < suspensionCallBeginIndex &&
+            if (instructions.indexOf(record.start) <= suspensionCallBeginIndex &&
                 suspensionCallBeginIndex < instructions.indexOf(record.end)
-            ) return true
+            ) {
+                return JvmAbi.isFakeLocalVariableForInline(record.name)
+            }
         }
         return false
     }
