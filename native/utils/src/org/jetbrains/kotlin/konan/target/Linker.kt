@@ -380,11 +380,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
 class GccBasedLinker(targetProperties: GccConfigurables)
     : LinkerFlags(targetProperties), GccConfigurables by targetProperties {
 
-    private val ar = if (HostManager.hostIsLinux) {
-        "$absoluteTargetToolchain/bin/ar"
-    } else {
-        "$absoluteTargetToolchain/bin/llvm-ar"
-    }
+    private val ar = "$absoluteLlvmHome/bin/llvm-ar"
     override val libGcc = "$absoluteTargetSysRoot/${super.libGcc}"
 
     private val specificLibs = abiSpecificLibraries.map { "-L${absoluteTargetSysRoot}/$it" }
@@ -463,12 +459,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
 class MingwLinker(targetProperties: MingwConfigurables)
     : LinkerFlags(targetProperties), MingwConfigurables by targetProperties {
 
-    // TODO: Maybe always use llvm-ar?
-    private val ar = if (HostManager.hostIsMingw) {
-        "$absoluteTargetToolchain/bin/ar"
-    } else {
-        "$absoluteLlvmHome/bin/llvm-ar"
-    }
+    private val ar = "$absoluteLlvmHome/bin/llvm-ar"
     private val clang = "$absoluteLlvmHome/bin/clang++"
 
     override val useCompilerDriverAsLinker: Boolean get() = true
