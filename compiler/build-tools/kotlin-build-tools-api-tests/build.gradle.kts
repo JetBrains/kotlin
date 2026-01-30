@@ -6,7 +6,6 @@ plugins {
     kotlin("jvm")
     `jvm-test-suite`
     id("test-symlink-transformation")
-    id("project-tests-convention")
 }
 
 val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
@@ -174,11 +173,9 @@ testing {
                     addSpecificBuildToolsImpl(implVersion.toString())
                 }
                 targets.all {
-                    projectTests {
-                        testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
-                            ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
-                            systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
-                        }
+                    testTask.configure {
+                        ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
+                        systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                     }
                 }
             }
@@ -189,6 +186,7 @@ testing {
             val isRegular = this@configureSuit.name in businessLogicTestSuits
             dependencies {
                 useJUnitJupiter(libs.versions.junit5.get())
+                runtimeOnly(libs.junit.platform.launcher)
 
                 implementation(project())
                 implementation(project(":kotlin-tooling-core"))
@@ -200,10 +198,8 @@ testing {
 
             targets.all {
                 if (businessLogicTestSuits.any { testTask.name.startsWith(it) }) {
-                    projectTests {
-                        testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
-                            systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
-                        }
+                    testTask.configure {
+                        systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                     }
                 }
             }
