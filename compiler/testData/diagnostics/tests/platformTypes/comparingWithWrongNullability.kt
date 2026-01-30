@@ -1,7 +1,6 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
 // FULL_JDK
-// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible
 
 import java.util.Comparator;
 
