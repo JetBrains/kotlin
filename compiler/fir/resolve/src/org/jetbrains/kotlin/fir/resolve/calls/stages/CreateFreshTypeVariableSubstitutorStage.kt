@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.types.model.isNullableType
 
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
@@ -151,7 +152,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         val session = context.session
         return if (typeParameter.shouldBeFlexible()) {
             when (type) {
-                is ConeRigidType -> if (!type.isMarkedNullable) {
+                is ConeRigidType -> if (with(context.typeContext) { !type.isNullableType() }) {
                     type.withNullability(nullable = false, session.typeContext).toTrivialFlexibleType(session.typeContext)
                 } else {
                     type
