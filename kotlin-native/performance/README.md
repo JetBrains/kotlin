@@ -8,6 +8,9 @@ To run the benchmarks you need a built Kotlin/Native distribution with the platf
 
 To run all the benchmarks just run `./gradlew` from this folder. The output will be placed in `build/nativeReport.json`.
 
+**NOTE**: consider running with `-PdryRun` beforehand to build everything before running the benchmarks, this will
+make the benchmarking results a bit more stable
+
 ## Analysis
 
 To pretty-print the report, or compare different reports, [benchmarksAnalyzer](benchmarksAnalyzer) can be used.
@@ -26,6 +29,7 @@ Pass as Gradle Properties (i.e. as `-P<option>=<value>`):
 * `nativeWarmup`, `attempts` - configure the warmup and the iteration count of each benchmark
 * `buildType` - whether to build in `debug` or `release` (default) mode
 * `filter`, `filterRegex` - comma-separated list of benchmarks to run
+* `druRun` - only compile the benchmarks, do not run them
 
 The full list can be found [here](buildSrc/src/main/kotlin/Properties.kt).
 
