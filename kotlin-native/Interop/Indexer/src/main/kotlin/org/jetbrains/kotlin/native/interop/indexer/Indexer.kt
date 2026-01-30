@@ -1271,8 +1271,8 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                  */
                 nativeIndex.tuToPCMPath = unitsHolder.binaryFileByUnit
                 measureTime {
-                    nativeIndex.typesDefinitions = indexTranslationUnitsForTypesDefinitions(nativeIndex.library, index, unitsHolder.allTranslationUnits, unitsHolder.binaryFileByUnit)
-                    // nativeIndex.typesDefinitions = TypesDefinitions(emptyMap(), emptyMap(), emptyMap())
+                    // nativeIndex.typesDefinitions = indexTranslationUnitsForTypesDefinitions(nativeIndex.library, index, unitsHolder.allTranslationUnits, unitsHolder.binaryFileByUnit)
+                    nativeIndex.typesDefinitions = TypesDefinitions(emptyMap(), emptyMap(), emptyMap())
                 }.also {
                     println("indexTranslationUnitsForTypesDefinitions: ${it.inWholeMilliseconds}")
                 }
@@ -1291,6 +1291,28 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                             }
                         }
                     })
+                }
+
+                unitsToProcess.forEach {
+                    visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
+                        val file = getContainingFile(cursor)
+                        if (file in ownHeaders && nativeIndex.library.includesDeclaration(cursor)) {
+                            when (cursor.kind) {
+                                CXCursorKind.CXCursor_ObjCInterfaceDecl -> nativeIndex.indexObjCClass(cursor)
+                                CXCursorKind.CXCursor_ObjCProtocolDecl -> nativeIndex.indexObjCProtocol(cursor)
+                                CXCursorKind.CXCursor_ObjCCategoryDecl -> {
+                                    // This fixes https://youtrack.jetbrains.com/issue/KT-49455, which effectively seems to be a bug in libclang:
+                                    // the libclang indexer doesn't properly index categories with
+                                    // `__attribute__((external_source_symbol(language="Swift",...)))`.
+                                    // As a workaround, additionally enumerate all the categories explicitly.
+                                    nativeIndex.indexObjCCategory(cursor)
+                                }
+
+                                else -> {}
+                            }
+                        }
+                        CXChildVisitResult.CXChildVisit_Continue
+                    }
                 }
 
                 val compilationWithPCH = if (allowPrecompiledHeaders)

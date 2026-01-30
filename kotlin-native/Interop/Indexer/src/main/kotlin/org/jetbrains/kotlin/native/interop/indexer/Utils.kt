@@ -322,6 +322,7 @@ fun visitChildren(parent: CValue<CXCursor>, visitor: CursorVisitor) {
 }
 
 internal fun visitChildren(translationUnit: CXTranslationUnit, visitor: CursorVisitor) {
+    if (System.getenv("SKIP_VISIT_CHILDREN").toBoolean()) return
     measureTime {
         visitChildren(clang_getTranslationUnitCursor(translationUnit), visitor)
     }.also {
