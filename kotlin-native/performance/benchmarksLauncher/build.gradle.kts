@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.benchmarkingTargets
 
 plugins {
+    id("custom-kotlin-native-home")
     kotlin("multiplatform")
 }
 
