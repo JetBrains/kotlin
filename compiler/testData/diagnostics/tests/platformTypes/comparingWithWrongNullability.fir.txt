@@ -1,6 +1,6 @@
 FILE: comparingWithWrongNullability.fir.kt
     public final fun foo(): R|kotlin/Unit| {
-        Q|java/util/Comparator|.R|java/util/Comparator.comparing*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String?, relevantFeature=null) kotlin/String!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Boolean?, relevantFeature=null) kotlin/Boolean!|>(<L> = SAM(comparing@fun <anonymous>(it: R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String?, relevantFeature=DontMakeExplicitJavaTypeArgumentsFlexible) @EnhancedNullability kotlin/String!|): R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Boolean?, relevantFeature=DontMakeExplicitJavaTypeArgumentsFlexible) @EnhancedNullability kotlin/Boolean!| <inline=NoInline>  {
+        Q|java/util/Comparator|.R|java/util/Comparator.comparing*s<Inapplicable(INAPPLICABLE): java/util/Comparator.comparing>#|<R|kotlin/String?|, R|kotlin/Boolean?|>(<L> = SAM(comparing@fun <anonymous>(it: R|@EnhancedNullability kotlin/String?|): R|kotlin/Boolean| <inline=Unknown>  {
             ^ !=(R|<local>/it|, String())
         }
         ))

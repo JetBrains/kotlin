@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
-// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible
 // ISSUE: KT-67999
 
 // FILE: J.java
@@ -12,7 +11,7 @@ public interface J<X> {
 
 fun main() {
     J<String?> { x ->
-        <!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in a future release. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>x<!>.length // Should not be unsafe call
+        x<!UNSAFE_CALL!>.<!>length // Should not be unsafe call
     }
 }
 

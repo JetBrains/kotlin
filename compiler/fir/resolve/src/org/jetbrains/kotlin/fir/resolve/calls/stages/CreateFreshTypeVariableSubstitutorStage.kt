@@ -149,7 +149,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         typeParameter: FirTypeParameterRef,
     ): ConeKotlinType {
         val session = context.session
-        return if (typeParameter.shouldBeFlexible()) {
+        return if (type.shouldExplicitArgumentBeFlexibleForGivenParameter(typeParameter)) {
             when (type) {
                 is ConeRigidType -> type.withNullability(nullable = false, session.typeContext).toTrivialFlexibleType(session.typeContext)
                 /*
@@ -186,16 +186,35 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         }
     }
 
+    /**
+     * In case a explicit type argument is given, this function returns true if its type should be converted to a nullability-flexible type.
+     *
+     * In pre-2.4 language versions, this function returns true if the corresponding [typeParameter] has at least one flexible upper bound.
+     * In particular, it's applicable for all java type parameters without explicit bounds, as by default the bound is Any!
+     * Shortly, this allows to achieve more flexible rules for Java functions accepting or returning generic types.
+     *
+     * During K2 stabilization and cleanup after its release, we made several attempts to switch it off at all,
+     * as it seems that such a flexibility allows too much. As it causes too much breaking changes, beginning from language version 2.4
+     * we apply the feature [LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible].
+     * According to its name, beginning from 2.4 this function returns true only for NULLABLE explicit type arguments.
+     * Of course, the requirement about at least one flexible upper bound for the [typeParameter] is still intact.
+     */
     context(context: ResolutionContext)
-    private fun FirTypeParameterRef.shouldBeFlexible(): Boolean {
+    private fun ConeKotlinType.shouldExplicitArgumentBeFlexibleForGivenParameter(typeParameter: FirTypeParameterRef): Boolean {
         val languageVersionSettings = context.session.languageVersionSettings
         if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) {
             return false
         }
-        return symbol.resolvedBounds.any {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible) &&
+            with(context.typeContext) { isNullableType() }
+        ) {
+            return false
+        }
+        return typeParameter.symbol.resolvedBounds.any {
             val type = it.coneType
             type is ConeFlexibleType || with(context.typeContext) {
-                (type.typeConstructor() as? ConeTypeParameterLookupTag)?.symbol?.fir?.shouldBeFlexible() ?: false
+                val boundingTypeParameter = (type.typeConstructor() as? ConeTypeParameterLookupTag)?.symbol?.fir ?: return@any false
+                shouldExplicitArgumentBeFlexibleForGivenParameter(boundingTypeParameter)
             }
         }
     }
