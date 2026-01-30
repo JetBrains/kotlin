@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
@@ -66,7 +67,7 @@ private val LANGUAGE_FEATURE_SETTINGS =
     )
 
 private fun newConfiguration(useNewInference: Boolean): CompilerConfiguration {
-    val configuration = CompilerConfiguration()
+    val configuration = CompilerConfiguration.create()
     configuration.put(CommonConfigurationKeys.MODULE_NAME, "benchmark")
     configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, "../compiler/cli/cli-base/resources")
     configuration.addJvmClasspathRoot(JDK_PATH)

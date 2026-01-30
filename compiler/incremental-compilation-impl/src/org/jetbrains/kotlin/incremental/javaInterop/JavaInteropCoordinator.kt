@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
@@ -137,7 +138,7 @@ internal sealed class JavaInteropCoordinator(
 ) {
     protected val compilerConfiguration: CompilerConfiguration by lazy {
         val filterMessageCollector = FilteringMessageCollector(messageCollector) { !it.isError }
-        CompilerConfiguration().apply {
+        CompilerConfiguration.create().apply {
             this.messageCollector = filterMessageCollector
             configureJdkClasspathRoots()
         }

@@ -22,6 +22,7 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
@@ -54,7 +55,7 @@ abstract class KotlinJvmReplServiceBase(
 
     private val log by lazy { Logger.getLogger("replService") }
 
-    protected val configuration = CompilerConfiguration().apply {
+    protected val configuration = CompilerConfiguration.create().apply {
         this.messageCollector = messageCollector
         registerExtensionStorage()
         addJvmClasspathRoots(PathUtil.kotlinPathsForCompiler.let { listOf(it.stdlibPath, it.reflectPath, it.scriptRuntimePath) })

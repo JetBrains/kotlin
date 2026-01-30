@@ -9,6 +9,18 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
 
+/**
+ * Default way for creating `CompilerConfiguration`.
+ * Creates a new configuration and registers default services.
+ */
+fun CompilerConfiguration.Companion.create(): CompilerConfiguration {
+    @OptIn(CompilerConfiguration.Internals::class)
+    return CompilerConfiguration().apply {
+        registerExtensionStorage()
+        initializeDiagnosticFactoriesStorageForCli()
+    }
+}
+
 fun CompilerConfiguration.registerExtensionStorage() {
     extensionsStorage = CompilerPluginRegistrar.ExtensionStorage()
 }
