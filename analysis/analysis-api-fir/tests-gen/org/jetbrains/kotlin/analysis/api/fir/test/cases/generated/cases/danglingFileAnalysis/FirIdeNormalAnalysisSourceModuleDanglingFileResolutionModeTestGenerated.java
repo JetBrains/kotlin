@@ -130,6 +130,12 @@ public class FirIdeNormalAnalysisSourceModuleDanglingFileResolutionModeTestGener
   }
 
   @Test
+  @TestMetadata("changedFunctionInitializerWithExplicitType.kt")
+  public void testChangedFunctionInitializerWithExplicitType() {
+    runTest("analysis/analysis-api/testData/analyzeCopyResolutionMode/changedFunctionInitializerWithExplicitType.kt");
+  }
+
+  @Test
   @TestMetadata("changedImport.kt")
   public void testChangedImport() {
     runTest("analysis/analysis-api/testData/analyzeCopyResolutionMode/changedImport.kt");
@@ -151,6 +157,12 @@ public class FirIdeNormalAnalysisSourceModuleDanglingFileResolutionModeTestGener
   @TestMetadata("changedPropertyInitializer.kt")
   public void testChangedPropertyInitializer() {
     runTest("analysis/analysis-api/testData/analyzeCopyResolutionMode/changedPropertyInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("changedPropertyInitializerWithExplicitType.kt")
+  public void testChangedPropertyInitializerWithExplicitType() {
+    runTest("analysis/analysis-api/testData/analyzeCopyResolutionMode/changedPropertyInitializerWithExplicitType.kt");
   }
 
   @Test

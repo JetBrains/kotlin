@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.projectStructure
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtFile
 /**
  * A service that provides [KaDanglingFileResolutionMode] for a given [KtFile] based purely on its content.
  */
+@KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaDanglingFileResolutionModeProvider {
     /**
@@ -40,7 +42,8 @@ public interface KaDanglingFileResolutionModeProvider {
          *
          * If the given [file] is not a dangling one, returns [KaDanglingFileResolutionMode.PREFER_SELF].
          */
-        public fun calculateMode(file: KtFile, project: Project): KaDanglingFileResolutionMode =
-            getInstance(project)?.calculateMode(file) ?: KaDanglingFileResolutionMode.PREFER_SELF
+        public fun calculateMode(file: KtFile): KaDanglingFileResolutionMode =
+            ApplicationManager.getApplication().serviceOrNull<KaDanglingFileResolutionModeProvider>()?.calculateMode(file)
+                ?: KaDanglingFileResolutionMode.PREFER_SELF
     }
 }

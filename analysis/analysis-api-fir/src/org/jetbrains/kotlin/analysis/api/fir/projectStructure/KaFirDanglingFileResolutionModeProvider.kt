@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.projectStructure
 
 import com.intellij.lang.ASTNode
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
@@ -29,14 +28,24 @@ import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.psi.psiUtil.textRangeWithoutComments
 
-internal class KaFirDanglingFileResolutionModeProvider(private val project: Project) : KaDanglingFileResolutionModeProvider {
+/**
+ * Calculates [KaDanglingFileResolutionMode] for the given [KtFile] based purely on its content.
+ *
+ * The computation is done by reusing [LLFirDeclarationModificationService] which handles PSI events in the IDE.
+ * To emulate these tree change events, [DiffTree] is run on the AST trees of both the original and the copy files.
+ * This [DiffTree] then reports deletions / insertions / replacements
+ * to the [LLFirDeclarationModificationService] based on a simple PSI comparator.
+ * If any Out-of-block modification was detected, returns [KaDanglingFileResolutionMode.PREFER_SELF].
+ * Otherwise, returns [KaDanglingFileResolutionMode.IGNORE_SELF].
+ */
+internal class KaFirDanglingFileResolutionModeProvider : KaDanglingFileResolutionModeProvider {
     @OptIn(LLFirInternals::class)
     override fun calculateMode(file: KtFile): KaDanglingFileResolutionMode {
-        val originalFile = file.copyOrigin as? KtFile ?: return KaDanglingFileResolutionMode.IGNORE_SELF
+        val originalFile = file.copyOrigin as? KtFile ?: return KaDanglingFileResolutionMode.PREFER_SELF
         val originalNode = ASTStructure(originalFile.node)
         val copyNode = ASTStructure(file.node)
 
-        val modificationService = LLFirDeclarationModificationService.getInstance(project)
+        val modificationService = LLFirDeclarationModificationService.getInstance(file.project)
         val consumer = Consumer(modificationService)
         DiffTree.diff(
             /* oldTree = */ originalNode,
@@ -49,14 +58,6 @@ internal class KaFirDanglingFileResolutionModeProvider(private val project: Proj
     }
 
     private class NodeComparator : ShallowNodeComparator<ASTNode, ASTNode> {
-        private fun PsiElement.getTextWithoutComments(): String {
-            val startOffset = startOffset
-            val startWithoutComments = textRangeWithoutComments.startOffset - startOffset
-            val endOffset = this@getTextWithoutComments.endOffset - startOffset
-
-            return text.substring(startWithoutComments, endOffset)
-        }
-
         override fun deepEqual(oldNode: ASTNode, newNode: ASTNode): ThreeState {
             if (oldNode.elementType != newNode.elementType) return ThreeState.NO
             if (oldNode.psi.getTextWithoutComments() == newNode.psi.getTextWithoutComments()) return ThreeState.YES
@@ -69,6 +70,14 @@ internal class KaFirDanglingFileResolutionModeProvider(private val project: Proj
 
         override fun hashCodesEqual(oldNode: ASTNode, newNode: ASTNode): Boolean {
             return oldNode.hashCode() == newNode.hashCode()
+        }
+
+        private fun PsiElement.getTextWithoutComments(): String {
+            val startOffset = startOffset
+            val startWithoutComments = textRangeWithoutComments.startOffset - startOffset
+            val endOffset = this@getTextWithoutComments.endOffset - startOffset
+
+            return text.substring(startWithoutComments, endOffset)
         }
     }
 
