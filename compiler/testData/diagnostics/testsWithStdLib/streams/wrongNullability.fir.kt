@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 // JVM_TARGET: 1.8
 // FIR_DUMP
@@ -17,7 +17,7 @@ interface Process {
 }
 
 fun run(filter: IntPredicate, allProcesses: Stream<Process>): List<IntLongPair> {
-    return <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>allProcesses.filter {
+    return <!RETURN_TYPE_MISMATCH!>allProcesses.filter {
         filter.test(it.pid())
     }.map<IntLongPair?> {
         val duration = it.totalCpuDuration()

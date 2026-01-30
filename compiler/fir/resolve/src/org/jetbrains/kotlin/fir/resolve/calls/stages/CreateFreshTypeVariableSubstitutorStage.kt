@@ -151,7 +151,11 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         val session = context.session
         return if (typeParameter.shouldBeFlexible()) {
             when (type) {
-                is ConeRigidType -> type.withNullability(nullable = false, session.typeContext).toTrivialFlexibleType(session.typeContext)
+                is ConeRigidType -> if (!type.isMarkedNullable) {
+                    type.withNullability(nullable = false, session.typeContext).toTrivialFlexibleType(session.typeContext)
+                } else {
+                    type
+                }
                 /*
                  * ConeFlexibleTypes have to be handled here
                  * at least because MapTypeArguments special-cases ConeRawTypes without explicit arguments (KT-54666)
