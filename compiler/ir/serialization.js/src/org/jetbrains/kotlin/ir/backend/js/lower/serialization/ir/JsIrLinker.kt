@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 class JsIrLinker(
     private val currentModule: ModuleDescriptor?, messageCollector: MessageCollector, builtIns: IrBuiltIns, symbolTable: SymbolTable,
     override val partialLinkageSupport: PartialLinkageSupportForLinker,
-    private val icData: ICData? = null,
     friendModules: Map<String, Collection<String>> = emptyMap(),
     private val stubGenerator: DeclarationStubGenerator? = null
 ) : KotlinIrLinker(
@@ -91,17 +90,6 @@ class JsIrLinker(
             super.init(delegate)
             deserializedFilesInKlibOrder[moduleFragment] = fileDeserializationStates.memoryOptimizedMap { it.file }
         }
-    }
-
-    override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
-        val currentModuleDeserializer = super.createCurrentModuleDeserializer(moduleFragment, dependencies)
-
-        icData?.let {
-            return CurrentModuleWithICDeserializer(currentModuleDeserializer, symbolTable, builtIns, it.icData) { ir ->
-                JsModuleDeserializer(currentModuleDeserializer.moduleDescriptor, ir, currentModuleDeserializer.strategyResolver, KotlinAbiVersion.CURRENT)
-            }
-        }
-        return currentModuleDeserializer
     }
 
     val modules
