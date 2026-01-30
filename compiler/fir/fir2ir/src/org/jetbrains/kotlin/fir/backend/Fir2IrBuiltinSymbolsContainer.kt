@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.backend.utils.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.fir.backend.utils.toIrSymbol
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeEquivalentCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import java.util.TreeSet
 
 @RequiresOptIn("This declaration can be used only from IrBuiltinsOverFir")
 annotation class Fir2IrBuiltInsInternals
@@ -314,11 +316,18 @@ class Fir2IrBuiltinSymbolsContainer(
         @OptIn(ClassIdBasedLocality::class)
         require(!callableId.isLocal)
         val classId = callableId.classId
-        return if (classId == null) {
+        val symbols = if (classId == null) {
             symbolProvider.getTopLevelFunctionSymbols(callableId.packageName, callableId.callableName)
         } else {
             findFirMemberFunctions(classId, callableId.callableName)
-        }.map { findFunction(it) }
+        }
+
+        val set = TreeSet(Comparator<FirNamedFunctionSymbol> { first, second ->
+            ConeEquivalentCallConflictResolver.areEquivalentTopLevelCallables(first.fir, second.fir, session, null)
+                .compareTo(true)
+        })
+        set.addAll(symbols)
+        return set.map { findFunction(it) }
     }
 
     @Fir2IrBuiltInsInternals
