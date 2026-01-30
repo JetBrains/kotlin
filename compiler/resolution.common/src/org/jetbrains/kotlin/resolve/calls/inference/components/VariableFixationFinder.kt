@@ -305,7 +305,7 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
                 && !isNoInfer
 
     context(c: Context)
-    private fun KotlinTypeMarker.isProperType(): Boolean =
+    protected fun KotlinTypeMarker.isProperType(): Boolean =
         isProperTypeForFixation(
             c.notFixedTypeVariables.keys
         ) { t -> !t.contains { it.isNotFixedRelevantVariable() } }
