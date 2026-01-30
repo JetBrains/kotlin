@@ -33,7 +33,7 @@ import java.io.File
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class NativeRunnerHandler(testServices: TestServices) : NativeBinaryArtifactHandler(testServices) {
+class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(testServices) {
     private var artifact: BinaryArtifacts.Native? = null
     override fun processModule(module: TestModule, info: BinaryArtifacts.Native) {
         if (NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)) {
