@@ -11944,6 +11944,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("reifiedInferenceEnumWithCaptured.kt")
+      public void testReifiedInferenceEnumWithCaptured() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/reifiedInferenceEnumWithCaptured.kt");
+      }
+
+      @Test
       @TestMetadata("reifiedToNothing.kt")
       public void testReifiedToNothing() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/reifiedToNothing.kt");
