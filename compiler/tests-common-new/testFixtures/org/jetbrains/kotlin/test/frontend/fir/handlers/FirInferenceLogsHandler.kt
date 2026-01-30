@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.utils.inferencelogs.FixationOnlyInferenceLogsDu
 import org.jetbrains.kotlin.test.utils.inferencelogs.FirInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.inferencelogs.MarkdownInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.inferencelogs.MermaidInferenceLogsDumper
+import org.jetbrains.kotlin.test.utils.latestLVTestDataFile
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import org.jetbrains.kotlin.test.utils.withExtension
 import java.io.File
@@ -49,11 +50,29 @@ class FirInferenceLogsHandler(
         testServices.assertions.assertAll(
             testServices.moduleStructure.allDirectives.inferenceLogsFormats.map { format ->
                 val dumper = format.dumper
-                val dumpFile = format.file
-                { testServices.assertions.assertEqualsToFile(dumpFile, dumper.renderDump(inferenceLoggers)) }
+                val renderedDump = dumper.renderDump(inferenceLoggers)
+                val originalFile = testServices.moduleStructure.originalTestDataFiles.first().originalTestDataFile
+                val originalDumpFile = originalFile.inferenceLogsFile(format)
+
+                if (testServices.moduleStructure.allDirectives.contains(USE_LATEST_LANGUAGE_VERSION)) {
+                    val latestLVFile = originalFile.latestLVTestDataFile
+                    val latestLVDumpFile = latestLVFile.inferenceLogsFile(format)
+
+                    if (originalDumpFile.exists() && originalDumpFile.readText().sanitize() == renderedDump.sanitize()) {
+                        return@map {
+                            testServices.assertions.assertFileDoesntExist(latestLVDumpFile) { "No need for a separate inference dump for `latestLV`, deleting..." }
+                        }
+                    }
+
+                    return@map { testServices.assertions.assertEqualsToFile(latestLVDumpFile, renderedDump) }
+                }
+
+                { testServices.assertions.assertEqualsToFile(originalDumpFile, renderedDump) }
             }
         )
     }
+
+    private fun String.sanitize() = trim().lines().joinToString("\n")
 
     private fun ensureNoStrayDumps() {
         val allowedFormats = testServices.moduleStructure.allDirectives.inferenceLogsFormats
@@ -74,9 +93,10 @@ class FirInferenceLogsHandler(
             } else {
                 ""
             }
-            val dumpFile = originalFile.withExtension("$additionalExtension$fileExtension")
-            return dumpFile
+            return originalFile.withExtension(additionalExtension).inferenceLogsFile(this)
         }
+
+    private fun File.inferenceLogsFile(format: InferenceLogsFormat): File = withExtension(format.fileExtension)
 
     private val InferenceLogsFormat.fileExtension: String
         get() = when (this) {
