@@ -59,6 +59,7 @@ val updateDefFileTasksPerFamily = if (HostManager.hostIsMac) {
     emptyMap()
 }
 
+val nativeBootstrapDistribution = registerNativeBootstrapDistribution()
 
 enabledTargets(platformManager).forEach { target ->
     val targetName = target.visibleName
@@ -77,7 +78,7 @@ enabledTargets(platformManager).forEach { target ->
             updateDefFileTasksPerFamily[target.family]?.let { dependsOn(it) }
 
             if (kotlinBuildProperties.buildPlatformLibsByBootstrapCompiler) {
-                this.compilerDistributionRoot.set(registerNativeBootstrapDistribution().map { it.root })
+                this.compilerDistributionRoot.set(nativeBootstrapDistribution.map { it.root })
             } else {
                 // Requires Native distribution with compiler JARs and stdlib klib.
                 this.compilerDistributionRoot.set(nativeDistribution.map { it.root })
