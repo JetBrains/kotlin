@@ -242,7 +242,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
-            "@JsNoRuntime annotations from expect must either be present with on actual as well, or the actual interface should be external.",
+            "@JsNoRuntime annotations from expect must either be present with on actual as well, or the actual interface must be external.",
         )
     }
 }
