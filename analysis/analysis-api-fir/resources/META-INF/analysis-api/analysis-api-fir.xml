@@ -63,6 +63,13 @@
 
     <registryKey
         defaultValue="true"
+        description="Enable automatic dangling file resolution mode calculation"
+        key="kotlin.analysis.autoDanglingResolutionMode"
+        restartRequired="false"
+    />
+
+    <registryKey
+        defaultValue="true"
         description="Perform cache clean-up when running out of RAM"
         key="kotlin.analysis.lowMemoryCacheCleanup"
         restartRequired="true"

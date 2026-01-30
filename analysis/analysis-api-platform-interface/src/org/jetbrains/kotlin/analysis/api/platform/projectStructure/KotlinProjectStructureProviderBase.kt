@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -48,8 +49,12 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
         return null
     }
 
-    @OptIn(KaExperimentalApi::class)
+    @OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
     private fun computeDefaultDanglingFileResolutionMode(file: KtFile): KaDanglingFileResolutionMode {
+        if (Registry.`is`("kotlin.analysis.autoDanglingResolutionMode", false)) {
+            return KaDanglingFileResolutionModeProvider.calculateMode(file)
+        }
+
         if (!file.isPhysical && !file.viewProvider.isEventSystemEnabled && file.copyOrigin != null) {
             return KaDanglingFileResolutionMode.IGNORE_SELF
         }
