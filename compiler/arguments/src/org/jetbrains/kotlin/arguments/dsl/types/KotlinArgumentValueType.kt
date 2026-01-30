@@ -181,5 +181,18 @@ class JvmDefaultType(
     }
 }
 
+/**
+ * A value which accepts [AbiStability] type.
+ */
+@Serializable
+class AbiStabilityType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<AbiStability?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<AbiStability> {
+    override fun stringRepresentation(value: AbiStability?): String? {
+        return value?.stabilityName?.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""

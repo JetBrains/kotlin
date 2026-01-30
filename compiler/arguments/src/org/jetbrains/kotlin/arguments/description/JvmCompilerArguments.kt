@@ -215,6 +215,11 @@ to force diagnostics to be reported.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{stable|unstable}".asReleaseDependent()
 
+        argumentType = AbiStabilityType(
+            isNullable = ReleaseDependent(true),
+            defaultValue = ReleaseDependent(null),
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
         )
