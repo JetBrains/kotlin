@@ -6544,7 +6544,7 @@
                                     "valueInVersions": []
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.LambdasType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []

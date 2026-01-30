@@ -702,6 +702,11 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         valueType = StringType.defaultNull
         valueDescription = "{class|indy}".asReleaseDependent()
 
+        argumentType = LambdasType(
+            isNullable = ReleaseDependent(true),
+            defaultValue = ReleaseDependent(null),
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_0,
         )

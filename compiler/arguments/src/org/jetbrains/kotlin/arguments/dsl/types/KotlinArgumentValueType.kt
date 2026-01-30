@@ -223,5 +223,18 @@ class JspecifyAnnotationsType(
     }
 }
 
+/**
+ * A value which accepts [Lambdas] type.
+ */
+@Serializable
+class LambdasType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<Lambdas?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<Lambdas> {
+    override fun stringRepresentation(value: Lambdas?): String? {
+        return value?.schemeName?.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
