@@ -9,8 +9,12 @@ import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.types.AssertionsModeType
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.CompatqualCheckerFrameworkAnnotationsType
+import org.jetbrains.kotlin.arguments.dsl.types.JspecifyAnnotationsType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
+import org.jetbrains.kotlin.arguments.dsl.types.SamConversionsType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 import org.jetbrains.kotlin.cli.common.arguments.Disables
@@ -38,7 +42,10 @@ private fun generateLevel(genDir: File, levelName: String) {
 }
 
 private fun findLevelWithParent(name: String): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?> {
-    fun find(level: KotlinCompilerArgumentsLevel, parent: KotlinCompilerArgumentsLevel?): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?>? {
+    fun find(
+        level: KotlinCompilerArgumentsLevel,
+        parent: KotlinCompilerArgumentsLevel?,
+    ): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?>? {
         if (level.name == name) return level to parent
         return level.nestedLevels.firstNotNullOfOrNull { find(it, level) }
     }
@@ -142,7 +149,7 @@ private fun generateArgumentsClass(
 private fun SmartPrinter.generateArgumentsClass(
     level: KotlinCompilerArgumentsLevel,
     parent: KotlinCompilerArgumentsLevel?,
-    info: ArgumentsInfo
+    info: ArgumentsInfo,
 ) {
     println(COPYRIGHT)
     println("package org.jetbrains.kotlin.cli.common.arguments")
@@ -223,7 +230,7 @@ private fun SmartPrinter.generateAdditionalSyntheticArguments(info: ArgumentsInf
     for (argument in info.additionalSyntheticArguments) {
         println("@get:Transient")
         println("var $argument: Boolean = true")
-        generateSetter(type = "Boolean", argument = null)
+        generateSetter(type = "Boolean", null)
         println()
     }
 }
@@ -343,7 +350,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
             val optionalValue = if (ifValue.isNotBlank()) ", \"$ifValue\"" else ""
             println("@Enables(LanguageFeature.$featureName$optionalValue)")
         }
-        is Disables if kind == AnnotationKind.LanguageFeature-> {
+        is Disables if kind == AnnotationKind.LanguageFeature -> {
             val feature = annotation.feature
             val ifValue = annotation.ifValueIs
             val featureName = feature.name
@@ -379,19 +386,26 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
 
 private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
     val name = argument.calculateName()
-    val type = when (val type = argument.valueType) {
+    val type = when (val type = argument.argumentType) {
         is BooleanType -> when (type.isNullable.current) {
             true -> "Boolean?"
             false -> "Boolean"
         }
         is StringArrayType -> "Array<String>?"
+        is AssertionsModeType, is JspecifyAnnotationsType, is SamConversionsType, is CompatqualCheckerFrameworkAnnotationsType -> "String?"
         else -> when (type.isNullable.current) {
             true -> "String?"
             false -> "String"
         }
     }
-    println("var $name: $type = ${argument.defaultValueInArgs}")
-    generateSetter(type, argument)
+
+    val defaultValue = when (argument.argumentType) {
+        is JspecifyAnnotationsType, is SamConversionsType, is CompatqualCheckerFrameworkAnnotationsType -> "null"
+        else -> argument.defaultValueInArgs
+    }
+
+    println("var $name: $type = $defaultValue")
+    generateSetter(type, defaultValue)
 }
 
 fun KotlinCompilerArgument.calculateName(): String = compilerName ?: name
@@ -399,13 +413,13 @@ fun KotlinCompilerArgument.calculateName(): String = compilerName ?: name
     .split("-").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
     .replaceFirstChar(Char::lowercaseChar)
 
-private fun SmartPrinter.generateSetter(type: String, argument: KotlinCompilerArgument?) {
+private fun SmartPrinter.generateSetter(type: String, defaultValue: String?) {
     withIndent {
         println("set(value) {")
         withIndent {
             println("checkFrozen()")
             if (type == "String?") {
-                println("field = if (value.isNullOrEmpty()) ${argument?.defaultValueInArgs} else value")
+                println("field = if (value.isNullOrEmpty()) $defaultValue else value")
             } else {
                 println("field = value")
             }
@@ -455,10 +469,10 @@ private fun SmartPrinter.generateDummyImpl() {
 
 private fun SmartPrinter.generateFreeArgsAndErrors() {
     println("var freeArgs: List<String> = emptyList()")
-    generateSetter("List<String>", argument = null)
+    generateSetter("List<String>", null)
     println()
     println("var internalArguments: List<ManualLanguageFeatureSetting> = emptyList()")
-    generateSetter("List<ManualLanguageFeatureSetting>", argument = null)
+    generateSetter("List<ManualLanguageFeatureSetting>", null)
     println()
     println("@Transient")
     println("var errors: ArgumentParseErrors? = null")
@@ -471,8 +485,8 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
 private val KotlinCompilerArgument.defaultValueInArgs: String
     get() {
         @Suppress("UNCHECKED_CAST")
-        val valueType = valueType as KotlinArgumentValueType<Any>
-        return valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
+        val argumentType = argumentType as KotlinArgumentValueType<Any>
+        return argumentType.stringRepresentation(argumentType.defaultValue.current) ?: "null"
     }
 
 private const val tripleQuote = "\"\"\""
