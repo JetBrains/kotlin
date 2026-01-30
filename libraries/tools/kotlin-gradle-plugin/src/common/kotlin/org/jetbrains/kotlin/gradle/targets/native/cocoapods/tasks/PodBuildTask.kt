@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.Cocoapods
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.genericPlatformDestination
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
@@ -111,7 +112,31 @@ abstract class PodBuildTask @Inject constructor(
         logger.info("Running xcodebuild command: ${podXcodeBuildCommand.joinToString(" ")}")
 
         // Run the xcodebuild command
-        runCommand(podXcodeBuildCommand, logger) {
+        runCommand(podXcodeBuildCommand, logger, errorHandler = { result ->
+            val output = result.stdErr.ifBlank { result.stdOut }
+
+            // Detect missing iOS/watchOS/tvOS platform
+            if (output.contains("is not installed") && output.contains("platform")) {
+                val platform = appleTarget.get().applePlatform
+                """
+                    |Xcode does not have the required $platform platform installed.
+                    |
+                    |To install the missing platform, run one of these commands:
+                    |    $ xcodebuild -downloadPlatform iOS
+                    |    $ xcodebuild -downloadPlatform watchOS
+                    |    $ xcodebuild -downloadPlatform tvOS
+                    |
+                    |Or open Xcode > Settings > Platforms and install the required platform.
+                    |
+                    |For more information: https://developer.apple.com/documentation/xcode/installing-additional-simulator-runtimes
+                    |
+                    |Original error:
+                    |$output
+                """.trimMargin()
+            } else {
+                null // Fall back to default error handling
+            }
+        }) {
             directory(podsXcodeProjDir.asFile.parentFile)
             environment().apply { // workaround for https://github.com/gradle/gradle/issues/27346
                 keys.filter {
