@@ -33,7 +33,7 @@ internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     testBuildDir: Path,
     archs: List<String> = listOf("arm64"),
     sdk: String = "iphoneos",
-    iphoneOsDeploymentTarget: String = "14.1"
+    iphoneOsDeploymentTarget: String = "14.1",
 ) = EnvironmentalVariables(
     "CONFIGURATION" to "Debug",
     "SDK_NAME" to sdk,
@@ -99,4 +99,108 @@ internal fun parseJsonToMap(jsonFile: Path): Map<String, Any> {
     val jsonText = jsonFile.readText()
     val typeToken = object : TypeToken<Map<String, Any>>() {}
     return Gson().fromJson(jsonText, typeToken.type)
+}
+
+/**
+ * Extracts symbol graph from a Swift module using `swift symbolgraph-extract`.
+ */
+private fun swiftSymbolgraphExtract(
+    workingDir: File,
+    moduleName: String,
+    target: String,
+    sdk: String = "iphoneos",
+    searchPaths: List<File> = emptyList(),
+): ProcessRunResult {
+    val sdkPathResult = runProcess(
+        listOf("xcrun", "--sdk", sdk, "--show-sdk-path"),
+        workingDir
+    )
+    require(sdkPathResult.isSuccessful) { "Failed to get SDK path: ${sdkPathResult.output}" }
+    val sdkPath = sdkPathResult.output.trim()
+
+    val outputDir = workingDir.resolve("symbolgraph-output")
+    outputDir.mkdirs()
+
+    val command = mutableListOf(
+        "xcrun", "swift", "symbolgraph-extract",
+        "-module-name", moduleName,
+        "-target", target,
+        "-output-dir", outputDir.absolutePath,
+        "-sdk", sdkPath
+    )
+    searchPaths.forEach { path ->
+        command.add("-I")
+        command.add(path.absolutePath)
+    }
+
+    return runProcess(command, workingDir)
+}
+
+/**
+ * Parses symbol graph JSON and extracts symbol names.
+ */
+private fun parseSymbolGraphNames(symbolGraphFile: File): Set<String> {
+    val json = symbolGraphFile.readText()
+    val typeToken = object : TypeToken<Map<String, Any>>() {}
+    val graph = Gson().fromJson<Map<String, Any>>(json, typeToken.type)
+
+    @Suppress("UNCHECKED_CAST")
+    val symbols = graph["symbols"] as? List<Map<String, Any>> ?: return emptySet()
+
+    return symbols.mapNotNull { symbol ->
+        @Suppress("UNCHECKED_CAST")
+        val names = symbol["names"] as? Map<String, Any>
+        names?.get("title") as? String
+    }.toSet()
+}
+
+/**
+ * Asserts that a Swift module contains expected symbols and does not contain unexpected ones.
+ */
+internal fun assertSwiftModuleSymbols(
+    workingDir: File,
+    moduleName: String,
+    target: String,
+    sdk: String = "iphoneos",
+    searchPaths: List<File>,
+    expectedSymbols: Set<String> = emptySet(),
+    unexpectedSymbols: Set<String> = emptySet(),
+) {
+    val result = swiftSymbolgraphExtract(workingDir, moduleName, target, sdk, searchPaths)
+    assert(result.isSuccessful) {
+        "symbolgraph-extract failed for module $moduleName: ${result.output}"
+    }
+
+    val outputDir = workingDir.resolve("symbolgraph-output")
+
+    // Try to find all symbol graph files (including extension files like Module@Extension.symbols.json)
+    val allSymbolGraphFiles = outputDir.listFiles()?.filter { it.name.endsWith(".symbols.json") } ?: emptyList()
+
+    assert(allSymbolGraphFiles.isNotEmpty()) {
+        "No symbol graph files found in: ${outputDir.absolutePath}. Search paths: $searchPaths"
+    }
+
+    // Collect symbols from all symbol graph files
+    val actualSymbols = mutableSetOf<String>()
+    allSymbolGraphFiles.forEach { file ->
+        actualSymbols.addAll(parseSymbolGraphNames(file))
+    }
+
+    expectedSymbols.forEach { expected ->
+        assert(expected in actualSymbols) {
+            val allFileContents = allSymbolGraphFiles.joinToString("\n---\n") { file ->
+                "${file.name}: ${file.readText().take(1000)}"
+            }
+            "Expected symbol '$expected' not found in module $moduleName.\n" +
+                    "Found symbol names: $actualSymbols\n" +
+                    "Symbol graph files found: ${allSymbolGraphFiles.map { it.name }}\n" +
+                    "File contents (truncated): $allFileContents"
+        }
+    }
+
+    unexpectedSymbols.forEach { unexpected ->
+        assert(unexpected !in actualSymbols) {
+            "Unexpected symbol '$unexpected' found in module $moduleName"
+        }
+    }
 }

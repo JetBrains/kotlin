@@ -181,6 +181,17 @@ class SwiftExportIT : KGPBaseTest() {
             assert(nmOutput.output.contains("com_github_jetbrains_swiftexport_functionToRemove").not()) {
                 "functionToRemove function is present in libShared.a"
             }
+
+            // Verify Swift module API surface using symbolgraph-extract
+            assertSwiftModuleSymbols(
+                workingDir = projectPath.toFile(),
+                moduleName = "Shared",
+                target = "arm64-apple-ios14.1",
+                sdk = "iphoneos",
+                searchPaths = listOf(builtProductsDir.toFile()),
+                expectedSymbols = setOf("barbarbar()"),
+                unexpectedSymbols = setOf("functionToRemove()")
+            )
         }
     }
 
@@ -376,6 +387,26 @@ class SwiftExportIT : KGPBaseTest() {
 
             assert(arm64Compilation.isSuccessful)
             assert(x64Compilation.isSuccessful)
+
+            // Verify Swift module API surface for arm64 (iosSimulatorArm64)
+            assertSwiftModuleSymbols(
+                workingDir = projectPath.toFile(),
+                moduleName = "Shared",
+                target = "arm64-apple-ios${sdkVersion.output.trim()}-simulator",
+                sdk = "iphonesimulator",
+                searchPaths = listOf(builtProductsDir),
+                expectedSymbols = setOf("iosSimulatorArm64Bar()")
+            )
+
+            // Verify Swift module API surface for x86_64 (iosX64)
+            assertSwiftModuleSymbols(
+                workingDir = projectPath.toFile(),
+                moduleName = "Shared",
+                target = "x86_64-apple-ios${sdkVersion.output.trim()}-simulator",
+                sdk = "iphonesimulator",
+                searchPaths = listOf(builtProductsDir),
+                expectedSymbols = setOf("iosX64Bar()")
+            )
         }
     }
 
@@ -567,6 +598,17 @@ class SwiftExportIT : KGPBaseTest() {
             ) {
                 assertTasksExecuted(":iosArm64DebugBuildSPMPackage")
             }
+
+            // Verify Swift module API surface using symbolgraph-extract
+            val builtProductsDir = projectPath.resolve("build/builtProductsDir")
+            assertSwiftModuleSymbols(
+                workingDir = projectPath.toFile(),
+                moduleName = "Shared",
+                target = "arm64-apple-ios17.0",
+                sdk = "iphoneos",
+                searchPaths = listOf(builtProductsDir.toFile()),
+                expectedSymbols = setOf("demo()")
+            )
         }
     }
 }
