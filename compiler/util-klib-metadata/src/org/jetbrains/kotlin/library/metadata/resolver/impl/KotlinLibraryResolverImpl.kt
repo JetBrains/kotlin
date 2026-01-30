@@ -81,9 +81,12 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         noEndorsedLibs: Boolean,
     ): List<KotlinLibrary> {
 
-        val userProvidedLibraries = unresolvedLibraries.asSequence()
-            .mapNotNull { searchPathResolver.resolve(it) }
-            .toList()
+        val userProvidedLibraries = unresolvedLibraries
+            .parallelStream()
+            .map { searchPathResolver.resolve(it) }
+            .filter { it != null }
+            .map { it!! }
+            .collect(java.util.stream.Collectors.toList())
 
         val legacyExternalToolResolveModeLibraries = runIf(legacyExternalToolResolveMode) {
             (searchPathResolver as? KotlinLibraryProperResolverWithAttributes)
@@ -160,28 +163,31 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         // constructed from the very beginning as well.
         val result = KotlinLibraryResolverResultImpl(rootLibraries)
 
-        val cache = mutableMapOf<Any, KotlinResolvedLibrary>()
+        val cache = java.util.concurrent.ConcurrentHashMap<Any, KotlinResolvedLibrary>()
         cache.putAll(rootLibraries.map { it.library.libraryFile.fileKey to it })
 
-        val processingQueue = ArrayDeque(rootLibraries)
-        while(processingQueue.isNotEmpty()) {
-            val currentLibrary = processingQueue.removeFirst()
-            currentLibrary.library.unresolvedDependencies(resolveManifestDependenciesLenient)
-                .forEach { unresolvedDependency ->
-                    if (!searchPathResolver.isProvidedByDefault(unresolvedDependency)) {
-                        searchPathResolver.resolve(unresolvedDependency)?.let { resolvedDependencyLibrary ->
-                            val fileKey = resolvedDependencyLibrary.libraryFile.fileKey
-                            if (fileKey in cache) {
-                                currentLibrary.addDependency(cache[fileKey]!!)
-                            } else {
-                                val newlyResolved = KotlinResolvedLibraryImpl(resolvedDependencyLibrary)
-                                cache[fileKey] = newlyResolved
-                                currentLibrary.addDependency(newlyResolved)
-                                processingQueue.add(newlyResolved)
+        var currentLevel: List<KotlinResolvedLibraryImpl> = rootLibraries
+        while (currentLevel.isNotEmpty()) {
+            val nextLevel = java.util.concurrent.ConcurrentLinkedQueue<KotlinResolvedLibraryImpl>()
+
+            currentLevel.parallelStream().forEach { currentLibrary ->
+                currentLibrary.library.unresolvedDependencies(resolveManifestDependenciesLenient)
+                    .parallelStream()
+                    .forEach { unresolvedDependency ->
+                        if (!searchPathResolver.isProvidedByDefault(unresolvedDependency)) {
+                            searchPathResolver.resolve(unresolvedDependency)?.let { resolvedDependencyLibrary ->
+                                val fileKey = resolvedDependencyLibrary.libraryFile.fileKey
+                                val resolvedLibrary = cache.computeIfAbsent(fileKey) {
+                                    val newLib = KotlinResolvedLibraryImpl(resolvedDependencyLibrary)
+                                    nextLevel.add(newLib)
+                                    newLib
+                                }
+                                currentLibrary.addDependency(resolvedLibrary)
                             }
                         }
                     }
-                }
+            }
+            currentLevel = nextLevel.toList()
         }
         return result
     }
