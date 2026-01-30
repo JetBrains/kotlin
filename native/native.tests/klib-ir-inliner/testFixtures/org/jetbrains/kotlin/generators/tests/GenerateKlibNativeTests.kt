@@ -152,7 +152,7 @@ fun main(args: Array<String>) {
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
-                model("box", excludeDirs = k1BoxTestDir)
+//                model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
             }
         }
