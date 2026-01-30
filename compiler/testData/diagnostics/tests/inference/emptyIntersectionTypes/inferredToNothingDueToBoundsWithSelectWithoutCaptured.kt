@@ -20,20 +20,20 @@ interface Traversable
 open class Entity : Traversable, SelfI<Entity>
 
 fun main() {
-//    when {
-//        "".hashCode() > 0 -> path
-//        else -> aStar.materialize()
-//    } // Ok in K1 and 2.2.0
-//
-//    when {
-//        "".hashCode() > 0 -> path
-//        else -> aEntity.materialize()
-//    } // Ok in K1, CCE in 2.2.0: class Entity cannot be cast to class Path
+    when {
+        "".hashCode() > 0 -> path
+        else -> aStar.materialize()
+    } // Ok in K1 and 2.2.0
 
-//    val x1 = when {
-//        "".hashCode() > 0 -> path
-//        else -> aStar.materialize()
-//    } // Ok in 2.2.0, CCE in K1: class Entity cannot be cast to class Path
+    when {
+        "".hashCode() > 0 -> path
+        else -> aEntity.materialize()
+    } // Ok in K1, CCE in 2.2.0: class Entity cannot be cast to class Path
+
+    val x1 = when {
+        "".hashCode() > 0 -> path
+        else -> aStar.materialize()
+    } // Ok in 2.2.0, CCE in K1: class Entity cannot be cast to class Path
 
     val x2 = when {
         "".hashCode() > 0 -> path

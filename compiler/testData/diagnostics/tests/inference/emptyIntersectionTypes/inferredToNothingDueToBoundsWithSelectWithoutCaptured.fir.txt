@@ -34,6 +34,33 @@ FILE: inferredToNothingDueToBoundsWithSelectWithoutCaptured.kt
 
     }
     public final fun main(): R|kotlin/Unit| {
+        when () {
+            CMP(>, String().R|kotlin/Any.hashCode|().R|kotlin/Int.compareTo|(Int(0))) ->  {
+                R|/path|
+            }
+            else ->  {
+                R|/aStar|.R|SubstitutionOverride</A.materialize: R|T|>|<R|CapturedType(*)|>()
+            }
+        }
+
+        when () {
+            CMP(>, String().R|kotlin/Any.hashCode|().R|kotlin/Int.compareTo|(Int(0))) ->  {
+                R|/path|
+            }
+            else ->  {
+                R|/aEntity|.R|SubstitutionOverride</A.materialize: R|T|>|<R|it(Entity & Path)|>()
+            }
+        }
+
+        lval x1: R|kotlin/Any| = when () {
+            CMP(>, String().R|kotlin/Any.hashCode|().R|kotlin/Int.compareTo|(Int(0))) ->  {
+                R|/path|
+            }
+            else ->  {
+                R|/aStar|.R|SubstitutionOverride</A.materialize: R|T|>|<R|CapturedType(*)|>()
+            }
+        }
+
         lval x2: R|Path| = when () {
             CMP(>, String().R|kotlin/Any.hashCode|().R|kotlin/Int.compareTo|(Int(0))) ->  {
                 R|/path|
