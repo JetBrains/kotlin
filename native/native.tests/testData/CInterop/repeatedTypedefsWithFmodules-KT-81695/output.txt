@@ -1,0 +1,26 @@
+library {
+  // module name: <dup.def>
+
+  library fragment {
+    // package name: dup
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall.Direct(name = "_bar")
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_dup1_bar")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external /* non-stable parameter names */ fun bar(arg0: kotlin/UByte /* = dup/char8_t^ */): kotlin/Unit
+
+      @kotlinx/cinterop/internal/CCall.Direct(name = "_foo")
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_dup0_foo")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external /* non-stable parameter names */ fun foo(arg0: kotlin/UByte /* = dup/char8_t^ */): kotlin/Unit
+
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public typealias char8_t = kotlin/UByte /* = kotlin/UByte */
+
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public typealias char8_tVar = kotlinx/cinterop/UByteVarOf<dup/char8_t^> /* = kotlinx/cinterop/UByteVarOf<kotlin/UByte /* = dup/char8_t^ */> */
+    }
+  }
+}

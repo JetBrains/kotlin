@@ -4,12 +4,42 @@ library {
   library fragment {
     // package name: forward
 
+    // class name: forward/Foo
+    // class name: forward/Foo.Companion
+    // class name: forward/FooMeta
+
+    @kotlinx/cinterop/ExternalObjCClass
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public open class forward/Foo : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "bar", encoding = "v16@0:8", isStret = false)
+      public open external fun bar(): kotlin/Unit
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object forward/Foo.Companion : forward/FooMeta, kotlinx/cinterop/ObjCClassOf<forward/Foo> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public open class forward/FooMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
     package {
 
       @kotlinx/cinterop/internal/CCall.Direct(name = "_consume")
       @kotlinx/cinterop/internal/CCall(id = "knifunptr_forward0_consume")
       @kotlinx/cinterop/ExperimentalForeignApi
-      public final external /* non-stable parameter names */ fun consume(arg0: objcnames/classes/Foo?): kotlin/Unit
+      public final external /* non-stable parameter names */ fun consume(arg0: forward/Foo?): kotlin/Unit
     }
   }
 }
