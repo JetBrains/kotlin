@@ -57,102 +57,12 @@ interface EvaluatorHandlerTrait {
             } while (true)
         }
     }
-
-    fun TestFile.getExpectedResult(): List<ParsedCodeMetaInfo> {
-        return globalMetadataInfoHandler.getExistingMetaInfosForFile(this)
-    }
 }
 
 interface IrInterpreterDumpHandlerTrait : EvaluatorHandlerTrait {
     context(_: AnalysisHandler<*>)
     fun processModule(module: TestModule) {
-        val irMetaInfo = processIrModule(module)
-        val firMetaInfo = testServices.firInterpreterResultsStorage[module] ?: irMetaInfo
-
-        val commonMetaInfo = irMetaInfo.map { (irTestFile, irTestData) ->
-            val firTestData = firMetaInfo[irTestFile] ?: return@map irTestFile to emptyList()
-            val common = irTestData.filter { irMetaInfo ->
-                firTestData.any { firMetaInfo ->
-                    firMetaInfo.start == irMetaInfo.start && firMetaInfo.end == irMetaInfo.end && firMetaInfo.description == irMetaInfo.description
-                }
-            }
-            irTestFile to common
-        }.toMap()
-
-        val irOnlyMetaInfo = irMetaInfo.map { (irTestFile, irTestData) ->
-            val commonTestData = commonMetaInfo[irTestFile] ?: return@map irTestFile to irTestData
-            val irOnly = irTestData.filter { irMetaInfo ->
-                !commonTestData.contains(irMetaInfo)
-            }
-            irTestFile to irOnly
-        }.toMap()
-
-        val firOnlyMetaInfo = firMetaInfo.map { (firTestFile, firTestData) ->
-            val commonTestData = commonMetaInfo[firTestFile] ?: return@map firTestFile to firTestData
-            val firOnly = firTestData.filter { irMetaInfo ->
-                !commonTestData.contains(irMetaInfo)
-            }
-            firTestFile to firOnly
-        }.toMap()
-
-        commonMetaInfo.forEach { (testFile, metaInfo) ->
-            globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfo)
-        }
-
-        irOnlyMetaInfo.forEach { (testFile, metaInfo) ->
-            globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfo.map { it.copy().apply { attributes.add("IR") } })
-        }
-
-        firOnlyMetaInfo.forEach { (testFile, metaInfo) ->
-            globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfo.map { it.copy().apply { attributes.add("FIR") } })
-        }
-    }
-
-    context(_: AnalysisHandler<*>)
-    fun processIrModule(module: TestModule): Map<TestFile, List<ParsedCodeMetaInfo>> {
-        if (!module.isSuppressedForK2() && testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicFrontend) {
-            return module.files.associateWith { testFile -> testFile.getExpectedResult() }
-        }
-
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val evaluatedConstTracker = configuration.get(CommonConfigurationKeys.EVALUATED_CONST_TRACKER)
-            ?: error("Couldn't find `EVALUATED_CONST_TRACKER` for IR interpreter dump handler")
-        val irModule = testServices.artifactsProvider.getArtifact(module, BackendKinds.IrBackend).irModuleFragment
-
-        return buildMap {
-            for ((irFile, testFile) in matchIrFileWithTestFile(irModule, module, testServices)) {
-                putAll(evaluatedConstTracker.processFile(testFile, irFile))
-            }
-        }
-    }
-
-    fun TestModule.isSuppressedForK2(): Boolean {
-        val ignoredBackends = this.directives[IGNORE_BACKEND_K2]
-        val targetBackend = testServices.defaultsProvider.targetBackend
-        return targetBackend in ignoredBackends || TargetBackend.ANY in ignoredBackends
-    }
-
-    private fun EvaluatedConstTracker.processFile(testFile: TestFile, irFile: IrFile): Map<TestFile, List<ParsedCodeMetaInfo>> {
-        val resultMap = mutableMapOf<TestFile, MutableList<ParsedCodeMetaInfo>>()
-        val rangesThatAreNotSupposedToBeRendered = testFile.extractRangesWithoutRender()
-        this.loadAllForTests(irFile.evaluatedConstTrackerKey)?.forEach { (pair, constantValue) ->
-            if (constantValue is AnnotationValue) return@forEach
-
-            val (start, end) = pair
-            if (rangesThatAreNotSupposedToBeRendered.any { start >= it.first && start <= it.second }) return@forEach
-
-            val message = constantValue.stringTemplateValue()
-            val metaInfo = ParsedCodeMetaInfo(
-                start, end,
-                attributes = mutableListOf(),
-                tag = if (constantValue is ErrorValue) "WAS_NOT_EVALUATED" else "EVALUATED",
-                description = StringUtil.escapeLineBreak(message)
-            )
-
-            resultMap.getOrPut(testFile) { mutableListOf() }.add(metaInfo)
-        }
-
-        return resultMap
+        // nothing
     }
 }
 
@@ -161,18 +71,14 @@ class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler
         get() = listOf(service(::FirInterpreterResultsStorage))
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        val results = buildMap {
-            info.partsForDependsOnModules.forEach {
-                it.firFilesByTestFile.forEach { (testFile, firFile) ->
-                    putAll(processFile(testFile, firFile))
-                }
+        info.partsForDependsOnModules.forEach {
+            it.firFilesByTestFile.forEach { (testFile, firFile) ->
+                processFile(testFile, firFile)
             }
         }
-        testServices.firInterpreterResultsStorage[module] = results
     }
 
-    private fun processFile(testFile: TestFile, firFile: FirFile): Map<TestFile, List<ParsedCodeMetaInfo>> {
-        val resultMap = mutableMapOf<TestFile, MutableList<ParsedCodeMetaInfo>>()
+    private fun processFile(testFile: TestFile, firFile: FirFile) {
         val rangesThatAreNotSupposedToBeRendered = testFile.extractRangesWithoutRender()
 
         fun render(result: FirElement, start: Int, end: Int) {
@@ -187,7 +93,7 @@ class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler
                 description = StringUtil.escapeLineBreak(message)
             )
 
-            resultMap.getOrPut(testFile) { mutableListOf() }.add(metaInfo)
+            globalMetadataInfoHandler.addMetadataInfosForFile(testFile, listOf(metaInfo))
         }
 
         fun render(result: FirLiteralExpression, source: KtSourceElement?) {
@@ -264,8 +170,6 @@ class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler
         }
 
         firFile.accept(EvaluateAndRenderExpressions(), Options(renderLiterals = false))
-
-        return resultMap
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
