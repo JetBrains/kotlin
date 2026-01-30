@@ -1040,7 +1040,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 val dereferencedCursor = dereferenceObjCProtocolCursorIfNeeded(cursor)
                 // FIXME: Check if CXCursor_ObjCProtocolDecl is correct?
                 if (dereferencedCursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl) {
-                    indexObjCClass(dereferencedCursor)
+                    indexObjCProtocol(dereferencedCursor)
                 }
             }
 
