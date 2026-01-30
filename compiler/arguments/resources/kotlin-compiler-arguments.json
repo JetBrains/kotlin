@@ -8260,7 +8260,7 @@
                                     "valueInVersions": []
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.JvmDefaultType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []

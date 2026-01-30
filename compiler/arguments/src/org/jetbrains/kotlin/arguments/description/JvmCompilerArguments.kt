@@ -183,6 +183,11 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         valueType = StringType.defaultNull
         valueDescription = "{enable|no-compatibility|disable}".asReleaseDependent()
 
+        argumentType = JvmDefaultType(
+            isNullable = ReleaseDependent(true),
+            defaultValue = ReleaseDependent(null),
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
             stabilizedVersion = KotlinReleaseVersion.v2_2_0,

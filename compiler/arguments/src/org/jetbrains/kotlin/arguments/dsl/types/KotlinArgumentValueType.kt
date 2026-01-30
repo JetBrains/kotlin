@@ -63,7 +63,7 @@ class KotlinVersionType(
         KotlinReleaseVersion.v1_9_0..KotlinReleaseVersion.v1_9_25 to KotlinVersion.v1_9,
         KotlinReleaseVersion.v2_0_0..KotlinReleaseVersion.v2_0_21 to KotlinVersion.v2_0,
         KotlinReleaseVersion.v2_1_0..KotlinReleaseVersion.v2_1_21 to KotlinVersion.v2_1,
-    )
+    ),
 ) : KotlinArgumentValueType<KotlinVersion> {
     override fun stringRepresentation(value: KotlinVersion?): String? {
         return value?.versionName?.valueOrNullStringLiteral
@@ -79,7 +79,7 @@ class KotlinJvmTargetType(
     override val defaultValue: ReleaseDependent<JvmTarget?> = ReleaseDependent(
         JvmTarget.jvm1_8,
         KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v1_9_20 to JvmTarget.jvm1_6
-    )
+    ),
 ) : KotlinArgumentValueType<JvmTarget> {
     override fun stringRepresentation(value: JvmTarget?): String? {
         return value?.targetName?.valueOrNullStringLiteral
@@ -124,7 +124,7 @@ class StringArrayType(
 
     override fun stringRepresentation(value: Array<String>?): String {
         if (value == null) return "null"
-        return value.joinToString(separator = ", ", prefix = "arrayOf(", postfix = ")") { "\"$it\""}
+        return value.joinToString(separator = ", ", prefix = "arrayOf(", postfix = ")") { "\"$it\"" }
     }
 }
 
@@ -164,6 +164,20 @@ class KlibIrInlinerModeType(
 ) : KotlinArgumentValueType<KlibIrInlinerMode> {
     override fun stringRepresentation(value: KlibIrInlinerMode?): String {
         return value?.modeState.valueOrNullStringLiteral
+    }
+}
+
+
+/**
+ * A value which accepts [JvmDefault] type.
+ */
+@Serializable
+class JvmDefaultType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<JvmDefault?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<JvmDefault> {
+    override fun stringRepresentation(value: JvmDefault?): String? {
+        return value?.methodName?.valueOrNullStringLiteral
     }
 }
 
