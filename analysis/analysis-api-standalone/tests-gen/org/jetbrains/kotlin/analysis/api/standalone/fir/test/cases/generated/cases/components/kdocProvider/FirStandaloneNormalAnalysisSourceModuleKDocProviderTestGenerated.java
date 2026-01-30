@@ -70,6 +70,24 @@ public class FirStandaloneNormalAnalysisSourceModuleKDocProviderTestGenerated ex
   }
 
   @Test
+  @TestMetadata("libraryBinaryJs.kt")
+  public void testLibraryBinaryJs() {
+    runTest("analysis/analysis-api/testData/components/kdocProvider/kdoc/libraryBinaryJs.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryBinaryJsExported.kt")
+  public void testLibraryBinaryJsExported() {
+    runTest("analysis/analysis-api/testData/components/kdocProvider/kdoc/libraryBinaryJsExported.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryBinaryJvm.kt")
+  public void testLibraryBinaryJvm() {
+    runTest("analysis/analysis-api/testData/components/kdocProvider/kdoc/libraryBinaryJvm.kt");
+  }
+
+  @Test
   @TestMetadata("override.kt")
   public void testOverride() {
     runTest("analysis/analysis-api/testData/components/kdocProvider/kdoc/override.kt");
