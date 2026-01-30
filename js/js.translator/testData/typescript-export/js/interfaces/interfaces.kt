@@ -50,6 +50,15 @@ interface WithTheCompanion {
     }
 }
 
+// KT-83930
+@JsExport
+interface KT83930 {
+    companion object {
+        @JsStatic
+        val hello: String = "Hello World"
+    }
+}
+
 @JsExport
 fun processOptionalInterface(a: OptionalFieldsInterface): String {
     return "${a.required}${a.notRequired ?: "unknown"}"
