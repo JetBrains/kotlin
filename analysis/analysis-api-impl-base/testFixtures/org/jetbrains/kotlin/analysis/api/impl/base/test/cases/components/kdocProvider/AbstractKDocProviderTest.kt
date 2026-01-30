@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -25,6 +28,14 @@ import org.jetbrains.kotlin.test.services.assertions
  * Reads the kdoc declarations provided in the source code and checks how they are rendered
  */
 abstract class AbstractKDocProviderTest : AbstractAnalysisApiBasedTest() {
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+
+        builder.apply {
+            useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
+        }
+    }
+
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyze(mainModule.ktModule) {
             copyAwareAnalyzeForTest(mainFile) { contextFile ->

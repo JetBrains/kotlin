@@ -74,6 +74,24 @@ public class FirIdeDependentAnalysisSourceModuleKDocProviderTestGenerated extend
   }
 
   @Test
+  @TestMetadata("libraryBinaryJs.kt")
+  public void testLibraryBinaryJs() {
+    run("libraryBinaryJs.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryBinaryJsExported.kt")
+  public void testLibraryBinaryJsExported() {
+    run("libraryBinaryJsExported.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryBinaryJvm.kt")
+  public void testLibraryBinaryJvm() {
+    run("libraryBinaryJvm.kt");
+  }
+
+  @Test
   @TestMetadata("override.kt")
   public void testOverride() {
     run("override.kt");
