@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
@@ -16,6 +17,7 @@ import javax.inject.Inject
 /**
  * Merge together existing benchmark reports from [inputReports] and store the merged report in [outputReport]
  */
+@CacheableTask
 open class MergeNativeReportsTask @Inject constructor(
         objectFactory: ObjectFactory,
 ) : DefaultTask() {
