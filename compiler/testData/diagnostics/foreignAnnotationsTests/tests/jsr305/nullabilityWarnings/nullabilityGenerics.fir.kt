@@ -34,7 +34,7 @@ class X<T>(t: T?) {
 
 fun test() {
     val a = A<String?>()
-    a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    a.foo(null)
 
     val b: String = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.bar()<!>
 }
