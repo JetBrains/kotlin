@@ -152,7 +152,9 @@ fun main(args: Array<String>) {
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
-                model("box", excludeDirs = k1BoxTestDir)
+                // TODO Uncomment the following line during work on OSIP-286 Migrate Kotlin Native box tests to common compiler test infra
+                //      Meanwhile let's not run these thousands of tests in `box` to make experimental test runs much faster.
+                // model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
             }
         }
