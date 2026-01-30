@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("UnstableApiUsage", "DEPRECATION_ERROR")
+@file:Suppress("UnstableApiUsage")
 
 package org.jetbrains.kotlin.gradle.scripting.internal
 
@@ -16,16 +16,20 @@ import org.gradle.api.artifacts.transform.*
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.buildtools.api.CompilationService
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
+import org.jetbrains.kotlin.buildtools.api.jvm.discoverScriptExtensionsOperation
 import org.jetbrains.kotlin.compilerRunner.btapi.SharedApiClassesClassLoaderProvider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -38,6 +42,7 @@ import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
 import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
+import org.jetbrains.kotlin.gradle.utils.use
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
@@ -137,6 +142,9 @@ private fun configureDiscoveryTransformation(
 
 @CacheableTransform
 internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<DiscoverScriptExtensionsTransformAction.Parameters> {
+
+    private val logger = Logging.getLogger(DiscoverScriptExtensionsTransformAction::class.java)
+
     interface Parameters : TransformParameters {
         @get:Internal
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
@@ -155,9 +163,17 @@ internal abstract class DiscoverScriptExtensionsTransformAction : TransformActio
 
         val classLoader = parameters.classLoadersCachingService.get()
             .getClassLoader(parameters.compilerClasspath.toList(), SharedApiClassesClassLoaderProvider)
-        val compilationService = CompilationService.loadImplementation(classLoader)
+        val kotlinToolchains = KotlinToolchains.loadImplementation(classLoader)
 
-        val extensions = compilationService.getCustomKotlinScriptFilenameExtensions(listOf(input))
+        val extensions = kotlinToolchains.jvm.discoverScriptExtensionsOperation(listOf(input.toPath())).let { operation ->
+            kotlinToolchains.createBuildSession().use { session ->
+                session.executeOperation(
+                    operation,
+                    kotlinToolchains.createInProcessExecutionPolicy(),
+                    GradleKotlinLogger(logger)
+                )
+            }
+        }
 
         if (extensions.isNotEmpty()) {
             val outputFile = outputs.file("${input.nameWithoutExtension}.discoveredScriptsExtensions.txt")
