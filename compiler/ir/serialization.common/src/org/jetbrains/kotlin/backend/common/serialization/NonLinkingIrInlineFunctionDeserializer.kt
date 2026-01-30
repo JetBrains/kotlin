@@ -145,7 +145,7 @@ class NonLinkingIrInlineFunctionDeserializer(
          */
         val reversedSignatureIndex: Map<IdSignature, Int> = run {
             val fileStream = inlinableFunctionsIr.irFile(0).codedInputStream
-            val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
+            val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
             fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
         }
 

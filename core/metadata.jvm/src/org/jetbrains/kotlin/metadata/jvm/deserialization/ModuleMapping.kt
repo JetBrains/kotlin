@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.metadata.jvm.deserialization
 
+import org.jetbrains.kotlin.metadata.ExtensionRegistryLite
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.isKotlin1Dot4OrLater
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.io.*
 
 class ModuleMapping private constructor(
@@ -80,7 +80,7 @@ class ModuleMapping private constructor(
             }
 
             // "Builtin" extension registry is needed in order to deserialize annotations on optional annotation classes and their members.
-            val extensions = ExtensionRegistryLite.newInstance().apply(BuiltInsProtoBuf::registerAllExtensions)
+            val extensions = ExtensionRegistryLite(BuiltInsProtoBuf::registerAllExtensions)
             val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream, extensions) ?: return EMPTY
             val result = linkedMapOf<String, PackageParts>()
 

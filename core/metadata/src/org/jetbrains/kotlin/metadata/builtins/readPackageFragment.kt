@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.metadata.builtins
 
+import org.jetbrains.kotlin.metadata.ExtensionRegistryLite
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.io.InputStream
 
 fun InputStream.readBuiltinsPackageFragment(): Pair<ProtoBuf.PackageFragment?, BuiltInsBinaryVersion> =
@@ -15,7 +15,7 @@ fun InputStream.readBuiltinsPackageFragment(): Pair<ProtoBuf.PackageFragment?, B
         val proto =
             if (version.isCompatibleWithCurrentCompilerVersion()) ProtoBuf.PackageFragment.parseFrom(
                 stream,
-                ExtensionRegistryLite.newInstance().apply(BuiltInsProtoBuf::registerAllExtensions)
+                ExtensionRegistryLite(BuiltInsProtoBuf::registerAllExtensions)
             )
             else null
         proto to version

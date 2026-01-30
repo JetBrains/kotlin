@@ -47,7 +47,7 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         val lib = libs.last()
         val ir = lib.irOrFail
         val fileSize = ir.irFileCount
-        val extReg = ExtensionRegistryLite.newInstance()
+        val extReg = ExtensionRegistryLite.getEmptyRegistry()
 
         val result = ArrayList<String>(fileSize)
 

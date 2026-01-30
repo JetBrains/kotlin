@@ -74,7 +74,7 @@ internal class KotlinLoadedLibraryHeader(
         get() = library.jsOutputName
 
     private val sourceFiles by lazy(LazyThreadSafetyMode.NONE) {
-        val extReg = ExtensionRegistryLite.newInstance()
+        val extReg = ExtensionRegistryLite.getEmptyRegistry()
         val ir = library.irOrFail
         val sources = (0 until ir.irFileCount).map {
             val fileProto = IrFile.parseFrom(ir.irFile(it).codedInputStream, extReg)
