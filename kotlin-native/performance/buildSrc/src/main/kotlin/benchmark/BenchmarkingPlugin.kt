@@ -90,8 +90,12 @@ abstract class BenchmarkingPlugin : Plugin<Project> {
             reportFile.set(layout.buildDirectory.file("nativeBenchResults.json"))
             verbose.convention(logger.isInfoEnabled)
             baseOnly.convention(project.baseOnly)
-            filter.convention(project.filter)
-            filterRegex.convention(project.filterRegex)
+            if (project.dryRun) {
+                filterRegex.set("^$")
+            } else {
+                filter.convention(project.filter)
+                filterRegex.convention(project.filterRegex)
+            }
             warmupCount.convention(nativeWarmup)
             repeatCount.convention(attempts)
             repeatingType.set(benchmark.repeatingType)
