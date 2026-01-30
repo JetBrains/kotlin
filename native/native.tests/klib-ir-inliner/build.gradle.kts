@@ -54,10 +54,6 @@ projectTests {
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
 
         extensions.configure<TestInputsCheckExtension> {
-            // add file permission for running native compiler backend from kotlin-native-compiler-embeddable.jar on CI
-            // TODO consider using NativeArgsProvider.compilerClasspath instead of hardcoded path
-            val embeddableCompiler = rootProject.projectDir.resolve("kotlin-native/dist/konan/lib/kotlin-native-compiler-embeddable.jar")
-            extraPermissions.add("""permission java.io.FilePermission "$embeddableCompiler", "read";""")
             // add link permission to load `libcallbacks.dylib`, via possible invocation of `JvmUtilsKt.createTempDirWithLibrary()` which invokes `Files.createLink()`
             extraPermissions.add("""permission java.nio.file.LinkPermission "hard";""")
         }
