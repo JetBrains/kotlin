@@ -24,19 +24,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) Kotlinx_serialization_coreMapLikeSerializer<id, id, id, MutableDictionary<id, id> *> * _Nullable foo __attribute__((swift_name("foo")));
+@property (class, readonly) Kotlinx_serialization_coreMapLikeSerializer<id, id, id, MutableDictionary<id, id> *> * _Nullable foo;
 @end
 
 @protocol Kotlinx_serialization_coreSerializationStrategy
 @required
 - (void)serializeEncoder:(id<Kotlinx_serialization_coreEncoder>)encoder value:(id _Nullable)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) id<Kotlinx_serialization_coreSerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) id<Kotlinx_serialization_coreSerialDescriptor> descriptor;
 @end
 
 @protocol Kotlinx_serialization_coreDeserializationStrategy
 @required
 - (id _Nullable)deserializeDecoder:(id<Kotlinx_serialization_coreDecoder>)decoder __attribute__((swift_name("deserialize(decoder:)")));
-@property (readonly) id<Kotlinx_serialization_coreSerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) id<Kotlinx_serialization_coreSerialDescriptor> descriptor;
 @end
 
 @protocol Kotlinx_serialization_coreKSerializer <Kotlinx_serialization_coreSerializationStrategy, Kotlinx_serialization_coreDeserializationStrategy>
@@ -53,7 +53,7 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-- (Builder _Nullable)builder __attribute__((swift_name("builder()")));
+- (Builder _Nullable)builder;
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
@@ -126,9 +126,9 @@ __attribute__((objc_subclassing_restricted))
 */
 - (void)readElementDecoder:(id<Kotlinx_serialization_coreCompositeDecoder>)decoder index:(int32_t)index builder:(MutableDictionary<id, id> *)builder checkIndex:(BOOL)checkIndex __attribute__((swift_name("readElement(decoder:index:builder:checkIndex:)")));
 - (void)serializeEncoder:(id<Kotlinx_serialization_coreEncoder>)encoder value:(Collection _Nullable)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) id<Kotlinx_serialization_coreSerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
-@property (readonly) id<Kotlinx_serialization_coreKSerializer> keySerializer __attribute__((swift_name("keySerializer")));
-@property (readonly) id<Kotlinx_serialization_coreKSerializer> valueSerializer __attribute__((swift_name("valueSerializer")));
+@property (readonly) id<Kotlinx_serialization_coreSerialDescriptor> descriptor;
+@property (readonly) id<Kotlinx_serialization_coreKSerializer> keySerializer;
+@property (readonly) id<Kotlinx_serialization_coreKSerializer> valueSerializer;
 @end
 
 @protocol Kotlinx_serialization_coreEncoder
@@ -149,13 +149,13 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (void)encodeNotNullMark __attribute__((swift_name("encodeNotNullMark()")));
+- (void)encodeNotNullMark;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (void)encodeNull __attribute__((swift_name("encodeNull()")));
+- (void)encodeNull;
 
 /**
  * @note annotations
@@ -165,7 +165,7 @@ __attribute__((objc_subclassing_restricted))
 - (void)encodeSerializableValueSerializer:(id<Kotlinx_serialization_coreSerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeSerializableValue(serializer:value:)")));
 - (void)encodeShortValue:(int16_t)value __attribute__((swift_name("encodeShort(value:)")));
 - (void)encodeStringValue:(NSString *)value __attribute__((swift_name("encodeString(value:)")));
-@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule;
 @end
 
 @protocol Kotlinx_serialization_coreSerialDescriptor
@@ -205,58 +205,58 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) NSArray<id<KotlinAnnotation>> *annotations __attribute__((swift_name("annotations")));
+@property (readonly) NSArray<id<KotlinAnnotation>> *annotations;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) int32_t elementsCount __attribute__((swift_name("elementsCount")));
-@property (readonly) BOOL isInline __attribute__((swift_name("isInline")));
+@property (readonly) int32_t elementsCount;
+@property (readonly) BOOL isInline;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) BOOL isNullable __attribute__((swift_name("isNullable")));
+@property (readonly) BOOL isNullable;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) Kotlinx_serialization_coreSerialKind *kind __attribute__((swift_name("kind")));
+@property (readonly) Kotlinx_serialization_coreSerialKind *kind;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) NSString *serialName __attribute__((swift_name("serialName")));
+@property (readonly) NSString *serialName;
 @end
 
 @protocol Kotlinx_serialization_coreDecoder
 @required
 - (id<Kotlinx_serialization_coreCompositeDecoder>)beginStructureDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor __attribute__((swift_name("beginStructure(descriptor:)")));
-- (BOOL)decodeBoolean __attribute__((swift_name("decodeBoolean()")));
-- (int8_t)decodeByte __attribute__((swift_name("decodeByte()")));
-- (unichar)decodeChar __attribute__((swift_name("decodeChar()")));
-- (double)decodeDouble __attribute__((swift_name("decodeDouble()")));
+- (BOOL)decodeBoolean;
+- (int8_t)decodeByte;
+- (unichar)decodeChar;
+- (double)decodeDouble;
 - (int32_t)decodeEnumEnumDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)enumDescriptor __attribute__((swift_name("decodeEnum(enumDescriptor:)")));
-- (float)decodeFloat __attribute__((swift_name("decodeFloat()")));
+- (float)decodeFloat;
 - (id<Kotlinx_serialization_coreDecoder>)decodeInlineDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor __attribute__((swift_name("decodeInline(descriptor:)")));
-- (int32_t)decodeInt __attribute__((swift_name("decodeInt()")));
-- (int64_t)decodeLong __attribute__((swift_name("decodeLong()")));
+- (int32_t)decodeInt;
+- (int64_t)decodeLong;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (BOOL)decodeNotNullMark __attribute__((swift_name("decodeNotNullMark()")));
+- (BOOL)decodeNotNullMark;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (KotlinNothing * _Nullable)decodeNull __attribute__((swift_name("decodeNull()")));
+- (KotlinNothing * _Nullable)decodeNull;
 
 /**
  * @note annotations
@@ -264,15 +264,15 @@ __attribute__((objc_subclassing_restricted))
 */
 - (id _Nullable)decodeNullableSerializableValueDeserializer:(id<Kotlinx_serialization_coreDeserializationStrategy>)deserializer __attribute__((swift_name("decodeNullableSerializableValue(deserializer:)")));
 - (id _Nullable)decodeSerializableValueDeserializer:(id<Kotlinx_serialization_coreDeserializationStrategy>)deserializer __attribute__((swift_name("decodeSerializableValue(deserializer:)")));
-- (int16_t)decodeShort __attribute__((swift_name("decodeShort()")));
-- (NSString *)decodeString __attribute__((swift_name("decodeString()")));
-@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+- (int16_t)decodeShort;
+- (NSString *)decodeString;
+@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule;
 @end
 
 @protocol KotlinIterator
 @required
-- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
-- (id _Nullable)next __attribute__((swift_name("next()")));
+- (BOOL)hasNext;
+- (id _Nullable)next;
 @end
 
 @protocol Kotlinx_serialization_coreCompositeDecoder
@@ -298,18 +298,18 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (BOOL)decodeSequentially __attribute__((swift_name("decodeSequentially()")));
+- (BOOL)decodeSequentially;
 - (id _Nullable)decodeSerializableElementDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index deserializer:(id<Kotlinx_serialization_coreDeserializationStrategy>)deserializer previousValue:(id _Nullable)previousValue __attribute__((swift_name("decodeSerializableElement(descriptor:index:deserializer:previousValue:)")));
 - (int16_t)decodeShortElementDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeShortElement(descriptor:index:)")));
 - (NSString *)decodeStringElementDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeStringElement(descriptor:index:)")));
 - (void)endStructureDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor __attribute__((swift_name("endStructure(descriptor:)")));
-@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule;
 @end
 
 @protocol KotlinMapEntry
 @required
-@property (readonly) id _Nullable key __attribute__((swift_name("key")));
-@property (readonly) id _Nullable value __attribute__((swift_name("value")));
+@property (readonly) id _Nullable key;
+@property (readonly) id _Nullable value;
 @end
 
 @protocol Kotlinx_serialization_coreCompositeEncoder
@@ -338,7 +338,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
 - (BOOL)shouldEncodeElementDefaultDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("shouldEncodeElementDefault(descriptor:index:)")));
-@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule;
 @end
 
 @interface Kotlinx_serialization_coreSerializersModule : Base
@@ -378,8 +378,8 @@ __attribute__((objc_subclassing_restricted))
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
 @interface Kotlinx_serialization_coreSerialKind : Base
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
+- (NSUInteger)hash;
+- (NSString *)description;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -426,8 +426,8 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.SinceKotlin(version="1.1")
 */
 - (BOOL)isInstanceValue:(id _Nullable)value __attribute__((swift_name("isInstance(value:)")));
-@property (readonly) NSString * _Nullable qualifiedName __attribute__((swift_name("qualifiedName")));
-@property (readonly) NSString * _Nullable simpleName __attribute__((swift_name("simpleName")));
+@property (readonly) NSString * _Nullable qualifiedName;
+@property (readonly) NSString * _Nullable simpleName;
 @end
 
 #pragma pop_macro("_Nullable_result")

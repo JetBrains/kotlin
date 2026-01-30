@@ -24,14 +24,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) KotlinStringBuilder *a __attribute__((swift_name("a")));
+@property (class, readonly) KotlinStringBuilder *a;
 @end
 
 @protocol KotlinCharSequence
 @required
 - (unichar)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
 - (id)subSequenceStartIndex:(int32_t)startIndex endIndex:(int32_t)endIndex __attribute__((swift_name("subSequence(startIndex:endIndex:)")));
-@property (readonly) int32_t length __attribute__((swift_name("length")));
+@property (readonly) int32_t length;
 @end
 
 @protocol KotlinAppendable
@@ -58,7 +58,7 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface KotlinStringBuilder : Base <KotlinCharSequence, KotlinAppendable>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithContent:(id)content __attribute__((swift_name("init(content:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCapacity:(int32_t)capacity __attribute__((swift_name("init(capacity:)"))) __attribute__((objc_designated_initializer));
@@ -155,7 +155,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)appendRangeValue:(id)value startIndex:(int32_t)startIndex endIndex_:(int32_t)endIndex __attribute__((swift_name("appendRange(value:startIndex:endIndex_:)")));
-- (int32_t)capacity __attribute__((swift_name("capacity()")));
+- (int32_t)capacity;
 
 /**
  * @note annotations
@@ -287,7 +287,7 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlin.IgnorableReturnValue
 */
-- (KotlinStringBuilder *)reverse __attribute__((swift_name("reverse()")));
+- (KotlinStringBuilder *)reverse;
 - (void)setIndex:(int32_t)index value:(unichar)value __attribute__((swift_name("set(index:value:)")));
 - (void)setLengthNewLength:(int32_t)newLength __attribute__((swift_name("setLength(newLength:)")));
 
@@ -311,9 +311,9 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.SinceKotlin(version="1.4")
 */
 - (void)toCharArrayDestination:(KotlinCharArray *)destination destinationOffset:(int32_t)destinationOffset startIndex:(int32_t)startIndex endIndex:(int32_t)endIndex __attribute__((swift_name("toCharArray(destination:destinationOffset:startIndex:endIndex:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
-- (void)trimToSize __attribute__((swift_name("trimToSize()")));
-@property (readonly) int32_t length __attribute__((swift_name("length")));
+- (NSString *)description;
+- (void)trimToSize;
+@property (readonly) int32_t length;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -323,22 +323,22 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (unichar)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (KotlinCharIterator *)iterator __attribute__((swift_name("iterator()")));
+- (KotlinCharIterator *)iterator;
 - (void)setIndex:(int32_t)index value:(unichar)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 @protocol KotlinIterator
 @required
-- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
-- (id _Nullable)next __attribute__((swift_name("next()")));
+- (BOOL)hasNext;
+- (id _Nullable)next;
 @end
 
 @interface KotlinCharIterator : Base <KotlinIterator>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (id)next __attribute__((swift_name("next()")));
-- (unichar)nextChar __attribute__((swift_name("nextChar()")));
+- (id)next;
+- (unichar)nextChar;
 @end
 
 #pragma pop_macro("_Nullable_result")

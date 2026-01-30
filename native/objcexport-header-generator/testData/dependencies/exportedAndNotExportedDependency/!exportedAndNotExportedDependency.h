@@ -138,32 +138,32 @@ __attribute__((swift_name("KotlinBoolean")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("MyLibraryA")))
 @interface MyAppMyLibraryA : MyAppBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)returnInt __attribute__((swift_name("returnInt()")));
-- (MyAppMyLibraryA *)returnMe __attribute__((swift_name("returnMe()")));
+- (int32_t)returnInt;
+- (MyAppMyLibraryA *)returnMe;
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("FooKt")))
 @interface MyAppFooKt : MyAppBase
-+ (MyAppTLBMyLibraryB *)foo __attribute__((swift_name("foo()")));
++ (MyAppTLBMyLibraryB *)foo;
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TopLevelCallablesKt")))
 @interface MyAppTopLevelCallablesKt : MyAppBase
-+ (int32_t)topLevelFunction __attribute__((swift_name("topLevelFunction()")));
-@property (class, readonly) int32_t topLevelProperty __attribute__((swift_name("topLevelProperty")));
++ (int32_t)topLevelFunction;
+@property (class, readonly) int32_t topLevelProperty;
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TLBMyLibraryB")))
 @interface MyAppTLBMyLibraryB : MyAppBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)returnInt __attribute__((swift_name("returnInt()")));
-- (MyAppTLBMyLibraryB *)returnMe __attribute__((swift_name("returnMe()")));
+- (int32_t)returnInt;
+- (MyAppTLBMyLibraryB *)returnMe;
 @end
 
 @interface MyAppBase (MyAppBaseCopying) <NSCopying>

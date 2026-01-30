@@ -22,13 +22,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)doAlloc __attribute__((swift_name("doAlloc()")));
-- (Foo *)doCopy __attribute__((swift_name("doCopy()")));
-- (Foo *)doInit __attribute__((swift_name("doInit()")));
-- (Foo *)doMutableCopy __attribute__((swift_name("doMutableCopy()")));
-- (Foo *)doNew __attribute__((swift_name("doNew()")));
+- (void)doAlloc;
+- (Foo *)doCopy;
+- (Foo *)doInit;
+- (Foo *)doMutableCopy;
+- (Foo *)doNew;
 @end
 
 #pragma pop_macro("_Nullable_result")
