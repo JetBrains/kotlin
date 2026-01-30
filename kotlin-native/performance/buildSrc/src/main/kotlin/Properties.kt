@@ -1,10 +1,6 @@
 package org.jetbrains.kotlin
 
 import org.gradle.api.Project
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.options.Option
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import java.io.File
 import java.util.*
@@ -26,6 +22,15 @@ val Project.nativeWarmup: Int
  */
 val Project.attempts: Int
     get() = (property("attempts") as String).toInt()
+
+/**
+ * When set, the benchmarks won't be executed, but everything will be built.
+ *
+ * This can be used prior to running many benchmarks to make sure no building task
+ * interferes with the benchmarks execution
+ */
+val Project.dryRun: Boolean
+    get() = (findProperty("dryRun") as String?)?.let { it.isEmpty() || it == "true" } ?: false
 
 /**
  * Space-separated additional compiler arguments for each benchmark
