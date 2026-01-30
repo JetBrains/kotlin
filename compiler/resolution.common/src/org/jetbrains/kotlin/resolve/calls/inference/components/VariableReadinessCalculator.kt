@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.VariableForFixation
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator.TypeVariableFixationReadinessQuality as Q
 
@@ -33,16 +32,19 @@ class VariableReadinessCalculator(
         HAS_PROPER_CONSTRAINTS,
         HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY,
 
-        // *** A prioritizer needed for KT-74999 (the Traversable vs. Path choice) ***
-        // Currently, only used in 2.2+, and helps with self-type based declared upper bounds in particular situations.
-        // Captured types are difficult to manipulate, so with `T <: Captured(...)` AND `T <: K` it's better to fix `T`
-        // earlier than `K :> SomeRegularType` / `K <: SomeRegularType`, as otherwise, we will have
-        // `T <: Captured(...) & SomeRegularType`, which is often problematic.
-        // TODO: it would be probably better to use READY_FOR_FIXATION_UPPER here and to have
-        //  it prioritized in comparison with READY_FOR_FIXATION_LOWER (however, KT-41934 example currently prevents it)
-        HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES,
-
         // *** The following block constitutes what "ready for fixation" used to mean in the old fixation code ***
+        // Theoretically, materialize-like functions should be capable of returning
+        // an instance of any arbitrary type, including `Nothing`, which is not possible,
+        // but in practice, there are reasonable materialize-like implementations that we
+        // want to support, and we need to make sure our type inference doesn't infer their
+        // return types into something too specific that the actual implementation won't
+        // be able to provide (see KT-74999 - the Traversable vs. Path choice).
+        // The "self-sufficiency" condition prevents attempts to fix materialize variables
+        // "too early" (see `k2StubTypeLeak.kt`).
+        IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE,
+
+        // Prioritizes the flow of type information between parallel branches in cases like
+        // the `arg ?: MyClass()` choice (`inferredToProjectionInsteadOfParameter.kt`).
         HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT,
         HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES,
 
@@ -111,13 +113,19 @@ class VariableReadinessCalculator(
         readiness[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints() || areAllProperConstraintsSelfTypeBased
         readiness[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)
 
-        readiness[Q.HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES] = areAllProperConstraintsSelfTypeBased
-                && fixationEnhancementsIn22
-                && !isReified() && hasDirectConstraintToNotFixedRelevantVariable()
+        val hasDependencyToOtherTypeVariables = hasDependencyToOtherTypeVariables()
+        val isMaterializeVariable = this in c.returnTypeTypeVariables
+                && true == c.notFixedTypeVariables[this]?.constraints?.none { it.kind.isLower() }
+                && true == c.notFixedTypeVariables[this]?.constraints?.any {
+            it.kind.isUpper() && (it.isProperArgumentConstraint() || it.isProperSelfTypeConstraint(this))
+        }
+
+        readiness[Q.IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE] = isMaterializeVariable
+                && !hasDependencyToOtherTypeVariables
 
         readiness[Q.HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT] =
             readiness[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased
-        readiness[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables()
+        readiness[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables
         readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS] = !allConstraintsTrivialOrNonProper()
         readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] =
             !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()

@@ -1,11 +1,11 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
 // DUMP_INFERENCE_LOGS: FIXATION
 
 enum class MyEnum { A, B }
 
 fun test() = when {
-    true -> enumValueOf("A")
+    true -> <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>enumValueOf<!>("A")
     else -> MyEnum.B
 }
 

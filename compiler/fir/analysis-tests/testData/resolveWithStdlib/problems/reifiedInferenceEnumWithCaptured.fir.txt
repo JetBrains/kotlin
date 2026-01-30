@@ -16,10 +16,10 @@ FILE: reifiedInferenceEnumWithCaptured.kt
             public get(): R|kotlin/enums/EnumEntries<MyEnum>|
 
     }
-    public final fun test(): R|MyEnum| {
+    public final fun test(): R|kotlin/Enum<*>| {
         ^test when () {
             Boolean(true) ->  {
-                R|kotlin/enumValueOf|<R|MyEnum|>(String(A))
+                R|kotlin/enumValueOf|<R|CapturedType(*)|>(String(A))
             }
             else ->  {
                 Q|MyEnum|.R|/MyEnum.B|

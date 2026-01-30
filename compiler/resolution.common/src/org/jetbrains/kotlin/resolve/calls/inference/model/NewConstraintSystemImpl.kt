@@ -168,6 +168,10 @@ class NewConstraintSystemImpl(
         storage.postponedTypeVariables += variable
     }
 
+    override fun markReturnTypeTypeVariable(variable: TypeVariableMarker) {
+        storage.returnTypeTypeVariables += variable.defaultType().typeConstructor()
+    }
+
     override fun markCouldBeResolvedWithUnrestrictedBuilderInference() {
         couldBeResolvedWithUnrestrictedBuilderInference = true
     }
@@ -446,6 +450,8 @@ class NewConstraintSystemImpl(
         // K1-only, so merge isn't important here
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
 
+        storage.returnTypeTypeVariables.addAll(otherSystem.returnTypeTypeVariables)
+
         hasContradictionInForkPointsCache = null
     }
 
@@ -554,6 +560,12 @@ class NewConstraintSystemImpl(
         get() {
             checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
             return storage.postponedTypeVariables
+        }
+
+    override val returnTypeTypeVariables: Set<TypeConstructorMarker>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.returnTypeTypeVariables
         }
 
     override val outerSystemVariablesPrefixSize: Int
