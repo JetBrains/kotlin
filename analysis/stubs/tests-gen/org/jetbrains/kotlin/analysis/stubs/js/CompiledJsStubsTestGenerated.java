@@ -3272,6 +3272,18 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     }
 
     @Test
+    @TestMetadata("ExportedKdoc.kt")
+    public void testExportedKdoc() {
+      run("ExportedKdoc.kt");
+    }
+
+    @Test
+    @TestMetadata("ExportedKdocSingleLine.kt")
+    public void testExportedKdocSingleLine() {
+      run("ExportedKdocSingleLine.kt");
+    }
+
+    @Test
     @TestMetadata("HttpLink.kt")
     public void testHttpLink() {
       run("HttpLink.kt");

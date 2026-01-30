@@ -1,0 +1,456 @@
+KtFile: ExportedKdoc.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// LANGUAGE: +ExportKDocDocumentationToKlib')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Class')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' documentation.')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+        KDOC_TAG
+          PsiElement(KDOC_TAG_NAME)('@author')
+          PsiWhiteSpace(' ')
+          PsiElement(KDOC_TEXT)('Me myself.')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+        KDOC_TAG
+          PsiElement(KDOC_TAG_NAME)('@since')
+          PsiWhiteSpace(' ')
+          PsiElement(KDOC_TEXT)('Forever.')
+          PsiWhiteSpace('\n ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+      KDOC_SECTION
+        KDOC_TAG
+          PsiElement(KDOC_TAG_NAME)('@property')
+          PsiWhiteSpace(' ')
+          KDOC_MARKDOWN_LINK
+            KDOC_NAME
+              PsiElement(IDENTIFIER)('value')
+          PsiWhiteSpace(' ')
+          PsiElement(KDOC_TEXT)('Not for swear words.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Foo')
+    PsiWhiteSpace('\n')
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Primary')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' constructor')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' docummentation.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PRIMARY_CONSTRUCTOR
+      PsiElement(constructor)('constructor')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('value')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      SECONDARY_CONSTRUCTOR
+        KDoc
+          PsiElement(KDOC_START)('/**')
+          PsiWhiteSpace('\n     ')
+          KDOC_SECTION
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' Secondary')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' constructor')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' documentation.')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' ')
+            KDOC_TAG
+              PsiElement(KDOC_TAG_NAME)('@param')
+              PsiWhiteSpace(' ')
+              KDOC_MARKDOWN_LINK
+                KDOC_NAME
+                  PsiElement(IDENTIFIER)('value')
+              PsiWhiteSpace(' ')
+              PsiElement(KDOC_TEXT)('Some integer. Maybe bigger is better, who knows.')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_END)('*/')
+        PsiWhiteSpace('\n    ')
+        PsiElement(constructor)('constructor')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('value')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        CONSTRUCTOR_DELEGATION_CALL
+          CONSTRUCTOR_DELEGATION_REFERENCE
+            PsiElement(this)('this')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('value')
+                PsiElement(DOT)('.')
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('toString')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      FUN
+        KDoc
+          PsiElement(KDOC_START)('/**')
+          PsiWhiteSpace('\n     ')
+          KDOC_SECTION
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' Member')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' function')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' documentation.')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' ')
+            KDOC_TAG
+              PsiElement(KDOC_TAG_NAME)('@return')
+              PsiWhiteSpace(' ')
+              PsiElement(KDOC_TEXT)('Nothing really.')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' ')
+            KDOC_TAG
+              PsiElement(KDOC_TAG_NAME)('@throws')
+              PsiWhiteSpace(' ')
+              KDOC_MARKDOWN_LINK
+                KDOC_NAME
+                  PsiElement(IDENTIFIER)('Throwable')
+              PsiWhiteSpace('\n     ')
+              PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' ')
+            KDOC_TAG
+              PsiElement(KDOC_TAG_NAME)('@see')
+              PsiWhiteSpace(' ')
+              KDOC_MARKDOWN_LINK
+                PsiElement(LBRACKET)('[')
+                KDOC_NAME
+                  PsiElement(IDENTIFIER)('prop')
+                PsiElement(RBRACKET)(']')
+              PsiWhiteSpace(' ')
+              PsiElement(KDOC_TEXT)('if you forgot how properties look.')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_END)('*/')
+        PsiWhiteSpace('\n    ')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        KDoc
+          PsiElement(KDOC_START)('/**')
+          PsiWhiteSpace('\n     ')
+          KDOC_SECTION
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' Member')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' property')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' documentation.')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_END)('*/')
+        PsiWhiteSpace('\n    ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('prop')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      OBJECT_DECLARATION
+        KDoc
+          PsiElement(KDOC_START)('/**')
+          PsiWhiteSpace('\n     ')
+          KDOC_SECTION
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' Companion')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' object')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' documentation.')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_END)('*/')
+        PsiWhiteSpace('\n    ')
+        MODIFIER_LIST
+          PsiElement(companion)('companion')
+        PsiWhiteSpace(' ')
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  TYPEALIAS
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Type')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' alias')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' documentation.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('MyString')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('String')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Annotation')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' class')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' documentation.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Anno')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Enum')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' class')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' documentation.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Direction')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        KDoc
+          PsiElement(KDOC_START)('/**')
+          PsiWhiteSpace('\n     ')
+          KDOC_SECTION
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' Enum')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' value')
+            PsiWhiteSpace('\n     ')
+            PsiElement(KDOC_LEADING_ASTERISK)('*')
+            PsiElement(KDOC_TEXT)(' documentation.')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_END)('*/')
+        PsiWhiteSpace('\n    ')
+        PsiElement(IDENTIFIER)('SOUTH')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  OBJECT_DECLARATION
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Top-level')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' object')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' documentation.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Obj')
+  PsiWhiteSpace('\n\n')
+  FUN
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Top-level')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' function')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' documentation.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('bar')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('number')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Top-level')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' property')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' documentation.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('topLevelProp')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace('\n    ')
+    PROPERTY_ACCESSOR
+      PsiElement(get)('get')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('0')
