@@ -1,0 +1,154 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.native.pipeline
+
+import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.createPhaseConfig
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
+import org.jetbrains.kotlin.cli.common.setupCommonKlibArguments
+import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
+import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
+import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
+import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.getModuleNameForSource
+import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.js.config.fakeOverrideValidator
+import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+
+/**
+ * Configuration phase for native klib compilation pipeline.
+ * Sets up the compiler configuration from K2NativeKlibCompilerArguments.
+ */
+object NativeConfigurationPhase : AbstractConfigurationPhase<K2NativeCompilerArguments>(
+    name = "NativeConfigurationPhase",
+    preActions = setOf(PerformanceNotifications.InitializationStarted),
+    postActions = setOf(CheckCompilationErrors.CheckMessageCollector),
+    configurationUpdaters = listOf(NativeKlibConfigurationUpdater)
+) {
+    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
+        return MetadataVersion(*versionArray)
+    }
+}
+
+/**
+ * Configuration updater that fills the CompilerConfiguration from K2NativeKlibCompilerArguments.
+ */
+object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArguments>() {
+    override fun fillConfiguration(
+        input: ArgumentsPipelineArtifact<K2NativeCompilerArguments>,
+        configuration: CompilerConfiguration,
+    ) {
+        val arguments = input.arguments
+        val rootDisposable = input.rootDisposable
+        configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = true, rootDisposable)
+        val phaseConfig = createPhaseConfig(arguments)
+        configuration.put(CommonConfigurationKeys.PHASE_CONFIG, phaseConfig)
+        setupNativeKlibConfiguration(configuration, arguments)
+    }
+
+    private fun setupNativeKlibConfiguration(
+        configuration: CompilerConfiguration,
+        arguments: K2NativeCompilerArguments,
+    ) {
+        val commonSources = arguments.commonSources?.toSet().orEmpty().map { java.io.File(it).absoluteFile.normalize() }
+        val hmppModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
+        arguments.freeArgs.forEach { path ->
+            val normalizedPath = java.io.File(path).absoluteFile.normalize()
+            configuration.addKotlinSourceRoot(path, normalizedPath in commonSources, hmppModuleStructure?.getModuleNameForSource(path))
+        }
+
+        configuration.produce = CompilerOutputKind.LIBRARY
+        arguments.moduleName?.let { configuration.put(KonanConfigKeys.MODULE_NAME, it) }
+        arguments.target?.let { configuration.target = it }
+
+        configuration.libraryFiles = arguments.libraries?.toList().orEmpty()
+        configuration.nostdlib = arguments.nostdlib
+        configuration.nodefaultlibs = arguments.nodefaultlibs
+
+        @Suppress("DEPRECATION")
+        configuration.noendorsedlibs = arguments.noendorsedlibs
+        configuration.nopack = arguments.nopack
+
+        arguments.outputName?.let { configuration.output = it }
+        arguments.friendModules?.let {
+            configuration.friendModules = it.split(File.pathSeparator).filterNot(String::isEmpty)
+        }
+        arguments.refinesPaths?.let {
+            configuration.refinesModules = it.filterNot(String::isEmpty)
+        }
+
+        configuration.includedBinaryFiles = arguments.includeBinaries?.toList().orEmpty()
+
+        arguments.manifestFile?.let { configuration.put(KonanConfigKeys.MANIFEST_FILE, it) }
+        arguments.headerKlibPath?.let { configuration.put(KonanConfigKeys.HEADER_KLIB, it) }
+        arguments.shortModuleName?.let { configuration.put(KonanConfigKeys.SHORT_MODULE_NAME, it) }
+        arguments.includes?.let {
+            configuration.put(KonanConfigKeys.INCLUDED_LIBRARIES, it.toList())
+        }
+
+        configuration.printIr = arguments.printIr
+        configuration.printFiles = arguments.printFiles
+        arguments.verifyCompiler?.let {
+            configuration.put(KonanConfigKeys.VERIFY_COMPILER, it == "true")
+        }
+        configuration.fakeOverrideValidator = arguments.fakeOverrideValidator
+        arguments.konanDataDir?.let { configuration.put(KonanConfigKeys.KONAN_DATA_DIR, it) }
+
+        configuration.checkDependencies = arguments.checkDependencies
+        arguments.writeDependenciesOfProducedKlibTo?.let {
+            configuration.put(KonanConfigKeys.WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO, it)
+        }
+        arguments.manifestNativeTargets?.let {
+            configuration.put(KonanConfigKeys.MANIFEST_NATIVE_TARGETS, parseManifestNativeTargets(it, configuration))
+        }
+
+        configuration.exportKdoc = arguments.exportKDoc
+
+        configuration.setupPartialLinkageConfig(
+            mode = arguments.partialLinkageMode,
+            logLevel = arguments.partialLinkageLogLevel,
+            compilerModeAllowsUsingPartialLinkage = false, // Don't run PL when producing KLIB
+            onWarning = { configuration.messageCollector.report(WARNING, it) },
+            onError = { configuration.messageCollector.report(ERROR, it) }
+        )
+    }
+
+    private fun parseManifestNativeTargets(
+        targetStrings: Array<String>,
+        configuration: CompilerConfiguration,
+    ): List<KonanTarget> {
+        val trimmedTargetStrings = targetStrings.map { it.trim() }
+        val (recognizedTargetNames, unrecognizedTargetNames) = trimmedTargetStrings.partition {
+            it in KonanTarget.predefinedTargets.keys
+        }
+
+        if (unrecognizedTargetNames.isNotEmpty()) {
+            configuration.messageCollector.report(
+                WARNING,
+                """
+                    The following target names passed to the -Xmanifest-native-targets are not recognized:
+                    ${unrecognizedTargetNames.joinToString(separator = ", ")}
+
+                    List of known target names:
+                    ${KonanTarget.predefinedTargets.keys.joinToString(separator = ", ")}
+                """.trimIndent()
+            )
+        }
+
+        return recognizedTargetNames.map { KonanTarget.predefinedTargets[it]!! }
+    }
+}

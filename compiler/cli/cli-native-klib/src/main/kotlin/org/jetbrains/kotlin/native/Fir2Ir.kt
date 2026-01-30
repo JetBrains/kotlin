@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.native
 
-import org.jetbrains.kotlin.backend.konan.KonanCompilationException
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -34,16 +35,14 @@ import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 
-fun PhaseContext.fir2Ir(
-        input: FirOutput.Full,
-): Fir2IrOutput {
+fun PhaseContext.fir2Ir(input: AllModulesFrontendOutput): Fir2IrOutput {
     val resolvedLibraries = config.resolvedLibraries.getFullResolvedList()
     val configuration = config.configuration
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
     val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(configuration, diagnosticsReporter)
-    val actualizedResult = input.firResult.convertToIrAndActualize(
+    val actualizedResult = input.convertToIrAndActualize(
         NativeFir2IrExtensions,
         fir2IrConfiguration,
         config.configuration.getCompilerExtensions(IrGenerationExtension),
@@ -110,10 +109,10 @@ fun PhaseContext.fir2Ir(
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
 
     if (diagnosticsReporter.hasErrors) {
-        throw KonanCompilationException("Compilation failed: there were some diagnostics during fir2ir")
+        throw CompilationErrorException("Compilation failed: there were some diagnostics during fir2ir")
     }
 
-    return Fir2IrOutput(input.firResult, symbols, actualizedResult, usedLibraries)
+    return Fir2IrOutput(input, symbols, actualizedResult, usedLibraries)
 }
 
 private fun PhaseContext.createKonanSymbols(

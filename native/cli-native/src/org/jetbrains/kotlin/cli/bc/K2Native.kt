@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.native.pipeline.NativeKlibCliPipeline
 import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -41,6 +43,23 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override fun MutableList<String>.addPlatformOptions(arguments: K2NativeCompilerArguments) {}
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = MetadataVersion(*versionArray)
+
+    /**
+     * Phased pipeline execution for klib compilation.
+     * Returns null if this compilation requires binary compilation.
+     */
+    override fun doExecutePhased(
+        arguments: K2NativeCompilerArguments,
+        services: Services,
+        basicMessageCollector: MessageCollector,
+    ): ExitCode? {
+        if (arguments.produce != "library") {
+            return null
+        }
+        // TODO: AP for review: is it ok to do so?
+        arguments.disableDefaultScriptingPlugin = true
+        return NativeKlibCliPipeline(defaultPerformanceManager).execute(arguments, services, basicMessageCollector)
+    }
 
     override fun doExecute(@NotNull arguments: K2NativeCompilerArguments,
                            @NotNull configuration: CompilerConfiguration,
@@ -71,9 +90,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             // Some errors during KotlinCoreEnvironment setup.
             return ExitCode.COMPILATION_ERROR
         }
-
         try {
-            runKonanDriver(configuration, environment, rootDisposable)
+            doExecutePhased(arguments, Services.EMPTY, configuration.messageCollector)
+                ?: runKonanDriver(configuration, environment, rootDisposable)
         } catch (e: Throwable) {
             if (e is KonanCompilationException || e is CompilationErrorException || e is IrValidationException)
                 return ExitCode.COMPILATION_ERROR

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
@@ -33,10 +34,13 @@ sealed class FrontendPhaseOutput {
 
 internal interface FrontendContext : NativeBackendPhaseContext {
     var frontendServices: FrontendServices
+
+    val project: Project
 }
 
 internal class FrontendContextImpl(
-        config: KonanConfig
+        config: KonanConfig,
+        override val project: Project,
 ) : BasicNativeBackendPhaseContext(config), FrontendContext {
     override lateinit var frontendServices: FrontendServices
 }

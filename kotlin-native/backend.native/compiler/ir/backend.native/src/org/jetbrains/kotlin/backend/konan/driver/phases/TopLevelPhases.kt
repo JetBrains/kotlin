@@ -48,7 +48,7 @@ internal fun PhaseEngine<NativeBackendPhaseContext>.runFrontend(config: KonanCon
         throw Error("Attempt to run K1 from unsupported LV=${languageVersion}")
     }
 
-    val frontendOutput = useContext(FrontendContextImpl(config)) { it.runPhase(FrontendPhase, environment) }
+    val frontendOutput = useContext(FrontendContextImpl(config, config.project)) { it.runPhase(FrontendPhase, environment) }
     return frontendOutput as? FrontendPhaseOutput.Full
 }
 

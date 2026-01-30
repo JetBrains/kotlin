@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.backend.konan.KonanCompilationException
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.cli.common.*
@@ -86,7 +86,7 @@ private inline fun <F> PhaseContext.firFrontend(
 
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
     return if (syntaxErrors || diagnosticsReporter.hasErrors) {
-        throw KonanCompilationException("Compilation failed: there were frontend errors")
+        throw CompilationErrorException("Compilation failed: there were frontend errors")
     } else {
         FirOutput.Full(AllModulesFrontendOutput(outputs))
     }

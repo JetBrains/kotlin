@@ -35,4 +35,6 @@ interface PerformanceManagerContext {
  */
 interface PhaseContext : LoggingContext, ErrorReportingContext, DisposableContext, PerformanceManagerContext {
     val config: NativeKlibCompilationConfig
+
+    override fun dispose() {}
 }

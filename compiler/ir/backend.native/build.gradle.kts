@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":core:compiler.common.native"))
     implementation(project(":native:kotlin-native-utils"))
     implementation(project(":compiler:ir.serialization.native"))
+    implementation(project(":compiler:frontend.common.jvm")) // For TestProcessor shitty utility func
     api(project(":native:base"))
 }
 

@@ -24,6 +24,13 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.native.FirOutput
 import org.jetbrains.kotlin.native.FirSerializerInput
+import org.jetbrains.kotlin.native.phases.runFir2Ir
+import org.jetbrains.kotlin.native.phases.runFir2IrSerializer
+import org.jetbrains.kotlin.native.phases.runFirFrontend
+import org.jetbrains.kotlin.native.phases.runFirSerializer
+import org.jetbrains.kotlin.native.phases.runK2SpecialBackendChecks
+import org.jetbrains.kotlin.native.phases.runPreSerializationLowerings
+import org.jetbrains.kotlin.native.phases.writeKlib
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
@@ -107,7 +114,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val serializerOutput = serializeKLibK2(engine, config, environment)
         serializerOutput?.let {
             performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
-                engine.writeKlib(it)
+                engine.writeKlib(it, config.outputPath, produceHeaderKlib = false)
             }
         }
     }

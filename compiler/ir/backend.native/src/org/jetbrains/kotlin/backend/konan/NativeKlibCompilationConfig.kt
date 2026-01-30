@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
@@ -21,8 +20,6 @@ import org.jetbrains.kotlin.util.removeSuffixIfPresent
  * from the need to extract src -> klib compilation from the /kotlin-native directory.
  */
 interface NativeKlibCompilationConfig {
-    val project: Project
-
     val configuration: CompilerConfiguration
 
     val target: KonanTarget
