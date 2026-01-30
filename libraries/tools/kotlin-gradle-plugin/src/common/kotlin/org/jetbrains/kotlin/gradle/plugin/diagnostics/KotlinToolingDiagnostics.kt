@@ -2045,6 +2045,21 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object KMPAndroidTargetIsIncompatibleWithTheNewAgpKMPPlugin :
+        ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            trace: Throwable,
+        ) = build(throwable = trace) {
+            title("Failed to create 'androidTarget()'")
+                .description("Enabled `androidTarget()` target is not compatible with 'com.android.kotlin.multiplatform.library' plugin.")
+                .solution {
+                    "Please migrate your project from using 'androidTarget()' to 'android()' DSL provided by " +
+                            "'com.android.kotlin.multiplatform.library' plugin (see https://kotl.in/gradle/agp-new-kmp for guidance)."
+                }
+                .documentationLink(URI("https://kotl.in/gradle/agp-new-kmp"))
+        }
+    }
+
     internal object NonKmpAgpIsDeprecated : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(androidPluginId: String) = build {
             val titleStep = title(

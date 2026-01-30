@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.generators.gradle.dsl
 
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.generators.arguments.getPrinterToFile
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainer
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import javax.inject.Inject
+import kotlin.jvm.java
 
 fun main() {
     generateKotlinTargetContainerWithPresetFunctionsInterface(::getPrinterToFile)
@@ -50,6 +52,7 @@ internal fun generateKotlinTargetContainerWithPresetFunctionsInterface(withPrint
         .plus(typeName(KotlinTarget::class.java.canonicalName))
         .plus(typeName(ObjectFactory::class.java.canonicalName))
         .plus(typeName(Inject::class.java.canonicalName))
+        .plus(typeName(Project::class.java.canonicalName))
         .plus(typeName("org.jetbrains.kotlin.gradle.utils.newInstance"))
         .plus(typeName("org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset"))
         .filter { it.packageName() != className.packageName() }
@@ -171,6 +174,7 @@ private fun generateDefaultPresetFunctionImplementation(
     |    $configureOrCreateFunctionName(
     |        name,
     |        presets.getByName("$entityName") as ${presetEntry.presetType.renderShort()},
+    |        project,
     |        configure
     |    )$alsoBlockAfterConfiguration
     |
@@ -183,12 +187,14 @@ private fun defaultContainerClassHeader(
     className: TypeName,
 ) = """
 internal fun ObjectFactory.${defaultImplementationClassname.renderShort()}(
-    targets: NamedDomainObjectCollection<KotlinTarget>
-): ${defaultImplementationClassname.renderShort()} = newInstance<${defaultImplementationClassname.renderShort()}>(targets)
+    targets: NamedDomainObjectCollection<KotlinTarget>,
+    project: Project,
+): ${defaultImplementationClassname.renderShort()} = newInstance<${defaultImplementationClassname.renderShort()}>(targets, project)
 
 internal abstract class ${defaultImplementationClassname.renderShort()} @Inject constructor(
     objectFactory: ObjectFactory,
     override val targets: NamedDomainObjectCollection<KotlinTarget>,
+    private val project: Project,
 ) : ${className.renderShort()}, ${parentInterface.simpleName} {
 
     val presets: NamedDomainObjectCollection<InternalKotlinTargetPreset<*>> =
