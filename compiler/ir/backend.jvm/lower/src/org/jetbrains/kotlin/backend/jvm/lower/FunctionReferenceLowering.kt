@@ -64,13 +64,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         get() = invokeFunction.isSuspend && origin.isLambda && type.isSuspendFunctionOrKFunction()
 
     private val IrRichFunctionReference.isIgnored: Boolean
-        get() = (isSuspendLambda && !isCrossinlineDefaultLambda) || isInlineLambda
-
-    private val IrRichFunctionReference.isCrossinlineDefaultLambda: Boolean
-        get() = origin.isLambda &&
-                (currentFunction?.irElement as? IrFunction)
-                    ?.parameters?.any { it.isCrossinline && it.defaultValue?.expression == this }
-                ?: false
+        get() = isSuspendLambda || isInlineLambda
 
     override fun lower(irFile: IrFile) {
         irFile.findRichInlineLambdas(context) { argument, _, parameter, _ ->
@@ -484,9 +478,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 isOperator = superFunction.isOperator
                 isSuspend = superFunction.isSuspend
             }.apply {
-                if (irFunctionReference.origin == JvmLoweredStatementOrigin.DEFAULT_VALUE_OF_INLINABLE_PARAMETER ||
-                    (irFunctionReference.isSuspendLambda && irFunctionReference.isCrossinlineDefaultLambda)
-                ) {
+                if (irFunctionReference.origin == JvmLoweredStatementOrigin.DEFAULT_VALUE_OF_INLINABLE_PARAMETER) {
                     origin = JvmLoweredDeclarationOrigin.INVOKE_OF_DEFAULT_VALUE_OF_INLINABLE_PARAMETER
                 }
                 annotations = invokeFunction.annotations
