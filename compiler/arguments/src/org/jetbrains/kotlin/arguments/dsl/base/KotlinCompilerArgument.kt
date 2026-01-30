@@ -21,6 +21,7 @@ import kotlin.properties.ReadOnlyProperty
  * @param delimiter if an argument accepts a list of file paths - defines an accepted delimiter between these paths.
  * @param valueType the argument value type.
  * @param valueDescription describes which values are accepted by the argument.
+ * @param argumentType the argument value type.
  * The description text may have a different value for different Kotlin releases,
  * see [ReleaseDependent] on how to define the description for older versions.
  * @param additionalAnnotations additional annotations that should be added for the Kotlin compiler argument representation (e.g. [Deprecated]).
@@ -37,8 +38,12 @@ data class KotlinCompilerArgument(
     val description: ReleaseDependent<String>,
     val delimiter: Delimiter?,
 
+    // TODO(KT-83794): Deprecate valueType and change kdoc
     val valueType: KotlinArgumentValueType<*>,
+    // TODO(KT-83794): Deprecate valueDescription, change kdoc and add argumentDescription
     val valueDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
+
+    val argumentType: KotlinArgumentValueType<*>,
 
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 
@@ -92,12 +97,17 @@ internal class KotlinCompilerArgumentBuilder {
     /**
      * @see KotlinCompilerArgument.valueType
      */
-    lateinit var valueType: KotlinArgumentValueType<*>
+    var valueType: KotlinArgumentValueType<*>? = null
 
     /**
      * @see KotlinCompilerArgument.valueDescription
      */
     var valueDescription: ReleaseDependent<String?> = null.asReleaseDependent()
+
+    /**
+     * @see KotlinCompilerArgument.argumentType
+     */
+    var argumentType: KotlinArgumentValueType<*>? = null
 
     /**
      * @see KotlinCompilerArgument.compilerName
@@ -151,8 +161,11 @@ internal class KotlinCompilerArgumentBuilder {
         shortName = shortName,
         deprecatedName = deprecatedName,
         description = description,
-        valueType = valueType,
+        // TODO(KT-83794): Make valueType optional
+        valueType = requireNotNull(valueType),
         valueDescription = valueDescription,
+        // TODO(KT-83794): Make argumentType mandatory
+        argumentType = argumentType ?: requireNotNull(valueType),
         releaseVersionsMetadata = releaseVersionsMetadata,
         additionalAnnotations = additionalAnnotations,
         compilerName = compilerName,

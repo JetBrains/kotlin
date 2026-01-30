@@ -25,6 +25,7 @@ private val freeCompilerArgument = KotlinCompilerArgument(
     description = ReleaseDependent("A list of additional compiler arguments", valueInVersions = emptyMap()),
     delimiter = KotlinCompilerArgument.Delimiter.None,
     valueType = StringArrayType.defaultNull,
+    argumentType = StringArrayType.defaultNull,
     releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
         introducedVersion = KotlinReleaseVersion.v1_4_0,
         stabilizedVersion = KotlinReleaseVersion.v1_4_0,

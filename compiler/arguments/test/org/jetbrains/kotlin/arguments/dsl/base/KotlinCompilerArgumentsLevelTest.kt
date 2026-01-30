@@ -102,6 +102,7 @@ class KotlinCompilerArgumentsLevelTest {
         name,
         description = "${name}_one".asReleaseDependent(),
         valueType = BooleanType(),
+        argumentType = BooleanType(),
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
         ),
