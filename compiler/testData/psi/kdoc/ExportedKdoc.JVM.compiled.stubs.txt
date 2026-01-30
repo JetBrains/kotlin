@@ -1,0 +1,144 @@
+Anno.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Anno]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+
+
+Direction.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Direction, fqName=Direction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Direction, superNames=[Enum]]
+      MODIFIER_LIST[public final enum]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Direction]
+        MODIFIER_LIST[private]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Enum]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Direction]
+      CLASS_BODY
+        ENUM_ENTRY[classId=null, fqName=Direction.SOUTH, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=SOUTH, superNames=[]]
+
+
+ExportedKdocKt.class:
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExportedKdocKt]]
+    facadeFqName: ExportedKdocKt
+    partSimpleName: "ExportedKdocKt"
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    PROPERTY[fqName=topLevelProp, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=topLevelProp]
+      origin: Facade(className=ExportedKdocKt, jvmClassName=null)
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+        MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
+    FUN[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
+      origin: Facade(className=ExportedKdocKt, jvmClassName=null)
+      MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=number]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Unit]
+    TYPEALIAS[classId=/MyString, fqName=MyString, isTopLevel=true, name=MyString]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]
+
+
+Foo.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=String]
+      CLASS_BODY
+        OBJECT_DECLARATION[classId=/Foo.Companion, fqName=Foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+          MODIFIER_LIST[public companion]
+          CLASS_BODY
+        SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
+          MODIFIER_LIST[public]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Int]
+        PROPERTY[fqName=Foo.value, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+        PROPERTY[fqName=Foo.prop, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=prop]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+        FUN[fqName=Foo.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          MODIFIER_LIST[public final]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Unit]
+
+
+Obj.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    OBJECT_DECLARATION[classId=/Obj, fqName=Obj, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Obj, superNames=[]]
+      MODIFIER_LIST[public]
+      CLASS_BODY

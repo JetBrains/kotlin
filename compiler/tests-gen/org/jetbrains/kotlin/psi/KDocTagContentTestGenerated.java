@@ -69,6 +69,16 @@ public class KDocTagContentTestGenerated extends AbstractKDocTagContentTest {
     runTest("compiler/testData/psi/kdoc/EndRightAfterText.kt");
   }
 
+  @TestMetadata("ExportedKdoc.kt")
+  public void testExportedKdoc() {
+    runTest("compiler/testData/psi/kdoc/ExportedKdoc.kt");
+  }
+
+  @TestMetadata("ExportedKdocSingleLine.kt")
+  public void testExportedKdocSingleLine() {
+    runTest("compiler/testData/psi/kdoc/ExportedKdocSingleLine.kt");
+  }
+
   @TestMetadata("HttpLink.kt")
   public void testHttpLink() {
     runTest("compiler/testData/psi/kdoc/HttpLink.kt");

@@ -1,0 +1,64 @@
+ORIGINAL KDOC:
+ Class documentation.
+CONTENT:
+Class documentation.
+
+ORIGINAL KDOC:
+ Primary constructor docummentation.
+CONTENT:
+Primary constructor docummentation.
+
+ORIGINAL KDOC:
+ Secondary constructor documentation.
+CONTENT:
+Secondary constructor documentation.
+
+ORIGINAL KDOC:
+ Member function documentation.
+CONTENT:
+Member function documentation.
+
+ORIGINAL KDOC:
+ Member property documentation.
+CONTENT:
+Member property documentation.
+
+ORIGINAL KDOC:
+ Companion object documentation.
+CONTENT:
+Companion object documentation.
+
+ORIGINAL KDOC:
+ Type alias documentation.
+CONTENT:
+Type alias documentation.
+
+ORIGINAL KDOC:
+ Annotation class documentation.
+CONTENT:
+Annotation class documentation.
+
+ORIGINAL KDOC:
+ Enum class documentation.
+CONTENT:
+Enum class documentation.
+
+ORIGINAL KDOC:
+ Enum value documentation.
+CONTENT:
+Enum value documentation.
+
+ORIGINAL KDOC:
+ Top-level object documentation.
+CONTENT:
+Top-level object documentation.
+
+ORIGINAL KDOC:
+ Top-level function documentation.
+CONTENT:
+Top-level function documentation.
+
+ORIGINAL KDOC:
+ Top-level property documentation.
+CONTENT:
+Top-level property documentation.

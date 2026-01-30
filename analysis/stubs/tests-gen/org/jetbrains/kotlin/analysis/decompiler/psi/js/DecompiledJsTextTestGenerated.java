@@ -3088,6 +3088,18 @@ public class DecompiledJsTextTestGenerated extends AbstractDecompiledJsTextTest 
     }
 
     @Test
+    @TestMetadata("ExportedKdoc.kt")
+    public void testExportedKdoc() {
+      runTest("compiler/testData/psi/kdoc/ExportedKdoc.kt");
+    }
+
+    @Test
+    @TestMetadata("ExportedKdocSingleLine.kt")
+    public void testExportedKdocSingleLine() {
+      runTest("compiler/testData/psi/kdoc/ExportedKdocSingleLine.kt");
+    }
+
+    @Test
     @TestMetadata("HttpLink.kt")
     public void testHttpLink() {
       runTest("compiler/testData/psi/kdoc/HttpLink.kt");

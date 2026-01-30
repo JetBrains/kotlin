@@ -1,0 +1,175 @@
+ORIGINAL KDOC:
+@author Me myself.
+CONTENT:
+Me myself.
+
+ORIGINAL KDOC:
+@since Forever.
+ *
+CONTENT:
+Forever.
+
+
+ORIGINAL KDOC:
+* Class
+ * documentation.
+ *
+ * @author Me myself.
+ * @since Forever.
+ *
+ *
+CONTENT:
+Class
+documentation.
+
+
+
+ORIGINAL KDOC:
+@property value Not for swear words.
+CONTENT:
+Not for swear words.
+
+ORIGINAL KDOC:
+@property value Not for swear words.
+CONTENT:
+Not for swear words.
+
+ORIGINAL KDOC:
+* Primary
+ * constructor
+ * docummentation.
+CONTENT:
+Primary
+constructor
+docummentation.
+
+ORIGINAL KDOC:
+@param value Some integer. Maybe bigger is better, who knows.
+CONTENT:
+Some integer. Maybe bigger is better, who knows.
+
+ORIGINAL KDOC:
+* Secondary
+     * constructor
+     * documentation.
+     *
+     * @param value Some integer. Maybe bigger is better, who knows.
+CONTENT:
+Secondary
+constructor
+documentation.
+
+
+
+ORIGINAL KDOC:
+@return Nothing really.
+CONTENT:
+Nothing really.
+
+ORIGINAL KDOC:
+@throws Throwable
+     *
+CONTENT:
+
+
+ORIGINAL KDOC:
+@see [prop] if you forgot how properties look.
+CONTENT:
+if you forgot how properties look.
+
+ORIGINAL KDOC:
+* Member
+     * function
+     * documentation.
+     *
+     * @return Nothing really.
+     * @throws Throwable
+     *
+     * @see [prop] if you forgot how properties look.
+CONTENT:
+Member
+function
+documentation.
+
+
+
+ORIGINAL KDOC:
+* Member
+     * property
+     * documentation.
+CONTENT:
+Member
+property
+documentation.
+
+ORIGINAL KDOC:
+* Companion
+     * object
+     * documentation.
+CONTENT:
+Companion
+object
+documentation.
+
+ORIGINAL KDOC:
+* Type
+ * alias
+ * documentation.
+CONTENT:
+Type
+alias
+documentation.
+
+ORIGINAL KDOC:
+* Annotation
+ * class
+ * documentation.
+CONTENT:
+Annotation
+class
+documentation.
+
+ORIGINAL KDOC:
+* Enum
+ * class
+ * documentation.
+CONTENT:
+Enum
+class
+documentation.
+
+ORIGINAL KDOC:
+* Enum
+     * value
+     * documentation.
+CONTENT:
+Enum
+value
+documentation.
+
+ORIGINAL KDOC:
+* Top-level
+ * object
+ * documentation.
+CONTENT:
+Top-level
+object
+documentation.
+
+ORIGINAL KDOC:
+* Top-level
+ * function
+ * documentation.
+CONTENT:
+Top-level
+function
+documentation.
+
+ORIGINAL KDOC:
+* Top-level
+ * property
+ * documentation.
+CONTENT:
+Top-level
+property
+documentation.
