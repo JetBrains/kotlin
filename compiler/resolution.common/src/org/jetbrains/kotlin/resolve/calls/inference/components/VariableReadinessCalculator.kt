@@ -71,7 +71,7 @@ class VariableReadinessCalculator(
         // which may "poison" other type variables depending on the current one.
         // This entry de-prioritizes variables that have `:> Nothing(?)` constraints
         // (both nullable and not null).
-        // See: `reifiedToNothing.kt` (KT-76443)
+        // See: `lambdaParameterTypeInElvis.kt` and `reifiedToNothing.kt` (KT-76443).
         HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT,
         ;
 
