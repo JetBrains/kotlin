@@ -13,7 +13,6 @@ import org.jetbrains.kotlinx.dataframe.columns.*
 import org.jetbrains.kotlinx.dataframe.impl.columns.ColumnsList
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
-import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
@@ -48,7 +47,7 @@ internal class Expr0 : AbstractInterpreter<ColumnsResolver>() {
     override fun Arguments.interpret(): ColumnsResolver {
         return ResolvedDataColumn(
             ColumnWithPathApproximation(
-                ColumnPathApproximation(listOf(name)),
+                ColumnPath(listOf(name)),
                 SimpleDataColumn(name, expression)
             )
         )
@@ -207,7 +206,7 @@ internal class ColsOf0 : AbstractInterpreter<ColumnsResolver>() {
         return object : ColumnsResolver {
             override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
                 val cols = df.columns().map {
-                    val path = ColumnPathApproximation(listOf(it.name))
+                    val path = ColumnPath(listOf(it.name))
                     ColumnWithPathApproximation(path, it)
                 }
                 return colsOf(cols, typeArg0.coneType)
@@ -306,7 +305,7 @@ internal class WithoutNulls1 : AbstractInterpreter<ColumnsResolver>() {
         return object : ColumnsResolver {
             override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
                 val cols = df.columns().map {
-                    val path = ColumnPathApproximation(listOf(it.name))
+                    val path = ColumnPath(listOf(it.name))
                     ColumnWithPathApproximation(path, it)
                 }
                 return cols.filter {
