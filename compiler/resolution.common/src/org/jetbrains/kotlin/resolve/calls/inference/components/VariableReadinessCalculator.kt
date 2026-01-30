@@ -122,6 +122,7 @@ class VariableReadinessCalculator(
 
         readiness[Q.IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE] = isMaterializeVariable
                 && !hasDependencyToOtherTypeVariables
+                && c.notFixedTypeVariables[this]?.constraints?.any { it.type.isProperType() } == true
 
         readiness[Q.HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT] =
             readiness[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased
