@@ -109,7 +109,12 @@ apply plugin: CompilationDatabasePlugin
 dependencies {
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
     commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
+    compilationDatabase project(":kotlin-native:Interop:Runtime")
+    compilationDatabase project(":kotlin-native:libclangext")
+    compilationDatabase project(":kotlin-native:libllvmext")
+    compilationDatabase project(":kotlin-native:llvmDebugInfoC")
     compilationDatabase project(":kotlin-native:runtime")
+    compilationDatabase project(":kotlin-native:tools:minidump-analyzer")
     runtimeBitcode project(":kotlin-native:runtime")
     objcExportApi project(":kotlin-native:runtime")
     embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
