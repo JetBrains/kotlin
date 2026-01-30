@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.File
@@ -167,7 +168,7 @@ class KonanDriver(
             val moduleName = config.moduleId
             if (libraries.any { it.uniqueName == moduleName }) {
                 val kexeModuleName = "${moduleName}_kexe"
-                config.configuration.put(KonanConfigKeys.MODULE_NAME, kexeModuleName)
+                config.configuration.moduleName = kexeModuleName
                 assert(libraries.none { it.uniqueName == kexeModuleName })
             }
         }

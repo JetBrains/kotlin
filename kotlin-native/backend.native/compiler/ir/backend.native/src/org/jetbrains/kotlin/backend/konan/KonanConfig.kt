@@ -408,7 +408,7 @@ class KonanConfig(
         get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName
 
     override val moduleId: String
-        get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: implicitModuleName
+        get() = configuration.moduleName ?: implicitModuleName
 
     private val defaultAllocationMode
         get() = AllocationMode.CUSTOM

@@ -121,9 +121,6 @@ object KonanConfigKeys {
     val HEADER_KLIB = CompilerConfigurationKey.create<String>("HEADER_KLIB")
 
     @JvmField
-    val MODULE_NAME = CompilerConfigurationKey.create<String>("MODULE_NAME")
-
-    @JvmField
     val NATIVE_LIBRARY_FILES = CompilerConfigurationKey.create<List<String>>("NATIVE_LIBRARY_FILES")
 
     // Don't link with the default libraries.
@@ -403,10 +400,6 @@ var CompilerConfiguration.manifestFile: String?
 var CompilerConfiguration.headerKlib: String?
     get() = get(KonanConfigKeys.HEADER_KLIB)
     set(value) { put(KonanConfigKeys.HEADER_KLIB, requireNotNull(value) { "nullable values are not allowed" }) }
-
-var CompilerConfiguration.moduleName: String?
-    get() = get(KonanConfigKeys.MODULE_NAME)
-    set(value) { put(KonanConfigKeys.MODULE_NAME, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.nativeLibraryFiles: List<String>
     get() = getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
