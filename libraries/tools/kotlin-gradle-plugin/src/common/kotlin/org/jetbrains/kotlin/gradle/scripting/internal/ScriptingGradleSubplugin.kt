@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("UnstableApiUsage", "DEPRECATION_ERROR")
+@file:Suppress("UnstableApiUsage")
 
 package org.jetbrains.kotlin.gradle.scripting.internal
 
@@ -16,16 +16,19 @@ import org.gradle.api.artifacts.transform.*
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.buildtools.api.CompilationService
-import org.jetbrains.kotlin.compilerRunner.btapi.SharedApiClassesClassLoaderProvider
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
+import org.jetbrains.kotlin.buildtools.api.jvm.discoverScriptExtensionsOperation
+import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -132,17 +135,24 @@ private fun configureDiscoveryTransformation(
     }
     val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
     val compilerClasspath = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
-    project.dependencies.registerOnceDiscoverScriptExtensionsTransform(classLoadersCachingService, compilerClasspath)
+    val buildSessionService = BuildSessionService.registerIfAbsent(project)
+    project.dependencies.registerOnceDiscoverScriptExtensionsTransform(classLoadersCachingService, compilerClasspath, buildSessionService)
 }
 
 @CacheableTransform
 internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<DiscoverScriptExtensionsTransformAction.Parameters> {
+
+    private val logger = Logging.getLogger(DiscoverScriptExtensionsTransformAction::class.java)
+
     interface Parameters : TransformParameters {
         @get:Internal
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
 
         @get:Classpath
         val compilerClasspath: ConfigurableFileCollection
+
+        @get:Internal
+        val buildSessionService: Property<BuildSessionService>
     }
 
     @get:Classpath
@@ -153,11 +163,19 @@ internal abstract class DiscoverScriptExtensionsTransformAction : TransformActio
     override fun transform(outputs: TransformOutputs) {
         val input = inputArtifact.get().asFile
 
-        val classLoader = parameters.classLoadersCachingService.get()
-            .getClassLoader(parameters.compilerClasspath.toList(), SharedApiClassesClassLoaderProvider)
-        val compilationService = CompilationService.loadImplementation(classLoader)
+        val buildSession = parameters.buildSessionService.get().getOrCreateBuildSession(
+            parameters.classLoadersCachingService.get(),
+            parameters.compilerClasspath.toList()
+        )
+        val kotlinToolchains = buildSession.kotlinToolchains
 
-        val extensions = compilationService.getCustomKotlinScriptFilenameExtensions(listOf(input))
+        val extensions = kotlinToolchains.jvm.discoverScriptExtensionsOperation(listOf(input.toPath())).let { operation ->
+            buildSession.executeOperation(
+                operation,
+                kotlinToolchains.createInProcessExecutionPolicy(),
+                GradleKotlinLogger(logger)
+            )
+        }
 
         if (extensions.isNotEmpty()) {
             val outputFile = outputs.file("${input.nameWithoutExtension}.discoveredScriptsExtensions.txt")
@@ -169,10 +187,12 @@ internal abstract class DiscoverScriptExtensionsTransformAction : TransformActio
 private fun DependencyHandler.registerDiscoverScriptExtensionsTransform(
     classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
     compilerClasspath: NamedDomainObjectProvider<Configuration>,
+    buildSessionService: Provider<BuildSessionService>,
 ) {
     fun TransformSpec<DiscoverScriptExtensionsTransformAction.Parameters>.configureCommonParameters() {
         parameters.classLoadersCachingService.set(classLoadersCachingService)
         parameters.compilerClasspath.from(compilerClasspath)
+        parameters.buildSessionService.set(buildSessionService)
     }
     registerTransformForArtifactType(
         DiscoverScriptExtensionsTransformAction::class.java,
@@ -189,10 +209,11 @@ private fun DependencyHandler.registerDiscoverScriptExtensionsTransform(
 
 private fun DependencyHandler.registerOnceDiscoverScriptExtensionsTransform(
     classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
-    compilerClasspath: NamedDomainObjectProvider<Configuration>
+    compilerClasspath: NamedDomainObjectProvider<Configuration>,
+    buildSessionService: Provider<BuildSessionService>,
 ) {
     if (!extensions.extraProperties.has("DiscoverScriptExtensionsTransform")) {
-        registerDiscoverScriptExtensionsTransform(classLoadersCachingService, compilerClasspath)
+        registerDiscoverScriptExtensionsTransform(classLoadersCachingService, compilerClasspath, buildSessionService)
         extensions.extraProperties["DiscoverScriptExtensionsTransform"] = true
     }
 }
