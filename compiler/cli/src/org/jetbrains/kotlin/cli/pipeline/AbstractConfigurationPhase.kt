@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_COMMA
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_K2_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
@@ -53,7 +54,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         }
 
         if (input.arguments.printConfiguration || input.arguments.verbose) {
-            println(configuration)
+            configuration.messageCollector.report(INFO, configuration.toString())
         }
 
         return ConfigurationPipelineArtifact(configuration, input.diagnosticCollector, input.rootDisposable)
