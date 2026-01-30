@@ -1,7 +1,7 @@
 package java2d
 
 class A {
-    fun getConst() = <!EVALUATED{IR}("OK")!>OK<!>
+    fun getConst() = OK
 
     companion object {
         const val OK = <!EVALUATED("OK")!>"OK"<!>

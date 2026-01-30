@@ -11,16 +11,16 @@ annotation class IntegerNumberValid(
     val message: String = "Has illegal integer number value",
     val groups: Array<KClass<*>> = [],
 
-    val minimum: Long = Long.<!EVALUATED{IR}("-9223372036854775808")!>MIN_VALUE<!>,
-    val maximum: Long = Long.<!EVALUATED{IR}("9223372036854775807")!>MAX_VALUE<!>,
+    val minimum: Long = Long.MIN_VALUE,
+    val maximum: Long = Long.MAX_VALUE,
 
-    val minMaxArray: LongArray = <!EVALUATED{IR}("[-9223372036854775808.toLong(), 9223372036854775807.toLong()]")!>longArrayOf(Long.<!EVALUATED{IR}("-9223372036854775808")!>MIN_VALUE<!>, Long.<!EVALUATED{IR}("9223372036854775807")!>MAX_VALUE<!>)<!>,
-    val minMaxArrayCollection: LongArray = <!EVALUATED{IR}("[-9223372036854775808.toLong(), 9223372036854775807.toLong()]")!>[Long.<!EVALUATED{IR}("-9223372036854775808")!>MIN_VALUE<!>, Long.<!EVALUATED{IR}("9223372036854775807")!>MAX_VALUE<!>]<!>,
+    val minMaxArray: LongArray = longArrayOf(Long.MIN_VALUE, Long.MAX_VALUE),
+    val minMaxArrayCollection: LongArray = [Long.MIN_VALUE, Long.MAX_VALUE],
 )
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class AnnotationWithDefault(val str: String = <!EVALUATED{IR}("String")!>"Str" + "ing"<!>)
+annotation class AnnotationWithDefault(val str: String = "Str" + "ing")
 
 @AnnotationWithDefault()
 class A

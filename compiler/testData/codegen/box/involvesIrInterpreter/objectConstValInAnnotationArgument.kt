@@ -3,7 +3,7 @@ annotation class Key(val value: String)
 object Messanger {
     const val DEFAULT_TEXT = <!EVALUATED("OK")!>"OK"<!>
 
-    fun message(@Key(value = <!EVALUATED{IR}("OK")!>DEFAULT_TEXT<!>) text: String = <!EVALUATED{IR}("OK")!>DEFAULT_TEXT<!>): String {
+    fun message(@Key(value = DEFAULT_TEXT) text: String = DEFAULT_TEXT): String {
         return text
     }
 }

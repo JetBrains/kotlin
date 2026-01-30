@@ -1,11 +1,9 @@
-// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
-// ^^^ KT-73621: EVALUATED{IR} is missing
 // WITH_STDLIB
 
 object Test {
     fun foo(): String = "foo " + this
 
-    fun bar(): String = "<!EVALUATED{IR}("bar ")!>bar <!>$this"
+    fun bar(): String = "bar $this"
 
     fun baz(): String = "baz " + this.toString()
 }

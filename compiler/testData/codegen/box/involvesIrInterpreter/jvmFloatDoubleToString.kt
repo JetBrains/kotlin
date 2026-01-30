@@ -1,8 +1,6 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // IGNORE_BACKEND: WASM_JS, WASM_WASI
 // ^Known behavior difference
-// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
-// ^^^ KT-73621: EVALUATED{IR} is missing
 fun <T> T.id() = this
 
 const val toStringDouble1 = 1.0.<!EVALUATED("1.0")!>toString()<!>
@@ -24,8 +22,8 @@ fun box(): String {
     if (toStringFloat3.id() != "1.5")     return "Fail 2.3"
 
     // START_EVALUATION_CHECKS
-    val localDoubleToString = 1.0.<!EVALUATED{IR}("1.0")!>toString()<!>
-    val localFloatToString = 1.0f.<!EVALUATED{IR}("1.0")!>toString()<!>
+    val localDoubleToString = 1.0.toString()
+    val localFloatToString = 1.0f.toString()
     // STOP_EVALUATION_CHECKS
 
     if (localDoubleToString.id() != toStringDouble1)    return "Fail 3.1"
