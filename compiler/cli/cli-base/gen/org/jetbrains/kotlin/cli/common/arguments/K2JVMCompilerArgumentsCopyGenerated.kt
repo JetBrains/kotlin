@@ -55,7 +55,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.linkViaSignatures = from.linkViaSignatures
     to.moduleName = from.moduleName
     to.noCallAssertions = from.noCallAssertions
-    to.noFallbackToDefaultModuleName = from.noFallbackToDefaultModuleName
     to.noJdk = from.noJdk
     to.noNewJavaAnnotationTargets = from.noNewJavaAnnotationTargets
     to.noOptimize = from.noOptimize

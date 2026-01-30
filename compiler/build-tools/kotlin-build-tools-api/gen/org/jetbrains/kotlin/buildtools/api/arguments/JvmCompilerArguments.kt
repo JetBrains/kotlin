@@ -474,16 +474,6 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_NO_CALL_ASSERTIONS", KotlinReleaseVersion(1, 0, 0))
 
     /**
-     * Throw exception when generating calls to symbols from a module with no name, instead of falling back to 'main'.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_NO_FALLBACK_TO_DEFAULT_MODULE_NAME: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_NO_FALLBACK_TO_DEFAULT_MODULE_NAME", KotlinReleaseVersion(2, 3, 20))
-
-    /**
      * Don't generate Java 1.8+ targets for Kotlin annotation classes.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

@@ -70,7 +70,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_MODULE_PATH
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_MULTIFILE_PARTS_INHERIT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_NO_CALL_ASSERTIONS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_NO_FALLBACK_TO_DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_NO_NEW_JAVA_ANNOTATION_TARGETS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_NO_OPTIMIZE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_NO_PARAM_ASSERTIONS
@@ -192,7 +191,6 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (X_MODULE_PATH in this) { arguments.javaModulePath = get(X_MODULE_PATH)}
     if (X_MULTIFILE_PARTS_INHERIT in this) { arguments.inheritMultifileParts = get(X_MULTIFILE_PARTS_INHERIT)}
     if (X_NO_CALL_ASSERTIONS in this) { arguments.noCallAssertions = get(X_NO_CALL_ASSERTIONS)}
-    if (X_NO_FALLBACK_TO_DEFAULT_MODULE_NAME in this) { arguments.noFallbackToDefaultModuleName = get(X_NO_FALLBACK_TO_DEFAULT_MODULE_NAME)}
     if (X_NO_NEW_JAVA_ANNOTATION_TARGETS in this) { arguments.noNewJavaAnnotationTargets = get(X_NO_NEW_JAVA_ANNOTATION_TARGETS)}
     if (X_NO_OPTIMIZE in this) { arguments.noOptimize = get(X_NO_OPTIMIZE)}
     if (X_NO_PARAM_ASSERTIONS in this) { arguments.noParamAssertions = get(X_NO_PARAM_ASSERTIONS)}
@@ -279,7 +277,6 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     try { this[X_MODULE_PATH] = arguments.javaModulePath } catch (_: NoSuchMethodError) {  }
     try { this[X_MULTIFILE_PARTS_INHERIT] = arguments.inheritMultifileParts } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_CALL_ASSERTIONS] = arguments.noCallAssertions } catch (_: NoSuchMethodError) {  }
-    try { this[X_NO_FALLBACK_TO_DEFAULT_MODULE_NAME] = arguments.noFallbackToDefaultModuleName } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_NEW_JAVA_ANNOTATION_TARGETS] = arguments.noNewJavaAnnotationTargets } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_OPTIMIZE] = arguments.noOptimize } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_PARAM_ASSERTIONS] = arguments.noParamAssertions } catch (_: NoSuchMethodError) {  }
@@ -445,9 +442,6 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
 
     public val X_NO_CALL_ASSERTIONS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_NO_CALL_ASSERTIONS")
-
-    public val X_NO_FALLBACK_TO_DEFAULT_MODULE_NAME: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_NO_FALLBACK_TO_DEFAULT_MODULE_NAME")
 
     public val X_NO_NEW_JAVA_ANNOTATION_TARGETS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_NO_NEW_JAVA_ANNOTATION_TARGETS")

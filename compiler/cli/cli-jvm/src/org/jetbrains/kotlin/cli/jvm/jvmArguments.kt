@@ -133,7 +133,6 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
 
     put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, arguments.ignoredAnnotationsForBridges?.toList().orEmpty())
-    put(JVMConfigurationKeys.NO_FALLBACK_TO_DEFAULT_MODULE_NAME, arguments.noFallbackToDefaultModuleName)
 }
 
 private fun isCompatibleJvmTargetAndRelease(jvmTarget: String, release: String): Boolean {
