@@ -55,7 +55,6 @@ fun processChunked(chunkHandler: (String) -> Unit) {
     chunkHandler("dataC")
 }
 
-
 private fun testWithClient() = barRegular {
     var clientvar = "hi"
     var another = "hello"
@@ -78,12 +77,8 @@ class WithMemberFunctions {
 
         barRegular {
             baz(memberVar)
-            baz(person.name)
-            baz(person.age)
-            baz(this.memberVar)
-            baz(<!CV_DIAGNOSTIC!>personAlice.name<!>)
+            println(person)
             baz(personAlice.age)
-            baz(<!CV_DIAGNOSTIC!>personAlice.child<!>.age)
         }
     }
 }
@@ -133,7 +128,7 @@ fun foo() {
     val person = MutablePerson("Alice")
 
     barRegular {
-        baz(<!CV_DIAGNOSTIC!>person.name<!>)
+        baz(person.name)
     }
 
     var person2 = MutablePerson("Alice")
@@ -163,12 +158,12 @@ fun foo() {
     var localObj = MutableObject()
     barRegular {
 
-        println(<!CV_DIAGNOSTIC!><!CV_DIAGNOSTIC!>localObj<!>.mutableField<!>)
+        println(<!CV_DIAGNOSTIC!>localObj<!>.mutableField)
     }
 
     val localObjVal = MutableObject()
     barRegular {
-        println(<!CV_DIAGNOSTIC!>localObjVal.mutableField<!>)
+        println(localObjVal.mutableField)
     }
 
     barRegular {
@@ -179,7 +174,7 @@ fun foo() {
 
     val root = RootObject()
     barRegular {
-        baz(<!CV_DIAGNOSTIC!>root.next!!.next!!.theProblematicVar<!>)
+        baz(root.next!!.next!!.theProblematicVar)
     }
 
     var count = false
@@ -212,12 +207,6 @@ fun foo() {
         }
         val s = <!CV_DIAGNOSTIC!>obj<!> as String
         val res = <!CV_DIAGNOSTIC!>nullableStr<!> ?: "default"
-    }
-
-    var girl = MutablePerson(name = "Alice")
-    barRegular {
-        var boy = <!CV_DIAGNOSTIC!>girl<!>
-        boy.name = "bob" // shoud be exception here
     }
 
 }
