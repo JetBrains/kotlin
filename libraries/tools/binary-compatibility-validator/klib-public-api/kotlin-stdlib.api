@@ -85,6 +85,10 @@ open annotation class kotlin.js/ExperimentalJsFileName : kotlin/Annotation { // 
     constructor <init>() // kotlin.js/ExperimentalJsFileName.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.js/ExperimentalJsNoRuntime : kotlin/Annotation { // kotlin.js/ExperimentalJsNoRuntime|null[0]
+    constructor <init>() // kotlin.js/ExperimentalJsNoRuntime.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.js/ExperimentalJsReflectionCreateInstance : kotlin/Annotation { // kotlin.js/ExperimentalJsReflectionCreateInstance|null[0]
     constructor <init>() // kotlin.js/ExperimentalJsReflectionCreateInstance.<init>|<init>(){}[0]
 }
@@ -9074,6 +9078,11 @@ open annotation class kotlin.js/JsFileName : kotlin/Annotation { // kotlin.js/Js
 }
 
 // Targets: [native, wasmJs, wasmWasi]
+open annotation class kotlin.js/JsNoRuntime : kotlin/Annotation { // kotlin.js/JsNoRuntime|null[1]
+    constructor <init>() // kotlin.js/JsNoRuntime.<init>|<init>(){}[1]
+}
+
+// Targets: [native, wasmJs, wasmWasi]
 open annotation class kotlin.js/JsStatic : kotlin/Annotation { // kotlin.js/JsStatic|null[1]
     constructor <init>() // kotlin.js/JsStatic.<init>|<init>(){}[1]
 }
@@ -13766,11 +13775,6 @@ open annotation class kotlin.concurrent/Volatile : kotlin/Annotation { // kotlin
 }
 
 // Targets: [js, wasmJs, wasmWasi]
-open annotation class kotlin.js/ExperimentalJsNoRuntime : kotlin/Annotation { // kotlin.js/ExperimentalJsNoRuntime|null[0]
-    constructor <init>() // kotlin.js/ExperimentalJsNoRuntime.<init>|<init>(){}[0]
-}
-
-// Targets: [js, wasmJs, wasmWasi]
 open annotation class kotlin.native.concurrent/SharedImmutable : kotlin/Annotation { // kotlin.native.concurrent/SharedImmutable|null[1]
     constructor <init>() // kotlin.native.concurrent/SharedImmutable.<init>|<init>(){}[1]
 }
@@ -13989,11 +13993,6 @@ open annotation class kotlin/JsFun : kotlin/Annotation { // kotlin/JsFun|null[0]
 // Targets: [js, wasmJs]
 final val kotlin.js/definedExternally // kotlin.js/definedExternally|{}definedExternally[0]
     final fun <get-definedExternally>(): kotlin/Nothing // kotlin.js/definedExternally.<get-definedExternally>|<get-definedExternally>(){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-open annotation class kotlin.js/JsNoRuntime : kotlin/Annotation { // kotlin.js/JsNoRuntime|null[1]
-    constructor <init>() // kotlin.js/JsNoRuntime.<init>|<init>(){}[1]
-}
 
 // Targets: [wasmJs, wasmWasi]
 open annotation class kotlin.wasm.unsafe/UnsafeWasmMemoryApi : kotlin/Annotation { // kotlin.wasm.unsafe/UnsafeWasmMemoryApi|null[0]
