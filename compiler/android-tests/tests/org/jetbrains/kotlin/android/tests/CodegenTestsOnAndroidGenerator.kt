@@ -11,6 +11,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
@@ -345,6 +346,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     if (module.files.isEmpty()) continue
                     services.registerArtifactsProvider(ArtifactsProvider(services, moduleStructure.modules))
 
+                    // The configuration is used as a key here and not used for the actual compiler invocation
+                    // So if the configuration is created with default services inside, it messes up the
+                    // equals/hashcode.
+                    @OptIn(CompilerConfiguration.Internals::class)
                     val keyConfiguration = CompilerConfiguration()
                     val configuratorForFlags = JvmEnvironmentConfigurator(services)
                     with(configuratorForFlags) {

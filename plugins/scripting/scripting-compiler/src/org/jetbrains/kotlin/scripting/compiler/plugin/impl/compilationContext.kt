@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import org.jetbrains.kotlin.cli.common.setupCommonArguments
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -253,7 +254,7 @@ private fun createInitialCompilerConfiguration(
     reportArgumentsIgnoredGenerally(baseArguments, messageCollector, reportingState)
     reportingState.currentArguments = baseArguments
 
-    return CompilerConfiguration().apply {
+    return CompilerConfiguration.create().apply {
         this.messageCollector = messageCollector
         setupCommonArguments(baseArguments)
 
