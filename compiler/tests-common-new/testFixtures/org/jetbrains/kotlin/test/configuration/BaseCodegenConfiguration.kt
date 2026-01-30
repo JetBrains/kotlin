@@ -274,9 +274,6 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
         configureFirHandlersStep {
             useHandlers(::FirInterpreterDumpHandler)
         }
-        configureJvmArtifactsHandlersStep {
-            useHandlers(::JvmIrInterpreterDumpHandler)
-        }
     }
 }
 

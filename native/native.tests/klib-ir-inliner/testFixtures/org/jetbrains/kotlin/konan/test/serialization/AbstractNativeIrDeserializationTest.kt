@@ -93,9 +93,6 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
             configureFirHandlersStep {
                 useHandlers(::FirInterpreterDumpHandler)
             }
-            configureKlibArtifactsHandlersStep {
-                useHandlers(::NativeKlibInterpreterDumpHandler)
-            }
         }
     }
 }
