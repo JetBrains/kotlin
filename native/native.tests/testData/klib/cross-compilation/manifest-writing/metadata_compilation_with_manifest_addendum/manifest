@@ -1,0 +1,10 @@
+abi_version = <value sanitized for test data stability>
+bar = bar
+baz = baz
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+foo = foo
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets =
+unique_name = stub

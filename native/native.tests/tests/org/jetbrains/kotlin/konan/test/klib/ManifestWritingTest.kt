@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
@@ -28,6 +29,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.util.*
 
@@ -45,10 +49,50 @@ private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-comp
 @TestDataPath("\$PROJECT_ROOT/$TEST_DATA_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 class ManifestWritingTest : AbstractNativeSimpleTest() {
+
+    @TempDir
+    lateinit var tempDir: File
+
     @Test
     @TestMetadata("regular_compilation")
     fun `Manifest of regular compilation`(testInfo: TestInfo) {
         doManifestTest(testInfo)
+    }
+
+    @Test
+    @TestMetadata("regular_compilation_with_manifest_addendum")
+    fun `Manifest of regular compilation with manifest addendum`(testInfo: TestInfo) {
+        val addendum = generateManifestAddendum("foo=foo", "bar=bar", "baz=baz")
+        doManifestTest(
+            testInfo,
+            "-manifest=$addendum"
+        )
+    }
+
+    @Test
+    @TestMetadata("regular_compilation_with_manifest_addendum_empty_native_targets")
+    fun `Manifest of regular compilation with manifest addendum with empty native targets`(testInfo: TestInfo) {
+        val addendum = generateManifestAddendum("foo=foo", "bar=bar", "baz=baz", "native_targets=")
+        val exception = assertThrows<CompilationToolException> {
+            doManifestTest(
+                testInfo,
+                "-manifest=$addendum"
+            )
+        }
+        assertTrue { "Custom properties [native_targets] are not allowed to be added" in exception.reason }
+    }
+
+    @Test
+    @TestMetadata("regular_compilation_with_manifest_addendum_non_empty_native_targets")
+    fun `Manifest of regular compilation with manifest addendum with non-empty native targets`(testInfo: TestInfo) {
+        val addendum = generateManifestAddendum("foo=foo", "bar=bar", "baz=baz", "native_targets=linux_x64,macos_x64")
+        val exception = assertThrows<CompilationToolException> {
+            doManifestTest(
+                testInfo,
+                "-manifest=$addendum"
+            )
+        }
+        assertTrue { "Custom properties [native_targets] are not allowed to be added" in exception.reason }
     }
 
     @Test
@@ -77,6 +121,45 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
             testInfo,
             "-Xmetadata-klib",
         )
+    }
+
+    @Test
+    @TestMetadata("metadata_compilation_with_manifest_addendum")
+    fun `Manifest of metadata compilation with manifest addendum`(testInfo: TestInfo) {
+        val addendum = generateManifestAddendum("foo=foo", "bar=bar", "baz=baz")
+        doManifestTest(
+            testInfo,
+            "-Xmetadata-klib",
+            "-manifest=$addendum"
+        )
+    }
+
+    @Test
+    @TestMetadata("metadata_compilation_with_manifest_addendum_empty_native_targets")
+    fun `Manifest of metadata compilation with manifest addendum with empty native targets`(testInfo: TestInfo) {
+        val addendum = generateManifestAddendum("foo=foo", "bar=bar", "baz=baz", "native_targets=")
+        val exception = assertThrows<CompilationToolException> {
+            doManifestTest(
+                testInfo,
+                "-Xmetadata-klib",
+                "-manifest=$addendum"
+            )
+        }
+        assertTrue { "Custom properties [native_targets] are not allowed to be added" in exception.reason }
+    }
+
+    @Test
+    @TestMetadata("metadata_compilation_with_manifest_addendum_non_empty_native_targets")
+    fun `Manifest of metadata compilation with manifest addendum with non-empty native targets`(testInfo: TestInfo) {
+        val addendum = generateManifestAddendum("foo=foo", "bar=bar", "baz=baz", "native_targets=linux_x64,macos_x64")
+        val exception = assertThrows<CompilationToolException> {
+            doManifestTest(
+                testInfo,
+                "-Xmetadata-klib",
+                "-manifest=$addendum"
+            )
+        }
+        assertTrue { "Custom properties [native_targets] are not allowed to be added" in exception.reason }
     }
 
     @Test
@@ -126,16 +209,16 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
     }
 
     private fun doManifestTest(testInfo: TestInfo, vararg additionalCompilerArguments: String) {
-        val testName = testInfo.testMethod.get().annotations.firstIsInstance<TestMetadata>().value
-        val rootDir = File(TEST_DATA_ROOT, testName)
-        require(rootDir.exists()) { "File doesn't exist: ${rootDir.absolutePath}" }
-
         val compilationResult = compileLibrary(
             testRunSettings,
             stubSourceFile,
             packed = false,
             freeCompilerArgs = additionalCompilerArguments.toList()
-        )
+        ).assertSuccess()
+
+        val testName = testInfo.testMethod.get().annotations.firstIsInstance<TestMetadata>().value
+        val rootDir = File(TEST_DATA_ROOT, testName)
+        require(rootDir.exists()) { "File doesn't exist: ${rootDir.absolutePath}" }
 
         val expectedOutput = rootDir.resolve("output.txt")
         TestDataAssertions.assertEqualsToFile(expectedOutput, compilationResult.toOutput().sanitizeCompilationOutput())
@@ -143,21 +226,27 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
         compareManifests(compilationResult, rootDir.resolve("manifest"))
     }
 
-    fun String.sanitizeCompilationOutput(): String = lines().joinToString(separator = "\n") { line ->
+    private fun String.sanitizeCompilationOutput(): String = lines().joinToString(separator = "\n") { line ->
         when {
             DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX.matches(line) -> ""
             else -> line
         }
     }
 
+    private fun generateManifestAddendum(vararg properties: String): File {
+        val manifestAddendum = File(tempDir, "manifest-addendum.properties")
+        manifestAddendum.bufferedWriter().use { writer -> writer.write(properties.joinToString(separator = "\n")) }
+        return manifestAddendum
+    }
+
     companion object {
 
 
         private fun AbstractNativeSimpleTest.compareManifests(
-            compilationResult: TestCompilationResult<out TestCompilationArtifact.KLIB>,
+            compilationResult: TestCompilationResult.Success<out TestCompilationArtifact.KLIB>,
             expectedManifest: File,
         ) {
-            val klibRoot = compilationResult.assertSuccess().resultingArtifact
+            val klibRoot = compilationResult.resultingArtifact
             val actualManifestSanitizedText = readManifestAndSanitize(klibRoot.klibFile, targets.testTarget)
 
             TestDataAssertions.assertEqualsToFile(expectedManifest, actualManifestSanitizedText)
