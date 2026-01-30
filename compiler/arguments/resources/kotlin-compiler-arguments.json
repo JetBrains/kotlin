@@ -5398,7 +5398,7 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": "LEGACY",
+                                        "current": "legacy",
                                         "valueInVersions": []
                                     }
                                 },
@@ -6292,12 +6292,12 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": "STRICT",
+                                        "current": "strict",
                                         "valueInVersions": [
                                             {
                                                 "minReleaseVersion": "1.4.30",
                                                 "maxReleaseVersion": "2.0.21",
-                                                "value": "WARN"
+                                                "value": "warn"
                                             }
                                         ]
                                     }
@@ -7222,7 +7222,7 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": "INDY",
+                                        "current": "indy",
                                         "valueInVersions": []
                                     }
                                 },
@@ -7348,7 +7348,7 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": "NONE",
+                                        "current": "none",
                                         "valueInVersions": []
                                     }
                                 },
@@ -7432,7 +7432,7 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": "ENABLE",
+                                        "current": "enable",
                                         "valueInVersions": []
                                     }
                                 },
@@ -7972,7 +7972,7 @@
                                     "valueInVersions": []
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.WhenExpressionsType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []

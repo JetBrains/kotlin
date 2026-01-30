@@ -288,5 +288,18 @@ class CompatqualCheckerFrameworkAnnotationsType(
     }
 }
 
+/**
+ * A value which accepts [WhenExpressions] type.
+ */
+@Serializable
+class WhenExpressionsType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<WhenExpressions?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<WhenExpressions> {
+    override fun stringRepresentation(value: WhenExpressions?): String? {
+        return value?.schemeName?.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""

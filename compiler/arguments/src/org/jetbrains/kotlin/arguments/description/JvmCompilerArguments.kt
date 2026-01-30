@@ -991,6 +991,11 @@ The default value is 'inline'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{indy|inline}".asReleaseDependent()
 
+        argumentType = WhenExpressionsType(
+            isNullable = ReleaseDependent(true),
+            defaultValue = ReleaseDependent(null),
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_20
         )
