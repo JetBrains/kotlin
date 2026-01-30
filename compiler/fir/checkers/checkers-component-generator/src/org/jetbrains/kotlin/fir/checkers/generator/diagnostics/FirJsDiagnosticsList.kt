@@ -115,7 +115,7 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         }
         val NAMED_COMPANION_IN_EXPORTED_INTERFACE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
 
-        val NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
 
         val EXPOSED_NOT_EXPORTED_SUPER_INTERFACE by deprecationError<KtElement>(
             LanguageFeature.JsExposedNotExportedSuperInterfaceApiByExportedOne
