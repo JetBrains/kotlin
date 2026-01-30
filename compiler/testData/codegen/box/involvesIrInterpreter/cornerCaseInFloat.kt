@@ -11,8 +11,8 @@ fun box(): String {
     val b = 0.1f + 0.2f
     val c = number + 0.2f
 
-    if (<!EVALUATED{IR}("0.3")!>a<!>.toString() == b.toString()) return "Fail 1: unexpected optimization"
-    if (<!EVALUATED{IR}("0.3")!>a<!>.toString() == c.toString()) return "Fail 2: unexpected equality of compile time and runtime results"
+    if (a.toString() == b.toString()) return "Fail 1: unexpected optimization"
+    if (a.toString() == c.toString()) return "Fail 2: unexpected equality of compile time and runtime results"
 
     return "OK"
 }

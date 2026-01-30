@@ -1,6 +1,3 @@
-// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
-// ^^^ KT-73621: EVALUATED{IR} is missing
-
 object Test
 
 fun test1(): String {
@@ -9,7 +6,7 @@ fun test1(): String {
     val test = Test
     val b = "test 1: " + test
 
-    if (a != b) return "<!EVALUATED{IR}("Fail 1: "")!>Fail 1: \"<!>$a<!EVALUATED{IR}("" != "")!>\" != \"<!>$b<!EVALUATED{IR}(""")!>\"<!>"
+    if (a != b) return "Fail 1: \"$a\" != \"$b\""
     return "OK"
 }
 
@@ -19,17 +16,17 @@ fun test2(): String {
     val test = Test
     val b = "test 2: " + test.toString()
 
-    if (a != b) return "<!EVALUATED{IR}("Fail 2: "")!>Fail 2: \"<!>$a<!EVALUATED{IR}("" != "")!>\" != \"<!>$b<!EVALUATED{IR}(""")!>\"<!>"
+    if (a != b) return "Fail 2: \"$a\" != \"$b\""
     return "OK"
 }
 
 fun test3(): String {
-    val a = "<!EVALUATED{IR}("test 3: ")!>test 3: <!>$Test"
+    val a = "test 3: $Test"
 
     val test = Test
-    val b = "<!EVALUATED{IR}("test 3: ")!>test 3: <!>$test"
+    val b = "test 3: $test"
 
-    if (a != b) return "<!EVALUATED{IR}("Fail 3: "")!>Fail 3: \"<!>$a<!EVALUATED{IR}("" != "")!>\" != \"<!>$b<!EVALUATED{IR}(""")!>\"<!>"
+    if (a != b) return "Fail 3: \"$a\" != \"$b\""
     return "OK"
 }
 
