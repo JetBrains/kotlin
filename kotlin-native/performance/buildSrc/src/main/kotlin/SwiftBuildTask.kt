@@ -62,7 +62,7 @@ open class SwiftBuildTask @Inject constructor(
     @get:OutputFile
     val outputFile = outputDirectory.file(product)
 
-    private fun ExecOperations.swiftBuild(configure: Action<ExecSpec> = {}) = exec {
+    private fun ExecOperations.swiftBuild(configure: Action<ExecSpec>) = exec {
         executable("swift")
         args(
                 "build",
@@ -75,7 +75,7 @@ open class SwiftBuildTask @Inject constructor(
 
     @TaskAction
     fun run() {
-        execOperations.swiftBuild().assertNormalExitValue()
+        execOperations.swiftBuild{}.assertNormalExitValue()
         val buildLocation = ByteArrayOutputStream().apply {
             execOperations.swiftBuild {
                 standardOutput = this@apply
