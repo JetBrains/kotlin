@@ -45,8 +45,6 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
         get() = tasks.named(KotlinAbiCheckTaskImpl.NAME)
     override val updateTaskProvider: TaskProvider<Task>
         get() = tasks.named(KotlinAbiUpdateTask.NAME)
-    override val internalDumpTaskProvider: TaskProvider<Task>
-        get() = tasks.named(KotlinAbiDumpTaskImpl.NAME)
 }
 
 internal fun Project.AbiValidationExtensionImpl(): AbiValidationExtensionImpl =

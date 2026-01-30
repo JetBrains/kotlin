@@ -93,7 +93,7 @@ interface AbiValidationExtension {
     val referenceDumpDir: DirectoryProperty
 
     /**
-     *  A provider for the task that compares actual dumps from the current with dumps from [referenceDumpDir].
+     * A provider for the task that compares actual dumps from the current with dumps from [referenceDumpDir].
      *
      * This task fails if any differences are found between the files.
      *
@@ -109,23 +109,39 @@ interface AbiValidationExtension {
     val updateTaskProvider: TaskProvider<Task>
 
     /**
-     * A provider for the task that generates actual dumps from the current code.
+     * Whether to include the declarations for targets which are not supported by the host in the generated dump.
+     * Targets which are not supported by the host in two cases:
+     * - cross-compilation is disabled and some targets can't be compiled on the host machine
+     * - c-interop being used and some targets can't be compiled on the host machine
      *
-     * These dumps are used when comparing with dumps from the [referenceDumpDir] by the [checkTaskProvider] task.
-     *
-     * @since 2.4.0
-     */
-    val internalDumpTaskProvider: TaskProvider<Task>
-
-    /**
-     * Whether to include the declarations for targets which are not supported by host compiler in the generated dump.
      * These declarations are taken from the reference dump, if available.
      *
      * If possible, unsupported targets are supplemented with common declarations that are already present in the supported targets.
      *
      * However, this does not provide a complete guarantee, so it should be used with caution.
+     * This mode is intended to improve the "local" development experience only, and it is crucial to double-check ABI dumps on a host supporting corresponding compilation targets.
      *
      * If the option is set to `false` and the compiler does not support some of the Kotlin targets used in the current project, the dump generation fails with an error.
+     *
+     * Example.
+     *
+     *  There are two targets in the project `iosX64`, `androidNativeX64` and `linuxX64`.
+     *  Current dump contains class `my.Utils` which present in all targets, `my.IosUtils` only in iosX64.
+     *
+     *  Suppose we make such changes:
+     *  - added `my.Utils2` in all targets
+     *  - added `my.LinuxUtils` in linuxX64
+     *  - added `my.NonAppleUtils` in linuxX64 and androidNativeX64
+     *  - added `my.IosUtils2` in iosX64
+     *
+     *  On a host that lacks iosX64 support, and this mode is enabled, there will be such changes in the dump:
+     *  - `my.Utils` will stay present in all targets of the new dump (correct inference)
+     *  - `my.IosUtils` will stay present in iosX64 target of the new dump (correct inference)
+     *  - `my.Utils2` will be present in all targets of the new dump (correct inference)
+     *  - `my.LinuxUtils` will be present in linuxX64 target of the new dump (correct inference)
+     *  - `my.NonAppleUtils` will be present in all targets of the new dump (incorrect inference - because usually if it is added to everything, then there is a high chance that the symbol is added to an unsupported target)
+     *  - `my.IosUtils2` won't be present in iosX64 targets of the new dump (incorrect inference - because we can't compile the target and see what appeared individually in it)
+     *
      *
      * Default value: `true`
      *
