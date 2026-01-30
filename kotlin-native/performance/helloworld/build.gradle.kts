@@ -53,6 +53,7 @@ val processBenchResults by tasks.registering {
     inputs.file(unprocessedReportFile).withPathSensitivity(PathSensitivity.NONE) // just the contents of the report matters
     val reportFile = layout.buildDirectory.file("nativeBenchResults.json")
     outputs.file(reportFile)
+    outputs.cacheIf { true }
 
     doFirst {
         val report = unprocessedReportFile.get().asFile.readText()
