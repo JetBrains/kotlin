@@ -1,3 +1,10 @@
+## 2.3.10-RC2
+
+### Compiler
+
+- [`KT-83984`](https://youtrack.jetbrains.com/issue/KT-83984) Data races around kotlinx.serialization plugin protobuf extensions registration
+- [`KT-83983`](https://youtrack.jetbrains.com/issue/KT-83983) Revert of KT-83081
+
 ## 2.3.10-RC
 
 ### Compiler
