@@ -179,9 +179,6 @@ object JVMConfigurationKeys {
     @JvmField
     val IGNORED_ANNOTATIONS_FOR_BRIDGES = CompilerConfigurationKey.create<List<String>>("IGNORED_ANNOTATIONS_FOR_BRIDGES")
 
-    @JvmField
-    val NO_FALLBACK_TO_DEFAULT_MODULE_NAME = CompilerConfigurationKey.create<Boolean>("NO_FALLBACK_TO_DEFAULT_MODULE_NAME")
-
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -375,8 +372,4 @@ var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
 var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
     get() = getList(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES)
     set(value) { put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, value) }
-
-var CompilerConfiguration.noFallbackToDefaultModuleName: Boolean
-    get() = getBoolean(JVMConfigurationKeys.NO_FALLBACK_TO_DEFAULT_MODULE_NAME)
-    set(value) { put(JVMConfigurationKeys.NO_FALLBACK_TO_DEFAULT_MODULE_NAME, value) }
 

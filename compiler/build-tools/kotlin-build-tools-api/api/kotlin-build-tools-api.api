@@ -398,7 +398,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Jv
 	public static final field X_MODULE_PATH Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_MULTIFILE_PARTS_INHERIT Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_NO_CALL_ASSERTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
-	public static final field X_NO_FALLBACK_TO_DEFAULT_MODULE_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_NO_NEW_JAVA_ANNOTATION_TARGETS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_NO_OPTIMIZE Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_NO_PARAM_ASSERTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;

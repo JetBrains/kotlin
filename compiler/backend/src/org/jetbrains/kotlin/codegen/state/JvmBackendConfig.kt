@@ -117,6 +117,4 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
         else JvmWhenGenerationScheme.INLINE
 
     val generateDebugMetadataV2: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_3
-
-    val noFallbackToDefaultModuleName: Boolean = configuration.noFallbackToDefaultModuleName
 }

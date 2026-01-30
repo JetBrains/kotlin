@@ -80,8 +80,6 @@ where advanced options include:
   -Xmodule-path=<path>       Paths to Java 9+ modules.
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and a facade.
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types.
-  -Xno-fallback-to-default-module-name
-                             Throw exception when generating calls to symbols from a module with no name, instead of falling back to 'main'.
   -Xno-new-java-annotation-targets
                              Don't generate Java 1.8+ targets for Kotlin annotation classes.
   -Xno-optimize              Disable optimizations.
