@@ -4,19 +4,22 @@ import PackageDescription
 
 let package = Package(
     name: "swift-interop",
-    products: [
-        .executable(name: "swiftInterop", targets: ["SwiftInterop"])
-    ],
+    platforms: [.macOS(.v13)], // package-benchmark requirements
     dependencies: [
-        .package(path: "build/swiftpkg/kt")
+        .package(path: "build/swiftpkg/kt"),
+        .package(url: "https://github.com/ordo-one/package-benchmark", .upToNextMajor(from: "1.4.0"))
     ],
     targets: [
         .executableTarget(
             name: "SwiftInterop",
             dependencies: [
-                .product(name: "Kt", package: "kt")
+                .product(name: "Kt", package: "kt"),
+                .product(name: "Benchmark", package: "package-benchmark"),
             ],
-            path: "swiftSrc"
-        )
+            path: "Benchmarks/SwiftInterop",
+            plugins: [
+                .plugin(name: "BenchmarkPlugin", package: "package-benchmark")
+            ]
+        ),
    ]
 )
