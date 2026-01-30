@@ -5,6 +5,8 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.gradle.kotlin.dsl.creating
 import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.named
@@ -15,6 +17,9 @@ import org.jetbrains.kotlin.*
 import javax.inject.Inject
 
 internal const val BENCHMARKING_GROUP = "benchmarking"
+internal const val BENCHMARK_SEMAPHORE_NAME = "benchmarkSemaphore"
+
+abstract class BenchmarkSemaphore : BuildService<BuildServiceParameters.None>
 
 open class BenchmarkExtension @Inject constructor(project: Project) {
     /**
@@ -46,6 +51,10 @@ open class BenchmarkExtension @Inject constructor(project: Project) {
     val konanRun by project.tasks.registering(RunKotlinNativeTask::class)
     val getCodeSize by project.tasks.registering(CodeSizeTask::class)
     val konanJsonReport by project.tasks.registering(JsonReportTask::class)
+
+    val benchmarkSemaphore = project.gradle.sharedServices.registerIfAbsent(BENCHMARK_SEMAPHORE_NAME, BenchmarkSemaphore::class.java) {
+        maxParallelUsages.set(1) // Benchmarks should not be executed in parallel to each other: this will skew their results
+    }
 }
 
 /**
@@ -91,6 +100,8 @@ abstract class BenchmarkingPlugin : Plugin<Project> {
                 arguments.add(benchmark.applicationName.map { "$it::" })
             }
             useCSet.convention(project.useCSet)
+
+            usesService(benchmark.benchmarkSemaphore)
 
             // We do not want to cache benchmarking runs; we want the task to run whenever requested.
             outputs.upToDateWhen { false }
