@@ -67,6 +67,7 @@ abstract class BenchmarkingPlugin : Plugin<Project> {
     protected abstract fun Project.configureTasks()
 
     override fun apply(target: Project) = with(target) {
+        pluginManager.apply("custom-kotlin-native-home")
         pluginManager.apply("kotlin-multiplatform")
 
         createExtension()
