@@ -139,6 +139,6 @@ class CallableReferenceInfo(
     ): CallableReferenceInfo = CallableReferenceInfo(
         callSite, name, explicitReceiver,
         session, containingFile, containingDeclarations,
-        expectedType, lhs, hasSyntheticOuterCall, origin
+        expectedType, lhs, hasSyntheticOuterCall, origin, callKind
     )
 }

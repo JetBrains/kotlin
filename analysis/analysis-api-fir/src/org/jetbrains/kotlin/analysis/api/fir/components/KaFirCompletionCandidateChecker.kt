@@ -71,18 +71,14 @@ private class KaFirCompletionExtensionCandidateChecker(
     private val firCallSiteSession: FirSession
     private val firOriginalFile: FirFile
     private val explicitReceiverInfo: ExplicitReceiverInfo?
-    private val resolutionMode: SingleCandidateResolutionMode
     private val candidateResolver: SingleCandidateResolver
+    private val containingCallableReference: KtCallableReferenceExpression?
 
     init {
         val fakeFile = nameExpression.containingKtFile
         val firFakeFile = fakeFile.getOrBuildFirFile(resolutionFacade)
 
-        resolutionMode = if (explicitReceiver?.parent is KtCallableReferenceExpression) {
-            SingleCandidateResolutionMode.CHECK_EXTENSION_CALLABlE_REFERENCE_FOR_COMPLETION
-        } else {
-            SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION
-        }
+        containingCallableReference = explicitReceiver?.parent as? KtCallableReferenceExpression
         implicitReceivers = computeImplicitReceivers(firFakeFile)
         firCallSiteSession = firFakeFile.llFirSession
         firOriginalFile = originalFile.getOrBuildFirFile(resolutionFacade)
@@ -102,6 +98,12 @@ private class KaFirCompletionExtensionCandidateChecker(
 
         val firSymbol = candidate.firSymbol as FirCallableSymbol<*>
         firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+
+        val resolutionMode = if (containingCallableReference != null) {
+            SingleCandidateResolutionMode.CHECK_EXTENSION_CALLABlE_REFERENCE_FOR_COMPLETION
+        } else {
+            SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION
+        }
 
         fun processReceiver(implicitReceiverValue: ImplicitReceiverValue<*>?): KaExtensionApplicabilityResult? {
             val resolutionParameters = ResolutionParameters(
@@ -172,21 +174,21 @@ private class KaFirCompletionExtensionCandidateChecker(
 
         val receiverExpressionFir = receiverExpression.getOrBuildFirOfType<FirExpression>(resolutionFacade)
 
-        val callableReferenceLHS = if (resolutionMode == SingleCandidateResolutionMode.CHECK_EXTENSION_CALLABlE_REFERENCE_FOR_COMPLETION) {
-            val callableReference = receiverExpression.parent as KtCallableReferenceExpression
-            val callableReferenceFir = callableReference.getOrBuildFirOfType<FirCallableReferenceAccess>(resolutionFacade)
-            val resolver = SingleCandidateResolver(firCallSiteSession, firOriginalFile)
-            val components = resolver.bodyResolveComponents
-            val context = components.context
-            context.withFile(firOriginalFile, components) {
-                components.doubleColonExpressionResolver.resolveDoubleColonLHS(callableReferenceFir)
+        val callableReferenceLHS =
+            if (containingCallableReference != null) {
+                val callableReferenceFir = containingCallableReference.getOrBuildFirOfType<FirCallableReferenceAccess>(resolutionFacade)
+                val resolver = SingleCandidateResolver(firCallSiteSession, firOriginalFile)
+                val components = resolver.bodyResolveComponents
+                val context = components.context
+                context.withFile(firOriginalFile, components) {
+                    components.doubleColonExpressionResolver.resolveDoubleColonLHS(callableReferenceFir)
+                }
+            } else {
+                null
             }
-        } else {
-            null
-        }
 
         val refinedReceiverExpression =
-            if (resolutionMode == SingleCandidateResolutionMode.CHECK_EXTENSION_CALLABlE_REFERENCE_FOR_COMPLETION &&
+            if (containingCallableReference != null &&
                 receiverExpressionFir is FirResolvedQualifier &&
                 callableReferenceLHS is DoubleColonLHS.Type
             ) {
