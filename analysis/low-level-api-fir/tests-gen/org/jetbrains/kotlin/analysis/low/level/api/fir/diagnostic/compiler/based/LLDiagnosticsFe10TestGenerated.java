@@ -26806,6 +26806,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("jSpecifyWithVarargs.kt")
+      public void testJSpecifyWithVarargs() {
+        runTest("compiler/testData/diagnostics/tests/j+k/jSpecifyWithVarargs.kt");
+      }
+
+      @Test
       @TestMetadata("javaField.kt")
       public void testJavaField() {
         runTest("compiler/testData/diagnostics/tests/j+k/javaField.kt");

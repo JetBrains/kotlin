@@ -26806,6 +26806,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("jSpecifyWithVarargs.kt")
+      public void testJSpecifyWithVarargs() {
+        runTest("compiler/testData/diagnostics/tests/j+k/jSpecifyWithVarargs.kt");
+      }
+
+      @Test
       @TestMetadata("javaField.kt")
       public void testJavaField() {
         runTest("compiler/testData/diagnostics/tests/j+k/javaField.kt");
