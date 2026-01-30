@@ -81,38 +81,6 @@ val KotlinLibrary.serializedKlibFingerprint: SerializedKlibFingerprint?
 internal val SerializedIrFile.fileMetadata: ByteArray
     get() = backendSpecificMetadata ?: error("Expect file caches to have backendSpecificMetadata, but '$path' doesn't")
 
-fun generateKLib(
-    modulesStructure: ModulesStructure,
-    outputKlibPath: String,
-    nopack: Boolean,
-    jsOutputName: String?,
-    icData: List<KotlinFileSerializedData>,
-    moduleFragment: IrModuleFragment,
-    irBuiltIns: IrBuiltIns,
-    diagnosticReporter: IrDiagnosticReporter,
-    builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
-    wasmTarget: WasmTarget? = null,
-    performanceManager: PerformanceManager? = null
-) {
-    val configuration = modulesStructure.compilerConfiguration
-
-    serializeModuleIntoKlib(
-        moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-        configuration = configuration,
-        diagnosticReporter = diagnosticReporter,
-        metadataSerializer = KlibMetadataIncrementalSerializer(modulesStructure, moduleFragment),
-        klibPath = outputKlibPath,
-        moduleFragment = moduleFragment,
-        irBuiltIns = irBuiltIns,
-        cleanFiles = icData,
-        nopack = nopack,
-        jsOutputName = jsOutputName,
-        builtInsPlatform = builtInsPlatform,
-        wasmTarget = wasmTarget,
-        performanceManager = performanceManager,
-    )
-}
-
 /**
  * Note: This function returns the list of the deserialized [IrModuleFragment]s that has exactly the same
  * order as the libraries in [klibs].
@@ -238,7 +206,6 @@ fun loadIrForSingleModule(
             builtIns = irBuiltIns,
             messageCollector = messageLogger
         ),
-        icData = null,
         friendModules = friendModules
     )
 
@@ -331,7 +298,6 @@ fun getIrModuleInfoForKlib(
             builtIns = irBuiltIns,
             messageCollector = messageCollector,
         ),
-        icData = null,
         friendModules = friendModules
     )
 
@@ -389,7 +355,6 @@ fun getIrModuleInfoForSourceFiles(
             builtIns = irBuiltIns,
             messageCollector = messageCollector,
         ),
-        icData = null,
         friendModules = friendModules,
     )
 
