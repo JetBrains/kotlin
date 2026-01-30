@@ -40,14 +40,9 @@ class ClassicFrontend2IrConverter(
     FrontendKinds.ClassicFrontend,
     BackendKinds.IrBackend
 ) {
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::LibraryProvider))
-
     override fun transform(module: TestModule, inputArtifact: ClassicFrontendOutputArtifact): IrBackendInput {
         return when (val targetBackend = testServices.defaultsProvider.targetBackend) {
             TargetBackend.JVM_IR, TargetBackend.JVM_IR_SERIALIZE -> transformToJvmIr(module, inputArtifact)
-            TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> transformToJsIr(module, inputArtifact)
-            TargetBackend.WASM -> transformToWasmIr(module, inputArtifact)
             else -> testServices.assertions.fail { "Target backend $targetBackend not supported for transformation into IR" }
         }
     }
@@ -71,101 +66,6 @@ class ClassicFrontend2IrConverter(
             sourceFiles = emptyList(),
             descriptorMangler = backendInput.symbolTable.signaturer!!.mangler,
             irMangler = JvmIrMangler,
-        )
-    }
-
-    private fun transformToJsIr(module: TestModule, inputArtifact: ClassicFrontendOutputArtifact): IrBackendInput {
-        val (psiFiles, analysisResult, project, _) = inputArtifact
-
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-
-        val sourceFiles = psiFiles.values.toList()
-        val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
-
-        val klibs = LoadedKlibs(all = testServices.klibEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices))
-
-        val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
-            project = project,
-            files = sourceFiles,
-            configuration = configuration,
-            analysisResult = analysisResult,
-            klibs = klibs,
-            icData = icData,
-            irFactory = IrFactoryImpl,
-        ) {
-            testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
-        }
-
-        @Suppress("DEPRECATION_ERROR")
-        val hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(sourceFiles, analysisResult.bindingContext)
-        val metadataSerializer = KlibMetadataIncrementalSerializer(
-            sourceFiles,
-            configuration,
-            project,
-            analysisResult.bindingContext,
-            moduleFragment.descriptor,
-        )
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
-        return IrBackendInput.JsIrAfterFrontendBackendInput(
-            moduleFragment,
-            pluginContext.irBuiltIns,
-            icData,
-            diagnosticReporter = DiagnosticReporterFactory.createReporter(),
-            hasErrors,
-            descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
-            irMangler = JsManglerIr,
-            metadataSerializer = metadataSerializer,
-        )
-    }
-
-    private fun transformToWasmIr(module: TestModule, inputArtifact: ClassicFrontendOutputArtifact): IrBackendInput {
-        val (psiFiles, analysisResult, project, _) = inputArtifact
-
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-
-        val sourceFiles = psiFiles.values.toList()
-        val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
-
-        val klibs = LoadedKlibs(all = testServices.klibEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices))
-
-        val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
-            project = project,
-            files = sourceFiles,
-            configuration = configuration,
-            analysisResult = analysisResult,
-            klibs = klibs,
-            icData = icData,
-            irFactory = IrFactoryImpl,
-        ) {
-            testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
-        }
-
-        @Suppress("DEPRECATION_ERROR")
-        val analyzerFacade = TopDownAnalyzerFacadeForWasm.facadeFor(configuration.get(WasmConfigurationKeys.WASM_TARGET))
-
-        @Suppress("DEPRECATION_ERROR")
-        val hasErrors = analyzerFacade.checkForErrors(sourceFiles, analysisResult.bindingContext)
-        val metadataSerializer = KlibMetadataIncrementalSerializer(
-            sourceFiles,
-            configuration,
-            project,
-            analysisResult.bindingContext,
-            moduleFragment.descriptor,
-        )
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
-        return IrBackendInput.WasmAfterFrontendBackendInput(
-            moduleFragment,
-            pluginContext.irBuiltIns,
-            icData,
-            diagnosticReporter = DiagnosticReporterFactory.createReporter(),
-            hasErrors,
-            descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
-            irMangler = JsManglerIr,
-            metadataSerializer = metadataSerializer,
         )
     }
 }
