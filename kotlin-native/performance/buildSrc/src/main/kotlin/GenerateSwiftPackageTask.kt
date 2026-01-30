@@ -12,6 +12,7 @@ private const val PACKAGE_FILENAME = "Package.swift"
 /**
  * Generate `Package.swift` for a given XCFramework
  */
+@CacheableTask
 open class GenerateSwiftPackageTask @Inject constructor(
         objectFactory: ObjectFactory,
 ) : DefaultTask() {

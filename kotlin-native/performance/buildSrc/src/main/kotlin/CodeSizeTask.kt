@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
@@ -28,6 +29,7 @@ private fun getCodeSizeBenchmark(name: String, file: File): String {
     ).toJson()
 }
 
+@CacheableTask
 open class CodeSizeTask @Inject constructor(
         objectFactory: ObjectFactory,
 ) : DefaultTask() {

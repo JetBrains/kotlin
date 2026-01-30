@@ -38,6 +38,7 @@ private fun createJsonReport(
  *
  * Adds cpu, os, java versions, compiler version and flags.
  */
+@CacheableTask
 open class JsonReportTask @Inject constructor(
         objectFactory: ObjectFactory,
 ) : DefaultTask() {
