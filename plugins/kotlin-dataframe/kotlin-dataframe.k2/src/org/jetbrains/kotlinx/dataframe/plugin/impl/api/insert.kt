@@ -1,9 +1,9 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlinx.dataframe.api.*
+import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
-import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.InsertClauseApproximation
 
 internal class Insert1 : AbstractInterpreter<InsertClauseApproximation>() {
@@ -30,7 +30,7 @@ internal class Under0 : AbstractInterpreter<PluginDataFrameSchema>() {
 }
 
 internal class Under1 : AbstractInterpreter<PluginDataFrameSchema>() {
-    val Arguments.columnPath: ColumnPathApproximation by arg()
+    val Arguments.columnPath: ColumnPath by arg()
     val Arguments.receiver: InsertClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
