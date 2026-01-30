@@ -194,5 +194,18 @@ class AbiStabilityType(
     }
 }
 
+/**
+ * A value which accepts [AssertionsMode] type.
+ */
+@Serializable
+class AssertionsModeType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
+    override val defaultValue: ReleaseDependent<AssertionsMode?> = ReleaseDependent(AssertionsMode.LEGACY),
+) : KotlinArgumentValueType<AssertionsMode> {
+    override fun stringRepresentation(value: AssertionsMode?): String? {
+        return value?.modeName?.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""

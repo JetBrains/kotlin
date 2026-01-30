@@ -322,9 +322,13 @@ The default value is 1.""".asReleaseDependent()
 -Xassertions=jvm:            enable, depend on JVM assertion settings;
 -Xassertions=legacy:         calculate the condition on each call, the behavior depends on JVM assertion settings in the kotlin package;
 default: legacy""".asReleaseDependent()
-        // TODO: change to JVMAssertionsMode type
         valueType = StringType(defaultValue = "legacy".asReleaseDependent())
         valueDescription = "{always-enable|always-disable|jvm|legacy}".asReleaseDependent()
+
+        argumentType = AssertionsModeType(
+            isNullable = ReleaseDependent(false),
+            defaultValue = ReleaseDependent(AssertionsMode.LEGACY),
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_60,
