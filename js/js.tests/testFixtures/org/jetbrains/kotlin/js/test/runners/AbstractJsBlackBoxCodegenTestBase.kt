@@ -125,12 +125,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase(
             configureFirHandlersStep {
                 useHandlers(::FirInterpreterDumpHandler)
             }
-            configureKlibArtifactsHandlersStep {
-                useHandlers(::JsKlibInterpreterDumpHandler)
-            }
-            configureJsArtifactsHandlersStep {
-                useHandlers(::JsIrInterpreterDumpHandler)
-            }
         }
     }
 }

@@ -8,12 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.constant.AnnotationValue
-import org.jetbrains.kotlin.constant.ErrorValue
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.shouldUseCalleeReferenceAsItsSourceInIr
 import org.jetbrains.kotlin.fir.backend.utils.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -25,18 +20,10 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.evaluatedConstTrackerKey
-import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-
-private const val stopEvaluation = "// STOP_EVALUATION_CHECKS"
-private const val startEvaluation = "// START_EVALUATION_CHECKS"
 
 interface EvaluatorHandlerTrait {
     val testServices: TestServices
@@ -44,32 +31,9 @@ interface EvaluatorHandlerTrait {
     val globalMetadataInfoHandler
         get() = testServices.globalMetadataInfoHandler
 
-    fun TestFile.extractRangesWithoutRender(): List<Pair<Int, Int>> {
-        val content = testServices.sourceFileProvider.getContentOfSourceFile(this)
-        return buildList {
-            var indexOfStop = -1
-            do {
-                indexOfStop = content.indexOf(stopEvaluation, indexOfStop + 1)
-                if (indexOfStop < 0) break
-
-                val indexOfStart = content.indexOf(startEvaluation, indexOfStop).takeIf { it != -1 } ?: content.length
-                add(indexOfStop to indexOfStart)
-            } while (true)
-        }
-    }
-}
-
-interface IrInterpreterDumpHandlerTrait : EvaluatorHandlerTrait {
-    context(_: AnalysisHandler<*>)
-    fun processModule(module: TestModule) {
-        // nothing
-    }
 }
 
 class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler(testServices), EvaluatorHandlerTrait {
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::FirInterpreterResultsStorage))
-
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         info.partsForDependsOnModules.forEach {
             it.firFilesByTestFile.forEach { (testFile, firFile) ->
@@ -79,10 +43,7 @@ class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler
     }
 
     private fun processFile(testFile: TestFile, firFile: FirFile) {
-        val rangesThatAreNotSupposedToBeRendered = testFile.extractRangesWithoutRender()
-
         fun render(result: FirElement, start: Int, end: Int) {
-            if (rangesThatAreNotSupposedToBeRendered.any { start >= it.first && start <= it.second }) return
             if (result !is FirLiteralExpression) return
 
             val message = result.value.toString()
@@ -170,90 +131,6 @@ class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler
         }
 
         firFile.accept(EvaluateAndRenderExpressions(), Options(renderLiterals = false))
-    }
-
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
-}
-
-private class FirInterpreterResultsStorage : TestService {
-    private val storage = mutableMapOf<TestModule, Map<TestFile, List<ParsedCodeMetaInfo>>>()
-
-    operator fun get(module: TestModule): Map<TestFile, List<ParsedCodeMetaInfo>>? = storage[module]
-    operator fun set(module: TestModule, value: Map<TestFile, List<ParsedCodeMetaInfo>>) {
-        storage[module] = value
-    }
-}
-
-private val TestServices.firInterpreterResultsStorage: FirInterpreterResultsStorage by TestServices.testServiceAccessor()
-
-/**
- * Should be always used together with [FirInterpreterDumpHandler]
- */
-class JvmIrInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandlerTrait, JvmBinaryArtifactHandler(testServices) {
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::FirInterpreterResultsStorage))
-
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
-        processModule(module)
-    }
-
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
-}
-
-/**
- * Should be always used together with [FirInterpreterDumpHandler]
- */
-class JsIrInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandlerTrait, JsBinaryArtifactHandler(testServices) {
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::FirInterpreterResultsStorage))
-
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
-        processModule(module)
-    }
-
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
-}
-
-/**
- * Should be always used together with [FirInterpreterDumpHandler]
- */
-class WasmIrInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandlerTrait, WasmBinaryArtifactHandler(testServices) {
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::FirInterpreterResultsStorage))
-
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
-        processModule(module)
-    }
-
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
-}
-
-/**
- * Processes all klibs before 2nd compilation phase: dependencies and main modules
- *
- * Should be always used together with [FirInterpreterDumpHandler]
- */
-class NativeKlibInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandlerTrait, KlibArtifactHandler(testServices) {
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::FirInterpreterResultsStorage))
-
-    override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
-        processModule(module)
-    }
-
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
-}
-
-/**
- * Should be always used together with [FirInterpreterDumpHandler]
- */
-class JsKlibInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandlerTrait, KlibArtifactHandler(testServices) {
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::FirInterpreterResultsStorage))
-
-    override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
-        if (JsEnvironmentConfigurator.isMainModule(module, testServices)) return
-        processModule(module)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
