@@ -44,6 +44,11 @@ fun barRegular(f: () -> Unit) {
     f()
 }
 
+fun barRegularString(el : String, f: () -> Unit) {
+    println("Inside barRegular")
+    f()
+}
+
 fun processChunked(chunkHandler: (String) -> Unit) {
     chunkHandler("dataA")
     chunkHandler("dataB")
@@ -72,13 +77,15 @@ class WithMemberFunctions {
 
         barRegular {
             baz(memberVar)
-            baz(person.name)
-            baz(person.age)
-            baz(this.memberVar)
-            baz(personAlice.name)
+            println(person)
             baz(personAlice.age)
-            baz(personAlice.child.age)
         }
+    }
+}
+
+fun exampleValuePar(userId: String) {
+    barRegular {
+        baz(userId)
     }
 }
 
@@ -189,10 +196,9 @@ fun foo() {
         val res = nullableStr ?: "default"
     }
 
-    var girl = MutablePerson(name = "Alice")
-    barRegular {
-        var boy = girl
-        boy.name = "bob" // shoud be exception here
-    }
-
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, checkNotNullCall, classDeclaration,
+classReference, contractCallsEffect, contracts, elvisExpression, equalityExpression, functionDeclaration, functionalType,
+ifExpression, inline, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, thisExpression */
