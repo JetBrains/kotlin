@@ -55,6 +55,8 @@ projectTests {
 
         extensions.configure<TestInputsCheckExtension> {
             // add link permission to load `libcallbacks.dylib`, via possible invocation of `JvmUtilsKt.createTempDirWithLibrary()` which invokes `Files.createLink()`
+            // This happens in case of `catch (e: UnsatisfiedLinkError)` in `JvmUtilsKt.tryLoadKonanLibrary()`
+            // with message `Native Library <...>/kotlin-native/dist/konan/nativelib/libcallbacks.dylib already loaded in another classloader`
             extraPermissions.add("""permission java.nio.file.LinkPermission "hard";""")
         }
     }
