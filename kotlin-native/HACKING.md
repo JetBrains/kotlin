@@ -264,23 +264,29 @@ Use `Edit Configurations` in dropdown menu with your run/debug configurations an
 Ensure the port is `5005`.
 Now just run this configuration. It’ll attach and let the compiler run.
 
-## Developing Kotlin/Native runtime in CLion
+## Working with C++ code in CLion
 
-It's possible to use CLion to develop C++ runtime code efficiently and to have navigation in C++ code.
-To open runtime code in CLion as project and use all provided features of CLion, use a compilation database.
-It lets CLion detect project files and extract all the necessary compiler information, such as include paths and compilation flags.
-To generate a compilation database for the Kotlin/Native runtime, run the Gradle task
-`./gradlew :kotlin-native:compdb`.
-This task generates `<path_to_kotlin>/kotlin-native/compile_commands.json` file that should be opened in CLion as project.
-Other developer tools also can use generated compilation database, but then `clangd` tool should be installed manually.
+It's possible to use CLion to work on C++ code used in Kotlin/Native: 
+- Kotlin/Native runtime found in `kotlin-native/runtime`
+- extensions for llvm found in `kotlin-native/libllvmext` and `kotlin-native/llvmDebugInfoC`
+- extensions for libclang found in `kotlin-native/libclangext`
+- support code for JVM<->C++ bindings in `kotlin-native/Interop/Runtime`
+- a tool to analyze minidumps used in Compiler Tests on macOS in `kotlin-native/tools/minidump-analyzer`
 
-Also, it's possible to build Kotlin/Native runtime with dwarf debug information, which can be useful for debugging.
-To do this you should add `kotlin.native.isNativeRuntimeDebugInfoEnabled=true` line to `local.properties` file. Note, that changing
-this property requires clean compiler rebuild with gradle daemon restart.
+C++ code support is done via Compilation Database. It lets CLion detect project files and extract all the necessary compiler information, such as include paths and compilation flags.
 
-Unfortunately, this feature works quite unstable because of using several llvm versions simultaneously,
-so it's need to be additionally enabled while compiling application with `-Xbinary=stripDebugInfoFromNativeLibs=false`
-compiler flag or corresponding setting in gradle build script. After doing this, Kotlin/Native runtime in application
+To generate the Compilation Database, run `./gradlew :kotlin-native:compdb`.
+This task generates `<path_to_kotlin>/kotlin-native/compile_commands.json` file that should be opened in CLion as a project.
+Other developer tools can also use the generated Compilation Database, but may require a manual installation of `clangd` LSP.
+
+### Kotlin/Native runtime specifics
+
+It's possible to build Kotlin/Native runtime with dwarf debug information, which can be useful for debugging.
+To do this you should add `kotlin.native.isNativeRuntimeDebugInfoEnabled=true` line to `local.properties` file.
+
+Unfortunately, this feature might work unstable, so it's need to be additionally enabled while
+compiling an application with `-Xbinary=stripDebugInfoFromNativeLibs=false` compiler flag or
+the corresponding setting in the Gradle build script. After doing this, Kotlin/Native runtime in application
 is debuggable in CLion, with Attach to process tool.
 
 
