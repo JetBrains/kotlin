@@ -39,6 +39,14 @@ tasks.register("compileKotlinNative") {
     dependsOn(getTasksByName("compileKotlin${hostKotlinNativeTargetName.capitalized}", true))
 }
 
+val nativeReports by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named("native-report"))
+    }
+}
+
 val benchmarkSubprojects = subprojects.filter {
     when (it.name) {
         "benchmarksAnalyzer", "benchmarksLauncher" -> false
@@ -46,39 +54,24 @@ val benchmarkSubprojects = subprojects.filter {
     }
 }
 
-val clean = tasks.named("clean")
-
 val konanRun by tasks.registering
 defaultTasks(konanRun.name)
 
 val mergeNativeReports by tasks.registering(MergeNativeReportsTask::class) {
     outputReport = layout.buildDirectory.file(nativeJson)
-    benchmarkSubprojects.forEach {
-        inputReports.from(it.layout.buildDirectory.file(nativeJson).get().asFile)
-    }
-}
-
-konanRun.configure {
-    // After :konanRun, the aggregating report must always get updated.
-    finalizedBy(mergeNativeReports)
+    inputReports.from(nativeReports)
 }
 
 benchmarkSubprojects.forEach {
-    konanRun.configure {
-        dependsOn("${it.path}:konanJsonReport")
-    }
-    clean.configure {
-        // Make sure all nativeReport.json from all benchmark subprojects
-        dependsOn("${it.path}:clean")
-    }
-    it.afterEvaluate {
-        it.tasks.named("konanJsonReport").configure {
-            // When `:<bench-group>:konanRun` is run, the aggregating report needs to be updated (required for CI)
-            finalizedBy(mergeNativeReports)
+    val benchmarkGroupRun = tasks.register(it.name) {
+        // When :<bench-group> is requested either via CLI or by :konanRun, add a new
+        // dependency into `nativeReports` to be processed by `mergeNativeReports`.
+        dependencies {
+            nativeReports(project(it.path))
         }
-    }
-    tasks.register(it.name) {
-        dependsOn("${it.path}:konanJsonReport")
         finalizedBy(mergeNativeReports) // when `:<bench-group>` is run, the aggregating report needs to be updated
+    }
+    konanRun.configure {
+        dependsOn(benchmarkGroupRun)
     }
 }
