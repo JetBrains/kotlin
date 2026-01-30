@@ -8,13 +8,13 @@ let package = Package(
         .executable(name: "swiftInterop", targets: ["SwiftInterop"])
     ],
     dependencies: [
-        .package(path: "build/swiftpkg/benchmark")
+        .package(path: "build/swiftpkg/kt")
     ],
     targets: [
         .executableTarget(
             name: "SwiftInterop",
             dependencies: [
-                .product(name: "Benchmark", package: "benchmark")
+                .product(name: "Kt", package: "kt")
             ],
             path: "swiftSrc"
         )

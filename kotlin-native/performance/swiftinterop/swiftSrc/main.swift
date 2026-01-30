@@ -4,7 +4,7 @@
  */
 
 import Foundation
-import benchmark
+import kt
 
 var runner = BenchmarksRunner()
 let args = KotlinArray<NSString>(size: Int32(CommandLine.arguments.count - 1), init: {index in

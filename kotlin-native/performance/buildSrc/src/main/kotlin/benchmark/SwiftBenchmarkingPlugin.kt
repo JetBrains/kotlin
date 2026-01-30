@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import javax.inject.Inject
 
-private const val NATIVE_FRAMEWORK_NAME = "benchmark"
+private const val NATIVE_FRAMEWORK_NAME = "kt"
 private const val EXTENSION_NAME = "swiftBenchmark"
 
 open class SwiftBenchmarkExtension @Inject constructor(project: Project) : BenchmarkExtension(project) {

@@ -15,5 +15,5 @@ swiftBenchmark {
     // NOTE: these properties should be kept in sync with Package.swift
     applicationName = "swiftInterop"
     swiftToolsVersion = "5.8"
-    packageDirectory = layout.buildDirectory.dir("swiftpkg/benchmark")
+    packageDirectory = layout.buildDirectory.dir("swiftpkg/kt")
 }

@@ -4,7 +4,7 @@
  */
 
 import Foundation
-import benchmark
+import kt
 
 private let REPEAT_COUNT = 10000
 

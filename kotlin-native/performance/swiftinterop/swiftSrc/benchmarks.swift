@@ -4,7 +4,7 @@
  */
 
 import Foundation
-import benchmark
+import kt
 
 class SimpleCost: Cost {
     let value: Int
