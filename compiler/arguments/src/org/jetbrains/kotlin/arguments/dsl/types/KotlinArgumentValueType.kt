@@ -249,5 +249,18 @@ class SamConversionsType(
     }
 }
 
+/**
+ * A value which accepts [SerializeIr] type.
+ */
+@Serializable
+class SerializeIrType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
+    override val defaultValue: ReleaseDependent<SerializeIr?> = ReleaseDependent(SerializeIr.NONE),
+) : KotlinArgumentValueType<SerializeIr> {
+    override fun stringRepresentation(value: SerializeIr?): String? {
+        return value?.modeName?.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""

@@ -7342,13 +7342,13 @@
                                     "valueInVersions": []
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.SerializeIrType",
                                     "isNullable": {
                                         "current": false,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": "none",
+                                        "current": "NONE",
                                         "valueInVersions": []
                                     }
                                 },

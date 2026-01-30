@@ -842,6 +842,11 @@ See KT-45671 for more details.""".asReleaseDependent()
         )
         valueDescription = "{none|inline|all}".asReleaseDependent()
 
+        argumentType = SerializeIrType(
+            isNullable = ReleaseDependent(false),
+            defaultValue = ReleaseDependent(SerializeIr.NONE),
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
         )
