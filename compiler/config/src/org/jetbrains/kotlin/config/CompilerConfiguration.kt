@@ -10,6 +10,8 @@ import java.util.*
 
 class CompilerConfiguration {
     companion object {
+//    Uncomment when Compose tests migrate to `CompilerConfiguration.create()`
+//        @OptIn(Internals::class)
         @JvmField
         val EMPTY = CompilerConfiguration().apply { isReadOnly = true }
 
@@ -24,6 +26,9 @@ class CompilerConfiguration {
             } as T
         }
     }
+
+    @Internals("Consider using `CompilerConfiguration.create()` from :cli-base module instead")
+    constructor()
 
     private val map: MutableMap<Key<*>, Any> = LinkedHashMap()
     var isReadOnly = false
@@ -101,6 +106,7 @@ class CompilerConfiguration {
     }
 
     fun copy(): CompilerConfiguration {
+        @OptIn(Internals::class)
         return CompilerConfiguration().also { it.map.putAll(map) }
     }
 
@@ -135,4 +141,7 @@ class CompilerConfiguration {
     private fun checkReadOnly() {
         check(!isReadOnly) { "CompilerConfiguration is read-only" }
     }
+
+    @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+    annotation class Internals(val message: String)
 }

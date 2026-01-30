@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.
 import org.jetbrains.kotlin.assignment.plugin.AssignmentCommandLineProcessor
 import org.jetbrains.kotlin.assignment.plugin.AssignmentConfigurationKeys
 import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionRegistrar
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.*
@@ -176,7 +177,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
         val compilerArguments = makeScriptCompilerArguments(scriptDefinition.compilerOptions.toList())
         val commandLineProcessors = listOf(AssignmentCommandLineProcessor())
-        val compilerConfiguration = CompilerConfiguration()
+        val compilerConfiguration = CompilerConfiguration.create()
         processCompilerPluginsOptions(
             compilerConfiguration, compilerArguments.pluginOptions?.asIterable() ?: emptyList(), commandLineProcessors
         )
