@@ -64,17 +64,8 @@ object FirCapturedMutableVariablesAnalyzer : AbstractFirPropertyInitializationCh
                 }
             }
 
-            val leftmostReceiverSymbol = leftmostReceiverVariableSymbol(accessExpression)
-            // Logic:
-            // 1. If symbol is in data.properties, it is declared inside this lambda (local).
-            // 2. If symbol is NOT in data.properties, but isLocal == true, it is captured from outer scope.
-            if (leftmostReceiverSymbol != null) {
-                if (!leftmostReceiverSymbol.isLocal) continue
-                if (leftmostReceiverSymbol in data.properties) continue
-            } else {
-                if (!variableSymbol.isLocal) continue
-                if (variableSymbol in data.properties) continue
-            }
+            if (!variableSymbol.isLocal) continue
+            if (variableSymbol in data.properties) continue
 
             val report = IEReporter(source, context, reporter, FirErrors.CV_DIAGNOSTIC)
             report(
@@ -82,36 +73,8 @@ object FirCapturedMutableVariablesAnalyzer : AbstractFirPropertyInitializationCh
                     info = "Variable is captured from outer scope",
                     containingLambda = containingLambda.symbol.name.toString(),
                     variableName = variableSymbol.name.toString(),
-                    leftmostReceiverName = leftmostReceiverSymbol?.name.toString(),
                 )
             )
-        }
-    }
-
-    private fun leftmostReceiverVariableSymbol(expression: FirQualifiedAccessExpression?): FirVariableSymbol<*>? {
-        if (expression == null) {
-            return null
-        }
-        var current: FirExpression =
-            expression.explicitReceiver?.unwrapErrorExpression()?.unwrapArgument() ?: return null
-        while (true) {
-            when (val e = current) {
-                is FirQualifiedAccessExpression -> {
-                    val next = e.explicitReceiver?.unwrapErrorExpression()?.unwrapArgument()
-                    if (next != null) {
-                        current = next
-                        continue
-                    }
-                    return e.calleeReference.toResolvedVariableSymbol()
-                }
-                is FirSafeCallExpression -> {
-                    current = e.receiver.unwrapErrorExpression().unwrapArgument()
-                }
-                is FirCheckNotNullCall -> {
-                    current = e.argument.unwrapErrorExpression().unwrapArgument()
-                }
-                else -> return null
-            }
         }
     }
 }
