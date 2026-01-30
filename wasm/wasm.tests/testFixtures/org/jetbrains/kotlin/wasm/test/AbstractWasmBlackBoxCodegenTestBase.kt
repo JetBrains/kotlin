@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.FirInterpreterDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.JsKlibInterpreterDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
-import org.jetbrains.kotlin.test.backend.handlers.WasmIrInterpreterDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonClassicFrontendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
@@ -36,7 +34,6 @@ import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmIrHandler
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
-import org.jetbrains.kotlin.wasm.test.handlers.WasmTypeScriptCompilationHandler
 
 abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>(
     private val targetFrontend: FrontendKind<R>,
@@ -105,12 +102,6 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
             enableMetaInfoHandler()
             configureFirHandlersStep {
                 useHandlers(::FirInterpreterDumpHandler)
-            }
-            configureKlibArtifactsHandlersStep {
-                useHandlers(::JsKlibInterpreterDumpHandler)
-            }
-            configureWasmArtifactsHandlersStep {
-                useHandlers(::WasmIrInterpreterDumpHandler)
             }
         }
     }

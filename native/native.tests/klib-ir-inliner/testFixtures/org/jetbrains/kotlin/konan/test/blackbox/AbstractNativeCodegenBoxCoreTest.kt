@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAd
 import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.FirInterpreterDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.NativeKlibInterpreterDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -105,9 +104,6 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
         forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
             configureFirHandlersStep {
                 useHandlers(::FirInterpreterDumpHandler)
-            }
-            configureKlibArtifactsHandlersStep {
-                useHandlers(::NativeKlibInterpreterDumpHandler)
             }
         }
     }
