@@ -18,12 +18,10 @@ class NativeTestsSuppressor(
 ) : AfterAnalysisChecker(testServices) {
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         if (failedAssertions.isEmpty()) {
-            return buildList {
-                addAll(testServices.createUnmutingErrorIfNeeded())
-            }.map { it.wrap() }
+            return listOfNotNull(testServices.createUnmutingErrorIfNeeded()?.wrap())
         }
 
-        val newFailedAssertions = failedAssertions.flatMap { wrappedException ->
+        val newFailedAssertions = failedAssertions.mapNotNull { wrappedException ->
             testServices.processException(wrappedException)
         }
 
@@ -36,21 +34,20 @@ class NativeTestsSuppressor(
     }
 }
 
-private fun TestServices.processException(wrappedException: WrappedException): List<WrappedException> {
+private fun TestServices.processException(wrappedException: WrappedException): WrappedException? {
     if (testRunSettings.isIgnoredTarget(moduleStructure.allDirectives))
-        return emptyList()
+        return null
 
-    // TODO Remove this workaround for KT-73621, when tests having `EVALUATED{IR}` will be dropped and KT-73621 will become obsolete.
+    // TODO Remove this workaround for KT-73621, when tests having `EVALUATED{IR}` will be dropped in scope of KT-83514.
     if (wrappedException is WrappedException.FromMetaInfoHandler &&
         wrappedException.message?.startsWith("org.opentest4j.AssertionFailedError: Actual data differs from file content:") == true &&
         moduleStructure.modules.any {it.files.any { it.originalContent.contains("<!EVALUATED{IR}(")} }
-    ) return emptyList()
+    ) return null
 
-    return listOf(wrappedException)
+    return wrappedException
+
 }
 
-private fun TestServices.createUnmutingErrorIfNeeded(): List<Throwable> {
-    return if (testRunSettings.isIgnoredTarget(moduleStructure.allDirectives))
-        listOf(AssertionError("Looks like this test can be unmuted. Adjust/remove a relevant test directive IGNORE_BACKEND or IGNORE_NATIVE"))
-    else emptyList()
-}
+private fun TestServices.createUnmutingErrorIfNeeded(): Throwable? =
+    takeIf { testRunSettings.isIgnoredTarget(moduleStructure.allDirectives) }
+        ?.run { AssertionError("Looks like this test can be unmuted. Adjust/remove a relevant test directive IGNORE_BACKEND or IGNORE_NATIVE") }
