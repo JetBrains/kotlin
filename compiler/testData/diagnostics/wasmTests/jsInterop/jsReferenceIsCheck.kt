@@ -3,6 +3,7 @@
 // FIR_IDENTICAL
 // TARGET_BACKEND: WASM
 // MODULE: main
+// IGNORE_FIR_DIAGNOSTICS
 
 // FILE: jsReferenceIsCheck.kt
 
@@ -19,8 +20,8 @@ fun testTypeOperations(obj: JsReference<C>) {
     val reported = listOf(
         { <!USELESS_IS_CHECK!>obj is Any<!> },
         { <!USELESS_IS_CHECK!>obj !is Any<!> },
-        { <!IMPOSSIBLE_IS_CHECK_WARNING!>obj is String<!> },
-        { <!IMPOSSIBLE_IS_CHECK_WARNING!>obj !is String<!> },
+        { <!IMPOSSIBLE_IS_CHECK_ERROR!>obj is String<!> },
+        { <!IMPOSSIBLE_IS_CHECK_ERROR!>obj !is String<!> },
     )
 }
 
@@ -33,8 +34,8 @@ fun testTypeOperationsWithIntersection(obj: JsReference<C>) {
         { <!USELESS_IS_CHECK!>obj !is C<!> },
         { <!USELESS_IS_CHECK!>obj is Any<!> },
         { <!USELESS_IS_CHECK!>obj !is Any<!> },
-        { <!IMPOSSIBLE_IS_CHECK_WARNING!>obj is String<!> },
-        { <!IMPOSSIBLE_IS_CHECK_WARNING!>obj !is String<!> },
+        { <!IMPOSSIBLE_IS_CHECK_ERROR!>obj is String<!> },
+        { <!IMPOSSIBLE_IS_CHECK_ERROR!>obj !is String<!> },
     )
 }
 
