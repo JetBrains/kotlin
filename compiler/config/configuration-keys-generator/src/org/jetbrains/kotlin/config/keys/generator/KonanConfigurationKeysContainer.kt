@@ -44,7 +44,6 @@ object KonanConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.bac
     val LIST_TARGETS by key<Boolean>()
     val MANIFEST_FILE by key<String>()
     val HEADER_KLIB by key<String>("Path to file where header klib should be produced.")
-    val MODULE_NAME by key<String>()
     val NATIVE_LIBRARY_FILES by key<List<String>>()
     val NODEFAULTLIBS by key<Boolean>("Don't link with the default libraries.")
     val NOENDORSEDLIBS by key<Boolean>("Don't link with the endorsed libraries.")
