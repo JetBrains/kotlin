@@ -95,12 +95,13 @@ class ModularCinteropTest : AbstractNativeCInteropBaseTest() {
     fun `KT-81695 repeated typedefs with -fmodules - reference the same typedef`() {
         val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/repeatedTypedefsWithFmodules-KT-81695")
         val defFile = testPathFull.resolve("dup.def")
-        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
+        val goldenFile = testPathFull.resolve("output.txt")
 
-        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs)
-        assertIs<TestCompilationResult.CompilationToolFailure>(result)
-        val actualFailure = result.loggedData.toString()
-        assertContains(actualFailure, "'char8_tVar' is going to be declared twice")
+        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
+        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess()
+        val klib = result.resultingArtifact
+        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+        assertEqualsToFile(goldenFile, metadata)
     }
 
     @Test

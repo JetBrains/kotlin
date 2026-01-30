@@ -17,6 +17,11 @@
 package org.jetbrains.kotlin.native.interop.indexer
 
 import clang.*
+import clang.CXIdxEntityKind.CXIdxEntity_ObjCClass
+import clang.CXIdxEntityKind.CXIdxEntity_CXXClass
+import clang.CXIdxEntityKind.CXIdxEntity_ObjCProtocol
+import clang.CXIdxEntityKind.CXIdxEntity_CXXInterface
+import clang.CXIdxEntityKind.CXIdxEntity_Typedef
 import kotlinx.cinterop.*
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -30,6 +35,7 @@ import java.nio.file.Paths
 import java.security.DigestInputStream
 import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.measureTime
 
 val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
 
@@ -315,8 +321,13 @@ fun visitChildren(parent: CValue<CXCursor>, visitor: CursorVisitor) {
     }
 }
 
-internal fun visitChildren(translationUnit: CXTranslationUnit, visitor: CursorVisitor) =
+internal fun visitChildren(translationUnit: CXTranslationUnit, visitor: CursorVisitor) {
+    measureTime {
         visitChildren(clang_getTranslationUnitCursor(translationUnit), visitor)
+    }.also {
+        print(println("Visit children tu: ${it.inWholeMilliseconds}"))
+    }
+}
 
 internal fun getFields(type: CValue<CXType>): List<CValue<CXCursor>> {
     val result = mutableListOf<CValue<CXCursor>>()
@@ -671,6 +682,106 @@ internal class ModulesMap(
     }
 }
 
+data class TypesDefinitions(
+        val protocolDefinitionByUsr: Map<String, CValue<CXCursor>>,
+        val classDefinitionByUsr: Map<String, CValue<CXCursor>>,
+        val typealiasDefinitionByName: Map<String, CValue<CXCursor>>,
+)
+
+fun indexTranslationUnitsForTypesDefinitions(
+        library: NativeLibrary,
+        index: CXIndex,
+        translationUnits: Collection<CXTranslationUnit>,
+        tuToPcm: Map<CXTranslationUnit, String>
+): TypesDefinitions {
+    val protocolDefinitionByUsr = mutableMapOf<String, CValue<CXCursor>>()
+    val classDefinitionByUsr = mutableMapOf<String, CValue<CXCursor>>()
+    val typealiasDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
+
+    translationUnits.forEach {
+        if (!System.getenv("USE_VISIT_CHILDREN").toBoolean()) {
+            indexTranslationUnit(index, it, 0, object : Indexer {
+                override fun indexDeclaration(info: CXIdxDeclInfo) {
+                    val cursor = info.cursor.readValue()
+                    val entityInfo = info.entityInfo!!.pointed
+                    val kind = entityInfo.kind
+
+                    when (kind) {
+                        // FIXME: Discuss, CXIdxEntity_Enum and CXIdxEntity_Typedef vs CXCursor_TypedefDecl. Do we have the same redeclaration problem with enums?
+                        CXIdxEntity_Typedef -> {
+                            if (isAvailable(cursor)) {
+                                val type = clang_getCursorType(cursor)
+                                val declCursor = clang_getTypeDeclaration(type)
+                                val name = getCursorSpelling(declCursor)
+                                typealiasDefinitionByName[name] = declCursor
+                            }
+                        }
+                        CXIdxEntity_ObjCClass -> {
+                            val originalCursor = dereferenceObjCClassCursorIfNeeded(cursor)
+                            if (isAvailable(originalCursor) && !isObjCInterfaceDeclForward(originalCursor)) {
+                                // FIXME: To discuss: maybe just always use constructUsrFromObjCClassDecl?
+                                classDefinitionByUsr[getUsr(originalCursor)] = originalCursor
+                            }
+                        }
+                        CXIdxEntity_CXXClass -> {
+                            val originalCursor = dereferenceObjCClassCursorIfNeeded(cursor)
+                            if (isAvailable(originalCursor) && cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl && !isObjCInterfaceDeclForward(originalCursor)) {
+                                classDefinitionByUsr[constructUsrFromObjCClassDecl(originalCursor)] = originalCursor
+                            }
+                        }
+                        CXIdxEntity_ObjCProtocol -> {
+                            val originalCursor = dereferenceObjCProtocolCursorIfNeeded(cursor)
+                            if (isAvailable(originalCursor) && !isObjCProtocolDeclForward(originalCursor)) {
+                                protocolDefinitionByUsr[getUsr(originalCursor)] = originalCursor
+                            }
+                        }
+                        CXIdxEntity_CXXInterface -> {
+                            val originalCursor = dereferenceObjCProtocolCursorIfNeeded(cursor)
+                            if (isAvailable(originalCursor) && cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl && !isObjCProtocolDeclForward(originalCursor)) {
+                                protocolDefinitionByUsr[constructUsrFromObjCProtocolDecl(originalCursor)] = originalCursor
+                            }
+                        }
+                        else -> {}
+                    }
+                }
+            })
+        } else {
+            println("Visit children for: ${tuToPcm[it]}")
+            visitChildren(it) { cursor, _ ->
+                // FIXME: What exactly is includesDeclaration?
+                // FIXME: do we need to filter by allHeaders?
+                if (library.includesDeclaration(cursor)) {
+                    when (cursor.kind) {
+                        CXCursorKind.CXCursor_TypedefDecl -> {
+                            if (isAvailable(cursor)) {
+                                val type = clang_getCursorType(cursor)
+                                val declCursor = clang_getTypeDeclaration(type)
+                                val name = getCursorSpelling(declCursor)
+                                typealiasDefinitionByName[name] = declCursor
+                            }
+                        }
+                        CXCursorKind.CXCursor_ObjCInterfaceDecl -> {
+                            if (isAvailable(cursor) && !isObjCInterfaceDeclForward(cursor)) {
+                                classDefinitionByUsr[constructUsrFromObjCClassDecl(cursor)] = cursor
+                            }
+                        }
+                        CXCursorKind.CXCursor_ObjCProtocolDecl -> {
+                            if (isAvailable(cursor) && !isObjCProtocolDeclForward(cursor)) {
+                                protocolDefinitionByUsr[constructUsrFromObjCProtocolDecl(cursor)] = cursor
+                            }
+                        }
+
+                        else -> {}
+                    }
+                }
+                CXChildVisitResult.CXChildVisit_Continue
+            }
+        }
+    }
+
+    return TypesDefinitions(protocolDefinitionByUsr, classDefinitionByUsr, typealiasDefinitionByName)
+}
+
 internal fun getHeaderId(library: NativeLibrary, header: ClangFile?): HeaderId {
     if (header == null) {
         return HeaderId("builtins")
@@ -739,6 +850,9 @@ internal fun getHeadersAndUnits(
 class UnitsHolder(val index: CXIndex) : Disposable {
     private val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
 
+    val allTranslationUnits get() = unitByBinaryFile.values.toSet()
+    val binaryFileByUnit get() = unitByBinaryFile.map { it.value to it.key }.toMap()
+
     internal fun load(info: CXIdxImportedASTFileInfo): CXTranslationUnit {
         val canonicalPath: String = info.getFile()!!.canonicalPath
         return unitByBinaryFile.getOrPut(canonicalPath) {
@@ -752,13 +866,13 @@ class UnitsHolder(val index: CXIndex) : Disposable {
     }
 }
 
-class ClangFile(val cxFile: CXFile) {
+class ClangFile(val cxFile: CXFile, val line: Int? = null, val column: Int? = null, val offset: Int? = null) {
 
     val path: String get() = clang_getFileName(cxFile).convertAndDispose()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        return other is ClangFile && (clang_File_isEqual(cxFile, other.cxFile) != 0)
+        return other is ClangFile && (clang_File_isEqual(cxFile, other.cxFile) != 0) // && this.offset == other.offset
     }
 
     override fun hashCode(): Int = cValue<CXFileUniqueID> {
@@ -768,7 +882,7 @@ class ClangFile(val cxFile: CXFile) {
     override fun toString(): String = path
 }
 
-fun CXFile.asClangFile(): ClangFile = ClangFile(this)
+fun CXFile.asClangFile(line: Int? = null, column: Int? = null, offset: Int? = null): ClangFile = ClangFile(this, line, column, offset)
 fun CXTranslationUnit.getFile(fileName: String): ClangFile? = clang_getFile(this, fileName)?.asClangFile()
 fun CXIdxIncludedFileInfo.getFile(): ClangFile? = this.file?.asClangFile()
 fun CXIdxImportedASTFileInfo.getFile(): ClangFile? = this.file?.asClangFile()
@@ -964,8 +1078,11 @@ fun headerContentsHash(filePath: String) = File(filePath).sha256()
 
 internal fun CValue<CXSourceLocation>.getContainingFile(): ClangFile? = memScoped {
     val fileVar = alloc<CXFileVar>()
-    clang_getFileLocation(this@getContainingFile, fileVar.ptr, null, null, null)
-    fileVar.value?.asClangFile()
+    val line = alloc<IntVar>()
+    val column = alloc<IntVar>()
+    val offset = alloc<IntVar>()
+    clang_getFileLocation(this@getContainingFile, fileVar.ptr, line.ptr, column.ptr, offset.ptr)
+    fileVar.value?.asClangFile(line = line.value, column = column.value, offset = offset.value)
 }
 
 @JvmName("getFileContainingCursor")
@@ -981,6 +1098,51 @@ internal val CXModule.name: String get() = clang_Module_getName(this).convertAnd
 // TODO: this map doesn't get cleaned up but adds quite significant performance improvement.
 private val canonicalPaths = ConcurrentHashMap<String, String>()
 internal val ClangFile.canonicalPath: String get() = canonicalPaths.getOrPut(this.path) { File(this.path).canonicalPath }
+
+
+// TODO: unavailable declarations should be imported as deprecated.
+fun isAvailable(cursor: CValue<CXCursor>): Boolean = when (clang_getCursorAvailability(cursor)) {
+    CXAvailabilityKind.CXAvailability_Available,
+    CXAvailabilityKind.CXAvailability_Deprecated -> true
+
+    CXAvailabilityKind.CXAvailability_NotAvailable,
+    CXAvailabilityKind.CXAvailability_NotAccessible -> false
+}
+
+fun isObjCInterfaceDeclForward(cursor: CValue<CXCursor>): Boolean {
+    assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
+
+    // It is forward declaration <=> the first child is reference to it:
+    var result = false
+    visitChildren(cursor) { child, _ ->
+        result = (child.kind == CXCursorKind.CXCursor_ObjCClassRef && clang_getCursorReferenced(child) == cursor)
+        CXChildVisitResult.CXChildVisit_Break
+    }
+    return result
+}
+
+fun isObjCProtocolDeclForward(cursor: CValue<CXCursor>): Boolean = clang_isCursorDefinition(cursor) == 0
+
+// It is a class/protocol reference. To get the declaration cursor, we can use clang_getCursorReferenced.
+// If there is a real declaration besides this forward declaration, the function will automatically
+// resolve it.
+fun dereferenceObjCClassCursorIfNeeded(cursor: CValue<CXCursor>): CValue<CXCursor> =
+        if (cursor.kind == CXCursorKind.CXCursor_ObjCClassRef) clang_getCursorReferenced(cursor) else cursor
+fun dereferenceObjCProtocolCursorIfNeeded(cursor: CValue<CXCursor>): CValue<CXCursor> =
+        if (cursor.kind == CXCursorKind.CXCursor_ObjCProtocolRef) clang_getCursorReferenced(cursor) else cursor
+
+fun getUsr(cursor: CValue<CXCursor>): String = clang_getCursorUSR(cursor).convertAndDispose()
+
+// These are used when we can't fetch USR directly in the case of "external_source_symbol"
+fun constructUsrFromObjCClassDecl(cursor: CValue<CXCursor>): String {
+    assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
+    return clang_constructUSR_ObjCClass(getCursorSpelling(cursor)).convertAndDispose()
+}
+
+fun constructUsrFromObjCProtocolDecl(cursor: CValue<CXCursor>): String {
+    assert(cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl) { cursor.kind }
+    return clang_constructUSR_ObjCProtocol(getCursorSpelling(cursor)).convertAndDispose()
+}
 
 private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): ByteArray {
     val overlay = clang_VirtualFileOverlay_create(0)

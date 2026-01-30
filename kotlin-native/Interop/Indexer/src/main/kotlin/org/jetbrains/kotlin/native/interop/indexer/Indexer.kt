@@ -20,6 +20,7 @@ import clang.*
 import clang.CXIdxEntityKind.*
 import clang.CXTypeKind.*
 import kotlinx.cinterop.*
+import kotlin.time.measureTime
 
 private class StructDeclImpl(
         spelling: String,
@@ -227,6 +228,13 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
     override lateinit var includedHeaders: List<HeaderId>
 
+    /**
+     * FIXME: To discuss: with forward declarations we could compute this lazily on the first forward declaration we can't dereference to
+     * the definition, but with typedefs this will not work.
+     */
+    lateinit var typesDefinitions: TypesDefinitions
+    lateinit var tuToPCMPath: Map<CXTranslationUnit, String>
+
     internal fun log(message: String) {
         if (verbose) {
             println(message)
@@ -234,7 +242,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     private fun getDeclarationId(cursor: CValue<CXCursor>): DeclarationID {
-        val usr = clang_getCursorUSR(cursor).convertAndDispose()
+        val usr = getUsr(cursor)
         if (usr == "") {
             val kind = cursor.kind
             val spelling = getCursorSpelling(cursor)
@@ -400,20 +408,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
     }
 
-    private fun isObjCInterfaceDeclForward(cursor: CValue<CXCursor>): Boolean {
-        assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
-
-        // It is forward declaration <=> the first child is reference to it:
-        var result = false
-        visitChildren(cursor) { child, _ ->
-            result = (child.kind == CXCursorKind.CXCursor_ObjCClassRef && clang_getCursorReferenced(child) == cursor)
-            CXChildVisitResult.CXChildVisit_Break
-        }
-        return result
-    }
-
-    private fun getObjCClassAt(cursor: CValue<CXCursor>): ObjCClassImpl {
-        assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
+    private fun getObjCClassAt(originalCursor: CValue<CXCursor>): ObjCClassImpl {
+        assert(originalCursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { originalCursor.kind }
+        val cursor = typesDefinitions.classDefinitionByUsr[getUsr(originalCursor)] ?: originalCursor
 
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
         val parameters = mutableListOf<String>()
@@ -490,13 +487,14 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     private fun isLocatedInDefFile(cursor: CValue<CXCursor>): Boolean =
             clang_Location_isFromMainFile(clang_getCursorLocation(cursor)) != 0
 
-    private fun getObjCProtocolAt(cursor: CValue<CXCursor>): ObjCProtocolImpl {
-        assert(cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl) { cursor.kind }
+    private fun getObjCProtocolAt(originalCursor: CValue<CXCursor>): ObjCProtocolImpl {
+        val cursor = typesDefinitions.protocolDefinitionByUsr[getUsr(originalCursor)] ?: originalCursor
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
 
-        if (clang_isCursorDefinition(cursor) == 0) {
+        if (isObjCProtocolDeclForward(cursor)) {
             val definition = clang_getCursorDefinition(cursor)
-            return if (clang_isCursorDefinition(definition) != 0) {
+            return if (!isObjCProtocolDeclForward(definition)) {
+                // TODO: Why do we recursively search for the declaration here, but not in the class method?
                 getObjCProtocolAt(definition)
             } else {
                 objCProtocolRegistry.getOrPut(cursor) {
@@ -574,8 +572,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     fun getTypedef(type: CValue<CXType>): Type {
-        val declCursor = clang_getTypeDeclaration(type)
-        val name = getCursorSpelling(declCursor)
+        val originalDeclCursor = clang_getTypeDeclaration(type)
+        val name = getCursorSpelling(originalDeclCursor)
+        val declCursor = typesDefinitions.typealiasDefinitionByName[name] ?: originalDeclCursor
 
         val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor))
 
@@ -1010,13 +1009,24 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 }
             }
 
-            CXIdxEntity_ObjCClass -> if (cursor.kind != CXCursorKind.CXCursor_ObjCClassRef /* not a forward declaration */) {
-                indexObjCClass(cursor)
-            } else {
-                // It is a class reference. To get the declaration cursor, we can use clang_getCursorReferenced.
-                // If there is a real declaration besides this forward declaration, the function will automatically
-                // resolve it.
-                indexObjCClass(clang_getCursorReferenced(cursor))
+            CXIdxEntity_ObjCClass -> indexObjCClass(dereferenceObjCClassCursorIfNeeded(cursor))
+            /**
+             * FIXME: To discuss: the external_source_symbol also changes the Lang and this changes the entity type.
+             *
+             * here maybe?
+             * https://github.com/llvm/llvm-project/blob/f37bf0ce65b14fd5fb969743c47ab2958a7dad06/clang/lib/Index/IndexSymbol.cpp#L400
+             * https://github.com/Kotlin/llvm-project/blob/b2a2ff607b8d95f1f0a9fb7363311a97f61d6668/clang/tools/libclang/CXIndexDataConsumer.cpp#L1257-L1260
+             *
+             * Seems like a minor inconvenience since we can check the cursor kind
+             *
+             * But what about "USR" and "definedIn", do they impact anything?
+             * Probably if USR is overriden the lookup will not work?
+             */
+            CXIdxEntity_CXXClass -> {
+                val dereferencedCursor = dereferenceObjCClassCursorIfNeeded(cursor)
+                if (dereferencedCursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) {
+                    indexObjCClass(dereferencedCursor)
+                }
             }
 
             CXIdxEntity_ObjCCategory -> {
@@ -1025,13 +1035,13 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 }
             }
 
-            CXIdxEntity_ObjCProtocol -> if (cursor.kind != CXCursorKind.CXCursor_ObjCProtocolRef /* not a forward declaration */) {
-                indexObjCProtocol(cursor)
-            } else {
-                // It is a protocol reference. To get the declaration cursor, we can use clang_getCursorReferenced.
-                // If there is a real declaration besides this forward declaration, the function will automatically
-                // resolve it.
-                indexObjCProtocol(clang_getCursorReferenced(cursor))
+            CXIdxEntity_ObjCProtocol -> indexObjCProtocol(dereferenceObjCProtocolCursorIfNeeded(cursor))
+            CXIdxEntity_CXXInterface -> {
+                val dereferencedCursor = dereferenceObjCProtocolCursorIfNeeded(cursor)
+                // FIXME: Check if CXCursor_ObjCProtocolDecl is correct?
+                if (dereferencedCursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl) {
+                    indexObjCClass(dereferencedCursor)
+                }
             }
 
             CXIdxEntity_ObjCProperty -> {
@@ -1162,15 +1172,6 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         )
     }
 
-    // TODO: unavailable declarations should be imported as deprecated.
-    private fun isAvailable(cursor: CValue<CXCursor>): Boolean = when (clang_getCursorAvailability(cursor)) {
-        CXAvailabilityKind.CXAvailability_Available,
-        CXAvailabilityKind.CXAvailability_Deprecated -> true
-
-        CXAvailabilityKind.CXAvailability_NotAvailable,
-        CXAvailabilityKind.CXAvailability_NotAccessible -> false
-    }
-
     // Skip functions which parameter or return type is TemplateRef
     protected open fun isFuncDeclEligible(cursor: CValue<CXCursor>): Boolean {
         var ret = true
@@ -1260,6 +1261,22 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                     nativeIndex.getHeaderId(it)
                 }
 
+                /**
+                 * FIXME: To discuss: only run this with -fmodules?
+                 */
+                /**
+                 * FIXME: To discuss: if we don't care about forward declarations to types from system libraries, we could only index
+                 * translation units for user-defined modules. This will be faster, but even with @import UIKit the indexation of all TUs
+                 * takes ~400 ms. Maybe we could introduce this as an opt-out flag.
+                 */
+                nativeIndex.tuToPCMPath = unitsHolder.binaryFileByUnit
+                measureTime {
+                    nativeIndex.typesDefinitions = indexTranslationUnitsForTypesDefinitions(nativeIndex.library, index, unitsHolder.allTranslationUnits, unitsHolder.binaryFileByUnit)
+                    // nativeIndex.typesDefinitions = TypesDefinitions(emptyMap(), emptyMap(), emptyMap())
+                }.also {
+                    println("indexTranslationUnitsForTypesDefinitions: ${it.inWholeMilliseconds}")
+                }
+
                 unitsToProcess.forEach {
                     indexTranslationUnit(index, it, 0, object : Indexer {
                         override fun indexDeclaration(info: CXIdxDeclInfo) {
@@ -1274,28 +1291,6 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                             }
                         }
                     })
-                }
-
-                unitsToProcess.forEach {
-                    visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
-                        val file = getContainingFile(cursor)
-                        if (file in ownHeaders && nativeIndex.library.includesDeclaration(cursor)) {
-                            when (cursor.kind) {
-                                CXCursorKind.CXCursor_ObjCInterfaceDecl -> nativeIndex.indexObjCClass(cursor)
-                                CXCursorKind.CXCursor_ObjCProtocolDecl -> nativeIndex.indexObjCProtocol(cursor)
-                                CXCursorKind.CXCursor_ObjCCategoryDecl -> {
-                                    // This fixes https://youtrack.jetbrains.com/issue/KT-49455, which effectively seems to be a bug in libclang:
-                                    // the libclang indexer doesn't properly index categories with
-                                    // `__attribute__((external_source_symbol(language="Swift",...)))`.
-                                    // As a workaround, additionally enumerate all the categories explicitly.
-                                    nativeIndex.indexObjCCategory(cursor)
-                                }
-
-                                else -> {}
-                            }
-                        }
-                        CXChildVisitResult.CXChildVisit_Continue
-                    }
                 }
 
                 val compilationWithPCH = if (allowPrecompiledHeaders)
