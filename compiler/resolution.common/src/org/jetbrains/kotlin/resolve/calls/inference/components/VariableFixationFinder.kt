@@ -55,6 +55,7 @@ abstract class VariableFixationFinder(
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
         val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
         val postponedTypeVariables: List<TypeVariableMarker>
+        val returnTypeTypeVariables: Set<TypeConstructorMarker>
         val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
         val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
 
@@ -322,7 +323,7 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
         c.notFixedTypeVariables[this]?.typeVariable?.let { c.isReified(it) } ?: false
 
     context(c: Context)
-    private fun Constraint.isProperSelfTypeConstraint(ownerTypeVariable: TypeConstructorMarker): Boolean {
+    protected fun Constraint.isProperSelfTypeConstraint(ownerTypeVariable: TypeConstructorMarker): Boolean {
         val typeConstructor = type.typeConstructor()
         return position.from is DeclaredUpperBoundConstraintPosition<*>
                 && (typeConstructor.hasRecursiveTypeParametersWithGivenSelfType() || typeConstructor.isRecursiveTypeParameter())
