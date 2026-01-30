@@ -19,7 +19,15 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializerOutput
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.HeaderMode
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.native.FirOutput
@@ -112,6 +120,18 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         }
     }
 
+    /**
+     * Skips IR generation if either generating using -Xmetadata-klib or running header mode with
+     * -Xheader-mode and -Xheader-mode-type=compilation.
+     */
+    private fun skipIrGeneration(config: NativeKlibCompilationConfig, frontendOutput: FirOutput.Full): Boolean {
+        if (config.metadataKlib) return true
+        val skipInHeaderMode = config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
+                config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerModeType) == HeaderMode.COMPILATION &&
+                !requireIrForHeaderCompilationMode(frontendOutput)
+        return skipInHeaderMode
+    }
+
     private fun <T : PhaseContext> serializeKLibK2(
             engine: PhaseEngine<T>,
             config: NativeKlibCompilationConfig,
@@ -121,7 +141,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         if (frontendOutput is FirOutput.ShouldNotGenerateCode) return null
         require(frontendOutput is FirOutput.Full)
 
-        return if (config.metadataKlib) {
+        return if (skipIrGeneration(config, frontendOutput)) {
             performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
                 engine.runFirSerializer(frontendOutput)
             }
@@ -222,5 +242,30 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             linkKlibsOutput.symbolTable,
     ).also {
         additionalDataSetter(it)
+    }
+
+    @OptIn(DirectDeclarationsAccess::class)
+    private fun requireIrForHeaderCompilationMode(frontendOutput: FirOutput.Full): Boolean {
+        for (output in frontendOutput.firResult.outputs) {
+            for (file in output.fir) {
+                if (requireIrForHeaderCompilationMode(file.declarations)) return true
+            }
+        }
+        return false
+    }
+
+    @OptIn(DirectDeclarationsAccess::class)
+    private fun requireIrForHeaderCompilationMode(declarations: List<FirDeclaration>): Boolean {
+        for (declaration in declarations) {
+            if (declaration is FirFunction && declaration.status.isInline) return true
+            if (declaration is FirProperty) {
+                if (declaration.getter?.status?.isInline == true || declaration.setter?.status?.isInline == true) return true
+            }
+            if (declaration is FirClass) {
+                if (declaration.status.isValue) return true
+                if (requireIrForHeaderCompilationMode(declaration.declarations)) return true
+            }
+        }
+        return false
     }
 }

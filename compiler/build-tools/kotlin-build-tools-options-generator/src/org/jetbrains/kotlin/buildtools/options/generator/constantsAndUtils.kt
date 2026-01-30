@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
+import org.jetbrains.kotlin.arguments.dsl.types.HeaderMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
@@ -77,7 +78,8 @@ internal val enumNameAccessors = mutableMapOf(
     JvmTarget::class to JvmTarget::targetName,
     ExplicitApiMode::class to ExplicitApiMode::modeName,
     KotlinVersion::class to KotlinVersion::versionName,
-    ReturnValueCheckerMode::class to ReturnValueCheckerMode::modeState
+    ReturnValueCheckerMode::class to ReturnValueCheckerMode::modeState,
+    HeaderMode::class to HeaderMode::modeName
 )
 
 internal fun KClass<*>.toBtaEnumClassName(): ClassName = ClassName(API_ENUMS_PACKAGE, simpleName!!)

@@ -1211,6 +1211,22 @@ Warning: this flag is not intended for production use. If you want to configure 
     }
 
     compilerArgument {
+        name = "Xheader-mode-type"
+        description = """Generates output based on what it is used for:
+-Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
+-Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.
+                """.trimIndent().asReleaseDependent()
+        valueType = KotlinHeaderModeType()
+        valueDescription = ReleaseDependent(
+            current = HeaderMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}")
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0
+        )
+    }
+
+    compilerArgument {
         name = "Xdont-sort-source-files"
         description = """
             Disable automatic sorting of source files.

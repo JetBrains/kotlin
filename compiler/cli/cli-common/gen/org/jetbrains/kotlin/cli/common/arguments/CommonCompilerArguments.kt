@@ -516,6 +516,19 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Xheader-mode-type",
+        valueDescription = "{any|compilation}",
+        description = """Generates output based on what it is used for:
+-Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
+-Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.""",
+    )
+    var headerModeType: String = "any"
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xignore-const-optimization-errors",
         description = "Ignore all compilation exceptions while optimizing some constant expressions.",
     )
