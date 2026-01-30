@@ -374,10 +374,10 @@ class SymbolFinderOverFir(private val fir2irBuiltins: Fir2IrBuiltinSymbolsContai
     }
 
     override fun findFunctions(callableId: CallableId): Iterable<IrSimpleFunctionSymbol> {
-        return fir2irBuiltins.findFunctions(callableId)
+        return fir2irBuiltins.findFunctions(callableId).filter { !it.owner.isExpect }
     }
 
     override fun findProperties(callableId: CallableId): Iterable<IrPropertySymbol> {
-        return fir2irBuiltins.findProperties(callableId)
+        return fir2irBuiltins.findProperties(callableId).filter { !it.owner.isExpect }
     }
 }
