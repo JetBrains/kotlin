@@ -207,5 +207,21 @@ class AssertionsModeType(
     }
 }
 
+/**
+ * A value which accepts [JspecifyAnnotations] type.
+ */
+@Serializable
+class JspecifyAnnotationsType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
+    override val defaultValue: ReleaseDependent<JspecifyAnnotations?> = ReleaseDependent(
+        current = JspecifyAnnotations.STRICT,
+        KotlinReleaseVersion.v1_4_30..KotlinReleaseVersion.v2_0_21 to JspecifyAnnotations.WARN,
+    ),
+) : KotlinArgumentValueType<JspecifyAnnotations> {
+    override fun stringRepresentation(value: JspecifyAnnotations?): String? {
+        return value?.stateName?.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""

@@ -6286,14 +6286,20 @@
                                     "valueInVersions": []
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.JspecifyAnnotationsType",
                                     "isNullable": {
-                                        "current": true,
+                                        "current": false,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": null,
-                                        "valueInVersions": []
+                                        "current": "STRICT",
+                                        "valueInVersions": [
+                                            {
+                                                "minReleaseVersion": "1.4.30",
+                                                "maxReleaseVersion": "2.0.21",
+                                                "value": "WARN"
+                                            }
+                                        ]
                                     }
                                 },
                                 "releaseVersionsMetadata": {

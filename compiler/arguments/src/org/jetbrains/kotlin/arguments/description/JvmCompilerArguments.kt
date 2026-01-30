@@ -524,6 +524,14 @@ The default value is 'enable'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "ignore|strict|warn".asReleaseDependent()
 
+        argumentType = JspecifyAnnotationsType(
+            isNullable = ReleaseDependent(false),
+            defaultValue = ReleaseDependent(
+                current = JspecifyAnnotations.STRICT,
+                KotlinReleaseVersion.v1_4_30..KotlinReleaseVersion.v2_0_21 to JspecifyAnnotations.WARN,
+            ),
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
         )
