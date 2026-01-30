@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.native
 
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.isCurrentHost
@@ -39,7 +42,22 @@ internal class KotlinNativeSimulatorTestRunFactory(private val target: KotlinNat
         return DefaultSimulatorTestRun(name, target).apply {
             val project = target.project
             executionTask = thisTarget.registerNativeTestTask<KotlinNativeSimulatorTest>(testTaskName) { testTask ->
-                testTask.isEnabled = HostManager.hostIsMac && HostManager.host.architecture == thisTarget.konanTarget.architecture
+                val isCompatibleHost = HostManager.hostIsMac && HostManager.host.architecture == thisTarget.konanTarget.architecture
+                if (!isCompatibleHost && project.kotlinPropertiesProvider.ignoreDisabledNativeTargets != true) {
+                    val reason = when {
+                        !HostManager.hostIsMac -> "simulator tests require macOS"
+                        else -> "architecture mismatch - target requires ${thisTarget.konanTarget.architecture.name}, current host is ${HostManager.host.architecture.name}"
+                    }
+                    project.reportDiagnosticOncePerBuild(
+                        KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning(
+                            taskName = testTaskName,
+                            targetName = thisTarget.konanTarget.name,
+                            currentHost = HostManager.platformName(),
+                            reason = reason
+                        )
+                    )
+                }
+                testTask.onlyIf("Simulator tests require compatible macOS host") { isCompatibleHost }
                 testTask.configureDeviceId(thisTarget.konanTarget)
                 testTask.standalone.convention(true).finalizeValueOnRead()
             }
@@ -56,7 +74,18 @@ private inline fun <reified T : KotlinNativeTest> KotlinNativeTarget.registerNat
         testTask.group = LifecycleBasePlugin.VERIFICATION_GROUP
         testTask.description = "Executes Kotlin/Native unit tests for target ${targetName}."
         testTask.targetName = this@registerNativeTestTask.targetName
-        testTask.enabled = konanTarget.isCurrentHost
+        val isCurrentHost = konanTarget.isCurrentHost
+        if (!isCurrentHost && project.kotlinPropertiesProvider.ignoreDisabledNativeTargets != true) {
+            project.reportDiagnosticOncePerBuild(
+                KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning(
+                    taskName = name,
+                    targetName = konanTarget.name,
+                    currentHost = HostManager.hostOrNull?.name ?: "unsupported",
+                    reason = "tests can only run on ${konanTarget.name}"
+                )
+            )
+        }
+        testTask.onlyIf("Tests require ${konanTarget.name} host") { isCurrentHost }
         testTask.workingDir = project.projectDir.absolutePath
         testTask.configureConventions()
         configure(testTask)

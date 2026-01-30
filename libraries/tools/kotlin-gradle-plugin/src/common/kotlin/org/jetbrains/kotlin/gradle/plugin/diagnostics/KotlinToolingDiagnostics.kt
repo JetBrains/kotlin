@@ -303,7 +303,7 @@ internal object KotlinToolingDiagnostics {
             debuggable: Boolean,
             optimized: Boolean,
             contextDescription: String,
-            contextSolution: String
+            contextSolution: String,
         ): ToolingDiagnostic = build {
             title("Incompatible Binary Configuration")
                 .description {
@@ -452,7 +452,7 @@ internal object KotlinToolingDiagnostics {
             binaryName: String,
             targetName: String,
             reason: String,
-            issueUrl: URI?
+            issueUrl: URI?,
         ) = build {
             title("Kotlin/Native cache is disabled for $buildType binary '${binaryName}'")
                 .description {
@@ -475,7 +475,7 @@ internal object KotlinToolingDiagnostics {
             buildType: String,
             binaryName: String,
             targetName: String,
-            hostName: String
+            hostName: String,
         ) = build {
             title("Kotlin/Native cache disable configuration is redundant for $buildType binary '$binaryName'")
                 .description {
@@ -903,6 +903,26 @@ internal object KotlinToolingDiagnostics {
                 }
                 .solution {
                     "To hide this message, add '$KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS=true' to the Gradle properties."
+                }
+        }
+    }
+
+    object DisabledNativeTargetTaskWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            taskName: String,
+            targetName: String,
+            currentHost: String,
+            reason: String,
+        ): ToolingDiagnostic = build {
+            title("Native task '$taskName' is disabled")
+                .description {
+                    """
+                    Task '$taskName' for target '$targetName' cannot run on the current host ($currentHost).
+                    Reason: $reason
+                    """.trimIndent()
+                }
+                .solution {
+                    "To suppress this warning, add '$KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS=true' to gradle.properties."
                 }
         }
     }
@@ -2078,7 +2098,7 @@ internal object KotlinToolingDiagnostics {
 
     internal object DeprecatedKotlinAndroidPlugin : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke(
-            projectPath: String
+            projectPath: String,
         ) = build {
             title("Deprecated 'org.jetbrains.kotlin.android' plugin usage")
                 .description("The 'org.jetbrains.kotlin.android' plugin in project '$projectPath' is no longer required for Kotlin support since AGP 9.0.")
