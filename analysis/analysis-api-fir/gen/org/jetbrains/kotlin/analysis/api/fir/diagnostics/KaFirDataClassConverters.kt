@@ -7456,8 +7456,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJsErrors.NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED) { firDiagnostic ->
-        NotExportedActualDeclarationWhileExpectIsExportedImpl(
+    add(FirJsErrors.NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED) { firDiagnostic ->
+        NotExportedOrExternalActualDeclarationWhileExpectIsExportedImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
