@@ -505,6 +505,11 @@ The default value is 'enable'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "enable|disable".asReleaseDependent()
 
+        argumentType = CompatqualCheckerFrameworkAnnotationsType(
+            isNullable = ReleaseDependent(false),
+            defaultValue = ReleaseDependent(CompatqualCheckerFrameworkAnnotations.ENABLE),
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_20,
         )

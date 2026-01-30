@@ -275,5 +275,18 @@ class StringConcatType(
     }
 }
 
+/**
+ * A value which accepts [CompatqualCheckerFrameworkAnnotations] type.
+ */
+@Serializable
+class CompatqualCheckerFrameworkAnnotationsType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
+    override val defaultValue: ReleaseDependent<CompatqualCheckerFrameworkAnnotations?> = ReleaseDependent(CompatqualCheckerFrameworkAnnotations.ENABLE),
+) : KotlinArgumentValueType<CompatqualCheckerFrameworkAnnotations> {
+    override fun stringRepresentation(value: CompatqualCheckerFrameworkAnnotations?): String? {
+        return value?.stateName?.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""

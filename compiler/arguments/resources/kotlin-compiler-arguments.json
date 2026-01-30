@@ -7426,13 +7426,13 @@
                                     "valueInVersions": []
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.CompatqualCheckerFrameworkAnnotationsType",
                                     "isNullable": {
-                                        "current": true,
+                                        "current": false,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": null,
+                                        "current": "ENABLE",
                                         "valueInVersions": []
                                     }
                                 },
