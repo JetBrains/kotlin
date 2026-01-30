@@ -652,6 +652,11 @@ default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.
         valueType = StringType.defaultNull
         valueDescription = "{indy-with-constants|indy|inline}".asReleaseDependent()
 
+        argumentType = StringConcatType(
+            isNullable = ReleaseDependent(true),
+            defaultValue = ReleaseDependent(null),
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_20,
         )

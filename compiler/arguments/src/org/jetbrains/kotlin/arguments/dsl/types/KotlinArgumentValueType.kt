@@ -262,5 +262,18 @@ class SerializeIrType(
     }
 }
 
+/**
+ * A value which accepts [StringConcat] type.
+ */
+@Serializable
+class StringConcatType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<StringConcat?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<StringConcat> {
+    override fun stringRepresentation(value: StringConcat?): String? {
+        return value?.schemeName?.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
