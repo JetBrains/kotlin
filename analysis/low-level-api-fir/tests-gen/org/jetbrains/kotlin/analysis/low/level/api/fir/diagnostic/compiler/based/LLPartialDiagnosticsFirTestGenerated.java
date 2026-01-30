@@ -453,6 +453,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
     }
 
     @Test
+    @TestMetadata("jSpecifySimple.kt")
+    public void testJSpecifySimple() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/jSpecifySimple.kt");
+    }
+
+    @Test
     @TestMetadata("javaFieldVsAccessor.kt")
     public void testJavaFieldVsAccessor() {
       runTest("compiler/fir/analysis-tests/testData/resolve/javaFieldVsAccessor.kt");
