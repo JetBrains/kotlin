@@ -91,6 +91,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByIterable
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByName
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByRegex
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByStringDelimiters
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColByIndex
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColByIndexUntyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups2
@@ -237,6 +239,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NameStartsWith0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NameStartsWith1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NameStartsWith2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Named0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Named1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NestedSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
@@ -664,6 +667,9 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "ColumnPathInvokeTyped" -> ColumnPathInvokeTyped()
         "StringGetColumn" -> StringGetColumn()
         "ColumnPathGetColumn" -> ColumnPathGetColumn()
+        "ColByIndex" -> ColByIndex()
+        "ColByIndexUntyped" -> ColByIndexUntyped()
+        "Named1" -> Named1()
         else -> if (isTest) error(this) else null
     }
 }

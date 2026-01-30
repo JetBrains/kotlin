@@ -29,6 +29,8 @@ interface SingleColumnApproximation : ColumnsResolver, SingleColumn<Any?>, Colum
         return resolve(context).single()
     }
 
+    override fun rename(newName: String): SingleColumnApproximation
+
     val path: ColumnPath
 }
 
@@ -38,7 +40,7 @@ class ResolvedDataColumn(private val col: ColumnWithPathApproximation) : SingleC
         return col.column.name
     }
 
-    override fun rename(newName: String): ColumnReference<Any?> {
+    override fun rename(newName: String): SingleColumnApproximation {
         return ResolvedDataColumn(ColumnWithPathApproximation(col.path, col.column.rename(newName)))
     }
 

@@ -9,11 +9,7 @@ import org.jetbrains.kotlinx.dataframe.api.asColumnGroup
 import org.jetbrains.kotlinx.dataframe.api.cast
 import org.jetbrains.kotlinx.dataframe.api.pathOf
 import org.jetbrains.kotlinx.dataframe.api.select
-import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
-import org.jetbrains.kotlinx.dataframe.columns.ColumnReference
-import org.jetbrains.kotlinx.dataframe.columns.ColumnResolutionContext
-import org.jetbrains.kotlinx.dataframe.columns.ColumnWithPath
-import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
+import org.jetbrains.kotlinx.dataframe.columns.*
 import org.jetbrains.kotlinx.dataframe.impl.columns.ColumnsList
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
@@ -778,7 +774,7 @@ fun Arguments.stringApiColumnResolver(path: ColumnPath, type: ConeKotlinType): S
             return ColumnWithPathApproximation(path, simpleColumnOf(path.name(), type), isImpliedColumn = true)
         }
 
-        override fun rename(newName: String): ColumnReference<Any?> {
+        override fun rename(newName: String): SingleColumnApproximation {
             return stringApiColumnResolver(path.rename(newName), type)
         }
 
@@ -790,5 +786,62 @@ fun Arguments.stringApiColumnResolver(path: ColumnPath, type: ConeKotlinType): S
             return resolve(context.df.cast<ConeTypesAdapter>().toPluginDataFrameSchema())
                 .map { ColumnWithPath(it.column.asDataColumn(), it.path) }
         }
+    }
+}
+
+class ColByIndex : AbstractInterpreter<SingleColumnApproximation>() {
+    val Arguments.receiver by ignore()
+    val Arguments.index: Int by arg()
+    val Arguments.typeArg0 by type()
+
+    override fun Arguments.interpret(): SingleColumnApproximation {
+        return columnByIndexResolver(name = null, typeArg0.coneType, index)
+    }
+}
+
+class ColByIndexUntyped : AbstractInterpreter<SingleColumnApproximation>() {
+    val Arguments.receiver by ignore()
+    val Arguments.index: Int by arg()
+
+    override fun Arguments.interpret(): SingleColumnApproximation {
+        return columnByIndexResolver(name = null, session.builtinTypes.nullableAnyType.coneType, index)
+    }
+}
+
+private fun Arguments.columnByIndexResolver(
+    name: String?,
+    type: ConeKotlinType,
+    index: Int
+): SingleColumnApproximation = object : SingleColumnApproximation {
+    override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
+        return stringApiColumnResolver(pathOf(requireName()), type).resolve(df)
+    }
+
+    override fun resolve(context: ColumnResolutionContext): List<ColumnWithPath<Any?>> {
+        return stringApiColumnResolver(pathOf(requireName()), type).resolve(context)
+    }
+
+    override val path: ColumnPath get() = pathOf(requireName())
+
+    override fun name(): String = requireName()
+
+    override fun rename(newName: String): SingleColumnApproximation {
+        return columnByIndexResolver(newName, type, index)
+    }
+
+    private fun requireName(): String {
+        if (name == null) {
+            error("col($index) needs to be 'named'")
+        }
+        return name
+    }
+}
+
+internal class Named1 : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: SingleColumnApproximation by arg()
+    val Arguments.newName: String by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return receiver.rename(newName)
     }
 }
