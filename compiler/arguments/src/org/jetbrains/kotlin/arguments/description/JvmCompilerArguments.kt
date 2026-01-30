@@ -687,6 +687,11 @@ The default value is 'indy'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{class|indy}".asReleaseDependent()
 
+        argumentType = SamConversionsType(
+            isNullable = ReleaseDependent(false),
+            defaultValue = ReleaseDependent(SamConversions.INDY),
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_0,
         )

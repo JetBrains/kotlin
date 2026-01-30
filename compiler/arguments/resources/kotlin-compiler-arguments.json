@@ -7216,13 +7216,13 @@
                                     "valueInVersions": []
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.SamConversionsType",
                                     "isNullable": {
-                                        "current": true,
+                                        "current": false,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": null,
+                                        "current": "INDY",
                                         "valueInVersions": []
                                     }
                                 },

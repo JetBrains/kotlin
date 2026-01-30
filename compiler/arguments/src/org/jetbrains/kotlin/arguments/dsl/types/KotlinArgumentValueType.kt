@@ -236,5 +236,18 @@ class LambdasType(
     }
 }
 
+/**
+ * A value which accepts [SamConversions] type.
+ */
+@Serializable
+class SamConversionsType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
+    override val defaultValue: ReleaseDependent<SamConversions?> = ReleaseDependent(SamConversions.INDY),
+) : KotlinArgumentValueType<SamConversions> {
+    override fun stringRepresentation(value: SamConversions?): String? {
+        return value?.schemeName?.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
