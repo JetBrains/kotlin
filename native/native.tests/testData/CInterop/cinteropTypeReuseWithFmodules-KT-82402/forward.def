@@ -1,0 +1,3 @@
+# forward.def
+language = Objective-C
+modules = original forward

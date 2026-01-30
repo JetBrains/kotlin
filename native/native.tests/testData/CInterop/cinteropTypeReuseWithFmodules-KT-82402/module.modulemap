@@ -1,0 +1,2 @@
+module original { header "original.h" }
+module forward { header "forward.h" }
