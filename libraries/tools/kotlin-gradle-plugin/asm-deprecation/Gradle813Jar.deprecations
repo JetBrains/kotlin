@@ -20,7 +20,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 package org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline
 package org.jetbrains.kotlin.cli.jvm.config
 package org.jetbrains.kotlin.cli.jvm.index
-package org.jetbrains.kotlin.cli.jvm.javac
 package org.jetbrains.kotlin.cli.jvm.modules
 package org.jetbrains.kotlin.cli.jvm.plugins
 package org.jetbrains.kotlin.cli.pipeline
