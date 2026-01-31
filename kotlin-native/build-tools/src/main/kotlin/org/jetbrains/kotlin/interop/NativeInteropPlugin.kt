@@ -267,8 +267,7 @@ open class NativeInteropPlugin : Plugin<Project> {
                             ignoreWarningFlags +
                             "-Werror" +
                             sortedIncludeFlags +
-                            hostPlatform.clangForJni.hostCompilerArgsForJni
-
+                            jniHostCompilerArgs
                     flags(*cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
                 }
                 (".cpp" to ".$obj") {

@@ -27,6 +27,7 @@ plugins {
     id("kotlin.native.build-tools-conventions")
     id("native")
     id("native-dependencies")
+    id("jvm-toolchains")
 }
 
 val library = lib("llvmext")

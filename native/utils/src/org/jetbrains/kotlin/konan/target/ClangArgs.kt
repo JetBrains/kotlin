@@ -239,13 +239,16 @@ sealed class ClangArgs(
      * Should be used when compiling library for JNI.
      * For example, it is used for Kotlin/Native's Clang and LLVM libraries.
      */
-    class Jni(configurables: Configurables) : ClangArgs(configurables, forJni = true) {
+    class Jni(private val configurables: Configurables) : ClangArgs(configurables, forJni = true) {
         private val jdkDir by lazy {
-            val home = File.javaHome.absoluteFile
-            if (home.child("include").exists)
-                home.absolutePath
+            val home = configurables.hostString("konan.jdk.home")?.let { File(it) }
+                ?: System.getenv("JAVA_HOME")?.let { File(it) }
+                ?: File.javaHome
+            val absoluteHome = home.absoluteFile
+            if (absoluteHome.child("include").exists)
+                absoluteHome.absolutePath
             else
-                home.parentFile.absolutePath
+                absoluteHome.parentFile.absolutePath
         }
 
         val hostCompilerArgsForJni: Array<String> by lazy {
