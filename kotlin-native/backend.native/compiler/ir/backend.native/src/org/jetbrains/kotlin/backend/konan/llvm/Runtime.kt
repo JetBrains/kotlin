@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.TargetDataLayout
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -23,6 +24,8 @@ internal class Runtime(
     val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, phaseContext.messageCollector, llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
+
+    private val targetDataLayout: TargetDataLayout = TargetDataLayout.forTarget(phaseContext.config.target)
 
     private fun getStructTypeOrNull(name: String, isClass: Boolean = false) =
             LLVMGetTypeByName(llvmModule, "${if (isClass) "class" else "struct"}.$name")
@@ -108,15 +111,16 @@ internal class Runtime(
     fun alignOf(type: LLVMTypeRef) = LLVMABIAlignmentOfType(targetData, type)
     fun offsetOf(type: LLVMTypeRef, index: Int) = LLVMOffsetOfElement(targetData, type, index).toInt()
 
-    val pointerSize: Int by lazy { sizeOf(pointerType) }
-    val pointerAlignment: Int by lazy { alignOf(pointerType) }
+    val pointerSize: Int = targetDataLayout.pointerSize
+    val pointerAlignment: Int = targetDataLayout.pointerAlignment
 
     val stringHeaderExtraSize: Int by lazy {
         offsetOf(stringHeaderType, LLVMCountStructElementTypes(stringHeaderType) - 1) - sizeOf(arrayHeaderType)
     }
 
     // Must match kObjectAlignment in runtime
-    val objectAlignment = 8
+    val objectAlignment: Int = targetDataLayout.objectAlignment
 
-    val isBigEndian: Boolean by lazy { LLVMByteOrder(targetData) == LLVMByteOrdering.LLVMBigEndian }
+    // Pre-computed endianness - all K/N targets are little-endian
+    val isBigEndian: Boolean = targetDataLayout.isBigEndian
 }

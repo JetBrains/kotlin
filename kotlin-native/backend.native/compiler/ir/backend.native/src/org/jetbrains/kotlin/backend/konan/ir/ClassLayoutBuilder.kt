@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
-import llvm.LLVMABIAlignmentOfType
-import llvm.LLVMABISizeOfType
-import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenLlvmHelpers
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
-import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsDeserializer
 import org.jetbrains.kotlin.descriptors.Modality
@@ -268,14 +264,17 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
 }
 
 internal fun IrField.requiredAlignment(llvm: CodegenLlvmHelpers): Int {
-    val llvmType = type.toLLVMType(llvm)
-    val abiAlignment = if (llvmType == llvm.vector128Type) {
+    val primitiveBinaryType = type.computePrimitiveBinaryTypeOrNull()
+    val dataLayout = llvm.targetDataLayout
+
+    val abiAlignment = if (primitiveBinaryType == PrimitiveBinaryType.VECTOR128) {
         8 // over-aligned objects are not supported now, and this worked somehow, so let's keep it as it for now
     } else {
-        LLVMABIAlignmentOfType(llvm.runtime.targetData, llvmType)
+        dataLayout.alignmentOf(primitiveBinaryType)
     }
+
     return if (hasAnnotation(KonanFqNames.volatile)) {
-        val size = LLVMABISizeOfType(llvm.runtime.targetData, llvmType).toInt()
+        val size = dataLayout.sizeOf(primitiveBinaryType)
         val alignment = maxOf(size, abiAlignment)
         require(alignment % size == 0) { "Bad alignment of field ${render()}: abiAlignment = ${abiAlignment}, size = ${size}"}
         require(alignment % abiAlignment == 0) { "Bad alignment of field ${render()}: abiAlignment = ${abiAlignment}, size = ${size}"}
@@ -466,8 +465,8 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         val sortedDeclaredFields = if (irClass.hasAnnotation(KonanFqNames.noReorderFields))
             declaredFields
         else
-            declaredFields.sortedByDescending {
-                with(llvm) { LLVMStoreSizeOfType(runtime.targetData, it.type.toLLVMType(this)) }
+            declaredFields.sortedByDescending { fieldInfo ->
+                llvm.targetDataLayout.storeSizeOf(fieldInfo.type.computePrimitiveBinaryTypeOrNull())
             }
 
         return (superFields + sortedDeclaredFields).also { fields = it }

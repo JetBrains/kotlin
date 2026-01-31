@@ -412,6 +412,28 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     private val target = context.config.target
 
+    /** Pre-computed data layout for the target architecture. */
+    val targetDataLayout = TargetDataLayout.forTarget(target)
+
+    /**
+     * Get the ABI size of a primitive LLVM type using pre-computed values.
+     * This avoids a JNI call to LLVM for known types.
+     *
+     * @return The size of the type, or null if not a recognized primitive type
+     */
+    fun primitiveLlvmTypeSize(type: LLVMTypeRef): Int? = when (type) {
+        pointerType -> targetDataLayout.pointerSize
+        int1Type -> targetDataLayout.int1Size
+        int8Type -> targetDataLayout.int8Size
+        int16Type -> targetDataLayout.int16Size
+        int32Type -> targetDataLayout.int32Size
+        int64Type -> targetDataLayout.int64Size
+        floatType -> targetDataLayout.floatSize
+        doubleType -> targetDataLayout.doubleSize
+        vector128Type -> targetDataLayout.vector128Size
+        else -> null
+    }
+
     override val runtime get() = generationState.runtime
 
     init {

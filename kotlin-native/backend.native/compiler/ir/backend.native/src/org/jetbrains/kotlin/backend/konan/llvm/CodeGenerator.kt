@@ -10,6 +10,7 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.RuntimeStructLayouts
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.ir.ClassGlobalHierarchyInfo
@@ -597,8 +598,8 @@ internal abstract class FunctionGenerationContext(
     var returnSlot: LLVMValueRef? = null
         private set
     private var slotsPhi: LLVMValueRef? = null
-    private val frameOverlaySlotCount =
-            (LLVMStoreSizeOfType(llvmTargetData, runtime.frameOverlayType) / runtime.pointerSize).toInt()
+    // Use pre-computed frame overlay slot count from TargetDataLayout to avoid LLVM JNI call
+    private val frameOverlaySlotCount = RuntimeStructLayouts.getFrameOverlaySlotCount(llvm.targetDataLayout)
     private var slotCount = frameOverlaySlotCount
     private var localAllocs = 0
     // TODO: remove if exactly unused.
