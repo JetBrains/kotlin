@@ -69,33 +69,24 @@ static void RemoveOrInlinePrologueSafepointInstructions(
   }
 }
 
-static void LLVMKotlinRemoveRedundantSafepoints(LLVMModuleRef module, int isSafepointInliningAllowed) {
-  bool inliningAllowed = isSafepointInliningAllowed != 0;
-  LLVMValueRef currentFunction = LLVMGetFirstFunction(module);
-  while (currentFunction) {
-    if (!LLVMIsDeclaration(currentFunction)) {
-      LLVMBasicBlockRef firstBlock = LLVMGetFirstBasicBlock(currentFunction);
-      if (firstBlock) {
-        bool firstBlockHasSafepoint = BlockHasSafepointInstruction(firstBlock);
-        RemoveOrInlinePrologueSafepointInstructions(firstBlock, false, inliningAllowed);
-        LLVMBasicBlockRef currentBlock = LLVMGetNextBasicBlock(firstBlock);
-        while (currentBlock) {
-          RemoveOrInlinePrologueSafepointInstructions(currentBlock, firstBlockHasSafepoint, inliningAllowed);
-          currentBlock = LLVMGetNextBasicBlock(currentBlock);
-        }
-      }
-    }
-    currentFunction = LLVMGetNextFunction(currentFunction);
+bool kotlin::RemoveRedundantSafepointsPass::removeSafepoints(Function &F) {
+  if (F.isDeclaration())
+    return false;
+  if (F.empty())
+    return false;
+  auto It = F.begin();
+  auto &FirstBlock = *It;
+  bool FirstBlockHasSafepoint = BlockHasSafepointInstruction(wrap(&FirstBlock));
+  RemoveOrInlinePrologueSafepointInstructions(wrap(&FirstBlock), false, ShouldInline);
+  ++It;
+  for (; It != F.end(); ++It) {
+    RemoveOrInlinePrologueSafepointInstructions(wrap(&*It), FirstBlockHasSafepoint, ShouldInline);
   }
-}
-
-bool kotlin::RemoveRedundantSafepointsPass::removeSafepoints(Module &M) {
-  LLVMKotlinRemoveRedundantSafepoints(wrap(&M), ShouldInline);
   return true;
 }
 
-PreservedAnalyses kotlin::RemoveRedundantSafepointsPass::run(Module &M, ModuleAnalysisManager &) {
-  if (!removeSafepoints(M))
+PreservedAnalyses kotlin::RemoveRedundantSafepointsPass::run(Function &F, FunctionAnalysisManager &) {
+  if (!removeSafepoints(F))
     return PreservedAnalyses::all();
   return PreservedAnalyses::none();
 }

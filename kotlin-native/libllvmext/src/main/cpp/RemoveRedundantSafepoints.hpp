@@ -13,9 +13,9 @@ class RemoveRedundantSafepointsPass : public PassInfoMixin<RemoveRedundantSafepo
 public:
   explicit RemoveRedundantSafepointsPass(bool ShouldInline) : ShouldInline(ShouldInline) {}
 
-  bool removeSafepoints(Module &M);
+  bool removeSafepoints(Function &F);
 
-  PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM);
+  PreservedAnalyses run(Function &F, FunctionAnalysisManager &AF);
 };
 
 Expected<bool> parseRemoveRedundantSafepointsPassOptions(StringRef Params);

@@ -86,7 +86,7 @@ extern "C" LLVMErrorRef LLVMKotlinRunPasses(
           }
           if (PassBuilder::checkParametrizedPassName(Name, "kotlin-remove-sp")) {
               if (auto Param = PassBuilder::parsePassParameters(kotlin::parseRemoveRedundantSafepointsPassOptions, Name, "kotlin-remove-sp")) {
-                  PM.addPass(kotlin::RemoveRedundantSafepointsPass(*Param));
+                  PM.addPass(createModuleToFunctionPassAdaptor(kotlin::RemoveRedundantSafepointsPass(*Param)));
                   return true;
               }
               return false;
