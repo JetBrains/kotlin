@@ -52,6 +52,7 @@ data class LlvmPipelineConfig(
         val ltoPasses: String? = null,
         val sspMode: StackProtectorMode = StackProtectorMode.NO,
         val sanitizer: SanitizerKind? = null,
+        val shouldInlineSafepoints: Boolean = false,
 )
 
 private fun getCpuModel(context: NativeBackendPhaseContext): String {
@@ -183,6 +184,7 @@ internal fun createLTOFinalPipelineConfig(
             ltoPasses = config.llvmLTOPasses,
             sspMode = config.stackProtectorMode,
             sanitizer = config.sanitizer,
+            shouldInlineSafepoints = context.shouldInlineSafepoints(),
     )
 }
 
@@ -354,6 +356,11 @@ class MandatoryPostLTOOptimizationPipeline(
             null -> {}
             SanitizerKind.THREAD -> add("kotlin-tsan")
             SanitizerKind.ADDRESS -> errorReporting.reportCompilationError("Address sanitizer is not supported yet")
+        }
+        if (config.shouldInlineSafepoints) {
+            add("kotlin-remove-sp<inline>")
+        } else {
+            add("kotlin-remove-sp")
         }
     }
 }

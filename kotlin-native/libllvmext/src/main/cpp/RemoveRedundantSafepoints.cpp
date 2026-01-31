@@ -3,10 +3,16 @@
  * that can be found in the LICENSE file.
  */
 
+#include "RemoveRedundantSafepoints.hpp"
+
 #include <CAPIExtensions.h>
-#include <RemoveRedundantSafepoints.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Instructions.h>
+#include <llvm/IR/Module.h>
+#include "llvm/IR/Analysis.h"
+#include "llvm/IR/PassManager.h"
+#include "llvm/Support/Error.h"
+#include "llvm/Support/FormatVariadic.h"
 
 using namespace llvm;
 
@@ -63,7 +69,7 @@ static void RemoveOrInlinePrologueSafepointInstructions(
   }
 }
 
-void LLVMKotlinRemoveRedundantSafepoints(LLVMModuleRef module, int isSafepointInliningAllowed) {
+static void LLVMKotlinRemoveRedundantSafepoints(LLVMModuleRef module, int isSafepointInliningAllowed) {
   bool inliningAllowed = isSafepointInliningAllowed != 0;
   LLVMValueRef currentFunction = LLVMGetFirstFunction(module);
   while (currentFunction) {
@@ -81,4 +87,27 @@ void LLVMKotlinRemoveRedundantSafepoints(LLVMModuleRef module, int isSafepointIn
     }
     currentFunction = LLVMGetNextFunction(currentFunction);
   }
+}
+
+bool kotlin::RemoveRedundantSafepointsPass::removeSafepoints(Module &M) {
+  LLVMKotlinRemoveRedundantSafepoints(wrap(&M), ShouldInline);
+  return true;
+}
+
+PreservedAnalyses kotlin::RemoveRedundantSafepointsPass::run(Module &M, ModuleAnalysisManager &) {
+  if (!removeSafepoints(M))
+    return PreservedAnalyses::all();
+  return PreservedAnalyses::none();
+}
+
+Expected<bool> kotlin::parseRemoveRedundantSafepointsPassOptions(StringRef Params) {
+  if (Params.empty()) {
+    return false;
+  }
+  if (Params == "inline") {
+    return true;
+  }
+  return make_error<StringError>(
+      formatv("invalid kotlin-remove-sp pass parameter '{0}'", Params).str(),
+      inconvertibleErrorCode());
 }
