@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
-import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
@@ -99,17 +98,6 @@ internal val MandatoryPostLTOBitcodeLLVMPostprocessingPhase = optimizationPipeli
         pipeline = ::MandatoryPostLTOOptimizationPipeline,
 )
 
-internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
-        name = "RemoveRedundantSafepoints",
-        postactions = getDefaultLlvmModuleActions(),
-        op = { context, _ ->
-            RemoveRedundantSafepointsPass().runOnModule(
-                    module = context.llvm.module,
-                    isSafepointInliningAllowed = context.shouldInlineSafepoints()
-            )
-        }
-)
-
 internal val OptimizeTLSDataLoadsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
         name = "OptimizeTLSDataLoads",
         postactions = getDefaultLlvmModuleActions(),
@@ -152,7 +140,6 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
         it.runAndMeasurePhase(MandatoryPostLTOBitcodeLLVMPostprocessingPhase, module)
     }
-    runAndMeasurePhase(RemoveRedundantSafepointsPhase)
     if (context.config.optimizationsEnabled) {
         runAndMeasurePhase(OptimizeTLSDataLoadsPhase)
     }

@@ -11,6 +11,7 @@
 
 #include "Hide.hpp"
 #include "PassesProfileHandler.h"
+#include "RemoveRedundantSafepoints.hpp"
 #include "StackProtector.hpp"
 #include "ThreadSanitizer.hpp"
 
@@ -79,6 +80,13 @@ extern "C" LLVMErrorRef LLVMKotlinRunPasses(
           if (PassBuilder::checkParametrizedPassName(Name, "kotlin-ssp")) {
               if (auto Param = PassBuilder::parsePassParameters(kotlin::parseStackProtectorPassOptions, Name, "kotlin-ssp")) {
                   PM.addPass(createModuleToFunctionPassAdaptor(kotlin::MarkForStackProtector(*Param)));
+                  return true;
+              }
+              return false;
+          }
+          if (PassBuilder::checkParametrizedPassName(Name, "kotlin-remove-sp")) {
+              if (auto Param = PassBuilder::parsePassParameters(kotlin::parseRemoveRedundantSafepointsPassOptions, Name, "kotlin-remove-sp")) {
+                  PM.addPass(kotlin::RemoveRedundantSafepointsPass(*Param));
                   return true;
               }
               return false;
