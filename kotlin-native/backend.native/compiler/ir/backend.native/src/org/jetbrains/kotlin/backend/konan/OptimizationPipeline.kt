@@ -280,19 +280,15 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-mandatory"
     override val passes = buildList {
+        if (config.makeDeclarationsHidden) {
+            add("kotlin-hide")
+        }
         if (config.objCPasses) {
             // Lower ObjC ARC intrinsics (e.g. `@llvm.objc.clang.arc.use(...)`).
             // While Kotlin/Native codegen itself doesn't produce these intrinsics, they might come
             // from cinterop "glue" bitcode.
             // TODO: Consider adding other ObjC passes.
             add("objc-arc-contract")
-        }
-
-    }
-
-    override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
-        if (config.makeDeclarationsHidden) {
-            makeVisibilityHiddenLikeLlvmInternalizePass(module)
         }
     }
 }
