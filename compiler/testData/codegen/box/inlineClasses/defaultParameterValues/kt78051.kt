@@ -12,7 +12,20 @@ inline fun withDefaultIC(ic: IC = IC("OK")) {
     foo(ic)
 }
 
+// From original bug report
+inline fun withDefaultICAndCrossinline(
+    ic: IC = IC("OK"),
+    crossinline check: (IC) -> Unit
+) {
+    check(ic)
+}
+
 fun box(): String {
     withDefaultIC()
+
+    withDefaultICAndCrossinline { ic ->
+        if (ic.s != "OK") throw AssertionError("Fail crossinline: ${ic.s}")
+    }
+
     return "OK"
 }
