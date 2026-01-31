@@ -192,7 +192,10 @@ internal class RTTIGenerator(
     private fun getInstanceSize(classType: LLVMTypeRef?, irClass: IrClass) : Int {
         val elementType = getElementType(irClass)
         // Check if it is an array.
-        if (elementType != null) return -LLVMABISizeOfType(llvmTargetData, elementType).toInt()
+        if (elementType != null) {
+            val elementSize = llvm.primitiveLlvmTypeSize(elementType) ?: LLVMABISizeOfType(llvmTargetData, elementType).toInt()
+            return -elementSize
+        }
         return LLVMStoreSizeOfType(llvmTargetData, classType).toInt()
     }
 
