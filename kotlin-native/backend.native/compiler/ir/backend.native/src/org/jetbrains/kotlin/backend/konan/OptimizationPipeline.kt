@@ -280,6 +280,12 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-mandatory"
     override val passes = buildList {
+        when (config.sspMode) {
+            StackProtectorMode.NO -> {}
+            StackProtectorMode.YES -> add("kotlin-ssp")
+            StackProtectorMode.STRONG -> add("kotlin-ssp<strong>")
+            StackProtectorMode.ALL -> add("kotlin-ssp<req>")
+        }
         if (config.makeDeclarationsHidden) {
             add("kotlin-hide")
         }

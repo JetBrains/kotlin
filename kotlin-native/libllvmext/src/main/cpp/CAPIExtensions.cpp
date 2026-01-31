@@ -11,6 +11,7 @@
 
 #include "Hide.hpp"
 #include "PassesProfileHandler.h"
+#include "StackProtector.hpp"
 #include "ThreadSanitizer.hpp"
 
 using namespace llvm;
@@ -74,6 +75,13 @@ extern "C" LLVMErrorRef LLVMKotlinRunPasses(
               PM.addPass(ModuleThreadSanitizerPass());
               PM.addPass(createModuleToFunctionPassAdaptor(ThreadSanitizerPass()));
               return true;
+          }
+          if (PassBuilder::checkParametrizedPassName(Name, "kotlin-ssp")) {
+              if (auto Param = PassBuilder::parsePassParameters(kotlin::parseStackProtectorPassOptions, Name, "kotlin-ssp")) {
+                  PM.addPass(createModuleToFunctionPassAdaptor(kotlin::MarkForStackProtector(*Param)));
+                  return true;
+              }
+              return false;
           }
           return false;
         });
