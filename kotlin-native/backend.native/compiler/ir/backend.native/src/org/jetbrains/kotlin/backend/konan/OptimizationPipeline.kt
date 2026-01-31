@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.backend.konan
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.config.LoggingContext
+import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -49,6 +51,7 @@ data class LlvmPipelineConfig(
         val modulePasses: String? = null,
         val ltoPasses: String? = null,
         val sspMode: StackProtectorMode = StackProtectorMode.NO,
+        val sanitizer: SanitizerKind? = null,
 )
 
 private fun getCpuModel(context: NativeBackendPhaseContext): String {
@@ -101,6 +104,7 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
             modulePasses = config.llvmModulePasses,
             ltoPasses = config.llvmLTOPasses,
             sspMode = config.stackProtectorMode,
+            sanitizer = config.sanitizer,
     )
 }
 
@@ -178,12 +182,14 @@ internal fun createLTOFinalPipelineConfig(
             modulePasses = config.llvmModulePasses,
             ltoPasses = config.llvmLTOPasses,
             sspMode = config.stackProtectorMode,
+            sanitizer = config.sanitizer,
     )
 }
 
 abstract class LlvmOptimizationPipeline(
         private val config: LlvmPipelineConfig,
         private val performanceManager: PerformanceManager?,
+        private val errorReporting: ErrorReportingContext,
         private val logger: LoggingContext? = null,
 ) : Closeable {
     open fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {}
@@ -276,8 +282,12 @@ abstract class LlvmOptimizationPipeline(
     }
 }
 
-class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
-        LlvmOptimizationPipeline(config, performanceManager, logger) {
+class MandatoryOptimizationPipeline(
+        config: LlvmPipelineConfig,
+        performanceManager: PerformanceManager?,
+        errorReporting: ErrorReportingContext,
+        logger: LoggingContext? = null,
+) : LlvmOptimizationPipeline(config, performanceManager, errorReporting, logger) {
     override val pipelineName = "llvm-mandatory"
     override val passes = buildList {
         when (config.sspMode) {
@@ -299,14 +309,22 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
     }
 }
 
-class ModuleOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
-        LlvmOptimizationPipeline(config, performanceManager, logger) {
+class ModuleOptimizationPipeline(
+        config: LlvmPipelineConfig,
+        performanceManager: PerformanceManager?,
+        errorReporting: ErrorReportingContext,
+        logger: LoggingContext? = null,
+) : LlvmOptimizationPipeline(config, performanceManager, errorReporting, logger) {
     override val pipelineName = "llvm-default"
     override val passes = listOf(config.modulePasses ?: "default<$optimizationFlag>")
 }
 
-class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
-        LlvmOptimizationPipeline(config, performanceManager, logger) {
+class LTOOptimizationPipeline(
+        config: LlvmPipelineConfig,
+        performanceManager: PerformanceManager?,
+        errorReporting: ErrorReportingContext,
+        logger: LoggingContext? = null,
+) : LlvmOptimizationPipeline(config, performanceManager, errorReporting, logger) {
     override val pipelineName = "llvm-lto"
     override val passes =
             if (config.ltoPasses != null) listOf(config.ltoPasses)
@@ -324,10 +342,20 @@ class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: Pe
             }
 }
 
-class ThreadSanitizerPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
-        LlvmOptimizationPipeline(config, performanceManager, logger) {
-    override val pipelineName = "llvm-tsan"
-    override val passes = listOf("kotlin-tsan")
+class MandatoryPostLTOOptimizationPipeline(
+        config: LlvmPipelineConfig,
+        performanceManager: PerformanceManager?,
+        errorReporting: ErrorReportingContext,
+        logger: LoggingContext? = null,
+) : LlvmOptimizationPipeline(config, performanceManager, errorReporting, logger) {
+    override val pipelineName = "llvm-mandatory-post-lto"
+    override val passes = buildList {
+        when (config.sanitizer) {
+            null -> {}
+            SanitizerKind.THREAD -> add("kotlin-tsan")
+            SanitizerKind.ADDRESS -> errorReporting.reportCompilationError("Address sanitizer is not supported yet")
+        }
+    }
 }
 
 internal fun RelocationModeFlags.currentRelocationMode(context: NativeBackendPhaseContext): RelocationModeFlags.Mode =
