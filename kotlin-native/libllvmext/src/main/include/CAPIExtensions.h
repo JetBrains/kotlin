@@ -20,8 +20,6 @@ void LLVMKotlinInitializeTargets(void);
 
 void LLVMSetNoTailCall(LLVMValueRef Call);
 
-int LLVMInlineCall(LLVMValueRef call);
-
 /// Run `Passes` on module `M`.
 /// When `Profile` is not `NULL` also collect profiling data and store the result in it.
 LLVMErrorRef LLVMKotlinRunPasses(

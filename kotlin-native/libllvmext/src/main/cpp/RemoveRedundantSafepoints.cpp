@@ -5,68 +5,65 @@
 
 #include "RemoveRedundantSafepoints.hpp"
 
-#include <CAPIExtensions.h>
-#include <llvm/IR/Constants.h>
-#include <llvm/IR/Instructions.h>
-#include <llvm/IR/Module.h>
+#include "llvm/ADT/SmallVector.h"
+#include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/Analysis.h"
+#include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/PassManager.h"
+#include "llvm/Support/Casting.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/FormatVariadic.h"
+#include "llvm/Transforms/Utils/Cloning.h"
 
 using namespace llvm;
 
-static constexpr const char* functionPrologueSafepointName = "Kotlin_mm_safePointFunctionPrologue";
+namespace {
 
-static constexpr size_t functionPrologueSafepointNameLength =
-  std::char_traits<char>::length(functionPrologueSafepointName);
+constexpr const char* functionPrologueSafepointName = "Kotlin_mm_safePointFunctionPrologue";
 
-static bool InstructionIsPrologueSafepoint(LLVMValueRef instruction) {
-  if (LLVMIsACallInst(instruction) || LLVMIsAInvokeInst(instruction)) {
-    size_t calledNameLength = 0;
-    const char* calledName = LLVMGetValueName2(LLVMGetCalledValue(instruction), &calledNameLength);
-    return functionPrologueSafepointNameLength == calledNameLength &&
-      strncmp(calledName, functionPrologueSafepointName, calledNameLength) == 0;
+CallBase* instructionAsAPrologueSafepoint(Instruction &I) {
+  if (auto* CallInstr = dyn_cast<CallBase>(&I)) {
+    if (CallInstr->getCalledOperand()->getName() == functionPrologueSafepointName) {
+      return CallInstr;
+    }
   }
-  return false;
+  return nullptr;
 }
 
-static bool BlockHasSafepointInstruction(LLVMBasicBlockRef block) {
-  LLVMValueRef current = LLVMGetFirstInstruction(block);
-  while (current) {
-    if (InstructionIsPrologueSafepoint(current)) {
+bool blockHasAPrologueSafepoint(BasicBlock &BB) {
+  for (auto &I : BB) {
+    if (instructionAsAPrologueSafepoint(I))
       return true;
-    }
-    current = LLVMGetNextInstruction(current);
   }
   return false;
 }
 
-static void RemoveOrInlinePrologueSafepointInstructions(
-  LLVMBasicBlockRef block, bool removeFirst, bool isSafepointInliningAllowed) {
-  // Collect safepoint calls to erase and inline.
-  LLVMValueRef toInline = nullptr;
-  std::vector<LLVMValueRef> toErase;
-  bool first = true;
-  LLVMValueRef current = LLVMGetFirstInstruction(block);
-  while (current) {
-    if (InstructionIsPrologueSafepoint(current)) {
-      if (!first || removeFirst) {
-        toErase.push_back(current);
-      } else if (isSafepointInliningAllowed && !LLVMIsDeclaration(LLVMGetCalledValue(current))) {
-        toInline = current;
+}
+
+bool kotlin::RemoveRedundantSafepointsPass::removeAndInlineSafepoints(BasicBlock &BB, bool RemoveFirst) {
+  CallBase* ToInline = nullptr;
+  SmallVector<CallBase*> ToErase;
+  bool First = true;
+  for (auto& I : BB) {
+    if (auto* SPI = instructionAsAPrologueSafepoint(I)) {
+      if (!First || RemoveFirst) {
+        ToErase.push_back(SPI);
+      } else if (ShouldInline && !cast<GlobalValue>(SPI->getCalledOperand())->isDeclaration()) {
+        ToInline = SPI;
       }
-      first = false;
+      First = false;
     }
-    current = LLVMGetNextInstruction(current);
   }
-  // Perform actual modifications after iteration.
-  for (auto it = toErase.cbegin(); it != toErase.cend(); ++it) {
-    LLVMInstructionEraseFromParent(*it);
+  bool MadeChanges = !ToErase.empty();
+  for (auto* SPI : ToErase) {
+    SPI->eraseFromParent();
   }
-  if (toInline) {
-    LLVMInlineCall(toInline);
+  if (ToInline) {
+    InlineFunctionInfo IFI;
+    auto Result = InlineFunction(*ToInline, IFI);
+    MadeChanges |= Result.isSuccess();
   }
+  return MadeChanges;
 }
 
 bool kotlin::RemoveRedundantSafepointsPass::removeSafepoints(Function &F) {
@@ -76,13 +73,14 @@ bool kotlin::RemoveRedundantSafepointsPass::removeSafepoints(Function &F) {
     return false;
   auto It = F.begin();
   auto &FirstBlock = *It;
-  bool FirstBlockHasSafepoint = BlockHasSafepointInstruction(wrap(&FirstBlock));
-  RemoveOrInlinePrologueSafepointInstructions(wrap(&FirstBlock), false, ShouldInline);
+  bool FirstBlockHasSafepoint = blockHasAPrologueSafepoint(FirstBlock);
+  bool MadeChanges = removeAndInlineSafepoints(FirstBlock, false);
   ++It;
   for (; It != F.end(); ++It) {
-    RemoveOrInlinePrologueSafepointInstructions(wrap(&*It), FirstBlockHasSafepoint, ShouldInline);
+    bool Result = removeAndInlineSafepoints(*It, FirstBlockHasSafepoint);
+    MadeChanges |= Result;
   }
-  return true;
+  return MadeChanges;
 }
 
 PreservedAnalyses kotlin::RemoveRedundantSafepointsPass::run(Function &F, FunctionAnalysisManager &) {

@@ -5,10 +5,16 @@
 
 #include "llvm/IR/PassManager.h"
 
+namespace llvm {
+class BasicBlock;
+}
+
 namespace llvm::kotlin {
 
 class RemoveRedundantSafepointsPass : public PassInfoMixin<RemoveRedundantSafepointsPass> {
   bool ShouldInline;
+
+  bool removeAndInlineSafepoints(BasicBlock &BB, bool RemoveFirst);
 
 public:
   explicit RemoveRedundantSafepointsPass(bool ShouldInline) : ShouldInline(ShouldInline) {}

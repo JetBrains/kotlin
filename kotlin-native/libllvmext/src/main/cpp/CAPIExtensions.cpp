@@ -42,11 +42,6 @@ void LLVMSetNoTailCall(LLVMValueRef Call) {
     unwrap<CallInst>(Call)->setTailCallKind(CallInst::TCK_NoTail);
 }
 
-int LLVMInlineCall(LLVMValueRef call) {
-  InlineFunctionInfo IFI;
-  return InlineFunction(*unwrap<CallBase>(call), IFI).isSuccess();
-}
-
 extern "C" LLVMErrorRef LLVMKotlinRunPasses(
         LLVMModuleRef M,
         const char *Passes,
