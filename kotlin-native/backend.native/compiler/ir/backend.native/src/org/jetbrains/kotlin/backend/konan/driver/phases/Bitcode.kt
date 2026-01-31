@@ -10,6 +10,7 @@ import llvm.LLVMIsDeclaration
 import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.config.LoggingContext
+import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
-import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 import kotlin.sequences.forEach
@@ -69,12 +69,12 @@ internal class OptimizationState(
         override val performanceManager: PerformanceManager?,
 ) : BasicNativeBackendPhaseContext(konanConfig)
 
-internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfig, PerformanceManager?, LoggingContext) -> LlvmOptimizationPipeline) =
+internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfig, PerformanceManager?, ErrorReportingContext, LoggingContext) -> LlvmOptimizationPipeline) =
         createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
                 name = name,
                 postactions = getDefaultLlvmModuleActions(),
         ) { context, module ->
-            pipeline(context.llvmConfig, context.performanceManager, context).use {
+            pipeline(context.llvmConfig, context.performanceManager, context, context).use {
                 it.execute(module)
             }
         }
@@ -94,9 +94,9 @@ internal val LTOBitcodeOptimizationPhase = optimizationPipelinePass(
         pipeline = ::LTOOptimizationPipeline
 )
 
-internal val ThreadSanitizerPhase = optimizationPipelinePass(
-        name = "ThreadSanitizerPhase",
-        pipeline = ::ThreadSanitizerPipeline
+internal val MandatoryPostLTOBitcodeLLVMPostprocessingPhase = optimizationPipelinePass(
+        name = "MandatoryPostLTOBitcodeLLVMPostprocessingPhase",
+        pipeline = ::MandatoryPostLTOOptimizationPipeline,
 )
 
 internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
@@ -150,11 +150,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         it.runAndMeasurePhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
         it.runAndMeasurePhase(ModuleBitcodeOptimizationPhase, module)
         it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
-        when (context.config.sanitizer) {
-            SanitizerKind.THREAD -> it.runAndMeasurePhase(ThreadSanitizerPhase, module)
-            SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
-            null -> {}
-        }
+        it.runAndMeasurePhase(MandatoryPostLTOBitcodeLLVMPostprocessingPhase, module)
     }
     runAndMeasurePhase(RemoveRedundantSafepointsPhase)
     if (context.config.optimizationsEnabled) {
