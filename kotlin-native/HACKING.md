@@ -451,32 +451,42 @@ The similar helper is available for LLVM tools, `$dist/bin/run_konan llvm $tool 
 ### Convenient cross-compilation wrappers
 
 For easier cross-compilation of C/C++ code, Kotlin/Native provides wrapper scripts that follow
-the standard target triple naming convention:
+the LLVM target triple naming convention. These scripts are auto-generated from `konan/konan.properties`
+during the distribution build (via the `generateCrossCompilationWrappers` Gradle task).
+
+The script names use the full LLVM target triple from `konan.properties`, for example:
 
 | Target | C Compiler | C++ Compiler |
 |--------|------------|--------------|
-| `linux_x64` | `x86_64-linux-gnu-clang` | `x86_64-linux-gnu-clang++` |
-| `linux_arm64` | `aarch64-linux-gnu-clang` | `aarch64-linux-gnu-clang++` |
-| `linux_arm32_hfp` | `arm-linux-gnueabihf-clang` | `arm-linux-gnueabihf-clang++` |
-| `mingw_x64` | `x86_64-w64-mingw32-clang` | `x86_64-w64-mingw32-clang++` |
-| `android_arm64` | `aarch64-linux-android-clang` | `aarch64-linux-android-clang++` |
-| `android_arm32` | `arm-linux-androideabi-clang` | `arm-linux-androideabi-clang++` |
-| `android_x64` | `x86_64-linux-android-clang` | `x86_64-linux-android-clang++` |
-| `android_x86` | `i686-linux-android-clang` | `i686-linux-android-clang++` |
+| `linux_x64` | `x86_64-unknown-linux-gnu-clang` | `x86_64-unknown-linux-gnu-clang++` |
+| `linux_arm64` | `aarch64-unknown-linux-gnu-clang` | `aarch64-unknown-linux-gnu-clang++` |
+| `linux_arm32_hfp` | `arm-unknown-linux-gnueabihf-clang` | `arm-unknown-linux-gnueabihf-clang++` |
+| `mingw_x64` | `x86_64-pc-windows-gnu-clang` | `x86_64-pc-windows-gnu-clang++` |
+| `android_arm64` | `aarch64-unknown-linux-android-clang` | `aarch64-unknown-linux-android-clang++` |
+| `android_arm32` | `arm-unknown-linux-androideabi-clang` | `arm-unknown-linux-androideabi-clang++` |
+| `android_x64` | `x86_64-unknown-linux-android-clang` | `x86_64-unknown-linux-android-clang++` |
+| `android_x86` | `i686-unknown-linux-android-clang` | `i686-unknown-linux-android-clang++` |
+| `macos_x64` | `x86_64-apple-macos-clang` | `x86_64-apple-macos-clang++` |
+| `macos_arm64` | `arm64-apple-macos-clang` | `arm64-apple-macos-clang++` |
+| `ios_arm64` | `arm64-apple-ios-clang` | `arm64-apple-ios-clang++` |
+| ... | ... | ... |
+
+Scripts are generated for all targets defined in `konan.properties`, including Apple targets.
+Users run only the scripts that work on their host platform.
 
 Usage example:
 ```bash
 # Compile a C file for Linux x64
-$dist/bin/x86_64-linux-gnu-clang -c myfile.c -o myfile.o
+$dist/bin/x86_64-unknown-linux-gnu-clang -c myfile.c -o myfile.o
 
 # Compile a C++ file for Windows (MinGW)
-$dist/bin/x86_64-w64-mingw32-clang++ -c myfile.cpp -o myfile.o
+$dist/bin/x86_64-pc-windows-gnu-clang++ -c myfile.cpp -o myfile.o
 
 # Compile a C file for Linux ARM64
-$dist/bin/aarch64-linux-gnu-clang -c myfile.c -o myfile.o
+$dist/bin/aarch64-unknown-linux-gnu-clang -c myfile.c -o myfile.o
 
 # Compile a C++ file for Android ARM64
-$dist/bin/aarch64-linux-android-clang++ -c myfile.cpp -o myfile.o
+$dist/bin/aarch64-unknown-linux-android-clang++ -c myfile.cpp -o myfile.o
 ```
 
 These wrappers automatically use Kotlin/Native's sysroot and the correct compiler flags,
