@@ -3,8 +3,8 @@
 Data-flow-based exhaustiveness checking is the idea that our knowledge about
 the `when` subject's type and value should be stored and processed by the same
 infrastructure that powers our smartcasts.
-This enables us to leverage arbitrary smartcast information
-which we've managed to infer for the `when` subject expression so far.
+This allows us to leverage arbitrary smartcast information inferred for the
+`when` subject expression even before we begin the analysis of the `when` itself.
 
 DFA stores the available information in structures called `TypeStatement`s,
 which, in most cases, are of the form `v: T1 & ... & Tn`.
@@ -58,7 +58,7 @@ In the case of negative type information, things become a bit trickier:
 
 
 * `v: P1 & ¬N1` or `v: P2 & ¬N2`
-  * == `v: (P1 & ¬N1) | (P2 & ¬N2)` (1)
+  * == `v: (P1 & ¬N1) | (P2 & ¬N2)`
     * There's no direct `ConeKotlinType` representation for a negative type, so
       there's no builtin reprenentation for the intersections `P1 & ¬N1` and
       `P2 & ¬N2` either. Consequently, we are unable to call `CST` since we
@@ -79,7 +79,7 @@ In the case of negative type information, things become a bit trickier:
       such a variable conforms to this statement, but it doesn't satisfy the
       previous one as it violates the `(P2 | ¬N1)` term. It is actually unobtainable, 
       but we no longer know that.
-  * -> `v: CST(P1, P2) & ¬(N1 & N2)`
+  * ~> `v: CST(P1, P2) & ¬(N1 & N2)`
     * The second approximation takes place when we recall we neither have union types,
       and must rely on `CST`. Again, this isn't really an issue as we're only moving
       the upper bound further up.
@@ -89,7 +89,7 @@ In the case of negative type information, things become a bit trickier:
 So far so good. But now consider a more complex case where each input type statement
 involves multiple negative bounds already. For positives, it's not really an issue:
 the existence of `ConeIntersectionType` allows us to go back and forth between
-`v: P1 & ... & Pn` and `P: it(P1, ..., Pn)`, and we've already seen how it plays
+`v: P1 & ... & Pn` and `v: it(P1, ..., Pn)`, and we've already seen how it plays
 out in the first subsection of this document. For negatives, things get more complicated.
 
 * `v: ¬(N1 | N2)` and `v: ¬(N3 | N4)`
@@ -108,7 +108,7 @@ out in the first subsection of this document. For negatives, things get more com
       type statement and doesn't require running anything non-trivial.
 
 
-* `v: ¬(N1 | N2)` and `v: ¬(N3 | N4)`
+* `v: ¬(N1 | N2)` or `v: ¬(N3 | N4)`
   * == `v: ¬(N1 | N2) | ¬(N3 | N4)`
   * == `v: (¬N1 & ¬N2) | (¬N3 & ¬N4)`
   * == `v: (¬N1 | ¬N3) & (¬N1 | ¬N4) & (¬N2 | ¬N3) & (¬N2 | ¬N4)`
@@ -119,7 +119,7 @@ out in the first subsection of this document. For negatives, things get more com
       exponential algorithm into the compiler, which we don't really want to do.
     * So what we do instead is intersect all the lower bounds together in one go
       without building the individual permutations. This way we only end up supporting
-      the trivial cases like `v: ¬Number` or `v: Int` => `v: ¬Int`, but fail at more
+      the trivial cases like `v: ¬Number` or `v: ¬Int` => `v: ¬Int`, but fail at more
       complex examples like the one in `complementarySealedVariantsLimitations.kt`.
     * Hypothetically, we could bring support for more edge cases, such as manually
       preserving negative components common to both the statements, but it's too
