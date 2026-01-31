@@ -286,7 +286,10 @@ class BasicAssertionsTest {
 
     @Test
     fun testAssertNull() {
-        assertNull(null)
+        val s: String? = null
+        assertNull(s)
+        // Smart cast to Nothing?
+        val kt83131: Nothing? = s
     }
 
     @Test
