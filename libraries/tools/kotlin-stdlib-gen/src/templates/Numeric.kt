@@ -86,4 +86,47 @@ object Numeric : TemplateGroupBase() {
         }
     }
 
+    val f_product = fn("product()") {
+        listOf(Iterables, Sequences, ArraysOfObjects).forEach { include(it, summablePrimitives) }
+        include(ArraysOfPrimitives, numericPrimitivesDefaultOrder)
+        include(ArraysOfUnsigned)
+    } builder {
+        val p = primitive!!
+
+        doc { "Returns the product of all elements in the ${f.collection}." }
+        returns(p.sumType().name)
+
+        //sinceAtLeast("2.4")
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+
+            body {
+                if (p == p.sumType())
+                    "return storage.product().to${p.sumType().name}()"
+                else
+                    "return productOf { it.to${p.sumType().name}() }"
+            }
+        }
+        specialFor(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives) {
+            platformName("productOf<T>")
+
+            if (p.isUnsigned()) {
+                require(f != ArraysOfPrimitives) { "Arrays of unsigneds are separate from arrays of primitives." }
+                specialFor(Iterables) { sourceFile(SourceFile.UCollections) }
+                specialFor(Sequences) { sourceFile(SourceFile.USequences) }
+                specialFor(ArraysOfObjects) { sourceFile(SourceFile.UArrays) }
+            }
+
+            body {
+                """
+                var product: ${p.sumType().name} = ${p.sumType().one()}
+                for (element in this) {
+                    product *= element
+                }
+                return product
+                """
+            }
+        }
+    }
+
 }
