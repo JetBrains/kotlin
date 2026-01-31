@@ -6,10 +6,12 @@
 #include <llvm/IR/Module.h>
 #include <llvm/Passes/PassBuilder.h>
 #include <llvm/Passes/StandardInstrumentations.h>
+#include <llvm/Transforms/Instrumentation/ThreadSanitizer.h>
 #include <llvm/Transforms/Utils/Cloning.h>
 
 #include "Hide.hpp"
 #include "PassesProfileHandler.h"
+#include "ThreadSanitizer.hpp"
 
 using namespace llvm;
 
@@ -65,6 +67,12 @@ extern "C" LLVMErrorRef LLVMKotlinRunPasses(
             ArrayRef<llvm::PassBuilder::PipelineElement>) {
           if (Name == "kotlin-hide") {
               PM.addPass(kotlin::HidePass());
+              return true;
+          }
+          if (Name == "kotlin-tsan") {
+              PM.addPass(createModuleToFunctionPassAdaptor(kotlin::MarkForThreadSanitizer()));
+              PM.addPass(ModuleThreadSanitizerPass());
+              PM.addPass(createModuleToFunctionPassAdaptor(ThreadSanitizerPass()));
               return true;
           }
           return false;
