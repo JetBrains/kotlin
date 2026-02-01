@@ -36,8 +36,7 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
 /**
  * Runs the specified [block] with the given $values in context scope.
  *
- * As opposed to [with], [context] only makes the $values available for
- * context parameter resolution, but not as implicit $receivers.
+ * As opposed to [with], [context] doesn't make the the $values available as implicit $receivers
  *
  * @sample samples.misc.ContextParameters.useContext
  */
@@ -48,6 +47,24 @@ public inline fun <$types, $resultType> context($parameters, block: context($typ
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return block($arguments)
+}
+
+/**
+ * Runs the specified [block] with the given $values in context scope and in the arguments.
+ *
+ * As opposed to [with], [context] doesn't make the the $values available as implicit $receivers
+ *
+ * @sample samples.misc.ContextParameters.useContext
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("2.2")
+public inline fun <$types, $resultType> withRoles($parameters, block: context($types) ($types) -> $resultType): $resultType {
+    kotlin.contracts.contract {
+        callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    return context($arguments) {
+        block($arguments)
+    }
 }
 """
         )
