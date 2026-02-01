@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-data-manager")
 }
 
 val scriptingTestDefinition by configurations.creating
@@ -105,7 +106,7 @@ projectTests {
             JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
         )
     ) {
-        dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
+        dependsOn(":dist")
         workingDir = rootDir
 
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
@@ -113,10 +114,7 @@ projectTests {
             mustRunAfter(":analysis:analysis-api-fir:test")
         }
 
-        val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
-        doFirst {
-            systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
-        }
+        addClasspathProperty(scriptingTestDefinition, "kotlin.script.test.script.definition.classpath")
     }
 
     withJvmStdlibAndReflect()
