@@ -29,6 +29,7 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
         val types = parameterTypes.joinToString()
 
         val values = if (parameterTypes.size == 1) "value" else "values"
+        val argumentsWord = if (parameterTypes.size == 1) "argument" else "arguments"
         val receivers = if (parameterTypes.size == 1) "receiver" else "receivers"
 
         out.println(
@@ -50,7 +51,7 @@ public inline fun <$types, $resultType> context($parameters, block: context($typ
 }
 
 /**
- * Runs the specified [block] with the given $values in context scope and in the arguments.
+ * Runs the specified [block] with the given $values in context scope and in the $argumentsWord.
  *
  * As opposed to [with], [context] doesn't make the the $values available as implicit $receivers
  *
