@@ -53,6 +53,7 @@ data class LlvmPipelineConfig(
         val sspMode: StackProtectorMode = StackProtectorMode.NO,
         val sanitizer: SanitizerKind? = null,
         val shouldInlineSafepoints: Boolean = false,
+        val shouldOptimizeTLSLoads: Boolean = false,
 )
 
 private fun getCpuModel(context: NativeBackendPhaseContext): String {
@@ -185,6 +186,7 @@ internal fun createLTOFinalPipelineConfig(
             sspMode = config.stackProtectorMode,
             sanitizer = config.sanitizer,
             shouldInlineSafepoints = context.shouldInlineSafepoints(),
+            shouldOptimizeTLSLoads = config.optimizationsEnabled,
     )
 }
 
@@ -361,6 +363,9 @@ class MandatoryPostLTOOptimizationPipeline(
             add("kotlin-remove-sp<inline>")
         } else {
             add("kotlin-remove-sp")
+        }
+        if (config.shouldOptimizeTLSLoads) {
+            add("kotlin-optimize-tls")
         }
     }
 }

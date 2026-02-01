@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
-import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 import kotlin.sequences.forEach
@@ -98,12 +97,6 @@ internal val MandatoryPostLTOBitcodeLLVMPostprocessingPhase = optimizationPipeli
         pipeline = ::MandatoryPostLTOOptimizationPipeline,
 )
 
-internal val OptimizeTLSDataLoadsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
-        name = "OptimizeTLSDataLoads",
-        postactions = getDefaultLlvmModuleActions(),
-        op = { context, _ -> removeMultipleThreadDataLoads(context) }
-)
-
 internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "CStubs",
         postactions = getDefaultLlvmModuleActions(),
@@ -139,8 +132,5 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         it.runAndMeasurePhase(ModuleBitcodeOptimizationPhase, module)
         it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
         it.runAndMeasurePhase(MandatoryPostLTOBitcodeLLVMPostprocessingPhase, module)
-    }
-    if (context.config.optimizationsEnabled) {
-        runAndMeasurePhase(OptimizeTLSDataLoadsPhase)
     }
 }
