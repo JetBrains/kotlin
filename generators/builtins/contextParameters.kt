@@ -53,7 +53,7 @@ public inline fun <$types, $resultType> context($parameters, block: context($typ
 /**
  * Runs the specified [block] with the given $values in context scope and in the $argumentsWord.
  *
- * As opposed to [with], [context] doesn't make the the $values available as implicit $receivers
+ * As opposed to [with], [context] doesn't make the $values available as implicit $receivers
  *
  * @sample samples.misc.ContextParameters.useContext
  */
