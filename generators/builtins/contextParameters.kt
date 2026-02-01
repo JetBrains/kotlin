@@ -59,7 +59,7 @@ public inline fun <$types, $resultType> context($parameters, block: context($typ
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
-public inline fun <$types, $resultType> withRoles($parameters, block: context($types) ($types) -> $resultType): $resultType {
+public inline fun <$types, $resultType> context($parameters, block: context($types) ($types) -> $resultType): $resultType {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
