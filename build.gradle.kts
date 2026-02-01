@@ -74,6 +74,7 @@ plugins {
     id("gradle-plugins-documentation") apply false
     id("com.autonomousapps.dependency-analysis") version "3.4.0"
     id("project-tests-convention") apply false
+    id("test-data-manager-root")
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild

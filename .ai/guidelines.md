@@ -25,9 +25,35 @@ Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij
 
 - Don't modify `*Generated.java` test files directly - regenerate them with `generateTests` Gradle task
 
+## Areas
+
+**BEFORE running tests, modifying, or investigating code — identify the area and READ its docs.**
+
+| Area                     | Prefixes               | Location                                                  | Docs                                                                             |
+|--------------------------|------------------------|-----------------------------------------------------------|----------------------------------------------------------------------------------|
+| Analysis API             | `Ka*`, `KaFir*`, `LL*` | analysis/                                                 | [AGENTS.md](../analysis/AGENTS.md)                                               |
+| Backend: JVM             |                        | compiler/ir/backend.jvm/                                  | [AGENTS.md](../compiler/AGENTS.md)                                               |
+| Backend: JS              |                        | compiler/ir/backend.js/                                   | [AGENTS.md](../compiler/AGENTS.md)                                               |
+| Backend: Native          |                        | kotlin-native/                                            | [AGENTS.md](../compiler/AGENTS.md)                                               |
+| Backend: WASM            |                        | compiler/ir/backend.wasm/                                 | [AGENTS.md](../compiler/AGENTS.md)                                               |
+| Compiler plugins         |                        | plugins/                                                  | —                                                                                |
+| FIR (K2 frontend)        | `Fir*`                 | compiler/fir/                                             | [AGENTS.md](../compiler/AGENTS.md)                                               |
+| IR                       | `Ir*`                  | compiler/ir/                                              | [AGENTS.md](../compiler/AGENTS.md)                                               |
+| K1 (legacy frontend)     |                        | compiler/frontend/                                        | —                                                                                |
+| Kotlin Gradle Plugin     |                        | libraries/tools/kotlin-gradle-plugin/                     | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin/AGENTS.md)                   |
+| Kotlin Gradle Plugin API |                        | libraries/tools/kotlin-gradle-plugin-api/                 | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin-api/AGENTS.md)               |
+| KGP Integration Tests    |                        | libraries/tools/kotlin-gradle-plugin-integration-tests/   | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin-integration-tests/AGENTS.md) |
+| PSI                      | `Kt*`                  | compiler/psi/                                             | [AGENTS.md](../compiler/psi/AGENTS.md)                                           |
+| Standard library         |                        | libraries/stdlib/                                         | —                                                                                |
+| Test infrastructure      |                        | compiler/test-infrastructure/, compiler/tests-common-new/ | [testing.md](testing.md)                                                         |
+
+> **Adding new area docs:** Create `AGENTS.md` with content and `CLAUDE.md` containing only `@AGENTS.md`
+
 ## Running Individual Tests
 
-Use `-q` (quiet) flag to reduce output noise and save tokens:
+**MANDATORY: First check the [Areas](#areas) table above — some areas have specialized test tooling.**
+
+Use `-q` (quiet) flag to reduce output noise. Example of commands for areas WITHOUT specialized tooling:
 
 ```bash
 # Run a specific test class
@@ -54,30 +80,6 @@ Key points (not exhaustive):
 - Commit messages must explain not just WHAT but also WHY and HOW
 - Commit tests together with corresponding code changes
 - Non-functional changes (refactorings, reformats) should be in separate commits
-
-## Areas
-
-**BEFORE modifying or investigating code, identify the area by class prefix or location, then READ the linked docs.**
-
-| Area                 | Prefixes               | Location                                                  | Docs                                   |
-|----------------------|------------------------|-----------------------------------------------------------|----------------------------------------|
-| Analysis API         | `Ka*`, `KaFir*`, `LL*` | analysis/                                                 | [AGENTS.md](../analysis/AGENTS.md)     |
-| Backend: JVM         |                        | compiler/ir/backend.jvm/                                  | [AGENTS.md](../compiler/AGENTS.md)     |
-| Backend: JS          |                        | compiler/ir/backend.js/                                   | [AGENTS.md](../compiler/AGENTS.md)     |
-| Backend: Native      |                        | kotlin-native/                                            | [AGENTS.md](../compiler/AGENTS.md)     |
-| Backend: WASM        |                        | compiler/ir/backend.wasm/                                 | [AGENTS.md](../compiler/AGENTS.md)     |
-| Compiler plugins     |                        | plugins/                                                  | —                                      |
-| FIR (K2 frontend)    | `Fir*`                 | compiler/fir/                                             | [AGENTS.md](../compiler/AGENTS.md)     |
-| IR                   | `Ir*`                  | compiler/ir/                                              | [AGENTS.md](../compiler/AGENTS.md)     |
-| K1 (legacy frontend) |                        | compiler/frontend/                                        | —                                      |
-| Kotlin Gradle Plugin |                        | libraries/tools/kotlin-gradle-plugin/                     | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin/AGENTS.md) |
-| Kotlin Gradle Plugin API |                        | libraries/tools/kotlin-gradle-plugin-api/                 | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin-api/AGENTS.md) |
-| KGP Integration Tests |                        | libraries/tools/kotlin-gradle-plugin-integration-tests/   | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin-integration-tests/AGENTS.md) |
-| PSI                  | `Kt*`                  | compiler/psi/                                             | [AGENTS.md](../compiler/psi/AGENTS.md) |
-| Standard library     |                        | libraries/stdlib/                                         | —                                      |
-| Test infrastructure  |                        | compiler/test-infrastructure/, compiler/tests-common-new/ | [testing.md](testing.md)               |
-
-> **Adding new area docs:** Create `AGENTS.md` with content and `CLAUDE.md` containing only `@AGENTS.md`
 
 ## JetBrains IDE MCP - MANDATORY for the project files and operations
 

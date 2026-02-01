@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -143,6 +143,7 @@ class CodeConformanceTest : TestCase() {
                 "repo/gradle-build-conventions/buildsrc-compat/build/generated-sources",
                 "repo/gradle-build-conventions/generators/build/generated-sources",
                 "repo/gradle-build-conventions/project-tests-convention/build/generated-sources",
+                "repo/gradle-build-conventions/test-data-manager-convention/build/generated-sources",
                 "repo/gradle-build-conventions/android-sdk-provisioner/build/generated-sources",
                 "repo/gradle-build-conventions/asm-deprecating-transformer/build/generated-sources",
                 "repo/gradle-build-conventions/binaryen-configuration/build/generated-sources",

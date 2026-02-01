@@ -34,6 +34,29 @@ WHEN working with PSI elements:
 - All implementations must validate lifetime ownership with `withValidityAssertion`
 - Mark experimental APIs with `@KaExperimentalApi`, implementation details with `@KaImplementationDetail`
 
+## Working with Test Data
+
+When modifying test data files or running generated tests (`*Generated`) that compare output against `.txt` files, use `manageTestDataGlobally` instead of standard test commands:
+
+```bash
+# Update test data by directory (preferred)
+./gradlew manageTestDataGlobally --mode=update --test-data-path=analysis/analysis-api/testData/components/resolver/
+
+# Update test data by test class pattern
+./gradlew manageTestDataGlobally --mode=update --test-class-pattern=.*ResolveTest.*
+
+# Check mode (default) - verify test data matches without updating
+./gradlew manageTestDataGlobally --test-data-path=analysis/analysis-api/testData/components/resolver/singleByPsi/
+```
+
+**Why use `manageTestDataGlobally`?**
+- Runs only relevant tests (filtered by path or class pattern)
+- Handles variant chains correctly (golden `.txt` files run before variant-specific `.js.txt`, `.wasm.txt`, etc.)
+- Automatically discovers all modules that use managed test data
+- Detects and removes redundant variant files
+
+For full options, see [test-data-manager-convention](../repo/gradle-build-conventions/test-data-manager-convention/README.md).
+
 ## Key Components
 
 - [`analysis-api/`](analysis-api) - User-facing API surface (`KaSession`, `KaSymbol`, `KaType`)
@@ -45,6 +68,7 @@ WHEN working with PSI elements:
 - [`low-level-api-fir/`](low-level-api-fir) - K2-specific infrastructure for lazy/incremental analysis
 - [`symbol-light-classes/`](symbol-light-classes) - Java PSI view of Kotlin declarations for interop
 - [`decompiled/light-classes-for-decompiled`](decompiled/light-classes-for-decompiled) - Light classes for decompiled/library code
+- [`test-data-manager/`](test-data-manager) - Infrastructure for managing test data files with variant chains
 
 ## Detailed Documentation
 
@@ -62,3 +86,6 @@ WHEN working with light classes:
 
 WHEN working with lazy resolution (LL API):
 → READ [`low-level-api-fir/README.md`](low-level-api-fir/README.md)
+
+WHEN writing or managing test data files:
+→ READ [`test-data-manager/AGENTS.md`](test-data-manager/AGENTS.md)
