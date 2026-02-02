@@ -123,6 +123,7 @@ internal class GranularMetadataTransformation(
         val uklibFragmentAttributes: Set<String>,
         val computeTransformedLibraryChecksum: Boolean,
         val kmpResolutionStrategy: KmpResolutionStrategy,
+        val allowMatchingByRequestedCoordinates: Boolean,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true) : this(
             build = project.currentBuild,
@@ -148,6 +149,7 @@ internal class GranularMetadataTransformation(
             uklibFragmentAttributes = kotlinSourceSet.metadataFragmentAttributes.map { it.convertToStringForConsumption() }.toSet(),
             computeTransformedLibraryChecksum = project.kotlinPropertiesProvider.computeTransformedLibraryChecksum,
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
+            allowMatchingByRequestedCoordinates = project.kotlinPropertiesProvider.allowMatchingByRequestedCoordinatesInGMDT.get()
         )
     }
 
@@ -366,7 +368,8 @@ internal class GranularMetadataTransformation(
             params.dependingPlatformCompilations,
             projectStructureMetadata,
             isResolvedToProject,
-            resolveWithLenientPSMResolutionScheme = params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs
+            resolveWithLenientPSMResolutionScheme = params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs,
+            allowMatchingByRequestedCoordinates = params.allowMatchingByRequestedCoordinates
         )
 
         val allVisibleSourceSets = sourceSetVisibility.visibleSourceSetNames
