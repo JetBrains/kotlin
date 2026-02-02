@@ -87,9 +87,9 @@ class Collections {
 
         @Sample
         fun collectionSize() {
-            assertEquals(3, listOf(1, 2, 3).size)
-            assertEquals(0, emptySet<Int>().size)
-            assertEquals(2, mapOf(1 to "one", 2 to "two").size)
+            assertPrints(listOf(1, 2, 3).size, "3")
+            assertPrints(emptySet<Int>().size, "0")
+            assertPrints(mapOf(1 to "one", 2 to "two").size, "2")
         }
 
         @Sample
@@ -412,8 +412,8 @@ class Collections {
         fun get() {
             val list = listOf(1, 2, 3)
 
-            assertEquals(1, list[0])
-            assertEquals(3, list[2])
+            assertPrints(list[0], "1")
+            assertPrints(list[2], "3")
             assertFailsWith<IndexOutOfBoundsException> { list[3] }
         }
 
@@ -445,17 +445,17 @@ class Collections {
         @Sample
         fun indexOf() {
             val list = listOf('a', 'b', 'c', 'a')
-            assertEquals(0, list.indexOf('a'))
-            assertEquals(1, list.indexOf('b'))
-            assertEquals(-1, list.indexOf('e'))
+            assertPrints(list.indexOf('a'), "0")
+            assertPrints(list.indexOf('b'), "1")
+            assertPrints(list.indexOf('e'), "-1")
         }
 
         @Sample
         fun lastIndexOf() {
             val list = listOf('a', 'b', 'c', 'a')
-            assertEquals(3, list.lastIndexOf('a'))
-            assertEquals(1, list.lastIndexOf('b'))
-            assertEquals(-1, list.lastIndexOf('e'))
+            assertPrints(list.lastIndexOf('a'), "3")
+            assertPrints(list.lastIndexOf('b'), "1")
+            assertPrints(list.lastIndexOf('e'), "-1")
         }
 
         @Sample
@@ -534,7 +534,7 @@ class Collections {
 
                 // The list content remains the same
                 assertPrints(list, "[1, 2, 3]")
-                assertEquals(3, list.size)
+                assertPrints(list.size, "3")
             }
 
             @Sample
@@ -553,9 +553,9 @@ class Collections {
                     list.add(i)
                 }
 
-                assertEquals(1005, list.size)
-                assertEquals(1, list.first())
-                assertEquals(1000, list.last())
+                assertPrints(list.size, "1005")
+                assertPrints(list.first(), "1")
+                assertPrints(list.last(), "1000")
             }
         }
     }
