@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ENABLE_UKLIBS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
@@ -215,6 +216,24 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     private val enableUKlibs: Boolean
         get() = booleanProperty(KOTLIN_KMP_ENABLE_UKLIBS) ?: false
+
+    /**
+     * By default, the Source Set Visibility algorithm considers only end-resolved artifact coordinates.
+     * In Compose.git common dependencies are declared on coordinates X, but on some target dependencies they're
+     * [org.gradle.api.artifacts.DependencySubstitution] to androidX
+     *      'A.commonMain'     => api(project(":B")
+     *      |- 'A.jvmMain'     => inherited from A.commonMain
+     *      |- 'A.androidMain' => dependencySubstitution to api('androidx:B')
+     *                                  ^
+     *      resolved end-coordinates are different, but requested will be matching
+     *  When the flag is set, the algorithm will proceed with matching "requested" (i.e. api(project(":B")) coordinates
+     *
+     *  *Why not enable it by default?*
+     *  Because of the danger of dependency inconsistency. Algorithm expects that ALL artifacts are coming from the same publication
+     *  i.e. build. So API and Expect/Actuals are consistent between "metadata" and "implementation" variants.
+     */
+    val allowMatchingByRequestedCoordinatesInGMDT: Provider<Boolean>
+        get() = booleanProvider(KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT).orElse(false)
 
     // Throw in IDE resolvers instead of just printing them
     val strictResolveIdeDependencies: Boolean
@@ -757,6 +776,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_KMP_RESOLUTION_STRATEGY = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.kmpResolutionStrategy")
         val KOTLIN_KMP_ENABLE_UKLIBS = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.enableUKlibs")
         val KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.strictResolveIdeDependencies")
+        val KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT =
+            property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.allowMatchingByRequestedCoordinatesInMetadataTransformations")
         val KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT = property("kotlin.kmp.isolated-projects.support")
         val KOTLIN_INCREMENTAL_FIR = property("kotlin.incremental.jvm.fir")
         val KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.unresolvedDependenciesDiagnostic")
