@@ -57,7 +57,8 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 
     compilerArgument {
         name = "jdk-home"
-        description = "Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.".asReleaseDependent()
+        description =
+            "Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
@@ -80,7 +81,8 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 
     compilerArgument {
         name = "no-stdlib"
-        description = "Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection dependencies in the classpath.".asReleaseDependent()
+        description =
+            "Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection dependencies in the classpath.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(
@@ -193,7 +195,8 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 
     compilerArgument {
         name = "Xallow-unstable-dependencies"
-        description = "Do not report errors on classes in dependencies that were compiled by an unstable version of the Kotlin compiler.".asReleaseDependent()
+        description =
+            "Do not report errors on classes in dependencies that were compiled by an unstable version of the Kotlin compiler.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(
@@ -254,7 +257,8 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xadd-modules"
         compilerName = "additionalJavaModules"
-        description = "Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.".asReleaseDependent()
+        description =
+            "Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<module[,]>".asReleaseDependent()
 
@@ -356,7 +360,8 @@ default: legacy""".asReleaseDependent()
 
     compilerArgument {
         name = "Xuse-old-class-files-reading"
-        description = """Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
+        description =
+            """Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
 This can be used in the event of problems with the new implementation.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
@@ -367,7 +372,8 @@ This can be used in the event of problems with the new implementation.""".asRele
 
     compilerArgument {
         name = "Xuse-fast-jar-file-system"
-        description = "Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.".asReleaseDependent()
+        description =
+            "Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
         lifecycle(
@@ -505,7 +511,8 @@ The default value is 'enable'.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xdefault-script-extension"
-        description = "Compile expressions and unrecognized scripts passed with the -script argument as scripts with the given filename extension.".asReleaseDependent()
+        description =
+            "Compile expressions and unrecognized scripts passed with the -script argument as scripts with the given filename extension.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<script filename extension>".asReleaseDependent()
 
@@ -688,7 +695,8 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
 
     compilerArgument {
         name = "Xno-unified-null-checks"
-        description = "Use pre-1.4 exception types instead of 'java.lang.NPE' in null checks. See KT-22275 for more details.".asReleaseDependent()
+        description =
+            "Use pre-1.4 exception types instead of 'java.lang.NPE' in null checks. See KT-22275 for more details.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(
@@ -698,7 +706,8 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
 
     compilerArgument {
         name = "Xno-source-debug-extension"
-        description = "Don't generate the '@kotlin.jvm.internal.SourceDebugExtension' annotation with an SMAP copy on classes.".asReleaseDependent()
+        description =
+            "Don't generate the '@kotlin.jvm.internal.SourceDebugExtension' annotation with an SMAP copy on classes.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(
@@ -709,7 +718,8 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
     compilerArgument {
         name = "Xprofile"
         compilerName = "profileCompilerCommand"
-        description = """Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
+        description =
+            """Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
 `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
 If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.
 Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>""".asReleaseDependent()
@@ -796,7 +806,8 @@ See KT-45671 for more details.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xenhance-type-parameter-types-to-def-not-null"
-        description = "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').".asReleaseDependent()
+        description =
+            "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         additionalAnnotations(Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated))
@@ -892,7 +903,8 @@ inside suspend functions and lambdas to distinguish them from user code by debug
 
     compilerArgument {
         name = "Xannotations-in-metadata"
-        description = "Write annotations on declarations into the metadata (in addition to the JVM bytecode), and read annotations from the metadata if they are present.".asReleaseDependent()
+        description =
+            "Write annotations on declarations into the metadata (in addition to the JVM bytecode), and read annotations from the metadata if they are present.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         additionalAnnotations(Enables(LanguageFeature.AnnotationsInMetadata))
