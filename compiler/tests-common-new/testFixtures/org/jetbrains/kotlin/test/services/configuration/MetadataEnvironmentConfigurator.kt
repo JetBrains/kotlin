@@ -30,7 +30,7 @@ class MetadataEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
     ) {
         if (WITH_STDLIB in module.directives) {
             configuration.addJvmClasspathRoot(testServices.standardLibrariesPathProvider.commonStdlibForTests())
-            if (module.targetPlatform(testServices, allowMultiplatform = true).isMultiplatformWeb()) {
+            if (module.targetPlatform(testServices).isMultiplatformWeb()) {
                 configuration.addJvmClasspathRoot(testServices.standardLibrariesPathProvider.webStdlibForTests())
             }
         }

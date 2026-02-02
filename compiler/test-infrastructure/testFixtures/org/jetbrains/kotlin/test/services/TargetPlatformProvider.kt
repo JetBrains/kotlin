@@ -22,26 +22,30 @@ import org.jetbrains.kotlin.test.model.TestModule
  */
 abstract class TargetPlatformProvider : TestService {
     // TODO(KT-83996): Drop the `allowMultiplatform` parameter and use `!module.isLeafModuleInHmppStructure()` in the implementation instead
-    abstract fun getTargetPlatform(module: TestModule, allowMultiplatform: Boolean = false): TargetPlatform
+    abstract fun getTargetPlatform(module: TestModule): TargetPlatform
 }
 
 val TestServices.targetPlatformProvider: TargetPlatformProvider by TestServices.testServiceAccessor()
 
-fun TestModule.targetPlatform(testServices: TestServices, allowMultiplatform: Boolean = false): TargetPlatform =
-    testServices.targetPlatformProvider.getTargetPlatform(this, allowMultiplatform)
+fun TestModule.targetPlatform(testServices: TestServices): TargetPlatform =
+    testServices.targetPlatformProvider.getTargetPlatform(this)
 
 class TargetPlatformProviderForCompilerTests(val testServices: TestServices) : TargetPlatformProvider() {
-    override fun getTargetPlatform(module: TestModule, allowMultiplatform: Boolean): TargetPlatform {
+    override fun getTargetPlatform(module: TestModule): TargetPlatform {
         val directives = module.directives
-        if (allowMultiplatform || METADATA_ONLY_COMPILATION in directives) {
+
+        @OptIn(TestInfrastructureInternals::class)
+        val defaultTargetPlatform = testServices.defaultsProvider.targetPlatform
+
+        if (!module.isLeafModuleInMppGraph(testServices) || METADATA_ONLY_COMPILATION in directives) {
             return MetadataConfigurationUpdater.computeTargetPlatform(
                 directives[METADATA_TARGET_PLATFORMS],
                 onUnknownPlatform = { error("Unknown target platform: $it") },
                 onEmptyPlatforms = {},
+                defaultPlatform = defaultTargetPlatform,
             )
         }
 
-        @OptIn(TestInfrastructureInternals::class)
-        return testServices.defaultsProvider.targetPlatform
+        return defaultTargetPlatform
     }
 }
