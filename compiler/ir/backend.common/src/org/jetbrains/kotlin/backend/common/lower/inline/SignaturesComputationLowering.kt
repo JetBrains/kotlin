@@ -81,7 +81,7 @@ class SignaturesComputationLowering(val context: PreSerializationLoweringContext
         }
 
         // Compute signatures for prepared inline function copies created earlier
-        irModule.preparedInlineFunctionCopies.orEmpty().forEach { functionCopy ->
+        irModule.preparedInlineFunctionCopies?.forEach { functionCopy ->
             val file = functionCopy.file
             declarationTable.inFile(file) {
                 functionCopy.acceptVoid(visitor)
