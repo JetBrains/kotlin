@@ -57,3 +57,17 @@ fun box() {
 // test.kt:9 component2:
 // test.kt:16 box$lambda: x="O":kotlin.String, y="K":kotlin.String
 // test.kt:17 box:
+
+// EXPECTATIONS WASM
+// test.kt:16 $box: (8, 15, 20, 8)
+// test.kt:3 $MyPair.<init>: $<this>:(ref $MyPair)=(ref $MyPair), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:(ref $kotlin.String)=(ref $kotlin.String) (13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 28, 28, 28, 42, 42, 42)
+// test.kt:16 $box: (8, 4)
+// test.kt:13 $foo: $a:(ref $MyPair)=(ref $MyPair), $block:(ref $box$lambda)=(ref $box$lambda) (56, 62, 56, 56, 56, 56, 56, 56, 56, 56, 56)
+// test.kt:16 $box$lambda.invoke: $<this>:(ref $box$lambda)=(ref $box$lambda), $<destruct>:(ref $MyPair)=(ref $MyPair), $x:(ref null $kotlin.String)=null, $y:(ref null $kotlin.String)=null (29, 29)
+// test.kt:5 $MyPair.component1: $<this>:(ref $MyPair)=(ref $MyPair) (15, 15, 15, 8)
+// test.kt:16 $box$lambda.invoke: $<this>:(ref $box$lambda)=(ref $box$lambda), $<destruct>:(ref $MyPair)=(ref $MyPair), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:(ref null $kotlin.String)=null (29, 32, 32)
+// test.kt:9 $MyPair.component2: $<this>:(ref $MyPair)=(ref $MyPair) (15, 15, 15, 8)
+// test.kt:16 $box$lambda.invoke: $<this>:(ref $box$lambda)=(ref $box$lambda), $<destruct>:(ref $MyPair)=(ref $MyPair), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:(ref $kotlin.String)=(ref $kotlin.String) (32, 38, 42, 38, 43)
+// test.kt:13 $foo: $a:(ref $MyPair)=(ref $MyPair), $block:(ref $box$lambda)=(ref $box$lambda) (56, 56, 56, 56, 56, 56, 56, 56, 56, 64)
+// test.kt:16 $box: (4)
+// test.kt:17 $box: (1)

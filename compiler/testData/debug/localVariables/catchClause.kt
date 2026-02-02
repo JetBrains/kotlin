@@ -1,3 +1,6 @@
+// DONT_TARGET_EXACT_BACKEND: WASM_JS, WASM_WASI
+// TODO(review): better solution?
+// Due to the way the D8BasedDebugRunner works (using the D8 tool and its chrome debugger API to step into every statement until box() finishes execution), this test takes ages on wasm (5min locally), as the debugger stops at every step of the exception handling. Disable it for now
 // FILE: test.kt
 fun box() {
     try {
@@ -11,13 +14,13 @@ fun box() {
 }
 
 // EXPECTATIONS JVM_IR
-// test.kt:3 box:
-// test.kt:4 box:
-// test.kt:5 box: a:int=1:int
-// test.kt:6 box: a:int=0:int
-// test.kt:8 box:
-// test.kt:9 box: e:java.lang.Throwable=java.lang.ArithmeticException
+// test.kt:6 box:
+// test.kt:7 box:
+// test.kt:8 box: a:int=1:int
+// test.kt:9 box: a:int=0:int
 // test.kt:11 box:
+// test.kt:12 box: e:java.lang.Throwable=java.lang.ArithmeticException
+// test.kt:14 box:
 
 // EXPECTATIONS JS_IR
 // test.kt:4 box:

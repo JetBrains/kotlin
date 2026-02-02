@@ -35,3 +35,24 @@ suspend fun box() {
 // test.kt:4 foo: $completion=Coroutine
 // test.kt:8 doResume:
 // test.kt:9 doResume: dead=kotlin.Long
+
+// EXPECTATIONS WASM
+// test.kt:12 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (9, 9, 4)
+// test.kt:9 $foo1: $l:i64=i64, $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1, 1, 1, 1)
+// coroutineHelpers.kt:9 $EmptyContinuation.<get-context>: $<this>:(ref $EmptyContinuation)=(ref $EmptyContinuation) (37, 37)
+// test.kt:9 $foo1: $l:i64=i64, $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1, 1, 1, 1, 1, 1, 1, 1)
+// test.kt:6 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
+// test.kt:4 $foo: $$completion:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$) (19, 19)
+// test.kt:6 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4, 4)
+// test.kt:9 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (1, 1)
+// test.kt:6 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
+// test.kt:7 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4)
+// test.kt:4 $foo: $$completion:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$) (19, 19)
+// test.kt:7 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4, 4)
+// test.kt:9 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (1, 1)
+// test.kt:6 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=2:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
+// test.kt:7 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=2:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4, 4, 4)
+// test.kt:8 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=2:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (15, 4, 4)
+// test.kt:9 $$foo1COROUTINE$.doResume: $<this>:(ref $$foo1COROUTINE$)=(ref $$foo1COROUTINE$), $dead:i64=i64, $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=2:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (0)
+// test.kt:9 $foo1: $l:i64=i64, $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1)
+// test.kt:12 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (4, 4)

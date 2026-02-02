@@ -31,3 +31,11 @@ fun box() {
 // test.kt:5 blockFun: blockArg=Function1
 // test.kt:10 box$lambda: $this$blockFun="OK":kotlin.String
 // test.kt:11 box:
+
+// EXPECTATIONS WASM
+// test.kt:8 $box: (4)
+// test.kt:5 $blockFun: $blockArg:(ref $box$lambda)=(ref $box$lambda) (9, 4, 4, 4, 9, 9, 9, 9, 9, 9, 9, 9, 9)
+// test.kt:9 $box$lambda.invoke: $<this>:(ref $box$lambda)=(ref $box$lambda), $$this$blockFun:(ref $kotlin.String)=(ref $kotlin.String) (8, 8, 12)
+// test.kt:10 $box$lambda.invoke: $<this>:(ref $box$lambda)=(ref $box$lambda), $$this$blockFun:(ref $kotlin.String)=(ref $kotlin.String) (5)
+// test.kt:5 $blockFun: $blockArg:(ref $box$lambda)=(ref $box$lambda) (9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 19)
+// test.kt:11 $box: (1)

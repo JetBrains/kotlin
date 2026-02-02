@@ -55,3 +55,20 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
 // test.kt:12 doResume: x_param="O":kotlin.String
 // test.kt:7 component3:
 // test.kt:13 doResume: x_param="O":kotlin.String, y_param="K":kotlin.String
+
+// EXPECTATIONS WASM
+// coroutineHelpers.kt:9 $EmptyContinuation.<get-context>: $<this>:(ref $EmptyContinuation)=(ref $EmptyContinuation) (37, 37)
+// test.kt:14 $$box__JsExportAdapterCOROUTINE$.doResume: $<this>:(ref $$box__JsExportAdapterCOROUTINE$)=(ref $$box__JsExportAdapterCOROUTINE$), $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+// test.kt:12 $box: $$completion:(ref $$box__JsExportAdapterCOROUTINE$)=(ref $$box__JsExportAdapterCOROUTINE$) (24, 24)
+// test.kt:8 $A.<init>: $<this>:(ref $A)=(ref $A) (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+// test.kt:12 $box: $$completion:(ref $$box__JsExportAdapterCOROUTINE$)=(ref $$box__JsExportAdapterCOROUTINE$) (24, 24, 20)
+// test.kt:10 $foo: $a:(ref $A)=(ref $A), $block:(ref $box$slambda)=(ref $box$slambda), $$completion:(ref $$box__JsExportAdapterCOROUTINE$)=(ref $$box__JsExportAdapterCOROUTINE$) (62, 68, 68, 62, 62, 62, 62, 62, 62)
+// test.kt:12 $box$slambda.invoke: $<this>:(ref $box$slambda)=(ref $box$slambda), $<destruct>:(ref $A)=(ref $A), $$completion:(ref $$box__JsExportAdapterCOROUTINE$)=(ref $$box__JsExportAdapterCOROUTINE$), $x_param:(ref null $kotlin.String)=null, $y_param:(ref null $kotlin.String)=null (32, 32)
+// test.kt:5 $A.component1: $<this>:(ref $A)=(ref $A) (32, 32, 32, 35)
+// test.kt:12 $box$slambda.invoke: $<this>:(ref $box$slambda)=(ref $box$slambda), $<destruct>:(ref $A)=(ref $A), $$completion:(ref $$box__JsExportAdapterCOROUTINE$)=(ref $$box__JsExportAdapterCOROUTINE$), $x_param:(ref $kotlin.String)=(ref $kotlin.String), $y_param:(ref null $kotlin.String)=null (32, 44, 44)
+// test.kt:7 $A.component3: $<this>:(ref $A)=(ref $A) (32, 32, 32, 35)
+// test.kt:12 $box$slambda.invoke: $<this>:(ref $box$slambda)=(ref $box$slambda), $<destruct>:(ref $A)=(ref $A), $$completion:(ref $$box__JsExportAdapterCOROUTINE$)=(ref $$box__JsExportAdapterCOROUTINE$), $x_param:(ref $kotlin.String)=(ref $kotlin.String), $y_param:(ref null $kotlin.String)=null (44)
+// test.kt:13 $box$slambda.invoke: $<this>:(ref $box$slambda)=(ref $box$slambda), $<destruct>:(ref $A)=(ref $A), $$completion:(ref $$box__JsExportAdapterCOROUTINE$)=(ref $$box__JsExportAdapterCOROUTINE$), $x_param:(ref $kotlin.String)=(ref $kotlin.String), $y_param:(ref $kotlin.String)=(ref $kotlin.String) (4, 14, 4, 21)
+// test.kt:10 $foo: $a:(ref $A)=(ref $A), $block:(ref $box$slambda)=(ref $box$slambda), $$completion:(ref $$box__JsExportAdapterCOROUTINE$)=(ref $$box__JsExportAdapterCOROUTINE$) (70, 70)
+// test.kt:14 $box: $$completion:(ref $$box__JsExportAdapterCOROUTINE$)=(ref $$box__JsExportAdapterCOROUTINE$) (1, 1)
+// test.kt:14 $$box__JsExportAdapterCOROUTINE$.doResume: $<this>:(ref $$box__JsExportAdapterCOROUTINE$)=(ref $$box__JsExportAdapterCOROUTINE$), $suspendResult:(ref $kotlin.String)=(ref $kotlin.String), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)

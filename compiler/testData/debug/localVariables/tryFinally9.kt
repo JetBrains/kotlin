@@ -49,7 +49,7 @@ fun box() {
 // test.kt:21 compute: s:java.lang.String="NOPE":java.lang.String
 // test.kt:22 compute: s:java.lang.String="NOPE":java.lang.String
 // test.kt:7 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1\22:int=0:int
-// test.kt:23 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1\22:int=0:int, $i$a$-f-TestKt$compute$1\2\103\0:int=0:int
+// test.kt:23 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1\22:int=0:int, $i$a$-f-TestKt$compute$1\2\124\0:int=0:int
 // test.kt:27 compute:
 // test.kt:28 compute: s2:java.lang.String="NOPE":java.lang.String
 // test.kt:29 compute: s2:java.lang.String="NOPE":java.lang.String, j:int=0:int
@@ -99,3 +99,24 @@ fun box() {
 // test.kt:29 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="NOPE":kotlin.String, j=0:number
 // test.kt:28 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="OK":kotlin.String, j=0:number
 // test.kt:31 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="OK":kotlin.String, j=0:number
+
+// EXPECTATIONS WASM
+// test.kt:37 $box: $result:(ref null $kotlin.String)=null, $localX:(ref null $kotlin.String)=null (17)
+// test.kt:15 $compute: $y:i32=0:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (20, 20)
+// test.kt:16 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (22, 12, 30, 12, 12, 22, 22, 22, 22, 22, 22, 22, 22)
+// test.kt:17 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (23, 23, 23, 16)
+// test.kt:8 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (1)
+// test.kt:20 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (20, 20, 20)
+// test.kt:21 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (16, 12)
+// test.kt:22 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (12)
+// test.kt:7 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (4)
+// test.kt:23 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (23, 23, 23, 16)
+// test.kt:31 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (8)
+// test.kt:27 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (17, 17, 17, 17)
+// test.kt:28 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (18, 8, 26, 8, 8, 18, 18, 18, 18, 18, 18, 18, 18)
+// test.kt:29 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (17, 17, 17, 12, 12)
+// test.kt:28 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (8, 26, 8, 8, 8, 8)
+// test.kt:31 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (12, 12, 8, 8, 8)
+// test.kt:37 $box: $result:(ref null $kotlin.String)=null, $localX:(ref null $kotlin.String)=null (17)
+// test.kt:38 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $localX:(ref null $kotlin.String)=null (17, 17)
+// test.kt:39 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $localX:(ref $kotlin.String)=(ref $kotlin.String) (1, 1)

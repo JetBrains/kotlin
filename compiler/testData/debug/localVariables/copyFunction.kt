@@ -30,3 +30,11 @@ fun box() {
 // test.kt:3 <init>: a=1:number, b=3:number
 // test.kt:3 <init>: a=1:number, b=3:number
 // test.kt:8 box: a=someClass, b=someClass
+
+// EXPECTATIONS WASM
+// test.kt:6 $box: $a:(ref null $someClass)=null, $b:(ref null $someClass)=null (12, 22, 27, 12)
+// test.kt:3 $someClass.<init>: $<this>:(ref $someClass)=(ref $someClass), $a:f64=1:f64, $b:f64=2:f64 (21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 36, 36, 36, 50, 50, 50)
+// test.kt:7 $box: $a:(ref $someClass)=(ref $someClass), $b:(ref null $someClass)=null (12, 14, 23, 23, 23, 23, 23, 23, 14, 14, 14)
+// test.kt:3 $someClass.<init>: $<this>:(ref $someClass)=(ref $someClass), $a:f64=1:f64, $b:f64=3:f64 (21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 36, 36, 36, 50, 50, 50)
+// test.kt:7 $box: $a:(ref $someClass)=(ref $someClass), $b:(ref null $someClass)=null (14)
+// test.kt:8 $box: $a:(ref $someClass)=(ref $someClass), $b:(ref $someClass)=(ref $someClass) (1, 1)

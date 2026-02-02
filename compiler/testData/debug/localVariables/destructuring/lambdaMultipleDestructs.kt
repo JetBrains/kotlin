@@ -41,3 +41,15 @@ fun box() {
 // test.kt:1 component2:
 // test.kt:8 box$lambda: x="O":kotlin.String, y=123:number, z="K":kotlin.String, w=877:number
 // test.kt:9 box:
+
+// EXPECTATIONS WASM
+// test.kt:8 $box: (8, 10, 15, 8)
+// test.kt:3 $A.<init>: $<this>:(ref $A)=(ref $A), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:i32=123:i32 (13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 28, 28, 28, 39, 39, 39)
+// test.kt:8 $box: (21, 23, 28, 21)
+// test.kt:3 $A.<init>: $<this>:(ref $A)=(ref $A), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:i32=877:i32 (13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 28, 28, 28, 39, 39, 39)
+// test.kt:8 $box: (21, 4)
+// test.kt:5 $foo: $a:(ref $A)=(ref $A), $b:(ref $A)=(ref $A), $block:(ref $box$lambda)=(ref $box$lambda) (55, 61, 64, 55, 55, 55, 55, 55, 55, 55, 55, 55)
+// test.kt:8 $box$lambda.invoke: $<this>:(ref $box$lambda)=(ref $box$lambda), $<destruct>:(ref $A)=(ref $A), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:i32=123:i32, $z:(ref $kotlin.String)=(ref $kotlin.String), $w:i32=877:i32 (37, 37, 37, 40, 40, 40, 45, 45, 45, 48, 48, 48, 55, 59, 55, 65, 65, 65, 65, 65, 69, 65, 65, 54, 71)
+// test.kt:5 $foo: $a:(ref $A)=(ref $A), $b:(ref $A)=(ref $A), $block:(ref $box$lambda)=(ref $box$lambda) (55, 55, 55, 55, 55, 55, 55, 55, 55, 66)
+// test.kt:8 $box: (4)
+// test.kt:9 $box: (1)

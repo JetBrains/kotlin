@@ -25,3 +25,13 @@ fun box() {
 // test.kt:3 <init>:
 // test.kt:3 <init>:
 // test.kt:10 box: x=Foo
+
+// EXPECTATIONS WASM
+// test.kt:8 $box: $x:(ref null $Foo)=null (12, 12)
+// test.kt:5 $Foo.<init>: $<this>:(ref $Foo)=(ref $Foo) (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+// test.kt:8 $box: $x:(ref null $Foo)=null (12)
+// test.kt:9 $box: $x:(ref $Foo)=(ref $Foo) (6, 4, 6)
+// test.kt:3 $Bar.<init>: $<this>:(ref $Bar)=(ref $Bar), $$outer:(ref $Foo)=(ref $Foo) (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
+// test.kt:4 $Bar.<init>: $<this>:(ref $Bar)=(ref $Bar), $$outer:(ref $Foo)=(ref $Foo) (5, 5, 5)
+// test.kt:9 $box: $x:(ref $Foo)=(ref $Foo) (6)
+// test.kt:10 $box: $x:(ref $Foo)=(ref $Foo) (1, 1)

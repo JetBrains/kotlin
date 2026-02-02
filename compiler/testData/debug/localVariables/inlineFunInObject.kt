@@ -46,8 +46,8 @@ fun box() {
 // test.kt:6 baz: param:int=5:int, a:int=1:int
 // test.kt:26 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int
 // test.kt:27 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int
-// test.kt:7 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int, $i$a$-inlineCall-TestKt$foo$1$baz$1\2\129\0:int=0:int
-// test.kt:8 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int, $i$a$-inlineCall-TestKt$foo$1$baz$1\2\129\0:int=0:int, f\2:int=6:int
+// test.kt:7 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int, $i$a$-inlineCall-TestKt$foo$1$baz$1\2\163\0:int=0:int
+// test.kt:8 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int, $i$a$-inlineCall-TestKt$foo$1$baz$1\2\163\0:int=0:int, f\2:int=6:int
 // test.kt:27 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int
 // test.kt:28 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall\1\6:int=0:int, e\1:int=5:int
 // test.kt:9 baz: param:int=5:int, a:int=1:int
@@ -64,8 +64,8 @@ fun box() {
 // test.kt:18 baz: param:int=6:int, b:int=2:int
 // test.kt:26 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int
 // test.kt:27 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int
-// test.kt:19 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int, $i$a$-inlineCall-TestKt$bar$1$baz$1\3\131\0:int=0:int
-// test.kt:20 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int, $i$a$-inlineCall-TestKt$bar$1$baz$1\3\131\0:int=0:int, g\3:int=7:int
+// test.kt:19 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int, $i$a$-inlineCall-TestKt$bar$1$baz$1\3\165\0:int=0:int
+// test.kt:20 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int, $i$a$-inlineCall-TestKt$bar$1$baz$1\3\165\0:int=0:int, g\3:int=7:int
 // test.kt:27 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int
 // test.kt:28 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\18:int=0:int, e\2:int=5:int
 // test.kt:21 baz: param:int=6:int, b:int=2:int
@@ -124,3 +124,37 @@ fun box() {
 // test.kt:19 baz: param=6:number, b=2:number, d=4:number, e=5:number
 // test.kt:21 baz: param=6:number, b=2:number, d=4:number, e=5:number, g=7:number
 // test.kt:38 box:
+
+// EXPECTATIONS WASM
+// test.kt:31 $box: (4)
+// test.kt:3 $box: (4)
+// test.kt:10 $<no name provided>.<init>: $<this>:(ref $<no name provided>)=(ref $<no name provided>) (5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5)
+// test.kt:10 $box: (10, 6)
+// test.kt:5 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=5:i32, $a:i32=0:i32, $e:i32=0:i32, $f:i32=0:i32 (20, 20)
+// test.kt:6 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=5:i32, $a:i32=1:i32, $e:i32=0:i32, $f:i32=0:i32 (12)
+// test.kt:26 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=5:i32, $a:i32=1:i32, $e:i32=0:i32, $f:i32=0:i32 (12, 12)
+// test.kt:27 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=5:i32, $a:i32=1:i32, $e:i32=5:i32, $f:i32=0:i32 (4)
+// test.kt:7 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=5:i32, $a:i32=1:i32, $e:i32=5:i32, $f:i32=6:i32 (24, 24, 24)
+// test.kt:8 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=5:i32, $a:i32=1:i32, $e:i32=5:i32, $f:i32=6:i32 (13, 13, 13)
+// test.kt:28 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=5:i32, $a:i32=1:i32, $e:i32=5:i32, $f:i32=6:i32 (1, 1)
+// test.kt:9 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=5:i32, $a:i32=1:i32, $e:i32=5:i32, $f:i32=6:i32 (9, 9)
+// test.kt:10 $box: (6)
+// test.kt:11 $box: (1)
+// test.kt:35 $box: (4)
+// test.kt:14 $box: (4)
+// test.kt:22 $<no name provided>.<init>: $<this>:(ref $<no name provided>)=(ref $<no name provided>) (5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5)
+// test.kt:22 $box: (10, 6)
+// test.kt:16 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=6:i32, $b:i32=0:i32, $d:i32=0:i32, $e:i32=0:i32, $g:i32=0:i32 (20, 20)
+// test.kt:17 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=6:i32, $b:i32=2:i32, $d:i32=0:i32, $e:i32=0:i32, $g:i32=0:i32 (12)
+// test.kt:36 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=6:i32, $b:i32=2:i32, $d:i32=4:i32, $e:i32=0:i32, $g:i32=0:i32 (16, 16, 16)
+// test.kt:37 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=6:i32, $b:i32=2:i32, $d:i32=4:i32, $e:i32=0:i32, $g:i32=0:i32 (5, 5)
+// test.kt:18 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=6:i32, $b:i32=2:i32, $d:i32=4:i32, $e:i32=0:i32, $g:i32=0:i32 (12)
+// test.kt:26 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=6:i32, $b:i32=2:i32, $d:i32=4:i32, $e:i32=0:i32, $g:i32=0:i32 (12, 12)
+// test.kt:27 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=6:i32, $b:i32=2:i32, $d:i32=4:i32, $e:i32=5:i32, $g:i32=0:i32 (4)
+// test.kt:19 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=6:i32, $b:i32=2:i32, $d:i32=4:i32, $e:i32=5:i32, $g:i32=7:i32 (24, 24, 24)
+// test.kt:20 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=6:i32, $b:i32=2:i32, $d:i32=4:i32, $e:i32=5:i32, $g:i32=7:i32 (13, 13, 13)
+// test.kt:28 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=6:i32, $b:i32=2:i32, $d:i32=4:i32, $e:i32=5:i32, $g:i32=7:i32 (1, 1)
+// test.kt:21 $<no name provided>.baz: $<this>:(ref $<no name provided>)=(ref $<no name provided>), $param:i32=6:i32, $b:i32=2:i32, $d:i32=4:i32, $e:i32=5:i32, $g:i32=7:i32 (9, 9)
+// test.kt:22 $box: (6)
+// test.kt:23 $box: (1)
+// test.kt:38 $box: (1)

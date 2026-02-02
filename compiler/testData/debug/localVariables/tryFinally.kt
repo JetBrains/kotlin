@@ -41,3 +41,14 @@ fun box() {
 // test.kt:15 box: result="y":kotlin.String, x="A":kotlin.String, y="y":kotlin.String
 // test.kt:16 box: result="y":kotlin.String, x="A":kotlin.String, y="y":kotlin.String, z="z":kotlin.String
 // test.kt:19 box: result="yz":kotlin.String, x="A":kotlin.String, y="y":kotlin.String, z="z":kotlin.String
+
+// EXPECTATIONS WASM
+// test.kt:7 $box: $result:(ref null $kotlin.String)=null, $x:(ref null $kotlin.String)=null, $y:(ref null $kotlin.String)=null, $z:(ref null $kotlin.String)=null (17, 17, 17, 17)
+// test.kt:8 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $x:(ref null $kotlin.String)=null, $y:(ref null $kotlin.String)=null, $z:(ref null $kotlin.String)=null (21, 21, 21, 21, 21, 21, 21, 26, 26, 26, 21, 21, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14)
+// test.kt:10 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:(ref null $kotlin.String)=null, $z:(ref null $kotlin.String)=null (20, 20, 20, 20)
+// test.kt:11 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:(ref $kotlin.String)=(ref $kotlin.String), $z:(ref null $kotlin.String)=null (12, 22, 12, 12, 12)
+// test.kt:12 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:(ref $kotlin.String)=(ref $kotlin.String), $z:(ref null $kotlin.String)=null (12)
+// test.kt:16 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:(ref $kotlin.String)=(ref $kotlin.String), $z:(ref null $kotlin.String)=null (12)
+// test.kt:15 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:(ref $kotlin.String)=(ref $kotlin.String), $z:(ref null $kotlin.String)=null (20, 20, 20, 20)
+// test.kt:16 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:(ref $kotlin.String)=(ref $kotlin.String), $z:(ref null $kotlin.String)=null (12, 22, 12, 12, 12, 12)
+// test.kt:19 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $x:(ref $kotlin.String)=(ref $kotlin.String), $y:(ref $kotlin.String)=(ref $kotlin.String), $z:(ref null $kotlin.String)=null (1, 1)

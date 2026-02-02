@@ -36,3 +36,11 @@ fun box() {
 // test.kt:4 box: a=A
 // test.kt:10 box: a=A, y=1:number
 // test.kt:11 box: a=A, y=2:number
+
+// EXPECTATIONS WASM
+// test.kt:8 $box: $a:(ref null $A)=null, $y:i32=0:i32 (12, 12)
+// test.kt:5 $A.<init>: $<this>:(ref $A)=(ref $A) (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+// test.kt:9 $box: $a:(ref $A)=(ref $A), $y:i32=0:i32 (12, 12, 14, 14, 14)
+// test.kt:4 $box: $a:(ref $A)=(ref $A), $y:i32=0:i32 (16, 17)
+// test.kt:10 $box: $a:(ref $A)=(ref $A), $y:i32=2:i32 (4, 4, 4, 5, 5, 5, 5, 5, 5, 4, 4, 4)
+// test.kt:11 $box: $a:(ref $A)=(ref $A), $y:i32=2:i32 (1, 1)
