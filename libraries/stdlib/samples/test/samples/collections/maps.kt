@@ -469,13 +469,13 @@ class Maps {
     class CoreApi {
         @Sample
         fun size() {
-            assertEquals(0, emptyMap<Int, Int>().size)
+            assertPrints(emptyMap<Int, Int>().size, "0")
 
             val mutableMap = mutableMapOf(1 to "one", 2 to "two")
-            assertEquals(2, mutableMap.size)
+            assertPrints(mutableMap.size, "2")
 
             mutableMap[3] = "three"
-            assertEquals(3, mutableMap.size)
+            assertPrints(mutableMap.size, "3")
         }
 
         @Sample
@@ -488,8 +488,8 @@ class Maps {
         fun get() {
             val map = mapOf(1 to "one", 2 to "two")
 
-            assertEquals("two", map[2])
-            assertNull(map[3])
+            assertPrints(map[2], "two")
+            assertTrue(map[3] == null)
         }
 
         @Sample
@@ -526,11 +526,11 @@ class Maps {
         fun remove() {
             val map = mutableMapOf(1 to "one", 2 to "two")
 
-            assertEquals("one", map.remove(1))
+            assertPrints(map.remove(1), "one")
             assertPrints(map, "{2=two}")
 
             // There's no value for key=1 anymore
-            assertNull(map.remove(1))
+            assertTrue(map.remove(1) == null)
         }
 
         @Sample
