@@ -122,7 +122,7 @@ open class AbstractFirWasmTypeScriptExportSingleModuleTest : AbstractWasmJsCodeg
     }
 }
 
-open class AbstractFirWasmJsSteppingSingleFileTest(
+open class AbstractFirWasmJsSteppingSingleModuleTest(
     testGroupOutputDirPrefix: String = "debug/stepping/firBoxSingleModule",
 ) : AbstractWasmJsCodegenSingleModuleTestBase(
     "compiler/testData/debug/stepping/",
