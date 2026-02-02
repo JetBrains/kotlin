@@ -5,6 +5,7 @@
 
 import org.jetbrains.kotlin.benchmarkingTargets
 import org.jetbrains.kotlin.buildType
+import org.jetbrains.kotlin.dryRun
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.kotlinNativeHome
@@ -63,6 +64,7 @@ val processBenchResults by tasks.registering {
 }
 
 benchmark.getCodeSize.configure {
+    isEnabled = !dryRun
     codeSizeBinary = outputBinary
     dependsOn(benchmark.konanRun) // make sure there's a dependency information attached to the input above
 }
