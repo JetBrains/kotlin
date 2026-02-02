@@ -194,8 +194,11 @@ internal fun Compilation.parse(
         // See https://youtrack.jetbrains.com/issue/KT-35059.
         // So instead instruct Clang to serialize diagnostics to file and then deserialize them.
         // This way it is possible to find diagnostics from imported modules as well.
-        serializedDiagnosticsFile = Files.createTempFile("cinterop", ".d").toFile()
-        serializedDiagnosticsFile.deleteOnExit()
+        val tempDir = this.temporaryFilesDir?.toPath()?.also { Files.createDirectories(it) }
+        serializedDiagnosticsFile = Files.createTempFile(tempDir, "cinterop", ".d").toFile()
+        if (tempDir == null) {
+            serializedDiagnosticsFile.deleteOnExit()
+        }
         arguments += listOf(
                 "-serialize-diagnostics", serializedDiagnosticsFile.absolutePath,
                 // Enabling -serialize-diagnostics for some reason makes libclang print
@@ -397,8 +400,11 @@ internal fun Appendable.appendPreamble(compilation: Compilation) = this.apply {
  * Creates temporary source file which includes the library.
  */
 internal fun Compilation.createTempSource(): File {
-    val result = Files.createTempFile(null, ".${language.sourceFileExtension}").toFile()
-    result.deleteOnExit()
+    val tempDir = this.temporaryFilesDir?.toPath()?.also { Files.createDirectories(it) }
+    val result = Files.createTempFile(tempDir, null, ".${language.sourceFileExtension}").toFile()
+    if (tempDir == null) {
+        result.deleteOnExit()
+    }
 
     result.bufferedWriter().use { writer ->
         writer.appendPreamble(this)
@@ -411,19 +417,22 @@ fun Compilation.copy(
         includes: List<IncludeInfo> = this.includes,
         additionalPreambleLines: List<String> = this.additionalPreambleLines,
         compilerArgs: List<String> = this.compilerArgs,
-        language: Language = this.language
+        language: Language = this.language,
+        temporaryFilesDir: File? = this.temporaryFilesDir
 ): Compilation = CompilationImpl(
         includes = includes,
         additionalPreambleLines = additionalPreambleLines,
         compilerArgs = compilerArgs,
-        language = language
+        language = language,
+        temporaryFilesDir = temporaryFilesDir
 )
 
 data class CompilationImpl(
         override val includes: List<IncludeInfo>,
         override val additionalPreambleLines: List<String>,
         override val compilerArgs: List<String>,
-        override val language: Language
+        override val language: Language,
+        override val temporaryFilesDir: File? = null
 ) : Compilation
 
 /**
@@ -443,7 +452,10 @@ fun Compilation.precompileHeaders(): CompilationWithPCH = withIndex(excludeDecla
 }
 
 internal fun Compilation.withPrecompiledHeader(translationUnit: CXTranslationUnit): CompilationWithPCH {
-    val precompiledHeader = Files.createTempFile(null, ".pch").toFile().apply { this.deleteOnExit() }
+    val tempDir = this.temporaryFilesDir?.toPath()?.also { Files.createDirectories(it) }
+    val precompiledHeader = Files.createTempFile(tempDir, null, ".pch").toFile().apply {
+        if (tempDir == null) this.deleteOnExit()
+    }
     val errorCode = clang_saveTranslationUnit(translationUnit, precompiledHeader.absolutePath, 0)
     if (errorCode != 0) {
         error(buildString {
@@ -462,7 +474,8 @@ internal fun Compilation.withPrecompiledHeader(translationUnit: CXTranslationUni
     return CompilationWithPCH(
         this.compilerArgs,
         precompiledHeader.absolutePath,
-        this.language
+        this.language,
+        this.temporaryFilesDir
     )
 }
 
