@@ -40,7 +40,7 @@ enum class TargetPlatformEnum(val targetPlatform: TargetPlatform) {
 }
 
 class TargetPlatformProviderForAnalysisApiTests(val testServices: TestServices) : TargetPlatformProvider() {
-    override fun getTargetPlatform(module: TestModule, allowMultiplatform: Boolean): TargetPlatform {
+    override fun getTargetPlatform(module: TestModule): TargetPlatform {
         val explicitlyDeclaredPlatforms = module.directives[TARGET_PLATFORM]
         val platforms = explicitlyDeclaredPlatforms.map { it.targetPlatform }
         @OptIn(TestInfrastructureInternals::class)

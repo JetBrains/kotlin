@@ -114,7 +114,7 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
 
                     val standardLibrariesPathProvider = testServices.standardLibrariesPathProvider
                     dependencies.add(standardLibrariesPathProvider.commonStdlibForTests().canonicalPath)
-                    if (testModule.targetPlatform(testServices, allowMultiplatform = true).isMultiplatformWeb()) {
+                    if (testModule.targetPlatform(testServices).isMultiplatformWeb()) {
                         dependencies.add(standardLibrariesPathProvider.webStdlibForTests().canonicalPath)
                     }
 
