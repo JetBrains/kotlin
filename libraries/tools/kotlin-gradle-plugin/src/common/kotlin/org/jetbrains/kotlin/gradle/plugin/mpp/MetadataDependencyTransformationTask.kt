@@ -72,7 +72,7 @@ abstract class MetadataDependencyTransformationTask
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     //region Task Configuration State & Inputs
-    @get:Internal
+    @get:Nested
     internal val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
 
     @get:Internal
