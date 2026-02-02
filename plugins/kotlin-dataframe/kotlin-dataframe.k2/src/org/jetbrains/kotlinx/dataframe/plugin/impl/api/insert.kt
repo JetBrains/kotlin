@@ -22,9 +22,9 @@ internal class Under0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val path = column.resolve(receiver.df).single().path
+        val column = column.resolve(receiver.df).single()
         return receiver.df.asDataFrame()
-            .insert(receiver.column.asDataColumn()).under(path)
+            .insert(receiver.column.asDataColumn()).under { column.path }
             .toPluginDataFrameSchema()
     }
 }
