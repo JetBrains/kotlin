@@ -158,6 +158,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest> {
                 model("debug/stepping")
             }
+
+            testClass<AbstractFirWasmJsLocalVariableTest> {
+                model("debug/localVariables")
+            }
         }
         testGroup(testsRoot, "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmTypeScriptExportTest> {

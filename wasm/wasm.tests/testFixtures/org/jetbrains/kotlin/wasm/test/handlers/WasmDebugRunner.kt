@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
-class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServices) {
+// TODO(review) move WasmDebugRunner{Base,WithPrecompiled} to this file? Multiple files are confusing/not helpful
+
+open class WasmDebugRunner(testServices: TestServices, includeLocalVariableInformation: Boolean = false) :
+    WasmDebugRunnerBase(testServices, includeLocalVariableInformation) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
             val artifacts = modulesToArtifact.values.single()
@@ -27,3 +30,6 @@ class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServ
         }
     }
 }
+
+class WasmLocalVariableDebugRunner(testServices: TestServices) :
+        WasmDebugRunner(testServices, includeLocalVariableInformation = true)

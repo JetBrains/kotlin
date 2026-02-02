@@ -21,8 +21,13 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
-abstract class WasmDebugRunnerBase(testServices: TestServices) :
-    D8BasedDebugRunner<BinaryArtifacts.Wasm>(testServices, ArtifactKinds.Wasm, includeColumnInformation = true),
+abstract class WasmDebugRunnerBase(testServices: TestServices, includeLocalVariableInformation: Boolean) :
+    D8BasedDebugRunner<BinaryArtifacts.Wasm>(
+        testServices,
+        ArtifactKinds.Wasm,
+        includeColumnInformation = true,
+        includeLocalVariableInformation = includeLocalVariableInformation
+    ),
     WasmArtifactsCollector {
     protected val modulesToArtifact = mutableMapOf<TestModule, BinaryArtifacts.Wasm>()
 

@@ -95,7 +95,6 @@ object DirectiveTestUtils {
 
         // add locals of any (nested) lambdas
         // there will be quite a bit of unnecessary ones in here, but we only need to get the real ones as well.
-        // TODO(review): would be nicer to have a more robust solution here than text search. Somehow getting from the name of the local that holds the lambda, to the lambda's invoke function, that has the actual locals we're searching for
         module.definedFunctions.filter { it.name.contains(Regex("$scopeFunctionName(\\\$lambda)+\\.invoke")) }.forEach { lambda -> locals += lambda.locals }
 
         val local = locals.find { it.name == localName }
