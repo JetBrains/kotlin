@@ -146,7 +146,7 @@ fun main(args: Array<String>) {
             testClass<AbstractFirWasmJsSteppingTest> {
                 model("debug/stepping")
             }
-            testClass<AbstractFirWasmJsSteppingSingleFileTest> {
+            testClass<AbstractFirWasmJsSteppingSingleModuleTest> {
                 model("debug/stepping")
             }
             testClass<AbstractFirWasmJsSteppingWithInlinedFunInKlibTest> {
