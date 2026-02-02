@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
-import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrElement
@@ -1695,22 +1694,6 @@ abstract class IrFileSerializer(
 
     }
 
-    private inline fun <T : IrElement> requireAbiAtLeast(
-        @Suppress("SameParameterValue") abiCompatibilityLevel: KlibAbiCompatibilityLevel,
-        prefix: (T) -> String = { it::class.simpleName ?: "IrElement" },
-        irNode: () -> T,
-    ) {
-        if (!settings.abiCompatibilityLevel.isAtLeast(abiCompatibilityLevel))
-            serializationNotSupportedAtCurrentAbiLevel(prefix, irNode)
-    }
-
-    private inline fun <T : IrElement> serializationNotSupportedAtCurrentAbiLevel(
-        prefix: (T) -> String = { it::class.simpleName ?: "IrElement" },
-        irNode: () -> T,
-    ): Nothing {
-        val irNode = irNode()
-        error("${prefix(irNode)} serialization is not supported at ABI compatibility level ${settings.abiCompatibilityLevel}: ${irNode.render()}")
-    }
 }
 
 internal fun IrElement.isValidConstantAnnotationArgument(): Boolean =
