@@ -217,7 +217,9 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
         val sessionCacheStorage = LLFirSessionCache.getInstance(project).storage
         val analysisSessions = cache.asMap().values.toList()
 
-        val logDir = PathManager.getLogDir()
+        val logDir = PathManager.getLogDir().resolve("session-structure")
+        Files.createDirectories(logDir)
+
         val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-SSS"))
         val logFile = logDir.resolve("session-structure-$timestamp.graphml")
 
