@@ -329,7 +329,7 @@ abstract class IrFileSerializer(
             }
             else -> {
                 when (val symbolOwner = symbol.owner) {
-                    is IrDeclaration, is IrReturnableBlock -> declarationTable.getComputedSignature(symbolOwner, compatibleMode = false)
+                    is IrDeclaration, is IrReturnableBlock -> declarationTable.getPreComputedSignature(symbolOwner, compatibleMode = false)
                     else -> error("Expected symbol owner: ${symbolOwner.render()}")
                 }
             }
@@ -1620,7 +1620,7 @@ abstract class IrFileSerializer(
                         recordInSignatureClashDetector = false
                     )
                 } else {
-                    declarationTable.getComputedSignature(
+                    declarationTable.getPreComputedSignature(
                         function.originalOfPreparedInlineFunctionCopy!!,
                         compatibleMode = false
                     )
@@ -1661,7 +1661,7 @@ abstract class IrFileSerializer(
                 recordInSignatureClashDetector = false
             )
         } else {
-            declarationTable.getComputedSignature(topLevelDeclaration, compatibleMode = false)
+            declarationTable.getPreComputedSignature(topLevelDeclaration, compatibleMode = false)
         }
         require(idSig == idSig.topLevelSignature()) { "IdSig: $idSig\ntopLevel: ${idSig.topLevelSignature()}" }
         require(!idSig.isPackageSignature()) { "IsSig: $idSig\nDeclaration: ${topLevelDeclaration.render()}" }

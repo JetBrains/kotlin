@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
+import org.jetbrains.kotlin.ir.util.render
 
 abstract class GlobalDeclarationTable(val mangler: IrMangler) {
     val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
@@ -50,7 +51,7 @@ abstract class GlobalDeclarationTable(val mangler: IrMangler) {
         }
     }
 
-    fun getComputedSignature(symbolOwner: IrSymbolOwner): IdSignature =
+    fun getPreComputedSignature(symbolOwner: IrSymbolOwner): IdSignature =
         table[symbolOwner]
             ?: error("Signature of $symbolOwner is expected to be computed at this stage")
 }
@@ -86,18 +87,23 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
     fun signatureByReturnableBlock(returnableBlock: IrReturnableBlock): IdSignature =
         table.getOrPut(returnableBlock) { fileLocalIdSignatureComputer.generateScopeLocalSignature() }
 
-    fun getComputedSignature(symbolOwner: IrSymbolOwner, compatibleMode: Boolean): IdSignature {
-        if (symbolOwner is IrDeclaration) {
-            tryComputeBackendSpecificSignature(symbolOwner)?.let { return it }
-            if (symbolOwner.shouldHaveLocalSignature(compatibleMode))
-                return table[symbolOwner]
+    fun getPreComputedSignature(symbolOwner: IrSymbolOwner, compatibleMode: Boolean): IdSignature {
+        return when (symbolOwner) {
+            is IrDeclaration -> {
+                tryComputeBackendSpecificSignature(symbolOwner)?.let { return it }
+                if (symbolOwner.shouldHaveLocalSignature(compatibleMode))
+                    table[symbolOwner]
+                        ?: error("Signature of $symbolOwner is expected to be computed at this stage")
+                else
+                    globalDeclarationTable.getPreComputedSignature(symbolOwner)
+            }
+            is IrReturnableBlock -> {
+                table[symbolOwner]
                     ?: error("Signature of $symbolOwner is expected to be computed at this stage")
+            }
+            else -> error("Expected symbol owner: ${symbolOwner.render()}")
         }
-        if (symbolOwner is IrReturnableBlock) {
-            return table[symbolOwner]
-                ?: error("Signature of $symbolOwner is expected to be computed at this stage")
-        }
-        return globalDeclarationTable.getComputedSignature(symbolOwner)
+
     }
 }
 
