@@ -2,6 +2,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
@@ -729,29 +730,29 @@ internal class StringInvokeTyped : AbstractInterpreter<ColumnsResolver>() {
 }
 
 internal class ColumnPathInvokeTyped : AbstractInterpreter<ColumnsResolver>() {
-    val Arguments.receiver: ColumnPath by arg()
+    val Arguments.receiver: ColumnPathApproximation by arg()
     val Arguments.typeArg0 by type()
 
     override fun Arguments.interpret(): ColumnsResolver {
-        return stringApiColumnResolver(receiver, typeArg0.coneType)
+        return stringApiColumnResolver(receiver.path, typeArg0.coneType)
     }
 }
 
-internal class StringGetColumn : AbstractInterpreter<ColumnPath>() {
+internal class StringGetColumn : AbstractInterpreter<ColumnPathApproximation>() {
     val Arguments.receiver: String by arg()
     val Arguments.column: String by arg()
 
-    override fun Arguments.interpret(): ColumnPath {
-        return pathOf(receiver, column)
+    override fun Arguments.interpret(): ColumnPathApproximation {
+        return ColumnPathApproximation(listOf(receiver, column))
     }
 }
 
-internal class ColumnPathGetColumn : AbstractInterpreter<ColumnPath>() {
-    val Arguments.receiver: ColumnPath by arg()
+internal class ColumnPathGetColumn : AbstractInterpreter<ColumnPathApproximation>() {
+    val Arguments.receiver: ColumnPathApproximation by arg()
     val Arguments.column: String by arg()
 
-    override fun Arguments.interpret(): ColumnPath {
-        return receiver + column
+    override fun Arguments.interpret(): ColumnPathApproximation {
+        return ColumnPathApproximation(receiver.path + column)
     }
 }
 
@@ -810,7 +811,7 @@ class ColByIndexUntyped : AbstractInterpreter<SingleColumnApproximation>() {
 private fun Arguments.columnByIndexResolver(
     name: String?,
     type: ConeKotlinType,
-    index: Int
+    index: Int,
 ): SingleColumnApproximation = object : SingleColumnApproximation {
     override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
         return stringApiColumnResolver(pathOf(requireName()), type).resolve(df)
@@ -843,4 +844,110 @@ internal class Named1 : AbstractInterpreter<ColumnsResolver>() {
     override fun Arguments.interpret(): ColumnsResolver {
         return receiver.rename(newName)
     }
+}
+
+internal class ColByString : AbstractInterpreter<SingleColumnApproximation>() {
+    val Arguments.receiver by ignore()
+    val Arguments.name: String by arg()
+    val Arguments.typeArg0 by type()
+
+    override fun Arguments.interpret(): SingleColumnApproximation {
+        return stringApiColumnResolver(pathOf(name), typeArg0.coneType)
+    }
+}
+
+internal class ColByStringUntyped : AbstractInterpreter<SingleColumnApproximation>() {
+    val Arguments.receiver by ignore()
+    val Arguments.name: String by arg()
+
+    override fun Arguments.interpret(): SingleColumnApproximation {
+        return stringApiColumnResolver(pathOf(name), session.builtinTypes.nullableAnyType.coneType)
+    }
+}
+
+internal class StringNestedColUntyped : AbstractInterpreter<SingleColumnApproximation>() {
+    val Arguments.receiver: String by arg()
+    val Arguments.name: String by arg()
+
+    override fun Arguments.interpret(): SingleColumnApproximation {
+        return stringApiColumnResolver(pathOf(receiver, name), session.builtinTypes.nullableAnyType.coneType)
+    }
+}
+
+internal class StringNestedCol : AbstractInterpreter<SingleColumnApproximation>() {
+    val Arguments.receiver: String by arg()
+    val Arguments.name: String by arg()
+    val Arguments.typeArg0 by type()
+
+    override fun Arguments.interpret(): SingleColumnApproximation {
+        return stringApiColumnResolver(pathOf(receiver, name), typeArg0.coneType)
+    }
+}
+
+internal class ColumnPathColUntyped : AbstractInterpreter<SingleColumnApproximation>() {
+    val Arguments.receiver: ColumnPathApproximation by arg()
+    val Arguments.name: String by arg()
+
+    override fun Arguments.interpret(): SingleColumnApproximation {
+        return stringApiColumnResolver(receiver.path + name, session.builtinTypes.nullableAnyType.coneType)
+    }
+}
+
+internal class ColumnPathCol : AbstractInterpreter<SingleColumnApproximation>() {
+    val Arguments.receiver: ColumnPathApproximation by arg()
+    val Arguments.name: String by arg()
+    val Arguments.typeArg0 by type()
+
+    override fun Arguments.interpret(): SingleColumnApproximation {
+        return stringApiColumnResolver(receiver.path + name, typeArg0.coneType)
+    }
+}
+
+internal class StringSelect : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: String by arg()
+    val Arguments.selector: ColumnsResolver by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        val anyRow = Names.DATA_ROW_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection), isMarkedNullable = false)
+        val columnRef = stringApiColumnResolver(pathOf(receiver), anyRow)
+        return columnsResolver { columnRef.asColumnGroup().select { selector } }
+    }
+}
+
+internal class ColumnPathSelect : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: ColumnPathApproximation by arg()
+    val Arguments.selector: ColumnsResolver by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        val anyRow = Names.DATA_ROW_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection), isMarkedNullable = false)
+        val columnRef = stringApiColumnResolver(receiver.path, anyRow)
+        return columnsResolver { columnRef.asColumnGroup().select { selector } }
+    }
+}
+
+internal class PathOf : AbstractInterpreter<ColumnPathApproximation>() {
+    val Arguments.receiver by ignore()
+    val Arguments.columnNames: List<String> by arg()
+
+    override fun Arguments.interpret(): ColumnPathApproximation {
+        return ColumnPathApproximation(columnNames)
+    }
+}
+
+// Value of this class can appear where SingleColumnApproximation is expected, for example, df.select { pathOf() }
+// That's why simple ColumnPath cannot be used as is in return type or arguments of Interpreters, need a wrapper
+class ColumnPathApproximation(
+    override val path: ColumnPath,
+    private val resolver: SingleColumnApproximation,
+) : SingleColumnApproximation by resolver
+
+fun Arguments.ColumnPathApproximation(
+    path: List<String>,
+    type: ConeKotlinType = session.builtinTypes.nullableAnyType.coneType,
+): ColumnPathApproximation {
+    val columnPath = ColumnPath(path)
+    return ColumnPathApproximation(
+        columnPath,
+        stringApiColumnResolver(columnPath, type)
+    )
 }

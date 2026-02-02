@@ -93,6 +93,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByRegex
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByStringDelimiters
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColByIndex
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColByIndexUntyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColByString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColByStringUntyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups2
@@ -104,8 +106,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfPairs
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColUntyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathGetColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathInvokeTyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnRange
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConcatWithKeys
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsColumn
@@ -243,6 +248,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Named1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NestedSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PathOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PerRowCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Percentile0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Percentile1
@@ -289,6 +295,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Std1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringGetColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeTyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeUntyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringNestedCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringNestedColUntyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols2
@@ -670,6 +679,15 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "ColByIndex" -> ColByIndex()
         "ColByIndexUntyped" -> ColByIndexUntyped()
         "Named1" -> Named1()
+        "ColByString" -> ColByString()
+        "ColByStringUntyped" -> ColByStringUntyped()
+        "StringNestedColUntyped" -> StringNestedColUntyped()
+        "StringNestedCol" -> StringNestedCol()
+        "ColumnPathColUntyped" -> ColumnPathColUntyped()
+        "ColumnPathCol" -> ColumnPathCol()
+        "StringSelect" -> StringSelect()
+        "ColumnPathSelect" -> ColumnPathSelect()
+        "PathOf" -> PathOf()
         else -> if (isTest) error(this) else null
     }
 }
