@@ -31,12 +31,6 @@ class AnalysisFlag<out T> internal constructor(
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, defaultValue)
         }
 
-        open class String(val defaultValue: kotlin.String) {
-            companion object : String(defaultValue = "")
-
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, defaultValue)
-        }
-
         object ApiModeDisabledByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, ExplicitApiMode.DISABLED)
         }
