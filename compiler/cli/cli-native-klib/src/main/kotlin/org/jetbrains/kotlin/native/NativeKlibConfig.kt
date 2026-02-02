@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.KONAN_DATA_DIR
 import org.jetbrains.kotlin.backend.konan.NativeKlibCompilationConfig
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.manifestFile
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.perfManager
+import org.jetbrains.kotlin.konan.config.konanDataDir
+import org.jetbrains.kotlin.konan.config.manifestFile
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
@@ -63,7 +63,7 @@ internal fun createNativeKlibConfig(configuration: CompilerConfiguration): Nativ
     } else {
         HostManager.host
     }
-    val distribution = Distribution(KotlinNativePaths.homePath.absolutePath, konanDataDir = configuration.get(KONAN_DATA_DIR))
+    val distribution = Distribution(KotlinNativePaths.homePath.absolutePath, konanDataDir = configuration.konanDataDir)
     val resolver = KonanLibrariesResolveSupport(
         configuration, target, distribution, resolveManifestDependenciesLenient = true
     )

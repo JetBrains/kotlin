@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("generated-sources")
 }
 
 dependencies {
@@ -14,6 +13,7 @@ dependencies {
     // This dependency is required only because of PackagePartClassUtils in TestProcessor.
     // TODO (KT-84117)
     implementation(project(":compiler:frontend.common.jvm"))
+    api(project(":native:native.config"))
     api(project(":native:base"))
 }
 
@@ -23,5 +23,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
-
-generatedConfigurationKeys("KonanConfigKeys")
