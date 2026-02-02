@@ -21,7 +21,7 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
     override fun canRename(): Boolean = true
 
     override fun resolve(): PsiElement? = multiResolve(incompleteCode = false).let { resolvedResults ->
-        if (KotlinKDocResolutionStrategyProviderService.getService(element.project)?.shouldUseExperimentalStrategy() != false) {
+        if (KotlinKDocResolutionStrategyProviderService.getService(element.project)?.shouldUseExperimentalStrategy() == true) {
             /**
              * It's important to use [singleOrNull] instead of [firstOrNull] here
              * to get a drop-down menu in the IDE for KDoc references with multiple resolved results.
@@ -29,6 +29,9 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
              * IDE will use [multiResolve] instead and show all the found results.
              * Otherwise, when some element is returned from [resolve],
              * the IDE considers it to be the primary result and just shows it as-is.
+             *
+             * This logic should only be used if both the K2 mode and the experimental resolution are enabled.
+             * See KT-76607.
              */
             resolvedResults.singleOrNull()
         } else {
