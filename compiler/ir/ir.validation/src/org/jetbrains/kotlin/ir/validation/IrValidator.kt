@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrRichCallableReference
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrTreeSymbolsVisitor
@@ -102,6 +105,15 @@ private class IrFileValidator(
         context.withinAnnotationUsageSubTree {
             super.visitAnnotationUsage(annotationUsage)
         }
+    }
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
+        visitReferencedSimpleFunction(expression, expression.overriddenFunctionSymbol)
+        visitRichCallableReference(expression)
+    }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
+        visitRichCallableReference(expression)
     }
 
     override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
