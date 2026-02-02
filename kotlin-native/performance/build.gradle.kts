@@ -5,12 +5,6 @@ plugins {
     `lifecycle-base`
 }
 
-subprojects {
-    repositories {
-        mavenCentral()
-    }
-}
-
 val benchmarksAnalyzer by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
