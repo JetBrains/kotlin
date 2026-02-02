@@ -25,7 +25,7 @@ internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: Str
     }
 }
 
-internal class WasmBoxRunner(
+class WasmBoxRunner(
     testServices: TestServices
 ) : WasmBoxRunnerBase(testServices) {
 
