@@ -1,6 +1,7 @@
 // LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K2: ANY
+// IGNORE_HEADER_MODE: ANY
 
 class A(val a: String)
 class B(val b: String)

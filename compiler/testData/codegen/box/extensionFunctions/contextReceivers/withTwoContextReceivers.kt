@@ -1,5 +1,6 @@
 // LANGUAGE: +ContextReceivers
 // IGNORE_BACKEND_K2: ANY
+// IGNORE_HEADER_MODE: ANY
 // TARGET_BACKEND: JVM_IR
 
 class A { val o = "O" }
