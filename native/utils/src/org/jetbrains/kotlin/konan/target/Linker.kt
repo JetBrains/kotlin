@@ -31,34 +31,63 @@ enum class LinkerOutputKind {
     EXECUTABLE
 }
 
+private sealed class Ar(val ar: String) {
+    class GnuAr(ar: String) : Ar(ar)
+    class LlvmAr(ar: String) : Ar(ar)
+}
+
 // Here we take somewhat unexpected approach - we create the thin
 // library, and then repack it during post-link phase.
 // This way we ensure .a inputs are properly processed.
-private fun staticGnuArCommands(ar: String, executable: ExecutableFile,
-                                objectFiles: List<ObjectFile>, libraries: List<String>) = when {
-        HostManager.hostIsMingw -> {
-            val temp = executable.replace('/', '\\') + "__"
-            val arWindows = ar.replace('/', '\\')
-            listOf(
-                    Command(arWindows, "-rucT", temp).apply {
-                        +objectFiles
-                        +libraries
-                    },
-                    Command("cmd", "/c").apply {
-                        +"(echo create $executable & echo addlib ${temp} & echo save & echo end) | $arWindows -M"
-                    },
-                    Command("cmd", "/c", "del", "/q", temp))
-        }
-        HostManager.hostIsLinux || HostManager.hostIsMac -> listOf(
-                     Command(ar, "cqT", executable).apply {
-                        +objectFiles
-                        +libraries
-                     },
-                     Command("/bin/sh", "-c").apply {
-                        +"printf 'create $executable\\naddlib $executable\\nsave\\nend' | $ar -M"
-                     })
-        else -> TODO("Unsupported host ${HostManager.host}")
+// TODO KT-84037: this should be reworked.
+private fun Ar.staticArCommands(
+    executable: ExecutableFile,
+    objectFiles: List<ObjectFile>,
+    libraries: List<String>,
+) = when {
+    HostManager.hostIsMingw -> {
+        // TODO KT-84037: it would be nice to pass the `D` modifier to make it deterministic.
+        // But it is confusing with the `u` modifier.
+
+        val temp = executable.replace('/', '\\') + "__"
+        val arWindows = ar.replace('/', '\\')
+        listOf(
+            Command(arWindows, "-rucT", temp).apply {
+                +objectFiles
+                +libraries
+            },
+            Command("cmd", "/c").apply {
+                +"(echo create $executable & echo addlib ${temp} & echo save & echo end) | $arWindows -M"
+            },
+            Command("cmd", "/c", "del", "/q", temp)
+        )
     }
+    HostManager.hostIsLinux || HostManager.hostIsMac -> {
+        // The modifier to make `ar` deterministic (i.e. not include the timestamp and UID/GID in the output):
+        val D = when (this) {
+            is Ar.GnuAr -> {
+                // The "D" modifier can be used with `ar -M`, but this is not documented.
+                // Newer GNU ar versions are deterministic by default.
+                "D"
+            }
+            is Ar.LlvmAr -> {
+                // llvm-ar doesn't support `D` with `llvm-ar -M`.
+                // But it also doesn't need this as it is deterministic by default.
+                ""
+            }
+        }
+
+        listOf(
+            Command(ar, "cqT$D", executable).apply {
+                +objectFiles
+                +libraries
+            },
+            Command("/bin/sh", "-c").apply {
+                +"printf 'create $executable\\naddlib $executable\\nsave\\nend' | $ar -M$D"
+            })
+    }
+    else -> TODO("Unsupported host ${HostManager.host}")
+}
 
 class LinkerArguments(
     val tempFiles: TempFiles,
@@ -132,7 +161,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
     }
     private val prefix = "$absoluteTargetToolchain/bin/${clangTarget}${Android.API}"
     private val clang = if (HostManager.hostIsMingw) "$prefix-clang.cmd" else "$prefix-clang"
-    private val ar = "$absoluteTargetToolchain/${targetProperties.targetTriple.withoutVendor()}/bin/ar"
+    private val ar = Ar.GnuAr("$absoluteTargetToolchain/${targetProperties.targetTriple.withoutVendor()}/bin/ar")
 
     override val useCompilerDriverAsLinker: Boolean get() = true
 
@@ -143,7 +172,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
             "Sanitizers are unsupported"
         }
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
-            return staticGnuArCommands(ar, executable, objectFiles, staticLibraries)
+            return ar.staticArCommands(executable, objectFiles, staticLibraries)
 
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
         val toolchainSysroot = "${absoluteTargetToolchain}/sysroot"
@@ -381,9 +410,9 @@ class GccBasedLinker(targetProperties: GccConfigurables)
     : LinkerFlags(targetProperties), GccConfigurables by targetProperties {
 
     private val ar = if (HostManager.hostIsLinux) {
-        "$absoluteTargetToolchain/bin/ar"
+        Ar.GnuAr("$absoluteTargetToolchain/bin/ar")
     } else {
-        "$absoluteTargetToolchain/bin/llvm-ar"
+        Ar.LlvmAr("$absoluteTargetToolchain/bin/llvm-ar")
     }
     override val libGcc = "$absoluteTargetSysRoot/${super.libGcc}"
 
@@ -407,7 +436,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             require(sanitizer == null) {
                 "Sanitizers are unsupported"
             }
-            return staticGnuArCommands(ar, executable, objectFiles, staticLibraries)
+            return ar.staticArCommands(executable, objectFiles, staticLibraries)
         }
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
         val crtPrefix = "$absoluteTargetSysRoot/$crtFilesLocation"
@@ -465,9 +494,9 @@ class MingwLinker(targetProperties: MingwConfigurables)
 
     // TODO: Maybe always use llvm-ar?
     private val ar = if (HostManager.hostIsMingw) {
-        "$absoluteTargetToolchain/bin/ar"
+        Ar.GnuAr("$absoluteTargetToolchain/bin/ar")
     } else {
-        "$absoluteLlvmHome/bin/llvm-ar"
+        Ar.LlvmAr("$absoluteLlvmHome/bin/llvm-ar")
     }
     private val clang = "$absoluteLlvmHome/bin/clang++"
 
@@ -492,7 +521,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
             "Sanitizers are unsupported"
         }
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
-            return staticGnuArCommands(ar, executable, objectFiles, staticLibraries)
+            return ar.staticArCommands(executable, objectFiles, staticLibraries)
 
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
 
