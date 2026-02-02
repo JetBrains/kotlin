@@ -128,6 +128,7 @@ abstract class AbstractFirBuiltinSymbolProvider(
                 FirBuiltinAnnotationDeserializer(moduleData.session),
                 FirTypeDeserializer.FlexibleTypeFactory.Default,
                 FirConstDeserializer(BuiltInSerializerProtocol),
+                FirKDocDeserializer.Empty,
                 containerSource = null
             ).memberDeserializer
         }
@@ -140,7 +141,9 @@ abstract class AbstractFirBuiltinSymbolProvider(
 
             deserializeClassToSymbol(
                 classId, classProto, symbol, nameResolver, moduleData.session, moduleData,
-                null, FirTypeDeserializer.FlexibleTypeFactory.Default,
+                defaultAnnotationDeserializer = null,
+                FirKDocDeserializer.Empty,
+                FirTypeDeserializer.FlexibleTypeFactory.Default,
                 kotlinScopeProvider, BuiltInSerializerProtocol, parentContext,
                 null,
                 origin = if (originateFromFallbackBuiltIns) FirDeclarationOrigin.BuiltInsFallback else FirDeclarationOrigin.BuiltIns,

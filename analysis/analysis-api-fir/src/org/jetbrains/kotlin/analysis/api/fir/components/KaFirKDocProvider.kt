@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseKDocProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.compiledStub
+import org.jetbrains.kotlin.fir.deserialization.kdocText
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtNonPublicApi
@@ -34,6 +36,10 @@ internal class KaFirKDocProvider(
             is KtProperty -> psi.compiledStub.kdocText
             is KtPrimaryConstructor -> psi.compiledStub.kdocText
             is KtSecondaryConstructor -> psi.compiledStub.kdocText
+            null -> {
+                /** For symbols without a stub, the KDoc is provided by [org.jetbrains.kotlin.fir.session.KlibBasedKDocDeserializer]. */
+                symbol.firSymbol.fir.kdocText
+            }
             else -> null
         }
     }

@@ -107,6 +107,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
                         annotationDeserializer,
                         flexibleTypeFactory,
                         constDeserializer,
+                        kdocDeserializer,
                         createDeserializedContainerSource(resolvedLibrary, packageFqName),
                     ),
                     (resolvedLibrary as? KotlinLibrary)?.let(::MetadataLibraryPackagePartCacheDataExtra)
@@ -148,6 +149,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
                     session,
                     moduleData,
                     annotationDeserializer,
+                    kdocDeserializer,
                     flexibleTypeFactory,
                     kotlinScopeProvider,
                     KlibMetadataSerializerProtocol,
