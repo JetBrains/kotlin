@@ -441,10 +441,15 @@ projectTests {
     // Test everything
     wasmProjectTest("test") {
         include("**/*.class")
+        exclude("**/*SingleModule*TestGenerated.class")
     }
 
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
         include("**/Diagnostics*.class")
+    }
+
+    wasmProjectTest("wasmFirCompilerExtraTest") {
+        include("**/*SingleModule*TestGenerated.class")
     }
 
     testData(project(":compiler").isolated, "testData/diagnostics")
