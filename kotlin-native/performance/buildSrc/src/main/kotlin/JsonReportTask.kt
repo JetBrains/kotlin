@@ -26,7 +26,9 @@ private fun createJsonReport(
                     Environment.Machine(getValue("cpu"), getValue("os")),
                     Environment.JDKInstance(getValue("jdkVersion"), getValue("jdkVendor")),
             ),
-            benchmarkFiles.flatMap {
+            benchmarkFiles.filter {
+                it.exists() // some reports may not exist if this is a dryRun
+            }.flatMap {
                 parseBenchmarksArray(JsonTreeParser.parse(it.readText())).toList()
             },
             Compiler(Compiler.Backend(Compiler.BackendType.NATIVE, compilerVersion, compilerFlags), compilerVersion)
