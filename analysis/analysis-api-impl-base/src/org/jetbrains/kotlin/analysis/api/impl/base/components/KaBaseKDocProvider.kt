@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -36,6 +37,12 @@ abstract class KaBaseKDocProvider<T : KaSession> : KaBaseSessionComponent<T>(), 
     override fun KaDeclarationSymbol.findKDoc(): KDocCommentDescriptor? = with(analysisSession) {
         val ktElement = psi?.navigationElement as? KtDeclaration
         ktElement?.findKDoc()?.let { return it }
+
+        if (origin == KaSymbolOrigin.LIBRARY) {
+            findDeserializedKdocText(this@findKDoc)
+                ?.let(::constructCommentDescriptor)
+                ?.let { return it }
+        }
 
         if (this@findKDoc is KaCallableSymbol) {
             allOverriddenSymbols.forEach { overrider ->
@@ -69,6 +76,14 @@ abstract class KaBaseKDocProvider<T : KaSession> : KaBaseSessionComponent<T>(), 
 
         return null
     }
+
+    private fun constructCommentDescriptor(kdocText: String): KDocCommentDescriptor? {
+        val project = analysisSession.useSiteModule.project
+        val kdocElement = KtPsiFactory(project).createComment(kdocText) as? KDoc ?: return null
+        return KDocCommentDescriptorImpl(kdocElement.getDefaultSection(), kdocElement.getAllSections())
+    }
+
+    protected abstract fun findDeserializedKdocText(symbol: KaDeclarationSymbol): String?
 
     private fun KtElement.lookupOwnedKDoc(): KDocCommentDescriptor? {
         // KDoc for the primary constructor is located inside its class KDoc

@@ -2,8 +2,5 @@
 null
 
 ----------lib/foo(): kotlin.Unit------------------------------------------------
-<primary tag="null" subject="null">
-This is a sample function.
-<section="null" subject="null">
-This is a sample function.
+null
 
