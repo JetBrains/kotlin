@@ -24,23 +24,11 @@ val buildAnalyzer by tasks.registering(Sync::class) {
     into(layout.buildDirectory)
 }
 
-// CI calls this task to check that compilation is not broken in Aggregate
-tasks.register("compileKotlinNative") {
-    dependsOn(getTasksByName("compileKotlin${hostKotlinNativeTargetName.capitalized}", true))
-}
-
 val nativeReports by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named("native-report"))
-    }
-}
-
-val benchmarkSubprojects = subprojects.filter {
-    when (it.name) {
-        "benchmarksAnalyzer", "benchmarksLauncher" -> false
-        else -> true
     }
 }
 
