@@ -36,6 +36,10 @@ abstract class JsEnvironmentConfigurator<RunTask : Task>(protected val subTarget
                     productionExecutable.linkSyncTask
                 }
 
+                if (subTarget is KotlinJsIrNpmBasedSubTarget || subTarget.target.wasmTargetType != null) {
+                    assembleTask.destinationDirectory.set(compilation.npmProject.dist.mapToFile())
+                }
+
                 if (compilation.isMain()) {
                     project.addToAssemble(assembleTask)
                 }
