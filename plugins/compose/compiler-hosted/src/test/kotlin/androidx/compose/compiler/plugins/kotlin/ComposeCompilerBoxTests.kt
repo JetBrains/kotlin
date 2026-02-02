@@ -84,6 +84,7 @@ open class AbstractJsLightTreePluginBlackBoxCodegenForComposeTest : AbstractJsTe
 
 fun TestConfigurationBuilder.composeCompilerPluginConfiguration() {
     defaultDirectives {
+        COMPILER_ARGUMENTS with "-Xverify-ir=error"
         COMPILER_ARGUMENTS with flagToEnableComposeCompilerPlugin()
     }
 
