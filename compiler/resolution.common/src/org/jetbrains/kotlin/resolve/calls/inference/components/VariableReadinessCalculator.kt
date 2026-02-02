@@ -115,14 +115,11 @@ class VariableReadinessCalculator(
 
         val hasDependencyToOtherTypeVariables = hasDependencyToOtherTypeVariables()
         val isMaterializeVariable = this in c.returnTypeTypeVariables
-                && true == c.notFixedTypeVariables[this]?.constraints?.none { it.kind.isLower() }
-                && true == c.notFixedTypeVariables[this]?.constraints?.any {
-            it.kind.isUpper() && (it.isProperArgumentConstraint() || it.isProperSelfTypeConstraint(this))
-        }
+                && c.notFixedTypeVariables.getValue(this).constraints.none { it.kind.isLower() }
+                && c.notFixedTypeVariables.getValue(this).constraints.any { it.type.isProperType() }
 
         readiness[Q.IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE] = isMaterializeVariable
                 && !hasDependencyToOtherTypeVariables
-                && c.notFixedTypeVariables[this]?.constraints?.any { it.type.isProperType() } == true
 
         readiness[Q.HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT] =
             readiness[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased
