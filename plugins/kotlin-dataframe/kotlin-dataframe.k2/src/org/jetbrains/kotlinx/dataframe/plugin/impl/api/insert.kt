@@ -30,12 +30,12 @@ internal class Under0 : AbstractInterpreter<PluginDataFrameSchema>() {
 }
 
 internal class Under1 : AbstractInterpreter<PluginDataFrameSchema>() {
-    val Arguments.columnPath: ColumnPath by arg()
+    val Arguments.columnPath: ColumnPathApproximation by arg()
     val Arguments.receiver: InsertClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.asDataFrame()
-            .insert(receiver.column.asDataColumn()).under(columnPath)
+            .insert(receiver.column.asDataColumn()).under(columnPath.path)
             .toPluginDataFrameSchema()
     }
 }
