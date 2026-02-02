@@ -6,7 +6,7 @@ To run the benchmarks you need a built Kotlin/Native distribution with the platf
   in the root of the `git` repository (that is in the `kotlin` folder not in the current `kotlin/kotlin-native/performance`)
   to build the distribution from sources
 
-To run all the benchmarks just run `./gradlew` from this folder. The output will be placed in `build/nativeReport.json`.
+To run all the benchmarks just run `./gradlew :konanRun` from this folder. The output will be placed in `build/nativeReport.json`.
 
 **NOTE**: consider running with `-PdryRun` beforehand to build everything before running the benchmarks, this will
 make the benchmarking results a bit more stable
@@ -46,5 +46,6 @@ The benchmarks are split into several groups:
 * `swiftinterop` - benchmarks written in Swift calling Kotlin using ObjC export
 * `helloworld` - compilation time benchmark (compiles hello world with a CLI compiler)
 
-`./gradlew :konanRun` (or just `./gradlew`) runs all the groups; use something like `./gradlew :ring :startup`
-to only run a subset of groups.
+`./gradlew :konanRun` runs all the groups;
+use something like `./gradlew :konanRun -Pgroups=ring,startup`
+to only run a subset of groups. *NOTE*: `-Pgroups=` is treated as "enable all groups"

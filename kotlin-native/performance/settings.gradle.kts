@@ -20,23 +20,30 @@ plugins {
     id("cache-redirector")
 }
 
+val knownGroups = buildList {
+    add("ring")
+    add("cinterop")
+    add("helloworld")
+    add("numerical")
+    add("startup")
+    add("logging")
+    if (System.getProperty("os.name") == "Mac OS X") {
+        add("objcinterop")
+        add("swiftinterop")
+    }
+}
+
 gradle.beforeProject {
     // Can't use dependencyResolutionManagement, because kotlin-bootstrap adds their repos in `beforeProject`, so
     // each project needs their own set of repos to work.
     repositories {
         mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     }
+    extra["knownGroups"] = knownGroups
 }
 
 include(":benchmarksAnalyzer")
 include(":benchmarksLauncher")
-include(":ring")
-include(":cinterop")
-include(":helloworld")
-include(":numerical")
-include(":startup")
-include(":logging")
-if (System.getProperty("os.name") == "Mac OS X") {
-    include(":objcinterop")
-    include(":swiftinterop")
+knownGroups.forEach {
+    include(":$it")
 }

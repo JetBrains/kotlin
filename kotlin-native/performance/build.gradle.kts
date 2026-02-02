@@ -44,24 +44,13 @@ val benchmarkSubprojects = subprojects.filter {
     }
 }
 
-val konanRun by tasks.registering
-defaultTasks(konanRun.name)
-
-val mergeNativeReports by tasks.registering(MergeNativeReportsTask::class) {
-    outputReport = layout.buildDirectory.file(nativeJson)
-    inputReports.from(nativeReports)
+dependencies {
+    groups.forEach {
+        nativeReports(project(":$it"))
+    }
 }
 
-benchmarkSubprojects.forEach {
-    val benchmarkGroupRun = tasks.register(it.name) {
-        // When :<bench-group> is requested either via CLI or by :konanRun, add a new
-        // dependency into `nativeReports` to be processed by `mergeNativeReports`.
-        dependencies {
-            nativeReports(project(it.path))
-        }
-        finalizedBy(mergeNativeReports) // when `:<bench-group>` is run, the aggregating report needs to be updated
-    }
-    konanRun.configure {
-        dependsOn(benchmarkGroupRun)
-    }
+val konanRun by tasks.registering(MergeNativeReportsTask::class) {
+    outputReport = layout.buildDirectory.file(nativeJson)
+    inputReports.from(nativeReports)
 }
