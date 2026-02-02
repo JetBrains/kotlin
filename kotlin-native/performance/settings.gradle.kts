@@ -20,6 +20,14 @@ plugins {
     id("cache-redirector")
 }
 
+gradle.beforeProject {
+    // Can't use dependencyResolutionManagement, because kotlin-bootstrap adds their repos in `beforeProject`, so
+    // each project needs their own set of repos to work.
+    repositories {
+        mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+    }
+}
+
 include(":benchmarksAnalyzer")
 include(":benchmarksLauncher")
 include(":ring")
