@@ -58,6 +58,13 @@ inline class <!WRONG_EXPORTED_DECLARATION("value class")!>B(val b: Int)<!>
 @JsExport
 external interface ExternalInterface
 
+@JsExport
+external interface ExternalInterfaceWithCompanion {
+    companion <!WRONG_EXPORTED_DECLARATION("external companion object")!>object<!> {
+        fun foo(): String
+    }
+}
+
 <!MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE!>@JsExport.Default
 external interface DefaultExternalInterface<!>
 

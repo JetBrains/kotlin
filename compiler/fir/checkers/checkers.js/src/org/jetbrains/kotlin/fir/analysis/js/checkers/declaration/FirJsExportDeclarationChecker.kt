@@ -171,9 +171,14 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                         declaration.isInlineOrValue -> "value class"
                         else -> null
                     }
-                    else -> if (context.isInsideInterface && !declaration.status.isCompanion) {
-                        "nested/inner declaration inside exported interface"
-                    } else null
+
+                    else if context.isInsideInterface -> when {
+                        !declaration.status.isCompanion -> "nested/inner declaration inside exported interface"
+                        declaration.symbol.isEffectivelyExternal(context.session) -> "external companion object"
+                        else -> null
+                    }
+
+                    else -> null
                 }
 
                 if (context.isInsideInterface && declaration.status.isCompanion && declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT) {
