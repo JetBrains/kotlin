@@ -243,6 +243,7 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
 
     defaultDirectives {
         +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+        +WITH_STDLIB
     }
 
     forTestsNotMatching(
