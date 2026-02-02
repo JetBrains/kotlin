@@ -120,6 +120,12 @@ public class FirLightTreeBlackBoxCodegenTestForLombokGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("builderWithBoundedTypeParameter.kt")
+  public void testBuilderWithBoundedTypeParameter() {
+    runTest("plugins/lombok/testData/box/builderWithBoundedTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("builderWithClashingInnerBuilder.kt")
   public void testBuilderWithClashingInnerBuilder() {
     runTest("plugins/lombok/testData/box/builderWithClashingInnerBuilder.kt");
@@ -132,9 +138,21 @@ public class FirLightTreeBlackBoxCodegenTestForLombokGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("builderWithRawType.kt")
+  public void testBuilderWithRawType() {
+    runTest("plugins/lombok/testData/box/builderWithRawType.kt");
+  }
+
+  @Test
   @TestMetadata("builderWithSuperBuilder.kt")
   public void testBuilderWithSuperBuilder() {
     runTest("plugins/lombok/testData/box/builderWithSuperBuilder.kt");
+  }
+
+  @Test
+  @TestMetadata("builderWithWildcardType.kt")
+  public void testBuilderWithWildcardType() {
+    runTest("plugins/lombok/testData/box/builderWithWildcardType.kt");
   }
 
   @Test

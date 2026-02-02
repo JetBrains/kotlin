@@ -42,6 +42,12 @@ public class DiagnosticTestForLombokGenerated extends AbstractDiagnosticTestForL
   }
 
   @Test
+  @TestMetadata("builderWithGenericAndToBuilder.kt")
+  public void testBuilderWithGenericAndToBuilder() {
+    runTest("plugins/lombok/testData/diagnostics/k1+k2/builderWithGenericAndToBuilder.kt");
+  }
+
+  @Test
   @TestMetadata("clashAccessors.kt")
   public void testClashAccessors() {
     runTest("plugins/lombok/testData/diagnostics/k1+k2/clashAccessors.kt");
