@@ -46,11 +46,21 @@ class SignaturesComputationLowering(val context: PreSerializationLoweringContext
 
             // Compute the signature:
             when (val symbolOwner = symbol.owner) {
-                is IrDeclaration -> declarationTable.signatureByDeclaration(
-                    declaration = symbolOwner,
-                    compatibleMode = false,
-                    recordInSignatureClashDetector = isDeclared && !symbolOwner.isTopLevel,
-                )
+                is IrDeclaration -> {
+                    val record = when (symbolOwner) {
+                        is IrSimpleFunction -> {
+                            // Do not register prepared inline function copies in the clash detector.
+                            val isPreparedCopy = symbolOwner.originalOfPreparedInlineFunctionCopy != null
+                            isDeclared && !isPreparedCopy
+                        }
+                        else -> isDeclared
+                    }
+                    declarationTable.signatureByDeclaration(
+                        declaration = symbolOwner,
+                        compatibleMode = false,
+                        recordInSignatureClashDetector = record,
+                    )
+                }
                 is IrReturnableBlock -> declarationTable.signatureByReturnableBlock(symbolOwner)
                 else -> error("Expected symbol owner: ${symbolOwner.render()}")
             }
@@ -58,19 +68,17 @@ class SignaturesComputationLowering(val context: PreSerializationLoweringContext
 
         override fun visitFile(declaration: IrFile) {
             declarationTable.inFile(declaration) {
+                declaration.computeTopLevelDeclarationSignatures()
                 super.visitFile(declaration)
             }
         }
 
-        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-            if (declaration.originalOfPreparedInlineFunctionCopy != null) {
-                declarationTable.signatureByDeclaration(
-                    declaration.originalOfPreparedInlineFunctionCopy!!,
-                    compatibleMode = false,
-                    recordInSignatureClashDetector = false
-                )
-            }
-            super.visitSimpleFunction(declaration)
+        private fun IrFile.computeTopLevelDeclarationSignatures() = declarations.forEach {
+            declarationTable.signatureByDeclaration(
+                declaration = it,
+                compatibleMode = false,
+                recordInSignatureClashDetector = false,
+            )
         }
     }
 
@@ -86,6 +94,11 @@ class SignaturesComputationLowering(val context: PreSerializationLoweringContext
             declarationTable.inFile(file) {
                 functionCopy.acceptVoid(visitor)
             }
+            declarationTable.signatureByDeclaration(
+                functionCopy.originalOfPreparedInlineFunctionCopy!!,
+                compatibleMode = false,
+                recordInSignatureClashDetector = false
+            )
         }
     }
 }
