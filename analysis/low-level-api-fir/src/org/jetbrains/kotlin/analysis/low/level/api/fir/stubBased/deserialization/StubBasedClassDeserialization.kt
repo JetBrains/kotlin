@@ -9,6 +9,7 @@ import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -74,10 +75,13 @@ internal val KtDeclaration.modality: Modality
  *
  * @return compiled stub
  */
-internal inline val <T, reified S> T.compiledStub: S where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*>
+@KaImplementationDetail
+inline val <T, reified S> T.compiledStub: S where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*>
     get() = (this.greenStub ?: calculateStub()) as S
 
-private fun <S, T> T.calculateStub(): Stub where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*> {
+@PublishedApi
+@KaImplementationDetail
+internal fun <S, T> T.calculateStub(): Stub where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*> {
     val ktFile = containingKtFile
     requireWithAttachment(ktFile.isCompiled, { "Expected compiled file" }) {
         withPsiEntry("ktFile", ktFile)
