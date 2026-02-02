@@ -113,17 +113,17 @@ class VariableReadinessCalculator(
         readiness[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints() || areAllProperConstraintsSelfTypeBased
         readiness[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)
 
-        val hasDependencyToOtherTypeVariables = hasDependencyToOtherTypeVariables()
+        val hasDeepDependencyToOtherTypeVariables = hasDependencyToOtherTypeVariables()
         val isMaterializeVariable = this in c.returnTypeTypeVariables
                 && c.notFixedTypeVariables.getValue(this).constraints.none { it.kind.isLower() }
                 && c.notFixedTypeVariables.getValue(this).constraints.any { it.type.isProperType() }
 
         readiness[Q.IS_SELF_SUFFICIENT_MATERIALIZE_VARIABLE] = isMaterializeVariable
-                && !hasDependencyToOtherTypeVariables
+                && !hasDeepDependencyToOtherTypeVariables
 
         readiness[Q.HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT] =
             readiness[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased
-        readiness[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables
+        readiness[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDeepDependencyToOtherTypeVariables
         readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS] = !allConstraintsTrivialOrNonProper()
         readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] =
             !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
