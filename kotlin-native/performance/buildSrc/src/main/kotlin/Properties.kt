@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin
 
 import org.gradle.api.Project
+import org.gradle.internal.extensions.core.extra
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import java.io.File
 import java.util.*
@@ -53,6 +54,24 @@ val Project.filter: String?
  */
 val Project.filterRegex: String?
     get() = project.findProperty("filterRegex") as String?
+
+/**
+ * List of all known benchmark groups.
+ */
+@Suppress("UNCHECKED_CAST")
+val Project.knownGroups: List<String>
+    get() = extra["knownGroups"] as List<String>
+
+/**
+ * List of benchmark groups to include.
+ */
+val Project.groups: List<String>
+    get() = (project.findProperty("groups") as String?)
+            ?.split(",")
+            ?.map { it.trim() }
+            ?.filter { it.isNotEmpty() }
+            ?.takeIf { it.isNotEmpty() }
+            ?: knownGroups
 
 /**
  * Compiler version to store in the generated reports.

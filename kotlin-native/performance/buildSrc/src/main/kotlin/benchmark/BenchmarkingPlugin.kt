@@ -111,11 +111,7 @@ abstract class BenchmarkingPlugin : Plugin<Project> {
             // We do not want to cache benchmarking runs; we want the task to run whenever requested.
             outputs.upToDateWhen { false }
 
-            // TODO: Gradle fails with
-            //       Unable to make progress running work. The following items are queued for execution but none of them can be started
-            //       When calling something like ./gradlew :helloworld :logging
-            //       Removing this finalizedBy somehow helps
-//            finalizedBy(benchmark.konanJsonReport)
+            finalizedBy(benchmark.konanJsonReport)
         }
 
         benchmark.getCodeSize.configure {
