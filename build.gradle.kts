@@ -446,6 +446,7 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":compiler:compiler.version",
     ":compiler:build-tools:kotlin-build-statistics",
     ":kotlin-build-common",
+    ":compiler:arguments.common",
 )
 
 extra["kotlinJpsPluginMavenDependencies"] = listOf(
