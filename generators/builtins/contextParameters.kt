@@ -12,18 +12,19 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
     override fun getMultifileClassName(): String = "ContextParametersKt"
 
     override fun generateBody() {
-        generateSingleFunction(listOf("with"), listOf("T"), "R")
+        generateSingleFunction(listOf("with"), listOf("T"), "R", false)
         for (i in 2..6) {
             val parameterNames = ('a' .. 'z').take(i)
             generateSingleFunction(
                 parameterNames.map { it.toString() },
                 parameterNames.map { it.uppercase() },
-                "R"
+                "R",
+                true
             )
         }
     }
 
-    fun generateSingleFunction(parameterNames: List<String>, parameterTypes: List<String>, resultType: String) {
+    fun generateSingleFunction(parameterNames: List<String>, parameterTypes: List<String>, resultType: String, dual: Boolean) {
         val arguments = parameterNames.joinToString()
         val parameters = parameterNames.zip(parameterTypes) { name, type -> "$name: $type" }.joinToString()
         val types = parameterTypes.joinToString()
@@ -48,16 +49,15 @@ public inline fun <$types, $resultType> context($parameters, block: context($typ
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return block($arguments)
-}
+}""" + if (dual) """
 
 /**
  * Runs the specified [block] with the given $values in context scope and in the $argumentsWord.
  *
- * As opposed to [with], [context] doesn't make the $values available as implicit $receivers
+ * As opposed to [with], [context] doesn't make the the $values available as implicit $receivers
  *
  * @sample samples.misc.ContextParameters.useContext
  */
-@kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
 public inline fun <$types, $resultType> context($parameters, block: context($types) ($types) -> $resultType): $resultType {
     kotlin.contracts.contract {
@@ -66,8 +66,9 @@ public inline fun <$types, $resultType> context($parameters, block: context($typ
     return context($arguments) {
         block($arguments)
     }
-}
-"""
+}""" else """
+
+""".trimIndent()
         )
     }
 
