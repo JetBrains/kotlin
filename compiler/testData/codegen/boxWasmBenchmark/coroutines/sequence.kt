@@ -20,7 +20,7 @@ fun builder(c: suspend () -> Unit): ManualContinuation {
 }
 
 fun box(): String {
-    val iterations = 20
+    val iterations = 100
     val fibonacci = sequence {
         yield(1)
         yield(1)
