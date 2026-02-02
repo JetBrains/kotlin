@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.incremental.clearJarCaches
 import java.io.File
-import java.nio.file.Path
 import java.util.concurrent.*
 
 internal class KotlinToolchainsImpl() : KotlinToolchains {
@@ -98,6 +97,3 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         }
     }
 }
-
-
-internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath

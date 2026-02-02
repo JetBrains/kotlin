@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import java.nio.file.Path
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
@@ -25,3 +26,5 @@ internal fun <T> CommonToolArguments.getUsingReflection(propertyName: String): T
             property.getter.call(this)
         } ?: throw NoSuchMethodError("No property found with name $propertyName in ${this::class.jvmName}")
 }
+
+internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath

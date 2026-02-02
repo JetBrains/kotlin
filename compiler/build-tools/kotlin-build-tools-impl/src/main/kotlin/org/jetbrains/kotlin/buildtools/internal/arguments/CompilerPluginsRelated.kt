@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.buildtools.internal.arguments
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
-import org.jetbrains.kotlin.buildtools.internal.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 
 internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<CompilerPlugin>) {
