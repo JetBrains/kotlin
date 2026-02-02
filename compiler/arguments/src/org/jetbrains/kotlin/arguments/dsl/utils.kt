@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.arguments.dsl
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
+import org.jetbrains.kotlin.arguments.dsl.types.PathType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
@@ -39,3 +40,6 @@ val IntType.Companion.defaultOne: IntType
     get() = IntType(
         defaultValue = 1.asReleaseDependent(),
     )
+
+val PathType.Companion.defaultNull: PathType
+    get() = PathType()

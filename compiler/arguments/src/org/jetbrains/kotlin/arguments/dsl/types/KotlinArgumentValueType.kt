@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.arguments.dsl.types
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 
 /**
  * [Kotlin compiler argument][org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument] value type.
@@ -63,7 +65,7 @@ class KotlinVersionType(
         KotlinReleaseVersion.v1_9_0..KotlinReleaseVersion.v1_9_25 to KotlinVersion.v1_9,
         KotlinReleaseVersion.v2_0_0..KotlinReleaseVersion.v2_0_21 to KotlinVersion.v2_0,
         KotlinReleaseVersion.v2_1_0..KotlinReleaseVersion.v2_1_21 to KotlinVersion.v2_1,
-    )
+    ),
 ) : KotlinArgumentValueType<KotlinVersion> {
     override fun stringRepresentation(value: KotlinVersion?): String? {
         return value?.versionName?.valueOrNullStringLiteral
@@ -79,7 +81,7 @@ class KotlinJvmTargetType(
     override val defaultValue: ReleaseDependent<JvmTarget?> = ReleaseDependent(
         JvmTarget.jvm1_8,
         KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v1_9_20 to JvmTarget.jvm1_6
-    )
+    ),
 ) : KotlinArgumentValueType<JvmTarget> {
     override fun stringRepresentation(value: JvmTarget?): String? {
         return value?.targetName?.valueOrNullStringLiteral
@@ -124,7 +126,7 @@ class StringArrayType(
 
     override fun stringRepresentation(value: Array<String>?): String {
         if (value == null) return "null"
-        return value.joinToString(separator = ", ", prefix = "arrayOf(", postfix = ")") { "\"$it\""}
+        return value.joinToString(separator = ", ", prefix = "arrayOf(", postfix = ")") { "\"$it\"" }
     }
 }
 
@@ -180,5 +182,28 @@ class KlibIrInlinerModeType(
     }
 }
 
+/**
+ * A value which accepts [Path] type.
+ */
+@Serializable
+class PathType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<Path?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<Path> {
+
+    override fun stringRepresentation(value: Path?): String? {
+        if (value == null) return null
+        return "\"${value.absolutePathStringOrThrow()}\""
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
+
+/**
+ * The implementation uses [Path.toFile] followed by [java.io.File.getAbsolutePath] rather than
+ * [kotlin.io.path.absolutePathString] to validate that the path comes from the default file system.
+ *
+ * See https://youtrack.jetbrains.com/issue/KT-83715 for details.
+ */
+private fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
