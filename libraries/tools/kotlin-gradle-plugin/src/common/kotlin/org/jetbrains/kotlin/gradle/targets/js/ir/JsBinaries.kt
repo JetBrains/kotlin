@@ -16,6 +16,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
@@ -83,6 +84,8 @@ sealed class JsIrBinary(
                 task.duplicatesStrategy = DuplicatesStrategy.WARN
 
                 task.from.from(linkSyncTaskRegisteredResources)
+
+                task.destinationDirectory.set(project.layout.buildDirectory.dir(KotlinPlatformType.js.name).dir(compilation.outputModuleName).mapToFile())
             }
         }
 
