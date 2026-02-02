@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.setupCommonKlibArguments
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.config.fakeOverrideValidator
+import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget

@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.cli.bc
 
-import org.jetbrains.kotlin.backend.konan.emitLazyObjcHeaderFile
-import org.jetbrains.kotlin.backend.konan.includedLibraries
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyOf
 import org.jetbrains.kotlin.cli.common.contentRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.useFir
+import org.jetbrains.kotlin.konan.config.emitLazyObjcHeaderFile
+import org.jetbrains.kotlin.konan.config.includedLibraries
 import org.jetbrains.kotlin.konan.file.File
 import java.util.*
 
