@@ -22,7 +22,7 @@ object FirWasmJsEqualityChecker : FirPlatformSpecificEqualityChecker() {
     // if the given type is not JsReference, returns that type
     // if the given type is JsReference, returns unwrapped upper bound (if any)
     // returns null if there is no known upper bound, so it can be any type
-    fun tryUnwrapReferenceType(type: ConeKotlinType): ConeKotlinType? {
+    fun tryUnwrapJsReferenceType(type: ConeKotlinType): ConeKotlinType? {
         if (type.classId != JsStandardClassIds.JsReference) return type
         val typeArg: ConeTypeProjection? = type.typeArguments.firstOrNull()
         return when (typeArg) {
@@ -39,6 +39,8 @@ object FirWasmJsEqualityChecker : FirPlatformSpecificEqualityChecker() {
 
     private val ConeIntersectionType.hasJsAnyOrJsReference: Boolean
         get() = intersectedTypes.any { isJsAnyOrJsReference(it) }
+
+    private fun ConeKotlinType.isJsAny() = classId == JsStandardClassIds.JsAny
 
     private inline fun minApplicabilityAmongJsTypesComponents(
         type: ConeKotlinType,
@@ -69,15 +71,13 @@ object FirWasmJsEqualityChecker : FirPlatformSpecificEqualityChecker() {
         rightType: ConeKotlinType,
         checker: FirEqualityCompatibilityChecker,
     ): Applicability {
-        val leftClassId = leftType.classId ?: return Applicability.GENERALLY_INAPPLICABLE
-        val rightClassId = rightType.classId ?: return Applicability.GENERALLY_INAPPLICABLE
         // allow equality checks with JsAny, as it can contain any JsReference and thus any object
-        if (leftClassId == JsStandardClassIds.JsAny || rightClassId == JsStandardClassIds.JsAny)
+        if (leftType.isJsAny() || rightType.isJsAny())
             return Applicability.APPLICABLE
 
         // allow equality checks between JsReference<C> and Kotlin types K if a corresponding check between K and C is allowed
-        val unwrappedLeftType = tryUnwrapReferenceType(leftType) ?: return Applicability.APPLICABLE
-        val unwrappedRightType = tryUnwrapReferenceType(rightType) ?: return Applicability.APPLICABLE
+        val unwrappedLeftType = tryUnwrapJsReferenceType(leftType) ?: return Applicability.APPLICABLE
+        val unwrappedRightType = tryUnwrapJsReferenceType(rightType) ?: return Applicability.APPLICABLE
 
         return checker.checkApplicability(
             operation,
