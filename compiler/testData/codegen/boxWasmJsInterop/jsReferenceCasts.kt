@@ -41,10 +41,10 @@ fun testTypeOperations(obj: JsReference<String>) : String? {
         return "!is Any"
     if (obj is String)
         return "is String"
-    if (obj != c)
-        return "!= C"
     // these checks are forbidden by FE checks, although actual runtime code would return 'true' due
     //  to previous unsafe casts
+//    if (obj != c)
+//        return "!= C"
 //    if (obj !is C)
 //        return "!is C"
 //    if (obj !== c)
