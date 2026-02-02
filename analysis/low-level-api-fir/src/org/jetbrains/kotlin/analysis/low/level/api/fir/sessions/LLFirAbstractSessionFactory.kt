@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.fir.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
+import org.jetbrains.kotlin.fir.deserialization.FirKDocDeserializer
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -78,6 +81,11 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     @KaCachedService
     private val resolutionScopeProvider: KaResolutionScopeProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaResolutionScopeProvider.getInstance(project)
+    }
+
+    @KaCachedService
+    private val platformSettings: KotlinPlatformSettings by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinPlatformSettings.getInstance(project)
     }
 
     abstract fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession
@@ -461,6 +469,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
             registerCommonComponents(languageVersionSettings, isMetadataCompilation = false)
             registerCommonComponentsAfterExtensionsAreConfigured()
+            registerKdocDeserializer()
 
             val kotlinScopeProvider = when {
                 platform.isJvm() -> FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
@@ -486,6 +495,20 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             additionalSessionConfiguration(context)
             LLFirSessionConfigurator.configure(this)
         }
+    }
+
+    private fun LLFirSession.registerKdocDeserializer() {
+        if (ktModule.targetPlatform.isJvm()) {
+            // Only KLib-based platforms are supported
+            return
+        }
+
+        if (platformSettings.deserializedDeclarationsOrigin == KotlinDeserializedDeclarationsOrigin.STUBS) {
+            // KDoc is always deserialized in stubs. No need to put it also to the FIR
+            return
+        }
+
+        register(FirKDocDeserializer::class, KlibBasedKDocDeserializer)
     }
 
     abstract fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession

@@ -111,6 +111,7 @@ open class JvmClassFileBasedSymbolProvider(
                 JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, byteContent),
                 JavaAwareFlexibleTypeFactory,
                 FirJvmConstDeserializer(facadeBinaryClass ?: kotlinClass, BuiltInSerializerProtocol),
+                FirKDocDeserializer.Empty,
                 source
             ),
         )

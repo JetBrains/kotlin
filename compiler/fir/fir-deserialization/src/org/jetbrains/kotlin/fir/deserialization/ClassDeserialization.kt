@@ -52,6 +52,7 @@ fun deserializeClassToSymbol(
     session: FirSession,
     moduleData: FirModuleData,
     defaultAnnotationDeserializer: AnnotationDeserializer?,
+    kdocDeserializer: FirKDocDeserializer,
     flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
     scopeProvider: FirScopeProvider,
     serializerExtensionProtocol: SerializerExtensionProtocol,
@@ -110,6 +111,7 @@ fun deserializeClassToSymbol(
             annotationDeserializer,
             flexibleTypeFactory,
             constDeserializer,
+            kdocDeserializer,
             containerSource,
             symbol,
             status.effectiveVisibility
@@ -234,6 +236,8 @@ fun deserializeClassToSymbol(
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
 
         contextParameters.addAll(classDeserializer.createContextParametersForClass(classProto, origin, symbol))
+
+        applyKDoc(context.kdocDeserializer.loadClassKDoc(classProto))
     }.apply {
         if (isSealed) {
             val inheritors = classProto.sealedSubclassFqNameList.map { nameIndex ->

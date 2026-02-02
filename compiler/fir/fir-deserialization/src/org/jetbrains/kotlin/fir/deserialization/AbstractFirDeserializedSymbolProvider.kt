@@ -192,6 +192,8 @@ abstract class AbstractFirDeserializedSymbolProvider(
 
     // ------------------------ Deserialization methods ------------------------
 
+    protected val kdocDeserializer: FirKDocDeserializer = session.effectiveKdocDeserializer
+
     sealed class ClassMetadataFindResult {
         data class NoMetadata(
             val classPostProcessor: DeserializedClassPostProcessor
@@ -266,6 +268,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
                     session,
                     moduleData,
                     annotationDeserializer,
+                    kdocDeserializer,
                     result.flexibleTypeFactory,
                     kotlinScopeProvider,
                     serializerExtensionProtocol,
