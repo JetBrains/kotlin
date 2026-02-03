@@ -35,7 +35,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
     ) : BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>(
         name = origin.name,
         description = origin.description.current,
-        valueType = BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType(origin.valueType),
+        valueType = BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType(origin.argumentType),
         introducedSinceVersion = origin.releaseVersionsMetadata.introducedVersion,
         deprecatedSinceVersion = origin.releaseVersionsMetadata.deprecatedVersion,
         removedSinceVersion = origin.releaseVersionsMetadata.removedVersion
