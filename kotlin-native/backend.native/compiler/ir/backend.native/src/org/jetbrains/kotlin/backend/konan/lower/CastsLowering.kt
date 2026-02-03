@@ -53,10 +53,10 @@ internal class CastsLowering(val context: Context) : BodyLoweringPass {
                     isSuperClassCast && isNullable -> expression.argument
                     isSuperClassCast && !isNullable ->
                         irBuilder.at(expression)
-                                .irCall(context.symbols.checkNotNull, expression.typeOperand, listOf(expression.typeOperand))
+                                .irCall(context.symbols.checkNotNull!!, expression.typeOperand, listOf(expression.typeOperand))
                                 .apply { arguments[0] = expression.argument }
                     else -> irBuilder.at(expression)
-                            .irCall(context.symbols.downcast, expression.typeOperand, listOf(expression.typeOperand))
+                            .irCall(context.symbols.downcast!!, expression.typeOperand, listOf(expression.typeOperand))
                             .apply {
                                 arguments[0] = expression.argument
                                 arguments[1] = IrClassReferenceImpl(

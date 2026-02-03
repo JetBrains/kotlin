@@ -96,7 +96,7 @@ internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val symbols: BackendNa
             }
 
             // Enable transparent stepping for bridges.
-            annotations += buildSimpleAnnotation(irBuiltIns, startOffset, endOffset, symbols.transparentForDebugger.owner)
+            annotations += buildSimpleAnnotation(irBuiltIns, startOffset, endOffset, symbols.transparentForDebugger!!.owner)
         }
     }
 }

@@ -574,9 +574,9 @@ class BackendNativeSymbols(
 
     val isSubtype = CallableIds.isSubtype.functionSymbol()
 
-    val downcast = CallableIds.downcast.functionSymbol()
+    val downcast = CallableIds.downcast.functionSymbolOrNull()
 
-    val checkNotNull = CallableIds.checkNotNull.functionSymbol()
+    val checkNotNull = CallableIds.checkNotNull.functionSymbolOrNull()
 
     val println by CallableIds.println.functionSymbol {
         it.hasShape(regularParameters = 1, parameterTypes = listOf(irBuiltIns.stringType))
@@ -652,7 +652,7 @@ class BackendNativeSymbols(
 
     val noInline = ClassIds.noInline.classSymbol()
 
-    val transparentForDebugger = ClassIds.transparentForDebugger.classSymbol()
+    val transparentForDebugger = ClassIds.transparentForDebugger.classSymbolOrNull()
 
     val enumVarConstructorSymbol by ClassIds.interopCEnumVar.primaryConstructorSymbol()
     val primitiveVarTypePrimaryConstructor by ClassIds.interopCPrimitiveVarType.primaryConstructorSymbol()
