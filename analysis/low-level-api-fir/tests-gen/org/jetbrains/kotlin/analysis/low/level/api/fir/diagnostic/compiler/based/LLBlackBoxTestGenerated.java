@@ -24454,12 +24454,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
-    @TestMetadata("linkViaSignatures.kt")
-    public void testLinkViaSignatures() {
-      runTest("compiler/testData/codegen/box/fir/linkViaSignatures.kt");
-    }
-
-    @Test
     @TestMetadata("listAssignmentInWhen.kt")
     public void testListAssignmentInWhen() {
       runTest("compiler/testData/codegen/box/fir/listAssignmentInWhen.kt");
@@ -24571,12 +24565,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @TestMetadata("publicMethodCallViaPackagePrivateCommon.kt")
     public void testPublicMethodCallViaPackagePrivateCommon() {
       runTest("compiler/testData/codegen/box/fir/publicMethodCallViaPackagePrivateCommon.kt");
-    }
-
-    @Test
-    @TestMetadata("SamWithReceiverMavenProjectImportHandler.kt")
-    public void testSamWithReceiverMavenProjectImportHandler() {
-      runTest("compiler/testData/codegen/box/fir/SamWithReceiverMavenProjectImportHandler.kt");
     }
 
     @Test

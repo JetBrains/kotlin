@@ -65,11 +65,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Enable old mangling scheme for inline classes"
     )
 
-    val SERIALIZE_IR by enumDirective(
-        description = "Enable serialization of JVM IR",
-        additionalParser = JvmSerializeIrMode.Companion::fromString
-    )
-
     val ENABLE_DEBUG_MODE by directive("Enable debug mode for compilation")
 
     val ENHANCED_COROUTINES_DEBUGGING by directive("Mark compiler generated code in coroutines")
