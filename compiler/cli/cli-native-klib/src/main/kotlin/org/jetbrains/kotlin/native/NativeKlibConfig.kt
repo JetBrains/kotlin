@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.KONAN_DATA_DIR
 import org.jetbrains.kotlin.backend.konan.NativeKlibCompilationConfig
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.manifestFile
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
@@ -31,10 +33,10 @@ class NativeKlibConfig(
 ) : NativeKlibCompilationConfig {
 
     override val moduleId: String
-        get() = configuration.get(CommonConfigurationKeys.MODULE_NAME) ?: File(outputPath).name
+        get() = configuration.moduleName ?: File(outputPath).name
 
     override val manifestProperties: Properties?
-        get() = configuration.get(KonanConfigKeys.MANIFEST_FILE)?.let {
+        get() = configuration.manifestFile?.let {
             File(it).loadProperties()
         }
 }
@@ -45,7 +47,7 @@ class NativePhaseContext(
     override var inVerbosePhase: Boolean = false
 
     override val messageCollector: MessageCollector
-        get() = config.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        get() = config.configuration.messageCollector
 
     override val performanceManager: PerformanceManager?
         get() = config.configuration.perfManager

@@ -22,23 +22,18 @@ object NativeFir2IrPhase : PipelinePhase<NativeFrontendArtifact, NativeFir2IrArt
     postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFrontendArtifact): NativeFir2IrArtifact {
-        val configuration = input.configuration
-        val environment = input.environment
-        val phaseContext = input.phaseContext
-
-        val fir2IrResult = phaseContext.fir2Ir(input.frontendOutput)
-
+        val (frontendOutput, configuration, environment, diagnosticCollector, phaseContext) = input
+        val fir2IrResult = phaseContext.fir2Ir(frontendOutput)
         SpecialBackendChecksTraversal(
             phaseContext,
             fir2IrResult.symbols,
             fir2IrResult.fir2irActualizedResult.irBuiltIns,
         ).lower(fir2IrResult.fir2irActualizedResult.irModuleFragment)
-
         return NativeFir2IrArtifact(
             fir2IrOutput = fir2IrResult,
             configuration = configuration,
             environment = environment,
-            diagnosticCollector = input.diagnosticCollector,
+            diagnosticCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }
@@ -50,19 +45,16 @@ object NativePreSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeF
     postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFir2IrArtifact): NativeFir2IrArtifact? {
-        val configuration = input.configuration
-        val environment = input.environment
-        val phaseContext = input.phaseContext
-        val fir2IrResult = input.fir2IrOutput
+        val (fir2IrOutput, configuration, environment, diagnosticCollector, phaseContext) = input
         val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
         val phaserState = PhaserState()
         val engine = PhaseEngine(phaseConfig, phaserState, phaseContext)
-        val loweredResult = engine.runPreSerializationLowerings(fir2IrResult, environment)
+        val loweredResult = engine.runPreSerializationLowerings(fir2IrOutput, environment)
         return NativeFir2IrArtifact(
             fir2IrOutput = loweredResult,
             configuration = configuration,
             environment = environment,
-            diagnosticCollector = input.diagnosticCollector,
+            diagnosticCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }

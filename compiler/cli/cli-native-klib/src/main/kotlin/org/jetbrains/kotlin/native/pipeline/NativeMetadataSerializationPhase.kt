@@ -16,15 +16,13 @@ object NativeMetadataSerializationPhase : PipelinePhase<NativeFrontendArtifact, 
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFrontendArtifact): NativeSerializationArtifact {
-        val firOutput = input.frontendOutput
-        val configuration = input.configuration
-        val phaseContext = input.phaseContext
+        val (frontendOutput, configuration, _, diagnosticCollector, phaseContext) = input
 
-        val serializerOutput = phaseContext.firSerializerBase(firOutput, null)
+        val serializerOutput = phaseContext.firSerializerBase(frontendOutput, fir2IrOutput = null)
         return NativeSerializationArtifact(
             serializerOutput = serializerOutput,
             configuration = configuration,
-            diagnosticCollector = input.diagnosticCollector,
+            diagnosticCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }

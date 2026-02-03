@@ -21,9 +21,7 @@ object NativeEnvironmentPhase : PipelinePhase<ConfigurationPipelineArtifact, Nat
     postActions = setOf(PerformanceNotifications.InitializationFinished, CheckCompilationErrors.CheckMessageCollector)
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): NativeConfigurationArtifact? {
-        val configuration = input.configuration
-        val rootDisposable = input.rootDisposable
-
+        val (configuration, diagnosticCollector, rootDisposable) = input
         val environment = KotlinCoreEnvironment.createForProduction(
             rootDisposable,
             configuration,
@@ -35,7 +33,7 @@ object NativeEnvironmentPhase : PipelinePhase<ConfigurationPipelineArtifact, Nat
         return NativeConfigurationArtifact(
             configuration = configuration,
             environment = environment,
-            diagnosticCollector = input.diagnosticCollector,
+            diagnosticCollector = diagnosticCollector,
         )
     }
 }
