@@ -47,7 +47,7 @@ fun <R> testWithTypeParameter() {
 fun testWithBounds() {
     val s: String? = null
     // U <: T, T = String!, String? <: U!
-    JavaClass.consumeWithBounds<String, <!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS("String!; String?")!>_<!>>(s)
+    JavaClass.consumeWithBounds<String, _>(s)
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, nullableType, propertyDeclaration,
