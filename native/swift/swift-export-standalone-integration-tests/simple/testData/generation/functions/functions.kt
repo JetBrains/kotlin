@@ -182,3 +182,12 @@ data class Foo(var value: Int = 0) {
 }
 
 operator fun Foo.invoke(other: Foo): Foo = other
+
+// FILE: inline_fun.kt
+package inline
+
+inline fun foo(): String = TODO()
+
+class Bar {
+    inline fun bar(): String = TODO()
+}

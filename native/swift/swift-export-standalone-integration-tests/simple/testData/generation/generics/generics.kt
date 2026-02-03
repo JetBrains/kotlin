@@ -4,6 +4,8 @@
 
 fun <T> foo(param1: T, param2: T?): T = TODO()
 
+inline fun <T> bar(param1: T?, param2: T): T = TODO()
+
 // A producer interface (covariant)
 interface Producer<out T> {
     fun produce(): T

@@ -10,7 +10,7 @@ class Foo {
     }
 }
 
-inline fun foo() {}
+inline fun <reified T> foo(): T = TODO()
 
 // FILE: packaged.kt
 package a.b.c

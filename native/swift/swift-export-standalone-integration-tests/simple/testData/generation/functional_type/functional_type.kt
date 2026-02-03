@@ -107,3 +107,11 @@ fun foo_flow_with_callback(callback: CallbackWithInnerClosure): CallbackWithInne
 
 class Foo
 class Bar
+
+// MODULE: inline
+// EXPORT_TO_SWIFT
+// FILE: inline.kt
+
+inline fun foo(inlined: () -> Unit): Unit = TODO()
+
+inline fun bar(inlined: () -> Unit, noinline notInlined: () -> Unit): Unit = TODO()

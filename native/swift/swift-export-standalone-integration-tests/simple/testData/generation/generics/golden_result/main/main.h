@@ -85,6 +85,8 @@ void * __root___TripleBox_init_allocate();
 
 void __root___TripleBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+void * _Nullable __root___bar__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable param1, void * _Nullable param2);
+
 NSDictionary<id, id> * __root___createMap__TypesOfArguments__Swift_Array_main_Pair___(NSArray<id> * pairs);
 
 NSArray<id> * __root___customFilter__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(NSArray<id> * receiver, _Bool (^predicate)(void * _Nullable ));

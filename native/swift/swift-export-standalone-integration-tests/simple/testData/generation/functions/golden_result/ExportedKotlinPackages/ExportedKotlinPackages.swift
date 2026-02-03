@@ -1,3 +1,5 @@
+public enum inline {
+}
 public enum kotlin {
     public enum collections {
     }

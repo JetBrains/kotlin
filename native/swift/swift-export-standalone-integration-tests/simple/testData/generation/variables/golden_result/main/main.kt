@@ -112,6 +112,54 @@ public fun __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSuppo
     lateinit_foo = __newValue
 }
 
+@ExportedBridge("inline_barGet_get")
+public fun inline_barGet_get(): Int {
+    val _result = `inline`.barGet
+    return _result
+}
+
+@ExportedBridge("inline_barGet_set__TypesOfArguments__Swift_Int32__")
+public fun inline_barGet_set__TypesOfArguments__Swift_Int32__(newValue: Int): Unit {
+    val __newValue = newValue
+    `inline`.barGet = __newValue
+}
+
+@ExportedBridge("inline_barSet_get")
+public fun inline_barSet_get(): Int {
+    val _result = `inline`.barSet
+    return _result
+}
+
+@ExportedBridge("inline_barSet_set__TypesOfArguments__Swift_Int32__")
+public fun inline_barSet_set__TypesOfArguments__Swift_Int32__(newValue: Int): Unit {
+    val __newValue = newValue
+    `inline`.barSet = __newValue
+}
+
+@ExportedBridge("inline_bar_get")
+public fun inline_bar_get(): Int {
+    val _result = `inline`.bar
+    return _result
+}
+
+@ExportedBridge("inline_bar_set__TypesOfArguments__Swift_Int32__")
+public fun inline_bar_set__TypesOfArguments__Swift_Int32__(newValue: Int): Unit {
+    val __newValue = newValue
+    `inline`.bar = __newValue
+}
+
+@ExportedBridge("inline_fooGet_get")
+public fun inline_fooGet_get(): kotlin.native.internal.NativePtr {
+    val _result = `inline`.fooGet
+    return _result.objcPtr()
+}
+
+@ExportedBridge("inline_foo_get")
+public fun inline_foo_get(): kotlin.native.internal.NativePtr {
+    val _result = `inline`.foo
+    return _result.objcPtr()
+}
+
 @ExportedBridge("namespace_main_bar_get")
 public fun namespace_main_bar_get(): Int {
     val _result = namespace.main.bar
@@ -136,4 +184,3 @@ public fun namespace_main_foobar__TypesOfArguments__Swift_Int32__(`param`: Int):
     val _result = namespace.main.foobar(__param)
     return _result
 }
-
