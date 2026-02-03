@@ -498,7 +498,7 @@ object StandaloneProjectFactory {
     }
 
     private fun withAllTransitiveDependencies(ktModules: List<KaModule>): List<KaModule> {
-        val visited = hashSetOf<KaModule>()
+        val visited = mutableSetOf<KaModule>()
         val stack = ktModules.toMutableList()
         while (stack.isNotEmpty()) {
             val module = stack.popLast()
