@@ -67,6 +67,9 @@ Run across all modules with the plugin:
 
 # Filter by path or pattern (applies to all modules)
 ./gradlew manageTestDataGlobally --mode=update --test-data-path=testData/myTest.kt
+
+# Run only golden tests (skip variant-specific tests)
+./gradlew manageTestDataGlobally --mode=update --golden-only
 ```
 
 ### Module Filtering
@@ -90,11 +93,12 @@ View all options:
 ./gradlew help --task :analysis:analysis-api-fir:manageTestData
 ```
 
-| Option                 | Description                         |
-|------------------------|-------------------------------------|
-| `--mode`               | `check` (default) or `update`       |
-| `--test-data-path`     | Filter tests by test data file path |
-| `--test-class-pattern` | Filter tests by class name regex    |
+| Option                 | Description                                 |
+|------------------------|---------------------------------------------|
+| `--mode`               | `check` (default) or `update`               |
+| `--test-data-path`     | Filter tests by test data file path         |
+| `--test-class-pattern` | Filter tests by class name regex            |
+| `--golden-only`        | Run only golden tests (empty variant chain) |
 
 ## Execution Order
 

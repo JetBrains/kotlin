@@ -96,12 +96,14 @@ internal object TestDataManagerRunner {
         val totalTime = measureTime {
             val testDataPath = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_DATA_PATH)
             val testClassPattern = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_CLASS_PATTERN)
+            val goldenOnly = System.getProperty(TEST_DATA_MANAGER_OPTIONS_GOLDEN_ONLY)?.toBooleanStrictOrNull() ?: false
             val mode = TestDataManagerMode.currentModeOrNull
 
             println("Starting test data manager...")
             println("  mode: ${mode ?: "NOT SET"}")
             println("  testDataPath: ${testDataPath ?: "NOT SET"}")
             println("  testClassPattern: ${testClassPattern ?: "NOT SET"}")
+            println("  goldenOnly: $goldenOnly")
 
             if (mode == null) {
                 System.err.println("WARNING: Mode is not set!")
@@ -111,7 +113,7 @@ internal object TestDataManagerRunner {
 
             LauncherFactory.openSession().use { launcherSession ->
                 context(launcherSession) {
-                    discoverAndRunTests(testClassPattern, testDataPath)
+                    discoverAndRunTests(testClassPattern, testDataPath, goldenOnly)
                 }
             }
 
@@ -141,10 +143,11 @@ internal object TestDataManagerRunner {
     private fun discoverAndRunTests(
         testClassPattern: String?,
         testDataPath: String?,
+        goldenOnly: Boolean = false,
     ) {
         val timingStats = TimingStats()
         val launcher = launcherSession.launcher
-        val request = buildDiscoveryRequest(testClassPattern, testDataPath)
+        val request = buildDiscoveryRequest(testClassPattern, testDataPath, goldenOnly)
 
         // Phase 1: Discover tests with variant chains
         val (discoveredTests, discoveryTime) = measureTimedValue {
@@ -226,6 +229,7 @@ internal object TestDataManagerRunner {
     internal fun buildDiscoveryRequest(
         testClassPattern: String? = null,
         testDataPath: String? = null,
+        goldenOnly: Boolean = false,
         vararg additionalFilters: Filter<*>,
     ): LauncherDiscoveryRequest {
         val builder = LauncherDiscoveryRequestBuilder.request()
@@ -235,7 +239,7 @@ internal object TestDataManagerRunner {
                 // Only generated tests are included to significantly reduce the number of candidates
                 // since anyway this tool is not replacement for the standard `test` command
                 ClassNameFilter.includeClassNamePatterns(".*Generated"),
-                ManagedTestFilter,
+                ManagedTestFilter(goldenOnly),
             )
 
         if (testDataPath != null) {

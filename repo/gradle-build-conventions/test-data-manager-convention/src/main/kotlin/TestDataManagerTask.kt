@@ -57,6 +57,16 @@ interface TestDataManagerTask : Task {
     @get:Option(option = "test-class-pattern", description = "Regex pattern for test class names. If not specified, runs all tests")
     @get:Optional
     val testClassPattern: Property<String>
+
+    /**
+     * When true, runs only golden tests (tests with an empty variant chain).
+     *
+     * This filters out all variant-specific tests, running only the base/golden tests.
+     */
+    @get:Input
+    @get:Option(option = "golden-only", description = "Run only golden tests (empty variant chain). If not specified, runs all tests")
+    @get:Optional
+    val goldenOnly: Property<Boolean>
 }
 
 /**

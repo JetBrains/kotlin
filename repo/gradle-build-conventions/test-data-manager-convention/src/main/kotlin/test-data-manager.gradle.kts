@@ -41,6 +41,7 @@ tasks.register<TestDataManagerModuleTask>(manageTestDataTaskName) {
     mode.convention(rootConfig.mode.orElse(TestDataManagerMode.DEFAULT))
     testDataPath.convention(rootConfig.testDataPath)
     testClassPattern.convention(rootConfig.testClassPattern)
+    goldenOnly.convention(rootConfig.goldenOnly)
 
     // Capture test task configuration eagerly during configuration (configuration-cache compatible)
     // Note: taskProvider.map creates a task dependency, so we capture the value directly

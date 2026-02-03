@@ -16,8 +16,10 @@ import org.junit.platform.launcher.PostDiscoveryFilter
  *
  * This filter checks both the test class and its enclosing classes,
  * so nested test classes within a ManagedTest are also included.
+ *
+ * @param goldenOnly When true, only includes tests with an empty variant chain (golden tests).
  */
-internal object ManagedTestFilter : PostDiscoveryFilter {
+internal class ManagedTestFilter(private val goldenOnly: Boolean = false) : PostDiscoveryFilter {
     override fun apply(descriptor: TestDescriptor): FilterResult {
         val source = descriptor.source.orElse(null) ?: return FilterResult.excluded("No source")
         val testClass = when (source) {
@@ -26,10 +28,18 @@ internal object ManagedTestFilter : PostDiscoveryFilter {
             else -> return FilterResult.excluded("Unsupported source type")
         }
 
-        return if (testClass.findManagedTestClass() != null) {
-            FilterResult.included("Implements ManagedTest")
-        } else {
-            FilterResult.excluded("Does not implement ManagedTest")
+        val managedTestClass = testClass.findManagedTestClass()
+            ?: return FilterResult.excluded("Does not implement ManagedTest")
+
+        // Filter out non-golden classes (classes with non-empty variant chain)
+        // variantChain is a class-level property, so filtering at class level is efficient
+        if (goldenOnly) {
+            val variantChain = managedTestClass.getVariantChain()
+            if (variantChain.isNotEmpty()) {
+                return FilterResult.excluded("Non-golden class: $variantChain")
+            }
         }
+
+        return FilterResult.included("Implements ManagedTest" + if (goldenOnly) " (golden)" else "")
     }
 }
