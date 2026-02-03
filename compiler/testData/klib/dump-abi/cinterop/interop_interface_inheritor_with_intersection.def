@@ -1,0 +1,12 @@
+language = Objective-C
+---
+#import <Foundation/Foundation.h>
+
+@protocol A
+-(void) overriddenFunction;
+@property int overriddenProperty;
+@end
+
+@protocol B
+-(void) overriddenFunction;
+@end
