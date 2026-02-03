@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.util.removeSuffixIfPresent
  * from the need to extract src -> klib compilation from the /kotlin-native directory.
  */
 interface NativeKlibCompilationConfig {
-    val project: Project
-
     val configuration: CompilerConfiguration
 
     val target: KonanTarget
