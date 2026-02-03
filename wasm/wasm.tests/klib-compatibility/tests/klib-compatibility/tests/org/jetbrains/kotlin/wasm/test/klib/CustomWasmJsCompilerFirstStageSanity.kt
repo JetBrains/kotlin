@@ -15,6 +15,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @Tag("sanity")
+@Tag("aggregate")
 class CustomWasmJsCompilerFirstStageSanity :
     AbstractCustomWasmJsCompilerFirstStageTest(testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/") {
 

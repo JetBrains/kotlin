@@ -100,9 +100,21 @@ fun Project.customFirstStageTest(
     )
 }
 
+fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task> {
+    val version = CustomCompilerVersion(rawVersion)
+    return customCompilerTest(
+        version = version,
+        taskName = "testMinimalInAggregate",
+        tag = "aggregate",
+    )
+}
+
 /* Custom-first-stage test tasks for different compiler versions. */
 customFirstStageTest("2.3.0")
 // TODO: Add a new task for the "custom-first-stage" test here.
+
+// TODO: Keep updating the following compiler version to be the previous major one.
+customStagesAggregateTest("2.3.0")
 
 tasks.test {
     // The default test task does not resolve the necessary dependencies and does not set up the environment.
