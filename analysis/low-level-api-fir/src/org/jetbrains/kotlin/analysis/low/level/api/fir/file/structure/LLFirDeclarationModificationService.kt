@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.publishModuleOutO
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
@@ -142,7 +142,19 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             return LLModificationLocality.OutOfBlock
         }
 
-        if (element is PsiWhiteSpace || element is PsiComment) {
+        if (element.isWhitespaceOrComment()) {
+            if (modificationType is KaElementModificationType.ElementReplaced && modificationType.replacedElement.isWhitespaceOrComment()) {
+                /**
+                 * There might be cases when one whitespace / comment node is replaced with another whitespace / comment node.
+                 * ```kotlin
+                 * interface A -> interface/* my comment */A
+                 * ```
+                 * The whitespace deletion here is considered OOBM. However, the replacement node is a comment that still separates other nodes.
+                 * The modification is invisible as it's still a valid code.
+                 */
+                return LLModificationLocality.Invisible
+            }
+
             // `PsiWhiteSpace` is not a `KtElement`, so we cannot invalidate it directly. This also ensures that we get a somewhat stable
             // element instead of the (possibly deleted) whitespace.
             //
@@ -196,7 +208,8 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      * This check covers cases such as a new body that was added to a function, which should cause an out-of-block modification.
      */
     private fun PsiElement.isNewDirectChildOf(inBlockModificationOwner: KtAnnotated, modificationType: KaElementModificationType): Boolean =
-        modificationType == KaElementModificationType.ElementAdded && parent == inBlockModificationOwner
+        (modificationType == KaElementModificationType.ElementAdded || modificationType is KaElementModificationType.ElementReplaced)
+                && parent == inBlockModificationOwner
 
     /**
      * Contract changes are always out-of-block modifications. If a contract is removed all at once, e.g. via [PsiElement.delete],
@@ -216,18 +229,34 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      * As it is not a valid contract statement, its removal doesn't need to trigger an out-of-block modification. Nonetheless, as such a
      * situation should not occur frequently, false positives are acceptable and this simplifies the analysis, making it less error-prone.
      */
-    private fun KaElementModificationType.isContractRemoval(): Boolean =
-        this is KaElementModificationType.ElementRemoved && (removedElement as? KtExpression)?.isContractDescriptionCallPsiCheck() == true
+    private fun KaElementModificationType.isContractRemoval(): Boolean {
+        val removedElement =
+            (this as? KaElementModificationType.ElementRemoved)?.removedElement
+                ?: (this as? KaElementModificationType.ElementReplaced)?.replacedElement
+                ?: return false
+
+        return (removedElement as? KtExpression)?.isContractDescriptionCallPsiCheck() == true
+    }
 
     /**
      * Backing field access changes are always out-of-block modifications.
      *
      * @see potentiallyAffectsPropertyBackingFieldResolution
      */
-    private fun KaElementModificationType.isBackingFieldAccessChange(inBlockModificationOwner: KtAnnotated): Boolean =
-        inBlockModificationOwner is KtPropertyAccessor &&
-                this is KaElementModificationType.ElementRemoved &&
-                removedElement.potentiallyAffectsPropertyBackingFieldResolution()
+    private fun KaElementModificationType.isBackingFieldAccessChange(inBlockModificationOwner: KtAnnotated): Boolean {
+        if (inBlockModificationOwner !is KtPropertyAccessor) {
+            return false
+        }
+
+        val removedElement =
+            (this as? KaElementModificationType.ElementRemoved)?.removedElement
+                ?: (this as? KaElementModificationType.ElementReplaced)?.replacedElement
+                ?: return false
+
+        return removedElement.potentiallyAffectsPropertyBackingFieldResolution()
+    }
+
+    private fun PsiElement.isWhitespaceOrComment(): Boolean = this is PsiWhiteSpace || this is PsiComment
 
     private fun handleDeferredModification(modificationLocality: LLModificationLocality.Deferrable) {
         when (modificationLocality) {

@@ -48,6 +48,7 @@ public interface KaSourceModificationService : KaEngineService {
      *   body.
      * - If [element] is the parent of an already removed element, [KaElementModificationType.ElementRemoved] should contain the removed
      *   element.
+     * - If [element] is the replacement, [KaElementModificationType.ElementReplaced] should contain the replaced element.
      */
     public fun detectLocality(element: PsiElement, modificationType: KaElementModificationType): KaSourceModificationLocality
 

@@ -393,6 +393,11 @@ public final class org/jetbrains/kotlin/analysis/api/platform/modification/KaEle
 	public final fun getRemovedElement ()Lcom/intellij/psi/PsiElement;
 }
 
+public final class org/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType$ElementReplaced : org/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType {
+	public fun <init> (Lcom/intellij/psi/PsiElement;)V
+	public final fun getReplacedElement ()Lcom/intellij/psi/PsiElement;
+}
+
 public final class org/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType$Unknown : org/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/platform/modification/KaElementModificationType$Unknown;
 }
