@@ -307,10 +307,14 @@ internal class KClassImpl<T : Any>(
                 }
             } else {
                 jClass.genericSuperclass?.takeUnless { it == Any::class.java }?.let {
-                    result += it.toKType(knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL)
+                    result += it.toKType(
+                        knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL, howThisTypeIsUsed = TypeUsage.SUPERTYPE,
+                    )
                 }
                 jClass.genericInterfaces.mapTo(result) {
-                    it.toKType(knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL)
+                    it.toKType(
+                        knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL, howThisTypeIsUsed = TypeUsage.SUPERTYPE,
+                    )
                 }
             }
 

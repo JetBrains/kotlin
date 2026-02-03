@@ -18,6 +18,7 @@ internal fun Type.toKType(
     knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>,
     nullability: TypeNullability = TypeNullability.FLEXIBLE,
     replaceNonArrayArgumentsWithStarProjections: Boolean = false,
+    howThisTypeIsUsed: TypeUsage = TypeUsage.COMMON,
 ): KType {
     val base: SimpleKType = when (this) {
         is Class<*> -> {
@@ -53,18 +54,28 @@ internal fun Type.toKType(
     }
 
     // We cannot read `@kotlin.annotations.jvm.Mutable/ReadOnly` annotations in kotlin-reflect because they have CLASS retention.
-    // Therefore, all collection types in Java are considered mutability-flexible.
-    val withMutableFlexibility = run {
+    // Therefore, collection types in Java are considered mutability-flexible by default. The few exceptions are listed a bit below.
+    val mutableType = run {
         val klass = base.classifier as? KClass<*>
         val mutableFqName = JavaToKotlinClassMap.readOnlyToMutable(klass?.qualifiedName?.let(::FqNameUnsafe))
         if (mutableFqName != null && klass != null) {
-            val lowerBound = createJavaSimpleType(
+            createJavaSimpleType(
                 this, base.classifier, base.arguments, base.isMarkedNullable,
                 mutableCollectionClass = getMutableCollectionKClass(mutableFqName, klass),
             )
-            FlexibleKType.create(lowerBound, base, isRawType = false) { this }
-        } else base
+        } else null
     }
+
+    // Java collection type is loaded as mutable (as opposed to mutability-flexible) in the following cases:
+    // 1) If it's the top-level type in the supertype position.
+    // 2) If its last type argument has a contravariant projection. `List<in A>` does not make sense, but `MutableList<in A>` does.
+    //    So, `java.util.List<? super X>` is transformed to `kotlin.collections.MutableList<in X>` (NOT `(Mutable)List<in X>`).
+    //    Similarly, `java.util.Map<K, ? super V>` is transformed to `kotlin.collections.MutableMap<K, in V>`.
+    val withMutableFlexibility =
+        if (howThisTypeIsUsed == TypeUsage.SUPERTYPE || argumentsMakeSenseOnlyForMutableContainer(mutableType)) mutableType ?: base
+        else mutableType?.let {
+            FlexibleKType.create(it, base, isRawType = false) { this }
+        } ?: base
 
     return when (nullability) {
         TypeNullability.NOT_NULL -> withMutableFlexibility
@@ -81,6 +92,11 @@ internal enum class TypeNullability {
     NOT_NULL,
     NULLABLE,
     FLEXIBLE,
+}
+
+internal enum class TypeUsage {
+    SUPERTYPE,
+    COMMON,
 }
 
 private fun createJavaSimpleType(
@@ -185,3 +201,8 @@ private fun SimpleKType.toFlexibleArrayElementVarianceType(javaType: Type): Flex
         isRawType = false,
         computeJavaType = { javaType },
     ) as FlexibleKType
+
+private fun Type.argumentsMakeSenseOnlyForMutableContainer(mutableType: SimpleKType?): Boolean =
+    this is ParameterizedType && actualTypeArguments.last().let {
+        it is WildcardType && it.lowerBounds.size == 1
+    } && mutableType != null && (mutableType.classifier as KClass<*>).typeParameters.last().variance == KVariance.OUT

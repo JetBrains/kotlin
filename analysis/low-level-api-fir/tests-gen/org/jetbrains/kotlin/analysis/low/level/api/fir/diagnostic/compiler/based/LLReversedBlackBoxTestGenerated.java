@@ -58221,6 +58221,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("javaMutableCollections.kt")
+      public void testJavaMutableCollections() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/javaMutableCollections.kt");
+      }
+
+      @Test
       @TestMetadata("javaWildcards.kt")
       public void testJavaWildcards() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/javaWildcards.kt");
