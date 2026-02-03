@@ -194,7 +194,7 @@ internal class KaFirSymbolRelationProvider(
         return true
     }
 
-    fun getContainingDeclarationByPsi(symbol: KaSymbol): KaDeclarationSymbol? {
+    private fun getContainingDeclarationByPsi(symbol: KaSymbol): KaDeclarationSymbol? {
         val containingDeclaration = getContainingPsi(symbol) ?: return null
         return with(analysisSession) { containingDeclaration.symbol }
     }
