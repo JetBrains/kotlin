@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.wasm.test.klib.AbstractCustomWasmJsCompilerFirstStageTest
 import org.jetbrains.kotlin.test.HeavyTest
+import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
     val testsRoot = args[0]
@@ -25,6 +27,18 @@ fun main(args: Array<String>) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("boxInline")
             }
+
+            testClass<AbstractCustomWasmJsCompilerFirstStageTest>(
+                suiteTestClassName = "CustomWasmJsAggregateFirstStageTestGenerated",
+                annotations = listOf(
+                    annotation(HeavyTest::class.java),
+                    aggregate(),
+                )
+            ) {
+                model("boxInline")
+            }
         }
     }
 }
+
+private fun aggregate(): AnnotationModel = annotation(Tag::class.java, "aggregate")
