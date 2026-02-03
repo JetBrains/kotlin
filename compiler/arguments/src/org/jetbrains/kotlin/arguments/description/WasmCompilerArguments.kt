@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
 
@@ -20,7 +19,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     compilerArgument {
         name = "Xwasm"
         description = "Use the WebAssembly compiler backend.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -30,7 +29,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     compilerArgument {
         name = "Xwasm-target"
         description = "Set up the Wasm target (wasm-js or wasm-wasi).".asReleaseDependent()
-        valueType = StringType.defaultNull
+        argumentType = StringType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -41,7 +40,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-debug-info"
         compilerName = "wasmDebug"
         description = "Add debug info to the compiled WebAssembly module.".asReleaseDependent()
-        valueType = BooleanType(
+        argumentType = BooleanType(
             isNullable = false.asReleaseDependent(),
             defaultValue = true.asReleaseDependent()
         )
@@ -55,7 +54,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-debug-friendly"
         compilerName = "forceDebugFriendlyCompilation"
         description = "Avoid optimizations that can break debugging.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -65,7 +64,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     compilerArgument {
         name = "Xwasm-included-module-only"
         description = "Compile only a module passed using `-include` option.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
@@ -85,7 +84,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     compilerArgument {
         name = "Xwasm-generate-wat"
         description = "Generate a .wat file.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -96,7 +95,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-kclass-fqn"
         compilerName = "wasmKClassFqn"
         description = "Enable support for 'KClass.qualifiedName'.".asReleaseDependent()
-        valueType = BooleanType.defaultTrue
+        argumentType = BooleanType.defaultTrue
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -106,7 +105,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     compilerArgument {
         name = "Xwasm-enable-array-range-checks"
         description = "Turn on range checks for array access functions.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -116,7 +115,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     compilerArgument {
         name = "Xwasm-enable-asserts"
         description = "Turn on asserts.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -126,7 +125,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     compilerArgument {
         name = "Xwasm-use-traps-instead-of-exceptions"
         description = "Use traps instead of throwing exceptions.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -136,7 +135,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     compilerArgument {
         name = "Xwasm-internal-local-variable-prefix"
         description = "Prefix to use for internally generated local variables.".asReleaseDependent()
-        valueType = StringType(
+        argumentType = StringType(
             isNullable = false.asReleaseDependent(),
             defaultValue = "~".asReleaseDependent()
         )
@@ -149,7 +148,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     compilerArgument {
         name = "Xwasm-use-new-exception-proposal"
         description = "Use an updated version of the exception proposal with try_table.".asReleaseDependent()
-        valueType = BooleanType(
+        argumentType = BooleanType(
             isNullable = ReleaseDependent(
                 true,
                 KotlinReleaseVersion.v2_1_20..KotlinReleaseVersion.v2_2_20 to false,
@@ -170,7 +169,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-no-jstag"
         compilerName = "wasmNoJsTag"
         description = "Don't use WebAssembly.JSTag for throwing and catching exceptions".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_20,
@@ -181,7 +180,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-debugger-custom-formatters"
         compilerName = "debuggerCustomFormatters"
         description = "Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -192,7 +191,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-source-map-include-mappings-from-unavailable-sources"
         compilerName = "includeUnavailableSourcesIntoSourceMap"
         description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -203,7 +202,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-preserve-ic-order"
         compilerName = "preserveIcOrder"
         description = "Preserve wasm file structure between IC runs.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -214,7 +213,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-ic-cache-readonly"
         compilerName = "icCacheReadonly"
         description = "Do not commit IC cache updates.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -225,7 +224,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-generate-dwarf"
         compilerName = "generateDwarf"
         description = "Generate DWARF debug information.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -238,7 +237,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
                 "The format will be chosen automatically based on the file extension. " +
                 "Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, " +
                 "and plain text for all other file types.").asReleaseDependent()
-        valueType = StringType.defaultNull
+        argumentType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -253,7 +252,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
                 "The format will be chosen automatically depending on the file extension. " +
                 "Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, " +
                 "and plain text for all other file types.").asReleaseDependent()
-        valueType = StringType.defaultNull
+        argumentType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(

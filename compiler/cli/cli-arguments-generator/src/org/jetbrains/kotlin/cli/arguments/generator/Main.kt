@@ -280,7 +280,7 @@ private fun validateDeprecationConsistency(argument: KotlinCompilerArgument) {
 
 private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument) {
     if (argument.additionalAnnotations.none { it is Enables || it is Disables }) return
-    when (val valueType = argument.valueType) {
+    when (val valueType = argument.argumentType) {
         is BooleanType -> {
             valueType.defaultValue.current.let {
                 if (it != false) {
@@ -381,7 +381,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
 
 private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
     val name = argument.calculateName()
-    val type = when (val type = argument.valueType) {
+    val type = when (val type = argument.argumentType) {
         is BooleanType -> when (type.isNullable.current) {
             true -> "Boolean?"
             false -> "Boolean"
@@ -473,7 +473,7 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
 private val KotlinCompilerArgument.defaultValueInArgs: String
     get() {
         @Suppress("UNCHECKED_CAST")
-        val valueType = valueType as KotlinArgumentValueType<Any>
+        val valueType = argumentType as KotlinArgumentValueType<Any>
         return valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
     }
 
