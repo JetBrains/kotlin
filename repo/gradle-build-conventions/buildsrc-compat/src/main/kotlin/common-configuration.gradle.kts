@@ -356,7 +356,6 @@ fun Project.configureTests() {
             ":kotlin-native:libclangInterop",
             ":kotlin-native:llvmInterop",
             ":kotlin-native:tools:kdumputil",
-            ":kotlin-sam-with-receiver-compiler-plugin",
             ":kotlin-scripting-common",
             ":kotlin-scripting-compiler",
             ":kotlin-scripting-dependencies",
