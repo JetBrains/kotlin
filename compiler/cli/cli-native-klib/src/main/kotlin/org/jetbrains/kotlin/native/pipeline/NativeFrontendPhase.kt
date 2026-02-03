@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.native.pipeline
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
+import org.jetbrains.kotlin.konan.config.konanPrintFiles
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.NativePhaseContext
@@ -100,7 +100,7 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
 
         val outputs = sessionsWithSources.map { (session, sources) ->
             buildResolveAndCheckFir(session, sources, diagnosticsReporter).also {
-                if (config.configuration.getBoolean(KonanConfigKeys.PRINT_FILES)) {
+                if (config.configuration.konanPrintFiles) {
                     it.fir.forEach { file -> println(file.render()) }
                 }
             }

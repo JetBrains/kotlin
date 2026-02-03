@@ -68,8 +68,8 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
 
         configuration.konanProducedArtifactKind = CompilerOutputKind.LIBRARY
         arguments.moduleName?.let { configuration.moduleName = it }
-        arguments.target?.let { configuration.target = it }
-        configuration.targetPlatform = configuration.target?.let {
+        arguments.target?.let { configuration.konanTarget = it }
+        configuration.targetPlatform = configuration.konanTarget?.let {
             NativePlatforms.nativePlatformByTargetNames(listOf(it))
         } ?: NativePlatforms.unspecifiedNativePlatform
 
@@ -93,13 +93,13 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
 
         arguments.manifestFile?.let { configuration.konanManifestAddend = it }
         arguments.headerKlibPath?.let { configuration.konanGeneratedHeaderKlibPath = it }
-        arguments.shortModuleName?.let { configuration.shortModuleName = it }
+        arguments.shortModuleName?.let { configuration.konanShortModuleName = it }
         arguments.includes?.let {
-            configuration.includedLibraries = it.toList()
+            configuration.konanIncludedLibraries = it.toList()
         }
 
-        configuration.printIr = arguments.printIr
-        configuration.printFiles = arguments.printFiles
+        configuration.konanPrintIr = arguments.printIr
+        configuration.konanPrintFiles = arguments.printFiles
         arguments.verifyCompiler?.let {
             configuration.verifyCompiler = it == "true"
         }
@@ -108,13 +108,13 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
 
         configuration.checkDependencies = arguments.checkDependencies
         arguments.writeDependenciesOfProducedKlibTo?.let {
-            configuration.writeDependenciesOfProducedKlibTo = it
+            configuration.konanWriteDependenciesOfProducedKlibTo = it
         }
         arguments.manifestNativeTargets?.let {
-            configuration.manifestNativeTargets = parseManifestNativeTargets(it, configuration)
+            configuration.konanManifestNativeTargets = parseManifestNativeTargets(it, configuration)
         }
 
-        configuration.exportKdoc = arguments.exportKDoc
+        configuration.konanExportKdoc = arguments.exportKDoc
 
         configuration.setupPartialLinkageConfig(
             mode = arguments.partialLinkageMode,

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.common.contentRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.konan.config.emitLazyObjcHeaderFile
-import org.jetbrains.kotlin.konan.config.includedLibraries
+import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.file.File
 import java.util.*
 
@@ -48,7 +48,7 @@ internal fun adjustConfigurationForSecondStage(
     // We need to remove this flag, as it would otherwise override header written previously.
     // Unfortunately, there is no way to remove the flag, so empty string is put instead
     configuration.emitLazyObjcHeaderFile?.let { configuration.emitLazyObjcHeaderFile = "" }
-    configuration.includedLibraries += listOf(intermediateKLib.absolutePath)
+    configuration.konanIncludedLibraries += listOf(intermediateKLib.absolutePath)
 }
 
 internal fun createIntermediateKlib(): File =

@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanLibraries
+import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -64,7 +66,7 @@ class KonanDriver(
             )
         }
 
-        val fileNames = configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { libPath ->
+        val fileNames = configuration.konanLibraryToAddToCache?.let { libPath ->
             val filesToCache = configuration.get(KonanConfigKeys.FILES_TO_CACHE)
             when {
                 !filesToCache.isNullOrEmpty() -> filesToCache
@@ -100,7 +102,7 @@ class KonanDriver(
             konanConfig.targetManager.list()
         }
 
-        val hasIncludedLibraries = configuration[KonanConfigKeys.INCLUDED_LIBRARIES]?.isNotEmpty() == true
+        val hasIncludedLibraries = configuration.konanIncludedLibraries.isNotEmpty()
         val isProducingExecutableFromLibraries = konanConfig.produce == CompilerOutputKind.PROGRAM
                 && configuration.konanLibraries.isNotEmpty() && !hasIncludedLibraries
         val hasCompilerInput = configuration.kotlinSourceRoots.isNotEmpty()

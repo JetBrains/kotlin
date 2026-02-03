@@ -24,18 +24,30 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.MemoryModel
 import org.jetbrains.kotlin.config.nativeBinaryOptions.parseBinaryOptions
 import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.konan.config.konanDontCompressKlib
+import org.jetbrains.kotlin.konan.config.konanEntryPoint
+import org.jetbrains.kotlin.konan.config.konanExportKdoc
 import org.jetbrains.kotlin.konan.config.konanFriendLibraries
 import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
 import org.jetbrains.kotlin.konan.config.konanIncludedBinaries
+import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanLibraries
+import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
 import org.jetbrains.kotlin.konan.config.konanManifestAddend
+import org.jetbrains.kotlin.konan.config.konanManifestNativeTargets
 import org.jetbrains.kotlin.konan.config.konanNativeLibraries
 import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
 import org.jetbrains.kotlin.konan.config.konanNoEndorsedLibs
 import org.jetbrains.kotlin.konan.config.konanNoStdlib
 import org.jetbrains.kotlin.konan.config.konanOutputPath
+import org.jetbrains.kotlin.konan.config.konanPrintBitcode
+import org.jetbrains.kotlin.konan.config.konanPrintFiles
+import org.jetbrains.kotlin.konan.config.konanPrintIr
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
+import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
 import org.jetbrains.kotlin.konan.config.konanRefinesModules
+import org.jetbrains.kotlin.konan.config.konanShortModuleName
+import org.jetbrains.kotlin.konan.config.konanTarget
+import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedKlibTo
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -71,7 +83,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     // With Swift Export, exported prefix must be Kotlin.
     ("Kotlin".takeIf { get(BinaryOptions.swiftExport) == true } ?: arguments.moduleName)?.let { put(FULL_EXPORTED_NAME_PREFIX, it) }
 
-    arguments.target?.let { put(TARGET, it) }
+    arguments.target?.let { konanTarget = it }
 
     konanIncludedBinaries = arguments.includeBinaries.toNonNullList()
     konanNativeLibraries = arguments.nativeLibraries.toNonNullList()
@@ -85,7 +97,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     konanProducedArtifactKind = outputKind
     arguments.headerKlibPath?.let { konanGeneratedHeaderKlibPath = it }
 
-    arguments.mainPackage?.let { put(ENTRY, it) }
+    arguments.mainPackage?.let { konanEntryPoint = it }
     arguments.manifestFile?.let { konanManifestAddend = it }
     arguments.runtimeFile?.let { put(RUNTIME_FILE, it) }
     arguments.temporaryFilesDir?.let { put(TEMPORARY_FILES_DIR, it) }
@@ -126,15 +138,15 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(STATIC_FRAMEWORK, selectFrameworkType(this@setupFromArguments, arguments, outputKind))
     put(OVERRIDE_CLANG_OPTIONS, arguments.clangOptions.toNonNullList())
 
-    put(EXPORT_KDOC, arguments.exportKDoc)
+    konanExportKdoc = arguments.exportKDoc
 
-    put(PRINT_IR, arguments.printIr)
-    put(PRINT_BITCODE, arguments.printBitCode)
-    put(PRINT_FILES, arguments.printFiles)
+    konanPrintIr = arguments.printIr
+    konanPrintBitcode = arguments.printBitCode
+    konanPrintFiles = arguments.printFiles
 
-    put(PURGE_USER_LIBS, arguments.purgeUserLibs)
+    konanPurgeUserLibs = arguments.purgeUserLibs
 
-    putIfNotNull(WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO, arguments.writeDependenciesOfProducedKlibTo)
+    arguments.writeDependenciesOfProducedKlibTo?.let { konanWriteDependenciesOfProducedKlibTo = it }
 
     if (arguments.verifyCompiler != null)
         put(VERIFY_COMPILER, arguments.verifyCompiler == "true")
@@ -199,7 +211,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         konanRefinesModules = arguments.refinesPaths!!.filterNot(String::isEmpty)
 
     put(EXPORTED_LIBRARIES, selectExportedLibraries(this@setupFromArguments, arguments, outputKind))
-    put(INCLUDED_LIBRARIES, selectIncludes(this@setupFromArguments, arguments, outputKind))
+    konanIncludedLibraries = selectIncludes(this@setupFromArguments, arguments, outputKind)
     put(FRAMEWORK_IMPORT_HEADERS, arguments.frameworkImportHeaders.toNonNullList())
     arguments.emitLazyObjCHeader?.let { put(EMIT_LAZY_OBJC_HEADER_FILE, it) }
 
@@ -210,7 +222,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     val libraryToAddToCache = parseLibraryToAddToCache(arguments, this@setupFromArguments, outputKind)
     if (libraryToAddToCache != null && !arguments.outputName.isNullOrEmpty())
         report(ERROR, "${K2NativeCompilerArguments::libraryToAddToCache.cliArgument} already implicitly sets output file name")
-    libraryToAddToCache?.let { put(LIBRARY_TO_ADD_TO_CACHE, it) }
+    libraryToAddToCache?.let { konanLibraryToAddToCache = it }
     put(CACHED_LIBRARIES, parseCachedLibraries(arguments, this@setupFromArguments))
     put(CACHE_DIRECTORIES, arguments.cacheDirectories.toNonNullList())
     put(AUTO_CACHEABLE_FROM, arguments.autoCacheableFrom.toNonNullList())
@@ -234,7 +246,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, nThreads)
 
     parseShortModuleName(arguments, this@setupFromArguments, outputKind)?.let {
-        put(SHORT_MODULE_NAME, it)
+        konanShortModuleName = it
     }
     put(FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
     putIfNotNull(PRE_LINK_CACHES, parsePreLinkCachesValue(this@setupFromArguments, arguments.preLinkCaches))
@@ -359,7 +371,8 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(KONAN_DATA_DIR, arguments.konanDataDir)
 
     val manifestNativeTargets = arguments.manifestNativeTargets?.let { parseManifestNativeTargets(it) }
-    putIfNotNull(MANIFEST_NATIVE_TARGETS, manifestNativeTargets)
+    if (manifestNativeTargets != null)
+        konanManifestNativeTargets = manifestNativeTargets
     this@setupFromArguments.targetPlatform = NativePlatforms.nativePlatformByTargets(manifestNativeTargets.orEmpty())
 
     putIfNotNull(LLVM_MODULE_PASSES, arguments.llvmModulePasses)
@@ -369,7 +382,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.normalize()
 
 internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: KonanConfig) = with(KonanConfigKeys) {
-    put(TARGET, konanConfig.target.toString())
+    konanTarget = konanConfig.target.toString()
     put(DEBUG, konanConfig.debug)
     setupPartialLinkageConfig(konanConfig.partialLinkageConfig)
     putIfNotNull(EXTERNAL_DEPENDENCIES, konanConfig.externalDependenciesFile?.absolutePath)
