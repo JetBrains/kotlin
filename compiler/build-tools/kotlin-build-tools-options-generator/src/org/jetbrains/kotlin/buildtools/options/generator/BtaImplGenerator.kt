@@ -10,6 +10,7 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
+import org.jetbrains.kotlin.arguments.dsl.types.PathType
 import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -262,15 +263,25 @@ internal class BtaImplGenerator(
             add("if (%M in this) { ", member)
             val valueToAssign = CodeBlock.builder().apply {
                 add("get(%M)", member)
-                add(
-                    when {
-                        type.isCompilerEnum -> maybeGetNullabilitySign(
-                            argument
-                        ) + ".stringValue"
-                        argument.valueType.origin is IntType -> maybeGetNullabilitySign(argument) + ".toString()"
-                        else -> ""
+                when {
+                    type.isCompilerEnum -> {
+                        add(maybeGetNullabilitySign(argument) + ".stringValue")
                     }
-                )
+                    argument.valueType.origin is IntType -> {
+                        add(maybeGetNullabilitySign(argument) + ".toString()")
+                    }
+                    argument.valueType.origin is PathType -> {
+                        add(
+                            maybeGetNullabilitySign(argument) + ".%M()",
+                            MemberName(
+                                packageName = targetPackage,
+                                simpleName = "absolutePathStringOrThrow",
+                                isExtension = true
+                            )
+                        )
+                    }
+                    else -> ""
+                }
             }.build()
             if (wasRemoved) {
                 add(
@@ -314,6 +325,10 @@ internal class BtaImplGenerator(
                 argument.valueType.origin is IntType -> {
                     add(maybeGetNullabilitySign(argument))
                     add(".let { it.toInt() }")
+                }
+                argument.valueType.origin is PathType -> {
+                    add(maybeGetNullabilitySign(argument))
+                    add(".let { %M(it) }", MemberName(KOTLIN_IO_PATH, "Path"))
                 }
                 else -> ""
             }
