@@ -12,29 +12,16 @@ import llvm.LLVMContextDispose
 import llvm.LLVMDisposeModule
 import llvm.LLVMOpaqueModule
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.HeaderMode
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
-import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.native.FirOutput
-import org.jetbrains.kotlin.native.FirSerializerInput
-import org.jetbrains.kotlin.native.runPreSerializationLowerings
 import org.jetbrains.kotlin.util.PerformanceManager
-import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
@@ -54,7 +41,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                         CompilerOutputKind.DYNAMIC -> produceCLibrary(engine, config, environment)
                         CompilerOutputKind.STATIC -> produceCLibrary(engine, config, environment)
                         CompilerOutputKind.FRAMEWORK -> produceObjCFramework(engine, config, environment)
-                        CompilerOutputKind.LIBRARY -> produceKlib(engine, config, environment)
+                        CompilerOutputKind.LIBRARY -> error("klib is supported only in NativeKlibCliPipeline")
                         CompilerOutputKind.BITCODE -> error("Bitcode output kind is obsolete.")
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
@@ -73,7 +60,8 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
      * - Binary (if -Xomit-framework-binary is not passed).
      */
     private fun produceObjCFramework(engine: PhaseEngine<NativeBackendPhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
+        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
+                ?: return
 
         val (objCExportedInterface, linkKlibsOutput, objCCodeSpec) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
@@ -95,7 +83,8 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     }
 
     private fun produceCLibrary(engine: PhaseEngine<NativeBackendPhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
+        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
+                ?: return
 
         val (linkKlibsOutput, cAdapterElements) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             engine.linkKlibs(frontendOutput) {
@@ -112,77 +101,12 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
-    private fun <T : PhaseContext> produceKlib(engine: PhaseEngine<T>, config: NativeKlibCompilationConfig, environment: KotlinCoreEnvironment) {
-        val serializerOutput = serializeKLibK2(engine, config, environment)
-        serializerOutput?.let {
-            performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
-                engine.writeKlib(it, config.outputPath)
-            }
-        }
-    }
-
-    /**
-     * Skips IR generation if either generating using -Xmetadata-klib or running header mode with
-     * -Xheader-mode and -Xheader-mode-type=compilation.
-     */
-    private fun skipIrGeneration(config: NativeKlibCompilationConfig, frontendOutput: FirOutput.Full): Boolean {
-        if (config.metadataKlib) return true
-        val skipInHeaderMode = config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
-                config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerModeType) == HeaderMode.COMPILATION &&
-                !requireIrForHeaderCompilationMode(frontendOutput)
-        return skipInHeaderMode
-    }
-
-    private fun <T : PhaseContext> serializeKLibK2(
-            engine: PhaseEngine<T>,
-            config: NativeKlibCompilationConfig,
-            environment: KotlinCoreEnvironment
-    ): SerializerOutput? {
-        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFirFrontend(environment) }
-        if (frontendOutput is FirOutput.ShouldNotGenerateCode) return null
-        require(frontendOutput is FirOutput.Full)
-
-        return if (skipIrGeneration(config, frontendOutput)) {
-            performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
-                engine.runFirSerializer(frontendOutput)
-            }
-        } else {
-            val fir2IrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-                engine.runFir2Ir(frontendOutput)
-            }
-            engine.runK2SpecialBackendChecks(fir2IrOutput)
-
-            val loweredIr = performanceManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
-                engine.runPreSerializationLowerings(fir2IrOutput, environment)
-            }
-            val headerKlibPath = config.headerKlibPath
-            if (!headerKlibPath.isNullOrEmpty()) {
-                // Child performance manager is needed since otherwise the phase ordering is broken
-                PerformanceManagerImpl.createChildIfNeeded(performanceManager, start = false).let {
-                    val headerKlib = it.tryMeasurePhaseTime(PhaseType.IrSerialization) {
-                        engine.runFir2IrSerializer(FirSerializerInput(loweredIr, produceHeaderKlib = true))
-                    }
-                    it.tryMeasurePhaseTime(PhaseType.KlibWriting) {
-                        engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
-                    }
-                    performanceManager?.addOtherUnitStats(it?.unitStats)
-                }
-                // Don't overwrite the header klib with the full klib and stop compilation here.
-                // By providing the same path for both regular output and header klib we can skip emitting the full klib.
-                if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
-            }
-
-            performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
-                engine.runFir2IrSerializer(FirSerializerInput(loweredIr))
-            }
-        }
-    }
-
     /**
      * Produce a single binary artifact.
      */
     private fun produceBinary(engine: PhaseEngine<NativeBackendPhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
+        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
+                ?: return
 
         val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.linkKlibs(frontendOutput) }
         val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput)
@@ -218,7 +142,8 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         require(config.target.family.isAppleFamily)
         require(config.produce == CompilerOutputKind.TEST_BUNDLE)
 
-        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
+        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
+                ?: return
         val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             engine.runPhase(CreateTestBundlePhase, frontendOutput)
             engine.linkKlibs(frontendOutput)
@@ -243,30 +168,5 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             linkKlibsOutput.symbolTable,
     ).also {
         additionalDataSetter(it)
-    }
-
-    @OptIn(DirectDeclarationsAccess::class)
-    private fun requireIrForHeaderCompilationMode(frontendOutput: FirOutput.Full): Boolean {
-        for (output in frontendOutput.firResult.outputs) {
-            for (file in output.fir) {
-                if (requireIrForHeaderCompilationMode(file.declarations)) return true
-            }
-        }
-        return false
-    }
-
-    @OptIn(DirectDeclarationsAccess::class)
-    private fun requireIrForHeaderCompilationMode(declarations: List<FirDeclaration>): Boolean {
-        for (declaration in declarations) {
-            if (declaration is FirFunction && declaration.status.isInline) return true
-            if (declaration is FirProperty) {
-                if (declaration.getter?.status?.isInline == true || declaration.setter?.status?.isInline == true) return true
-            }
-            if (declaration is FirClass) {
-                if (declaration.status.isValue) return true
-                if (requireIrForHeaderCompilationMode(declaration.declarations)) return true
-            }
-        }
-        return false
     }
 }
