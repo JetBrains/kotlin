@@ -45,6 +45,8 @@ abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext
 }
 
 object PerformanceNotifications {
+    object InitializationStarted : AbstractNotification(PhaseType.Initialization, start = true)
+    object InitializationFinished : AbstractNotification(PhaseType.Initialization, start = false)
     // frontend
     object AnalysisStarted : AbstractNotification(PhaseType.Analysis, start = true)
     object AnalysisFinished : AbstractNotification(PhaseType.Analysis, start = false)
@@ -56,6 +58,10 @@ object PerformanceNotifications {
     // ir pre-lowering
     object IrPreLoweringStarted : AbstractNotification(PhaseType.IrPreLowering, start = true)
     object IrPreLoweringFinished : AbstractNotification(PhaseType.IrPreLowering, start = false)
+
+    // ir serialization
+    object IrSerializationStarted : AbstractNotification(PhaseType.IrSerialization, start = true)
+    object IrSerializationFinished : AbstractNotification(PhaseType.IrSerialization, start = false)
 
     // klib writing
     object KlibWritingStarted : AbstractNotification(PhaseType.KlibWriting, start = true)
