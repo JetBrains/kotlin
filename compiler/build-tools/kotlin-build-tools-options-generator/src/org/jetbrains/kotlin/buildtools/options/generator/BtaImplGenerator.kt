@@ -168,11 +168,18 @@ internal class BtaImplGenerator(
             val argumentTypeParameter = when (argument.valueType) {
                 is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
                     val type = argument.valueType.kType
-                    if (type.isCompilerEnum) {
-                        val classifier = type.classifier as KClass<*>
-                        classifier.toBtaEnumClassName()
-                    } else {
-                        type.asTypeName()
+                    when {
+                        type.isCompilerEnum -> {
+                            val classifier = type.classifier as KClass<*>
+                            classifier.toBtaEnumClassName()
+                        }
+                        type.isCustomType -> {
+                            val classifier = type.classifier as KClass<*>
+                            classifier.toBtaCustomClassName()
+                        }
+                        else -> {
+                            type.asTypeName()
+                        }
                     }
                 }
                 is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type
@@ -280,6 +287,16 @@ internal class BtaImplGenerator(
                             )
                         )
                     }
+                    type.isCustomType -> {
+                        add(
+                            maybeGetNullabilitySign(argument) + ".%M()",
+                            MemberName(
+                                packageName = targetPackage,
+                                simpleName = "toArgumentString",
+                                isExtension = true
+                            )
+                        )
+                    }
                     else -> ""
                 }
             }.build()
@@ -329,6 +346,16 @@ internal class BtaImplGenerator(
                 argument.valueType.origin is PathType -> {
                     add(maybeGetNullabilitySign(argument))
                     add(".let { %M(it) }", MemberName(KOTLIN_IO_PATH, "Path"))
+                }
+                type.isCustomType -> {
+                    add(
+                        maybeGetNullabilitySign(argument) + ".%M()",
+                        MemberName(
+                            packageName = targetPackage,
+                            simpleName = "to${argument.name.replaceFirstChar { it.uppercase() }}",
+                            isExtension = true
+                        )
+                    )
                 }
                 else -> ""
             }

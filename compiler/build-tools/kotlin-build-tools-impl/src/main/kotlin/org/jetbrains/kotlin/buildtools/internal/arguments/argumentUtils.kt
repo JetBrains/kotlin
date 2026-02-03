@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection", "unused")
+
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
@@ -28,3 +30,14 @@ internal fun <T> CommonToolArguments.getUsingReflection(propertyName: String): T
 }
 
 internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
+
+//TODO(KT-83794) Uncomment once Xprofile is changed to ProfileCompilerCommandType
+//internal fun ProfileCompilerCommand.toArgumentString(): String =
+//    "\"${profilerPath.absolutePathStringOrThrow()}:$command:${outputDir.absolutePathStringOrThrow()}\""
+//
+//internal fun String.toXprofile(): ProfileCompilerCommand {
+//    val parts = this.split(":")
+//    require(parts.size == 3) { "Invalid async profiler settings format: $this" }
+//
+//    return ProfileCompilerCommand(Path(parts[0]), parts[1], Path(parts[2]))
+//}
