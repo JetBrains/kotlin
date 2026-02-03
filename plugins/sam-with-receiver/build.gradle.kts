@@ -21,9 +21,7 @@ dependencies {
     testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
-    testFixturesApi(libs.junit4)
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testRuntimeOnly(toolsJar())
 
