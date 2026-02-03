@@ -95,8 +95,6 @@ class JvmFir2IrExtensions(
 
     override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? = null
 
-    override val irNeedsDeserialization: Boolean = false
-
     override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean {
         val builtIns = irBuiltIns ?: error("BuiltIns are not initialized")
         val symbolTable = symbolTable ?: error("SymbolTable is not initialized")
