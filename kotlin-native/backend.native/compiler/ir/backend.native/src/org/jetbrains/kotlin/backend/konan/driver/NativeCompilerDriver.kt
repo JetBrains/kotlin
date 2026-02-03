@@ -115,7 +115,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val serializerOutput = serializeKLibK2(engine, config, environment)
         serializerOutput?.let {
             performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
-                engine.writeKlib(it)
+                engine.writeKlib(it, config.outputPath)
             }
         }
     }
