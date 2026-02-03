@@ -45,7 +45,7 @@ open class JvmGeneratorExtensionsImpl(
     private val configuration: CompilerConfiguration,
     private val generateFacades: Boolean = true,
 ) : GeneratorExtensions(), JvmGeneratorExtensions {
-    override val irDeserializationEnabled: Boolean = configuration.get(JVMConfigurationKeys.SERIALIZE_IR) != JvmSerializeIrMode.NONE
+    override val irDeserializationEnabled: Boolean = false
 
     override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
 

@@ -34,7 +34,7 @@ class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : Jv
     private fun makeSerializerSession(fileClassFqName: FqName) =
         JvmIrSerializerSession(
             declarationTable,
-            configuration.get(JVMConfigurationKeys.SERIALIZE_IR) ?: JvmSerializeIrMode.NONE,
+            JvmSerializeIrMode.NONE,
             fileClassFqName,
             configuration,
         )
