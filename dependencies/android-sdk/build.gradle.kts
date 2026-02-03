@@ -101,8 +101,9 @@ fun unzipSdkTask(
         val injected = project.objects.newInstance<Injected>()
         val fs = injected.fs
         val archiveOperations = injected.archiveOperations
-        val file = cfg.singleFile
+        val files = cfg.incoming.files
         doFirst {
+            val file = files.singleFile
             fs.copy {
                 when (ext) {
                     "zip" -> from(archiveOperations.zipTree(file))
