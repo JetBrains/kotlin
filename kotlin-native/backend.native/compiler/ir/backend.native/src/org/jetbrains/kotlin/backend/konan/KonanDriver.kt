@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.konan.config.konanLibraries
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -101,7 +102,7 @@ class KonanDriver(
 
         val hasIncludedLibraries = configuration[KonanConfigKeys.INCLUDED_LIBRARIES]?.isNotEmpty() == true
         val isProducingExecutableFromLibraries = konanConfig.produce == CompilerOutputKind.PROGRAM
-                && configuration[KonanConfigKeys.LIBRARY_FILES]?.isNotEmpty() == true && !hasIncludedLibraries
+                && configuration.konanLibraries.isNotEmpty() && !hasIncludedLibraries
         val hasCompilerInput = configuration.kotlinSourceRoots.isNotEmpty()
                 || hasIncludedLibraries
                 || configuration[KonanConfigKeys.EXPORTED_LIBRARIES]?.isNotEmpty() == true

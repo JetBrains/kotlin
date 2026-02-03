@@ -15,6 +15,12 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.konan.config.konanFriendLibraries
+import org.jetbrains.kotlin.konan.config.konanLibraries
+import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
+import org.jetbrains.kotlin.konan.config.konanNoEndorsedLibs
+import org.jetbrains.kotlin.konan.config.konanNoStdlib
+import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.isNativeStdlib
@@ -445,18 +451,18 @@ class CacheBuilder(
             )
 
             setupCommonOptionsForCaches(konanConfig)
-            put(KonanConfigKeys.PRODUCE, CompilerOutputKind.STATIC_CACHE)
+            konanProducedArtifactKind = CompilerOutputKind.STATIC_CACHE
             // CHECK_DEPENDENCIES is computed based on outputKind, which is overwritten in the line above
             // So we have to change CHECK_DEPENDENCIES accordingly, otherwise they might not be downloaded (see KT-67547)
             put(KonanConfigKeys.CHECK_DEPENDENCIES, true)
             put(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE, libraryPath)
-            put(KonanConfigKeys.NODEFAULTLIBS, true)
-            put(KonanConfigKeys.NOENDORSEDLIBS, true)
-            put(KonanConfigKeys.NOSTDLIB, true)
-            put(KonanConfigKeys.LIBRARY_FILES, libraries)
+            konanNoDefaultLibs = true
+            konanNoEndorsedLibs = true
+            konanNoStdlib = true
+            konanLibraries = libraries
             val generateTestRunner = this@CacheBuilder.generateTestRunner
             if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
-                put(KonanConfigKeys.FRIEND_MODULES, konanConfig.friendModuleFiles.map { it.absolutePath })
+                konanFriendLibraries = konanConfig.friendModuleFiles.map { it.absolutePath }
                 put(KonanConfigKeys.GENERATE_TEST_RUNNER, generateTestRunner)
                 put(KonanConfigKeys.INCLUDED_LIBRARIES, listOf(libraryPath))
                 configuration.get(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH)?.let { put(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH, it) }

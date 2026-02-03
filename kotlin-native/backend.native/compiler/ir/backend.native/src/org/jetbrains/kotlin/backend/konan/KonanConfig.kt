@@ -21,6 +21,14 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
+import org.jetbrains.kotlin.konan.config.konanFriendLibraries
+import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
+import org.jetbrains.kotlin.konan.config.konanIncludedBinaries
+import org.jetbrains.kotlin.konan.config.konanManifestAddend
+import org.jetbrains.kotlin.konan.config.konanNativeLibraries
+import org.jetbrains.kotlin.konan.config.konanOutputPath
+import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
+import org.jetbrains.kotlin.konan.config.konanRefinesModules
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
@@ -454,7 +462,7 @@ class KonanConfig(
         configuration.get(BinaryOptions.linkRuntime) ?: defaultStrategy
     }
 
-    override val manifestProperties = configuration.get(KonanConfigKeys.MANIFEST_FILE)?.let {
+    override val manifestProperties = configuration.konanManifestAddend?.let {
         File(it).loadProperties()
     }
 
@@ -673,25 +681,25 @@ class KonanConfig(
         get() = manifestProperties?.getProperty("interop") == "true"
 
     override val produce: CompilerOutputKind
-        get() = configuration.get(KonanConfigKeys.PRODUCE)!!
+        get() = configuration.konanProducedArtifactKind!!
 
     override val metadataKlib: Boolean
         get() = configuration.getBoolean(CommonConfigurationKeys.METADATA_KLIB)
 
     override val headerKlibPath: String?
-        get() = configuration.get(KonanConfigKeys.HEADER_KLIB)?.removeSuffixIfPresent(".klib")
+        get() = configuration.konanGeneratedHeaderKlibPath?.removeSuffixIfPresent(".klib")
 
     override val friendModuleFiles: Set<File>
-        get() = configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet() ?: emptySet()
+        get() = configuration.konanFriendLibraries.map { File(it) }.toSet()
 
     override val refinesModuleFiles: Set<File>
-        get() = configuration.get(KonanConfigKeys.REFINES_MODULES)?.map { File(it) }?.toSet().orEmpty()
+        get() = configuration.konanRefinesModules.map { File(it) }.toSet()
 
     override val nativeLibraries: List<String>
-        get() = configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
+        get() = configuration.konanNativeLibraries
 
     override val includeBinaries: List<String>
-        get() = configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
+        get() = configuration.konanIncludedBinaries
 
     override val writeDependenciesOfProducedKlibTo: String?
         get() = configuration.get(KonanConfigKeys.WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO)
@@ -703,7 +711,7 @@ class KonanConfig(
         get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
 
     override val outputPath: String
-        get() = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
+        get() = configuration.konanOutputPath?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
 }
 
 private fun String.isRelease(): Boolean {

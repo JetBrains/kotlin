@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.serialization.addLanguageFeaturesToManifest
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.konan.config.konanDontCompressKlib
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.writer.includeBitcode
 import org.jetbrains.kotlin.konan.library.writer.includeNativeIncludedBinaries
@@ -32,8 +32,8 @@ import java.util.Properties
 fun PhaseContext.writeKlib(input: KlibWriterInput) {
     val suffix = ".klib"
     val outputPath = input.outputPath
-    val nopack = config.configuration.getBoolean(KonanConfigKeys.NOPACK)
-    val klibOutputFileName = if (!nopack) "${outputPath}.klib" else outputPath
+    val dontCompressKlib = config.configuration.konanDontCompressKlib
+    val klibOutputFileName = if (!dontCompressKlib) "${outputPath}.klib" else outputPath
     val config = config
     val configuration = config.configuration
     val libraryName = config.moduleId
@@ -52,9 +52,9 @@ fun PhaseContext.writeKlib(input: KlibWriterInput) {
 
     addLanguageFeaturesToManifest(manifestProperties, configuration.languageVersionSettings)
 
-    if (!nopack) {
+    if (!dontCompressKlib) {
         if (!klibOutputFileName.endsWith(suffix)) {
-            error("please specify correct output: packed: ${!nopack}, $klibOutputFileName$suffix")
+            error("please specify correct output: packed: ${!dontCompressKlib}, $klibOutputFileName$suffix")
         }
     }
 
@@ -96,7 +96,7 @@ fun PhaseContext.writeKlib(input: KlibWriterInput) {
         } else listOf(target.visibleName)
 
     KlibWriter {
-        format(if (nopack) KlibFormat.Directory else KlibFormat.ZipArchive)
+        format(if (dontCompressKlib) KlibFormat.Directory else KlibFormat.ZipArchive)
         manifest {
             moduleName(libraryName)
             versions(versions)
