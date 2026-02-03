@@ -12,7 +12,6 @@ annotation class K3(val value: Array<String>)
 
 fun box(): String {
     val k1 = K1::class.primaryConstructor!!
-    // isOptional should be true, see KT-82881.
     assertFalse(k1.parameters.single().isOptional)
     assertEquals(emptyList(), k1.callBy(emptyMap()).value.toList())
 

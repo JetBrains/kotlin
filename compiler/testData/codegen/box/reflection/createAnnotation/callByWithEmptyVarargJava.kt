@@ -22,7 +22,7 @@ import kotlin.test.*
 
 fun box(): String {
     // Java annotation constructor parameter is vararg if and only if it's a single parameter named "value".
-    // In this case, kotlin-reflect should treat this parameter as optional (modulo KT-82881) and allow its absence in `callBy`.
+    // In this case, kotlin-reflect should allow this parameter to be omitted in `callBy`.
 
     val j1 = J1::class.primaryConstructor!!
     assertFalse(j1.parameters.single().isOptional)
