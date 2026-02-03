@@ -29,10 +29,13 @@ import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import java.util.Properties
 
-fun PhaseContext.writeKlib(input: KlibWriterInput, klibOutputFileName: String, suffix: String) {
+fun PhaseContext.writeKlib(input: KlibWriterInput) {
+    val suffix = ".klib"
+    val outputPath = input.outputPath
+    val nopack = config.configuration.getBoolean(KonanConfigKeys.NOPACK)
+    val klibOutputFileName = if (!nopack) "${outputPath}.klib" else outputPath
     val config = config
     val configuration = config.configuration
-    val nopack = configuration.getBoolean(KonanConfigKeys.NOPACK)
     val libraryName = config.moduleId
     val shortLibraryName = config.shortModuleName
     val versions = KotlinLibraryVersioning(
