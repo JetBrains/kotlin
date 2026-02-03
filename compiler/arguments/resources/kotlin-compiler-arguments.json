@@ -1,5 +1,5 @@
 {
-    "schemaVersion": 3,
+    "schemaVersion": 4,
     "releases": [
         {
             "name": "1.0.0",
@@ -3089,6 +3089,21 @@
                             "valueInVersions": []
                         },
                         "delimiter": null,
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinHeaderModeType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": "any",
+                                "valueInVersions": []
+                            }
+                        },
+                        "argumentDescription": {
+                            "current": "{any|compilation}",
+                            "valueInVersions": []
+                        },
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinHeaderModeType",
                             "isNullable": {
@@ -16846,6 +16861,21 @@
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.IntType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": 64,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "argumentDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.IntType",
                                     "isNullable": {
