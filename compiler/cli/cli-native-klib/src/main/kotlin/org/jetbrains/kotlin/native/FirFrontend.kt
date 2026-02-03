@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -92,7 +93,7 @@ private inline fun <F> PhaseContext.firFrontend(
     }
 }
 
-fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirOutput {
+private fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirOutput {
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     // FIR
@@ -112,7 +113,7 @@ fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirOutput {
     )
 }
 
-fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutput {
+private fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutput {
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     // FIR
@@ -138,4 +139,16 @@ fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutp
                 buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
             },
     )
+}
+
+fun PhaseContext.firFrontend(input: KotlinCoreEnvironment): FirOutput {
+    var output = if (input.configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)) {
+        firFrontendWithLightTree(input)
+    } else {
+        firFrontendWithPsi(input)
+    }
+    if (output is FirOutput.Full) {
+        output = FirOutput.Full(FrontendFilesForPluginsGenerationPipelinePhase.createFilesWithGeneratedDeclarations(output.firResult))
+    }
+    return output
 }
