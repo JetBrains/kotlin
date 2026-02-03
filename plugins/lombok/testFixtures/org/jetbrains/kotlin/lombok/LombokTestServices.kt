@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok
 
 import lombok.Getter
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.lombok.LombokDirectives.ENABLE_LOMBOK
@@ -32,7 +33,7 @@ class LombokAdditionalSourceFileProvider(testServices: TestServices) : Additiona
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         if (ENABLE_LOMBOK !in module.directives) return emptyList()
-        return listOf(File(COMMON_SOURCE_PATH).toTestFile())
+        return listOf(ForTestCompileRuntime.transformTestDataPath(COMMON_SOURCE_PATH).toTestFile())
     }
 }
 
@@ -55,9 +56,18 @@ class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             configuration.addJvmClasspathRoot(GUAVA_JAR)
         }
 
+        createStopBubblingConfig(module)
         val lombokConfig = findLombokConfig(module) ?: return
         lombokConfig.copyTo(testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module).resolve(lombokConfig.name))
         configuration.put(LombokConfigurationKeys.LOMBOK_CONFIG_FILE, lombokConfig)
+    }
+
+    /**
+     * This config will prevent lombok from finding `lombok.config` file in parent directories.
+     */
+    private fun createStopBubblingConfig(module: TestModule) {
+        val file = testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module).parentFile.resolve(LOMBOK_CONFIG_NAME)
+        file.writeText("config.stopBubbling = true")
     }
 
     private fun findLombokConfig(module: TestModule): File? {
