@@ -33,7 +33,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 class KonanConfig(
-        override val project: Project,
+        val project: Project,
         override val configuration: CompilerConfiguration
 ) : NativeKlibCompilationConfig {
     /**
