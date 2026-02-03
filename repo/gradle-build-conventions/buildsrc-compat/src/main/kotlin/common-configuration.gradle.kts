@@ -345,7 +345,6 @@ fun Project.configureTests() {
             ":kotlin-gradle-plugin-idea-proto",
             ":kotlin-gradle-plugin-integration-tests",
             ":kotlin-gradle-statistics",
-            ":kotlin-lombok-compiler-plugin",
             ":kotlin-main-kts",
             ":kotlin-main-kts-test",
             ":kotlin-metadata-jvm",

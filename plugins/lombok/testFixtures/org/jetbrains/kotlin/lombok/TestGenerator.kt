@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun main(args: Array<String>) {
+    val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("plugins/lombok/tests-gen", "plugins/lombok/testData") {
+        testGroup(testsRoot, "plugins/lombok/testData") {
             testClass<AbstractIrBlackBoxCodegenTestForLombok> {
                 model("box")
             }

@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -38,10 +39,7 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -50,9 +48,6 @@ projectTests {
         jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)
     ) {
-        dependsOn(":dist")
-        workingDir = rootDir
-
         val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()
         doFirst {
             testRuntimeClasspathFiles
@@ -63,9 +58,15 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.lombok.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.lombok.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+    withTestJar()
+
+    testData(project(":kotlin-lombok-compiler-plugin").isolated, "testData")
 }
 
 publish()
