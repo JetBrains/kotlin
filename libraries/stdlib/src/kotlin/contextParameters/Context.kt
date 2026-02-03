@@ -12,7 +12,7 @@ package kotlin
 
 
 /**
- * Runs the specified [block] with the given value in context scope.
+ * Runs the specified [block] with the given value in context scope and as lambda argument.
  *
  * As opposed to [with], [context] only makes the value available for
  * context parameter resolution, but not as implicit receiver.
@@ -48,7 +48,7 @@ public inline fun <A, B, R> context(a: A, b: B, block: context(A, B) () -> R): R
 
 
 /**
- * Runs the specified [block] with the given values in context scope.
+ * Runs the specified [block] with the given values in context scope and as lambda arguments.
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
@@ -86,7 +86,7 @@ public inline fun <A, B, C, R> context(a: A, b: B, c: C, block: context(A, B, C)
 
 
 /**
- * Runs the specified [block] with the given values in context scope.
+ * Runs the specified [block] with the given values in context scope and as lambda arguments.
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
@@ -124,7 +124,7 @@ public inline fun <A, B, C, D, R> context(a: A, b: B, c: C, d: D, block: context
 
 
 /**
- * Runs the specified [block] with the given values in context scope.
+ * Runs the specified [block] with the given values in context scope and as lambda arguments.
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
@@ -162,7 +162,7 @@ public inline fun <A, B, C, D, E, R> context(a: A, b: B, c: C, d: D, e: E, block
 
 
 /**
- * Runs the specified [block] with the given values in context scope.
+ * Runs the specified [block] with the given values in context scope and as lambda arguments.
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
@@ -200,7 +200,7 @@ public inline fun <A, B, C, D, E, F, R> context(a: A, b: B, c: C, d: D, e: E, f:
 
 
 /**
- * Runs the specified [block] with the given values in context scope.
+ * Runs the specified [block] with the given values in context scope and as lambda arguments.
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.

@@ -38,6 +38,8 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
 
         val values = if (parameterTypes.size == 1) "value" else "values"
         val receivers = if (parameterTypes.size == 1) "receiver" else "receivers"
+        val argumentsWord = if (parameterTypes.size == 1) "argument" else "arguments"
+        val optionalComment = if (lambdaWithParams) " and as lambda $argumentsWord" else ""
 
         val contextParams = parameters
         val lambdaParams = if (lambdaWithParams) parameters else ""
@@ -58,7 +60,7 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
         out.println(
             """
 /**
- * Runs the specified [block] with the given $values in context scope.
+ * Runs the specified [block] with the given $values in context scope$optionalComment.
  *
  * As opposed to [with], [context] only makes the $values available for
  * context parameter resolution, but not as implicit $receivers.
