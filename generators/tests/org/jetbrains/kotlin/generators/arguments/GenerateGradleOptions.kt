@@ -947,7 +947,7 @@ context(_: KotlinCompilerArgumentsLevel)
 private val KotlinCompilerArgument.gradleReturnType: String
     get() {
         // Set nullability based on Gradle default value
-        var type = when (valueType::class
+        @Suppress("DEPRECATION") var type = when (valueType::class
             .supertypes.single { it.classifier == KotlinArgumentValueType::class }
             .arguments.first().type!!.classifier as KClass<*>) {
             Boolean::class -> "kotlin.Boolean"
