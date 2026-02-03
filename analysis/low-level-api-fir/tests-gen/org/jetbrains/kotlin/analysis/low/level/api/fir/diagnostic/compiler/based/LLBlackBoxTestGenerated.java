@@ -58221,6 +58221,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("javaWildcards.kt")
+      public void testJavaWildcards() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/javaWildcards.kt");
+      }
+
+      @Test
       @TestMetadata("nullablilitySubstitution.kt")
       public void testNullablilitySubstitution() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/nullablilitySubstitution.kt");

@@ -142,7 +142,10 @@ private fun Type.toKTypeProjection(knownTypeParameters: Map<TypeVariable<*>, KTy
     }
     return when {
         lowerBounds.size == 1 -> KTypeProjection.contravariant(lowerBounds.single().toKType(knownTypeParameters))
-        upperBounds.size == 1 -> KTypeProjection.covariant(upperBounds.single().toKType(knownTypeParameters))
+        upperBounds.size == 1 -> upperBounds.single().let {
+            if (it == Any::class.java) KTypeProjection.STAR
+            else KTypeProjection.covariant(upperBounds.single().toKType(knownTypeParameters))
+        }
         else -> KTypeProjection.STAR
     }
 }
