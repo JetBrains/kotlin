@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.native
 
-import org.jetbrains.kotlin.backend.konan.KonanCompilationException
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
@@ -110,7 +110,7 @@ fun PhaseContext.fir2Ir(
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
 
     if (diagnosticsReporter.hasErrors) {
-        throw KonanCompilationException("Compilation failed: there were some diagnostics during fir2ir")
+        throw CompilationErrorException("Compilation failed: there were some diagnostics during fir2ir")
     }
 
     return Fir2IrOutput(input.firResult, symbols, actualizedResult, usedLibraries)
