@@ -1,21 +1,20 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.common.ir.wrapWithLambdaCall
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.reportWarning
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.backend.konan.ir.isAbstract
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -23,29 +22,76 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.IrStatementsBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irBoolean
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irGetObjectValue
+import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.builders.irTemporary
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
+import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isBoolean
+import org.jetbrains.kotlin.ir.types.isString
+import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.types.starProjectedType
+import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.types.typeWithArguments
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.SetDeclarationsParentVisitor
+import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.addFakeOverrides
+import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameterWithClassParent
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.hasShape
+import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.isFunction
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import kotlin.collections.plus
 
-internal class TestProcessor(
-        private val context: LoweringContext,
-        private val sourcesModules: Set<ModuleDescriptor>? = null,
+class TestProcessor(
+    private val context: LoweringContext,
+    private val sourcesModules: Set<ModuleDescriptor>? = null,
 ) : FileLoweringPass {
     companion object {
         val TEST_SUITE_CLASS by IrDeclarationOriginImpl.Regular
@@ -54,7 +100,7 @@ internal class TestProcessor(
         val COMPANION_GETTER_NAME = Name.identifier("getCompanion")
         val INSTANCE_GETTER_NAME = Name.identifier("createInstance")
 
-        val IGNORE_FQ_NAME = FqName.fromSegments(listOf("kotlin", "test" , "Ignore"))
+        val IGNORE_FQ_NAME = FqName.fromSegments(listOf("kotlin", "test", "Ignore"))
     }
 
     private enum class TestProcessorFunctionKind(annotationNameString: String, val runtimeKindString: String) {
@@ -103,8 +149,8 @@ internal class TestProcessor(
         get() = name.substringAfterLast('/')
 
     private fun MutableList<TestFunction>.registerFunction(
-            function: IrFunction,
-            kinds: Collection<Pair<TestProcessorFunctionKind, /* ignored: */ Boolean>>) =
+        function: IrFunction,
+        kinds: Collection<Pair<TestProcessorFunctionKind, /* ignored: */ Boolean>>) =
         kinds.forEach { (kind, ignored) ->
             add(TestFunction(function, kind, ignored))
         }
@@ -116,11 +162,11 @@ internal class TestProcessor(
     ) = add(TestFunction(function, kind, ignored))
 
     private fun <T : IrElement> IrStatementsBuilder<T>.generateFunctionRegistration(
-            receiver: IrValueDeclaration,
-            registerTestCase: IrFunction,
-            registerFunction: IrFunction,
-            functions: Collection<TestFunction>,
-            parent: IrDeclarationParent,
+        receiver: IrValueDeclaration,
+        registerTestCase: IrFunction,
+        registerFunction: IrFunction,
+        functions: Collection<TestFunction>,
+        parent: IrDeclarationParent,
     ) {
         functions.forEach {
             if (it.kind == TestProcessorFunctionKind.TEST) {
@@ -137,10 +183,11 @@ internal class TestProcessor(
                     dispatchReceiver = irGet(receiver)
                     val testKindEntry = it.kind.runtimeKind
                     arguments[1] = IrGetEnumValueImpl(
-                            it.function.startOffset,
-                            it.function.endOffset,
-                            symbols.testFunctionKind.typeWithArguments(emptyList()),
-                            testKindEntry)
+                        it.function.startOffset,
+                        it.function.endOffset,
+                        symbols.testFunctionKind.typeWithArguments(emptyList()),
+                        testKindEntry
+                    )
                     arguments[2] = it.function.wrapWithLambdaCall(parent, this@TestProcessor.context)
                 }
             }
@@ -155,9 +202,9 @@ internal class TestProcessor(
     private fun IrType.isTestFunctionKind() = classifierOrNull == symbols.testFunctionKind
 
     private data class TestFunction(
-            val function: IrFunction,
-            val kind: TestProcessorFunctionKind,
-            val ignored: Boolean
+        val function: IrFunction,
+        val kind: TestProcessorFunctionKind,
+        val ignored: Boolean
     ) {
         val functionName: String get() = function.name.identifier
     }
@@ -229,7 +276,7 @@ internal class TestProcessor(
                             isInner ->
                                 warn("Annotation $annotation is not allowed for methods of an inner class")
 
-                            isAbstract() -> {
+                            modality == Modality.ABSTRACT || modality == Modality.SEALED -> {
                                 // We cannot create an abstract test class but it's allowed to mark its methods as
                                 // tests because the class can be extended. So skip this case without warnings.
                             }
@@ -310,7 +357,7 @@ internal class TestProcessor(
             val parent = declaration.parent
 
             warnAboutLoneIgnore(symbol)
-            val kinds = TestProcessorFunctionKind.values().mapNotNull { kind ->
+            val kinds = TestProcessorFunctionKind.entries.mapNotNull { kind ->
                 symbol.findAnnotatedFunction(kind.annotationFqName)?.let { annotatedFunction ->
                     warnAboutInheritedAnnotations(kind, symbol, annotatedFunction)
                     kind to (kind == TestProcessorFunctionKind.TEST && annotatedFunction.hasAnnotation(IGNORE_FQ_NAME))
@@ -325,7 +372,7 @@ internal class TestProcessor(
             when (parent) {
                 is IrPackageFragment -> topLevelFunctions.registerFunction(declaration, kinds)
                 is IrClass -> registerClassFunction(parent, declaration, kinds)
-                else -> UnsupportedOperationException("Cannot create test function $declaration (defined in $parent")
+                else -> throw UnsupportedOperationException("Cannot create test function $declaration (defined in $parent")
             }
         }
     }
@@ -339,22 +386,23 @@ internal class TestProcessor(
      */
     private fun buildObjectGetter(objectSymbol: IrClassSymbol,
                                   owner: IrClass,
-                                  getterName: Name): IrSimpleFunction =
+                                  getterName: Name
+    ): IrSimpleFunction =
         context.irFactory.createSimpleFunction(
-                owner.startOffset,
-                owner.endOffset,
-                TEST_SUITE_GENERATED_MEMBER,
-                getterName,
-                DescriptorVisibilities.PROTECTED,
-                isInline = false,
-                isExpect = false,
-                objectSymbol.starProjectedType,
-                Modality.FINAL,
-                IrSimpleFunctionSymbolImpl(),
-                isTailrec = false,
-                isSuspend = false,
-                isOperator = false,
-                isInfix = false,
+            owner.startOffset,
+            owner.endOffset,
+            TEST_SUITE_GENERATED_MEMBER,
+            getterName,
+            DescriptorVisibilities.PROTECTED,
+            isInline = false,
+            isExpect = false,
+            objectSymbol.starProjectedType,
+            Modality.FINAL,
+            IrSimpleFunctionSymbolImpl(),
+            isTailrec = false,
+            isSuspend = false,
+            isOperator = false,
+            isInfix = false,
         ).apply {
             parent = owner
 
@@ -365,7 +413,8 @@ internal class TestProcessor(
             overriddenSymbols += superFunction.symbol
 
             body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
-                +irReturn(irGetObjectValue(objectSymbol.typeWithArguments(emptyList()), objectSymbol)
+                +irReturn(
+                    irGetObjectValue(objectSymbol.typeWithArguments(emptyList()), objectSymbol)
                 )
             }
         }
@@ -376,22 +425,23 @@ internal class TestProcessor(
      */
     private fun buildInstanceGetter(classSymbol: IrClassSymbol,
                                     owner: IrClass,
-                                    getterName: Name): IrSimpleFunction =
+                                    getterName: Name
+    ): IrSimpleFunction =
         context.irFactory.createSimpleFunction(
-                owner.startOffset,
-                owner.endOffset,
-                TEST_SUITE_GENERATED_MEMBER,
-                getterName,
-                DescriptorVisibilities.PROTECTED,
-                isInline = false,
-                isExpect = false,
-                classSymbol.starProjectedType,
-                Modality.FINAL,
-                IrSimpleFunctionSymbolImpl(),
-                isTailrec = false,
-                isSuspend = false,
-                isOperator = false,
-                isInfix = false,
+            owner.startOffset,
+            owner.endOffset,
+            TEST_SUITE_GENERATED_MEMBER,
+            getterName,
+            DescriptorVisibilities.PROTECTED,
+            isInline = false,
+            isExpect = false,
+            classSymbol.starProjectedType,
+            Modality.FINAL,
+            IrSimpleFunctionSymbolImpl(),
+            isTailrec = false,
+            isSuspend = false,
+            isOperator = false,
+            isInfix = false,
         ).apply {
             parent = owner
 
@@ -427,16 +477,16 @@ internal class TestProcessor(
                                            functions: Collection<TestFunction>,
                                            ignored: Boolean): IrConstructor =
             context.irFactory.createConstructor(
-                    testSuite.owner.startOffset,
-                    testSuite.owner.endOffset,
-                    TEST_SUITE_GENERATED_MEMBER,
-                    Name.special("<init>"),
-                    DescriptorVisibilities.PUBLIC,
-                    isInline = false,
-                    isExpect = false,
-                    testSuite.starProjectedType,
-                    IrConstructorSymbolImpl(),
-                    isPrimary = true,
+                testSuite.owner.startOffset,
+                testSuite.owner.endOffset,
+                TEST_SUITE_GENERATED_MEMBER,
+                Name.special("<init>"),
+                DescriptorVisibilities.PUBLIC,
+                isInline = false,
+                isExpect = false,
+                testSuite.starProjectedType,
+                IrConstructorSymbolImpl(),
+                isPrimary = true,
             ).apply {
                 parent = owner
 
@@ -481,21 +531,21 @@ internal class TestProcessor(
      * annotated with @Test). The test suite class is a subclass of ClassTestSuite<T> where T is the test class.
      */
     private fun buildClassSuite(
-            suiteName: String,
-            testClass: IrClass,
-            testCompanion: IrClass?,
-            irFile: IrFile,
-            functions: Collection<TestFunction>,
+        suiteName: String,
+        testClass: IrClass,
+        testCompanion: IrClass?,
+        irFile: IrFile,
+        functions: Collection<TestFunction>,
     ): IrClass {
         return context.irFactory.createClass(
-                testClass.startOffset,
-                testClass.endOffset,
-                TEST_SUITE_CLASS,
-                testClass.name.synthesizeSuiteClassName(),
-                DescriptorVisibilities.PRIVATE,
-                IrClassSymbolImpl(),
-                ClassKind.CLASS,
-                Modality.FINAL,
+            testClass.startOffset,
+            testClass.endOffset,
+            TEST_SUITE_CLASS,
+            testClass.name.synthesizeSuiteClassName(),
+            DescriptorVisibilities.PRIVATE,
+            IrClassSymbolImpl(),
+            ClassKind.CLASS,
+            Modality.FINAL,
         ).apply {
             irFile.addChild(this)
             createThisReceiverParameter()
@@ -529,7 +579,7 @@ internal class TestProcessor(
             companionGetter?.let { declarations += it }
 
             superTypes += symbols.baseClassSuite.typeWith(listOf(testClassType, testCompanionType))
-            addFakeOverrides((context as? NativePreSerializationLoweringContext)?.typeSystem ?: (context as Context).typeSystem)
+            addFakeOverrides((context as? NativePreSerializationLoweringContext)?.typeSystem ?: (context as CommonBackendContext).typeSystem)
         }
     }
     //endregion
@@ -655,7 +705,7 @@ internal class TestProcessor(
 
         if (annotationCollector.testClasses.isNotEmpty() || annotationCollector.topLevelFunctions.isNotEmpty()) {
             irFile.annotations += buildSimpleAnnotation(
-                    context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, symbols.testsProcessed!!.owner
+                context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, symbols.testsProcessed!!.owner
             )
         }
     }
