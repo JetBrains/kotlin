@@ -82,8 +82,6 @@ projectTests {
         useJUnitPlatform {
             excludeTags("sandbox-native")
         }
-    }.also {
-        confugureFirPluginAnnotationsDependency(it)
     }
 
     nativeTestTask(
@@ -97,4 +95,5 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
+    withPluginSandboxAnnotations()
 }

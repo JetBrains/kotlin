@@ -124,31 +124,6 @@ fun Test.enableJunit5ExtensionsAutodetection() {
     systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 }
 
-fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>) {
-    val firPluginJvmAnnotations: Configuration by configurations.creating
-    val firPluginJsAnnotations: Configuration by configurations.creating {
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_RUNTIME))
-            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-        }
-    }
-
-    dependencies {
-        firPluginJvmAnnotations(project(":plugins:plugin-sandbox:plugin-annotations")) { isTransitive = false }
-        firPluginJsAnnotations(project(":plugins:plugin-sandbox:plugin-annotations")) { isTransitive = false }
-    }
-
-    testTask.configure {
-        dependsOn(firPluginJvmAnnotations, firPluginJsAnnotations)
-        val localFirPluginJvmAnnotations: FileCollection = firPluginJvmAnnotations
-        val localFirPluginJsAnnotations: FileCollection = firPluginJsAnnotations
-        doFirst {
-            systemProperty("firPluginAnnotations.jvm.path", localFirPluginJvmAnnotations.singleFile.canonicalPath)
-            systemProperty("firPluginAnnotations.js.path", localFirPluginJsAnnotations.singleFile.canonicalPath)
-        }
-    }
-}
-
 fun Project.optInTo(annotationFqName: String) {
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
         compilerOptions.optIn.add(annotationFqName)

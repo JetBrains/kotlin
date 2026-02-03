@@ -83,9 +83,10 @@ projectTests {
         dependsOn(":dist")
         workingDir = rootDir
         useJUnitPlatform()
-    }.also { confugureFirPluginAnnotationsDependency(it) }
+    }
 
     withJvmStdlibAndReflect()
+    withPluginSandboxAnnotations()
 }
 
 testsJar()

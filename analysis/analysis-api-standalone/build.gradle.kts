@@ -69,9 +69,10 @@ projectTests {
             // Ensure golden tests run first
             mustRunAfter(":analysis:analysis-api-fir:test")
         }
-    }.also { confugureFirPluginAnnotationsDependency(it) }
+    }
 
     withJvmStdlibAndReflect()
+    withPluginSandboxAnnotations()
 }
 
 testsJar()
