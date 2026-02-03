@@ -397,7 +397,6 @@ fun Project.configureTests() {
             ":native:swift:swift-export-standalone-integration-tests:simple",
             ":plugins:compose-compiler-plugin:compiler-hosted",
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
-            ":plugins:js-plain-objects:compiler-plugin",
             ":plugins:jvm-abi-gen",
             ":plugins:parcelize:parcelize-compiler",
             ":plugins:plugins-interactions-testing",

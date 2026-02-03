@@ -9,6 +9,7 @@ plugins {
     id("java-test-fixtures")
     id("d8-configuration")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val jsoIrRuntimeForTests by configurations.creating {
@@ -52,10 +53,6 @@ optInToExperimentalCompilerApi()
 sourceSets {
     "main" { none() }
     "testFixtures" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
 }
 
 publish {
@@ -70,17 +67,13 @@ testsJar()
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
-
-        workingDir = rootDir
-
-        dependsOn(jsoIrRuntimeForTests)
-
-        val localJsPlainObjectsIrRuntimePath: FileCollection = jsoIrRuntimeForTests
-
-        doFirst {
-            systemProperty("jso.runtime.path", localJsPlainObjectsIrRuntimePath.asPath)
-        }
+        addClasspathProperty(jsoIrRuntimeForTests, "jso.runtime.path")
     }
 
-    testGenerator("org.jetbrains.kotlinx.jspo.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlinx.jspo.TestGeneratorKt", generateTestsInBuildDirectory = true)
+
+    withJsRuntime()
+
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
+    testData(project(":plugins:js-plain-objects:compiler-plugin").isolated, "testData")
 }
