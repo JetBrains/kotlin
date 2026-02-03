@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.arguments.description.removed
 
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
@@ -35,7 +33,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         compilerName = "outputFile"
         argumentType = StringType.defaultNull
         description = "".asReleaseDependent()
-        valueDescription = "<filepath>".asReleaseDependent()
+        argumentDescription = "<filepath>".asReleaseDependent()
 
         additionalAnnotations(
             Deprecated("It is senseless to use with IR compiler. Only for compatibility."),

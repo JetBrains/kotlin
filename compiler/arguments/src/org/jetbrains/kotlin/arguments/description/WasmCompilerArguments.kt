@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.dsl.base.*
@@ -238,7 +236,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
                 "Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, " +
                 "and plain text for all other file types.").asReleaseDependent()
         argumentType = StringType.defaultNull
-        valueDescription = "<path>".asReleaseDependent()
+        argumentDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -253,7 +251,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
                 "Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, " +
                 "and plain text for all other file types.").asReleaseDependent()
         argumentType = StringType.defaultNull
-        valueDescription = "<path>".asReleaseDependent()
+        argumentDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,

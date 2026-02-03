@@ -24,12 +24,12 @@ class ReturnValueCheckerModeConsistency {
     }
 
     @Test
-    fun explicitApiArgumentValueDescription() {
+    fun explicitApiArgumentDescription() {
         val returnValueCheckerArg = actualCommonCompilerArguments.arguments.single { it.name == "Xreturn-value-checker" }
 
         assertEquals(
             expected = 10644755,
-            actual = returnValueCheckerArg.valueDescription.hashCode(),
+            actual = returnValueCheckerArg.argumentDescription.hashCode(),
             message = "Value description in '${returnValueCheckerArg.name}' should be updated by moving current value to 'oldValues'."
         )
     }

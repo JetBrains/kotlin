@@ -28,7 +28,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
     val deprecatedSinceVersion: KotlinReleaseVersion?,
     val removedSinceVersion: KotlinReleaseVersion?,
 ) {
-    @Suppress("DEPRECATION")
+
     class SSoTCompilerArgument(
         val effectiveCompilerName: String,
         origin: KotlinCompilerArgument,
