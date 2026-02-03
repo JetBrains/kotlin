@@ -46,7 +46,6 @@ class JvmBackendContext(
     val symbolTable: SymbolTable,
     val generatorExtensions: JvmGeneratorExtensions,
     val backendExtension: JvmBackendExtension,
-    val irSerializer: JvmIrSerializer?,
     val irDeserializer: JvmIrDeserializer,
     val irProviders: List<IrProvider>,
     val irPluginContext: IrPluginContext?,

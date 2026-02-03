@@ -21,7 +21,6 @@ private val jvmModulePhases1 = createModulePhases(
     ::ProcessOptionalAnnotations,
     ::JvmExpectDeclarationRemover,
     ::ConstEvaluationLowering,
-    ::SerializeIrPhase,
     ::FileClassLowering,
     ::JvmStaticInObjectLowering,
     ::RepeatedAnnotationLowering,
