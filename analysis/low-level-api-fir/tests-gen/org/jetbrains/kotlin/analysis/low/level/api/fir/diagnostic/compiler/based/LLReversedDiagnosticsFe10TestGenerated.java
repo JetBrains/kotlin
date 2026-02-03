@@ -429,6 +429,18 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("crashOnPlusAssignInBuildList.kt")
+    public void testCrashOnPlusAssignInBuildList() {
+      runTest("compiler/testData/diagnostics/tests/crashOnPlusAssignInBuildList.kt");
+    }
+
+    @Test
+    @TestMetadata("crashOnPlusAssignWithUnresolvedInBuildList.kt")
+    public void testCrashOnPlusAssignWithUnresolvedInBuildList() {
+      runTest("compiler/testData/diagnostics/tests/crashOnPlusAssignWithUnresolvedInBuildList.kt");
+    }
+
+    @Test
     @TestMetadata("DefaultValueForParameterInFunctionType.kt")
     public void testDefaultValueForParameterInFunctionType() {
       runTest("compiler/testData/diagnostics/tests/DefaultValueForParameterInFunctionType.kt");
