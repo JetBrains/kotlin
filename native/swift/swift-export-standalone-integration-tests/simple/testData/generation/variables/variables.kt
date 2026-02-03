@@ -36,3 +36,24 @@ val baz: Int = 30
 
 // FILE: unsupported.kt
 const val STRING_CONST: String = "Hello, World!"
+
+// FILE: inline.kt
+package inline
+
+inline val foo: String
+    get() = TODO()
+
+val fooGet: String
+    inline get() = TODO()
+
+inline var bar: Int
+    get() = TODO()
+    set(value) = TODO()
+
+var barGet: Int
+    inline get() = TODO()
+    set(value) = TODO()
+
+var barSet: Int
+    get() = TODO()
+    inline set(value) = TODO()

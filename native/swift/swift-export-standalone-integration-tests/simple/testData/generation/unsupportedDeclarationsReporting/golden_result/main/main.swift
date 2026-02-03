@@ -120,7 +120,7 @@ extension ExportedKotlinPackages.a.b.c {
         }
     }
 }
-// Can't export foo: inline functions are not supported yet.
-// Can't export foo: inline functions are not supported yet.
+// Can't export foo: inline functions with reified type parameters are not supported yet.
+// Can't export foo: inline functions with reified type parameters are not supported yet.
 // Can't export a.b.c.E.values: static functions are not supported yet.
 // Can't export a.b.c.E.values: static functions are not supported yet.

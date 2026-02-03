@@ -877,6 +877,14 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
     public static func EmptySerializersModule() -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
         return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_EmptySerializersModule())
     }
+    public static func serializersModule(
+        builderAction: @escaping (ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder) -> Swift.Void
+    ) -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+        return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_SerializersModule__TypesOfArguments__U28ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleBuilderU29202D_U20Swift_Void__({
+            let originalBlock = builderAction
+            return { arg0 in return originalBlock(ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder.__createClassWrapper(externalRCRef: arg0)) }
+        }()))
+    }
     public static func overwriteWith(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
         other: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
@@ -2013,6 +2021,37 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
+    }
+    public static func decodeStructure(
+        _ receiver: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder,
+        descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
+        block: @escaping (any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return { switch kotlinx_serialization_encoding_decodeStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoderU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), descriptor.__externalRCRef(), {
+            let originalBlock = block
+            return { arg0 in return originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder).map { it in it.__externalRCRef() } ?? nil }
+        }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+    }
+    public static func encodeCollection(
+        _ receiver: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
+        descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
+        collectionSize: Swift.Int32,
+        block: @escaping (any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder) -> Swift.Void
+    ) -> Swift.Void {
+        return kotlinx_serialization_encoding_encodeCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_U28anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoderU29202D_U20Swift_Void__(receiver.__externalRCRef(), descriptor.__externalRCRef(), collectionSize, {
+            let originalBlock = block
+            return { arg0 in return originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder) }
+        }())
+    }
+    public static func encodeStructure(
+        _ receiver: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
+        descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
+        block: @escaping (any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder) -> Swift.Void
+    ) -> Swift.Void {
+        return kotlinx_serialization_encoding_encodeStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoderU29202D_U20Swift_Void__(receiver.__externalRCRef(), descriptor.__externalRCRef(), {
+            let originalBlock = block
+            return { arg0 in return originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder) }
+        }())
     }
 }
 extension ExportedKotlinPackages.kotlinx.serialization.BinaryFormat where Self : KotlinRuntimeSupport._KotlinBridgeable {

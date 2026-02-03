@@ -292,6 +292,12 @@ public final class TripleBox: main.Box {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
+public func bar(
+    param1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
+    param2: (any KotlinRuntimeSupport._KotlinBridgeable)?
+) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+    return { switch __root___bar__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+}
 public func createMap(
     pairs: [main.Pair]
 ) -> [Swift.AnyHashable?: (any KotlinRuntimeSupport._KotlinBridgeable)?] {
