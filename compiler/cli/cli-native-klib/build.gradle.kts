@@ -35,6 +35,7 @@ dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":compiler:fir:fir-native"))
     implementation(project(":compiler:ir.objcinterop"))
+    implementation(project(":compiler:ir.inline"))
     implementation(project(":native:frontend.native"))
 }
 
