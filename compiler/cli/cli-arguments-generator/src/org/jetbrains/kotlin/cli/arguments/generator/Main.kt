@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.cli.arguments.generator
 
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
@@ -239,7 +237,7 @@ private fun SmartPrinter.generateArgumentAnnotation(
         println("""value = "-${argument.name}",""")
         argument.shortName?.let { println("""shortName = "-$it",""") }
         argument.deprecatedName?.let { println("""deprecatedName = "-$it",""") }
-        argument.valueDescription.current?.let { println("""valueDescription = "$it",""") }
+        argument.argumentDescription.current?.let { println("""valueDescription = "$it",""") }
         val rawDescription = argument.description.current.replace("\"", """\"""")
         val description = if ("\n" in rawDescription) {
             "$tripleQuote$rawDescription$tripleQuote"

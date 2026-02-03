@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.arguments.description.removed
 
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
@@ -78,7 +76,7 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
         name = "Xjavac-arguments"
         description = "Java compiler arguments.".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        valueDescription = "<option[,]>".asReleaseDependent()
+        argumentDescription = "<option[,]>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
