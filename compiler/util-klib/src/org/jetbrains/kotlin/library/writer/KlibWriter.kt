@@ -92,7 +92,7 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
             this += KlibResourcesComponentWriterImpl
         }
 
-        val destination = KlibFile(destinationPath)
+        val destination = KlibFile(destinationPath).absoluteFile
 
         if (destination.exists) {
             destination.deleteRecursively()
