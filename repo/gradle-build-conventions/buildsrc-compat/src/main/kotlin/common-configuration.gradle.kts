@@ -329,7 +329,6 @@ fun Project.configureTests() {
             ":generators:analysis-api-generator:generator-kotlin-native",
             ":jps:jps-common",
             ":jps:jps-plugin",
-            ":kotlin-allopen-compiler-plugin",
             ":kotlin-annotation-processing",
             ":kotlin-annotation-processing-base",
             ":kotlin-annotation-processing-cli",
