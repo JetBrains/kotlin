@@ -49,7 +49,7 @@ internal fun hashCode(obj: dynamic): Int {
     @Suppress("UNUSED_VARIABLE")
     return when (val typeOf = jsTypeOf(obj)) {
         "object" -> if ("function" === jsTypeOf(obj.hashCode)) (obj.hashCode)() else getObjectHashCode(obj)
-        "function" -> getObjectHashCode(obj)
+        "function" -> if ("function" === jsTypeOf(obj.hashCode)) (obj.hashCode)() else getObjectHashCode(obj)
         "number" -> getNumberHashCode(obj)
         "boolean" -> getBooleanHashCode(obj.unsafeCast<Boolean>())
         "string" -> getStringHashCode(js("String")(obj))

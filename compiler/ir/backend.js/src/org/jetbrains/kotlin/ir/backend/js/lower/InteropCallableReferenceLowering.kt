@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import kotlin.apply
 
 // TODO: Consider merging this lowering with CallableReferenceLowering (KT-78283).
 /**
@@ -582,6 +583,30 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                         functionReferenceReflectedName.toIrConst(context.irBuiltIns.stringType, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
                     )
                 )
+                val superCall = lambdaInfo.lambdaClass.defaultConstructor?.body?.statements?.filterIsInstance<IrDelegatingConstructorCallImpl>()?.firstOrNull()
+                if (superCall != null) {
+                    statements.add(
+                        setDynamicProperty(
+                            tmpVar.symbol,
+                            "flags",
+                            (superCall.arguments[0] as IrConstImpl).value.toIrConst(context.irBuiltIns.intType, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                        )
+                    )
+                    statements.add(
+                        setDynamicProperty(
+                            tmpVar.symbol,
+                            "arity",
+                            (superCall.arguments[1] as IrConstImpl).value.toIrConst(context.irBuiltIns.intType, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                        )
+                    )
+                    statements.add(
+                        setDynamicProperty(
+                            tmpVar.symbol,
+                            "id",
+                            (superCall.arguments[2] as IrConstImpl).value.toIrConst(context.irBuiltIns.stringType, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                        )
+                    )
+                }
             }
 
             if (lambdaDeclaration.isSuspend) {
@@ -598,13 +623,28 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 )
             }
 
-            statements.add(
-                JsIrBuilder.buildReturn(
-                    factoryFunction.symbol,
-                    JsIrBuilder.buildGetValue(tmpVar.symbol),
-                    context.irBuiltIns.nothingType
-                )
-            )
+            val returnStatement =
+                if (lambdaInfo.lambdaClass.superClass?.symbol == context.symbols.reflectionSymbols.kFunctionImpl) {
+                    JsIrBuilder.buildReturn(
+                        factoryFunction.symbol,
+                        IrCallImpl.fromSymbolOwner(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            context.symbols.reflectionSymbols.createComparableReference,
+                        ).apply {
+                            arguments[0] = JsIrBuilder.buildGetValue(tmpVar.symbol)
+                        },
+                        context.irBuiltIns.nothingType
+                    )
+                } else {
+                    JsIrBuilder.buildReturn(
+                        factoryFunction.symbol,
+                        JsIrBuilder.buildGetValue(tmpVar.symbol),
+                        context.irBuiltIns.nothingType
+                    )
+                }
+
+            statements.add(returnStatement)
         } else {
             statements.add(JsIrBuilder.buildReturn(factoryFunction.symbol, functionExpression, context.irBuiltIns.nothingType))
         }
