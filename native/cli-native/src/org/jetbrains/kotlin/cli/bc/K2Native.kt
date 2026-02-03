@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.ir.validation.IrValidationException
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
+import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -134,7 +135,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 | * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}
                 | * Compiler version: ${KotlinCompilerVersion.getVersion()}
-                | * Output kind: ${configuration.get(KonanConfigKeys.PRODUCE)}
+                | * Output kind: ${configuration.konanProducedArtifactKind}
 
                 """.trimMargin())
             throw e

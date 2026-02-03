@@ -23,6 +23,19 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.MemoryModel
 import org.jetbrains.kotlin.config.nativeBinaryOptions.parseBinaryOptions
 import org.jetbrains.kotlin.config.targetPlatform
+import org.jetbrains.kotlin.konan.config.konanDontCompressKlib
+import org.jetbrains.kotlin.konan.config.konanFriendLibraries
+import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
+import org.jetbrains.kotlin.konan.config.konanIncludedBinaries
+import org.jetbrains.kotlin.konan.config.konanLibraries
+import org.jetbrains.kotlin.konan.config.konanManifestAddend
+import org.jetbrains.kotlin.konan.config.konanNativeLibraries
+import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
+import org.jetbrains.kotlin.konan.config.konanNoEndorsedLibs
+import org.jetbrains.kotlin.konan.config.konanNoStdlib
+import org.jetbrains.kotlin.konan.config.konanOutputPath
+import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
+import org.jetbrains.kotlin.konan.config.konanRefinesModules
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -43,13 +56,13 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     arguments.kotlinHome?.let { put(KONAN_HOME, it) }
 
-    put(NODEFAULTLIBS, arguments.nodefaultlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
+    konanNoDefaultLibs = arguments.nodefaultlibs || !arguments.libraryToAddToCache.isNullOrEmpty()
     @Suppress("DEPRECATION")
-    put(NOENDORSEDLIBS, arguments.noendorsedlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
-    put(NOSTDLIB, arguments.nostdlib || !arguments.libraryToAddToCache.isNullOrEmpty())
-    put(NOPACK, arguments.nopack)
+    konanNoEndorsedLibs = arguments.noendorsedlibs || !arguments.libraryToAddToCache.isNullOrEmpty()
+    konanNoStdlib = arguments.nostdlib || !arguments.libraryToAddToCache.isNullOrEmpty()
+    konanDontCompressKlib = arguments.nopack
     put(NOMAIN, arguments.nomain)
-    put(LIBRARY_FILES, arguments.libraries.toNonNullList())
+    konanLibraries = arguments.libraries.toNonNullList()
     put(LINKER_ARGS, arguments.linkerArguments.toNonNullList() +
             arguments.singleLinkerArguments.toNonNullList())
     arguments.moduleName?.let { put(MODULE_NAME, it) }
@@ -60,20 +73,20 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     arguments.target?.let { put(TARGET, it) }
 
-    put(INCLUDED_BINARY_FILES, arguments.includeBinaries.toNonNullList())
-    put(NATIVE_LIBRARY_FILES, arguments.nativeLibraries.toNonNullList())
+    konanIncludedBinaries = arguments.includeBinaries.toNonNullList()
+    konanNativeLibraries = arguments.nativeLibraries.toNonNullList()
 
     // TODO: Collect all the explicit file names into an object
     // and teach the compiler to work with temporaries and -save-temps.
 
-    arguments.outputName?.let { put(OUTPUT, it) }
+    arguments.outputName?.let { konanOutputPath = it }
     val outputKind = CompilerOutputKind.valueOf(
             (arguments.produce ?: "program").uppercase())
-    put(PRODUCE, outputKind)
-    putIfNotNull(HEADER_KLIB, arguments.headerKlibPath)
+    konanProducedArtifactKind = outputKind
+    arguments.headerKlibPath?.let { konanGeneratedHeaderKlibPath = it }
 
     arguments.mainPackage?.let { put(ENTRY, it) }
-    arguments.manifestFile?.let { put(MANIFEST_FILE, it) }
+    arguments.manifestFile?.let { konanManifestAddend = it }
     arguments.runtimeFile?.let { put(RUNTIME_FILE, it) }
     arguments.temporaryFilesDir?.let { put(TEMPORARY_FILES_DIR, it) }
     put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.orEmpty().toList())
@@ -180,10 +193,10 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
                     || arguments.checkDependencies
     )
     if (arguments.friendModules != null)
-        put(FRIEND_MODULES, arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty))
+        konanFriendLibraries = arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty)
 
     if (arguments.refinesPaths != null)
-        put(REFINES_MODULES, arguments.refinesPaths!!.filterNot(String::isEmpty))
+        konanRefinesModules = arguments.refinesPaths!!.filterNot(String::isEmpty)
 
     put(EXPORTED_LIBRARIES, selectExportedLibraries(this@setupFromArguments, arguments, outputKind))
     put(INCLUDED_LIBRARIES, selectIncludes(this@setupFromArguments, arguments, outputKind))

@@ -66,33 +66,33 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
             configuration.addKotlinSourceRoot(path, normalizedPath in commonSources, hmppModuleStructure?.getModuleNameForSource(path))
         }
 
-        configuration.produce = CompilerOutputKind.LIBRARY
+        configuration.konanProducedArtifactKind = CompilerOutputKind.LIBRARY
         arguments.moduleName?.let { configuration.moduleName = it }
         arguments.target?.let { configuration.target = it }
         configuration.targetPlatform = configuration.target?.let {
             NativePlatforms.nativePlatformByTargetNames(listOf(it))
         } ?: NativePlatforms.unspecifiedNativePlatform
 
-        configuration.libraryFiles = arguments.libraries?.toList().orEmpty()
-        configuration.nostdlib = arguments.nostdlib
-        configuration.nodefaultlibs = arguments.nodefaultlibs
+        configuration.konanLibraries = arguments.libraries?.toList().orEmpty()
+        configuration.konanNoStdlib = arguments.nostdlib
+        configuration.konanNoDefaultLibs = arguments.nodefaultlibs
 
         @Suppress("DEPRECATION")
-        configuration.noendorsedlibs = arguments.noendorsedlibs
-        configuration.nopack = arguments.nopack
+        configuration.konanNoEndorsedLibs = arguments.noendorsedlibs
+        configuration.konanDontCompressKlib = arguments.nopack
 
-        arguments.outputName?.let { configuration.output = it }
+        arguments.outputName?.let { configuration.konanOutputPath = it }
         arguments.friendModules?.let {
-            configuration.friendModules = it.split(File.pathSeparator).filterNot(String::isEmpty)
+            configuration.konanFriendLibraries = it.split(File.pathSeparator).filterNot(String::isEmpty)
         }
         arguments.refinesPaths?.let {
-            configuration.refinesModules = it.filterNot(String::isEmpty)
+            configuration.konanRefinesModules = it.filterNot(String::isEmpty)
         }
 
-        configuration.includedBinaryFiles = arguments.includeBinaries?.toList().orEmpty()
+        configuration.konanIncludedBinaries = arguments.includeBinaries?.toList().orEmpty()
 
-        arguments.manifestFile?.let { configuration.manifestFile = it }
-        arguments.headerKlibPath?.let { configuration.headerKlib = it }
+        arguments.manifestFile?.let { configuration.konanManifestAddend = it }
+        arguments.headerKlibPath?.let { configuration.konanGeneratedHeaderKlibPath = it }
         arguments.shortModuleName?.let { configuration.shortModuleName = it }
         arguments.includes?.let {
             configuration.includedLibraries = it.toList()

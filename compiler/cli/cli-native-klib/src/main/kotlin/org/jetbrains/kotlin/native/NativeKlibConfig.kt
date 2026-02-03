@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.konan.config.konanDataDir
-import org.jetbrains.kotlin.konan.config.manifestFile
+import org.jetbrains.kotlin.konan.config.konanManifestAddend
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
@@ -36,7 +36,7 @@ class NativeKlibConfig(
         get() = configuration.moduleName ?: File(outputPath).name
 
     override val manifestProperties: Properties?
-        get() = configuration.manifestFile?.let {
+        get() = configuration.konanManifestAddend?.let {
             File(it).loadProperties()
         }
 }
