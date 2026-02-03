@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 
 fun PhaseContext.fir2Ir(
-        input: FirOutput.Full,
+        input: AllModulesFrontendOutput,
 ): Fir2IrOutput {
     val resolvedLibraries = config.resolvedLibraries.getFullResolvedList()
     val configuration = config.configuration
@@ -43,7 +44,7 @@ fun PhaseContext.fir2Ir(
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
     val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(configuration, diagnosticsReporter)
-    val actualizedResult = input.firResult.convertToIrAndActualize(
+    val actualizedResult = input.convertToIrAndActualize(
         NativeFir2IrExtensions,
         fir2IrConfiguration,
         config.configuration.getCompilerExtensions(IrGenerationExtension),
@@ -113,7 +114,7 @@ fun PhaseContext.fir2Ir(
         throw CompilationErrorException("Compilation failed: there were some diagnostics during fir2ir")
     }
 
-    return Fir2IrOutput(input.firResult, symbols, actualizedResult, usedLibraries)
+    return Fir2IrOutput(input, symbols, actualizedResult, usedLibraries)
 }
 
 private fun PhaseContext.createKonanSymbols(

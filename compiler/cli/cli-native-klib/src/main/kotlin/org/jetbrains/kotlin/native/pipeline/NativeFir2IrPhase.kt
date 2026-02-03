@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
-import org.jetbrains.kotlin.native.FirOutput
 import org.jetbrains.kotlin.native.fir2Ir
 import org.jetbrains.kotlin.native.runPreSerializationLowerings
 
@@ -27,7 +26,7 @@ object NativeFir2IrPhase : PipelinePhase<NativeFrontendArtifact, NativeFir2IrArt
         val environment = input.environment
         val phaseContext = input.phaseContext
 
-        val fir2IrResult = phaseContext.fir2Ir(FirOutput.Full(input.frontendOutput))
+        val fir2IrResult = phaseContext.fir2Ir(input.frontendOutput)
 
         SpecialBackendChecksTraversal(
             phaseContext,
