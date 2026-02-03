@@ -10,6 +10,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @Tag("sanity")
+@Tag("aggregate")
 class CustomNativeCompilerSecondStageSanity : AbstractCustomNativeCompilerSecondStageTest() {
     private val testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/"
 

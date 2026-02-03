@@ -135,6 +135,15 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
     )
 }
 
+fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task> {
+    val version = CustomCompilerVersion(rawVersion)
+    return customCompilerTest(
+        version = version,
+        taskName = "testMinimalInAggregate",
+        tag = "aggregate"
+    )
+}
+
 customFirstStageTest("1.9.20")
 customFirstStageTest("2.0.0")
 customFirstStageTest("2.1.0")
@@ -146,6 +155,9 @@ customFirstStageTest("2.3.0")
 // TODO: Keep updating two following compiler versions to be the previous and latest ones.
 customSecondStageTest("2.3.0")
 // add `customSecondStageTest("2.4.0-Beta1")`, as soon it is released
+
+// TODO: Keep updating the following compiler versions to be the previous major one.
+customStagesAggregateTest("2.3.0")
 
 projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true) {
