@@ -28,10 +28,7 @@ object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSe
     postActions = setOf(PerformanceNotifications.IrSerializationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFir2IrArtifact): NativeSerializationArtifact? {
-        val fir2IrOutput = input.fir2IrOutput
-        val configuration = input.configuration
-        val phaseContext = input.phaseContext
-
+        val (fir2IrOutput, configuration, _, diagnosticCollector, phaseContext) = input
         val headerKlibPath = configuration.get(KonanConfigKeys.HEADER_KLIB)?.removeSuffix(".klib")
         val outputKlibPath = phaseContext.config.outputPath
         if (!headerKlibPath.isNullOrEmpty()) {
@@ -53,7 +50,7 @@ object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSe
         return NativeSerializationArtifact(
             serializerOutput = serializerOutput,
             configuration = configuration,
-            diagnosticCollector = input.diagnosticCollector,
+            diagnosticCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }
@@ -69,9 +66,7 @@ object NativeKlibWritingPhase : PipelinePhase<NativeSerializationArtifact, Nativ
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeSerializationArtifact): NativeKlibSerializedArtifact? {
-        val configuration = input.configuration
-        val phaseContext = input.phaseContext
-        val serializerOutput = input.serializerOutput
+        val (serializerOutput, configuration, diagnosticCollector, phaseContext) = input
         val outputKlibPath = phaseContext.config.outputPath
         phaseContext.writeKlib(
             KlibWriterInput(serializerOutput, outputKlibPath, produceHeaderKlib = false)
@@ -79,7 +74,7 @@ object NativeKlibWritingPhase : PipelinePhase<NativeSerializationArtifact, Nativ
         return NativeKlibSerializedArtifact(
             outputKlibPath = outputKlibPath,
             configuration = configuration,
-            diagnosticCollector = input.diagnosticCollector,
+            diagnosticCollector = diagnosticCollector,
         )
     }
 }

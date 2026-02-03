@@ -51,9 +51,7 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeConfigurationArtifact): NativeFrontendArtifact? {
-        val environment = input.environment
-
-        val configuration = input.configuration
+        val (configuration, environment, diagnosticCollector) = input
         val config = createNativeKlibConfig(configuration)
         val phaseContext = NativePhaseContext(config)
         val firOutput = phaseContext.firFrontend(environment)
@@ -61,7 +59,7 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
             firOutput,
             configuration = configuration,
             environment = environment,
-            diagnosticCollector = input.diagnosticCollector,
+            diagnosticCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }

@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.getModuleNameForSource
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.moduleName
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.js.config.fakeOverrideValidator
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -56,7 +58,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         val rootDisposable = input.rootDisposable
         configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = true, rootDisposable)
         val phaseConfig = createPhaseConfig(arguments)
-        configuration.put(CommonConfigurationKeys.PHASE_CONFIG, phaseConfig)
+        configuration.phaseConfig = phaseConfig
         setupNativeKlibConfiguration(configuration, arguments)
     }
 
@@ -72,7 +74,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         }
 
         configuration.produce = CompilerOutputKind.LIBRARY
-        arguments.moduleName?.let { configuration.put(CommonConfigurationKeys.MODULE_NAME, it) }
+        arguments.moduleName?.let { configuration.moduleName = it }
         arguments.target?.let { configuration.target = it }
 
         configuration.libraryFiles = arguments.libraries?.toList().orEmpty()
@@ -93,27 +95,27 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
 
         configuration.includedBinaryFiles = arguments.includeBinaries?.toList().orEmpty()
 
-        arguments.manifestFile?.let { configuration.put(KonanConfigKeys.MANIFEST_FILE, it) }
-        arguments.headerKlibPath?.let { configuration.put(KonanConfigKeys.HEADER_KLIB, it) }
-        arguments.shortModuleName?.let { configuration.put(KonanConfigKeys.SHORT_MODULE_NAME, it) }
+        arguments.manifestFile?.let { configuration.manifestFile = it }
+        arguments.headerKlibPath?.let { configuration.headerKlib = it }
+        arguments.shortModuleName?.let { configuration.shortModuleName = it }
         arguments.includes?.let {
-            configuration.put(KonanConfigKeys.INCLUDED_LIBRARIES, it.toList())
+            configuration.includedLibraries = it.toList()
         }
 
         configuration.printIr = arguments.printIr
         configuration.printFiles = arguments.printFiles
         arguments.verifyCompiler?.let {
-            configuration.put(KonanConfigKeys.VERIFY_COMPILER, it == "true")
+            configuration.verifyCompiler = it == "true"
         }
         configuration.fakeOverrideValidator = arguments.fakeOverrideValidator
         arguments.konanDataDir?.let { configuration.put(KonanConfigKeys.KONAN_DATA_DIR, it) }
 
         configuration.checkDependencies = arguments.checkDependencies
         arguments.writeDependenciesOfProducedKlibTo?.let {
-            configuration.put(KonanConfigKeys.WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO, it)
+            configuration.writeDependenciesOfProducedKlibTo = it
         }
         arguments.manifestNativeTargets?.let {
-            configuration.put(KonanConfigKeys.MANIFEST_NATIVE_TARGETS, parseManifestNativeTargets(it, configuration))
+            configuration.manifestNativeTargets = parseManifestNativeTargets(it, configuration)
         }
 
         configuration.exportKdoc = arguments.exportKDoc
