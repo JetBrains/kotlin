@@ -7,6 +7,7 @@ dependencies {
 
     implementation(project(":compiler:cli"))
     implementation(project(":compiler:cli-base"))
+    implementation(project(":compiler:cli:cli-native-klib"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.backend.native"))
     implementation(project(":compiler:util"))
