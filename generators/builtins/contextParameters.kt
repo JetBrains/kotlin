@@ -12,16 +12,16 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
     override fun getMultifileClassName(): String = "ContextParametersKt"
 
     override fun generateBody() {
-        generateFunction(listOf("with"), listOf("T"), "R", lambdaWithParams = true)
+        generateSingleFunction(listOf("with"), listOf("T"), "R", lambdaWithParams = true)
         for (i in 2..6) {
             val parameterNames = ('a' .. 'z').take(i)
-            generateFunction(
+            generateSingleFunction(
                 parameterNames.map { it.toString() },
                 parameterNames.map { it.uppercase() },
                 "R",
                 lambdaWithParams = false
             )
-            generateFunction(
+            generateSingleFunction(
                 parameterNames.map { it.toString() },
                 parameterNames.map { it.uppercase() },
                 "R",
@@ -30,7 +30,7 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
         }
     }
 
-    fun generateFunction(parameterNames: List<String>, parameterTypes: List<String>, resultType: String, lambdaWithParams: Boolean) {
+    fun generateSingleFunction(parameterNames: List<String>, parameterTypes: List<String>, resultType: String, lambdaWithParams: Boolean) {
         val arguments = parameterNames.joinToString()
         val parameters = parameterNames.zip(parameterTypes) { name, type -> "$name: $type" }.joinToString()
         val contextTypes = parameterTypes.joinToString()
