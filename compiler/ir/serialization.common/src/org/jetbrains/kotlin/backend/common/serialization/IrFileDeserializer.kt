@@ -232,7 +232,7 @@ class IrLibraryFileFromBytes(private val bytesSource: IrLibraryBytesSource) : Ir
     }
 
     companion object {
-        val extensionRegistryLite: ExtensionRegistryLite = ExtensionRegistryLite.newInstance()
+        val extensionRegistryLite: ExtensionRegistryLite = ExtensionRegistryLite.getEmptyRegistry()
     }
 }
 

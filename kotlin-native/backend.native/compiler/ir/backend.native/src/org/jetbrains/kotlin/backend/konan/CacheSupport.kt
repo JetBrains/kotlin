@@ -30,7 +30,7 @@ class FileWithFqName(val filePath: String, val fqName: String)
 fun KotlinLibrary.getFilesWithFqNames(): List<FileWithFqName> {
     val ir = irOrFail
     val fileProtos = Array<ProtoFile>(ir.irFileCount) {
-        ProtoFile.parseFrom(ir.irFile(it).codedInputStream, ExtensionRegistryLite.newInstance())
+        ProtoFile.parseFrom(ir.irFile(it).codedInputStream, ExtensionRegistryLite.getEmptyRegistry())
     }
     return fileProtos.mapIndexed { index, proto ->
         val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, index))
@@ -45,7 +45,7 @@ fun KotlinLibrary.getFilesWithFqNames(): List<FileWithFqName> {
 fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
     val ir = irOrFail
     val fileProtos = Array<ProtoFile>(ir.irFileCount) {
-        ProtoFile.parseFrom(ir.irFile(it).codedInputStream, ExtensionRegistryLite.newInstance())
+        ProtoFile.parseFrom(ir.irFile(it).codedInputStream, ExtensionRegistryLite.getEmptyRegistry())
     }
     val filePathToIndexAndReader = fileProtos.withIndex().associate {
         val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, it.index))
