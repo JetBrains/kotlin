@@ -140,6 +140,15 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
     )
 }
 
+fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task> {
+    val version = CustomCompilerVersion(rawVersion)
+    return customCompilerTest(
+        version = version,
+        taskName = "testMinimalInAggregate",
+        tag = "aggregate",
+    )
+}
+
 /* Custom-first-stage test tasks for different compiler versions. */
 customFirstStageTest("1.9.20", addWritePermissionsForAllProperties = true, addReadWritePermissionsForGradleCache = true)
 customFirstStageTest("2.0.0", addWritePermissionsForAllProperties = true)
@@ -151,6 +160,9 @@ customFirstStageTest("2.3.0")
 /* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
 // TODO: Keep updating the following compiler versions to be the previous one and latest one(as as soon it's released).
 customSecondStageTest("2.3.0")
+
+// TODO: Keep updating the following compiler versions to be the previous major one.
+customStagesAggregateTest("2.3.0")
 
 tasks.test {
     // The default test task does not resolve the necessary dependencies and does not set up the environment.

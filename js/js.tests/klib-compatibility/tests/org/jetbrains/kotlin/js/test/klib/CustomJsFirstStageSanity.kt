@@ -8,6 +8,7 @@ import org.opentest4j.TestAbortedException
 import kotlin.test.assertEquals
 
 @Tag("sanity")
+@Tag("aggregate")
 class CustomJsCompilerFirstStageSanity :
     AbstractCustomJsCompilerFirstStageTest(testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/") {
 
