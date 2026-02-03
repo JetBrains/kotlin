@@ -51,6 +51,14 @@ void __root___foo_set__TypesOfArguments__Swift_Optional_main_Foo__Swift_String__
 
 void * __root___return_any_should_append_runtime_import();
 
+NSString * inline_Bar_bar(void * self);
+
+void * inline_Bar_init_allocate();
+
+void inline_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+NSString * inline_foo();
+
 int32_t namespace1_bar();
 
 void namespace1_local_functions_foo();

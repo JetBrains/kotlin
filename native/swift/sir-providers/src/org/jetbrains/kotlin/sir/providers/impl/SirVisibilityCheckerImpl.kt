@@ -152,8 +152,8 @@ public class SirVisibilityCheckerImpl(
             unsupportedDeclarationReporter.report(this@isExported, "suspend functions are not supported yet.")
             return@withSessions false
         }
-        if (isInline) {
-            unsupportedDeclarationReporter.report(this@isExported, "inline functions are not supported yet.")
+        if (isInline && typeParameters.any { it.isReified }) {
+            unsupportedDeclarationReporter.report(this@isExported, "inline functions with reified type parameters are not supported yet.")
             return@withSessions false
         }
         return@withSessions true
