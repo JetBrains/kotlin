@@ -9,6 +9,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -26,7 +27,9 @@ import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.build.project.tests.CollectTestDataTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import java.io.File
 
 abstract class ProjectTestsExtension(val project: Project) {
@@ -91,6 +94,18 @@ abstract class ProjectTestsExtension(val project: Project) {
         isTransitive = false
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
+    }
+
+    val pluginSandboxAnnotationsJar: Configuration = project.configurations.create("pluginSandboxAnnotationsJar") {
+        isTransitive = false
+    }
+
+    val pluginSandboxAnnotationsJsKlib: Configuration = project.configurations.create("pluginSandboxAnnotationsJsKlib") {
+        isTransitive = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_RUNTIME))
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        }
     }
 
     private fun add(configuration: Configuration, dependency: DependencyHandler.() -> ProjectDependency) {
@@ -183,6 +198,11 @@ abstract class ProjectTestsExtension(val project: Project) {
 
     fun withThirdPartyJsr305() {
         thirdPartyJsr305.set(File(project.rootDir, "third-party/jsr305"))
+    }
+
+    fun withPluginSandboxAnnotations() {
+        add(pluginSandboxAnnotationsJar) { project(":plugins:plugin-sandbox:plugin-annotations") }
+        add(pluginSandboxAnnotationsJsKlib) { project(":plugins:plugin-sandbox:plugin-annotations", "jsRuntimeElements") }
     }
 
     // -------------------- testData configuration --------------------

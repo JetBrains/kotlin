@@ -17,6 +17,10 @@ val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply 
     stdlibWasmWasiRuntimeForTests.from(extension.stdlibWasmWasiRuntimeForTests)
     testWasmJsRuntimeForTests.from(extension.testWasmJsRuntimeForTests)
     testWasmWasiRuntimeForTests.from(extension.testWasmWasiRuntimeForTests)
+
+    pluginSandboxAnnotationsJar.from(extension.pluginSandboxAnnotationsJar)
+    pluginSandboxAnnotationsJsKlib.from(extension.pluginSandboxAnnotationsJsKlib)
+
     mockJdkRuntimeJar.value(extension.mockJdkRuntime)
     mockJdkRuntime.value(extension.mockJdkRuntime)
     mockJDKModifiedRuntime.value(extension.mockJDKModifiedRuntime)

@@ -27,6 +27,8 @@ import TestCompilePaths.KOTLIN_WASM_JS_STDLIB_KLIB_PATH
 import TestCompilePaths.KOTLIN_WASM_WASI_KOTLIN_TEST_KLIB_PATH
 import TestCompilePaths.KOTLIN_WASM_WASI_STDLIB_KLIB_PATH
 import TestCompilePaths.KOTLIN_WEB_STDLIB_KLIB_PATH
+import TestCompilePaths.PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH
+import TestCompilePaths.PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -100,6 +102,14 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
     @get:InputFiles
     @get:Classpath
     abstract val testWasmWasiRuntimeForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val pluginSandboxAnnotationsJar: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val pluginSandboxAnnotationsJsKlib: ConfigurableFileCollection
 
     @get:Input
     abstract val testDataMap: MapProperty<String, String>
@@ -177,6 +187,10 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
             ifNotEmpty(KOTLIN_WASM_WASI_STDLIB_KLIB_PATH, stdlibWasmWasiRuntimeForTests),
             ifNotEmpty(KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH, testWasmJsRuntimeForTests),
             ifNotEmpty(KOTLIN_WASM_WASI_KOTLIN_TEST_KLIB_PATH, testWasmWasiRuntimeForTests),
+
+            // Plugin sandbox annotations
+            ifNotEmpty(PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH, pluginSandboxAnnotationsJar),
+            ifNotEmpty(PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH, pluginSandboxAnnotationsJsKlib),
 
             // JVM additional libs
             mockJdkRuntimeJar.orNull?.let { "-D$KOTLIN_MOCKJDK_RUNTIME_PATH=${it.asFile.absolutePath}" },
