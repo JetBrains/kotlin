@@ -194,6 +194,7 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
+
         val expressionSource = lambdaExpression.toFirSourceElement()
         val target: FirFunctionTarget
         val anonymousFunction = buildAnonymousFunction {
@@ -1733,6 +1734,7 @@ class LightTreeRawFirExpressionBuilder(
         scriptSource: KtSourceElement,
         fileName: String,
         snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        functionBodySetup: FirBlockBuilder.() -> Unit,
         statementsSetup: MutableList<FirElement>.() -> Unit,
     ): FirReplSnippet {
         shouldNotBeCalled()

@@ -209,9 +209,10 @@ open class PsiRawFirBuilder(
         scriptSource: KtSourceElement,
         fileName: String,
         snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        functionBodySetup: FirBlockBuilder.() -> Unit,
         statementsSetup: MutableList<FirElement>.() -> Unit,
     ): FirReplSnippet {
-        return Visitor().convertReplSnippet(script as KtScript, scriptSource as KtPsiSourceElement, fileName, snippetSetup, statementsSetup)
+        return Visitor().convertReplSnippet(script as KtScript, scriptSource as KtPsiSourceElement, fileName, snippetSetup, functionBodySetup, statementsSetup)
     }
 
     protected open inner class Visitor : KtVisitor<FirElement, FirElement?>(), DestructuringContext<KtDestructuringDeclarationEntry> {
@@ -1444,6 +1445,7 @@ open class PsiRawFirBuilder(
             scriptSource: KtPsiSourceElement,
             fileName: String,
             snippetSetup: FirReplSnippetBuilder.() -> Unit,
+            functionBodySetup: FirBlockBuilder.() -> Unit,
             statementsSetup: MutableList<FirElement>.() -> Unit,
         ): FirReplSnippet {
             val snippetName = NameUtils.getSnippetTargetClassName(Name.special("<$fileName>"))
@@ -1496,7 +1498,7 @@ open class PsiRawFirBuilder(
                                     replClassMembers.add(member)
                                 }
 
-                                createEvalFunction(script, evalSymbol, replElements)
+                                createEvalFunction(script, evalSymbol, replElements, functionBodySetup)
                             }
 
                             val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
@@ -1544,6 +1546,7 @@ open class PsiRawFirBuilder(
             script: KtScript,
             evalSymbol: FirNamedFunctionSymbol,
             replElements: List<FirElement>,
+            functionBodySetup: FirBlockBuilder.() -> Unit,
         ): FirNamedFunction {
             val evalTarget = FirFunctionTarget(labelName = null, isLambda = false)
             return buildNamedFunction {
@@ -1568,6 +1571,7 @@ open class PsiRawFirBuilder(
                                 else -> error("unexpected element type in REPL snippet: ${element::class}")
                             }
                         }
+                        functionBodySetup()
                     }
                 }
 

@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -87,8 +89,15 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
             )
         )
 
-        val resultProp = irSnippetClass.declarations
-            .filterIsInstance<IrProperty>()
+        val replProperties = irSnippetClass.declarations.filterIsInstance<IrProperty>()
+        for (property in replProperties) {
+            // TO make sure initializing the property from the eval function works correctly,
+            // mark all REPL properties as vars. This makes sure that synthetic accessors are
+            // generated when needed.
+            property.isVar = true
+        }
+
+        val resultProp = replProperties
             .singleOrNull { it.origin == IrDeclarationOrigin.SCRIPT_RESULT_PROPERTY }
         resultProp?.let { irResultProperty ->
             val backingField = irResultProperty.backingField ?: return@let

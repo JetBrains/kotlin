@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionPointName
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
@@ -32,8 +32,10 @@ abstract class FirReplSnippetConfiguratorExtension(
     fun interface Factory : FirExtension.Factory<FirReplSnippetConfiguratorExtension>
 
     abstract fun isReplSnippetsSource(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): Boolean
+
     abstract fun FirReplSnippetBuilder.configureContainingFile(fileBuilder: FirFileBuilder)
     abstract fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>)
+    abstract fun FirBlockBuilder.configureEvalBody(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>)
 
     /**
      * Allows mutating the statements of a `FirReplSnippet` `$$eval` function body as needed before

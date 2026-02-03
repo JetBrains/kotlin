@@ -1363,6 +1363,13 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                         }
                     }
                 },
+                functionBodySetup = {
+                    if (repSnippetConfigurator != null) {
+                        with(repSnippetConfigurator) {
+                            configureEvalBody(fileBuilder.sourceFile, scriptSource, context)
+                        }
+                    }
+                },
                 statementsSetup = {
                     if (repSnippetConfigurator != null) {
                         with(repSnippetConfigurator) {
@@ -1398,6 +1405,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         scriptSource: KtSourceElement,
         fileName: String,
         snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        functionBodySetup: FirBlockBuilder.() -> Unit,
         statementsSetup: MutableList<FirElement>.() -> Unit,
     ): FirReplSnippet
 
