@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
 val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jvmCompilerArguments) {
     compilerArgument {
@@ -80,6 +81,21 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
+            removedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xserialize-ir"
+        description = "Save the IR to metadata (Experimental).".asReleaseDependent()
+        argumentType = StringType(
+            isNullable = false.asReleaseDependent(),
+            defaultValue = "none".asReleaseDependent()
+        )
+        argumentTypeDescription = "{none|inline|all}".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
             removedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }

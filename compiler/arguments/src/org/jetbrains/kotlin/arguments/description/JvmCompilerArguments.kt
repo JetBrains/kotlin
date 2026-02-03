@@ -797,20 +797,6 @@ See KT-45671 for more details.""".asReleaseDependent()
     }
 
     compilerArgument {
-        name = "Xserialize-ir"
-        description = "Save the IR to metadata (Experimental).".asReleaseDependent()
-        argumentType = StringType(
-            isNullable = false.asReleaseDependent(),
-            defaultValue = "none".asReleaseDependent()
-        )
-        argumentTypeDescription = "{none|inline|all}".asReleaseDependent()
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_6_0,
-        )
-    }
-
-    compilerArgument {
         name = "Xvalidate-bytecode"
         description = "Validate generated JVM bytecode before and after optimizations.".asReleaseDependent()
         argumentType = BooleanType.defaultFalse

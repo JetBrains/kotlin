@@ -548,17 +548,6 @@ problems with parentheses in identifiers on certain platforms.""",
         }
 
     @Argument(
-        value = "-Xserialize-ir",
-        valueDescription = "{none|inline|all}",
-        description = "Save the IR to metadata (Experimental).",
-    )
-    var serializeIr: String = "none"
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xstring-concat",
         valueDescription = "{indy-with-constants|indy|inline}",
         description = """Select the code generation scheme for string concatenation:

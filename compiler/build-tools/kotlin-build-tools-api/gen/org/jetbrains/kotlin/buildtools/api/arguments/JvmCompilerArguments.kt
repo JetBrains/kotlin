@@ -621,9 +621,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Save the IR to metadata (Experimental).
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.4.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_SERIALIZE_IR: JvmCompilerArgument<String> =
         JvmCompilerArgument("X_SERIALIZE_IR", KotlinReleaseVersion(1, 6, 0))
 

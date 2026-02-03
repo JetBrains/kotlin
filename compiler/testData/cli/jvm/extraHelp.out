@@ -109,8 +109,6 @@ where advanced options include:
                              problems with parentheses in identifiers on certain platforms.
   -Xscript-resolver-environment=<key=value[,]>
                              Set the script resolver environment in key-value pairs (the value can be quoted and escaped).
-  -Xserialize-ir={none|inline|all}
-                             Save the IR to metadata (Experimental).
   -Xstring-concat={indy-with-constants|indy|inline}
                              Select the code generation scheme for string concatenation:
                              -Xstring-concat=indy-with-constants  Concatenate strings using 'invokedynamic' and 'makeConcatWithConstants'. This requires '-jvm-target 9' or greater.

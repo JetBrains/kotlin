@@ -70,7 +70,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.sanitizeParentheses = from.sanitizeParentheses
     to.scriptResolverEnvironment = from.scriptResolverEnvironment?.copyOf()
     to.scriptTemplates = from.scriptTemplates?.copyOf()
-    to.serializeIr = from.serializeIr
     to.strictMetadataVersionSemantics = from.strictMetadataVersionSemantics
     to.stringConcat = from.stringConcat
     to.supportCompatqualCheckerFrameworkAnnotations = from.supportCompatqualCheckerFrameworkAnnotations
