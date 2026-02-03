@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.native.resolve
 
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanLibraries
+import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
 import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
 import org.jetbrains.kotlin.konan.config.konanNoEndorsedLibs
 import org.jetbrains.kotlin.konan.config.konanNoStdlib
@@ -31,10 +32,10 @@ class KonanLibrariesResolveSupport(
     resolveManifestDependenciesLenient: Boolean
 ) {
     private val includedLibraryFiles =
-            configuration.getList(KonanConfigKeys.INCLUDED_LIBRARIES).map { File(it) }
+            configuration.konanIncludedLibraries.map { File(it) }
 
     private val libraryToCacheFile =
-                    configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { File(it) }
+                    configuration.konanLibraryToAddToCache?.let { File(it) }
 
     private val libraryPaths = configuration.konanLibraries
 

@@ -21,14 +21,20 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.konanFriendLibraries
 import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
 import org.jetbrains.kotlin.konan.config.konanIncludedBinaries
+import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanManifestAddend
 import org.jetbrains.kotlin.konan.config.konanNativeLibraries
 import org.jetbrains.kotlin.konan.config.konanOutputPath
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
+import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
 import org.jetbrains.kotlin.konan.config.konanRefinesModules
+import org.jetbrains.kotlin.konan.config.konanShortModuleName
+import org.jetbrains.kotlin.konan.config.konanTarget
+import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedKlibTo
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
@@ -52,7 +58,7 @@ class KonanConfig(
     val macabi: Boolean = run {
         val macabi = configuration.getBoolean(BinaryOptions.macabi)
         // We can't access `target` property due to circular dependency.
-        val target = configuration.get(KonanConfigKeys.TARGET)
+        val target = configuration.konanTarget
         if (macabi && target !in setOf("ios_simulator_arm64", "ios_x64")) {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, "macabi is only supported for iosArm64 target")
             false
@@ -62,7 +68,7 @@ class KonanConfig(
     internal val distribution = run {
         val overridenProperties = mutableMapOf<String, String>().apply {
             if (macabi) {
-                val target = configuration.get(KonanConfigKeys.TARGET)
+                val target = configuration.konanTarget
                 // Overriding properties is a bit better alternative than
                 // Tracking all usages of `configurables` in code and making adjustments on call-site.
                 // Still ugly, of course.
@@ -94,7 +100,7 @@ class KonanConfig(
     }
 
     private val platformManager = PlatformManager(distribution)
-    internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
+    internal val targetManager = platformManager.targetManager(configuration.konanTarget)
     override val target = targetManager.target
     internal val phaseConfig = configuration.phaseConfig!!
 
@@ -392,7 +398,7 @@ class KonanConfig(
 
     val includedLibraries: List<KotlinLibrary>
         get() = getIncludedLibraries(
-                configuration.getList(KonanConfigKeys.INCLUDED_LIBRARIES).map { File(it) },
+                configuration.konanIncludedLibraries.map { File(it) },
                 configuration,
                 resolve.resolvedLibraries
         )
@@ -675,7 +681,7 @@ class KonanConfig(
         get() = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
 
     val purgeUserLibs: Boolean
-        get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
+        get() = configuration.konanPurgeUserLibs
 
     val isInteropStubs: Boolean
         get() = manifestProperties?.getProperty("interop") == "true"
@@ -702,13 +708,13 @@ class KonanConfig(
         get() = configuration.konanIncludedBinaries
 
     override val writeDependenciesOfProducedKlibTo: String?
-        get() = configuration.get(KonanConfigKeys.WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO)
+        get() = configuration.konanWriteDependenciesOfProducedKlibTo
 
     override val nativeTargetsForManifest: Collection<KonanTarget>?
-        get() = configuration.get(KonanConfigKeys.MANIFEST_NATIVE_TARGETS)
+        get() = configuration.get(NativeConfigurationKeys.KONAN_MANIFEST_NATIVE_TARGETS)
 
     override val shortModuleName: String?
-        get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
+        get() = configuration.konanShortModuleName
 
     override val outputPath: String
         get() = configuration.konanOutputPath?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
