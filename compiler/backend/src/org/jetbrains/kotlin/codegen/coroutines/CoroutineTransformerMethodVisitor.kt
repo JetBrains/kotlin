@@ -755,7 +755,7 @@ class CoroutineTransformerMethodVisitor(
     private fun dropSuspensionMarkers(methodNode: MethodNode) {
         // Drop markers, including ones, which we ignored in recognizing phase
         fun isSuspensionMarkerToRemove(insn: AbstractInsnNode) =
-            isBeforeSuspendMarker(insn) || isAfterSuspendMarker(insn) || isBeforeSuspendUnitCallMarker(insn)
+            isBeforeSuspendMarker(insn) || isAfterSuspendMarker(insn) || isBeforeSuspendUnitCallMarker(insn) || isBeforeSuspendGenericCallMarker(insn)
         for (marker in methodNode.instructions.asSequence().filter { isSuspensionMarkerToRemove(it) }.toList()) {
             methodNode.instructions.removeAll(listOf(marker.previous, marker))
         }

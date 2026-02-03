@@ -64,6 +64,7 @@ private const val INLINE_MARKER_BEFORE_UNBOX_INLINE_CLASS = 8
 private const val INLINE_MARKER_AFTER_UNBOX_INLINE_CLASS = 9
 private const val INLINE_MARKER_SUSPEND_LAMBDA_PARAMETER = 10
 private const val INLINE_MARKER_BEFORE_SUSPEND_UNIT_CALL = 11
+private const val INLINE_MARKER_BEFORE_SUSPEND_GENERIC_CALL = 12
 
 internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossinline match: (Method) -> Boolean): SMAPAndMethodNode? {
     var node: MethodNode? = null
@@ -571,6 +572,10 @@ fun addBeforeSuspendUnitCallMarker(v: InstructionAdapter) {
     v.emitInlineMarker(INLINE_MARKER_BEFORE_SUSPEND_UNIT_CALL)
 }
 
+fun addBeforeSuspendGenericCallMarker(v: InstructionAdapter) {
+    v.emitInlineMarker(INLINE_MARKER_BEFORE_SUSPEND_GENERIC_CALL)
+}
+
 private fun InstructionAdapter.emitInlineMarker(id: Int) {
     iconst(id)
     invokestatic(
@@ -588,6 +593,9 @@ internal fun isAfterInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarke
 internal fun isReturnsUnitMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_RETURNS_UNIT)
 // set after suspend calls of Unit-returning functions. Used for detecting eligibility of tail-call optimization.
 internal fun isBeforeSuspendUnitCallMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_SUSPEND_UNIT_CALL)
+// set after suspend calls of suspendCoroutineUninterceptedOrReturn of an unknown generic type if that type matches the caller's single type
+// parameter. Used for detecting eligibility of tail-call optimization.
+fun isBeforeSuspendGenericCallMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_SUSPEND_GENERIC_CALL)
 internal fun isFakeContinuationMarker(insn: AbstractInsnNode) =
     insn.previous != null && isSuspendMarker(insn.previous, INLINE_MARKER_FAKE_CONTINUATION) && insn.opcode == Opcodes.ACONST_NULL
 
@@ -672,7 +680,8 @@ fun MethodNode.preprocessSuspendMarkers(forInline: Boolean, keepFakeContinuation
                 instructions.remove(beforeMarker.previous)
                 instructions.remove(beforeMarker)
             }
-            if (isBeforeInlineSuspendMarker(insn) && insn.next?.next?.let { isBeforeSuspendUnitCallMarker(it) } == true) {
+            if (isBeforeInlineSuspendMarker(insn) && insn.next?.next?.let {
+                    isBeforeSuspendUnitCallMarker(it) || isBeforeSuspendGenericCallMarker(it) } == true) {
                 instructions.remove(insn.next.next)
                 instructions.remove(insn.next)
             }

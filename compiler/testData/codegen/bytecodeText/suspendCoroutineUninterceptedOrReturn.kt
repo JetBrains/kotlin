@@ -30,4 +30,5 @@ public suspend inline fun <T> suspendTest(crossinline block: (Continuation<T>) -
     suspendCoroutineUninterceptedOrReturn { c: Continuation<T> -> }
 
 // @kotlin/coroutines/TestKt.class:
-// 2 InlineMarker.mark
+// 1 BIPUSH 12
+// 3 InlineMarker.mark
