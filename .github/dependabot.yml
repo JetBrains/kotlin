@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    exclude-paths:
+      - "libraries/tools/kotlin-gradle-plugin-integration-tests/**"
+#      - "benchmarks/**"
+#      - "compiler/android-tests/**"
+#      - "compiler/test-infrastructure*/**"
+#      - "compiler/test-security-manager/**"
+#      - "compiler/tests-*/**"
+#      - "generators/**"
+#      - "js/js.tests/**"
+#      - "wasm/wasm.tests/**"
+#      - "native/native.tests/**"
+#      - "test-instrumenter/**"
+#      - "repo/artifacts-tests/**"
+#      - "repo/codebase-tests/**"
