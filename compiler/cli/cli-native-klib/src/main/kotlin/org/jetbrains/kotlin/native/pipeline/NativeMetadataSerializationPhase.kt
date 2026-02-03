@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.native.pipeline
 
+import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.native.FirOutput
-import org.jetbrains.kotlin.native.firSerializer
+import org.jetbrains.kotlin.native.firSerializerBase
 
 object NativeMetadataSerializationPhase : PipelinePhase<NativeFrontendArtifact, NativeSerializationArtifact>(
     name = "NativeMetadataSerializationPhase",
@@ -29,5 +31,10 @@ object NativeMetadataSerializationPhase : PipelinePhase<NativeFrontendArtifact, 
             diagnosticCollector = input.diagnosticCollector,
             phaseContext = phaseContext,
         )
+    }
+
+    fun PhaseContext.firSerializer(input: FirOutput): SerializerOutput? = when (input) {
+        !is FirOutput.Full -> null
+        else -> firSerializerBase(input.firResult, null)
     }
 }

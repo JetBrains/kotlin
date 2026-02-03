@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,16 +24,7 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 
-fun PhaseContext.firSerializer(input: FirOutput): SerializerOutput? = when (input) {
-    !is FirOutput.Full -> null
-    else -> firSerializerBase(input.firResult, null)
-}
-
-fun PhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput {
-    return firSerializerBase(input.firToIrOutput.frontendOutput, input.firToIrOutput, produceHeaderKlib = input.produceHeaderKlib)
-}
-
-private fun PhaseContext.firSerializerBase(
+internal fun PhaseContext.firSerializerBase(
         firResult: AllModulesFrontendOutput,
         fir2IrOutput: Fir2IrOutput?,
         produceHeaderKlib: Boolean = false,
