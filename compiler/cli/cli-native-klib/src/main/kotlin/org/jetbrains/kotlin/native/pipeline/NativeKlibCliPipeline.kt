@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.util.PerformanceManager
 
 class NativeKlibCliPipeline(
-    override val defaultPerformanceManager: PerformanceManager
+    override val defaultPerformanceManager: PerformanceManager,
+    override val isNativeOneStage: Boolean,
 ) : AbstractCliPipeline<K2NativeCompilerArguments>() {
 
     override fun createCompoundPhase(

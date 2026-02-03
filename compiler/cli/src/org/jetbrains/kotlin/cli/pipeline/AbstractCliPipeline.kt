@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.util.CompilerType
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.forEachStringMeasurement
-import java.io.File
 
 abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
     fun execute(
@@ -66,18 +65,23 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
 
         return try {
             val code = runPhasedPipeline(argumentsInput)
-            performanceManager.notifyCompilationFinished()
-            if (arguments.reportPerf) {
-                messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: " + performanceManager.getTargetInfo())
-                performanceManager.forEachStringMeasurement {
-                    messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: $it", null)
+            // In the case of one-stage compilation, the performance manager is shared between
+            // 2 pipelines: src -> klib (this one) and klib -> binary (subsequent).
+            // In this case we are not yet finished with the performance measurement and will finalize it
+            // after the subsequent pipeline finishes.
+            if (!isNativeOneStage) {
+                performanceManager.notifyCompilationFinished()
+                if (arguments.reportPerf) {
+                    messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: " + performanceManager.getTargetInfo())
+                    performanceManager.forEachStringMeasurement {
+                        messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: $it", null)
+                    }
+                }
+
+                if (arguments.dumpPerf != null) {
+                    performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
                 }
             }
-
-            if (arguments.dumpPerf != null) {
-                performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
-            }
-
             if (messageCollector.hasErrors()) ExitCode.COMPILATION_ERROR else code
         } catch (_: CompilationErrorException) {
             ExitCode.COMPILATION_ERROR
@@ -145,4 +149,9 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
     }
 
     protected open fun isKaptMode(arguments: A): Boolean = false
+
+    /**
+     * In Native CLI there is a one-stage compilation mode, which is used when producing a binary from sources directly.
+     */
+    protected open val isNativeOneStage = false
 }

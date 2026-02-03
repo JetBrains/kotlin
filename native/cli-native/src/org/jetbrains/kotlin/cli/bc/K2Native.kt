@@ -55,9 +55,18 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         if (arguments.produce != "library") {
             return null
         }
+        return doExecutePhasedKlibCompilation(arguments, services, basicMessageCollector, isOneStageCompilation = false)
+    }
+
+    private fun doExecutePhasedKlibCompilation(
+        arguments: K2NativeCompilerArguments,
+        services: Services,
+        basicMessageCollector: MessageCollector,
+        isOneStageCompilation: Boolean
+    ): ExitCode {
         // TODO (KT-84069)
         arguments.disableDefaultScriptingPlugin = true
-        return NativeKlibCliPipeline(defaultPerformanceManager).execute(arguments, services, basicMessageCollector)
+        return NativeKlibCliPipeline(defaultPerformanceManager, isNativeOneStage = isOneStageCompilation).execute(arguments, services, basicMessageCollector)
     }
 
     override fun doExecute(@NotNull arguments: K2NativeCompilerArguments,
@@ -90,8 +99,27 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             return ExitCode.COMPILATION_ERROR
         }
         try {
-            doExecutePhased(arguments, Services.EMPTY, configuration.messageCollector)
-                ?: runKonanDriver(configuration, environment, rootDisposable)
+            // K2/Native backend cannot produce binary directly from FIR frontend output, since descriptors, deserialized from KLib, are needed
+            // So, such compilation is split to two stages:
+            // - source files are compiled to intermediate KLib by FIR frontend
+            // - intermediate Klib is compiled to binary by K2/Native backend
+            if (isOneStageCompilation(arguments)) {
+                val intermediateKlib = createIntermediateKlib()
+                val klibArgs = prepareKlibArgumentsForOneStage(arguments, intermediateKlib.canonicalPath)
+                val klibCompilationExitCode = doExecutePhasedKlibCompilation(
+                    klibArgs, Services.EMPTY, configuration.messageCollector,
+                    isOneStageCompilation = true
+                )
+                if (klibCompilationExitCode != ExitCode.OK) {
+                    return klibCompilationExitCode
+                }
+                adjustConfigurationForSecondStage(configuration, intermediateKlib)
+                val environmentForSecondStage = prepareEnvironment(arguments, configuration, rootDisposable)
+                runKonanDriver(configuration, environmentForSecondStage, rootDisposable)
+            } else {
+                doExecutePhased(arguments, Services.EMPTY, configuration.messageCollector)
+                    ?: runKonanDriver(configuration, environment, rootDisposable)
+            }
         } catch (e: Throwable) {
             if (e is KonanCompilationException || e is CompilationErrorException || e is IrValidationException)
                 return ExitCode.COMPILATION_ERROR

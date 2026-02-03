@@ -18,6 +18,7 @@ import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.contracts.contract
 
 /**
  * The class is not thread-safe; all functions should be called sequentially phase-by-phase within a specific module
