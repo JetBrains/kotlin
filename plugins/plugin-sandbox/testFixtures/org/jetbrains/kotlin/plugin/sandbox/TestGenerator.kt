@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGrou
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
-fun main() {
-    generateTestGroupSuiteWithJUnit5 {
-        testGroup("plugins/plugin-sandbox/tests-gen", "plugins/plugin-sandbox/testData") {
+fun main(args: Array<String>) {
+    val testsRoot = args[0]
+    generateTestGroupSuiteWithJUnit5(args) {
+        testGroup(testsRoot, "plugins/plugin-sandbox/testData") {
             testClass<AbstractFirPsiPluginDiagnosticTest> {
                 model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }

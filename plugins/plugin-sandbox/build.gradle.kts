@@ -8,8 +8,8 @@ plugins {
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
-
 
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
 val nativeTargetName = HostManager.host.name
@@ -63,21 +63,12 @@ optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
-    "main" {
-        projectDefault()
-    }
-    "test" {
-        generatedTestDir()
-    }
-    "testFixtures" {
-        projectDefault()
-    }
+    "main" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist")
-        workingDir = rootDir
         useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
         useJUnitPlatform {
             excludeTags("sandbox-native")
@@ -92,8 +83,17 @@ projectTests {
         compilerPluginDependencies = listOf(sandboxPluginForTests)
     )
 
-    testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+    withTestJar()
+    withStdlibCommon()
+    withJsRuntime()
     withPluginSandboxAnnotations()
+
+    testData(project(":plugins:plugin-sandbox").isolated, "testData")
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
 }
