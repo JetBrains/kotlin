@@ -37,7 +37,10 @@ object Namer {
     val KPROPERTY_GET = "get"
     val KPROPERTY_SET = "set"
     val KCALLABLE_CACHE_SUFFIX = "\$cache"
+    const val KCALLABLE_FLAGS = "\$flags"
     const val KCALLABLE_ARITY = "\$arity"
+    const val KCALLABLE_ID = "\$id"
+    const val KCALLABLE_BOUND_VALUES = "\$bound"
 
     const val SHARED_BOX_V = "_v"
 }

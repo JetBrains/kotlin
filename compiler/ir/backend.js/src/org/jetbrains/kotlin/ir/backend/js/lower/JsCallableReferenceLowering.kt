@@ -24,12 +24,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.toIrConst
 
 @PhasePrerequisites(PropertyReferenceLowering::class, FunctionInlining::class)
-class JsCallableReferenceLowering(context: JsIrBackendContext) : WebCallableReferenceLowering(context) {
-
+class JsCallableReferenceLowering(private val jsContext: JsIrBackendContext) : WebCallableReferenceLowering(jsContext) {
     private val compileSuspendAsJsGenerator = context.compileSuspendAsJsGenerator
 
     override fun getConstructorCallOrigin(reference: IrRichFunctionReference) = JsStatementOrigins.CALLABLE_REFERENCE_CREATE
@@ -58,16 +59,18 @@ class JsCallableReferenceLowering(context: JsIrBackendContext) : WebCallableRefe
                     symbol = continuation.symbol,
                     origin = JsStatementOrigins.CALLABLE_REFERENCE_INVOKE,
                 )
+            } else if (functionReference.reflectionTargetSymbol != null) {
+                arguments[0] = functionReference.getFlags().toIrConst(context.irBuiltIns.intType)
+                arguments[1] = functionReference.getArity().toIrConst(context.irBuiltIns.intType)
+                arguments[2] = functionReference.getId(jsContext).toIrConst(context.irBuiltIns.stringType)
             }
         }
     }
 
-    override fun getSuperClassType(reference: IrRichFunctionReference): IrType {
-        return if (reference.shouldAddContinuation) {
-            context.symbols.coroutineImpl.owner.defaultType
-        } else {
-            context.irBuiltIns.anyType
-        }
+    override fun getSuperClassType(reference: IrRichFunctionReference): IrType = when {
+        reference.shouldAddContinuation -> context.symbols.coroutineImpl.owner.defaultType
+        reference.reflectionTargetSymbol != null -> jsContext.symbols.reflectionSymbols.kFunctionImpl.defaultType
+        else -> jsContext.irBuiltIns.anyType
     }
 
     override fun getExtraConstructorParameters(constructor: IrConstructor, reference: IrRichFunctionReference): List<IrValueParameter> {

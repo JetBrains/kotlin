@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
@@ -389,6 +390,8 @@ class BackendJsSymbols(
         override val getKClass: IrSimpleFunctionSymbol = CallableIds.getKClass.functionSymbol()
         override val getKClassFromExpression: IrSimpleFunctionSymbol = CallableIds.getKClassFromExpression.functionSymbol()
         override val kTypeClass: IrClassSymbol = StandardClassIds.KType.classSymbol()
+
+        val kFunctionImpl: IrClassSymbol = ClassIds.KFunctionImpl.classSymbol()
     }
 
     val primitiveClassesObject: IrClassSymbol = ClassIds.PrimitiveClasses.classSymbol()
@@ -505,6 +508,9 @@ private object ClassIds {
     private val String.coroutinesClassId get() = ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier(this))
     val coroutineImpl = "CoroutineImpl".coroutinesClassId
     val continuation = "Continuation".coroutinesClassId
+
+    // Reflection
+    val KFunctionImpl = ClassId(JsStandardClassIds.BASE_REFLECT_JS_INTERNAL_PACKAGE, Name.identifier("KFunctionImpl"))
 
     // Other
     val PrimitiveClasses = ClassId(JsStandardClassIds.BASE_REFLECT_JS_INTERNAL_PACKAGE, Name.identifier("PrimitiveClasses"))

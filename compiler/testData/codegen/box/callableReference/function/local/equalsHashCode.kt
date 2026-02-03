@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-
 fun box(): String {
     fun bar() {}
     fun baz() {}

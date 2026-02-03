@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameterWithClassParent
 import org.jetbrains.kotlin.ir.util.fields
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
@@ -61,7 +60,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : We
                 functionReference.reflectionTargetSymbol != null -> {
                     arguments[0] = functionReference.getFlags().toIrConst(context.irBuiltIns.intType)
                     arguments[1] = functionReference.getArity().toIrConst(context.irBuiltIns.intType)
-                    arguments[2] = functionReference.getFqName(backendContext).toIrConst(context.irBuiltIns.stringType)
+                    arguments[2] = functionReference.getId(backendContext).toIrConst(context.irBuiltIns.stringType)
                 }
             }
         }
@@ -112,26 +111,6 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : We
         }
     }
 }
-
-private fun IrRichFunctionReference.getFlags(): Int = listOfNotNull(
-    (1 shl 0).takeIf { invokeFunction.isSuspend },
-    (1 shl 1).takeIf { hasVarargConversion },
-    (1 shl 2).takeIf { hasSuspendConversion },
-    (1 shl 3).takeIf { hasUnitConversion },
-    (1 shl 4).takeIf { isFunInterfaceConstructorAdapter() },
-).sum()
-
-private fun IrRichFunctionReference.getArity(): Int =
-    invokeFunction.parameters.size - boundValues.size + if (invokeFunction.isSuspend) 1 else 0
-
-private fun IrRichFunctionReference.getFqName(backendContext: WasmBackendContext): String = when {
-    isFunInterfaceConstructorAdapter() -> invokeFunction.returnType.getClass()!!.fqNameForIrSerialization.toString()
-    else -> (backendContext.irFactory as IrFactoryImplForWasmIC).declarationSignature(reflectionTargetSymbol!!.owner).toString()
-}
-
-
-private fun IrRichFunctionReference.isFunInterfaceConstructorAdapter() =
-    invokeFunction.origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR
 
 private fun IrRichFunctionReference.getLinkageErrorIfAny(backendContext: WasmBackendContext): String? =
     reflectionTargetLinkageError?.let { reflectionTargetLinkageError ->

@@ -28,6 +28,23 @@ internal fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     if (jsTypeOf(obj1) == "number" && jsTypeOf(obj2) == "number") {
         return obj1 === obj2 && (obj1 !== 0 || 1.asDynamic() / obj1 === 1.asDynamic() / obj2)
     }
+
+    if (isCallableReference(obj1) && isCallableReference(obj2)) {
+        if (obj1 === obj2) return true
+        if (obj1.`$id` != obj2.`$id`) return false
+        if (obj1.`$flags` != obj2.`$flags`) return false
+        if (obj1.`$arity` != obj2.`$arity`) return false
+
+        if (obj1.`$bound` == null && obj2.`$bound` == null) return true
+        if (obj1.`$bound` === obj2.`$bound`) return true
+        if (!isJsArray(obj1.`$bound`) || !isJsArray(obj2.`$bound`)) return false
+
+        val bound1 = obj1.`$bound`.unsafeCast<Array<dynamic>>()
+        val bound2 = obj2.`$bound`.unsafeCast<Array<dynamic>>()
+
+        return bound1.contentEqualsInternal(bound2)
+    }
+
     return obj1 === obj2
 }
 
@@ -49,7 +66,7 @@ internal fun hashCode(obj: dynamic): Int {
     @Suppress("UNUSED_VARIABLE")
     return when (val typeOf = jsTypeOf(obj)) {
         "object" -> if ("function" === jsTypeOf(obj.hashCode)) (obj.hashCode)() else getObjectHashCode(obj)
-        "function" -> getObjectHashCode(obj)
+        "function" -> if (isCallableReference(obj)) getCallableReferenceHashCode(obj) else getObjectHashCode(obj)
         "number" -> getNumberHashCode(obj)
         "boolean" -> getBooleanHashCode(obj.unsafeCast<Boolean>())
         "string" -> getStringHashCode(js("String")(obj))
@@ -145,6 +162,20 @@ internal fun getStringHashCode(str: String): Int {
         val code: Int = str.asDynamic().charCodeAt(i)
         hash = hash * 31 + code
     }
+    return hash
+}
+
+private fun getCallableReferenceHashCode(obj: dynamic): Int {
+    var hash: Int = obj.`$flags`.unsafeCast<Int>()
+    hash = (31 * hash) + obj.`$id`.hashCode()
+    hash = (31 * hash) + (obj.`$arity` ?: -1).unsafeCast<Int>()
+
+    val bound = obj.`$bound`
+    if (bound != null && isJsArray(bound)) {
+        val boundArray = bound.unsafeCast<Array<dynamic>>()
+        hash = (31 * hash) + boundArray.contentHashCodeInternal()
+    }
+
     return hash
 }
 

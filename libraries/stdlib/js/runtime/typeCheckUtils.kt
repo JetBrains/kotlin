@@ -162,3 +162,6 @@ internal fun isCharSequence(value: dynamic): Boolean =
 @UsedFromCompilerGeneratedCode
 internal fun isExternalObject(value: dynamic, ktExternalObject: dynamic) =
     jsEqeqeq(value, ktExternalObject) || (jsTypeOf(ktExternalObject) == "function" && jsInstanceOf(value, ktExternalObject))
+
+internal fun isCallableReference(value: dynamic): Boolean =
+    jsTypeOf(value) == "function" && value.callableName != null && value.`$id` != null && value.`$flags` != null

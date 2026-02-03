@@ -582,6 +582,55 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                         functionReferenceReflectedName.toIrConst(context.irBuiltIns.stringType, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
                     )
                 )
+                val superCall = constructor.body?.statements
+                    ?.filterIsInstance<IrDelegatingConstructorCallImpl>()
+                    ?.firstOrNull()
+                if (superCall != null) {
+                    val (flags, arity, id) = superCall.arguments
+                    statements.add(
+                        setDynamicProperty(
+                            tmpVar.symbol,
+                            Namer.KCALLABLE_FLAGS,
+                            flags?.shallowCopy()?.apply {
+                                startOffset = UNDEFINED_OFFSET
+                                endOffset = UNDEFINED_OFFSET
+                            } ?: compilationException("'flags' is expected to be passed to a parent constructor", superCall)
+                        )
+                    )
+                    statements.add(
+                        setDynamicProperty(
+                            tmpVar.symbol,
+                            Namer.KCALLABLE_ARITY,
+                            arity?.shallowCopy()?.apply {
+                                startOffset = UNDEFINED_OFFSET
+                                endOffset = UNDEFINED_OFFSET
+                            } ?: compilationException("'arity' is expected to be passed to a parent constructor", superCall)
+                        )
+                    )
+                    statements.add(
+                        setDynamicProperty(
+                            tmpVar.symbol,
+                            Namer.KCALLABLE_ID,
+                            id?.shallowCopy()?.apply {
+                                startOffset = UNDEFINED_OFFSET
+                                endOffset = UNDEFINED_OFFSET
+                            } ?: compilationException("'id' is expected to be passed to a parent constructor", superCall)
+                        )
+                    )
+                    if (factoryFunction.parameters.any()) {
+                        statements.add(
+                            setDynamicProperty(
+                                tmpVar.symbol,
+                                Namer.KCALLABLE_BOUND_VALUES,
+                                JsIrBuilder.buildArray(
+                                    factoryFunction.parameters.map { JsIrBuilder.buildGetValue(it.symbol) },
+                                    context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType),
+                                    context.irBuiltIns.anyNType
+                                )
+                            )
+                        )
+                    }
+                }
             }
 
             if (lambdaDeclaration.isSuspend) {

@@ -1,7 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// TODO: investigate should it be ran for JS or not
-
 package test
 
 class A {
