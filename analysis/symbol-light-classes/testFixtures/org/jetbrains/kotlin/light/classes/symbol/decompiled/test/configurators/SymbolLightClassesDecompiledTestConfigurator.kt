@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,12 +14,15 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
-class AnalysisApiSymbolLightClassesDecompiledTestConfigurator(
-    override val defaultTargetPlatform: TargetPlatform
+abstract class SymbolLightClassesDecompiledTestConfigurator(
+    override val defaultTargetPlatform: TargetPlatform,
+    override val testPrefixes: List<String>,
 ) : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
     override val analysisApiMode: AnalysisApiMode get() = AnalysisApiMode.Ide
@@ -36,8 +39,18 @@ class AnalysisApiSymbolLightClassesDecompiledTestConfigurator(
     override fun createModules(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
-        project: Project
+        project: Project,
     ): KtTestModuleStructure {
         return AnalysisApiFirLibraryBinaryDecompiledTestConfigurator.createModules(moduleStructure, testServices, project)
     }
 }
+
+object SymbolLightClassesDecompiledJvmTestConfigurator : SymbolLightClassesDecompiledTestConfigurator(
+    JvmPlatforms.defaultJvmPlatform,
+    listOf("lib"),
+)
+
+object SymbolLightClassesDecompiledJsTestConfigurator : SymbolLightClassesDecompiledTestConfigurator(
+    JsPlatforms.defaultJsPlatform,
+    listOf("kmp.lib"),
+)

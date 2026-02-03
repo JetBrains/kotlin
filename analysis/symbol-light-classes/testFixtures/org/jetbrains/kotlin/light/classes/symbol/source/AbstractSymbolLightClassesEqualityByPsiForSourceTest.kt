@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.source
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesEqualityByPsiTest
+import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassSourceJvmTestConfigurator
 
 abstract class AbstractSymbolLightClassesEqualityByPsiForSourceTest :
     AbstractSymbolLightClassesEqualityByPsiTest(
-        configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false),
-        currentExtension = EXTENSIONS.JAVA,
+        configurator = SymbolLightClassSourceJvmTestConfigurator,
         stopIfCompilationErrorDirectivePresent = false,
     )

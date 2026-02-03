@@ -10,6 +10,5 @@ import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClasses
 
 abstract class AbstractSymbolLightClassesAnnotationEqualityForSourceTest : AbstractSymbolLightClassesAnnotationEqualityTest(
     configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false),
-    currentExtension = EXTENSIONS.JAVA,
     isTestAgainstCompiledCode = false,
 )
