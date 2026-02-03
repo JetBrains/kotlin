@@ -16,6 +16,23 @@ import kotlin.experimental.ExperimentalTypeInference
 /**
  * Builds a [Sequence] lazily yielding values one by one.
  *
+ * If the consuming code stops iterating the sequence before it's completed,
+ * the remainder of the computation will not run at all.
+ * In particular, it means that `finally` blocks may be left unexecuted:
+ *
+ * ```
+ * val sequenceOfOne = sequence {
+ *     try {
+ *         yield(1)
+ *         // no code after the `yield(1)` line will be executed!
+ *     } finally {
+ *         println("This line will not run")
+ *     }
+ * }
+ * // only get the first element, do not attempt evaluating the rest of them
+ * println(sequenceOfOne.first())
+ * ```
+ *
  * @see kotlin.sequences.generateSequence
  *
  * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
@@ -27,6 +44,25 @@ public fun <T> sequence(@BuilderInference block: suspend SequenceScope<T>.() -> 
 
 /**
  * Builds an [Iterator] lazily yielding values one by one.
+ *
+ * If the consuming code stops using the iterator without [Iterator.hasNext] returning `false` first,
+ * the remainder of the computation will not run at all.
+ * In particular, it means that `finally` blocks may be left unexecuted:
+ *
+ * ```
+ * val singleElementIterator = iterator {
+ *     try {
+ *         yield(1)
+ *         // no code after the `yield(1)` line will be executed!
+ *     } finally {
+ *         println("This line will not run")
+ *     }
+ * }
+ * // only get the first element, do not attempt evaluating the rest of them
+ * if (singleElementIterator.hasNext()) {
+ *     println(singleElementIterator.next())
+ * }
+ * ```
  *
  * @sample samples.collections.Sequences.Building.buildIterator
  * @sample samples.collections.Iterables.Building.iterable
