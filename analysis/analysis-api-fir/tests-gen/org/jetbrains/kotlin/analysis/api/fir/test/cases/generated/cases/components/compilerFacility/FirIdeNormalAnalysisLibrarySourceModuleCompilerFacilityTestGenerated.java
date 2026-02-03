@@ -173,6 +173,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
   }
 
   @Test
+  @TestMetadata("localClassTypeArgument.kt")
+  public void testLocalClassTypeArgument() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/localClassTypeArgument.kt");
+  }
+
+  @Test
   @TestMetadata("multipleFiles.kt")
   public void testMultipleFiles() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/multipleFiles.kt");
