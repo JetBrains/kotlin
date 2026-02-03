@@ -560,15 +560,19 @@ class ExpressionCodegen(
             addSuspendMarker(mv, isStartNotEnd = true, suspensionPointKind == SuspensionPointKind.NOT_INLINE)
 
             if (expression.type.isUnit()) {
-                // Although we cannot be sure in type of suspendCoroutineUninterceptedOrReturn<T>() with non-inlined lambda due to
+                // Although we cannot be sure in type of `suspendCoroutineUninterceptedOrReturn<T>()` with non-inlined lambda due to
                 // the possibility of "unsafe" casts of the lambda types, we can ignore it for tail-call optimization aim, as unsafe
                 // casts can break it in any case (e.g. cast Continuation<Int> to Continuation<String> and call `resumeWith` with
                 // a wrong result type).
                 addBeforeSuspendUnitCallMarker(mv)
-                // This code adds "SuspendUnit" markers for suspension points from non-inlined calls
-                // and for directly inlined calls of suspendCoroutineUninterceptedOrReturn().
-                // Another case is suspendCoroutineUninterceptedOrReturn() call in the chain of inlined methods;
-                // for such cases, the marker is added during inlining in IrInlineCallGenerator
+            } else if (callee.isBuiltInSuspendCoroutineUninterceptedOrReturn() && expression.isGenericCallWithCallersSingleTypeParameter(irFunction)) {
+                // The code above adds "SuspendUnit" markers for suspension points from non-inlined calls
+                // and for directly inlined calls of `suspendCoroutineUninterceptedOrReturn()`, such as calls of `suspendCoroutine()`.
+                // In some cases we can detect that the suspension point return type (i.e. what is returned by
+                // `suspendCoroutineUninterceptedOrReturn`) matches the caller's type parameter and reuse it later in IrInlineCallGenerator
+                // to detect whether the actual return type is Unit or not. For such cases we add a special suspend marker here, that
+                // will be later either removed, kept, or replaced with the "SuspendUnit" marker.
+                addBeforeSuspendGenericCallMarker(mv)
             }
         }
 
@@ -1083,7 +1087,7 @@ class ExpressionCodegen(
                 expression.argument.accept(this, data).materializeAt(context.irBuiltIns.anyNType)
                 val type = typeMapper.boxType(typeOperand)
                 if (typeOperand.isReifiedTypeParameter) {
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, OperationKind.IS)
                     mv.instanceOf(type)
                 } else {
                     TypeIntrinsics.instanceOf(mv, kotlinType, type)
@@ -1492,7 +1496,7 @@ class ExpressionCodegen(
                 val classType = classReference.classType
                 val classifier = classType.classifierOrNull
                 if (classifier is IrTypeParameterSymbol) {
-                    val success = putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
+                    val success = putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, OperationKind.JAVA_CLASS)
                     assert(success) {
                         "Non-reified type parameter under ::class should be rejected by type checker: ${classType.render()}"
                     }
@@ -1555,6 +1559,7 @@ class ExpressionCodegen(
             config.languageVersionSettings,
             config.unifiedNullChecks,
         )
+        // TODO remove it after bootstrap compiler included adding INLINE_MARKER_BEFORE_SUSPEND_GENERIC_CALL
         // additional "hack" to support TCO with Unit-returning `suspendCoroutine` calls - we know that the type of built-in
         // `suspendCoroutine` is the same as the type of `suspendCoroutineUninterceptedOrReturn` called by it
         val markInlinedSuspensionPointAsUnitReturning = callee.isBuiltInSuspendCoroutine() && element.type.isUnit()

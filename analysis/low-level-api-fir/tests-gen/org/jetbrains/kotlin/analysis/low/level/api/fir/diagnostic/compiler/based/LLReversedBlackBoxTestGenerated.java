@@ -16950,6 +16950,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
         }
 
         @Test
+        @TestMetadata("kt84095.kt")
+        public void testKt84095() {
+          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/kt84095.kt");
+        }
+
+        @Test
         @TestMetadata("override.kt")
         public void testOverride() {
           runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/override.kt");
