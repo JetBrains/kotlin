@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.native.pipeline
 
-import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.native.FirOutput
 import org.jetbrains.kotlin.native.firSerializerBase
 
 object NativeMetadataSerializationPhase : PipelinePhase<NativeFrontendArtifact, NativeSerializationArtifact>(
@@ -18,23 +15,17 @@ object NativeMetadataSerializationPhase : PipelinePhase<NativeFrontendArtifact, 
     preActions = setOf(PerformanceNotifications.KlibWritingStarted),
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: NativeFrontendArtifact): NativeSerializationArtifact? {
+    override fun executePhase(input: NativeFrontendArtifact): NativeSerializationArtifact {
         val firOutput = input.frontendOutput
         val configuration = input.configuration
         val phaseContext = input.phaseContext
 
-        val serializerOutput = phaseContext.firSerializer(FirOutput.Full(firOutput))
-            ?: return null
+        val serializerOutput = phaseContext.firSerializerBase(firOutput, null)
         return NativeSerializationArtifact(
             serializerOutput = serializerOutput,
             configuration = configuration,
             diagnosticCollector = input.diagnosticCollector,
             phaseContext = phaseContext,
         )
-    }
-
-    fun PhaseContext.firSerializer(input: FirOutput): SerializerOutput? = when (input) {
-        !is FirOutput.Full -> null
-        else -> firSerializerBase(input.firResult, null)
     }
 }
