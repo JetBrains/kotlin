@@ -95,7 +95,7 @@ class KonanDriver(
                     val ir = lib.irOrFail
                     (0 until ir.irFileCount).map { fileIndex ->
                         val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, fileIndex))
-                        val proto = IrFile.parseFrom(ir.irFile(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
+                        val proto = IrFile.parseFrom(ir.irFile(fileIndex).codedInputStream, ExtensionRegistryLite.getEmptyRegistry())
                         val fileEntry = fileReader.fileEntry(proto)
                         fileReader.deserializeFileEntryName(fileEntry)
                     }

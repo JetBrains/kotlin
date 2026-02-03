@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
+import org.jetbrains.kotlin.metadata.ExtensionRegistryLite
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.java.JavaClassProtoBuf
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -125,10 +125,11 @@ data class SerializedJavaClassWithSource(
 fun SerializedJavaClass.toProtoData() = ClassProtoData(proto, NameResolverImpl(stringTable, qualifiedNameTable))
 
 val JAVA_CLASS_PROTOBUF_REGISTRY =
-        ExtensionRegistryLite.newInstance()
-                .also(JavaClassProtoBuf::registerAllExtensions)
-                // Built-ins extensions are used for annotations' serialization
-                .also(BuiltInsProtoBuf::registerAllExtensions)
+    ExtensionRegistryLite {
+        JavaClassProtoBuf.registerAllExtensions(this)
+        // Built-ins extensions are used for annotations' serialization
+        BuiltInsProtoBuf.registerAllExtensions(this)
+    }
 
 object JavaClassProtoMapValueExternalizer : DataExternalizer<SerializedJavaClass> {
     override fun save(output: DataOutput, value: SerializedJavaClass) {

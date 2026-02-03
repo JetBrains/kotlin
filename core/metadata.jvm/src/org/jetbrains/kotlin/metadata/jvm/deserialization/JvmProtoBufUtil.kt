@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.metadata.jvm.deserialization
 
+import org.jetbrains.kotlin.metadata.ExtensionRegistryLite
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -18,7 +19,7 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 object JvmProtoBufUtil {
-    val EXTENSION_REGISTRY: ExtensionRegistryLite = ExtensionRegistryLite.newInstance().apply {
+    val EXTENSION_REGISTRY: ExtensionRegistryLite = ExtensionRegistryLite {
         registerAllExtensions(this)
         SerializationPluginMetadataExtensions.registerAllExtensions(this)
     }
