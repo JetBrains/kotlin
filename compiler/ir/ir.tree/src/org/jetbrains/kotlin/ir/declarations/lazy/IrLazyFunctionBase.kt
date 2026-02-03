@@ -12,12 +12,4 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 
 interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer {
     val initialSignatureFunction: IrFunction?
-
-    fun getTopLevelDeclaration(): IrDeclaration {
-        var current: IrDeclaration = this
-        while (current.parent !is IrPackageFragment) {
-            current = current.parent as IrDeclaration
-        }
-        return current
-    }
 }

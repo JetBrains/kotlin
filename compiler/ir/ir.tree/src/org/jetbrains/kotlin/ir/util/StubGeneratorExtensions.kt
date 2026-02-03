@@ -66,8 +66,6 @@ open class StubGeneratorExtensions {
         companion object Instance : EnhancedNullability()
     }
 
-    open val irDeserializationEnabled: Boolean = false
-
     open fun generateFlexibleNullabilityAnnotation(): IrAnnotation? = null
 
     open fun generateFlexibleMutabilityAnnotation(): IrAnnotation? = null
