@@ -21,11 +21,11 @@ package kotlin
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
-public inline fun <T, R> context(with: T, block: context(T) () -> R): R {
+public inline fun <T, R> context(with: T, block: context(T) (T) -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return block(with)
+    return block(with, with)
 }
 
 
@@ -57,11 +57,51 @@ public inline fun <A, B, R> context(a: A, b: B, block: context(A, B) () -> R): R
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
+public inline fun <A, B, R> context(a: A, b: B, block: context(A, B) (A, B) -> R): R {
+    kotlin.contracts.contract {
+        callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    return context(a, b) {
+        block(a, b)
+    }
+}
+
+
+/**
+ * Runs the specified [block] with the given values in context scope.
+ *
+ * As opposed to [with], [context] only makes the values available for
+ * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("2.2")
 public inline fun <A, B, C, R> context(a: A, b: B, c: C, block: context(A, B, C) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return block(a, b, c)
+}
+
+
+/**
+ * Runs the specified [block] with the given values in context scope.
+ *
+ * As opposed to [with], [context] only makes the values available for
+ * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("2.2")
+public inline fun <A, B, C, R> context(a: A, b: B, c: C, block: context(A, B, C) (A, B, C) -> R): R {
+    kotlin.contracts.contract {
+        callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    return context(a, b, c) {
+        block(a, b, c)
+    }
 }
 
 
@@ -93,6 +133,26 @@ public inline fun <A, B, C, D, R> context(a: A, b: B, c: C, d: D, block: context
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
+public inline fun <A, B, C, D, R> context(a: A, b: B, c: C, d: D, block: context(A, B, C, D) (A, B, C, D) -> R): R {
+    kotlin.contracts.contract {
+        callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    return context(a, b, c, d) {
+        block(a, b, c, d)
+    }
+}
+
+
+/**
+ * Runs the specified [block] with the given values in context scope.
+ *
+ * As opposed to [with], [context] only makes the values available for
+ * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, R> context(a: A, b: B, c: C, d: D, e: E, block: context(A, B, C, D, E) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
@@ -111,10 +171,50 @@ public inline fun <A, B, C, D, E, R> context(a: A, b: B, c: C, d: D, e: E, block
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
+public inline fun <A, B, C, D, E, R> context(a: A, b: B, c: C, d: D, e: E, block: context(A, B, C, D, E) (A, B, C, D, E) -> R): R {
+    kotlin.contracts.contract {
+        callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    return context(a, b, c, d, e) {
+        block(a, b, c, d, e)
+    }
+}
+
+
+/**
+ * Runs the specified [block] with the given values in context scope.
+ *
+ * As opposed to [with], [context] only makes the values available for
+ * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("2.2")
 public inline fun <A, B, C, D, E, F, R> context(a: A, b: B, c: C, d: D, e: E, f: F, block: context(A, B, C, D, E, F) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return block(a, b, c, d, e, f)
+}
+
+
+/**
+ * Runs the specified [block] with the given values in context scope.
+ *
+ * As opposed to [with], [context] only makes the values available for
+ * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("2.2")
+public inline fun <A, B, C, D, E, F, R> context(a: A, b: B, c: C, d: D, e: E, f: F, block: context(A, B, C, D, E, F) (A, B, C, D, E, F) -> R): R {
+    kotlin.contracts.contract {
+        callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    return context(a, b, c, d, e, f) {
+        block(a, b, c, d, e, f)
+    }
 }
 

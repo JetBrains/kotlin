@@ -12,63 +12,67 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
     override fun getMultifileClassName(): String = "ContextParametersKt"
 
     override fun generateBody() {
-        generateSingleFunction(listOf("with"), listOf("T"), "R", false)
+        generateFunction(listOf("with"), listOf("T"), "R", lambdaWithParams = true)
         for (i in 2..6) {
             val parameterNames = ('a' .. 'z').take(i)
-            generateSingleFunction(
+            generateFunction(
                 parameterNames.map { it.toString() },
                 parameterNames.map { it.uppercase() },
                 "R",
-                true
+                lambdaWithParams = false
+            )
+            generateFunction(
+                parameterNames.map { it.toString() },
+                parameterNames.map { it.uppercase() },
+                "R",
+                lambdaWithParams = true
             )
         }
     }
 
-    fun generateSingleFunction(parameterNames: List<String>, parameterTypes: List<String>, resultType: String, dual: Boolean) {
+    fun generateFunction(parameterNames: List<String>, parameterTypes: List<String>, resultType: String, lambdaWithParams: Boolean) {
         val arguments = parameterNames.joinToString()
         val parameters = parameterNames.zip(parameterTypes) { name, type -> "$name: $type" }.joinToString()
-        val types = parameterTypes.joinToString()
+        val contextTypes = parameterTypes.joinToString()
+        val lambdaTypes = if (lambdaWithParams) parameterTypes.joinToString() else ""
 
         val values = if (parameterTypes.size == 1) "value" else "values"
-        val argumentsWord = if (parameterTypes.size == 1) "argument" else "arguments"
         val receivers = if (parameterTypes.size == 1) "receiver" else "receivers"
+
+        val contextParams = parameters
+        val lambdaParams = if (lambdaWithParams) parameters else ""
+        val returnExpression =
+            if (lambdaWithParams && parameterNames.size == 1)
+"""
+    return block(${arguments}, ${arguments})"""
+            else if (lambdaWithParams)
+"""
+    return context($arguments) {
+        block($arguments)
+    }"""
+            else
+"""
+    return block($arguments)"""
+
 
         out.println(
             """
 /**
  * Runs the specified [block] with the given $values in context scope.
  *
- * As opposed to [with], [context] doesn't make the the $values available as implicit $receivers
+ * As opposed to [with], [context] only makes the $values available for
+ * context parameter resolution, but not as implicit $receivers.
  *
  * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
-public inline fun <$types, $resultType> context($parameters, block: context($types) () -> $resultType): $resultType {
+public inline fun <$contextTypes, $resultType> context($parameters, block: context($contextTypes) ($lambdaTypes) -> $resultType): $resultType {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
-    }
-    return block($arguments)
-}""" + if (dual) """
-
-/**
- * Runs the specified [block] with the given $values in context scope and in the $argumentsWord.
- *
- * As opposed to [with], [context] doesn't make the the $values available as implicit $receivers
- *
- * @sample samples.misc.ContextParameters.useContext
- */
-@SinceKotlin("2.2")
-public inline fun <$types, $resultType> context($parameters, block: context($types) ($types) -> $resultType): $resultType {
-    kotlin.contracts.contract {
-        callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
-    }
-    return context($arguments) {
-        block($arguments)
-    }
-}""" else """
-
-""".trimIndent()
+    }$returnExpression
+}
+"""
         )
     }
 
