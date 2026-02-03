@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.arguments.dsl.types
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
+import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
 
 /**
  * [Kotlin compiler argument][org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument] value type.
@@ -194,6 +194,22 @@ class PathType(
     override fun stringRepresentation(value: Path?): String? {
         if (value == null) return null
         return "\"${value.absolutePathStringOrThrow()}\""
+    }
+}
+
+/**
+ * A value which accepts [ProfileCompilerCommand] type.
+ */
+@Serializable
+object ProfileCompilerCommandType : KotlinArgumentValueType<ProfileCompilerCommand> {
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true)
+    override val defaultValue: ReleaseDependent<ProfileCompilerCommand?> = ReleaseDependent(null)
+
+    override fun stringRepresentation(value: ProfileCompilerCommand?): String? {
+        if (value == null) return null
+        return with(value) {
+            "\"${profilerPath.absolutePathStringOrThrow()}${File.pathSeparator}$command${File.pathSeparator}${outputDir.absolutePathStringOrThrow()}\""
+        }
     }
 }
 
