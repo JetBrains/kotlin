@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.analysis.test.data.manager.filters
 
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.analysis.FakeGoldenAnalysisApiTestGenerated
+import org.jetbrains.kotlin.analysis.test.data.manager.fakes.lightclasses.FakeKnmLightClassesTestGenerated
 import org.junit.jupiter.api.Test
 
 internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `ClassSource with class implementing ManagedTest is included`() {
         assertIncluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorFromClass<FakeGoldenAnalysisApiTestGenerated>(),
         )
     }
@@ -20,7 +21,7 @@ internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `ClassSource with class NOT implementing ManagedTest is excluded`() {
         assertExcluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorFromClass<NoMetadataClass>(),
         )
     }
@@ -28,7 +29,7 @@ internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `MethodSource with method from class implementing ManagedTest is included`() {
         assertIncluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
         )
     }
@@ -36,7 +37,7 @@ internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `MethodSource with method from class NOT implementing ManagedTest is excluded`() {
         assertExcluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorFromMethod(NoMetadataClass::someMethod),
         )
     }
@@ -44,7 +45,7 @@ internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `Nested class within ManagedTest is included`() {
         assertIncluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorFromClass<FakeGoldenAnalysisApiTestGenerated.Expressions>(),
         )
     }
@@ -52,7 +53,7 @@ internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `Nested class within non-ManagedTest is excluded`() {
         assertExcluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorFromClass<NoMetadataClass.Nested>(),
         )
     }
@@ -60,7 +61,7 @@ internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `Method in nested class within ManagedTest is included`() {
         assertIncluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated.Expressions::testCall),
         )
     }
@@ -68,7 +69,7 @@ internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `Method in nested class within non-ManagedTest is excluded`() {
         assertExcluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorFromMethod(NoMetadataClass.Nested::nestedMethod),
         )
     }
@@ -76,7 +77,7 @@ internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `Descriptor without source is excluded`() {
         assertExcluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorWithSource(source = null),
         )
     }
@@ -85,7 +86,7 @@ internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     fun `Unsupported source type is excluded`() {
         val unsupportedSource = object : org.junit.platform.engine.TestSource {}
         assertExcluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorWithSource(source = unsupportedSource),
         )
     }
@@ -93,7 +94,7 @@ internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `Static nested class within ManagedTest is excluded`() {
         assertExcluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorFromClass<FakeGoldenAnalysisApiTestGenerated.StaticNested>(),
         )
     }
@@ -101,8 +102,60 @@ internal class ManagedTestFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `Method in static nested class within ManagedTest is excluded`() {
         assertExcluded(
-            filter = ManagedTestFilter,
+            filter = ManagedTestFilter(),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated.StaticNested::testStatic),
+        )
+    }
+
+    // Tests for goldenOnly=true (class-level filtering)
+
+    @Test
+    fun `goldenOnly excludes non-golden class`() {
+        assertExcluded(
+            filter = ManagedTestFilter(goldenOnly = true),
+            descriptor = descriptorFromClass<FakeKnmLightClassesTestGenerated>(),
+        )
+    }
+
+    @Test
+    fun `goldenOnly excludes method from non-golden class`() {
+        assertExcluded(
+            filter = ManagedTestFilter(goldenOnly = true),
+            descriptor = descriptorFromMethod(FakeKnmLightClassesTestGenerated::testSimple),
+        )
+    }
+
+    @Test
+    fun `goldenOnly includes golden class`() {
+        assertIncluded(
+            filter = ManagedTestFilter(goldenOnly = true),
+            descriptor = descriptorFromClass<FakeGoldenAnalysisApiTestGenerated>(),
+        )
+    }
+
+    @Test
+    fun `goldenOnly includes method from golden class`() {
+        assertIncluded(
+            filter = ManagedTestFilter(goldenOnly = true),
+            descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
+        )
+    }
+
+    // Tests for goldenOnly=false (default behavior unchanged)
+
+    @Test
+    fun `goldenOnly false includes non-golden class`() {
+        assertIncluded(
+            filter = ManagedTestFilter(goldenOnly = false),
+            descriptor = descriptorFromClass<FakeKnmLightClassesTestGenerated>(),
+        )
+    }
+
+    @Test
+    fun `goldenOnly false includes method from non-golden class`() {
+        assertIncluded(
+            filter = ManagedTestFilter(goldenOnly = false),
+            descriptor = descriptorFromMethod(FakeKnmLightClassesTestGenerated::testSimple),
         )
     }
 }

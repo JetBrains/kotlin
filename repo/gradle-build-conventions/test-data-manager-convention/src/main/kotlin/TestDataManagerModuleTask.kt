@@ -43,6 +43,7 @@ abstract class TestDataManagerModuleTask : JavaExec(), TestDataManagerTask {
         systemProperty("$testDataManagerOptionsPrefix.mode", mode.get())
         testDataPath.orNull?.let { systemProperty("$testDataManagerOptionsPrefix.testDataPath", it) }
         testClassPattern.orNull?.let { systemProperty("$testDataManagerOptionsPrefix.testClassPattern", it) }
+        goldenOnly.orNull?.let { systemProperty("$testDataManagerOptionsPrefix.goldenOnly", it) }
 
         super.exec()
     }

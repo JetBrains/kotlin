@@ -24,10 +24,12 @@ internal abstract class AbstractFakeTestIntegrationTest {
     protected fun buildFakeDiscoveryRequest(
         testClassPattern: String? = null,
         testDataPath: String? = null,
+        goldenOnly: Boolean = false,
         vararg additionalFilters: Filter<*>,
     ): LauncherDiscoveryRequest = TestDataManagerRunner.buildDiscoveryRequest(
         testClassPattern,
         testDataPath,
+        goldenOnly,
         PackageNameFilter.includePackageNames(FakeManagedTest::class.java.`package`.name),
         *additionalFilters,
     )
@@ -35,28 +37,31 @@ internal abstract class AbstractFakeTestIntegrationTest {
     protected fun discoverFakeTestPlan(
         testClassPattern: String? = null,
         testDataPath: String? = null,
+        goldenOnly: Boolean = false,
         vararg additionalFilters: Filter<*>,
     ): TestPlan {
-        val request = buildFakeDiscoveryRequest(testClassPattern, testDataPath, *additionalFilters)
+        val request = buildFakeDiscoveryRequest(testClassPattern, testDataPath, goldenOnly, *additionalFilters)
         return LauncherFactory.create().discover(request)
     }
 
     protected fun discoverFakeTests(
         testClassPattern: String? = null,
         testDataPath: String? = null,
+        goldenOnly: Boolean = false,
         vararg additionalFilters: Filter<*>,
     ): List<DiscoveredTest> {
-        val testPlan = discoverFakeTestPlan(testClassPattern, testDataPath, *additionalFilters)
+        val testPlan = discoverFakeTestPlan(testClassPattern, testDataPath, goldenOnly, *additionalFilters)
         return TestDataManagerRunner.discoverTests(testPlan)
     }
 
     protected fun <T> discoverFakeTests(
         testClassPattern: String? = null,
         testDataPath: String? = null,
+        goldenOnly: Boolean = false,
         vararg additionalFilters: Filter<*>,
         transform: (TestIdentifier) -> T,
     ): List<T> {
-        val testPlan = discoverFakeTestPlan(testClassPattern, testDataPath, *additionalFilters)
+        val testPlan = discoverFakeTestPlan(testClassPattern, testDataPath, goldenOnly, *additionalFilters)
         return TestDataManagerRunner.discoverTests(testPlan, transform)
     }
 }

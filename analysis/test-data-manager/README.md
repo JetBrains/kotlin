@@ -129,6 +129,9 @@ Run across all modules with the test-data-manager plugin:
 
 # Update mode - updates test data files
 ./gradlew manageTestDataGlobally --mode=update
+
+# Run only golden tests (skip all variant-specific tests)
+./gradlew manageTestDataGlobally --mode=update --golden-only
 ```
 
 ### Per-Module Execution

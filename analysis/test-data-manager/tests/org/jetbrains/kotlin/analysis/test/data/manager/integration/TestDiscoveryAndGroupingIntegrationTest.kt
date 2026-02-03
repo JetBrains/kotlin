@@ -75,11 +75,13 @@ internal class TestDiscoveryAndGroupingIntegrationTest : AbstractFakeTestIntegra
     private fun assertGroupingResultWithoutConflicts(
         testClassPattern: String? = null,
         testDataPath: String? = null,
+        goldenOnly: Boolean = false,
         expected: String,
     ) {
         assertGroupingResult(
             testClassPattern = testClassPattern,
             testDataPath = testDataPath,
+            goldenOnly = goldenOnly,
             PackageNameFilter.excludePackageNames(FakeConflictingTestABGenerated::class.java.`package`.name),
             expected = expected,
         )
@@ -88,10 +90,11 @@ internal class TestDiscoveryAndGroupingIntegrationTest : AbstractFakeTestIntegra
     private fun assertGroupingResult(
         testClassPattern: String? = null,
         testDataPath: String? = null,
+        goldenOnly: Boolean = false,
         vararg additionalFilters: Filter<*>,
         expected: String,
     ) {
-        val tests = discoverFakeTests(testClassPattern, testDataPath, *additionalFilters)
+        val tests = discoverFakeTests(testClassPattern, testDataPath, goldenOnly, *additionalFilters)
         val result = TestDataManagerRunner.groupByVariantDepth(tests)
 
         assertEquals(expected.trimIndent(), formatResult(result))
@@ -424,6 +427,52 @@ internal class TestDiscoveryAndGroupingIntegrationTest : AbstractFakeTestIntegra
                 Variants: [[lib, kmp.lib]]
                 FakeLibKmpLightClassesTestGenerated.NestedDir.testInner() -> [lib, kmp.lib]
                 FakeLibKmpLightClassesTestGenerated.testSimple() -> [lib, kmp.lib]
+            """
+        )
+    }
+
+    @Test
+    fun `discovery with goldenOnly finds only golden tests`() {
+        assertGroupingResultWithoutConflicts(
+            goldenOnly = true,
+            expected = """
+                === Group 0 (golden) ===
+                FakeFirTestGenerated.Resolve.testInference() -> []
+                FakeFirTestGenerated.testChecker() -> []
+                FakeGoldenAnalysisApiTestGenerated.Expressions.testCall() -> []
+                FakeGoldenAnalysisApiTestGenerated.Expressions.testLambda() -> []
+                FakeGoldenAnalysisApiTestGenerated.testSymbols() -> []
+                FakeGoldenAnalysisApiTestGenerated.testTypes() -> []
+                FakeGoldenLightClassesTestGenerated.NestedDir.testInner() -> []
+                FakeGoldenLightClassesTestGenerated.testSimple() -> []
+            """
+        )
+    }
+
+    @Test
+    fun `discovery with goldenOnly and testClassPattern combined`() {
+        assertGroupingResultWithoutConflicts(
+            testClassPattern = ".*LightClasses.*",
+            goldenOnly = true,
+            expected = """
+                === Group 0 (golden) ===
+                FakeGoldenLightClassesTestGenerated.NestedDir.testInner() -> []
+                FakeGoldenLightClassesTestGenerated.testSimple() -> []
+            """
+        )
+    }
+
+    @Test
+    fun `discovery with goldenOnly and testDataPath combined`() {
+        assertGroupingResultWithoutConflicts(
+            testDataPath = "testData/analysis",
+            goldenOnly = true,
+            expected = """
+                === Group 0 (golden) ===
+                FakeGoldenAnalysisApiTestGenerated.Expressions.testCall() -> []
+                FakeGoldenAnalysisApiTestGenerated.Expressions.testLambda() -> []
+                FakeGoldenAnalysisApiTestGenerated.testSymbols() -> []
+                FakeGoldenAnalysisApiTestGenerated.testTypes() -> []
             """
         )
     }

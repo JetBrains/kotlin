@@ -45,6 +45,14 @@ internal val TestSource.testDataPath: String?
     }
 
 /**
+ * Gets the variant chain from a ManagedTest class by instantiating it.
+ */
+internal fun Class<*>.getVariantChain(): TestVariantChain {
+    val instance = getDeclaredConstructor().newInstance()
+    return (instance as ManagedTest).variantChain
+}
+
+/**
  * Gets the variant chain for a test by instantiating its test class
  * and reading the [ManagedTest.variantChain].
  */
@@ -56,9 +64,7 @@ internal val TestIdentifier.variantChain: TestVariantChain
         }
 
         val managedTestClass = testClass.findManagedTestClass() ?: return emptyList()
-        val instance = managedTestClass.getDeclaredConstructor().newInstance()
-        val managedTest = instance as ManagedTest
-        return managedTest.variantChain
+        return managedTestClass.getVariantChain()
     }
 
 /**

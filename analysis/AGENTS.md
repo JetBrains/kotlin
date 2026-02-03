@@ -47,6 +47,9 @@ When modifying test data files or running generated tests (`*Generated`) that co
 
 # Check mode (default) - verify test data matches without updating
 ./gradlew manageTestDataGlobally --test-data-path=analysis/analysis-api/testData/components/resolver/singleByPsi/
+
+# Run only golden tests (useful for quick baseline updates)
+./gradlew manageTestDataGlobally --mode=update --golden-only
 ```
 
 **Why use `manageTestDataGlobally`?**
