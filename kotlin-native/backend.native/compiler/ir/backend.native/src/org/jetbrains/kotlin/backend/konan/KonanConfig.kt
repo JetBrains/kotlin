@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.native.resolve.KonanLibrariesResolveSupport
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
@@ -382,10 +383,14 @@ class KonanConfig(
     override val resolvedLibraries get() = resolve.resolvedLibraries
 
     val includedLibraries: List<KotlinLibrary>
-        get() = resolve.includedLibraries
+        get() = getIncludedLibraries(
+                configuration.getList(KonanConfigKeys.INCLUDED_LIBRARIES).map { File(it) },
+                configuration,
+                resolve.resolvedLibraries
+        )
 
     val exportedLibraries: List<KotlinLibrary>
-        get() = resolve.exportedLibraries
+        get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver, report = true)
 
     fun librariesWithDependencies(): List<KotlinLibrary> {
         return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(
