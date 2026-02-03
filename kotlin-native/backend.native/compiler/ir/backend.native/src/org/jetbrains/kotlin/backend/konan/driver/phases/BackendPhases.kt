@@ -84,42 +84,6 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrO
     runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
-    val diagnosticReporter = DiagnosticReporterFactory.createReporter()
-    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            diagnosticReporter,
-            environment.configuration.languageVersionSettings
-    )
-    val loweringContext = NativePreSerializationLoweringContext(
-            fir2IrOutput.fir2irActualizedResult.irBuiltIns,
-            environment.configuration,
-            irDiagnosticReporter,
-    )
-    val preSerializationLowered = newEngine(loweringContext) { engine ->
-        // TODO: move to nativeLoweringsOfTheFirstPhase after they moved to NativeLoweringPhases.kt
-        // Unfortunately, this needs K/N to be turned on by default in the Kotlin repository.
-        val lowerings = listOf(testProcessorModulePhase) +
-                nativeLoweringsOfTheFirstPhase(environment.configuration.languageVersionSettings)
-        engine.runPreSerializationLoweringPhases(
-                fir2IrOutput.fir2irActualizedResult,
-                lowerings,
-        )
-    }
-    // TODO: After KT-73624, generate native diagnostic tests for `compiler/testData/diagnostics/irInliner/syntheticAccessors`
-    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-            diagnosticReporter,
-            environment.configuration.messageCollector,
-            environment.configuration.renderDiagnosticInternalName,
-    )
-    if (diagnosticReporter.hasErrors) {
-        throw KonanCompilationException("Compilation failed: there were some diagnostics during IR Inliner")
-    }
-
-    return fir2IrOutput.copy(
-            fir2irActualizedResult = preSerializationLowered,
-    )
-}
-
 internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "addEntryPoint",
         preactions = getDefaultIrActions(),

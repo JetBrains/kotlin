@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.native.FirOutput
 import org.jetbrains.kotlin.native.FirSerializerInput
+import org.jetbrains.kotlin.native.runPreSerializationLowerings
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
