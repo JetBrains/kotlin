@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.cli.pipeline.metadata
 
+import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.getZipFileSystemAccessor
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.targetPlatform
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -56,10 +59,14 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
         input: ArgumentsPipelineArtifact<K2MetadataCompilerArguments>,
         configuration: CompilerConfiguration,
     ) {
-        fillConfiguration(configuration, input.arguments)
+        fillConfiguration(configuration, input.arguments, input.rootDisposable)
     }
 
-    fun fillConfiguration(configuration: CompilerConfiguration, arguments: K2MetadataCompilerArguments) {
+    fun fillConfiguration(
+        configuration: CompilerConfiguration,
+        arguments: K2MetadataCompilerArguments,
+        rootDisposable: Disposable,
+    ) {
         val collector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         val commonSources = arguments.commonSources?.toSet() ?: emptySet()
@@ -106,6 +113,12 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
         } else {
             collector.report(ERROR, "Specify destination via -d")
         }
+
+        configuration.zipFileSystemAccessor = arguments.getZipFileSystemAccessor(
+            zipFileAccessorCacheLimitArgument = K2MetadataCompilerArguments::klibZipFileAccessorCacheLimit,
+            collector = collector,
+            rootDisposable = rootDisposable,
+        )
     }
 
     fun computeTargetPlatform(

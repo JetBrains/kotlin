@@ -85,7 +85,7 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
-        MetadataConfigurationUpdater.fillConfiguration(configuration, arguments)
+        MetadataConfigurationUpdater.fillConfiguration(configuration, arguments, rootDisposable)
 
         val moduleName = configuration.moduleName
         val environment =

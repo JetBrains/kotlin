@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
@@ -91,6 +92,18 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_20,
+        )
+    }
+
+    compilerArgument {
+        name = "Xklib-zip-file-accessor-cache-limit"
+        description = "Maximum number of klibs that can be cached during compilation. Default is 64.".asReleaseDependent()
+        valueType = IntType(
+            defaultValue = 64.asReleaseDependent()
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0
         )
     }
 }
