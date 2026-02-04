@@ -14,16 +14,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit4(args) {
         testGroup("compiler/incremental-compilation-impl/tests-gen", "jps/jps-plugin/testData") {
-            testClass<AbstractIncrementalK1JvmCompilerRunnerTest>(
-                init = incrementalJvmTestData(
-                    targetBackend = TargetBackend.JVM_IR,
-                    folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to ".*SinceK2",
-                        WITH_JAVA to "(^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature)" // KT-56681
-                    )
-                )
-            )
-
             // K2
             testClass<AbstractIncrementalK2JvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
@@ -73,7 +63,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractIncrementalMultiplatformJvmCompilerRunnerTest> {
                 modelForDirectoryBasedTest("incremental/mpp", "allPlatforms", extension = null, excludeParentDirs = true)
-                modelForDirectoryBasedTest("incremental/mpp", "jvmOnlyK1", extension = null, excludeParentDirs = true)
             }
             //TODO: write a proper k2 multiplatform test runner KT-63183
         }

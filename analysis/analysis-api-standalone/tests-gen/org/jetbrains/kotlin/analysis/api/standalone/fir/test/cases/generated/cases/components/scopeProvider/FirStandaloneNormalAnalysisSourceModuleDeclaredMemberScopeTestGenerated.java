@@ -62,12 +62,6 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   }
 
   @Test
-  @TestMetadata("annotatedPropertiesCompiledK1.kt")
-  public void testAnnotatedPropertiesCompiledK1() {
-    run("annotatedPropertiesCompiledK1.kt");
-  }
-
-  @Test
   @TestMetadata("annotatedReturnType.kt")
   public void testAnnotatedReturnType() {
     run("annotatedReturnType.kt");
