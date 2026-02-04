@@ -133,6 +133,6 @@ class CompilerConfiguration {
     }
 
     private fun checkReadOnly() {
-        require(!isReadOnly) { "CompilerConfiguration is read-only" }
+        check(!isReadOnly) { "CompilerConfiguration is read-only" }
     }
 }
