@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
+import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsReporterImpl
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -27,7 +27,7 @@ class LossDiagnosticCollectorComponent(
             return
         }
 
-        if (reporter !is PendingDiagnosticsCollectorWithSuppress) {
+        if (reporter !is PendingDiagnosticsReporterImpl) {
             return
         }
 

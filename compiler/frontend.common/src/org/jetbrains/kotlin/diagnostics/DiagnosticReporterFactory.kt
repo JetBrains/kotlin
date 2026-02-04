@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollectorWithSuppress
 
@@ -19,7 +18,8 @@ object DiagnosticReporterFactory {
         }
     }
 
-    fun createPendingReporter(): PendingDiagnosticsCollectorWithSuppress {
-        return PendingDiagnosticsCollectorWithSuppress()
+    // TODO: get rid of this method and the whole `DiagnosticReporterFactory` (fixed in following commits)
+    fun createPendingReporter(): BaseDiagnosticsCollector {
+        return SimpleDiagnosticsCollectorWithSuppress()
     }
 }

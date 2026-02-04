@@ -20,8 +20,8 @@ abstract class AbstractDiagnosticCollectorComponent(
 
     open fun checkSettings(data: CheckerContext) {}
 
-    protected fun checkAndCommitReportsOn(element: FirElement, context: DiagnosticContext?) {
+    protected fun checkAndCommitReportsOn(element: FirElement, context: DiagnosticContext, commitEverything: Boolean) {
         val source = element.source ?: return
-        reporter.checkAndCommitReportsOn(source, context)
+        reporter.checkAndCommitReportsOn(source, context, commitEverything)
     }
 }
