@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Toolchain
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.Kotlin230AndBelowWrapper
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinBelow240Wrapper
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -164,6 +165,9 @@ public interface KotlinToolchains {
             when {
                 kotlinCompilerVersion <= KotlinCompilerVersion(2, 3, 0, null) -> {
                     Kotlin230AndBelowWrapper(baseImplementation)
+                }
+                kotlinCompilerVersion < KotlinCompilerVersion(2, 4, 0, null) -> {
+                    KotlinBelow240Wrapper(baseImplementation)
                 }
                 else -> baseImplementation
             }
