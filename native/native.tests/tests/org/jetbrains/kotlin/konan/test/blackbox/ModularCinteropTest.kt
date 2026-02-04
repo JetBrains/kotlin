@@ -20,8 +20,9 @@ import kotlin.test.assertIs
 class ModularCinteropTest : AbstractNativeCInteropBaseTest() {
 
     @BeforeEach
-    fun onlyOnAppleHosts() {
-        // -fmodules currently only works on apple hosts
+    fun onlyOnAppleTargets() {
+        // We are primarily interested in running these tests on Apple targets because we care about Objective-C, but in theory we could
+        // support -fmodules tests on other hosts and targets as well even where we don't support Objective-C
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
     }
     @Test
