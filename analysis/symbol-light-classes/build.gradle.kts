@@ -60,8 +60,10 @@ projectTests {
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()
     withScriptRuntime()
-    withDist()
     withPluginSandboxAnnotations()
+
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 
     testData(project.isolated, "testData")
     testData(project(":compiler").isolated, "testData/asJava/lightClasses")

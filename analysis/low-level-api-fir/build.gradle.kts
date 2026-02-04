@@ -132,8 +132,10 @@ projectTests {
     withScriptRuntime()
     withScriptingPlugin()
     withTestScriptDefinition()
-    withDist()
     withPluginSandboxAnnotations()
+
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 }
 
 allprojects {

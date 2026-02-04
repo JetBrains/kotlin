@@ -84,8 +84,10 @@ projectTests {
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
     withScriptRuntime()
-    withDist()
     withPluginSandboxAnnotations()
+
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 
     testData(project.isolated, "testData")
     testData(project(":analysis:analysis-api").isolated, "testData")

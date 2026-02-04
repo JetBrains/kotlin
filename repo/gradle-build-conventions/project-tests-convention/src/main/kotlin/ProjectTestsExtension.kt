@@ -32,6 +32,13 @@ import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import java.io.File
 
+@RequiresOptIn(
+    level = RequiresOptIn.Level.ERROR,
+    message = "Unless your tests use the compiler distribution directly, consider depending on individual dist artifacts"
+)
+@Target(AnnotationTarget.FUNCTION)
+annotation class KotlinCompilerDistUsage
+
 abstract class ProjectTestsExtension(val project: Project) {
     abstract val allowFlaky: Property<Boolean>
 
@@ -174,6 +181,7 @@ abstract class ProjectTestsExtension(val project: Project) {
         add(testScriptDefinitionForTests) { project(":plugins:scripting:test-script-definition", "testFixturesApiElements") }
     }
 
+    @KotlinCompilerDistUsage
     fun withDist() {
         add(distForTests) { project(":kotlin-compiler", "distElements") }
     }

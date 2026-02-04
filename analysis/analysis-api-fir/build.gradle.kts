@@ -103,8 +103,10 @@ projectTests {
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
     withScriptRuntime()
-    withDist()
     withPluginSandboxAnnotations()
+
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 }
 
 testsJar()
