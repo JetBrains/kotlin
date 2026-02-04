@@ -158,6 +158,8 @@ public actual fun atanh(x: Double): Double = kotlin.math.fdlibm.__ieee754_atanh(
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Doubles.hypot
  */
 @SinceKotlin("1.2")
 public actual fun hypot(x: Double, y: Double): Double = kotlin.math.fdlibm.__ieee754_hypot(x, y)
@@ -706,6 +708,8 @@ public actual fun atanh(x: Float): Float = kotlin.math.fdlibm.__ieee754_atanh(x.
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Floats.hypot
  */
 @SinceKotlin("1.2")
 public actual fun hypot(x: Float, y: Float): Float = kotlin.math.fdlibm.__ieee754_hypot(x.toDouble(), y.toDouble()).toFloat()

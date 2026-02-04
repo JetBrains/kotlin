@@ -173,6 +173,8 @@ public expect fun atanh(x: Double): Double
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Doubles.hypot
  */
 @SinceKotlin("1.2")
 public expect fun hypot(x: Double, y: Double): Double
@@ -691,6 +693,8 @@ public expect fun atanh(x: Float): Float
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Floats.hypot
  */
 @SinceKotlin("1.2")
 public expect fun hypot(x: Float, y: Float): Float

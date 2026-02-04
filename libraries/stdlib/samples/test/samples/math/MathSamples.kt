@@ -260,6 +260,18 @@ class MathSamples {
             assertPrints(sqrt(Double.NaN), "NaN")
             assertPrints(sqrt(Double.POSITIVE_INFINITY), "Infinity")
         }
+
+        @Sample
+        fun hypot() {
+            // sqrt(6 * 6 + 8 * 8) = sqrt(36 + 64) = sqrt(100) = 10
+            assertPrints(hypot(6.0, 8.0), "10.0")
+
+            // special cases
+            assertPrints(hypot(Double.NaN, 2.0), "NaN")
+            assertPrints(hypot(1.0, Double.NaN), "NaN")
+            assertPrints(hypot(Double.POSITIVE_INFINITY, 2.0), "Infinity")
+            assertPrints(hypot(1.0, Double.NEGATIVE_INFINITY), "Infinity")
+        }
     }
 
     class Floats {
@@ -511,6 +523,18 @@ class MathSamples {
             assertPrints(sqrt(-4.0f), "NaN")
             assertPrints(sqrt(Float.NaN), "NaN")
             assertPrints(sqrt(Float.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun hypot() {
+            // sqrt(6 * 6 + 8 * 8) = sqrt(36 + 64) = sqrt(100) = 10
+            assertPrints(hypot(6.0f, 8.0f), "10.0")
+
+            // special cases
+            assertPrints(hypot(Float.NaN, 2.0f), "NaN")
+            assertPrints(hypot(1.0f, Float.NaN), "NaN")
+            assertPrints(hypot(Float.POSITIVE_INFINITY, 2.0f), "Infinity")
+            assertPrints(hypot(1.0f, Float.NEGATIVE_INFINITY), "Infinity")
         }
     }
 
