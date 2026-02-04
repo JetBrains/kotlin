@@ -91,6 +91,43 @@ Converting Java PSI classes to Kotlin is NOT always possible. Before attempting:
 - `visit` prefix for visitor methods (e.g., `visitCallExpression`)
 - `create` prefix for factory methods in `KtPsiFactory` (e.g., `createExpression`)
 
+### Documenting KtElement Classes
+
+General documentation rules from [api-development.md](../../analysis/docs/contribution-guide/api-development.md) apply to all PSI classes. This section describes additional requirements specific to concrete classes implementing `KtElement`.
+
+**Required documentation for concrete KtElement classes:**
+
+1. **Class description** — A simple explanation of which Kotlin language concept or syntax construct the class represents.
+
+2. **Code example** — A code snippet showing the syntax in context. Use ASCII-art markers (`^___^`) to indicate the specific portion that the class represents.
+
+Example documentation format:
+````kotlin
+/**
+ * Represents a function call expression.
+ *
+ * ### Example:
+ * 
+ * ```kotlin
+ * fun main() {
+ *     println(0)
+ * // ^_________^
+ * }
+ * ```
+ */
+class KtCallExpression : ...
+````
+
+**Reference examples:**
+- `KtCallExpression` and `KtAnnotationEntry` demonstrate the code example format with ASCII-art markers.
+
+**Test coverage requirement:**
+
+All concrete `KtElement` classes must be covered by tests in `compiler/testData/psi/`:
+- Each test consists of a `.kt` file containing example Kotlin code and a corresponding `.txt` file showing the expected PSI tree structure
+- These tests serve as documentation showing which code constructs map to which PSI elements
+- When adding a new `KtElement` class, add corresponding test cases demonstrating the syntax it represents
+
 ## Detailed Documentation
 
 WHEN modifying PSI interfaces or adding new element types:
