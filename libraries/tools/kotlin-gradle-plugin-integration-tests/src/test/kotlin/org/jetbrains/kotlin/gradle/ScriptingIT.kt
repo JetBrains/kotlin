@@ -140,11 +140,6 @@ abstract class ScriptingIT : KGPBaseTest() {
     }
 }
 
-@DisplayName("K1 Scripting plugin")
-class ScriptingK1IT : ScriptingIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
-}
-
 @DisplayName("K2 Scripting plugin")
 class ScriptingK2IT : ScriptingIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()

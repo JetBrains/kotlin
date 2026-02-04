@@ -78,14 +78,6 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
         assertEquals(expectedExitCode, exitCode, output)
     }
 
-    fun testShouldNotGenerateCodeJVM() {
-        runTest(K2JVMCompiler(), classNotFound, CustomComponentRegistrar::class)
-    }
-
-    fun testRepeatedAnalysisJVM() {
-        runTest(K2JVMCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
-    }
-
     fun testAnalysisError() {
         runTest(K2JVMCompiler(), simple, ErrorAnalysisComponentRegistrar::class, ExitCode.COMPILATION_ERROR)
     }

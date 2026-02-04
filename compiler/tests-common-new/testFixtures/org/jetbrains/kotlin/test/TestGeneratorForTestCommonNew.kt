@@ -146,10 +146,6 @@ fun main(args: Array<String>) {
                 model("codegen/asmLike")
             }
 
-            testClass<AbstractClassicJvmIntegrationDiagnosticTest> {
-                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-            }
-
             // ------------- Inline scopes tests duplication -------------
 
             testClass<AbstractFirBytecodeTextTestWithInlineScopes> {
