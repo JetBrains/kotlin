@@ -52181,6 +52181,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         }
 
         @Test
+        @TestMetadata("effectivelyImmutableCases.kt")
+        public void testEffectivelyImmutableCases() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/varCapturing/effectivelyImmutableCases.kt");
+        }
+
+        @Test
         @TestMetadata("nonInPlaceVariableCapture.kt")
         public void testNonInPlaceVariableCapture() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/varCapturing/nonInPlaceVariableCapture.kt");

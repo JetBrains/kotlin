@@ -112,24 +112,12 @@ fun foo() {
         baz(y)
     }
 
-    var badSink : Int? = 42
-    barRegular {
-        <!CV_DIAGNOSTIC!>badSink = null<!>
-    }
-
 
     val person = MutablePerson("Alice")
 
     barRegular {
         baz(person.name)
     }
-
-    var person2 = MutablePerson("Alice")
-
-    barRegular {
-        baz(<!CV_DIAGNOSTIC!>person2<!>.age)
-    }
-
 
     barRegular {
         baz(hi)
@@ -146,12 +134,6 @@ fun foo() {
         val localObj = MutableObject()
 
         println(localObj.mutableField)
-    }
-
-    var localObj = MutableObject()
-    barRegular {
-
-        println(<!CV_DIAGNOSTIC!>localObj<!>.mutableField)
     }
 
     val localObjVal = MutableObject()
@@ -203,6 +185,18 @@ fun foo() {
     }
 
 }
+
+fun doSomethingBig() {
+    var hi = 2
+
+    fun localHelper(message: String) {
+        println(message)
+        println(hi)
+    }
+
+    localHelper("1")
+}
+
 
 /* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, checkNotNullCall, classDeclaration,
 classReference, contractCallsEffect, contracts, elvisExpression, equalityExpression, functionDeclaration, functionalType,
