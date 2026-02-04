@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 
 class ReportCommitterDiagnosticComponent(
     session: FirSession,
-    reporter: DiagnosticReporter
+    reporter: PendingDiagnosticReporter
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
     override fun visitElement(element: FirElement, data: CheckerContext) {
         checkAndCommitReportsOn(element, data)

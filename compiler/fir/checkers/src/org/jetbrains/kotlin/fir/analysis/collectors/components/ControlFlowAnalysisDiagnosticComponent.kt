@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
 class ControlFlowAnalysisDiagnosticComponent(
     session: FirSession,
-    reporter: DiagnosticReporter,
+    reporter: PendingDiagnosticReporter,
     declarationCheckers: DeclarationCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
-    constructor(session: FirSession, reporter: DiagnosticReporter, mppKind: MppCheckerKind) : this(
+    constructor(session: FirSession, reporter: PendingDiagnosticReporter, mppKind: MppCheckerKind) : this(
         session,
         reporter,
         when (mppKind) {

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.diagnostics.impl
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 
-abstract class BaseDiagnosticsCollector : DiagnosticReporter() {
+abstract class BaseDiagnosticsCollector : PendingDiagnosticReporter() {
     abstract val diagnostics: List<KtDiagnostic>
     abstract val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
 }

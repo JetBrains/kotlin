@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.MutableCheckerContext
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 class CliDiagnosticsCollector(
     session: FirSession,
     scopeSession: ScopeSession,
-    createComponents: (DiagnosticReporter) -> DiagnosticCollectorComponents,
+    createComponents: (PendingDiagnosticReporter) -> DiagnosticCollectorComponents,
 ) : AbstractDiagnosticCollector(session, scopeSession, createComponents) {
     override fun createVisitor(components: DiagnosticCollectorComponents): CheckerRunningDiagnosticCollectorVisitor {
         return CheckerRunningDiagnosticCollectorVisitor(

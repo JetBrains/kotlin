@@ -29,10 +29,6 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
         diagnosticReporter.report(diagnostic, context)
     }
 
-    override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {
-        diagnosticReporter.checkAndCommitReportsOn(element, context)
-    }
-
     private val suppressCache = IrBasedSuppressCache()
 
     private fun IrElement.toSourceElement(containingIrFile: IrFile): AbstractKtSourceElement? {
@@ -93,28 +89,24 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
         override fun report(factory: KtDiagnosticFactory0) {
             sourceElement?.let {
                 reportOn(it, factory)
-                checkAndCommitReportsOn(it, this)
             }
         }
 
         override fun <A : Any> report(factory: KtDiagnosticFactory1<A>, a: A) {
             sourceElement?.let {
                 reportOn(it, factory, a)
-                checkAndCommitReportsOn(it, this)
             }
         }
 
         override fun <A : Any, B : Any> report(factory: KtDiagnosticFactory2<A, B>, a: A, b: B) {
             sourceElement?.let {
                 reportOn(it, factory, a, b)
-                checkAndCommitReportsOn(it, this)
             }
         }
 
         override fun <A : Any, B : Any, C : Any> report(factory: KtDiagnosticFactory3<A, B, C>, a: A, b: B, c: C) {
             sourceElement?.let {
                 reportOn(it, factory, a, b, c)
-                checkAndCommitReportsOn(it, this)
             }
         }
 

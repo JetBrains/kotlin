@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.delegatedPropertySourceOrThis
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.fir.types.*
 
 class ErrorNodeDiagnosticCollectorComponent(
     session: FirSession,
-    reporter: DiagnosticReporter,
+    reporter: PendingDiagnosticReporter,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
     override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
         val source = errorLoop.source

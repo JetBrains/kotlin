@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLCheckersFactory.Provider.Companion.filterToCheckersMapUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
@@ -75,7 +75,7 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
     private val expressionCheckersProvider = Provider(session, ::createExpressionCheckers)
     private val typeCheckersProvider = Provider(session, ::createTypeCheckers)
 
-    fun createComponents(filter: DiagnosticCheckerFilter, reporter: DiagnosticReporter): DiagnosticCollectorComponents {
+    fun createComponents(filter: DiagnosticCheckerFilter, reporter: PendingDiagnosticReporter): DiagnosticCollectorComponents {
         val declarationCheckers = declarationCheckersProvider.getOrCreateCheckers(filter)
         val expressionCheckers = expressionCheckersProvider.getOrCreateCheckers(filter)
         val typeCheckers = typeCheckersProvider.getOrCreateCheckers(filter)
