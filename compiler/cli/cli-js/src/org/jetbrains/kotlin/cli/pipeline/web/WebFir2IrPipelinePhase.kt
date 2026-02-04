@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
@@ -114,8 +113,7 @@ private fun runJsKlibCallCheckers(
     firOutputs: List<SingleModuleFrontendOutput>,
     fir2IrActualizedResult: Fir2IrActualizedResult,
 ) {
-    val irDiagnosticReporter =
-        KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
+    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
 
     val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
         configuration,

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -20,9 +21,11 @@ import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
 class KtDiagnosticReporterWithImplicitIrBasedContext(
-    val diagnosticReporter: DiagnosticReporter,
+    diagnosticReporter: DiagnosticReporter,
     val languageVersionSettings: LanguageVersionSettings
 ) : DiagnosticReporter(), IrDiagnosticReporter {
+    val diagnosticReporter: DiagnosticReporter = diagnosticReporter.deduplicating()
+
     override val hasErrors: Boolean get() = diagnosticReporter.hasErrors
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {

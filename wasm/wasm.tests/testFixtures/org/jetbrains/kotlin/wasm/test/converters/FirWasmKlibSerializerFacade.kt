@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
-import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
@@ -56,7 +55,7 @@ class FirWasmKlibSerializerFacade(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val diagnosticReporter = DiagnosticsCollectorImpl()
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            diagnosticReporter.deduplicating(),
+            diagnosticReporter,
             configuration.languageVersionSettings
         )
         val outputFile = testServices.klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
