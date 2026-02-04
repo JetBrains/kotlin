@@ -269,6 +269,8 @@ constructor(
                 .all { binary ->
                     val syncTask = binary.linkSyncTask
 
+                    syncTask.destinationDirectory.set(project.layout.buildDirectory.dir(KotlinPlatformType.js.name).dir(compilation.outputModuleName).mapToFile())
+
                     binary.linkTask.configure {
                         it.finalizedBy(syncTask)
                     }
