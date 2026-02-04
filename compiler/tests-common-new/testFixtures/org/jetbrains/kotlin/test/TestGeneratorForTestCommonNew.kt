@@ -129,10 +129,6 @@ fun main(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/boxInline")
-            }
-
             testClass<AbstractIrBytecodeListingTest> {
                 model("codegen/bytecodeListing")
             }
@@ -173,11 +169,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirBlackBoxInlineCodegenTestWithInlineScopes> {
                 model("codegen/boxInline", excludeDirs = k2BoxTestDir)
-            }
-
-            testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopes> {
-                model("codegen/box")
-                model("codegen/boxInline")
             }
 
             testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes>("FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes") {

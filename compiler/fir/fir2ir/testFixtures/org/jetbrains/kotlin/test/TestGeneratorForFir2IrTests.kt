@@ -118,16 +118,6 @@ fun main(args: Array<String>) {
                 model("diagnostics/testsWithJvmBackend", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractFirLightTreeSerializeCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/box")
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractFirPsiSerializeCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/box")
-                model("codegen/boxInline")
-            }
-
             testClass<AbstractFirPsiBytecodeListingTest> {
                 model("codegen/bytecodeListing")
             }
