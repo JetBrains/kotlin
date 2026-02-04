@@ -6,20 +6,11 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollectorWithSuppress
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 
+// TODO: delete the function with its only usage in Compose tests
 object DiagnosticReporterFactory {
-    fun createReporter(disableSuppress: Boolean = false): BaseDiagnosticsCollector {
-        return if (disableSuppress) {
-            SimpleDiagnosticsCollector()
-        } else {
-            SimpleDiagnosticsCollectorWithSuppress()
-        }
-    }
-
-    // TODO: get rid of this method and the whole `DiagnosticReporterFactory` (fixed in following commits)
-    fun createPendingReporter(): BaseDiagnosticsCollector {
-        return SimpleDiagnosticsCollectorWithSuppress()
+    fun createReporter(): BaseDiagnosticsCollector {
+        return DiagnosticsCollectorImpl()
     }
 }

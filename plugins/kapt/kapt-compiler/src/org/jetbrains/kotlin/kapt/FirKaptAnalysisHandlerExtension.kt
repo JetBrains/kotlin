@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.*
@@ -191,7 +191,7 @@ open class FirKaptAnalysisHandlerExtension(
         configuration.moduleChunk = ModuleChunk(configuration.modules)
 
         val frontendInput = ConfigurationPipelineArtifact(
-            configuration, DiagnosticReporterFactory.createPendingReporter(), disposable,
+            configuration, DiagnosticsCollectorImpl(), disposable,
         )
         val frontendOutput = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
 
@@ -202,7 +202,7 @@ open class FirKaptAnalysisHandlerExtension(
         val fir2IrOutput = JvmFir2IrPipelinePhase.executePhase(
             frontendOutput.copy(
                 // Ignore all other FE errors
-                diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(),
+                diagnosticCollector = DiagnosticsCollectorImpl(),
             ),
             emptyList(),
         ) ?: return null

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.inline.konan.nativeLoweringsOfTheFirstPhase
 
@@ -27,7 +27,7 @@ internal val testProcessorModulePhase = makeIrModulePhase(
 )
 
 public fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
-    val diagnosticReporter = DiagnosticReporterFactory.createReporter()
+    val diagnosticReporter = DiagnosticsCollectorImpl()
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         diagnosticReporter,
         environment.configuration.languageVersionSettings

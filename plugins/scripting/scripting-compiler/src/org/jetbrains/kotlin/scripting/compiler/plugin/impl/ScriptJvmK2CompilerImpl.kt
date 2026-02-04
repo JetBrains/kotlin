@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertAnalyzedFirT
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
 import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
@@ -125,7 +125,7 @@ class ScriptJvmK2CompilerImpl(
     ): ResultWithDiagnostics<CompiledScript> = context(
         ErrorReportingContext(
             state.messageCollector,
-            DiagnosticReporterFactory.createPendingReporter(),
+            DiagnosticsCollectorImpl(),
             state.compilerContext.environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         )
     ) {

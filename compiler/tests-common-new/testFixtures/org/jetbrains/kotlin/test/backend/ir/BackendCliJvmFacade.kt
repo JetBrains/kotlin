@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmWriteOutputsPhase
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.services.TestServices
@@ -26,7 +26,7 @@ class BackendCliJvmFacade(testServices: TestServices) : AbstractJvmIrBackendFaca
         }
         val messageCollector = inputArtifact.cliArtifact.configuration.messageCollector
         val input = inputArtifact.cliArtifact.copy(
-            diagnosticCollector = DiagnosticReporterFactory.createPendingReporter()
+            diagnosticCollector = DiagnosticsCollectorImpl()
         )
         val output = JvmBackendPipelinePhase.executePhase(input)?.let(JvmWriteOutputsPhase::executePhase)
             ?: return processErrorFromCliPhase(messageCollector, testServices)

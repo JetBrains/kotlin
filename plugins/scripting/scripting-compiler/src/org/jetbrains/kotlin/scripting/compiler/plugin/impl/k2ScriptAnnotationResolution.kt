@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -80,7 +80,7 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
     )
 
     // separate reporter for refinement to avoid double raw fir warnings reporting
-    val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter()
+    val diagnosticsCollector = DiagnosticsCollectorImpl()
     val firFile = script.convertToFir(sessionForAnnotationResolution, diagnosticsCollector)
     firFile.declarations.forEach {
         if (it is FirScript) {
