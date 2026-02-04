@@ -10069,6 +10069,21 @@
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
+                                        "argumentType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "argumentDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {

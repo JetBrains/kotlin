@@ -98,7 +98,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
     compilerArgument {
         name = "Xklib-zip-file-accessor-cache-limit"
         description = "Maximum number of klibs that can be cached during compilation. Default is 64.".asReleaseDependent()
-        valueType = IntType(
+        argumentType = IntType(
             defaultValue = 64.asReleaseDependent()
         )
 
