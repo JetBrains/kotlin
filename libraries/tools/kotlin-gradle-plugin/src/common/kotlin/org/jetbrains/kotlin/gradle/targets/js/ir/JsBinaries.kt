@@ -83,6 +83,8 @@ sealed class JsIrBinary(
                 task.duplicatesStrategy = DuplicatesStrategy.WARN
 
                 task.from.from(linkSyncTaskRegisteredResources)
+
+                task.destinationDirectory.set(compilation.npmProject.dist.mapToFile())
             }
         }
 
