@@ -354,7 +354,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     fun testMetadataVersionDerivedFromLanguage() {
         for (languageVersion in LanguageVersion.entries) {
-            if (languageVersion.isUnsupported && !languageVersion.isJvmOnly) continue
+            if (languageVersion.isUnsupported) continue
 
             compileKotlin(
                 "source.kt", tmpdir, additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, languageVersion.versionString),
@@ -578,7 +578,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         val library = compileLibrary(
             "library",
             additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
             )
         )
@@ -587,7 +587,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         val library2 = compileLibrary(
             "library",
             additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 K2JVMCompilerArguments::abiStability.cliArgument("stable")
             )
@@ -615,7 +615,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         val library = compileLibrary(
             "library",
             additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 K2JVMCompilerArguments::abiStability.cliArgument("unstable")
             )
@@ -638,7 +638,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         ))
         compileKotlin(
             "source.kt", tmpdir, listOf(library), additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 CommonCompilerArguments::skipPrereleaseCheck.cliArgument,
             )
