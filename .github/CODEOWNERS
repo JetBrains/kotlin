@@ -57,6 +57,7 @@
 /compiler/compiler-runner/ @JetBrains/kotlin-frontend
 /compiler/compiler-runner-unshaded/ @JetBrains/kotlin-build-tools
 /compiler/config/ @JetBrains/kotlin-frontend
+/compiler/config/configuration-keys-generator/src/org/jetbrains/kotlin/config/keys/generator/WasmConfigurationKeysContainer.kt @JetBrains/kotlin-wasm
 /compiler/config.jvm/ @JetBrains/kotlin-jvm
 /compiler/container/ @JetBrains/kotlin-frontend
 /compiler/daemon/ @JetBrains/kotlin-build-tools @JetBrains/build-tools-api
