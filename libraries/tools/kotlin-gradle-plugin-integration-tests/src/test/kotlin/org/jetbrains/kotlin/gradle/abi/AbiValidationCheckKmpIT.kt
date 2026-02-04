@@ -8,27 +8,13 @@
 package org.jetbrains.kotlin.gradle.abi
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.abi.utils.*
+import org.jetbrains.kotlin.gradle.abi.utils.abiValidation
+import org.jetbrains.kotlin.gradle.abi.utils.kmpProject
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
 
 @MppGradlePluginTests
 class AbiValidationCheckKmpIT : KGPBaseTest() {
-    @GradleTest
-    fun testForDisabledAbiValidation(
-        gradleVersion: GradleVersion,
-    ) {
-        kmpProject(gradleVersion) {
-            buildScriptInjection {
-                kotlinMultiplatform.jvm()
-            }
-
-            build("check") {
-                assertTasksAreNotInTaskGraph(":checkKotlinAbi")
-            }
-        }
-    }
-
     @GradleTest
     fun testForEnabledAbiValidation(
         gradleVersion: GradleVersion,
@@ -38,9 +24,7 @@ class AbiValidationCheckKmpIT : KGPBaseTest() {
                 kotlinMultiplatform.jvm()
             }
 
-            abiValidation {
-                enabled.set(true)
-            }
+            abiValidation()
 
             // create the reference dumps to check
             build("updateKotlinAbi")

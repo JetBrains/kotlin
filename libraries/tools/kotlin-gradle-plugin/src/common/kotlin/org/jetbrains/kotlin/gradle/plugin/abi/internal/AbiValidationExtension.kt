@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.abi.internal
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskContainer
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
-import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask
 import org.jetbrains.kotlin.gradle.utils.property
 import javax.inject.Inject
@@ -24,8 +24,21 @@ import javax.inject.Inject
 @ExperimentalAbiValidation
 internal abstract class AbiValidationExtensionImpl @Inject constructor(
     objects: ObjectFactory,
+    private val projectName: String,
     private val tasks: TaskContainer,
+    private val layout: ProjectLayout
 ) : AbiValidationExtension {
+    private var activated = false
+
+    internal fun activate() {
+        if (!activated) {
+            activated = true
+            registerTasks(projectName, tasks, layout)
+        }
+    }
+
+    internal val isActivated: Boolean get() = activated
+
     final override val enabled: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     override val filters: AbiFiltersSpec = objects.AbiFiltersSpecImpl()
@@ -48,7 +61,7 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
 }
 
 internal fun Project.AbiValidationExtensionImpl(): AbiValidationExtensionImpl =
-    objects.newInstance(AbiValidationExtensionImpl::class.java, objects, tasks)
+    objects.newInstance(AbiValidationExtensionImpl::class.java, objects, name, tasks, layout)
 
 
 @Suppress("DEPRECATION")

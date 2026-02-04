@@ -102,6 +102,8 @@ interface KotlinTopLevelExtension : KotlinTopLevelExtensionConfig, KotlinSourceS
      * }
      * ```
      *
+     * Accessing this property causes ABI validation to be enabled and corresponding tasks to be created.
+     *
      * Note that this DSL is experimental, and it will likely change in future versions until it is stable.
      *
      * @since 2.4.0
@@ -125,10 +127,25 @@ interface KotlinTopLevelExtension : KotlinTopLevelExtensionConfig, KotlinSourceS
      * }
      * ```
      *
+     * Calling this function causes ABI validation to be enabled and corresponding tasks to be created.
+     *
      * Note that this DSL is experimental, and it will likely change in future versions until it is stable.
      *
      * @since 2.4.0
      */
     @ExperimentalAbiValidation
     fun abiValidation(action: Action<AbiValidationExtension>)
+
+    /**
+     * Enables ABI validation in Kotlin.
+     *
+     * An *experimental* plugin DSL extension to configure Application Binary Interface (ABI) validation.
+     *
+     * ABI validation is a part of the Kotlin toolset designed to control which declarations are available to other modules.
+     * You can use this tool to control the binary compatibility of your library or shared module.
+     *
+     * @since 2.4.0
+     */
+    @ExperimentalAbiValidation
+    fun abiValidation()
 }

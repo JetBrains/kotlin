@@ -8,24 +8,26 @@
 package org.jetbrains.kotlin.gradle.abi
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.abi.utils.abiValidation
 import org.jetbrains.kotlin.gradle.abi.utils.jvmProject
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
-import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.GradleTest
+import org.jetbrains.kotlin.gradle.testbase.JvmGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
+import org.jetbrains.kotlin.gradle.testbase.assertTasksAreNotInTaskGraph
+import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.buildAndAssertAllTasks
 
 @JvmGradlePluginTests
-class AbiValidationCheckJvmIT : KGPBaseTest() {
+class AbiValidationTasksIT : KGPBaseTest() {
     @GradleTest
-    fun testForEnabledAbiValidation(
+    fun testForDisabledAbiValidation(
         gradleVersion: GradleVersion,
     ) {
         jvmProject(gradleVersion) {
-            abiValidation()
-            // create the reference dumps to check
-            build("updateKotlinAbi")
+            buildAndAssertAllTasks(notRegisteredTasks = listOf(":checkKotlinAbi"))
 
             build("check") {
-                assertTasksExecuted(":checkKotlinAbi")
+                assertTasksAreNotInTaskGraph(":checkKotlinAbi")
             }
         }
     }
