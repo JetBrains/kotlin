@@ -1,3 +1,9 @@
+public class cases/protected/OpenProtectedFunUsedByPublicInlineFun {
+	public fun <init> ()V
+	protected final fun protectedFun ()V
+	public final fun publicInline ()V
+}
+
 public final class cases/protected/ProtectedFunUsedByPublicInlineFun {
 	public fun <init> ()V
 	public final fun publicInline ()V
