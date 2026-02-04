@@ -13861,6 +13861,21 @@ abstract interface <#A: out kotlin/Any?> kotlin.reflect/KCallable { // kotlin.re
 final fun (kotlin/Any?).kotlin/toString(): kotlin/String // kotlin/toString|toString@kotlin.Any?(){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Byte).kotlin.ranges/downUntil(kotlin/Byte): kotlin.ranges/IntProgression // kotlin.ranges/downUntil|downUntil@kotlin.Byte(kotlin.Byte){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Byte).kotlin.ranges/downUntil(kotlin/Int): kotlin.ranges/IntProgression // kotlin.ranges/downUntil|downUntil@kotlin.Byte(kotlin.Int){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Byte).kotlin.ranges/downUntil(kotlin/Long): kotlin.ranges/LongProgression // kotlin.ranges/downUntil|downUntil@kotlin.Byte(kotlin.Long){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Byte).kotlin.ranges/downUntil(kotlin/Short): kotlin.ranges/IntProgression // kotlin.ranges/downUntil|downUntil@kotlin.Byte(kotlin.Short){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Char).kotlin.ranges/downUntil(kotlin/Char): kotlin.ranges/CharProgression // kotlin.ranges/downUntil|downUntil@kotlin.Char(kotlin.Char){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/Double).kotlin/toBits(): kotlin/Long // kotlin/toBits|toBits@kotlin.Double(){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
@@ -13873,10 +13888,46 @@ final fun (kotlin/Float).kotlin/toBits(): kotlin/Int // kotlin/toBits|toBits@kot
 final fun (kotlin/Float).kotlin/toRawBits(): kotlin/Int // kotlin/toRawBits|toRawBits@kotlin.Float(){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Int).kotlin.ranges/downUntil(kotlin/Byte): kotlin.ranges/IntProgression // kotlin.ranges/downUntil|downUntil@kotlin.Int(kotlin.Byte){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Int).kotlin.ranges/downUntil(kotlin/Int): kotlin.ranges/IntProgression // kotlin.ranges/downUntil|downUntil@kotlin.Int(kotlin.Int){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Int).kotlin.ranges/downUntil(kotlin/Long): kotlin.ranges/LongProgression // kotlin.ranges/downUntil|downUntil@kotlin.Int(kotlin.Long){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Int).kotlin.ranges/downUntil(kotlin/Short): kotlin.ranges/IntProgression // kotlin.ranges/downUntil|downUntil@kotlin.Int(kotlin.Short){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/Int).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Int(kotlin.Int){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Long).kotlin.ranges/downUntil(kotlin/Byte): kotlin.ranges/LongProgression // kotlin.ranges/downUntil|downUntil@kotlin.Long(kotlin.Byte){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Long).kotlin.ranges/downUntil(kotlin/Int): kotlin.ranges/LongProgression // kotlin.ranges/downUntil|downUntil@kotlin.Long(kotlin.Int){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Long).kotlin.ranges/downUntil(kotlin/Long): kotlin.ranges/LongProgression // kotlin.ranges/downUntil|downUntil@kotlin.Long(kotlin.Long){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Long).kotlin.ranges/downUntil(kotlin/Short): kotlin.ranges/LongProgression // kotlin.ranges/downUntil|downUntil@kotlin.Long(kotlin.Short){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/Long).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Long(kotlin.Int){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Short).kotlin.ranges/downUntil(kotlin/Byte): kotlin.ranges/IntProgression // kotlin.ranges/downUntil|downUntil@kotlin.Short(kotlin.Byte){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Short).kotlin.ranges/downUntil(kotlin/Int): kotlin.ranges/IntProgression // kotlin.ranges/downUntil|downUntil@kotlin.Short(kotlin.Int){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Short).kotlin.ranges/downUntil(kotlin/Long): kotlin.ranges/LongProgression // kotlin.ranges/downUntil|downUntil@kotlin.Short(kotlin.Long){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/Short).kotlin.ranges/downUntil(kotlin/Short): kotlin.ranges/IntProgression // kotlin.ranges/downUntil|downUntil@kotlin.Short(kotlin.Short){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/String).kotlin.text/substring(kotlin/Int): kotlin/String // kotlin.text/substring|substring@kotlin.String(kotlin.Int){}[0]
@@ -13916,6 +13967,18 @@ final fun (kotlin/String?).kotlin/plus(kotlin/Any?): kotlin/String // kotlin/plu
 
 // Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/Throwable).kotlin/printStackTrace() // kotlin/printStackTrace|printStackTrace@kotlin.Throwable(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/UByte).kotlin.ranges/downUntil(kotlin/UByte): kotlin.ranges/UIntProgression // kotlin.ranges/downUntil|downUntil@kotlin.UByte(kotlin.UByte){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/UInt).kotlin.ranges/downUntil(kotlin/UInt): kotlin.ranges/UIntProgression // kotlin.ranges/downUntil|downUntil@kotlin.UInt(kotlin.UInt){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/ULong).kotlin.ranges/downUntil(kotlin/ULong): kotlin.ranges/ULongProgression // kotlin.ranges/downUntil|downUntil@kotlin.ULong(kotlin.ULong){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/UShort).kotlin.ranges/downUntil(kotlin/UShort): kotlin.ranges/UIntProgression // kotlin.ranges/downUntil|downUntil@kotlin.UShort(kotlin.UShort){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
 final fun <#A: kotlin/Any?> kotlin.collections/copyToArray(kotlin.collections/Collection<#A>): kotlin/Array<#A> // kotlin.collections/copyToArray|copyToArray(kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}[0]
