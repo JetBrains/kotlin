@@ -15,11 +15,11 @@ fun Parent() {
     }
 }
 
-context(Foo)
+context(foo: Foo)
 @Composable
 fun Test(a: String = "A", b: Int = 2) {
     val combineParams = a + b
-    if (someString == combineParams) {
+    if (foo.someString == combineParams) {
         println("Same same")
     }
 }
