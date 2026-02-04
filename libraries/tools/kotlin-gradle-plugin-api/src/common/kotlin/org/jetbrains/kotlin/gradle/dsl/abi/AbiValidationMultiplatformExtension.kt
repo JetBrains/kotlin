@@ -11,114 +11,48 @@ import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 
 /**
- * A plugin DSL extension for configuring Application Binary Interface (ABI) validation.
- *
- * ABI validation is a part of the Kotlin toolset designed to control which declarations are available to other modules.
- * Use this tool to control the binary compatibility of your library or shared module.
- *
- * This extension is available inside the `kotlin {}` block in your build script:
- *
- * ```kotlin
- * kotlin {
- *     abiValidation {
- *         // Your ABI validation configuration
- *     }
- * }
- * ```
- *
- *  Note that this DSL is experimental, and it will likely change in future versions until it is stable.
- *
- * @since 2.1.20
- */
-/*
-We can't mark top level extensions with @ExperimentalAbiValidation because
-in buildSrc Gradle always creates accessors for these extensions which cause the opt-in error,
-which cannot be suppressed.
-
-See Gradle issue https://github.com/gradle/gradle/issues/32019
+ * @deprecated The class 'AbiValidationMultiplatformExtension' was removed.
  */
 @KotlinGradlePluginDsl
+@ExperimentalAbiValidation
+@Suppress("DEPRECATION_ERROR")
+@Deprecated("The class 'AbiValidationMultiplatformExtension' was removed.", level = DeprecationLevel.ERROR)
 interface AbiValidationMultiplatformExtension : AbiValidationMultiplatformVariantSpec {
     /**
-     * Enable ABI validation tasks.
-     *
-     * If value is `false`, then the tasks of generating, verifying, and updating the dump will do nothing.
-     *
-     * By default, all ABI validation tasks are disabled in order to perform ABI generation and verification
-     * in multi-project builds only on explicitly marked projects.
-     *
-     * `false` by default.
+     * Left for source compatibility.
+     * The @Deprecated annotation is not needed because there is no way to use it from the script.
      */
-    @ExperimentalAbiValidation
     val enabled: Property<Boolean>
 
     /**
-     * @deprecated Variants DSL was removed and is no longer supported.
+     * Left for source compatibility.
+     * The @Deprecated annotation is not needed because there is no way to use it from the script.
      */
-    @Deprecated("Variants DSL was removed and is no longer supported.", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     val variants: NamedDomainObjectContainer<AbiValidationMultiplatformVariantSpec>
 }
 
 /**
- * A specification for the ABI validation report variant.
- *
- * An ABI validation report variant is a group of configurations (like filters, klib validation, etc.), for which a separate set of Gradle tasks is created.
- * Different variants allow generating ABI dumps for different sets of classes and targets without modifying the build script.
- *
- * Each report variant has a unique name.
- *
- * A distinct set of Gradle tasks is created for each variant, with unique names.
- *
- * You can access tasks using properties:
- *
- * For the main variant:
- *
- * ```kotlin
- * kotlin {
- *     abiValidation {
- *         legacyDump.legacyDumpTaskProvider
- *         legacyDump.legacyCheckTaskProvider
- *         legacyDump.legacyUpdateTaskProvider
- *     }
- * }
- * ```
- * And for custom variants:
- *
- *```kotlin
- * kotlin {
- *     abiValidation {
- *         variants.getByName("my").legacyDump.legacyDumpTaskProvider
- *         variants.getByName("my").legacyDump.legacyCheckTaskProvider
- *         variants.getByName("my").legacyDump.legacyUpdateTaskProvider
- *     }
- * }
- * ```
- *
- * Note that this DSL is experimental, and it will likely change in future versions until it is stable.
- *
- * @since 2.1.20
- */
-/*
-We can't mark top level extensions with @ExperimentalAbiValidation because
-in buildSrc Gradle always creates accessors for these extensions which cause the opt-in error,
-which cannot be suppressed.
-
-See Gradle issue https://github.com/gradle/gradle/issues/32019
+ * @deprecated The class 'AbiValidationMultiplatformVariantSpec' was removed.
  */
 @KotlinGradlePluginDsl
-interface AbiValidationMultiplatformVariantSpec : AbiValidationVariantSpec {
+@ExperimentalAbiValidation
+@Deprecated("The class 'AbiValidationMultiplatformVariantSpec' was removed.", level = DeprecationLevel.ERROR)
+interface AbiValidationMultiplatformVariantSpec {
     /**
-     * Configure storing declarations from non-JVM and non-Android targets which are compiled in klibs.
+     * Left for source compatibility.
+     * The @Deprecated annotation is not needed because there is no way to use it from the script.
      */
-    @ExperimentalAbiValidation
+    @Suppress("DEPRECATION_ERROR")
     val klib: AbiValidationKlibKindExtension
 
     /**
-     * Configures the [klib] with the provided configuration.
+     * Left for source compatibility.
+     * The @Deprecated annotation is not needed because there is no way to use it from the script.
      */
-    @ExperimentalAbiValidation
+    @Suppress("DEPRECATION_ERROR")
     fun klib(action: Action<AbiValidationKlibKindExtension>) {
-        action.execute(klib)
+        // no-op
     }
 }
 
@@ -129,23 +63,17 @@ interface AbiValidationMultiplatformVariantSpec : AbiValidationVariantSpec {
  */
 @KotlinGradlePluginDsl
 @ExperimentalAbiValidation
+@Deprecated("The class 'AbiValidationKlibKindExtension' was removed.", level = DeprecationLevel.ERROR)
 interface AbiValidationKlibKindExtension {
     /**
-     * Whether to save declarations from a klib into the dump and check them.
+     * Left for source compatibility.
+     * The @Deprecated annotation is not needed because there is no way to use it from the script.
      */
     val enabled: Property<Boolean>
 
     /**
-     * Whether to include the declarations for targets which are not supported by host compiler in the generated dump. 
-     * These declarations are taken from the reference dump, if available.
-     *
-     * If possible, unsupported targets are supplemented with common declarations that are already present in the supported targets.
-     *
-     * However, this does not provide a complete guarantee, so it should be used with caution.
-     *
-     * If the option is set to `false` and the compiler does not support some of the Kotlin targets used in the current project, the dump generation fails with an error.
-     *
-     * Default value: `true`
+     * Left for source compatibility.
+     * The @Deprecated annotation is not needed because there is no way to use it from the script.
      */
     val keepUnsupportedTargets: Property<Boolean>
 }

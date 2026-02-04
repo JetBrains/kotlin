@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 
 @DisableCachingByDefault(because = "No output")
-internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask(), KotlinLegacyAbiCheckTask {
+internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask() {
     @get:InputFiles // InputFiles is used so as not to fall with an error if the reference directory does not exist https://github.com/gradle/gradle/issues/2016
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract override val referenceDir: DirectoryProperty
+    abstract val referenceDir: DirectoryProperty
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract override val actualDir: DirectoryProperty
+    abstract val actualDir: DirectoryProperty
 
     @get:Input
     val projectName: String = project.name
