@@ -41,12 +41,6 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
-  @TestMetadata("annotatedPropertiesK1.kt")
-  public void testAnnotatedPropertiesK1() {
-    run("annotatedPropertiesK1.kt");
-  }
-
-  @Test
   @TestMetadata("annotatedReturnType.kt")
   public void testAnnotatedReturnType() {
     run("annotatedReturnType.kt");
