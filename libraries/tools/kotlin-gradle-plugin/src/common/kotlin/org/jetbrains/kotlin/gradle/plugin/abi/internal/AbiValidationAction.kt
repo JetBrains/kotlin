@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.await
-import org.jetbrains.kotlin.gradle.plugin.findExtension
 
 /**
  * Sets up Application Binary Interface (ABI) validation as part of the Kotlin Gradle plugin. This was previously known as the Binary Compatibility validator.
@@ -17,20 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.findExtension
 internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
     val abiClasspath = prepareAbiClasspath()
 
-    when {
-        kotlinJvmExtensionOrNull != null -> {
-            val extension = kotlinJvmExtension
-            extension.extensions.createAbiValidationExtension(this).configure(this)
-        }
-        kotlinAndroidExtensionOrNull != null -> {
-            val extension = kotlinAndroidExtension
-            extension.extensions.createAbiValidationExtension(this).configure(this)
-        }
-        multiplatformExtensionOrNull != null -> {
-            val extension = multiplatformExtension
-            extension.extensions.createAbiValidationMultiplatformExtension(this).configure(this)
-        }
-    }
+    kotlinExtensionOrNull?.abiValidation?.configure(project)
 
     // wait until all compilations are configured
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
@@ -41,10 +27,8 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
             val target = extension.target
             finalizeJvmVariant(this, abiClasspath, target)
 
-            val abiValidation = extension.findExtension<AbiValidationExtensionImpl>(ABI_VALIDATION_EXTENSION_NAME)
-                ?: throw IllegalStateException("Kotlin extension not found: $ABI_VALIDATION_EXTENSION_NAME")
-            val isEnabled = abiValidation.enabled
-            addDependencyWithCheckTask(abiValidation, isEnabled)
+            val abiValidation = extension.abiValidation
+            addDependencyWithCheckTask(abiValidation)
         }
 
         kotlinAndroidExtensionOrNull != null -> {
@@ -52,22 +36,18 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
             val target = extension.target
             finalizeAndroidVariant(this, abiClasspath, target)
 
-            val abiValidation = extension.findExtension<AbiValidationExtensionImpl>(ABI_VALIDATION_EXTENSION_NAME)
-                ?: throw IllegalStateException("Kotlin extension not found: $ABI_VALIDATION_EXTENSION_NAME")
-            val isEnabled = abiValidation.enabled
-            addDependencyWithCheckTask(abiValidation, isEnabled)
+            val abiValidation = extension.abiValidation
+            addDependencyWithCheckTask(abiValidation)
         }
 
         multiplatformExtensionOrNull != null -> {
             val extension = multiplatformExtension
-            val abiValidation = extension.findExtension<AbiValidationMultiplatformExtensionImpl>(ABI_VALIDATION_EXTENSION_NAME)
-                ?: throw IllegalStateException("Kotlin extension not found: $ABI_VALIDATION_EXTENSION_NAME")
+            val abiValidation = extension.abiValidation
 
             val targets = extension.awaitTargets()
             abiValidation.finalizeMultiplatformVariant(this, abiClasspath, targets)
 
-            val isEnabled = abiValidation.enabled
-            addDependencyWithCheckTask(abiValidation, isEnabled)
+            addDependencyWithCheckTask(abiValidation)
         }
     }
 }

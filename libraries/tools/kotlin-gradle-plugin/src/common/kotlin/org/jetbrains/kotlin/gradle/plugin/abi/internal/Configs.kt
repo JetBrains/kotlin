@@ -7,23 +7,14 @@ package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.ProjectLayout
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationKlibKindExtension
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask
-import org.jetbrains.kotlin.gradle.utils.newInstance
-
-/**
- * Creates an instance of [AbiValidationKlibKindExtension].
- */
-internal fun ObjectFactory.AbiValidationKlibKindExtension(): AbiValidationKlibKindExtension = newInstance<AbiValidationKlibKindExtension>()
 
 /**
  * Configures the extension for Kotlin/JVM or Kotlin Android Gradle plugins.
@@ -32,44 +23,17 @@ internal fun ObjectFactory.AbiValidationKlibKindExtension(): AbiValidationKlibKi
 internal fun AbiValidationExtension.configure(project: Project) {
     this as AbiValidationExtensionImpl
 
-    configureCommon(project.layout)
-    configureLegacyTasks(project.name, project.tasks, project.layout, enabled)
-}
+    referenceDumpDir.convention(project.layout.projectDirectory.dir(AbiValidationPaths.LEGACY_DEFAULT_REFERENCE_DUMP_DIR))
+    keepLocallyUnsupportedTargets.convention(true)
 
-/**
- * Configures the extension for Kotlin Multiplatform Gradle plugins.
- */
-@ExperimentalAbiValidation
-internal fun AbiValidationMultiplatformExtension.configure(project: Project) {
-    this as AbiValidationMultiplatformExtensionImpl
-
-    configureCommon(project.layout)
-    configureMultiplatform()
-    configureLegacyTasks(project.name, project.tasks, project.layout, enabled)
-}
-
-/**
- * Initializes [this] report variant with default values for all Kotlin Gradle plugin types.
- */
-@ExperimentalAbiValidation
-internal fun AbiValidationVariantSpecImpl.configureCommon(layout: ProjectLayout) {
-    legacyDump.referenceDumpDir.convention(layout.projectDirectory.dir(AbiValidationPaths.LEGACY_DEFAULT_REFERENCE_DUMP_DIR))
-}
-
-/**
- * Initializes report variant with default values for all Kotlin Gradle plugin types.
- */
-@ExperimentalAbiValidation
-internal fun AbiValidationMultiplatformVariantSpecImpl.configureMultiplatform() {
-    klib.enabled.convention(true)
-    klib.keepUnsupportedTargets.convention(true)
+    configureTasks(project.name, project.tasks, project.layout, enabled)
 }
 
 /**
  * Creates and preconfigures legacy tasks for [this] report variant.
  */
 @ExperimentalAbiValidation
-internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
+private fun AbiValidationExtension.configureTasks(
     projectName: String,
     tasks: TaskContainer,
     layout: ProjectLayout,
@@ -77,16 +41,16 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
 ) {
     val klibFileName = "$projectName${AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION}"
 
-    val referenceDir = legacyDump.referenceDumpDir
+    val referenceDir = referenceDumpDir
     val filters = filters
     val dumpDir =
-        layout.buildDirectory.dir(AbiValidationPaths.LEGACY_ACTUAL_DUMP_DIR)
+        layout.buildDirectory.dir(AbiValidationPaths.ACTUAL_DUMP_DIR)
 
     val dumpTaskProvider =
         tasks.register(KotlinAbiDumpTaskImpl.NAME, KotlinAbiDumpTaskImpl::class.java) {
             it.dumpDir.convention(dumpDir)
             it.referenceKlibDump.convention(referenceDir.map { dir -> dir.file(klibFileName) })
-            it.keepUnsupportedTargets.convention(true)
+            it.keepLocallyUnsupportedTargets.convention(true)
             it.klibIsEnabled.convention(true)
 
             it.klib.convention(it.klibInput.map { targets -> if (it.klibIsEnabled.get()) targets else emptyList() })

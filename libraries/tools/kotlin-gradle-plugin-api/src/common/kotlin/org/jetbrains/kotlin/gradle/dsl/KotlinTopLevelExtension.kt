@@ -12,6 +12,8 @@ import org.gradle.api.provider.Property
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 
 /**
@@ -81,6 +83,52 @@ interface KotlinTopLevelExtension : KotlinTopLevelExtensionConfig, KotlinSourceS
     @ExperimentalKotlinGradlePluginApi
     fun <T : Named> NamedDomainObjectContainer<T>.invokeWhenCreated(
         name: String,
-        configure: T.() -> Unit
+        configure: T.() -> Unit,
     )
+
+    /**
+     * An *experimental* plugin DSL extension to configure Application Binary Interface (ABI) validation.
+     *
+     * ABI validation is a part of the Kotlin toolset designed to control which declarations are available to other modules.
+     * You can use this tool to control the binary compatibility of your library or shared module.
+     *
+     * This extension is available inside the `kotlin {}` block in your build script:
+     *
+     * ```kotlin
+     * kotlin {
+     *     // Your ABI validation configuration
+     *     abiValidation.filters { }
+     *     abiValidation.referenceDumpDir
+     * }
+     * ```
+     *
+     * Note that this DSL is experimental, and it will likely change in future versions until it is stable.
+     *
+     * @since 2.4.0
+     */
+    @ExperimentalAbiValidation
+    val abiValidation: AbiValidationExtension
+
+    /**
+     * An *experimental* plugin DSL extension to configure Application Binary Interface (ABI) validation.
+     *
+     * ABI validation is a part of the Kotlin toolset designed to control which declarations are available to other modules.
+     * You can use this tool to control the binary compatibility of your library or shared module.
+     *
+     * This extension is available inside the `kotlin {}` block in your build script:
+     *
+     * ```kotlin
+     * kotlin {
+     *     abiValidation {
+     *         // Your ABI validation configuration
+     *     }
+     * }
+     * ```
+     *
+     * Note that this DSL is experimental, and it will likely change in future versions until it is stable.
+     *
+     * @since 2.4.0
+     */
+    @ExperimentalAbiValidation
+    fun abiValidation(action: Action<AbiValidationExtension>)
 }
