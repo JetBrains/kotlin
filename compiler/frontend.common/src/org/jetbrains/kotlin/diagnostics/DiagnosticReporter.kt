@@ -9,19 +9,28 @@ import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 
+/**
+ * The diagnostic context is required for creating `KtDiagnostic` instances, and it is used for two purposes:
+ * 1. To compute the proper diagnostic factory based on language features for [KtDiagnosticFactoryForDeprecation]
+ * 2. To be stored inside the diagnostic instances and later accessed by the implementations of the
+ *    [org.jetbrains.kotlin.diagnostics.rendering.RenderingContext.Key]. To be precise, some fir-specific renderers
+ *    downcast the [DiagnosticBaseContext] to context from the FIR to access the FIR session.
+ */
 interface DiagnosticBaseContext {
     val languageVersionSettings: LanguageVersionSettings
-
-    object Default : DiagnosticBaseContext {
-        override val languageVersionSettings: LanguageVersionSettings
-            get() = LanguageVersionSettingsImpl.DEFAULT
-    }
 }
 
 interface DiagnosticContext : DiagnosticBaseContext {
+    override val languageVersionSettings: LanguageVersionSettings
     val containingFilePath: String?
 
     fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean
+
+    object Default : DiagnosticContext {
+        override val languageVersionSettings: LanguageVersionSettings get() = LanguageVersionSettingsImpl.DEFAULT
+        override val containingFilePath: String? get() = null
+        override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
+    }
 }
 
 abstract class DiagnosticReporter {

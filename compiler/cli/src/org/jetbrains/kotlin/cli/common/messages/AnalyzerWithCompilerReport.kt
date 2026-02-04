@@ -227,7 +227,7 @@ class AnalyzerWithCompilerReport(
                     KtRealPsiSourceElement(element),
                     message,
                     positioningStrategy = null,
-                    DiagnosticBaseContext.Default, // syntax errors couldn't be suppressed anyway
+                    DiagnosticContext.Default, // syntax errors couldn't be suppressed anyway
                 )
                 val context = object : DiagnosticContext {
                     override val containingFilePath: String?
