@@ -346,7 +346,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     if (module.files.isEmpty()) continue
                     services.registerArtifactsProvider(ArtifactsProvider(services, moduleStructure.modules))
 
-                    val keyConfiguration = CompilerConfiguration.create()
+                    // The configuration is used as a key here and not used for the actual compiler invocation
+                    // So if the configuration is created with default services inside, it messes up the
+                    // equals/hashcode.
+                    @OptIn(CompilerConfiguration.Internals::class)
+                    val keyConfiguration = CompilerConfiguration()
                     val configuratorForFlags = JvmEnvironmentConfigurator(services)
                     with(configuratorForFlags) {
                         val extractor = DirectiveToConfigurationKeyExtractor()
