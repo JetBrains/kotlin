@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsReporterImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
@@ -287,7 +287,7 @@ class FirCheckersRunnerTransformer(
 
     override fun transformFile(file: FirFile, data: Nothing?): FirFile = file.also {
         withFileAnalysisExceptionWrapping(file) {
-            val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter()
+            val diagnosticsCollector = DiagnosticsCollectorImpl()
             val diagnosticsReporter = PendingDiagnosticsReporterImpl(diagnosticsCollector)
             diagnosticCollector.collectDiagnostics(file, diagnosticsReporter)
         }

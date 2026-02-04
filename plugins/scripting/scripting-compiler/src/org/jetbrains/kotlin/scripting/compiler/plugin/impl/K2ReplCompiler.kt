@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -250,7 +250,7 @@ private fun compileImpl(
     val compilerConfiguration = state.compilerContext.environment.configuration.copy().apply {
         jvmTarget = selectJvmTarget(scriptCompilationConfiguration, messageCollector)
     }
-    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
+    val diagnosticsReporter = DiagnosticsCollectorImpl()
     val renderDiagnosticName = compilerConfiguration.renderDiagnosticInternalName
     val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, diagnosticsReporter)
     val targetId = TargetId(snippet.name!!, "java-production")

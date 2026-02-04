@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.wasm.test.converters
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -54,7 +54,7 @@ class FirWasmKlibSerializerFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
+        val diagnosticReporter = DiagnosticsCollectorImpl()
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticReporter.deduplicating(),
             configuration.languageVersionSettings

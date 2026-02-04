@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -53,7 +53,7 @@ class GenerationState(
     compiledCodeProvider: CompiledCodeProvider = CompiledCodeProvider.Empty
 ) {
     val diagnosticReporter: DiagnosticReporter =
-        diagnosticReporter ?: DiagnosticReporterFactory.createReporter()
+        diagnosticReporter ?: DiagnosticsCollectorImpl()
 
     abstract class GenerateClassFilter {
         abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean

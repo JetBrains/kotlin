@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
@@ -145,7 +145,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     else -> throw AssertionError("Unexpected result ${analysisResult::class.java}")
                 }
 
-                val codegenDiagnosticsCollector = SimpleDiagnosticsCollector()
+                val codegenDiagnosticsCollector = DiagnosticsCollectorImpl()
 
                 val generationState = GenerationState(
                     snippetKtFile.project,

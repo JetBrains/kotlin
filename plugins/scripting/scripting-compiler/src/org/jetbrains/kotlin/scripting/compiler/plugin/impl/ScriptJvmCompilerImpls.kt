@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -259,7 +259,7 @@ private fun doCompile(
         messageCollector
     )
 
-    val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
+    val diagnosticsReporter = DiagnosticsCollectorImpl()
     val generationState = GenerationState(
         ktFiles.first().project,
         analysisResult.moduleDescriptor,
@@ -337,7 +337,7 @@ private fun doCompileWithK2(
     )
 
     val renderDiagnosticName = configuration.renderDiagnosticInternalName
-    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
+    val diagnosticsReporter = DiagnosticsCollectorImpl()
 
     val projectEnvironment = context.environment.toVfsBasedProjectEnvironment()
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)

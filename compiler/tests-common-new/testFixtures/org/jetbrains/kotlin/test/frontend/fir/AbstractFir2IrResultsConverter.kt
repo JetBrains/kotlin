@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
@@ -86,7 +86,7 @@ abstract class AbstractFir2IrResultsConverter(
         val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val irMangler = createIrMangler()
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
+        val diagnosticReporter = DiagnosticsCollectorImpl()
 
         val fir2IrExtensions = createFir2IrExtensions(compilerConfiguration)
 

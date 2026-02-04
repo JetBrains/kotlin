@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaser.PhaserState
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -41,7 +41,7 @@ class WasmPreSerializationLoweringFacade(
         require(module.languageVersionSettings.languageVersion.usesK2)
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
+        val diagnosticReporter = DiagnosticsCollectorImpl()
 
         when (inputArtifact) {
             is Fir2IrCliBasedOutputArtifact<*> -> {

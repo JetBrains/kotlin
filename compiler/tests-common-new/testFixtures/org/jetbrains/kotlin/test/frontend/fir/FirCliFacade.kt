@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipeli
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
@@ -41,7 +41,7 @@ abstract class FirCliFacade<Phase, OutputPipelineArtifact>(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val input = ConfigurationPipelineArtifact(
             configuration = configuration,
-            diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(),
+            diagnosticCollector = DiagnosticsCollectorImpl(),
             rootDisposable = testServices.compilerConfigurationProvider.testRootDisposable,
         )
 
