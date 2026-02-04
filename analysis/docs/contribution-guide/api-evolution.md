@@ -7,9 +7,11 @@ strategies. For guidance on designing new APIs, see the [API Development Guide](
 
 The Analysis API consists of several interconnected components, each serving a specific purpose:
 
-- **The Kotlin PSI** ([source](../../../compiler/psi/psi-api))
+- **The Kotlin PSI** ([source](../../../compiler/psi/psi-api), [guidelines](../../../compiler/psi/AGENTS.md))
     - Foundation layer providing syntax tree representation through [`KtElement`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtElement.kt)
     hierarchy
+    - Uses `Kt` prefix (compared to `Ka` for Analysis API)
+    - Has own stability annotations: `@KtExperimentalApi`, `@KtImplementationDetail`, `@KtNonPublicApi`
     - Key entities: [`KtFile`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtFile.kt),
     [`KtDeclaration`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtDeclaration.java),
     and [`KtExpression`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtExpression.java)
@@ -76,6 +78,10 @@ Every part of the Analysis API falls under one of these stability categories:
         - *Light Classes* (unless explicitly exposed in the *Analysis API Surface*)
         - PSI Reference implementations
         - Declarations annotated with `@KaImplementationDetail`
+
+> [!NOTE]
+> PSI uses parallel annotations: `@KtExperimentalApi`, `@KtImplementationDetail`, `@KtNonPublicApi`.
+> The `@KtPsiInconsistencyHandling` annotation marks code handling inconsistent PSI states (no Analysis API equivalent).
 
 ## Adding New APIs
 
