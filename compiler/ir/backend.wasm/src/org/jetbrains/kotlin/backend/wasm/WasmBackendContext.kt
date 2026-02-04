@@ -115,6 +115,13 @@ class WasmBackendContext(
 
     val callableReferenceClasses = mutableMapOf<Any, IrClass>()
 
+    // Counter for generating unique IDs for callable references (used for reflection)
+    private var nextCallableReferenceId = 0
+    val callableReferenceIds = mutableMapOf<String, Int>()
+
+    fun getOrCreateCallableReferenceId(fqName: String): Int =
+        callableReferenceIds.getOrPut(fqName) { nextCallableReferenceId++ }
+
     private var sharedPackageFragment: IrFile? = null
 
     fun getSharedCallableReferencePackageFragment(): IrFile {

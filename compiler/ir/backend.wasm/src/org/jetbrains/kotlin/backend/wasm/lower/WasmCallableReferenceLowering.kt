@@ -204,7 +204,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                 listOf(
                     makeValueParameter("flags", context.irBuiltIns.intType),
                     makeValueParameter("arity", context.irBuiltIns.intType),
-                    makeValueParameter("id", context.irBuiltIns.stringType),
+                    makeValueParameter("id", context.irBuiltIns.intType),
                     makeValueParameter("receiver", context.irBuiltIns.anyNType),
                     makeValueParameter("name", context.irBuiltIns.stringType),
                 )
@@ -235,7 +235,8 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                         reference.getArity().toIrConst(context.irBuiltIns.intType)
                     }
                     "id" -> {
-                        reference.getFqName(backendContext).toIrConst(context.irBuiltIns.stringType)
+                        backendContext.getOrCreateCallableReferenceId(reference.getFqName(backendContext))
+                            .toIrConst(context.irBuiltIns.intType)
                     }
                     "receiver" -> {
                         // Use the temporary variable if provided, otherwise null
