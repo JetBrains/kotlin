@@ -263,6 +263,17 @@ constructor(
     }
 
     private val genericLazyDelegate = lazy {
+        compilations.all { compilation ->
+            compilation.binaries
+                .withType(JsIrBinary::class.java)
+                .all { binary ->
+                    val syncTask = binary.linkSyncTask
+
+                    binary.linkTask.configure {
+                        it.finalizedBy(syncTask)
+                    }
+                }
+        }
         addSubTarget(KotlinGenericJsIr::class.java) {
             configureSubTarget()
         }
