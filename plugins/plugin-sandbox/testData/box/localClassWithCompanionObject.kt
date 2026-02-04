@@ -1,5 +1,3 @@
-// IGNORE_NATIVE: mode=ONE_STAGE_MULTI_MODULE
-//  ^Reason: KT-82482
 import org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo
 
 fun box(): String {
