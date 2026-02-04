@@ -1,0 +1,98 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable fun Test(clicked: Boolean) {
+    Modifier.thenIf(
+        condition = clicked,
+        ifTrue = {
+           clickable { println(clicked) }
+        },
+        ifFalse = {
+            remember { mutableStateOf(value = "Mock") }
+            if (clicked) {
+                return
+            }
+            clickable { println(clicked) }
+        },
+    )
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(clicked: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(clicked)) 0b0100 else 0b0010
+  }
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Modifier.thenIf(clicked, {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "C*<rememb...>,<{>:Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp1_group = %composer.cache(false) {
+        mutableStateOf(
+          value = "Mock"
+        )
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp1_group
+      if (clicked) {
+        %composer.endReplaceGroup()
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+        %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+          Test(clicked, %composer, updateChangedFlags(%changed or 0b0001))
+        }
+        return
+      }
+      val tmp0 = %this%thenIf.clickable(<block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp2_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
+          {
+            println(clicked)
+          }
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp2_group
+      })
+      %composer.endReplaceGroup()
+      tmp0
+    }
+    ) {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "C*<{>:Test.kt")
+      val tmp0 = %this%thenIf.clickable(<block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp1_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
+          {
+            println(clicked)
+          }
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp1_group
+      })
+      %composer.endReplaceGroup()
+      tmp0
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(clicked, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

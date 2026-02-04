@@ -443,6 +443,31 @@ class CompositionTests {
             }
         }
     }
+
+    // Regression test for b/479646393
+    @Test
+    fun testInlineSwitchRemembers() = compositionTest {
+        var clicked by mutableStateOf(true)
+
+        compose {
+            Modifier.thenIf(
+                condition = clicked,
+                ifTrue = {
+                    clickable { clicked = !clicked }
+                },
+                ifFalse = {
+                    remember { mutableStateOf(value = "Mock") }
+                    clickable { clicked = !clicked }
+                },
+            )
+        }
+
+        clicked = !clicked
+        advance()
+
+        clicked = !clicked
+        advance()
+    }
 }
 
 @Composable
@@ -575,3 +600,17 @@ fun TwoLambdas(
 }
 
 private fun use(value: Any?) {}
+
+private object Modifier
+
+private inline fun Modifier.thenIf(
+    condition: Boolean,
+    ifFalse: Modifier.() -> Modifier,
+    ifTrue: Modifier.() -> Modifier,
+) = if (condition) {
+    ifTrue()
+} else {
+    ifFalse()
+}
+
+private fun Modifier.clickable(f: () -> Unit): Modifier = this
