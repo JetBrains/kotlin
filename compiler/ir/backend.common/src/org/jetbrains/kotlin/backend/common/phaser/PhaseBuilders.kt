@@ -36,6 +36,29 @@ infix fun <Context : LoggingContext, Input, Mid, Output> CompilerPhase<Context, 
     return CompositePhase(if (this is CompositePhase<Context, *, *>) phases + unsafeOther else listOf(unsafeThis, unsafeOther))
 }
 
+fun <Context : LoggingContext, Input, Mid, Output> CompilerPhase<Context, Input, Mid>.thenIf(
+    condition: (Mid) -> Boolean,
+    onTrue: CompilerPhase<Context, Mid, out Output>,
+    onFalse: CompilerPhase<Context, Mid, out Output>
+): CompilerPhase<Context, Input, Output> {
+    val firstPhase = this
+    return object : CompilerPhase<Context, Input, Output> {
+        override fun invoke(
+            phaseConfig: PhaseConfig,
+            phaserState: PhaserState,
+            context: Context,
+            input: Input,
+        ): Output {
+            val midResult = firstPhase.invoke(phaseConfig, phaserState, context, input)
+            return if (condition(midResult)) {
+                onTrue.invoke(phaseConfig, phaserState, context, midResult)
+            } else {
+                onFalse.invoke(phaseConfig, phaserState, context, midResult)
+            }
+        }
+    }
+}
+
 fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
     name: String,
     preactions: Set<Action<Input, Context>> = emptySet(),
