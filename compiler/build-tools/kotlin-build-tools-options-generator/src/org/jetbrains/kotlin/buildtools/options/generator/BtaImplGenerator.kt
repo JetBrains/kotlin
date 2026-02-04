@@ -203,7 +203,22 @@ internal class BtaImplGenerator(
                         argumentTypeParameter
                     )
                 }
-                is BtaCompilerArgument.SSoTCompilerArgumentCompat -> TODO()
+
+                is BtaCompilerArgument.SSoTCompilerArgumentCompat -> {
+                    generateCompatArgumentsPropagators(
+                        implClassName,
+                        name,
+                        argumentTypeParameter,
+                        argument,
+                        wasRemoved,
+                        argument.effectiveCompilerName,
+                        toCompilerConverterFun,
+                        wasIntroducedRecently,
+                        applyCompilerArgumentsFun,
+                        argumentTypeParameter,
+                        argument.applierSimpleName
+                    )
+                }
 
                 is BtaCompilerArgument.CustomCompilerArgument -> {
                     defaultsInitializer.addStatement("optionsMap[%S] = %L", name, argument.defaultValue)
@@ -296,12 +311,63 @@ internal class BtaImplGenerator(
     }
 
     /**
+     * Generates code for compat arguments with ClassCastException handling
+     */
+    private fun generateCompatArgumentsPropagators(
+        implClassName: String,
+        name: String,
+        type: TypeName,
+        argument: BtaCompilerArgument.SSoTCompilerArgumentCompat,
+        wasRemoved: Boolean,
+        effectiveCompilerName: String,
+        toCompilerConverterFun: FunSpec.Builder,
+        wasIntroducedRecently: Boolean,
+        applyCompilerArgumentsFun: FunSpec.Builder,
+        argumentTypeParameter: TypeName,
+        applierSimpleName: String,
+    ) {
+        val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
+        val applier = MemberName(targetPackage, applierSimpleName)
+
+        // BTA → Compiler conversion with ClassCastException handling
+        CodeBlock.builder().apply {
+            add("if (%M in this) { ", member)
+            val valueToAssign = buildBtaToCompilerValueTransform(member, type, argument)
+            val assignment = buildCompilerAssignment(effectiveCompilerName, wasRemoved, valueToAssign)
+            add("try { %L } catch(e: ClassCastException) { arguments.%M(get(%M)) }", assignment, applier, member)
+            add("}")
+        }.build().also { setStatement ->
+            toCompilerConverterFun.addSafeSetStatement(
+                wasIntroducedRecently,
+                wasRemoved,
+                name,
+                argument,
+                setStatement,
+                generateCompatLayer,
+            )
+        }
+
+        // Compiler → BTA conversion with ClassCastException handling
+        val compilerToBtaStatement = buildCompilerToBtaValueTransform(
+            member, type, argument, effectiveCompilerName, wasRemoved, argumentTypeParameter
+        )
+        val wrappedStatement = CodeBlock.of(
+            "try { %L } catch (e: ClassCastException) { %M(this[%M], arguments) }",
+            compilerToBtaStatement,
+            applier,
+            member
+        )
+
+        applyCompilerArgumentsFun.addSafeMethodAccessStatement(wrappedStatement, failOnNoSuchMethod = false)
+    }
+
+    /**
      * Builds the value transformation from BTA to compiler (e.g., enum.stringValue, int.toString(), path.absolutePathStringOrThrow())
      */
     private fun buildBtaToCompilerValueTransform(
         member: MemberName,
         type: TypeName,
-        argument: BtaCompilerArgument.SSoTCompilerArgument,
+        argument: BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>,
     ): CodeBlock = CodeBlock.builder().apply {
         add("get(%M)", member)
         when {
@@ -361,7 +427,7 @@ internal class BtaImplGenerator(
     private fun buildCompilerToBtaValueTransform(
         member: MemberName,
         type: TypeName,
-        argument: BtaCompilerArgument.SSoTCompilerArgument,
+        argument: BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>,
         effectiveCompilerName: String,
         wasRemoved: Boolean,
         argumentTypeParameter: TypeName,
