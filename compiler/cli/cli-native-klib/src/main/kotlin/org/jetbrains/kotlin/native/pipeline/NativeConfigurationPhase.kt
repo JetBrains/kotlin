@@ -13,23 +13,15 @@ import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.setupCommonKlibArguments
-import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
-import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
-import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
-import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.getModuleNameForSource
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.config.phaseConfig
+import org.jetbrains.kotlin.cli.pipeline.*
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.config.fakeOverrideValidator
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 
 /**
  * Configuration phase for native klib compilation pipeline.
@@ -76,6 +68,9 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration.produce = CompilerOutputKind.LIBRARY
         arguments.moduleName?.let { configuration.moduleName = it }
         arguments.target?.let { configuration.target = it }
+        configuration.targetPlatform = configuration.target?.let {
+            NativePlatforms.nativePlatformByTargetNames(listOf(it))
+        } ?: NativePlatforms.unspecifiedNativePlatform
 
         configuration.libraryFiles = arguments.libraries?.toList().orEmpty()
         configuration.nostdlib = arguments.nostdlib
