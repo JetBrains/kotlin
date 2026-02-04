@@ -100,7 +100,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             gradleVersion,
             btaVersion = null,
             expectedSeverity = ToolingDiagnostic.Severity.ERROR, // it's rendered as ERROR because of warning-mode=fail
-            customizedKotlinVersion = KotlinVersion.KOTLIN_1_9,
+            customizedKotlinVersion = KotlinVersion.KOTLIN_2_0,
         )
 
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA with deprecation")

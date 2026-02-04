@@ -292,18 +292,10 @@ private fun CommonCompilerArguments.checkOutdatedVersions(
     }
     when {
         version.isUnsupported -> {
-            if ((!language.isJvmOnly || this !is K2JVMCompilerArguments)) {
-                reporter.reportError(
-                    "${versionKind.text} version ${version.versionString} is no longer supported; " +
-                            "use version ${supportedVersion!!.versionString} or greater instead."
-                )
-            } else if (!suppressVersionWarnings) {
-                reporter.reportWarning(
-                    "${versionKind.text} version ${version.versionString} is deprecated in JVM " +
-                            "and its support will be removed in a future version of Kotlin. " +
-                            "Update the version to $firstNonDeprecated."
-                )
-            }
+            reporter.reportError(
+                "${versionKind.text} version ${version.versionString} is no longer supported; " +
+                        "use version ${supportedVersion!!.versionString} or greater instead."
+            )
         }
         version.isDeprecated && !suppressVersionWarnings -> {
             reporter.reportWarning(
@@ -374,13 +366,7 @@ private fun CommonCompilerArguments.parseVersion(reporter: CommonCompilerArgumen
     if (value == null) null
     else LanguageVersion.fromVersionString(value)
         ?: run {
-            val entries = LanguageVersion.entries
-            val versionStrings = if (versionOf == "API") {
-                // TODO: this branch can be dropped again after KT-80590
-                entries.map { ApiVersion.createByLanguageVersion(it) }.filterNot { it.isUnsupported }.map(ApiVersion::description)
-            } else {
-                entries.filterNot { it.isUnsupported && !it.isJvmOnly }.map(LanguageVersion::description)
-            }
+            val versionStrings = LanguageVersion.entries.filterNot(LanguageVersion::isUnsupported).map(LanguageVersion::description)
             val message = "Unknown $versionOf version: $value\nSupported $versionOf versions: ${versionStrings.joinToString(", ")}"
             reporter.reportError(message)
             null

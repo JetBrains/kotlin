@@ -35,26 +35,6 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
     }
 
-    fun testDeserializedAnnotationReferencesJava() {
-        // Only Java
-        val libraryAnnotation = compileLibrary("libraryAnnotation")
-        // Specifically, use K1
-        val libraryUsingAnnotation = compileLibrary(
-            "libraryUsingAnnotation",
-            additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
-                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
-            ),
-            extraClassPath = listOf(libraryAnnotation)
-        )
-
-        compileKotlin(
-            "usage.kt",
-            output = tmpdir,
-            classpath = listOf(libraryAnnotation, libraryUsingAnnotation),
-        )
-    }
-
     fun testStrictMetadataVersionSemanticsOldVersion() {
         val nextMetadataVersion = languageVersion.toJvmMetadataVersion().next()
         val library = compileLibrary(
