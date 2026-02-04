@@ -5,7 +5,7 @@
 fun main() {
     buildList {
         add("O")
-        this[0] += "K"
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>this[0]<!> += "K"
     }
 }
 
