@@ -264,52 +264,14 @@ internal class BtaImplGenerator(
         applyCompilerArgumentsFun: FunSpec.Builder,
         argumentTypeParameter: TypeName,
     ) {
-        // add argument to the converter functions
         val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
+
+        // BTA → Compiler conversion
         CodeBlock.builder().apply {
             add("if (%M in this) { ", member)
-            val valueToAssign = CodeBlock.builder().apply {
-                add("get(%M)", member)
-                when {
-                    type.isCompilerEnum -> {
-                        add(maybeGetNullabilitySign(argument) + ".stringValue")
-                    }
-                    argument.valueType.origin is IntType -> {
-                        add(maybeGetNullabilitySign(argument) + ".toString()")
-                    }
-                    argument.valueType.origin is PathType -> {
-                        add(
-                            maybeGetNullabilitySign(argument) + ".%M()",
-                            MemberName(
-                                packageName = targetPackage,
-                                simpleName = "absolutePathStringOrThrow",
-                                isExtension = true
-                            )
-                        )
-                    }
-                    type.isCustomType -> {
-                        add(
-                            maybeGetNullabilitySign(argument) + ".%M()",
-                            MemberName(
-                                packageName = targetPackage,
-                                simpleName = "toArgumentString",
-                                isExtension = true
-                            )
-                        )
-                    }
-                    else -> ""
-                }
-            }.build()
-            if (wasRemoved) {
-                add(
-                    "arguments.%M(%S, %L)",
-                    MemberName(targetPackage, "setUsingReflection", isExtension = true),
-                    effectiveCompilerName,
-                    valueToAssign
-                )
-            } else {
-                add("arguments.%N = %L", effectiveCompilerName, valueToAssign)
-            }
+            val valueToAssign = buildBtaToCompilerValueTransform(member, type, argument)
+            val assignment = buildCompilerAssignment(effectiveCompilerName, wasRemoved, valueToAssign)
+            add("%L", assignment)
             add("}")
         }.build().also { setStatement ->
             toCompilerConverterFun.addSafeSetStatement(
@@ -322,45 +284,121 @@ internal class BtaImplGenerator(
             )
         }
 
-        applyCompilerArgumentsFun.addSafeMethodAccessStatement(CodeBlock.builder().apply {
-            add("this[%M] = ", member)
-            if (wasRemoved) {
-                add("arguments.%M(%S)", MemberName(targetPackage, "getUsingReflection", isExtension = true), effectiveCompilerName)
-            } else {
-                add("arguments.%N", effectiveCompilerName)
-            }
-
-            when {
-                type.isCompilerEnum -> {
-                    add(maybeGetNullabilitySign(argument))
-                    add(
-                        $$".let { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
-                        argumentTypeParameter.copy(nullable = false),
-                        MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
-                    )
-                }
-                argument.valueType.origin is IntType -> {
-                    add(maybeGetNullabilitySign(argument))
-                    add(".let { it.toInt() }")
-                }
-                argument.valueType.origin is PathType -> {
-                    add(maybeGetNullabilitySign(argument))
-                    add(".let { %M(it) }", MemberName(KOTLIN_IO_PATH, "Path"))
-                }
-                type.isCustomType -> {
-                    add(
-                        maybeGetNullabilitySign(argument) + ".%M()",
-                        MemberName(
-                            packageName = targetPackage,
-                            simpleName = "to${argument.name.replaceFirstChar { it.uppercase() }}",
-                            isExtension = true
-                        )
-                    )
-                }
-                else -> ""
-            }
-        }.build(), failOnNoSuchMethod = false)
+        // Compiler → BTA conversion
+        val compilerToBtaStatement = buildCompilerToBtaValueTransform(
+            member, type, argument, effectiveCompilerName, wasRemoved, argumentTypeParameter
+        )
+        applyCompilerArgumentsFun.addSafeMethodAccessStatement(compilerToBtaStatement, failOnNoSuchMethod = false)
     }
+
+    /**
+     * Builds the value transformation from BTA to compiler (e.g., enum.stringValue, int.toString(), path.absolutePathStringOrThrow())
+     */
+    private fun buildBtaToCompilerValueTransform(
+        member: MemberName,
+        type: TypeName,
+        argument: BtaCompilerArgument.SSoTCompilerArgument,
+    ): CodeBlock = CodeBlock.builder().apply {
+        add("get(%M)", member)
+        when {
+            type.isCompilerEnum -> {
+                add(maybeGetNullabilitySign(argument) + ".stringValue")
+            }
+            argument.valueType.origin is IntType -> {
+                add(maybeGetNullabilitySign(argument) + ".toString()")
+            }
+            argument.valueType.origin is PathType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M()",
+                    MemberName(
+                        packageName = targetPackage,
+                        simpleName = "absolutePathStringOrThrow",
+                        isExtension = true
+                    )
+                )
+            }
+            type.isCustomType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M()",
+                    MemberName(
+                        packageName = targetPackage,
+                        simpleName = "toArgumentString",
+                        isExtension = true
+                    )
+                )
+            }
+            else -> add("")
+        }
+    }.build()
+
+    /**
+     * Builds the assignment statement: arguments.property = value or arguments.setUsingReflection(...)
+     */
+    private fun buildCompilerAssignment(
+        effectiveCompilerName: String,
+        wasRemoved: Boolean,
+        valueToAssign: CodeBlock,
+    ): CodeBlock = CodeBlock.builder().apply {
+        if (wasRemoved) {
+            add(
+                "arguments.%M(%S, %L)",
+                MemberName(targetPackage, "setUsingReflection", isExtension = true),
+                effectiveCompilerName,
+                valueToAssign
+            )
+        } else {
+            add("arguments.%N = %L", effectiveCompilerName, valueToAssign)
+        }
+    }.build()
+
+    /**
+     * Builds the value transformation from compiler to BTA (e.g., string to enum, string.toInt(), path parsing)
+     */
+    private fun buildCompilerToBtaValueTransform(
+        member: MemberName,
+        type: TypeName,
+        argument: BtaCompilerArgument.SSoTCompilerArgument,
+        effectiveCompilerName: String,
+        wasRemoved: Boolean,
+        argumentTypeParameter: TypeName,
+    ): CodeBlock = CodeBlock.builder().apply {
+        add("this[%M] = ", member)
+        if (wasRemoved) {
+            add("arguments.%M(%S)", MemberName(targetPackage, "getUsingReflection", isExtension = true), effectiveCompilerName)
+        } else {
+            add("arguments.%N", effectiveCompilerName)
+        }
+
+        when {
+            type.isCompilerEnum -> {
+                add(maybeGetNullabilitySign(argument))
+                add(
+                    $$".let { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                    argumentTypeParameter.copy(nullable = false),
+                    MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+                )
+            }
+            argument.valueType.origin is IntType -> {
+                add(maybeGetNullabilitySign(argument))
+                add(".let { it.toInt() }")
+            }
+            argument.valueType.origin is PathType -> {
+                add(maybeGetNullabilitySign(argument))
+                add(".let { %M(it) }", MemberName(KOTLIN_IO_PATH, "Path"))
+            }
+            type.isCustomType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M()",
+                    MemberName(
+                        packageName = targetPackage,
+                        simpleName = "to${argument.name.replaceFirstChar { it.uppercase() }}",
+                        isExtension = true
+                    )
+                )
+            }
+            else -> add("")
+        }
+    }.build()
 
     fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, implParameter: ClassName) {
         val mapProperty = property(
