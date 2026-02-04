@@ -6,15 +6,9 @@
 package org.jetbrains.kotlin.diagnostics.impl
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryN
-import org.jetbrains.kotlin.diagnostics.DiagnosticContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
+import org.jetbrains.kotlin.diagnostics.*
 
 class DeduplicatingDiagnosticReporter(private val inner: DiagnosticReporter) : DiagnosticReporter() {
-
     override val hasErrors: Boolean get() = inner.hasErrors
 
     private val reported = mutableSetOf<Triple<String?, AbstractKtSourceElement, KtDiagnosticFactoryN>>()
@@ -29,10 +23,6 @@ class DeduplicatingDiagnosticReporter(private val inner: DiagnosticReporter) : D
                 }
             }
         }
-    }
-
-    override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {
-        inner.checkAndCommitReportsOn(element, context)
     }
 }
 

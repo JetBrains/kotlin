@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.unwrapVarargValue
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.name.StandardClassIds
 abstract class AbstractDiagnosticCollector(
     override val session: FirSession,
     override val scopeSession: ScopeSession = ScopeSession(),
-    protected val createComponents: (DiagnosticReporter) -> DiagnosticCollectorComponents,
+    protected val createComponents: (PendingDiagnosticReporter) -> DiagnosticCollectorComponents,
 ) : SessionAndScopeSessionHolder {
 
-    fun collectDiagnosticsInSettings(reporter: DiagnosticReporter) {
+    fun collectDiagnosticsInSettings(reporter: PendingDiagnosticReporter) {
         val visitor = createVisitor(createComponents(reporter))
         visitor.checkSettings()
     }
 
-    fun collectDiagnostics(firDeclaration: FirDeclaration, reporter: DiagnosticReporter) {
+    fun collectDiagnostics(firDeclaration: FirDeclaration, reporter: PendingDiagnosticReporter) {
         val visitor = createVisitor(createComponents(reporter))
         session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
             firDeclaration.accept(visitor, null)

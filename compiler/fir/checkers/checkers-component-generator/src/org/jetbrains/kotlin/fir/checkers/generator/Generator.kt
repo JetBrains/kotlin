@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 import kotlin.reflect.KClass
-import kotlin.text.removeSuffix
 
 internal typealias Alias = String
 private typealias Fqn = String
@@ -28,7 +27,7 @@ private const val MPP_CHECKER_WITH_KIND_FQN = "org.jetbrains.kotlin.fir.analysis
 
 // DiagnosticComponent
 private const val FIR_SESSION_FQN = "org.jetbrains.kotlin.fir.FirSession"
-private const val DIAGNOSTIC_REPORTER_FQN = "org.jetbrains.kotlin.diagnostics.DiagnosticReporter"
+private const val DIAGNOSTIC_REPORTER_FQN = "org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter"
 private const val ABSTRACT_DIAGNOSTIC_REPORTER_FQN =
     "org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent"
 private const val CHECKER_CONTEXT_FQN = "org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext"
@@ -205,7 +204,7 @@ class Generator(
             println("class $diagnosticComponentName(")
             withIndent {
                 println("session: FirSession,")
-                println("reporter: DiagnosticReporter,")
+                println("reporter: PendingDiagnosticReporter,")
                 println("private val checkers: $checkersComponentName,")
             }
             println(") : AbstractDiagnosticCollectorComponent(session, reporter) {")
@@ -266,7 +265,7 @@ class Generator(
     }
 
     private fun SmartPrinter.printDiagnosticComponentConstructor() {
-        println("constructor(session: FirSession, reporter: DiagnosticReporter, mppKind: MppCheckerKind) : this(")
+        println("constructor(session: FirSession, reporter: PendingDiagnosticReporter, mppKind: MppCheckerKind) : this(")
         withIndent {
             println("session,")
             println("reporter,")
