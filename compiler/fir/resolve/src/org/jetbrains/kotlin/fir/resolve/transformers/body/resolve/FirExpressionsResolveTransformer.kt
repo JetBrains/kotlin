@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -1967,7 +1968,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
             calleeReference = lhsGetCall.calleeReference
             var i = 0
-            val newMapping = (lhsGetCall.argumentList as FirResolvedArgumentList).mapping.mapKeysTo(LinkedHashMap()) { (argument) ->
+            argumentList = lhsGetCall.argumentList.mapArguments { argument ->
                 if (argument is FirVarargArgumentsExpression) {
                     buildVarargArgumentsExpression {
                         val varargSize = argument.arguments.size
@@ -1981,10 +1982,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     indicesQualifiedAccessForGet[i++]
                 }
             }
-            argumentList = buildResolvedArgumentList(
-                lhsGetCall.argumentList,
-                newMapping,
-            )
             origin = FirFunctionCallOrigin.Operator
             coneTypeOrNull = lhsGetCall.resolvedType
         }
@@ -2027,6 +2024,17 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 returns(true) implies (this@forCollectionLiteralInAnnotationResolution is ResolutionMode.WithExpectedType)
             }
             return (this as? ResolutionMode.WithExpectedType)?.arrayLiteralPosition != null
+        }
+
+    private inline fun FirArgumentList.mapArguments(transform: (FirExpression) -> FirExpression): FirArgumentList =
+        when (this) {
+            is FirResolvedArgumentList -> buildResolvedArgumentList(
+                this,
+                mapping = mapping.mapKeysTo(LinkedHashMap()) { transform(it.key) },
+            )
+            else -> buildArgumentList {
+                arguments.mapTo(this@buildArgumentList.arguments) { transform(it) }
+            }
         }
 
     override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement =
@@ -2155,13 +2163,30 @@ private fun FirFunctionCall.setIndexedAccessAugmentedAssignSource(fakeSourceElem
     val newSource = source?.fakeElement(fakeSourceElementKind)
     @OptIn(FirImplementationDetail::class)
     replaceSource(newSource)
-    val oldCalleeReference = calleeReference as? FirResolvedNamedReference
-        ?: error("${FirResolvedNamedReference::class.simpleName} expected, got ${calleeReference.render()}")
-    replaceCalleeReference(buildResolvedNamedReference {
-        this.name = oldCalleeReference.name
-        this.source = newSource
-        this.resolvedSymbol = oldCalleeReference.resolvedSymbol
-    })
+    replaceCalleeReference(calleeReference.createCopyWithNewSource(newSource))
+}
+
+private fun FirNamedReference.createCopyWithNewSource(newSource: KtSourceElement?): FirNamedReference {
+    return when (val oldCalleeReference = this) {
+        is FirResolvedNamedReference -> buildResolvedNamedReference {
+            name = oldCalleeReference.name
+            source = newSource
+            resolvedSymbol = oldCalleeReference.resolvedSymbol
+        }
+        is FirNamedReferenceWithCandidate -> FirNamedReferenceWithCandidate(
+            newSource, oldCalleeReference.name, candidate = oldCalleeReference.candidate,
+        )
+        is FirSimpleNamedReference -> buildSimpleNamedReference {
+            source = newSource
+            name = oldCalleeReference.name
+        }
+        is FirErrorNamedReference -> buildErrorNamedReference {
+            source = newSource
+            name = oldCalleeReference.name
+            diagnostic = oldCalleeReference.diagnostic
+        }
+        else -> error("Unexpected type of callee reference: ${render()}")
+    }
 }
 
 /**

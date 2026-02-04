@@ -3,8 +3,8 @@
 // WITH_STDLIB
 
 fun foo() = buildList {
-    val arr = Array(1) { iCantSpellMutableSetOf<Int>() }
-    arr[0] += 0
+    val arr = Array(1) { <!UNRESOLVED_REFERENCE!>iCantSpellMutableSetOf<!><Int>() }
+    arr[0] <!UNRESOLVED_REFERENCE!>+=<!> 0
     add(arr)
 }
 

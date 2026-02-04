@@ -1,9 +1,0 @@
-java.lang.IllegalStateException: FirResolvedNamedReference expected, got R?C|kotlin/Array.get|
-	at org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformerKt.setIndexedAccessAugmentedAssignSource(FirExpressionsResolveTransformer.kt:2159)
-	at org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformerKt.access$setIndexedAccessAugmentedAssignSource(FirExpressionsResolveTransformer.kt:1)
-	at org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer.transformIndexedAccessAugmentedAssignment(FirExpressionsResolveTransformer.kt:1770)
-	at org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher.transformIndexedAccessAugmentedAssignment(FirAbstractBodyResolveTransformerDispatcher.kt:415)
-	at org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher.transformIndexedAccessAugmentedAssignment(FirAbstractBodyResolveTransformerDispatcher.kt:27)
-	at org.jetbrains.kotlin.fir.expressions.FirIndexedAccessAugmentedAssignment.transform(FirIndexedAccessAugmentedAssignment.kt:41)
-	at org.jetbrains.kotlin.fir.expressions.FirExpressionUtilKt.transformStatementsIndexed(FirExpressionUtil.kt:247)
-	at org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer.transformBlockInCurrentScope$resolve(FirExpressionsResolveTransformer.kt:755)
