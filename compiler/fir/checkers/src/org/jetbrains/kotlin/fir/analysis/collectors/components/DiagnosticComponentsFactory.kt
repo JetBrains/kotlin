@@ -29,7 +29,6 @@ object DiagnosticComponentsFactory {
             if (mppKind == MppCheckerKind.Common) {
                 add(ErrorNodeDiagnosticCollectorComponent(session, reporter))
                 add(LanguageVersionSettingsDiagnosticComponent(session, reporter))
-                add(CapturedMutableVariablesDiagnosticComponent(session, reporter))
             }
         }.toTypedArray()
         return DiagnosticCollectorComponents(regularComponents, ReportCommitterDiagnosticComponent(session, reporter))

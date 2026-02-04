@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.FirCapturedVariableStabilityFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.cfa.FirCallsEffectAnalyzer
 import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
@@ -62,6 +63,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirOperatorModifierChecker,
         FirTailrecFunctionChecker,
         FirVersionOverloadsChecker,
+        FirCapturedVariableStabilityFunctionChecker,
     )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOf(
