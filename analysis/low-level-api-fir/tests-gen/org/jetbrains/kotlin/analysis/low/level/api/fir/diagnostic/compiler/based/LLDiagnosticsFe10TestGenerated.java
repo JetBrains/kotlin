@@ -37192,6 +37192,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("forInStringWithIndexNameBasedDestructuringFullForm.kt")
+      public void testForInStringWithIndexNameBasedDestructuringFullForm() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/forInStringWithIndexNameBasedDestructuringFullForm.kt");
+      }
+
+      @Test
       @TestMetadata("FunVsCtorInDifferentFiles.kt")
       public void testFunVsCtorInDifferentFiles() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/FunVsCtorInDifferentFiles.kt");
@@ -45375,6 +45381,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("complicatedLTGTE.kt")
       public void testComplicatedLTGTE() {
         runTest("compiler/testData/diagnostics/tests/syntax/complicatedLTGTE.kt");
+      }
+
+      @Test
+      @TestMetadata("forInStringWithIndexNameBasedDestructuringFullForm.kt")
+      public void testForInStringWithIndexNameBasedDestructuringFullForm() {
+        runTest("compiler/testData/diagnostics/tests/syntax/forInStringWithIndexNameBasedDestructuringFullForm.kt");
       }
 
       @Test

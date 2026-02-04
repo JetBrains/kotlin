@@ -12733,6 +12733,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("forInStringWithIndexNameBasedDestructuringFullForm.kt")
+      public void testForInStringWithIndexNameBasedDestructuringFullForm() {
+        runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInStringWithIndexNameBasedDestructuringFullForm.kt");
+      }
+
+      @Test
       @TestMetadata("forInStringWithIndexNameBasedDestructuringShortForm.kt")
       public void testForInStringWithIndexNameBasedDestructuringShortForm() {
         runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInStringWithIndexNameBasedDestructuringShortForm.kt");
@@ -28702,9 +28708,21 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("nameBasedDestructuring.kt")
+    public void testNameBasedDestructuring() {
+      runTest("compiler/testData/codegen/box/inline/nameBasedDestructuring.kt");
+    }
+
+    @Test
     @TestMetadata("nestedLabelsInlinedClashingAtFunctionsWithClosure.kt")
     public void testNestedLabelsInlinedClashingAtFunctionsWithClosure() {
       runTest("compiler/testData/codegen/box/inline/nestedLabelsInlinedClashingAtFunctionsWithClosure.kt");
+    }
+
+    @Test
+    @TestMetadata("positionBasedDestructuring.kt")
+    public void testPositionBasedDestructuring() {
+      runTest("compiler/testData/codegen/box/inline/positionBasedDestructuring.kt");
     }
 
     @Test
@@ -45037,6 +45055,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     @Test
     public void testAllFilesPresentInNameBasedDestructuring() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nameBasedDestructuring"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("fakeOverridenFunctionReturnsDataClass.kt")
+    public void testFakeOverridenFunctionReturnsDataClass() {
+      runTest("compiler/testData/codegen/box/nameBasedDestructuring/fakeOverridenFunctionReturnsDataClass.kt");
     }
 
     @Test
