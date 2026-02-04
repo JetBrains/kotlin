@@ -109,6 +109,7 @@
 /compiler/compiler-runner/ "Kotlin Frontend"
 /compiler/compiler-runner-unshaded/ "Kotlin Build Tools"
 /compiler/config/ "Kotlin Frontend"
+/compiler/config/configuration-keys-generator/src/org/jetbrains/kotlin/config/keys/generator/WasmConfigurationKeysContainer.kt "Kotlin Wasm"
 /compiler/config.jvm/ "Kotlin JVM"
 /compiler/container/ "Kotlin Frontend"
 /compiler/daemon/ "Kotlin Build Tools" "Build Tools API"
