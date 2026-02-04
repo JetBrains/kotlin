@@ -18,7 +18,7 @@ class RegexTest {
         assertEquals(pattern, regex1.pattern)
         assertEquals(setOf(RegexOption.IGNORE_CASE), regex1.options)
 
-        val options2 = setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE)
+        val options2 = setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)
         val regex2 = Regex(pattern, options2)
         assertEquals(options2, regex2.options)
     }
@@ -53,6 +53,21 @@ class RegexTest {
         assertFailsWith<IndexOutOfBoundsException> { p.find(input, -1) }
         assertFailsWith<IndexOutOfBoundsException> { p.find(input, input.length + 1) }
         assertEquals(null, p.find(input, input.length))
+    }
+
+    @Test fun matchDotAllResult() {
+        val p = "\\d+.\\d+".toRegex()
+        val input = "123\n456"
+
+        assertFalse(input matches p)
+        assertFalse(p matches input)
+        assertTrue(p in input)
+
+        val dap = p.pattern.toRegex(RegexOption.DOT_MATCHES_ALL)
+
+        assertTrue(input matches dap)
+        assertTrue(dap matches input)
+        assertTrue(dap in input)
     }
 
     @Test fun matchEscapeSurrogatePair() {
@@ -330,6 +345,11 @@ class RegexTest {
         assertEquals(listOf("test", "", "Line"), matchedValues)
     }
 
+    @Test fun matchDotAll() {
+        val regex = "^.*$".toRegex(RegexOption.DOT_MATCHES_ALL)
+        val matchedValues = regex.findAll("test\n\nLine").map { it.value }.toList()
+        assertEquals(listOf("test\n\nLine"), matchedValues)
+    }
 
     @Test fun matchEntire() {
         val regex = "(\\d)(\\w)".toRegex()
@@ -339,6 +359,17 @@ class RegexTest {
             assertEquals("3c", m.value)
             assertEquals(3, m.groups.size)
             assertEquals(listOf("3c", "3", "c"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+    }
+
+    @Test fun matchEntireDotAll() {
+        val regex = "\\d+.\\d+".toRegex(RegexOption.DOT_MATCHES_ALL)
+
+        assertNotNull(regex.matchEntire("123\n456")) { m ->
+            assertEquals("123\n456", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("123\n456"), m.groups.map { it!!.value })
             assertNull(m.next())
         }
     }
