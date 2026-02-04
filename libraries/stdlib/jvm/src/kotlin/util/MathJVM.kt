@@ -259,6 +259,8 @@ public actual fun atanh(x: Double): Double {
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Doubles.hypot
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -845,6 +847,8 @@ public actual inline fun atanh(x: Float): Float = atanh(x.toDouble()).toFloat()
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Floats.hypot
  */
 @SinceKotlin("1.2")
 @InlineOnly
