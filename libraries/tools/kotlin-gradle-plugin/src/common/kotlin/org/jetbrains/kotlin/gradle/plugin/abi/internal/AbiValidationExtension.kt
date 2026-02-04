@@ -39,7 +39,6 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
 
     internal val isActivated: Boolean get() = activated
 
-    @Deprecated("was removed")
     final override val enabled: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     override val filters: AbiFiltersSpec = objects.AbiFiltersSpecImpl()

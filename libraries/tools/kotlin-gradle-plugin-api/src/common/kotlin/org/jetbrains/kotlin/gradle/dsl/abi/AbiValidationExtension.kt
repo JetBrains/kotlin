@@ -39,10 +39,10 @@ interface AbiValidationExtension {
     /**
      * @deprecated Property was removed to enable ABI validation call function `abiValidation()`, `abiValidation { ... }` or read `abiValidation` property.
      */
-    @Deprecated(
+    /*@Deprecated(
         "Property was removed to enable ABI validation call function abiValidation(), abiValidation { ... } or read abiValidation property.",
         level = DeprecationLevel.ERROR
-    )
+    )*/
     val enabled: Property<Boolean>
 
     /**
