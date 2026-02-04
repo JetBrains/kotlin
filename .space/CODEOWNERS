@@ -1,41 +1,63 @@
 # This file uses Space CODEOWNERS syntax https://www.jetbrains.com/help/space/code-owners.html#codeowners-file-syntax with additional requirements:
 # 1. Team names have to be in quotations
-# 2. Individual owners have to be added via email address which is linked to a GitHub account (it can be a secondary email for the account)
+# 2. Individual owners have to be added via email and their GitHub username
 
-# It supports a `virtual team` setup, where 3rd party contributors outside JetBrains organization can be added
-# to `codeowners-virtual-team-mapping.json` for custom team management.
+# It supports a `virtual team` setup, where 3rd party code owners can be added to the repository
+# You need to set-up an empty team on Space and map it to external collaborators on GitHub via "SPACE_TO_GITHUB_OWNER" directive
 
 # This file is checked by org.jetbrains.kotlin.code.SpaceCodeOwnersTest
-# Directive OWNER_LIST specifies possible values for owner field
+# Directive SPACE_OWNER specifies team owner for Space (team name in quotations)
+# Directive USER_OWNER specifies individual owner with format: <email> <github_username>
+# Directive SPACE_TO_GITHUB_OWNER specifies Space team to GitHub username mapping with format: <team_name> <username1> <username2> [...]
 # Directive UNKNOWN specifies that path is unclaimed
 # Directive NO_OWNER specifies that path requires no reviewer, even fallback does not apply
 # Ownership must be exhaustive modulo UNKNOWN
 
-# OWNER_LIST: "Kotlin"
-# OWNER_LIST: "Kotlin Libraries"
-# OWNER_LIST: "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS" "Kotlin Frontend"
-# OWNER_LIST: "Kotlin Compiler"
-# OWNER_LIST: "Kotlin Build Infrastructure" "Kotlin Build Tools"
-# OWNER_LIST: "Build Tools API"
-# OWNER_LIST: "Kotlin Performance QA"
-# OWNER_LIST: "Kotlin Analysis API"
-# OWNER_LIST: "Kotlin Release"
-# OWNER_LIST: "Kotlin Language Evolution"
-# OWNER_LIST: "Google Compose"
-# OWNER_LIST: "Parcelize"
-# OWNER_LIST: mikhail.glukhikh@jetbrains.com dmitriy.novozhilov@jetbrains.com kirill.rakhman@jetbrains.com
-# OWNER_LIST: yan.zhulanow@jetbrains.com
-# OWNER_LIST: alexander.udalov@jetbrains.com
-# OWNER_LIST: zalim.bashorov@jetbrains.com
-# OWNER_LIST: ilya.goncharov@jetbrains.com artem.kobzar@jetbrains.com
-# OWNER_LIST: simon.ogorodnik@jetbrains.com stanislav.erokhin@jetbrains.com
-# OWNER_LIST: alexander.shabalin@jetbrains.com aleksei.glushko@jetbrains.com sergey.bogolepov@jetbrains.com svyatoslav.scherbina@jetbrains.com
-# OWNER_LIST: brian.norman@jetbrains.com
-# OWNER_LIST: ilya.chernikov@jetbrains.com alejandro.serrano.mena@jetbrains.com
-# OWNER_LIST: sergej.jaskiewicz@jetbrains.com
-# OWNER_LIST: "Kotlin for Data Science"
-# Kotlin Libraries
-# OWNER_LIST: vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com sergey.shanshin@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
+# SPACE_OWNER: "Kotlin"
+# SPACE_OWNER: "Kotlin Libraries"
+# SPACE_OWNER: "Kotlin JVM"
+# SPACE_OWNER: "Kotlin Native"
+# SPACE_OWNER: "Kotlin Wasm"
+# SPACE_OWNER: "Kotlin Common Backend"
+# SPACE_OWNER: "Kotlin JS"
+# SPACE_OWNER: "Kotlin Frontend"
+# SPACE_OWNER: "Kotlin Compiler"
+# SPACE_OWNER: "Kotlin Build Infrastructure"
+# SPACE_OWNER: "Kotlin Build Tools"
+# SPACE_OWNER: "Build Tools API"
+# SPACE_OWNER: "Kotlin Performance QA"
+# SPACE_OWNER: "Kotlin Analysis API"
+# SPACE_OWNER: "Kotlin Release"
+# SPACE_OWNER: "Kotlin Language Evolution"
+# SPACE_OWNER: "Kotlin for Data Science"
+
+# USER_OWNER: mikhail.glukhikh@jetbrains.com mikhail.glukhikh
+# USER_OWNER: dmitriy.novozhilov@jetbrains.com dmitriy.novozhilov
+# USER_OWNER: kirill.rakhman@jetbrains.com kirill.rakhman
+# USER_OWNER: yan.zhulanow@jetbrains.com yan.zhulanow
+# USER_OWNER: alexander.udalov@jetbrains.com alexander.udalov
+# USER_OWNER: zalim.bashorov@jetbrains.com zalim.bashorov
+# USER_OWNER: ilya.goncharov@jetbrains.com ilya.goncharov
+# USER_OWNER: artem.kobzar@jetbrains.com artem.kobzar
+# USER_OWNER: simon.ogorodnik@jetbrains.com simon.ogorodnik
+# USER_OWNER: stanislav.erokhin@jetbrains.com stanislav.erokhin
+# USER_OWNER: alexander.shabalin@jetbrains.com alexander.shabalin
+# USER_OWNER: aleksei.glushko@jetbrains.com aleksei.glushko
+# USER_OWNER: sergey.bogolepov@jetbrains.com sergey.bogolepov
+# USER_OWNER: svyatoslav.scherbina@jetbrains.com svyatoslav.scherbina
+# USER_OWNER: brian.norman@jetbrains.com brian.norman
+# USER_OWNER: ilya.chernikov@jetbrains.com ilya.chernikov
+# USER_OWNER: alejandro.serrano.mena@jetbrains.com alejandro.serrano.mena
+# USER_OWNER: sergej.jaskiewicz@jetbrains.com sergej.jaskiewicz
+# USER_OWNER: vsevolod.tolstopyatov@jetbrains.com vsevolod.tolstopyatov
+# USER_OWNER: ilya.gorbunov@jetbrains.com ilya.gorbunov
+# USER_OWNER: sergey.shanshin@jetbrains.com sergey.shanshin
+# USER_OWNER: leonid.startsev@jetbrains.com leonid.startsev
+# USER_OWNER: filipp.zhinkin@jetbrains.com filipp.zhinkin
+# USER_OWNER: dmitry.nekrasov@jetbrains.com dmitry.nekrasov
+
+# SPACE_TO_GITHUB_OWNER: "Google Compose" ashikov alanv bentrengrove anbailey chuckj derekx
+# SPACE_TO_GITHUB_OWNER: "Parcelize" troels jpaupore jsjeon jaebaek laszio villumsen
 
 # Fallback rule, must always be top
 * "Kotlin"
