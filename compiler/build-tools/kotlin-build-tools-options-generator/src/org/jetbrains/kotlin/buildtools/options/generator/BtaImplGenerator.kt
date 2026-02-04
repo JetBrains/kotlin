@@ -203,6 +203,8 @@ internal class BtaImplGenerator(
                         argumentTypeParameter
                     )
                 }
+                is BtaCompilerArgument.SSoTCompilerArgumentCompat -> TODO()
+
                 is BtaCompilerArgument.CustomCompilerArgument -> {
                     defaultsInitializer.addStatement("optionsMap[%S] = %L", name, argument.defaultValue)
                     generateCustomRepresentation(
@@ -229,9 +231,11 @@ internal class BtaImplGenerator(
         wasIntroducedRecently: Boolean,
     ) {
         val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
+        val applier = MemberName(targetPackage, argument.applierSimpleName)
+
         CodeBlock.builder().apply {
             add("if (%M in this) { ", member)
-            add("arguments.%M(get(%M))", argument.applier, member)
+            add("arguments.%M(get(%M))", applier, member)
             add("}")
         }.build().also { setStatement ->
             toCompilerConverterFun.addSafeSetStatement(
@@ -245,7 +249,7 @@ internal class BtaImplGenerator(
         }
 
         applyCompilerArgumentsFun.addSafeMethodAccessStatement(CodeBlock.builder().apply {
-            add("this[%M] = %M(this[%M], arguments)", member, argument.applier, member)
+            add("this[%M] = %M(this[%M], arguments)", member, applier, member)
         }.build(), failOnNoSuchMethod = false)
     }
 

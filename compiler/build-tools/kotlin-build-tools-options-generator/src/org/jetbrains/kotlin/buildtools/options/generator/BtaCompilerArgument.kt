@@ -43,6 +43,24 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         constructor(origin: KotlinCompilerArgument) : this(origin.calculateName(), origin)
     }
 
+    class SSoTCompilerArgumentCompat(
+        origin: SSoTCompilerArgument,
+    ) : BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>(
+        name = origin.name,
+        description = origin.description,
+        valueType = origin.valueType,
+        introducedSinceVersion = origin.introducedSinceVersion,
+        deprecatedSinceVersion = origin.deprecatedSinceVersion,
+        removedSinceVersion = origin.removedSinceVersion
+    ) {
+        constructor(origin: KotlinCompilerArgument) : this(SSoTCompilerArgument(origin))
+
+        val effectiveCompilerName: String = origin.effectiveCompilerName
+        val applierSimpleName = "apply${
+            origin.effectiveCompilerName.replaceFirstChar { it.uppercase() }
+        }"
+    }
+
     class CustomCompilerArgument(
         name: String,
         description: String,
@@ -50,7 +68,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         introducedSinceVersion: KotlinReleaseVersion,
         deprecatedSinceVersion: KotlinReleaseVersion?,
         removedSinceVersion: KotlinReleaseVersion?,
-        val applier: MemberName,
+        val applierSimpleName: String,
         val defaultValue: CodeBlock,
     ) : BtaCompilerArgument<BtaCompilerArgumentValueType.CustomArgumentValueType>(
         name = name,
@@ -69,7 +87,7 @@ sealed class BtaCompilerArgumentValueType(
     val isNullable: Boolean = false,
 ) {
     class SSoTCompilerArgumentValueType(
-        val origin: KotlinArgumentValueType<*>
+        val origin: KotlinArgumentValueType<*>,
     ) : BtaCompilerArgumentValueType(isNullable = origin.isNullable.current) {
         val kType: KType
             get() = origin::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!
@@ -95,7 +113,7 @@ object CustomCompilerArguments {
         introducedSinceVersion = KotlinReleaseVersion.v2_3_20,
         deprecatedSinceVersion = null,
         removedSinceVersion = null,
-        applier = MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "applyCompilerPlugins"),
+        applierSimpleName = "applyCompilerPlugins",
         defaultValue = CodeBlock.of(
             "%M<%T>()",
             MemberName("kotlin.collections", "emptyList"),
