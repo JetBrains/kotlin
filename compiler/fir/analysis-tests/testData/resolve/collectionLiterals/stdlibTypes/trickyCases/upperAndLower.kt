@@ -1,4 +1,4 @@
-// LANGUAGE: +CollectionLiterals
+// LANGUAGE: +CollectionLiterals, +UnnamedLocalVariables
 // RUN_PIPELINE_TILL: FRONTEND
 
 fun <K> select(vararg k: K): K = k[0]
@@ -6,18 +6,18 @@ fun <K> select(vararg k: K): K = k[0]
 fun cond(): Boolean = true
 
 fun test() {
-    val a: Set<*> <!INITIALIZER_TYPE_MISMATCH!>=<!> select(mutableListOf(), [42])
+    val _: Set<*> <!INITIALIZER_TYPE_MISMATCH!>=<!> select(mutableListOf(), [42])
 
-    val b: Set<*> = select(setOf(), [42])
-    val c: Collection<*> = select(setOf(), [42])
-
-    // ambiguity
-    val d: Collection<*> = select(<!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>(), <!CANNOT_INFER_PARAMETER_TYPE!>listOf<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
+    val _: Set<*> = select(setOf(), [42])
+    val _: Collection<*> = select(setOf(), [42])
 
     // ambiguity
-    val e: Collection<*> = select(<!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>(), <!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
+    val _: Collection<*> = select(<!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>(), <!CANNOT_INFER_PARAMETER_TYPE!>listOf<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
 
-    val f: Collection<*> =
+    // ambiguity
+    val _: Collection<*> = select(<!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>(), <!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
+
+    val _: Collection<*> =
         select(
             select(
                 mutableSetOf<Int>(),
@@ -27,7 +27,7 @@ fun test() {
         )
 
     // ambiguity
-    val g: Set<*> =
+    val _: Set<*> =
         select(
             select(
                 mutableSetOf<Int>(),
@@ -37,7 +37,7 @@ fun test() {
         )
 
     // ambiguity (?)
-    val h: Set<*> =
+    val _: Set<*> =
         select(
             <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>(),
             <!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>(),
@@ -45,7 +45,7 @@ fun test() {
         )
 
     // ambiguity (?)
-    val i: Set<*> =
+    val _: Set<*> =
         select(
             select(
                 <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>(),
@@ -54,7 +54,7 @@ fun test() {
             <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>,
         )
 
-    val j: Set<*> =
+    val _: Set<*> =
         select(
             select(
                 setOf(),
@@ -63,7 +63,7 @@ fun test() {
             [42],
         )
 
-    val k: Set<*> =
+    val _: Set<*> =
         select(
             hashSetOf(),
             [42],
@@ -72,35 +72,45 @@ fun test() {
 
 fun testWhen() {
     // ambiguity
-    val a: Set<*> <!INITIALIZER_TYPE_MISMATCH!>=<!> when {
+    val _: Set<*> <!INITIALIZER_TYPE_MISMATCH!>=<!> when {
         cond() -> mutableListOf()
         else -> [42]
     }
-
-    val b: Set<*> = when {
+    val _: Set<*> = when {
         cond() -> <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>()
         else -> [42]
     }
-    val c: Collection<*> = when {
+    val _: Set<*> = when {
+        cond() -> setOf(42)
+        else -> [42]
+    }
+    val _: Set<Int> = when {
+        cond() -> setOf()
+        else -> [42]
+    }
+    val _: Collection<*> = when {
         cond() -> <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>()
+        else -> [42]
+    }
+    val _: Collection<Int> = when {
+        cond() -> setOf()
         else -> [42]
     }
 
     // ambiguity
-    val d: Collection<*> = when {
-        cond() -> <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>()
-        cond() -> <!CANNOT_INFER_PARAMETER_TYPE!>listOf<!>()
+    val _: Collection<Int> = when {
+        cond() -> setOf()
+        cond() -> listOf()
         else -> <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>
     }
 
     // ambiguity
-    val e: Collection<*> = when {
-        cond() -> <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>()
-        cond() -> <!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>()
+    val _: Collection<Int> = when {
+        cond() -> setOf()
+        cond() -> mutableSetOf()
         else -> <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>
     }
-
-    val f: Collection<*> =
+    val _: Collection<*> =
         when {
             cond() -> when {
                 cond() -> mutableSetOf<Int>()
@@ -108,47 +118,76 @@ fun testWhen() {
             }
             else -> <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
         }
-
-    // ambiguity
-    val g: Set<*> =
+    val _: Collection<Any> =
         when {
             cond() -> when {
                 cond() -> mutableSetOf<Int>()
                 else -> mutableSetOf<String>()
             }
-            else -> <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
+            else -> []
+        }
+
+    // ambiguity
+    val _: Set<Any> =
+        when {
+            cond() -> when {
+                cond() -> mutableSetOf<Int>()
+                else -> mutableSetOf<String>()
+            }
+            else -> []
         }
 
     // ambiguity (?)
-    val h: Set<*> =
+    val _: Set<Int> =
         when {
-            cond() -> <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>()
-            cond() -> <!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>()
+            cond() -> setOf()
+            cond() -> mutableSetOf()
             else -> [42]
         }
 
     // ambiguity (?)
-    val i: Set<*> =
+    val _: Set<Int> =
         when {
             cond() -> when {
-                cond() -> <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>()
-                else -> <!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>()
+                cond() -> setOf()
+                else -> mutableSetOf()
             }
             else -> [42]
         }
 
-    val j: Set<*> =
+    val _: Set<Int> =
         when {
             cond() -> when {
-                cond() -> <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>()
-                else -> <!CANNOT_INFER_PARAMETER_TYPE!>hashSetOf<!>()
+                cond() -> setOf()
+                else -> hashSetOf()
             }
             else -> [42]
         }
 
-    val k: Set<*> =
+    val _: Set<*> =
         when {
             cond() -> <!CANNOT_INFER_PARAMETER_TYPE!>hashSetOf<!>()
+            else -> [42]
+        }
+
+    val _: Set<Int> =
+        when {
+            cond() -> hashSetOf()
+            else -> [42]
+        }
+
+    // ambiguity
+    val _: Set<Int> =
+        when {
+            cond() -> when {
+                cond() -> hashSetOf()
+                else -> mutableSetOf()
+            }
+            else -> [42]
+        }
+    val _: MutableCollection<Any> =
+        when {
+            cond() -> mutableSetOf()
             else -> [42]
         }
 }
