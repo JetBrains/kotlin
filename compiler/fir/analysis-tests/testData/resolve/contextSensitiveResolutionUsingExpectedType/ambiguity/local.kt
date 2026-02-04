@@ -55,12 +55,12 @@ class Test {
 
     fun test(s: Sealed): Int {
         return when (s) {
-            <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
+            <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, PROBLEMATIC_EQUALS!>A<!> -> 1
             <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
             C -> 3
             is D -> 4
             <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
-            <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>CompanionA<!> -> 6
+            <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, PROBLEMATIC_EQUALS!>CompanionA<!> -> 6
             <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, INCOMPATIBLE_TYPES!>CompanionB<!> -> 7
             else -> 100
         }
@@ -68,12 +68,12 @@ class Test {
 
     fun testClass(s: Sealed): Int {
         return when (s) {
-            Test.A -> 1
+            <!PROBLEMATIC_EQUALS!>Test.A<!> -> 1
             <!IMPOSSIBLE_IS_CHECK_ERROR!>is Test.B<!> -> 2
             Sealed.C -> 3
             is Sealed.D -> 4
             <!IMPOSSIBLE_IS_CHECK_ERROR!>is kotlin.String<!> -> 5
-            Test.CompanionA -> 6
+            <!PROBLEMATIC_EQUALS!>Test.CompanionA<!> -> 6
             <!INCOMPATIBLE_TYPES!>this.CompanionB<!> -> 7
             else -> 100
         }

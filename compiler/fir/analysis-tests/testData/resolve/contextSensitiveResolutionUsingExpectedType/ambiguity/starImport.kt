@@ -40,12 +40,12 @@ import foo.F
 import bar.*
 
 fun sealed(s: Sealed): Int = when (s) {
-    <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
+    <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, PROBLEMATIC_EQUALS!>A<!> -> 1
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
     C -> 3
     is D -> 4
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
-    <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>CompanionA<!> -> 6
+    <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, PROBLEMATIC_EQUALS!>CompanionA<!> -> 6
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, INCOMPATIBLE_TYPES!>CompanionB<!> -> 7
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>E<!><!> -> 8
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>F<!><!> -> 9
@@ -64,10 +64,10 @@ fun sealedExplicit(s: Sealed): Int = when (s) {
 }
 
 fun topLevelExplicit(s: Sealed): Int = when (s) {
-    foo.A -> 1
+    <!PROBLEMATIC_EQUALS!>foo.A<!> -> 1
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.B<!> -> 2
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is kotlin.String<!> -> 5
-    foo.CompanionA -> 6
+    <!PROBLEMATIC_EQUALS!>foo.CompanionA<!> -> 6
     <!INCOMPATIBLE_TYPES!>foo.CompanionB<!> -> 7
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.E<!> -> 8
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.F<!> -> 9
@@ -114,19 +114,19 @@ fun cast4ok(s: Sealed): Int {
     return 4
 }
 
-fun equality1wrong(s: Sealed): Boolean = s == <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!>
+fun equality1wrong(s: Sealed): Boolean = <!PROBLEMATIC_EQUALS!>s == <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!><!>
 fun equality1sealed(s: Sealed): Boolean = s == Sealed.A
-fun equality1topLevel(s: Sealed): Boolean = s == foo.A
+fun equality1topLevel(s: Sealed): Boolean = <!PROBLEMATIC_EQUALS!>s == foo.A<!>
 
 fun equality2ok(s: Sealed): Boolean = s == Sealed.C
 
-fun equality3wrong(s: Sealed): Boolean = s == <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>CompanionA<!>
+fun equality3wrong(s: Sealed): Boolean = <!PROBLEMATIC_EQUALS!>s == <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>CompanionA<!><!>
 fun equality3sealed(s: Sealed): Boolean = s == Sealed.CompanionA
-fun equality3topLevel(s: Sealed): Boolean = s == foo.CompanionA
+fun equality3topLevel(s: Sealed): Boolean = <!PROBLEMATIC_EQUALS!>s == foo.CompanionA<!>
 
-fun equality4ok(s: Sealed): Boolean = s == <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>F<!>
+fun equality4ok(s: Sealed): Boolean = <!PROBLEMATIC_EQUALS!>s == <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>F<!><!>
 fun equality4sealed(s: Sealed): Boolean = s == Sealed.F
-fun equality4topLevel(s: Sealed): Boolean = s == foo.F
+fun equality4topLevel(s: Sealed): Boolean = <!PROBLEMATIC_EQUALS!>s == foo.F<!>
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, data, equalityExpression, functionDeclaration, integerLiteral,
 isExpression, nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression,

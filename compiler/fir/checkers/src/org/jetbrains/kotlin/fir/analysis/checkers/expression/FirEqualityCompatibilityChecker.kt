@@ -15,11 +15,22 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
+import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
+import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -57,18 +68,102 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             )
         }
 
-        if (l.argument !is FirSmartCastExpression && r.argument !is FirSmartCastExpression) {
-            return
+        if (l.argument is FirSmartCastExpression || r.argument is FirSmartCastExpression) {
+            checkApplicability(l.smartCastTypeInfo, r.smartCastTypeInfo).ifInapplicable {
+                return reporter.reportInapplicabilityDiagnostic(
+                    expression, it, expression.operation, forceWarning = true,
+                    l.smartCastTypeInfo, r.smartCastTypeInfo,
+                    l.userType, r.userType,
+                )
+            }
         }
 
-        checkApplicability(l.smartCastTypeInfo, r.smartCastTypeInfo).ifInapplicable {
-            return reporter.reportInapplicabilityDiagnostic(
-                expression, it, expression.operation, forceWarning = true,
-                l.smartCastTypeInfo, r.smartCastTypeInfo,
-                l.userType, r.userType,
-            )
+        if (expression.operation == FirOperation.EQ || expression.operation == FirOperation.NOT_EQ) {
+            val problematicType = checkStrictEqualityCase(l.smartCastTypeInfo, r.smartCastTypeInfo)
+            if (problematicType != null) {
+                return reporter.reportOn(expression.source, FirErrors.PROBLEMATIC_EQUALS, problematicType)
+            }
         }
     }
+
+    context(context: CheckerContext)
+    fun checkStrictEqualityCase(leftTypeInfo: TypeInfo, rightTypeInfo: TypeInfo): ConeKotlinType? {
+        val leftType = leftTypeInfo.type
+        val leftCanBeNull = leftType.canBeNull(context.session)
+
+        val rightType = rightTypeInfo.type
+        val rightCanBeNull = rightType.canBeNull(context.session)
+
+        if (leftCanBeNull && rightCanBeNull) return null
+        if (areRelated(leftTypeInfo, rightTypeInfo)) return null
+
+        fun problematicCase(strictness: EqualityStrictness, otherCanBeNull: Boolean): Boolean =
+            strictness == EqualityStrictness.Strict || (strictness == EqualityStrictness.StrictModuloNullability && !otherCanBeNull)
+
+        return when {
+            problematicCase(leftTypeInfo.computeEqualityStrictness(), rightCanBeNull) -> leftType
+            problematicCase(rightTypeInfo.computeEqualityStrictness(), leftCanBeNull) -> rightType
+            else -> null
+        }
+    }
+
+    enum class EqualityStrictness {
+        Strict, StrictModuloNullability, NonStrict;
+
+        fun nullable(): EqualityStrictness = when (this) {
+            Strict, StrictModuloNullability -> StrictModuloNullability
+            NonStrict -> NonStrict
+        }
+
+        fun definitelyNotNullable(): EqualityStrictness = when (this) {
+            Strict, StrictModuloNullability -> Strict
+            NonStrict -> NonStrict
+        }
+    }
+
+    context(context: CheckerContext)
+    fun TypeInfo.computeEqualityStrictness(): EqualityStrictness =
+        computeEqualityStrictnessNotNull().let {
+            if (this.type.canBeNull(context.session)) it.nullable() else it
+        }
+
+    context(context: CheckerContext)
+    fun ConeKotlinType.computeEqualityStrictness(): EqualityStrictness =
+        toTypeInfo(context.session).computeEqualityStrictness()
+
+    @OptIn(SymbolInternals::class)
+    context(context: CheckerContext)
+    fun TypeInfo.computeEqualityStrictnessNotNull(): EqualityStrictness {
+        if (isBuiltin || isIdentityLess(context.session)) return EqualityStrictness.Strict
+        return when (val type = this.notNullType) {
+            is ConeIntegerLiteralType -> EqualityStrictness.Strict
+            is ConeIntersectionType -> type.intersectedTypes.minOf { it.computeEqualityStrictness() }
+            is ConeDefinitelyNotNullType -> type.original.computeEqualityStrictness().definitelyNotNullable()
+            is ConeFlexibleType -> listOf(type.lowerBound.computeEqualityStrictness(), type.upperBound.computeEqualityStrictness()).max()
+            else -> {
+                val classInfo = type.toRegularClassSymbol() ?: return EqualityStrictness.NonStrict
+                when {
+                    classInfo.overridesEquals -> EqualityStrictness.NonStrict
+                    classInfo.isData || classInfo.isInlineOrValue -> EqualityStrictness.Strict
+                    classInfo.isSealed -> classInfo.fir.getSealedClassInheritors(context.session).maxOf loop@{
+                        val symbol = it.toSymbol() as? FirRegularClassSymbol ?: return@loop EqualityStrictness.NonStrict
+                        symbol.defaultType().computeEqualityStrictness()
+                    }
+                    else -> EqualityStrictness.NonStrict
+                }
+            }
+        }
+    }
+
+    context(context: CheckerContext)
+    val FirRegularClassSymbol.overridesEquals: Boolean
+        get() {
+            var overridesEquals = false
+            processAllDeclaredCallables(context.session) {
+                if (it.name == OperatorNameConventions.EQUALS) overridesEquals = true
+            }
+            return overridesEquals
+        }
 
     context(context: CheckerContext)
     private fun checkEqualityApplicability(l: TypeInfo, r: TypeInfo): Applicability {
