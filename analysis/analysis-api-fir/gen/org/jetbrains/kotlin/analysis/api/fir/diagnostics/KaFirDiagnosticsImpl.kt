@@ -4904,6 +4904,12 @@ internal class ReceiverShadowedByContextParameterImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReceiverShadowedByContextParameter
 
+internal class ProblematicEqualsImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ProblematicEquals
+
 internal class RecursiveTypealiasExpansionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

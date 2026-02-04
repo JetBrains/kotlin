@@ -15,9 +15,9 @@ fun <T : MySealed> foo(a: T) {
     val L = MySealed.X
 
     if (a == X) {}
-    if (a == Y) {}
+    if (<!PROBLEMATIC_EQUALS!>a == Y<!>) {}
     if (a != X) {}
-    if (a != Y) {}
+    if (<!PROBLEMATIC_EQUALS!>a != Y<!>) {}
     if (a === X) {}
     if (<!EQUALITY_NOT_APPLICABLE!>a === Y<!>) {}
     if (a !== X) {}
@@ -38,7 +38,7 @@ fun <T : MySealed> foo(a: T) {
 
     when {
         a == X -> {}
-        a != Y -> {}
+        <!PROBLEMATIC_EQUALS!>a != Y<!> -> {}
     }
 
     when {
@@ -51,13 +51,13 @@ fun <T : MySealed> foo(a: T) {
 
     when (a) {
         X -> {}
-        Y, L -> {}
+        <!PROBLEMATIC_EQUALS!>Y<!>, L -> {}
         is Derived -> {}
     }
 
     when (val c = a) {
         X -> {}
-        Y, L -> {}
+        <!PROBLEMATIC_EQUALS!>Y<!>, L -> {}
         is Derived -> {}
     }
 

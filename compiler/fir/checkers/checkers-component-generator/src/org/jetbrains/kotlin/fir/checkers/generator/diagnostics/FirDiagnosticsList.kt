@@ -2045,6 +2045,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("isDispatchOfMemberExtension")
             parameter<List<FirValueParameterSymbol>>("contextParameterSymbols")
         }
+
+        val PROBLEMATIC_EQUALS by warning<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
     }
 
     val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {

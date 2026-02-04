@@ -627,6 +627,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("problematicEquals.kt")
+    public void testProblematicEquals() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/problematicEquals.kt");
+    }
+
+    @Test
     @TestMetadata("problems2.kt")
     public void testProblems2() {
       runTest("compiler/fir/analysis-tests/testData/resolve/problems2.kt");

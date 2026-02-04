@@ -15,11 +15,22 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
+import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
+import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -57,18 +68,57 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             )
         }
 
-        if (l.argument !is FirSmartCastExpression && r.argument !is FirSmartCastExpression) {
-            return
+        if (l.argument is FirSmartCastExpression || r.argument is FirSmartCastExpression) {
+            checkApplicability(l.smartCastTypeInfo, r.smartCastTypeInfo).ifInapplicable {
+                return reporter.reportInapplicabilityDiagnostic(
+                    expression, it, expression.operation, forceWarning = true,
+                    l.smartCastTypeInfo, r.smartCastTypeInfo,
+                    l.userType, r.userType,
+                )
+            }
         }
 
-        checkApplicability(l.smartCastTypeInfo, r.smartCastTypeInfo).ifInapplicable {
-            return reporter.reportInapplicabilityDiagnostic(
-                expression, it, expression.operation, forceWarning = true,
-                l.smartCastTypeInfo, r.smartCastTypeInfo,
-                l.userType, r.userType,
-            )
+        if (expression.operation == FirOperation.EQ || expression.operation == FirOperation.NOT_EQ) {
+            if (l.smartCastType.isMarkedNullable && r.smartCastType.isMarkedNullable) return
+
+            val lType = l.smartCastTypeInfo
+            val rType = r.smartCastTypeInfo
+            val problematicType =
+                lType.notNullType.takeIf { lType.hasBuiltinEquals } ?: rType.notNullType.takeIf { rType.hasBuiltinEquals } ?: return
+            if (areUnrelated(lType, rType)) {
+                reporter.reportOn(expression.source, FirErrors.PROBLEMATIC_EQUALS, problematicType)
+            }
         }
     }
+
+    @OptIn(SymbolInternals::class)
+    context(context: CheckerContext)
+    val TypeInfo.hasBuiltinEquals: Boolean
+        get() {
+            if (isBuiltin) return true
+            if (isIdentityLess(context.session)) return true
+            val classInfo = this.notNullType.toRegularClassSymbol() ?: return false
+            return when {
+                classInfo.isData || classInfo.isInlineOrValue -> !classInfo.overridesEquals
+                classInfo.isSealed ->
+                    !classInfo.overridesEquals &&
+                            classInfo.fir.getSealedClassInheritors(context.session).all loop@{
+                                val symbol = it.toSymbol() as? FirRegularClassSymbol ?: return@loop false
+                                symbol.defaultType().toTypeInfo(context.session).hasBuiltinEquals
+                            }
+                else -> false
+            }
+        }
+
+    context(context: CheckerContext)
+    val FirRegularClassSymbol.overridesEquals: Boolean
+        get() {
+            var overridesEquals = false
+            processAllDeclaredCallables(context.session) {
+                if (it.name == OperatorNameConventions.EQUALS) overridesEquals = true
+            }
+            return overridesEquals
+        }
 
     context(context: CheckerContext)
     private fun checkEqualityApplicability(l: TypeInfo, r: TypeInfo): Applicability {

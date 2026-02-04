@@ -5829,6 +5829,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.PROBLEMATIC_EQUALS) { firDiagnostic ->
+        ProblematicEqualsImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.RECURSIVE_TYPEALIAS_EXPANSION) { firDiagnostic ->
         RecursiveTypealiasExpansionImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -4090,6 +4090,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val contextParameterSymbols: List<KaSymbol>
     }
 
+    interface ProblematicEquals : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ProblematicEquals::class
+        val type: KaType
+    }
+
     interface RecursiveTypealiasExpansion : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = RecursiveTypealiasExpansion::class
     }

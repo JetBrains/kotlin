@@ -20,6 +20,8 @@ val CompanionB: Sealed, defined in foo.Sealed.Companion
 class foo.Test.A
 class foo.Sealed.A
 
+/local.kt:(1113,1114): warning: Problematic equality on 'Sealed'.
+
 /local.kt:(1132,1136): error: Check for instance is always 'false'.
 
 /local.kt:(1135,1136): error: Ambiguity with context-sensitive resolution:
@@ -36,15 +38,21 @@ class foo.Sealed.String
 class foo.Test.CompanionA
 val CompanionA: Sealed, defined in foo.Sealed.Companion
 
+/local.kt:(1222,1232): warning: Problematic equality on 'Sealed'.
+
 /local.kt:(1250,1260): error: Ambiguity with context-sensitive resolution:
 val CompanionB: Int, defined in foo.Test
 val CompanionB: Sealed, defined in foo.Sealed.Companion
 
 /local.kt:(1250,1260): error: Incompatible types 'Sealed' and 'Int'.
 
+/local.kt:(1381,1387): warning: Problematic equality on 'Sealed'.
+
 /local.kt:(1405,1414): error: Check for instance is always 'false'.
 
 /local.kt:(1487,1503): error: Check for instance is always 'false'.
+
+/local.kt:(1521,1536): warning: Problematic equality on 'Sealed'.
 
 /local.kt:(1554,1569): error: Incompatible types 'Sealed' and 'Int'.
 

@@ -12,8 +12,8 @@ fun work(message: String) { }
 fun usage(settings: Settings, basicSettings: Settings.BasicSettings) {
     if (settings == BasicSettings) work("Basic")
 
-    if (basicSettings == SpecificSettings) work("Specific")
-    if (basicSettings == Settings.SpecificSettings) work("Specific")
+    if (<!PROBLEMATIC_EQUALS!>basicSettings == SpecificSettings<!>) work("Specific")
+    if (<!PROBLEMATIC_EQUALS!>basicSettings == Settings.SpecificSettings<!>) work("Specific")
 }
 
 open class OpenSettings {
@@ -25,7 +25,7 @@ fun usageOpen(settings: OpenSettings, basicSettings: OpenSettings.OpenBasicSetti
     if (settings == OpenBasicSettings) work("Basic")
 
     if (basicSettings == <!UNRESOLVED_REFERENCE!>OpenSpecificSettings<!>) work("Specific")
-    if (basicSettings == OpenSettings.OpenSpecificSettings) work("Specific")
+    if (<!PROBLEMATIC_EQUALS!>basicSettings == OpenSettings.OpenSpecificSettings<!>) work("Specific")
 }
 
 /* GENERATED_FIR_TAGS: data, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, nestedClass,

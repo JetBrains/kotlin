@@ -974,6 +974,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val NOT_FUNCTION_AS_OPERATOR: KtDiagnosticFactory2<String, FirBasedSymbol<*>> = KtDiagnosticFactory2("NOT_FUNCTION_AS_OPERATOR", ERROR, SourceElementPositioningStrategies.OPERATOR, PsiElement::class, getRendererFactory())
     val DSL_SCOPE_VIOLATION: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("DSL_SCOPE_VIOLATION", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER: KtDiagnosticFactory3<FirBasedSymbol<*>, Boolean, List<FirValueParameterSymbol>> = KtDiagnosticFactory3("RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
+    val PROBLEMATIC_EQUALS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("PROBLEMATIC_EQUALS", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // Type alias
     val RECURSIVE_TYPEALIAS_EXPANSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("RECURSIVE_TYPEALIAS_EXPANSION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())

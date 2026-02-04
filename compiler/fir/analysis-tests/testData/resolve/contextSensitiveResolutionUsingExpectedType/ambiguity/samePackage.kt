@@ -15,7 +15,7 @@ object A
 class B
 
 fun sealed(s: Sealed): Int = when (s) {
-    <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
+    <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, PROBLEMATIC_EQUALS!>A<!> -> 1
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
     C -> 3
     is D -> 4
@@ -30,7 +30,7 @@ fun sealedExplicit(s: Sealed): Int = when (s) {
 }
 
 fun topLevelExplicit(s: Sealed): Int = when (s) {
-    foo.A -> 1
+    <!PROBLEMATIC_EQUALS!>foo.A<!> -> 1
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.B<!> -> 2
     else -> 6
 }
@@ -75,9 +75,9 @@ fun cast4ok(s: Sealed): Int {
     return 4
 }
 
-fun equality1wrong(s: Sealed): Boolean = s == <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!>
+fun equality1wrong(s: Sealed): Boolean = <!PROBLEMATIC_EQUALS!>s == <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!><!>
 fun equality1sealed(s: Sealed): Boolean = s == Sealed.A
-fun equality1topLevel(s: Sealed): Boolean = s == foo.A
+fun equality1topLevel(s: Sealed): Boolean = <!PROBLEMATIC_EQUALS!>s == foo.A<!>
 fun equality2ok(s: Sealed): Boolean = s == Sealed.C
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, data, equalityExpression, functionDeclaration, integerLiteral,

@@ -675,6 +675,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_FUNCTION_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_PROPERTY_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROBLEMATIC_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT
@@ -3486,6 +3487,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                 }
             },
             NOT_RENDERED,
+        )
+        map.put(
+            PROBLEMATIC_EQUALS,
+            "Problematic equality on ''{0}''.",
+            RENDER_TYPE
         )
 
         // Type alias
