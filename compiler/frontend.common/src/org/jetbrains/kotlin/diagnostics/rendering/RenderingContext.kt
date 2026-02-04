@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 
 @RequiresOptIn("Legacy API for K1 that doesn't pass a DiagnosticBaseContext. Mustn't be used with K2.")
 annotation class LegacyRenderingContextApi
@@ -20,10 +21,10 @@ sealed class RenderingContext {
 
     class Impl(
         private val objectsToRender: Collection<Any?>,
-        private val diagnosticContext: DiagnosticBaseContext = DiagnosticBaseContext.Default,
+        private val diagnosticContext: DiagnosticBaseContext,
     ) : RenderingContext() {
         @LegacyRenderingContextApi
-        constructor(objectsToRender: Collection<Any?>) : this(objectsToRender, DiagnosticBaseContext.Default)
+        constructor(objectsToRender: Collection<Any?>) : this(objectsToRender, DiagnosticContext.Default)
 
         private val data = linkedMapOf<Key<*>, Any?>()
 
@@ -35,7 +36,7 @@ sealed class RenderingContext {
 
     object Empty : RenderingContext() {
         override fun <T> get(key: Key<T>): T {
-            return key.compute(emptyList(), DiagnosticBaseContext.Default)
+            return key.compute(emptyList(), DiagnosticContext.Default)
         }
     }
 

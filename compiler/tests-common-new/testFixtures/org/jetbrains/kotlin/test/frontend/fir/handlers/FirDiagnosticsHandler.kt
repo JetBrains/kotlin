@@ -463,14 +463,14 @@ private class DebugDiagnosticConsumer(
                 factory.severity,
                 factory,
                 factory.defaultPositioningStrategy,
-                DiagnosticBaseContext.Default,
+                DiagnosticContext.Default,
             )
             is KtLightSourceElement -> KtLightSimpleDiagnostic(
                 sourceElement,
                 factory.severity,
                 factory,
                 factory.defaultPositioningStrategy,
-                DiagnosticBaseContext.Default,
+                DiagnosticContext.Default,
             )
         }
 
@@ -500,7 +500,7 @@ private class DebugDiagnosticConsumer(
                 factory.severity,
                 factory,
                 factory.defaultPositioningStrategy,
-                DiagnosticBaseContext.Default,
+                DiagnosticContext.Default,
             )
             is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
                 positionedElement,
@@ -508,7 +508,7 @@ private class DebugDiagnosticConsumer(
                 factory.severity,
                 factory,
                 factory.defaultPositioningStrategy,
-                DiagnosticBaseContext.Default,
+                DiagnosticContext.Default,
             )
         }
 
@@ -760,7 +760,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                         KtRealPsiSourceElement(it),
                         it.errorDescription,
                         positioningStrategy = null,
-                        DiagnosticBaseContext.Default, // syntax errors couldn't be suppressed anyway
+                        DiagnosticContext.Default, // syntax errors couldn't be suppressed anyway
                     )!!
                 }
             } else {
