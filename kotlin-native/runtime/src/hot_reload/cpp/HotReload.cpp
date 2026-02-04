@@ -864,7 +864,10 @@ KonanStartFunc HotReloadImpl::LoadBoostrapFile(const char* boostrapFilePath) con
     HRLogDebug("Loading bootstrap file: %s", boostrapFilePath);
 
     auto parsed = ParseObjectFile(boostrapFilePath);
-    if (!parsed) return nullptr;
+    if (!parsed) {
+        HRLogError("Bootstrap file failed to load!");
+        return nullptr;
+    }
 
     HRLogDebug("Found %zu impl symbols, creating placeholder stubs", parsed->implSymbols.size());
 

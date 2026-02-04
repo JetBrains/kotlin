@@ -49,7 +49,7 @@ extern "C" KInt Konan_run_start(const int argc, const char** argv) {
     }
 
     // Something failed while loading the boostrap object, return a failure code
-
+    std::fprintf(stderr, "error :: could not load expected bootstrap file %s\n", EXPECTED_BOOTSTRAP_FILE_PATH);
     return EXIT_FAILURE;
 }
 
