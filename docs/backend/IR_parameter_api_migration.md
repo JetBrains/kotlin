@@ -165,10 +165,10 @@ So far only dispatch and extension receivers could be bound in a reference to fu
        ```
      * `function.valueParamters.isEmpty()`
        into
-       `function.hasShape(regularParamters = 0)`
+       `function.hasShape(regularParameters = 0)`
      * `function.valueParamters.singleOrNull()?.type?.isInt() == true`
        into
-       `function.hasShape(regularParamters = 1, parameterTypes = listOf(irBuiltIns.intType))`
+       `function.hasShape(regularParameters = 1, parameterTypes = listOf(irBuiltIns.intType))`
      * `function.valueParamters.singleOrNull()?.type?.isPrimitiveType() == true`
        into
-       `function.hasShape(regularParamters = 1) && function.parameters[0].type.isPrimitiveType()`
+       `function.hasShape(regularParameters = 1) && function.parameters[0].type.isPrimitiveType()`
