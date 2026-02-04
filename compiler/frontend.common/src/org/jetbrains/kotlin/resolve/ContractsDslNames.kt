@@ -31,6 +31,7 @@ object ContractsDslNames {
     val CALLS_IN_PLACE: CallableId = contractBuilder("callsInPlace")
     val IMPLIES_BUILDER: CallableId = contractBuilder("implies")
     val HOLDS_IN: CallableId = contractBuilder("holdsIn")
+    val RETURNS_RESULT_OF: CallableId = contractBuilder("returnsResultOf")
 
     // enum class InvocationKind
     val INVOCATION_KIND_ENUM: CallableId = id("InvocationKind")

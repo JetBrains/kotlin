@@ -494,6 +494,7 @@ public final class kotlin/metadata/KmEffectType : java/lang/Enum {
 	public static final field CALLS Lkotlin/metadata/KmEffectType;
 	public static final field RETURNS_CONSTANT Lkotlin/metadata/KmEffectType;
 	public static final field RETURNS_NOT_NULL Lkotlin/metadata/KmEffectType;
+	public static final field RETURNS_RESULT_OF Lkotlin/metadata/KmEffectType;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/KmEffectType;
 	public static fun values ()[Lkotlin/metadata/KmEffectType;

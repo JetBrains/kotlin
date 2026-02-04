@@ -392,6 +392,7 @@ private fun ProtoBuf.Contract.toKmContract(c: ReadContext): KmContract {
             ProtoBuf.Effect.EffectType.RETURNS_CONSTANT -> KmEffectType.RETURNS_CONSTANT
             ProtoBuf.Effect.EffectType.CALLS -> KmEffectType.CALLS
             ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL -> KmEffectType.RETURNS_NOT_NULL
+            ProtoBuf.Effect.EffectType.RETURNS_RESULT_OF -> KmEffectType.RETURNS_RESULT_OF
         }
 
         val effectKind = if (!effect.hasKind()) null else when (requireNotNull(effect.kind)) {

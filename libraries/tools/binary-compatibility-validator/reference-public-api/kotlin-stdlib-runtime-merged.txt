@@ -3021,6 +3021,7 @@ public abstract interface class kotlin/contracts/ContractBuilder {
 	public abstract fun returns ()Lkotlin/contracts/Returns;
 	public abstract fun returns (Ljava/lang/Object;)Lkotlin/contracts/Returns;
 	public abstract fun returnsNotNull ()Lkotlin/contracts/ReturnsNotNull;
+	public abstract fun returnsResultOf (Lkotlin/Function;)V
 }
 
 public final class kotlin/contracts/ContractBuilder$DefaultImpls {

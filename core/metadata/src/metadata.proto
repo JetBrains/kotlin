@@ -617,6 +617,9 @@ message Effect {
 
     // ReturnsNotNull()
     RETURNS_NOT_NULL = 2;
+
+    // ReturnsResultOf(callable: ParameterReference)
+    RETURNS_RESULT_OF = 3;
   }
   optional EffectType effect_type = 1;
 

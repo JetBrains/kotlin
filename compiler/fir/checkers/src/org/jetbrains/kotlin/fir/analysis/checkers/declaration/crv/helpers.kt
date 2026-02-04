@@ -1,0 +1,52 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv
+
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsResultOfDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
+import org.jetbrains.kotlin.fir.declarations.mustUseReturnValueStatusComponent
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.functionTypeKind
+import org.jetbrains.kotlin.fir.types.isUnit
+import org.jetbrains.kotlin.fir.types.type
+import kotlin.collections.orEmpty
+
+context(context: CheckerContext)
+internal fun ConeKotlinType.isIgnorable(): Boolean {
+    return context.session.mustUseReturnValueStatusComponent.isIgnorableType(this)
+}
+
+@OptIn(SymbolInternals::class)
+internal fun FirCallableSymbol<*>.getReturnsResultOfParameterIndex(): Int? {
+    val declaration = fir as? FirContractDescriptionOwner ?: return null
+    val contractDescription = declaration.contractDescription as? FirResolvedContractDescription ?: return null
+    for (effectDeclaration in contractDescription.effects) {
+        val effect = effectDeclaration.effect
+        if (effect is ConeReturnsResultOfDeclaration) {
+            return effect.valueParameterReference.parameterIndex
+        }
+    }
+    return null
+}
+
+internal fun FirFunctionCall.getLambdaArgumentAtIndex(parameterIndex: Int): FirAnonymousFunction? {
+    val arguments = argumentList.arguments
+    if (parameterIndex < 0 || parameterIndex >= arguments.size) return null
+
+    val argument = arguments[parameterIndex]
+    return (argument as? FirAnonymousFunctionExpression)?.anonymousFunction
+}
+
+internal fun ConeKotlinType.isFunctionalTypeThatReturnsUnit(session: FirSession): Boolean =
+    functionTypeKind(session) != null && typeArguments.last().type?.isUnit == true

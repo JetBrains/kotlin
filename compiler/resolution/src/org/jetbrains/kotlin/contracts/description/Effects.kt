@@ -57,3 +57,12 @@ class CallsEffectDeclaration(val variableReference: VariableReference, val kind:
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
 }
+
+
+/**
+ * Effect which specifies that subroutine returns the result of calling the specified lambda parameter [variableReference].
+ */
+class ReturnsResultOfEffectDeclaration(val variableReference: VariableReference) : EffectDeclaration {
+    override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitReturnsResultOfEffectDeclaration(this, data)
+}

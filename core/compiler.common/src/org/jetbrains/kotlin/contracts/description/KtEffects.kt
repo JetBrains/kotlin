@@ -86,6 +86,19 @@ open class KtHoldsInEffectDeclaration<Type, Diagnostic>(
         contractDescriptionVisitor.visitHoldsInEffectDeclaration(this, data)
 }
 
+/**
+ * Effect which specifies that the function returns the result of invoking the callable [valueParameterReference].
+ */
+class KtReturnsResultOfDeclaration<Type, Diagnostic>(
+    val valueParameterReference: KtValueParameterReference<Type, Diagnostic>,
+) : KtEffectDeclaration<Type, Diagnostic>() {
+    override val erroneous: Boolean
+        get() = valueParameterReference.erroneous
+
+    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D, Type, Diagnostic>, data: D): R =
+        contractDescriptionVisitor.visitReturnsResultOfEffectDeclaration(this, data)
+}
+
 class KtErroneousCallsEffectDeclaration<Type, Diagnostic>(
     valueParameterReference: KtValueParameterReference<Type, Diagnostic>,
     val diagnostic: Diagnostic

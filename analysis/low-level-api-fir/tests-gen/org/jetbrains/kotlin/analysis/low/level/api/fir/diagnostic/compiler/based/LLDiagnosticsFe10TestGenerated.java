@@ -10468,6 +10468,28 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       public void testVoidOverrides() {
         runTest("compiler/testData/diagnostics/tests/crvFull/voidOverrides.kt");
       }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/crvFull/contracts")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Contracts {
+        @Test
+        public void testAllFilesPresentInContracts() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/crvFull/contracts"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("returnsResultOf.kt")
+        public void testReturnsResultOf() {
+          runTest("compiler/testData/diagnostics/tests/crvFull/contracts/returnsResultOf.kt");
+        }
+
+        @Test
+        @TestMetadata("returnsResultOfLib.kt")
+        public void testReturnsResultOfLib() {
+          runTest("compiler/testData/diagnostics/tests/crvFull/contracts/returnsResultOfLib.kt");
+        }
+      }
     }
 
     @Nested

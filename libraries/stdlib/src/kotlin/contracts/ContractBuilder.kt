@@ -119,6 +119,17 @@ public interface ContractBuilder {
     @ExperimentalExtendedContracts
     @ContractsDsl
     public infix fun <R> Boolean.holdsIn(lambda: Function<R>): HoldsIn
+
+    /**
+     * Specifies that the function returns the result of the invocation of the function parameter [lambda].
+     *
+     * This information is currently used by the Kotlin's return value checker and instructs it
+     * to look inside [lambda] to decide whether function with contract is ignorable.
+     *
+     * This contract is experimental, and it is allowed to use it only with the 'Return value checker' feature enabled.
+     */
+    @ContractsDsl
+    public fun <R> returnsResultOf(lambda: Function<R>)
 }
 
 /**

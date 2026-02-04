@@ -21,9 +21,11 @@ fun stringLambdaReturns(l: () -> String): String {
 
 fun main() {
     stringLambda {
+        stringF() // unused because not the last statement
         stringF() // used
     }
     unitLambda {
+        stringF() // unused because not the last statement
         stringF()
     }
     stringLambdaReturns {

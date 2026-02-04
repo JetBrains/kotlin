@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -114,6 +117,15 @@ class ConeEffectExtractor(
                     val condition = functionCall.explicitReceiver?.asContractElement() as? ConeBooleanExpression ?: noReceiver(resolvedId)
                     val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(LAMBDA_ARGUMENT_NAME)
                     ConeHoldsInEffectDeclaration(condition, reference)
+                } else {
+                    ConeContractDescriptionError.NotContractDsl(resolvedId).asElement()
+                }
+            }
+
+            ContractsDslNames.RETURNS_RESULT_OF -> {
+                if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED) {
+                    val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(LAMBDA_ARGUMENT_NAME)
+                    ConeReturnsResultOfDeclaration(reference)
                 } else {
                     ConeContractDescriptionError.NotContractDsl(resolvedId).asElement()
                 }

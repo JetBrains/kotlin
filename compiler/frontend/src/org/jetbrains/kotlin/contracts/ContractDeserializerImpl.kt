@@ -97,6 +97,12 @@ class ContractDeserializerImpl(
                         EventOccurrencesRange.UNKNOWN
                     CallsEffectDeclaration(callable, invocationKind)
                 }
+
+                ProtoBuf.Effect.EffectType.RETURNS_RESULT_OF -> {
+                    val argument = proto.effectConstructorArgumentList.getOrNull(0) ?: return null
+                    val callable = extractVariable(argument) ?: return null
+                    ReturnsResultOfEffectDeclaration(callable)
+                }
             }
         }
 
