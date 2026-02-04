@@ -5,7 +5,7 @@
 import androidx.compose.runtime.Composable
 
 
-    context(Foo)
+    context(_: Foo)
     @Composable
     fun Test(a: String, b: @Composable (String) -> Unit) {
         b("yay")
