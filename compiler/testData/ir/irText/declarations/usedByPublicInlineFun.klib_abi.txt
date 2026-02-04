@@ -8,3 +8,8 @@ final class /Foo { // /Foo|null[0]
     constructor <init>() // /Foo.<init>|<init>(){}[0]
     final inline fun publicInline() // /Foo.publicInline|publicInline(){}[0]
 }
+open class /OpenFoo { // /OpenFoo|null[0]
+    constructor <init>() // /OpenFoo.<init>|<init>(){}[0]
+    final fun protectedFun() // /OpenFoo.protectedFun|protectedFun(){}[0]
+    final inline fun publicInline() // /OpenFoo.publicInline|publicInline(){}[0]
+}
