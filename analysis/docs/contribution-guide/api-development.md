@@ -850,13 +850,13 @@ Use meaningful names that reflect the domain or are just more pleasant to see, r
 Avoid random variable names like `a`, `x`, or `temp`.
 The often-used `Foo` placeholder may be acceptable when discussing declarations in general terms.
 
-```kotlin
+````kotlin
 /**
  * The function symbol for the original Java getter method.
  *
  * #### Example:
  *
- * `​`​`
+ * ```
  * public class JavaClass {
  *     private int field;
  *
@@ -864,12 +864,12 @@ The often-used `Foo` placeholder may be acceptable when discussing declarations 
  *         return field;
  *     }
  * }
- * `​`​`
+ * ```
  *
  * In the synthetic property for `field`, [javaGetterSymbol] is the function symbol for `getField`.
  */
 val javaGetterSymbol: KaNamedFunctionSymbol
-```
+````
 
 ### Structure documentation comments
 
