@@ -81,10 +81,15 @@ public expect class Int : Number, Comparable<Int> {
     public operator fun unaryMinus(): Int
     public operator fun unaryPlus(): Int
     public operator fun plus(other: Int): Int
+    public operator fun plus(other: Long): Long
     public operator fun minus(other: Int): Int
+    public operator fun minus(other: Long): Long
     public operator fun times(other: Int): Int
+    public operator fun times(other: Long): Long
     public operator fun div(other: Int): Int
+    public operator fun div(other: Long): Long
     public operator fun rem(other: Int): Int
+    public operator fun rem(other: Long): Long
     
     public infix fun shl(bitCount: Int): Int
     public infix fun shr(bitCount: Int): Int

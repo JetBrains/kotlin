@@ -78,10 +78,15 @@ public actual class Int : Number(), Comparable<Int> {
     public actual operator fun unaryMinus(): Int = 0
     public actual operator fun unaryPlus(): Int = 0
     public actual operator fun plus(other: Int): Int = 0
+    public actual operator fun plus(other: Long): Long = 0
     public actual operator fun minus(other: Int): Int = 0
+    public actual operator fun minus(other: Long): Long = 0
     public actual operator fun times(other: Int): Int = 0
+    public actual operator fun times(other: Long): Long = 0
     public actual operator fun div(other: Int): Int = 0
+    public actual operator fun div(other: Long): Long = 0
     public actual operator fun rem(other: Int): Int = 0
+    public actual operator fun rem(other: Long): Long = 0
     
     public actual infix fun shl(bitCount: Int): Int = 0
     public actual infix fun shr(bitCount: Int): Int = 0

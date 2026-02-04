@@ -33,6 +33,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/codegen/boxKlib")
     testData(project(":compiler").isolated, "testData/codegen/jklib")
     testData(project(":compiler").isolated, "testData/ir/irText")
+    testData(project(":compiler").isolated, "testData/mockJDK")
 
     withJvmStdlibAndReflect()
 
