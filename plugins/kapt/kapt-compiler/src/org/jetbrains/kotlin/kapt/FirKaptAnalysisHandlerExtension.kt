@@ -97,6 +97,12 @@ open class FirKaptAnalysisHandlerExtension(
                 this.messageCollector = messageCollector
                 skipBodies = true
                 useLightTree = false
+
+                /*
+                 * Later the KAPT pipeline registers extensions once again, so the extensions storage
+                 * should be reset. Otherwise the extensions would be duplicated.
+                 */
+                @OptIn(CompilerConfiguration.Internals::class)
                 registerExtensionStorage()
             }
             val disposable = Disposer.newDisposable("K2KaptSession.project")
