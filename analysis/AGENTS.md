@@ -2,7 +2,7 @@
 
 A library for analyzing Kotlin code at the semantic level, providing structured access to symbols, types, and semantic relationships.
 
-**Entry point:** Use [`analyze()`](analysis-api/src/org/jetbrains/kotlin/analysis/api/analyze.kt) to start an analysis session. See [Analysis API documentation](https://kotl.in/analysis-api) for usage guide.
+**Entry point:** Use [`analyze()`](analysis-api/src/org/jetbrains/kotlin/analysis/api/analyze.kt) to start an analysis session. See [Analysis API documentation](https://kotl.in/analysis-api) for a usage guide.
 
 ## Architecture
 
@@ -22,13 +22,15 @@ Analysis API builds on top of Kotlin PSI (`compiler/psi/`):
 PSI (syntax) → Analysis API (semantics) → Symbols, Types, Resolution
 ```
 
+**Both PSI and Analysis API follow shared development principles** documented in [`docs/contribution-guide/api-development.md`](docs/contribution-guide/api-development.md).
+
 WHEN working with PSI elements:
-→ READ [`compiler/psi/AGENTS.md`](../compiler/psi/AGENTS.md)
+→ READ [`compiler/psi/AGENTS.md`](../compiler/psi/AGENTS.md) for PSI-specific rules and conventions
 
 ## Key Conventions
 
 - `Ka` prefix for Analysis API types, `Kt` for PSI types
-- Prefer interfaces over classes for better binary compatibility
+- Prefer interfaces to classes for better binary compatibility
 - Properties for attributes, functions for actions with parameters
 - Return nullable types for operations that can fail (avoid exceptions for non-exceptional cases)
 - All implementations must validate lifetime ownership with `withValidityAssertion`

@@ -6,6 +6,11 @@ and documentation standards.
 For information about the Kotlin Analysis API itself, check the [Analysis API documentation](https://kotl.in/analysis-api).  
 For information about evolving existing APIs, see the [API Evolution Guide](api-evolution.md).
 
+> [!NOTE]
+> These guidelines apply to both **Analysis API** (`Ka*` types) and **Kotlin PSI** (`Kt*` types).
+> While examples primarily use Analysis API, the same principles govern PSI development.
+> PSI-specific considerations are noted where they differ.
+
 ## Important Disclaimer
 
 Not all existing parts of the Analysis API strictly follow every guideline in this document.
@@ -765,6 +770,18 @@ inline fun <R> analyze(
 Be prepared for suspension! Unless the lambda parameter of an inline function is marked with `crossinline`, or a lambda runs inside a
 synchronized block, a suspend call may happen inside the passed lambda, and your function body may never be fully executed.
 
+### Java-Kotlin Interoperability (PSI)
+
+The PSI module contains both Java and Kotlin files. Converting Java to Kotlin is not always straightforward and in some cases even impossible:
+
+-  **`@JvmName` unavailable in interfaces** — in some cases it is impossible to convert Java methods to Kotlin properties in a binary-compatible way since `@JvmName` cannot be used to fix potential clashes. 
+-  **Platform type handling** — IntelliJ Platform APIs use Java types extensively; Kotlin's null-safety interop requires careful handling.
+    - The classic example is `PsiElement.getParent()` returning `PsiElement!`. After conversion to Kotlin it becomes either `PsiElement?` or `PsiElement` – both of them are breaking changes.
+      A workaround is to delegate the implementation to a Java method and keep the return type implicit.
+- **Binary compatibility** — PSI classes are widely used; the binary and source compatibility must be preserved as much as possible.
+
+Consult with PSI maintainers before converting Java classes to Kotlin.
+
 ### Component Architecture
 
 Components group related functionality, providing APIs through the `KaSession`:
@@ -945,6 +962,11 @@ After adding or modifying APIs:
 1. Update the documentation website at https://github.com/Kotlin/analysis-api
 2. Update migration guides if deprecating existing APIs
 
+#### Java Files in PSI
+
+For Java files in the PSI module, apply the same documentation principles using JavaDoc syntax.
+Use `@param`, `@return`, and `@see` tags as the JavaDoc equivalents of KDoc's parameter documentation.
+
 #### Mark K1-Specific Limitations
 
 If your API isn't implemented for K1, make it clear:
@@ -986,7 +1008,11 @@ Avoid adjectives such as "legacy", "classic", "old" or similar.
 
 ### Use Common Prefixes for Top-Level Class-Like Declarations
 
-The Analysis API uses the `Ka` prefix, while the PSI API uses `Kt` or `KDoc` prefixes.
+| API          | Prefix | Examples                                     |
+|--------------|--------|----------------------------------------------|
+| Analysis API | `Ka`   | `KaSession`, `KaSymbol`, `KaType`            |
+| Kotlin PSI   | `Kt`   | `KtElement`, `KtExpression`, `KtDeclaration` |
+| KDoc PSI     | `KDoc` | `KDocTag`, `KDocSection`                     |
 
 ### Use Common Property and Parameter Names
 
