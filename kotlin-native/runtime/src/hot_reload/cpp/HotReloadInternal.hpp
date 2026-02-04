@@ -32,6 +32,7 @@
 #include "llvm/ExecutionEngine/Orc/Debugging/DebuggerSupportPlugin.h"
 #include "llvm/ExecutionEngine/Orc/MachOPlatform.h"
 #include "llvm/ExecutionEngine/SectionMemoryManager.h"
+#include "llvm/ExecutionEngine/Orc/EPCDynamicLibrarySearchGenerator.h"
 
 typedef int (*KonanStartFunc)(const ObjHeader*);
 
@@ -94,7 +95,6 @@ public:
     KonanStartFunc LoadBoostrapFile(const char* boostrapFilePath) const;
 
     StatsCollector& GetStatsCollector() noexcept;
-    void SetupMachOPlatform() const;
 
 private:
     void StartServer();

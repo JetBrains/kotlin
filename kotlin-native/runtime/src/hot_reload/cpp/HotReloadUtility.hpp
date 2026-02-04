@@ -8,8 +8,8 @@
 
 #ifdef KONAN_HOT_RELOAD
 
-#include <string>
 #include <chrono>
+#include <Memory.h>
 #include <Logging.hpp>
 
 #define HRLogInfo(format, ...) RuntimeLogInfo({kotlin::kTagHotReloader}, format, ##__VA_ARGS__)
