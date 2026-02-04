@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext.DiagnosticContextImpl
-import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -15,13 +14,41 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.fqNameWithoutFileClassesWhenAvailable
 
 interface IrDiagnosticReporter {
-    fun at(irDeclaration: IrDeclaration): DiagnosticContextImpl
-    fun at(irElement: IrElement, containingIrFile: IrFile): DiagnosticContextImpl
-    fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): DiagnosticContextImpl
-    fun at(sourceElement: AbstractKtSourceElement?, irElement: IrElement, containingFile: IrFile): DiagnosticContextImpl
+    fun at(irDeclaration: IrDeclaration): IrDiagnosticContext
+    fun at(irElement: IrElement, containingIrFile: IrFile): IrDiagnosticContext
+    fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): IrDiagnosticContext
+    fun at(sourceElement: AbstractKtSourceElement?, irElement: IrElement, containingFile: IrFile): IrDiagnosticContext
 
     fun report(factory: KtSourcelessDiagnosticFactory, message: String)
     val hasErrors: Boolean
+
+    interface IrDiagnosticContext : DiagnosticContext {
+        val sourceElement: AbstractKtSourceElement?
+
+        fun report(factory: KtDiagnosticFactory0)
+
+        fun <A : Any> report(factory: KtDiagnosticFactory1<A>, a: A)
+
+        fun <A : Any, B : Any> report(factory: KtDiagnosticFactory2<A, B>, a: A, b: B)
+
+        fun <A : Any> report(factory: KtDiagnosticFactoryForDeprecation1<A>, a: A) {
+            report(factory.chooseFactory(this), a)
+        }
+
+        fun <A : Any, B : Any> report(factory: KtDiagnosticFactoryForDeprecation2<A, B>, a: A, b: B) {
+            report(factory.chooseFactory(this), a, b)
+        }
+
+        fun <A : Any, B : Any, C : Any> report(factory: KtDiagnosticFactoryForDeprecation3<A, B, C>, a: A, b: B, c: C) {
+            report(factory.chooseFactory(this), a, b, c)
+        }
+
+        fun <A : Any, B : Any, C : Any> report(factory: KtDiagnosticFactory3<A, B, C>, a: A, b: B, c: C)
+
+        abstract override fun equals(other: Any?): Boolean
+        abstract override fun hashCode(): Int
+    }
+
 }
 
 object IrDiagnosticRenderers {

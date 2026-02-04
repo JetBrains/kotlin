@@ -20,9 +20,18 @@ import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
 class KtDiagnosticReporterWithImplicitIrBasedContext(
-    diagnosticReporter: DiagnosticReporter,
-    languageVersionSettings: LanguageVersionSettings
-) : KtDiagnosticReporterWithContext(diagnosticReporter, languageVersionSettings), IrDiagnosticReporter {
+    val diagnosticReporter: DiagnosticReporter,
+    val languageVersionSettings: LanguageVersionSettings
+) : DiagnosticReporter(), IrDiagnosticReporter {
+    override val hasErrors: Boolean get() = diagnosticReporter.hasErrors
+
+    override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
+        diagnosticReporter.report(diagnostic, context)
+    }
+
+    override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {
+        diagnosticReporter.checkAndCommitReportsOn(element, context)
+    }
 
     private val suppressCache = IrBasedSuppressCache()
 
@@ -32,24 +41,24 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
             ?: sourceElement()
     }
 
-    override fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): DiagnosticContextImpl =
-        at(irElement, containingIrDeclaration.file)
+    override fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): IrDiagnosticReporter.IrDiagnosticContext {
+        return at(irElement, containingIrDeclaration.file)
+    }
 
-    override fun at(irDeclaration: IrDeclaration): DiagnosticContextImpl =
-        at(irDeclaration, irDeclaration.file)
+    override fun at(irDeclaration: IrDeclaration): IrDiagnosticReporter.IrDiagnosticContext {
+        return at(irDeclaration, irDeclaration.file)
+    }
 
-    override fun at(irElement: IrElement, containingIrFile: IrFile): DiagnosticContextImpl =
-        at(irElement.toSourceElement(containingIrFile), irElement, containingIrFile)
+    override fun at(irElement: IrElement, containingIrFile: IrFile): IrDiagnosticReporter.IrDiagnosticContext {
+        return at(irElement.toSourceElement(containingIrFile), irElement, containingIrFile)
+    }
 
     override fun at(
         sourceElement: AbstractKtSourceElement?,
         irElement: IrElement,
         containingFile: IrFile
-    ): DiagnosticContextImpl =
-        DiagnosticContextWithSuppressionImpl(sourceElement, irElement, containingFile)
-
-    override fun at(sourceElement: AbstractKtSourceElement?, containingFilePath: String): DiagnosticContextImpl {
-        error("Should not be called directly")
+    ): IrDiagnosticReporter.IrDiagnosticContext {
+        return DiagnosticContextWithSuppressionImpl(sourceElement, irElement, containingFile)
     }
 
     override fun report(factory: KtSourcelessDiagnosticFactory, message: String) {
@@ -66,15 +75,66 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
     }
 
     internal inner class DiagnosticContextWithSuppressionImpl(
-        sourceElement: AbstractKtSourceElement?,
+        override val sourceElement: AbstractKtSourceElement?,
         private val irElement: IrElement,
         private val containingFile: IrFile
-    ) : DiagnosticContextImpl(sourceElement, containingFile.path) {
+    ) : IrDiagnosticReporter.IrDiagnosticContext {
+        override val containingFilePath: String = containingFile.path
+
+        override val languageVersionSettings: LanguageVersionSettings
+            get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
+
 
         override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean =
             suppressCache.isSuppressed(
                 irElement, containingFile, diagnostic.factory.name.lowercase(), diagnostic.severity
             )
+
+        override fun report(factory: KtDiagnosticFactory0) {
+            sourceElement?.let {
+                reportOn(it, factory)
+                checkAndCommitReportsOn(it, this)
+            }
+        }
+
+        override fun <A : Any> report(factory: KtDiagnosticFactory1<A>, a: A) {
+            sourceElement?.let {
+                reportOn(it, factory, a)
+                checkAndCommitReportsOn(it, this)
+            }
+        }
+
+        override fun <A : Any, B : Any> report(factory: KtDiagnosticFactory2<A, B>, a: A, b: B) {
+            sourceElement?.let {
+                reportOn(it, factory, a, b)
+                checkAndCommitReportsOn(it, this)
+            }
+        }
+
+        override fun <A : Any, B : Any, C : Any> report(factory: KtDiagnosticFactory3<A, B, C>, a: A, b: B, c: C) {
+            sourceElement?.let {
+                reportOn(it, factory, a, b, c)
+                checkAndCommitReportsOn(it, this)
+            }
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is IrDiagnosticReporter.IrDiagnosticContext) return false
+
+            if (sourceElement != other.sourceElement) return false
+            if (containingFilePath != other.containingFilePath) return false
+            if (languageVersionSettings != other.languageVersionSettings) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = sourceElement?.hashCode() ?: 0
+            result = 31 * result + containingFilePath.hashCode()
+            result = 31 * result + languageVersionSettings.hashCode()
+            return result
+        }
     }
 }
 
