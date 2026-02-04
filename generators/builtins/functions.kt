@@ -45,7 +45,7 @@ class GenerateFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun generateBody() {
         for (i in 0..MAX_PARAM_COUNT) {
             generateDocumentation(i)
-            out.print("public interface Function$i")
+            out.print("@FunctionalInterface public interface Function$i")
             generateTypeParameters(i, variance = true)
             generateSuperClass()
             generateFunctionClassBody(i)
