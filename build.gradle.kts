@@ -943,19 +943,8 @@ tasks {
         dependsOn(":kotlin-main-kts-test:test")
     }
 
-    register("scriptingK1JvmTest") {
-        dependsOn(":kotlin-scripting-compiler:testWithK1")
-        dependsOn(":kotlin-scripting-jvm-host-test:testWithK1")
-        dependsOn(":kotlin-main-kts-test:testWithK1")
-        dependsOn(":kotlin-scripting-jsr223-test:test")
-        dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
-        dependsOn(":kotlin-scripting-ide-services-test:test")
-        dependsOn(":kotlin-scripting-ide-services-test:embeddableTest")
-    }
-
     register("scriptingTest") {
         dependsOn("scriptingJvmTest")
-        dependsOn("scriptingK1JvmTest")
     }
 
     register("compilerTest") {

@@ -95,11 +95,6 @@ abstract class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChange
     }
 }
 
-@DisplayName("Default incremental compilation with default precise java tracking on K1")
-class IncrementalK1JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
-}
-
 @DisplayName("Default incremental compilation with default precise java tracking on K2")
 open class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
@@ -286,11 +281,6 @@ abstract class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJav
             }
         }
     }
-}
-
-@DisplayName("Default incremental compilation with disabled precise java tracking and enabled K1")
-class IncrementalK1JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 }
 
 @DisplayName("Default incremental compilation with disabled precise java tracking and enabled K2")

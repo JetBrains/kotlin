@@ -37,16 +37,5 @@ projectTests {
         }
     }
 
-    testTask("testWithK1", parallel = true, jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = true) {
-        dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
-        workingDir = rootDir
-        val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
-        doFirst {
-            systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
-            systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
-            systemProperty("kotlin.script.test.base.compiler.arguments", "-language-version 1.9")
-        }
-    }
-
     withJvmStdlibAndReflect()
 }

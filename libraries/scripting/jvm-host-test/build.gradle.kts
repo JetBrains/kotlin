@@ -45,12 +45,4 @@ projectTests {
     //    dependsOn(embeddableTestRuntime)
     //    classpath = embeddableTestRuntime
     //}
-
-    testTask(taskName = "testWithK1", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
-        dependsOn(":dist")
-        workingDir = rootDir
-        doFirst {
-            systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
-        }
-    }
 }
