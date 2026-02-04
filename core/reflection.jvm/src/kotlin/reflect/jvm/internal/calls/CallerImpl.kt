@@ -5,6 +5,7 @@
 
 package kotlin.reflect.jvm.internal.calls
 
+import org.jetbrains.kotlin.utils.genericParameterTypesWithEnclosingThis
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
@@ -251,50 +252,5 @@ internal sealed class CallerImpl<out M : Member>(
         @Suppress("UNCHECKED_CAST")
         inline fun <reified T> Array<out T>.dropFirstAndLast(): Array<T> =
             if (size <= 2) emptyArray() else copyOfRange(1, size - 1) as Array<T>
-
-        private val ReflectConstructor<*>.genericParameterTypesWithoutEnclosingThis: Array<Type>
-            get() {
-                val genericParameterTypes = genericParameterTypes
-                val parameterTypes = parameterTypes
-                /**
-                 * When constructor has no generic signature, `Class::getGenericParameterTypes` simply returns `Class::parameterTypes`.
-                 * Otherwise, it returns the specified generic signature.
-                 *
-                 * For an inner class, it's generic signature (whenever it exists) DOES NOT contain enclosing `this` parameter,
-                 * yet the descriptor DOES.
-                 *
-                 * As Java Reflection API does not provide a direct way to tell, what Class::getGenericParameterTypes actually returned,
-                 * we distinguish these cases relying on the arrays lengths.
-                 *
-                 * See KT-17763 for the details.
-                 */
-                return if (genericParameterTypes.size == parameterTypes.size) {
-                    val clazz = declaringClass
-                    if (!Modifier.isStatic(clazz.modifiers) && clazz.declaringClass != null) {
-                        genericParameterTypes.dropFirst()
-                    } else {
-                        genericParameterTypes
-                    }
-                } else {
-                    genericParameterTypes
-                }
-            }
-
-        private val ReflectConstructor<*>.outerClassForInnerClassConstructor: Type?
-            get() =
-                declaringClass.let { klass ->
-                    val outerClass = klass.declaringClass
-                    if (outerClass != null && !Modifier.isStatic(klass.modifiers)) outerClass else null
-                }
-
-
-        private val ReflectConstructor<*>.genericParameterTypesWithEnclosingThis: Array<Type>
-            get() {
-                val outerThis = outerClassForInnerClassConstructor
-                return if (outerThis != null) arrayOf(
-                    outerThis,
-                    *genericParameterTypesWithoutEnclosingThis
-                ) else genericParameterTypesWithoutEnclosingThis
-            }
     }
 }
