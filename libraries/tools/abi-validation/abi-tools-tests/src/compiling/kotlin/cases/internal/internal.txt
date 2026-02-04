@@ -2,6 +2,11 @@ public final class cases/internal/Companion {
 	public fun <init> ()V
 }
 
+public final class cases/internal/InternalFunUsedByPublicInlineFun {
+	public fun <init> ()V
+	public final fun publicInline ()V
+}
+
 public final class cases/internal/PublicClass {
 }
 
