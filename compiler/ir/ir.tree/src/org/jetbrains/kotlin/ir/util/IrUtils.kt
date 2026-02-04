@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -1309,6 +1310,35 @@ fun IrFactory.createStaticFunctionWithReceivers(
 
 fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
     if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irImplicitCast(expression, to)
+
+// SAM class used as a superclass can sometimes have type projections.
+// But that's not suitable for super-types, so we erase them
+fun IrType.removeProjections(): IrType {
+    if (this !is IrSimpleType) return this
+    val arguments = arguments.mapIndexed { index, argument ->
+        val typeParameter = (classifier as IrClassSymbol).owner.typeParameters[index]
+        fun erasedUpperBound() = typeParameter.erasedUpperBound.defaultType
+
+        // Star projections are not allowed in supertype clause
+        if (argument !is IrTypeProjection) return@mapIndexed erasedUpperBound()
+
+        // `in` and `out` projections are not allowed either
+        if (argument.variance != Variance.INVARIANT) return@mapIndexed erasedUpperBound()
+
+        // In case a lambda parameter's type is inferred by the frontend to an intersection type, in IR
+        // it will be approximated to `Nothing` (because intersection types are not representable in IR at all).
+        // Since function parameters are contravariant, `Nothing` is the only type we can approximate an intersection type to.
+        // We cannot use `Nothing` as a parameter type, though —
+        // semantically it would mean that such a function reference can never be invoked, which is not true.
+        // Some targets like Wasm can break because of this.
+        // That's why we treat such type arguments similarly to type projections.
+        // For a concrete example, see this test: compiler/testData/codegen/box/callableReference/kt49526_sam.kt
+        if (typeParameter.variance == Variance.IN_VARIANCE && argument.type.isNothing()) return@mapIndexed erasedUpperBound()
+
+        argument.type
+    }
+    return classifier.typeWith(arguments)
+}
 
 fun IrContainerExpression.unwrapBlock(): IrExpression = statements.singleOrNull() as? IrExpression ?: this
 

@@ -770,6 +770,27 @@ class BodyGenerator(
             return
         }
 
+        // The call ref intrinsic needs to do manual casting of the
+        // function reference, as its first argument is currentlly an
+        // erased funcref.
+        if (call.symbol == wasmSymbols.callRef) {
+            val resultType = call.typeArguments[0]!!
+            val wasmFunctionType = WasmFunctionType(
+                parameterTypes = call.arguments.drop(1).map {
+                    wasmModuleTypeTransformer.transformType(it!!.type)
+                },
+                resultTypes = listOfNotNull(wasmModuleTypeTransformer.transformResultType(resultType)),
+            )
+            call.arguments.drop(1).forEach { generateExpression(it!!) }
+            val functionTypeReference = wasmFileCodegenContext.referenceFunctionType(wasmFunctionType)
+            generateExpression(call.arguments[0]!!)
+            body.buildRefCastStatic(wasmFileCodegenContext.referenceFunctionHeapType(wasmFunctionType), location)
+            body.buildInstr(WasmOp.CALL_REF, location, functionTypeReference)
+            if (resultType.isUnit())
+                body.buildGetUnit()
+            return
+        }
+
         if (call.symbol == wasmSymbols.wasmGetRttiIntField || call.symbol == wasmSymbols.wasmGetRttiLongField) {
             val fieldIndex = (call.arguments[0] as? IrConst)?.value as? Int ?: error("Invalid field index")
             generateExpression(call.arguments[1]!!)

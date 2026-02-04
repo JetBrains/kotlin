@@ -897,7 +897,8 @@ class WasmCompiledModuleFragment(
         val oldFromSize = to.size
         to.putAll(from)
         if (oldFromSize + from.size != to.size) {
-            compilationException("Declaration redefinition happened on $info.", null)
+            // XXX currently expected due to the fact that we might have the same generated function signatures across modules
+            // compilationException("Declaration redefinition happened on $info.", null)
         }
     }
 

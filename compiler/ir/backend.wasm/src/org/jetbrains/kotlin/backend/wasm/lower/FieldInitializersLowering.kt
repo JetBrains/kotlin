@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.lower.WasmCallableReferenceLowering.Companion.STATIC_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -22,12 +23,11 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -40,18 +40,19 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
     override fun lower(irFile: IrFile) {
         var nonConstantFieldInitializer: IrSimpleFunction? = null
         var objectInstanceFieldInitializer: IrSimpleFunction? = null
+        val staticFunctionReferenceInitializers = mutableMapOf<IrField, IrExpression>()
 
         irFile.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
 
-            private fun createInitializerFunction(): IrSimpleFunction {
+            private fun createInitializerFunction(name: String): IrSimpleFunction {
                 val newFunction = context.irFactory.createSimpleFunction(
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,
                     origin = JsIrBuilder.SYNTHESIZED_DECLARATION,
-                    name = Name.identifier("fieldInitializer"),
+                    name = Name.identifier(name),
                     visibility = DescriptorVisibilities.PRIVATE,
                     isInline = false,
                     isExpect = false,
@@ -78,17 +79,23 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
                 val initializer = declaration.initializer?.expression ?: return
                 if (initializer is IrConst && initializer.kind !is IrConstKind.String) return
 
+                val isStaticFunctionReference = declaration.origin == STATIC_FUNCTION_REFERENCE
+
                 val initializeFunction = when {
-                    declaration.isObjectInstanceField() -> objectInstanceFieldInitializer
+                    declaration.isObjectInstanceField() || isStaticFunctionReference-> objectInstanceFieldInitializer
                     else -> nonConstantFieldInitializer
                 }
 
                 val currentFunction = initializeFunction ?: run {
                     context.irFactory.stageController.restrictTo(declaration) {
-                        createInitializerFunction()
+                        createInitializerFunction(if (declaration.isObjectInstanceField() || isStaticFunctionReference) {
+                                                      "objectInitializer"
+                                                  } else {
+                                                      "nonConstantInitializer"
+                                                  })
                     }.also {
                         when {
-                            declaration.isObjectInstanceField() -> objectInstanceFieldInitializer = it
+                            declaration.isObjectInstanceField() || isStaticFunctionReference -> objectInstanceFieldInitializer = it
                             else -> nonConstantFieldInitializer = it
                         }
                     }
@@ -99,6 +106,12 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
                     .at(initializer)
                     .irSetField(null, declaration, initializer)
 
+                // Store the initializer expression for STATIC_FUNCTION_REFERENCE fields
+                // so DCE can visit it when the field is accessed
+                if (isStaticFunctionReference) {
+                    staticFunctionReferenceInitializers[declaration] = initializer
+                }
+
                 (currentFunction.body as IrBlockBody).statements.add(initializerStatement)
 
                 // Replace initializer with default one
@@ -106,10 +119,11 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
             }
         })
 
-        if (objectInstanceFieldInitializer != null || nonConstantFieldInitializer != null) {
+        if (objectInstanceFieldInitializer != null || nonConstantFieldInitializer != null || staticFunctionReferenceInitializers.isNotEmpty()) {
             with(context.getFileContext(irFile)) {
                 this.objectInstanceFieldInitializer = objectInstanceFieldInitializer?.also { irFile.declarations.add(it) }
                 this.nonConstantFieldInitializer = nonConstantFieldInitializer?.also { irFile.declarations.add(it) }
+                this.staticFunctionReferenceInitializers.putAll(staticFunctionReferenceInitializers)
             }
         }
     }

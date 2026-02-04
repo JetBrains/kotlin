@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.dce
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
+import org.jetbrains.kotlin.backend.wasm.lower.WasmCallableReferenceLowering.Companion.STATIC_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.backend.js.dce.UsefulDeclarationProcessor
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
@@ -28,6 +29,11 @@ internal class WasmUsefulDeclarationProcessor(
     private val kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun = context.fileContexts.mapValues { (_, fileContext) ->
         fileContext.kotlinClosureToJsConverters.entries.associate { (k, v) -> v to fileContext.closureCallExports[k] }
     }
+
+    private val staticFunctionReferenceInitializers =
+        context.fileContexts.values
+            .flatMap { it.staticFunctionReferenceInitializers.entries }
+            .associate { it.toPair() }
 
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
         override fun visitConst(expression: IrConst, data: IrDeclaration) = when (expression.kind) {
@@ -64,6 +70,11 @@ internal class WasmUsefulDeclarationProcessor(
 
             if (field.isObjectInstanceField()) {
                 field.type.classOrFail.owner.primaryConstructor?.enqueue(field, "object lazy initialization")
+            }
+
+            if (field.origin == STATIC_FUNCTION_REFERENCE) {
+                val initializer = staticFunctionReferenceInitializers[field]
+                initializer?.accept(this, data)
             }
 
             super.visitGetField(expression, data)

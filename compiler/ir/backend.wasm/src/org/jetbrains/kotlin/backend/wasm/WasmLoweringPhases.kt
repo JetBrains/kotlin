@@ -78,6 +78,13 @@ private fun createUpgradeCallableReferences(context: LoweringContext): UpgradeCa
     )
 }
 
+private fun createCaptureRichFunctionReferenceLocals(context: LoweringContext): LocalDeclarationsLowering {
+    return LocalDeclarationsLowering(
+        context,
+        considerRichFunctionReferenceInvokeFunctionsAsLocal = true,
+    )
+}
+
 @Suppress("unused")
 private fun createInventNamesForLocalFunctionsPhase(context: LoweringContext): KlibInventNamesForLocalFunctions{
     return KlibInventNamesForLocalFunctions()
@@ -163,14 +170,14 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::DelegatedPropertyOptimizationLowering,
     ::WasmPropertyReferenceLowering,
-    ::WasmCallableReferenceLowering,
 
     ::JsSingleAbstractMethodLowering,
     ::LocalDelegatedPropertiesLowering,
+    ::createCaptureRichFunctionReferenceLocals,
+    ::WasmCallableReferenceLowering,
     ::createInventNamesForLocalFunctionsPhase,
     ::createLocalDeclarationsLoweringPhase,
     ::LocalDeclarationPopupLowering,
-    ::WasmStaticCallableReferenceLowering,
     ::InnerClassesLowering,
     ::InnerClassesMemberBodyLowering,
     ::InnerClassConstructorCallsLowering,
@@ -179,7 +186,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::DelegateToSyntheticPrimaryConstructor,
 
     ::WasmStringSwitchOptimizerLowering,
-
     ::AssociatedObjectsLowering,
 
     ::ComplexExternalDeclarationsToTopLevelFunctionsLowering,

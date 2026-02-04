@@ -162,6 +162,7 @@ class BackendWasmSymbols(
     val refIsNull = CallableIds.wasm_ref_is_null.functionSymbol()
     val refTest = CallableIds.wasm_ref_test.functionSymbol()
     val refCastNull = CallableIds.wasm_ref_cast_null.functionSymbol()
+    val callRef = CallableIds.wasm_call_ref.functionSymbol()
     val wasmArrayCopy = CallableIds.wasm_array_copy.functionSymbol()
     val wasmArrayNewData0 = CallableIds.array_new_data0.functionSymbol()
     val wasmArrayNewData = CallableIds.array_new_data.functionSymbol()
@@ -434,6 +435,7 @@ private object CallableIds {
     val wasm_i32_and = "wasm_i32_and".wasmCallableId
     val wasm_ref_eq = "wasm_ref_eq".wasmCallableId
     val wasm_ref_is_null = "wasm_ref_is_null".wasmCallableId
+    val wasm_call_ref = "wasm_call_ref".wasmCallableId
     val wasm_ref_test = "wasm_ref_test".wasmCallableId
     val wasm_ref_cast_null = "wasm_ref_cast_null".wasmCallableId
     val wasm_array_copy = "wasm_array_copy".wasmCallableId

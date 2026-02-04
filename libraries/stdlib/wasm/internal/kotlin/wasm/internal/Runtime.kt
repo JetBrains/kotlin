@@ -79,6 +79,15 @@ internal fun <T, R> boxIntrinsic(x: T): R =
 internal fun <T, R> unboxIntrinsic(x: T): R =
     implementedAsIntrinsic
 
+// This intrinsic technically takes varargs, but we only introduce
+// this in IR lowerings with arguments added in manually. The type of
+// F is completely ignored and constrained by the backend to match a
+// function type with argument types from the arguments of this
+// instrinsic. The return type must be specified explicitly.
+@ExcludedFromCodegen
+internal fun <R> wasm_call_ref(f: Function<R>): R =
+    implementedAsIntrinsic
+
 // Represents absence of a value. Should never be used as a real object. See UnitToVoidLowering.kt for more info.
 @ExcludedFromCodegen
 internal class Void private constructor()

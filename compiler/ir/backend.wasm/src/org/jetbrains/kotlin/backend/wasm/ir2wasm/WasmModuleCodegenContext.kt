@@ -95,10 +95,32 @@ open class WasmFileCodegenContext(
         }
     }
 
+    private fun getFunctionTypeSignature(wasmFunctionType: WasmFunctionType): IdSignature {
+        val params = wasmFunctionType.parameterTypes.joinToString("_")
+        val results = wasmFunctionType.resultTypes.joinToString("_")
+        return IdSignature.CommonSignature("__SYNTHETIC__", "wasm_func_type_\$${params}_\$${results}", null, 0, null)
+    }
+
     fun defineFunctionType(irFunction: IrFunctionSymbol, wasmFunctionType: WasmFunctionType) {
         if (wasmFileFragment.definedFunctionTypes.put(irFunction.getReferenceKey(), wasmFunctionType) != null) {
             redefinitionError(irFunction.getReferenceKey(), "FunctionTypes")
         }
+    }
+
+    fun referenceFunctionType(wasmFunctionType: WasmFunctionType): FunctionTypeSymbol {
+        val signature = getFunctionTypeSignature(wasmFunctionType)
+        if (!wasmFileFragment.definedFunctionTypes.containsKey(signature)) {
+            wasmFileFragment.definedFunctionTypes[signature] = wasmFunctionType
+        }
+        return FunctionTypeSymbol(signature)
+    }
+
+    fun referenceFunctionHeapType(wasmFunctionType: WasmFunctionType): FunctionHeapTypeSymbol {
+        val signature = getFunctionTypeSignature(wasmFunctionType)
+        if (!wasmFileFragment.definedFunctionTypes.containsKey(signature)) {
+            wasmFileFragment.definedFunctionTypes[signature] = wasmFunctionType
+        }
+        return FunctionHeapTypeSymbol(signature)
     }
 
     fun referenceFunctionWasmReference(irFunction: IrFunctionSymbol): FuncSymbol {
