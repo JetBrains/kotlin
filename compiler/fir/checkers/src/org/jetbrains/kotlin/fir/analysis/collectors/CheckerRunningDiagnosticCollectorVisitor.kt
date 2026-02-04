@@ -28,6 +28,6 @@ open class CheckerRunningDiagnosticCollectorVisitor(
 
     override fun onDeclarationExit(declaration: FirDeclaration) {
         if (declaration !is FirFile) return
-        components.reportCommitter.endOfFile(declaration)
+        components.reportCommitter.endOfFile(declaration, context)
     }
 }

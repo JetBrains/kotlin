@@ -871,7 +871,7 @@ internal class KaFirCompilerFacility(
         codeFragmentMappings: CodeFragmentMappings?,
         codegenFactory: JvmIrCodegenFactory,
         generateClassFilter: GenerationState.GenerateClassFilter,
-        diagnosticReporter: PendingDiagnosticsCollectorWithSuppress,
+        diagnosticsCollector: BaseDiagnosticsCollector,
         jvmGeneratorExtensions: JvmGeneratorExtensions,
         compiledCodeProvider: CompiledCodeProvider,
     ): KaCompilationResult {
@@ -898,7 +898,7 @@ internal class KaFirCompilerFacility(
             configuration,
             classBuilderFactory,
             generateDeclaredClassFilter = generateClassFilter,
-            diagnosticReporter = diagnosticReporter,
+            diagnosticReporter = diagnosticsCollector,
             compiledCodeProvider = compiledCodeProvider
         )
 
@@ -998,7 +998,7 @@ internal class KaFirCompilerFacility(
             else -> baseFir2IrExtensions
         }
 
-        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
+        val diagnosticsCollector = DiagnosticReporterFactory.createReporter()
 
         val commonMemberStorage = contextDeclarationCache?.customCommonMemberStorage ?: Fir2IrCommonMemberStorage()
 
@@ -1008,7 +1008,7 @@ internal class KaFirCompilerFacility(
             session = session,
             firFiles = chunk.files.map { it.firFile },
             fir2IrExtensions = fir2IrExtensions,
-            diagnosticReporter = diagnosticReporter,
+            diagnosticReporter = diagnosticsCollector,
             effectiveConfiguration = configuration,
             irGeneratorExtensions = irGeneratorExtensions,
             commonMemberStorage = commonMemberStorage
@@ -1019,8 +1019,8 @@ internal class KaFirCompilerFacility(
             irTypeParam to with(fir2IrResult.components) { coneType.toIrType() }
         }
 
-        if (diagnosticReporter.hasErrors) {
-            val errors = computeErrors(diagnosticReporter.diagnostics.filterIsInstance<KtDiagnosticWithSource>(), allowedErrorFilter)
+        if (diagnosticsCollector.hasErrors) {
+            val errors = computeErrors(diagnosticsCollector.diagnostics.filterIsInstance<KtDiagnosticWithSource>(), allowedErrorFilter)
             if (errors.isNotEmpty()) {
                 return KaCompilationResult.Failure(errors)
             }
@@ -1061,13 +1061,13 @@ internal class KaFirCompilerFacility(
             codeFragmentMappings,
             codegenFactory,
             generateClassFilter,
-            diagnosticReporter,
+            diagnosticsCollector,
             baseFir2IrExtensions,
             compiledCodeProvider
         )
 
-        if (diagnosticReporter.hasErrors) {
-            val errors = computeErrors(diagnosticReporter.diagnostics.filterIsInstance<KtDiagnosticWithSource>(), allowedErrorFilter)
+        if (diagnosticsCollector.hasErrors) {
+            val errors = computeErrors(diagnosticsCollector.diagnostics.filterIsInstance<KtDiagnosticWithSource>(), allowedErrorFilter)
             if (errors.isNotEmpty()) {
                 return KaCompilationResult.Failure(errors)
             }

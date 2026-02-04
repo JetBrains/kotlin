@@ -16,10 +16,10 @@ class ReportCommitterDiagnosticComponent(
     reporter: PendingDiagnosticReporter
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
     override fun visitElement(element: FirElement, data: CheckerContext) {
-        checkAndCommitReportsOn(element, data)
+        checkAndCommitReportsOn(element, data, commitEverything = false)
     }
 
-    fun endOfFile(file: FirFile) {
-        checkAndCommitReportsOn(file, null)
+    fun endOfFile(file: FirFile, context: CheckerContext) {
+        checkAndCommitReportsOn(file, context, commitEverything = true)
     }
 }

@@ -62,7 +62,9 @@ abstract class DiagnosticReporter {
  * This whole situation is not the case for backend diagnostics reporting, as
  * [org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext] creates the suppression mapping once for the whole
  * file, so it doesn't matter when the diagnostic is reported, the suppressions would be already computed.
+ *
+ * @param commitEverything whether to commit all pending reports regardless of the element
  */
 abstract class PendingDiagnosticReporter : DiagnosticReporter() {
-    open fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {}
+    abstract fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext, commitEverything: Boolean)
 }
