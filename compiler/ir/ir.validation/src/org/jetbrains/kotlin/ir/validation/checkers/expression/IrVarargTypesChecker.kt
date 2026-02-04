@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.ir.validation.checkers.expression
 
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
+import org.jetbrains.kotlin.ir.validation.checkers.IrVarargCheckers
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.validateVararg
 
 /**
  * Makes sure that [IrVararg.type] is an array of [IrVararg.varargElementType].
  */
+@IrVarargCheckers
 object IrVarargTypesChecker : IrElementChecker<IrVararg>(IrVararg::class) {
     override fun check(element: IrVararg, context: CheckerContext) {
         validateVararg(element, element.type, element.varargElementType, context)
