@@ -11,6 +11,7 @@ dependencies {
     api(project(":compiler:ir.serialization.common"))
     api(project(":kotlin-util-klib-metadata"))
     api(project(":native:kotlin-native-utils"))
+    implementation(project(":native:native.config"))
     implementation(project(":compiler:compiler.version"))
     implementation(project(":compiler:config"))
     implementation(project(":compiler:fir:fir2ir"))
