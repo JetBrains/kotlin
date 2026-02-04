@@ -108,15 +108,8 @@ fun foo() {
 
     // OK
     barRegular {
-        var unstableY = "3"
-        baz(unstableY)
-    }
-
-    barRegular {
-        var unstableY2 = false
-        if (!unstableY2) {
-            println("hi")
-        }
+        var y = "3"
+        baz(y)
     }
 
     var badSink : Int? = 42
@@ -210,3 +203,8 @@ fun foo() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, checkNotNullCall, classDeclaration,
+classReference, contractCallsEffect, contracts, elvisExpression, equalityExpression, functionDeclaration, functionalType,
+ifExpression, inline, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, thisExpression */

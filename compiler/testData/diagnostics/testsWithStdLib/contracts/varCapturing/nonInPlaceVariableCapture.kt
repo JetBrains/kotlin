@@ -112,6 +112,11 @@ fun foo() {
         baz(y)
     }
 
+    var badSink : Int? = 42
+    barRegular {
+        <!CV_DIAGNOSTIC!>badSink<!> = null
+    }
+
     val person = MutablePerson("Alice")
 
     barRegular {
