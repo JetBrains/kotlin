@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.ir.validation.checkers.expression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
+import org.jetbrains.kotlin.ir.validation.checkers.IrTypeCheckers
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 
 /**
  * Makes sure that [IrDynamicType] is not used as receiver of IrFieldAccessExpression.
  */
+@IrTypeCheckers
 object IrDynamicTypeFieldAccessChecker : IrElementChecker<IrFieldAccessExpression>(IrFieldAccessExpression::class) {
     override fun check(element: IrFieldAccessExpression, context: CheckerContext) {
         if (element.receiver?.type is IrDynamicType) {

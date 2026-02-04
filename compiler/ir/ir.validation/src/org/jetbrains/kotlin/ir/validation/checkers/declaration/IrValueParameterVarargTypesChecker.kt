@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.ir.validation.checkers.declaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
+import org.jetbrains.kotlin.ir.validation.checkers.IrVarargCheckers
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.validateVararg
 
 /**
  * Makes sure that: [IrVararg.type] is an array of [IrVararg.varargElementType].
  */
+@IrVarargCheckers
 object IrValueParameterVarargTypesChecker : IrElementChecker<IrValueParameter>(IrValueParameter::class) {
     override fun check(
         element: IrValueParameter,

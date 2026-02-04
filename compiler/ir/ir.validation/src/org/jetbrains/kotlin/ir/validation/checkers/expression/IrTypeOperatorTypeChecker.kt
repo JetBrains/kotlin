@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
+import org.jetbrains.kotlin.ir.validation.checkers.IrTypeCheckers
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.ensureTypeIs
 
+@IrTypeCheckers
 object IrTypeOperatorTypeChecker : IrElementChecker<IrTypeOperatorCall>(IrTypeOperatorCall::class) {
     override fun check(element: IrTypeOperatorCall, context: CheckerContext) {
         // TODO: check IMPLICIT_NOTNULL's argument type.
