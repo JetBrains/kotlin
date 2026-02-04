@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.ir.validation.checkers.expression
 
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
+import org.jetbrains.kotlin.ir.validation.checkers.IrTypeCheckers
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.ensureTypeIs
 
+@IrTypeCheckers
 object IrStringConcatenationTypeChecker : IrElementChecker<IrStringConcatenation>(IrStringConcatenation::class) {
     override fun check(element: IrStringConcatenation, context: CheckerContext) {
         element.ensureTypeIs(context.irBuiltIns.stringType, context)

@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.ir.validation.checkers.expression
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
+import org.jetbrains.kotlin.ir.validation.checkers.IrTypeCheckers
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.ensureTypeIs
 
+@IrTypeCheckers
 object IrGetObjectValueTypeChecker : IrElementChecker<IrGetObjectValue>(IrGetObjectValue::class) {
     override fun check(element: IrGetObjectValue, context: CheckerContext) {
         element.ensureTypeIs(element.symbol.createType(false, emptyList()), context)
