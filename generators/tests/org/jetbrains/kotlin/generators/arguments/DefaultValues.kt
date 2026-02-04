@@ -55,7 +55,7 @@ open class DefaultValues(
         typeOf<KotlinVersionDsl?>(),
         typeOf<String?>(),
         possibleValues = LanguageVersion.entries
-            .filterNot { it.isUnsupported && !it.isJvmOnly }
+            .filterNot { it.isUnsupported }
             .map { "\"${it.description}\"" },
         fromKotlinOptionConverterProp = """
         if (this != null) ${typeOf<KotlinVersionDsl>()}.fromVersion(this) else null
