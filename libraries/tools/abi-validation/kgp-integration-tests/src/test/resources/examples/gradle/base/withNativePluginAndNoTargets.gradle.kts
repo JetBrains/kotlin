@@ -13,9 +13,7 @@ repositories {
 
 kotlin {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
-    abiValidation {
-        enabled = true
-    }
+    abiValidation()
 
     sourceSets {
         val commonMain by getting

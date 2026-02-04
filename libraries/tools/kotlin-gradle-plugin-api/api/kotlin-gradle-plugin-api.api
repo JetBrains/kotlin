@@ -638,6 +638,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl$Defa
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtensionConfig, org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetContainer {
+	public abstract fun abiValidation ()V
 	public abstract fun abiValidation (Lorg/gradle/api/Action;)V
 	public abstract fun getAbiValidation ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;
 	public abstract fun getCompilerVersion ()Lorg/gradle/api/provider/Property;

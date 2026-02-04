@@ -24,25 +24,33 @@ internal fun GradleProject.abiValidation(configuration: AbiValidationExtension.(
 }
 
 /**
- * Gets the reference dump file for the specified [variant] in a Kotlin JVM project or a Kotlin Multiplatform project without any Android target.
+ * Enables ABI validation in Kotlin extension.
  */
-internal fun GradleProject.referenceJvmDumpFile(variant: String = "main"): File {
-    val dumpDir = if (variant == "main") "api" else "api-$projectName"
-    return projectPath.resolve(dumpDir).resolve("$projectName.api").toFile()
+@OptIn(ExperimentalAbiValidation::class)
+internal fun GradleProject.abiValidation() {
+    buildScriptInjection {
+        @Suppress("UNCHECKED_CAST")
+        (project.extensions.getByName("kotlin") as KotlinBaseExtension).abiValidation()
+    }
 }
 
 /**
- * Gets the reference dump file for the JVM target of the specified [variant] in a Kotlin Multiplatform project with a mix of JVM and Android targets.
+ * Gets the reference dump file in a Kotlin JVM project or a Kotlin Multiplatform project without any Android target.
  */
-internal fun GradleProject.referenceMixedJvmDumpFile(variant: String = "main"): File {
-    val dumpDir = if (variant == "main") "api" else "api-$projectName"
-    return projectPath.resolve(dumpDir).resolve("jvm").resolve("$projectName.api").toFile()
+internal fun GradleProject.referenceJvmDumpFile(): File {
+    return projectPath.resolve("api").resolve("$projectName.api").toFile()
 }
 
 /**
- * Gets the reference dump file for the Android target of the specified [variant] in a Kotlin Multiplatform project with a mix of JVM and Android targets.
+ * Gets the reference dump file for the JVM target in a Kotlin Multiplatform project with a mix of JVM and Android targets.
  */
-internal fun GradleProject.referenceMixedAndroidDumpFile(variant: String = "main"): File {
-    val dumpDir = if (variant == "main") "api" else "api-$projectName"
-    return projectPath.resolve(dumpDir).resolve("android").resolve("$projectName.api").toFile()
+internal fun GradleProject.referenceMixedJvmDumpFile(): File {
+    return projectPath.resolve("api").resolve("jvm").resolve("$projectName.api").toFile()
+}
+
+/**
+ * Gets the reference dump file for the Android target in a Kotlin Multiplatform project with a mix of JVM and Android targets.
+ */
+internal fun GradleProject.referenceMixedAndroidDumpFile(): File {
+    return projectPath.resolve("api").resolve("android").resolve("$projectName.api").toFile()
 }
