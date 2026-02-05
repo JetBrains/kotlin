@@ -1,45 +1,61 @@
 public abstract interface Base /* Base*/ {
-  public abstract boolean boolean();//  boolean()
+  @org.jetbrains.annotations.Nullable()
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.Boolean boolean();//  boolean()
 
-  public abstract boolean getBooleanProperty();//  getBooleanProperty()
+  @org.jetbrains.annotations.Nullable()
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.Boolean getBooleanProperty();//  getBooleanProperty()
 
-  public abstract char char();//  char()
+  @org.jetbrains.annotations.Nullable()
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.Character char();//  char()
 
-  public abstract char getCharProperty();//  getCharProperty()
+  @org.jetbrains.annotations.Nullable()
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.Character getCharProperty();//  getCharProperty()
 
-  public abstract int getIntProperty();//  getIntProperty()
+  @org.jetbrains.annotations.Nullable()
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.Integer getIntProperty();//  getIntProperty()
 
-  public abstract int int();//  int()
+  @org.jetbrains.annotations.Nullable()
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.Integer int();//  int()
 
-  public abstract long getLongProperty();//  getLongProperty()
+  @org.jetbrains.annotations.Nullable()
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.Long getLongProperty();//  getLongProperty()
 
-  public abstract long long();//  long()
+  @org.jetbrains.annotations.Nullable()
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.Long long();//  long()
 }
 
 public final class Delegating /* Delegating*/ implements Base {
   @java.lang.Override()
-  public boolean boolean();//  boolean()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.Boolean boolean();//  boolean()
 
   @java.lang.Override()
-  public boolean getBooleanProperty();//  getBooleanProperty()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.Boolean getBooleanProperty();//  getBooleanProperty()
 
   @java.lang.Override()
-  public char char();//  char()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.Character char();//  char()
 
   @java.lang.Override()
-  public char getCharProperty();//  getCharProperty()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.Character getCharProperty();//  getCharProperty()
 
   @java.lang.Override()
-  public int getIntProperty();//  getIntProperty()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer getIntProperty();//  getIntProperty()
 
   @java.lang.Override()
-  public int int();//  int()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer int();//  int()
 
   @java.lang.Override()
-  public long getLongProperty();//  getLongProperty()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.Long getLongProperty();//  getLongProperty()
 
   @java.lang.Override()
-  public long long();//  long()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.Long long();//  long()
 
   public  Delegating(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Base);//  .ctor(@org.jetbrains.annotations.NotNull() Base)
 }
