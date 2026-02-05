@@ -190,8 +190,7 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "arm64-apple-ios14.1",
                 sdk = "iphoneos",
                 searchPaths = listOf(builtProductsDir.toFile()),
-                expectedSymbols = setOf("barbarbar()"),
-                unexpectedSymbols = setOf("functionToRemove()")
+                expectedSymbols = setOf("barbarbar()")
             )
         }
     }

@@ -152,7 +152,7 @@ private fun parseSymbolGraphNames(symbolGraphFile: File): Set<String> {
 }
 
 /**
- * Asserts that a Swift module contains expected symbols and does not contain unexpected ones.
+ * Asserts that a Swift module contains exactly the expected symbols.
  */
 internal fun assertSwiftModuleSymbols(
     workingDir: File,
@@ -160,8 +160,7 @@ internal fun assertSwiftModuleSymbols(
     target: String,
     sdk: String = "iphoneos",
     searchPaths: List<File>,
-    expectedSymbols: Set<String> = emptySet(),
-    unexpectedSymbols: Set<String> = emptySet(),
+    expectedSymbols: Set<String>,
 ) {
     val result = swiftSymbolgraphExtract(workingDir, moduleName, target, sdk, searchPaths)
     assert(result.isSuccessful) {
@@ -189,21 +188,15 @@ internal fun assertSwiftModuleSymbols(
         actualSymbols.addAll(parseSymbolGraphNames(file))
     }
 
-    expectedSymbols.forEach { expected ->
-        assert(expected in actualSymbols) {
-            val allFileContents = allSymbolGraphFiles.joinToString("\n---\n") { file ->
-                "${file.name}: ${file.readText().take(1000)}"
-            }
-            "Expected symbol '$expected' not found in module $moduleName.\n" +
-                    "Found symbol names: $actualSymbols\n" +
-                    "Symbol graph files found: ${allSymbolGraphFiles.map { it.name }}\n" +
-                    "File contents (truncated): $allFileContents"
-        }
-    }
-
-    unexpectedSymbols.forEach { unexpected ->
-        assert(unexpected !in actualSymbols) {
-            "Unexpected symbol '$unexpected' found in module $moduleName"
+    assert(actualSymbols == expectedSymbols) {
+        val missing = expectedSymbols - actualSymbols
+        val extra = actualSymbols - expectedSymbols
+        buildString {
+            appendLine("Symbol mismatch in module $moduleName")
+            if (missing.isNotEmpty()) appendLine("Missing symbols: $missing")
+            if (extra.isNotEmpty()) appendLine("Unexpected symbols: $extra")
+            appendLine("Expected: $expectedSymbols")
+            appendLine("Actual: $actualSymbols")
         }
     }
 }
