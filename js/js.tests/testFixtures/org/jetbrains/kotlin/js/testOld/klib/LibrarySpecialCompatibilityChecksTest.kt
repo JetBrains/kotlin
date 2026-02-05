@@ -7,7 +7,12 @@ package org.jetbrains.kotlin.js.testOld.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 import java.util.*
 
@@ -31,7 +36,8 @@ interface DummyLibraryCompiler {
     )
 }
 
-abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir(), DummyLibraryCompiler {
+@Execution(ExecutionMode.SAME_THREAD)
+abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
     /**
      * Since the ABI version is bumped after the language version, it may happen that after bumping the language version
      * [KotlinAbiVersion.CURRENT] != [LanguageVersion.LATEST_STABLE]. This can cause issues in library compatibility tests: for example,
@@ -39,9 +45,15 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir(), Dum
      * Since this is only a temporary situation (the ABI version is usually bumped shortly after the language version),
      * we simply ignore these tests when this happens.
      */
-    override fun shouldRunTest(): Boolean =
-        LanguageVersion.LATEST_STABLE.major == KotlinAbiVersion.CURRENT.major && LanguageVersion.LATEST_STABLE.minor == KotlinAbiVersion.CURRENT.minor
+    @BeforeEach
+    fun assumeAbiAndLanguageAligned() {
+        Assumptions.assumeTrue(abiAndLanguageAreAligned(), "ABI and language basic versions are not aligned")
+    }
 
+    @TempDir
+    private lateinit var tmpdir: File
+
+    @Test
     fun testSameBasicCompilerVersion() {
         for (versionsWithSameBasicVersion in SORTED_TEST_COMPILER_VERSION_GROUPS) {
             for (libraryVersion in versionsWithSameBasicVersion) {
@@ -56,6 +68,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir(), Dum
         }
     }
 
+    @Test
     fun testNewerCompilerVersion() {
         testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
             compileDummyLibrary(
@@ -66,6 +79,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir(), Dum
         }
     }
 
+    @Test
     fun testOlderCompilerVersion() {
         testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
             val sameLanguageVersion = haveSameLanguageVersion(currentVersion, nextVersion)
@@ -77,19 +91,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir(), Dum
         }
     }
 
-    private inline fun testCurrentAndNextBasicVersions(block: (currentVersion: TestVersion, nextVersion: TestVersion) -> Unit) {
-        for (i in 0..SORTED_TEST_COMPILER_VERSION_GROUPS.size - 2) {
-            val versionsWithSameBasicVersion = SORTED_TEST_COMPILER_VERSION_GROUPS[i]
-            val versionsWithNextSameBasicVersion = SORTED_TEST_COMPILER_VERSION_GROUPS[i + 1]
-
-            for (currentVersion in versionsWithSameBasicVersion) {
-                for (nextVersion in versionsWithNextSameBasicVersion) {
-                    block(currentVersion, nextVersion)
-                }
-            }
-        }
-    }
-
+    @Test
     fun testEitherVersionIsMissing() {
         listOf(
             TestVersion(2, 0, 0) to null,
@@ -100,6 +102,22 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir(), Dum
                 compilerVersion = compilerVersion,
                 expectedWarningStatus = WarningStatus.NO_WARNINGS
             )
+        }
+    }
+
+    private fun abiAndLanguageAreAligned(): Boolean =
+        LanguageVersion.LATEST_STABLE.major == KotlinAbiVersion.CURRENT.major && LanguageVersion.LATEST_STABLE.minor == KotlinAbiVersion.CURRENT.minor
+
+    private inline fun testCurrentAndNextBasicVersions(block: (currentVersion: TestVersion, nextVersion: TestVersion) -> Unit) {
+        for (i in 0..SORTED_TEST_COMPILER_VERSION_GROUPS.size - 2) {
+            val versionsWithSameBasicVersion = SORTED_TEST_COMPILER_VERSION_GROUPS[i]
+            val versionsWithNextSameBasicVersion = SORTED_TEST_COMPILER_VERSION_GROUPS[i + 1]
+
+            for (currentVersion in versionsWithSameBasicVersion) {
+                for (nextVersion in versionsWithNextSameBasicVersion) {
+                    block(currentVersion, nextVersion)
+                }
+            }
         }
     }
 
