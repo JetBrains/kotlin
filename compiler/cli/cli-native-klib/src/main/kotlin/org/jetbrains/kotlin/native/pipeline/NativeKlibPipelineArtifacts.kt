@@ -21,7 +21,12 @@ data class NativeConfigurationArtifact(
     override val configuration: CompilerConfiguration,
     val environment: KotlinCoreEnvironment,
     val diagnosticsCollector: BaseDiagnosticsCollector,
-) : PipelineArtifact()
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeConfigurationArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
 
 data class NativeFrontendArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
@@ -30,8 +35,9 @@ data class NativeFrontendArtifact(
     override val diagnosticsCollector: BaseDiagnosticsCollector,
     val phaseContext: NativeFirstStagePhaseContext,
 ) : FrontendPipelineArtifact() {
-    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): NativeFrontendArtifact {
-        return copy(diagnosticsCollector = newDiagnosticsCollector)
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeFrontendArtifact {
+        return copy(configuration = newConfiguration)
     }
 
     override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
@@ -48,6 +54,11 @@ data class NativeFir2IrArtifact(
 ) : Fir2IrPipelineArtifact() {
     override val result: Fir2IrActualizedResult
         get() = fir2IrOutput.fir2irActualizedResult
+
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeFir2IrArtifact {
+        return copy(configuration = newConfiguration)
+    }
 }
 
 data class NativeSerializationArtifact(
@@ -55,10 +66,20 @@ data class NativeSerializationArtifact(
     override val configuration: CompilerConfiguration,
     val diagnosticsCollector: BaseDiagnosticsCollector,
     val phaseContext: NativeFirstStagePhaseContext,
-) : PipelineArtifact()
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeSerializationArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
 
 data class NativeKlibSerializedArtifact(
     val outputKlibPath: String,
     override val configuration: CompilerConfiguration,
     val diagnosticsCollector: BaseDiagnosticsCollector,
-) : PipelineArtifact()
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeKlibSerializedArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}

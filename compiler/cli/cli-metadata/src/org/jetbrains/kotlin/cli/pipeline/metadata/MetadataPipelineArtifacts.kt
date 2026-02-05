@@ -20,8 +20,9 @@ data class MetadataFrontendPipelineArtifact(
     override val diagnosticsCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
 ) : FrontendPipelineArtifact() {
-    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): MetadataFrontendPipelineArtifact {
-        return copy(diagnosticsCollector = newDiagnosticsCollector)
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataFrontendPipelineArtifact {
+        return copy(configuration = newConfiguration)
     }
 
     override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
@@ -32,10 +33,20 @@ data class MetadataFrontendPipelineArtifact(
 data class MetadataInMemorySerializationArtifact(
     val metadata: SerializedMetadata,
     override val configuration: CompilerConfiguration,
-) : PipelineArtifact()
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataInMemorySerializationArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
 
 data class MetadataSerializationArtifact(
     val outputInfo: OutputInfo?,
     override val configuration: CompilerConfiguration,
     val destination: String,
-) : PipelineArtifact()
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataSerializationArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}

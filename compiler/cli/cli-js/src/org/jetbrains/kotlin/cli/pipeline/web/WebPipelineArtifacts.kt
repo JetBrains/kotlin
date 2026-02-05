@@ -25,8 +25,9 @@ data class WebFrontendPipelineArtifact(
     val moduleStructure: ModulesStructure,
     val hasErrors: Boolean,
 ) : FrontendPipelineArtifact() {
-    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): WebFrontendPipelineArtifact {
-        return copy(diagnosticsCollector = newDiagnosticsCollector)
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): WebFrontendPipelineArtifact {
+        return copy(configuration = newConfiguration)
     }
 
     override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
@@ -41,18 +42,33 @@ data class JsFir2IrPipelineArtifact(
     override val diagnosticsCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
     val hasErrors: Boolean,
-) : Fir2IrPipelineArtifact()
+) : Fir2IrPipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JsFir2IrPipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
 
 data class JsSerializedKlibPipelineArtifact(
     val outputKlibPath: String,
     val diagnosticsCollector: BaseDiagnosticsCollector,
     override val configuration: CompilerConfiguration,
-) : PipelineArtifact()
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JsSerializedKlibPipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
 
 data class JsLoadedKlibPipelineArtifact(
     val project: Project,
     override val configuration: CompilerConfiguration,
-) : PipelineArtifact()
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JsLoadedKlibPipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
 
 sealed class WebBackendPipelineArtifact : PipelineArtifact()
 
@@ -60,10 +76,20 @@ data class JsBackendPipelineArtifact(
     val outputs: CompilationOutputs,
     val outputDir: File,
     override val configuration: CompilerConfiguration,
-) : WebBackendPipelineArtifact()
+) : WebBackendPipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JsBackendPipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
 
 data class WasmBackendPipelineArtifact(
     val result: List<WasmCompilerResult>,
     val outputDir: File,
     override val configuration: CompilerConfiguration
-) : WebBackendPipelineArtifact()
+) : WebBackendPipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): WasmBackendPipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}

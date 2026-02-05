@@ -19,10 +19,15 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.name.FqName
 
-class JvmScriptPipelineArtifact(
+data class JvmScriptPipelineArtifact(
     override val exitCode: ExitCode,
     override val configuration: CompilerConfiguration,
-) : PipelineArtifactWithExitCode()
+) : PipelineArtifactWithExitCode() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JvmScriptPipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
 
 data class JvmFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
@@ -31,8 +36,9 @@ data class JvmFrontendPipelineArtifact(
     override val diagnosticsCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
 ) : FrontendPipelineArtifact() {
-    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): JvmFrontendPipelineArtifact {
-        return copy(diagnosticsCollector = newDiagnosticsCollector)
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JvmFrontendPipelineArtifact {
+        return copy(configuration = newConfiguration)
     }
 
     override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
@@ -47,7 +53,12 @@ data class JvmFir2IrPipelineArtifact(
     override val diagnosticsCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
     val mainClassFqName: FqName?,
-) : Fir2IrPipelineArtifact()
+) : Fir2IrPipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JvmFir2IrPipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
 
 data class JvmBackendPipelineArtifact(
     override val configuration: CompilerConfiguration,
@@ -55,9 +66,19 @@ data class JvmBackendPipelineArtifact(
     val diagnosticsCollector: BaseDiagnosticsCollector,
     val mainClassFqName: FqName?,
     val outputs: List<GenerationState>,
-) : PipelineArtifact()
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JvmBackendPipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
 
-class JvmBinaryPipelineArtifact(
+data class JvmBinaryPipelineArtifact(
     val outputs: List<GenerationState>,
     override val configuration: CompilerConfiguration,
-) : PipelineArtifact()
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JvmBinaryPipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
