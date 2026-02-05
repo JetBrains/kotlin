@@ -15,7 +15,7 @@ expect <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F2
     fun foo()
 }
 
-<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM;JVM}!>expect<!> fun interface F4 {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface F4 {
     fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>foo<!>()
 }
 

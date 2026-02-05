@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
-    fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM;JVM}!>foo<!>(param: Int = 1)
+    fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>(param: Int = 1)
 }
 
 // MODULE: m2-jvm()()(m1-common)

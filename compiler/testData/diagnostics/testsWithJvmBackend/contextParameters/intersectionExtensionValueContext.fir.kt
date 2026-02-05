@@ -19,6 +19,6 @@ interface Third {
     fun foo(a: A)
 }
 
-<!CONFLICTING_INHERITED_JVM_DECLARATIONS, CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface IntersectionContextWithExtension : First, Second<!>
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface IntersectionContextWithExtension : First, Second<!>
 
 <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface IntersectionContextWithValue : First, Third<!>
