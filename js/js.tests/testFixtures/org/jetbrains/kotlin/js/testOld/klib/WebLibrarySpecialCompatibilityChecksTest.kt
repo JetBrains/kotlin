@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.klib.compatibility.LibrarySpecialCompatibilityChecksTest
+import org.jetbrains.kotlin.klib.compatibility.TestVersion
+import org.jetbrains.kotlin.klib.compatibility.WarningStatus
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -53,6 +56,9 @@ abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatib
         compileDummyLibrary(libraryVersion, compilerVersion, isZipped = false, expectedWarningStatus, exportKlibToOlderAbiVersion)
         compileDummyLibrary(libraryVersion, compilerVersion, isZipped = true, expectedWarningStatus, exportKlibToOlderAbiVersion)
     }
+
+    override fun abiAndLanguageAreAligned(): Boolean =
+        LanguageVersion.LATEST_STABLE.major == KotlinAbiVersion.CURRENT.major && LanguageVersion.LATEST_STABLE.minor == KotlinAbiVersion.CURRENT.minor
 
     val patchedJsStdlibWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         createPatchedStdlib(JsEnvironmentConfigurator.stdlibPath)
