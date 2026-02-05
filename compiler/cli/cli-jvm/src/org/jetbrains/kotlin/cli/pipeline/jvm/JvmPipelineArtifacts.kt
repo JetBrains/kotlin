@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.name.FqName
 
-class JvmScriptPipelineArtifact(override val exitCode: ExitCode) : PipelineArtifactWithExitCode()
+class JvmScriptPipelineArtifact(
+    override val exitCode: ExitCode,
+    override val configuration: CompilerConfiguration,
+) : PipelineArtifactWithExitCode()
 
 data class JvmFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
@@ -39,7 +42,7 @@ data class JvmFrontendPipelineArtifact(
 
 data class JvmFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
     override val diagnosticsCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
@@ -47,11 +50,14 @@ data class JvmFir2IrPipelineArtifact(
 ) : Fir2IrPipelineArtifact()
 
 data class JvmBackendPipelineArtifact(
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
     val diagnosticsCollector: BaseDiagnosticsCollector,
     val mainClassFqName: FqName?,
     val outputs: List<GenerationState>,
 ) : PipelineArtifact()
 
-class JvmBinaryPipelineArtifact(val outputs: List<GenerationState>) : PipelineArtifact()
+class JvmBinaryPipelineArtifact(
+    val outputs: List<GenerationState>,
+    override val configuration: CompilerConfiguration,
+) : PipelineArtifact()

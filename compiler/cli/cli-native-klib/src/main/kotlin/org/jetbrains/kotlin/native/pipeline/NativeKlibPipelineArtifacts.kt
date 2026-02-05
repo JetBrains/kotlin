@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.native.Fir2IrOutput
 import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
 
 data class NativeConfigurationArtifact(
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
     val environment: KotlinCoreEnvironment,
     val diagnosticsCollector: BaseDiagnosticsCollector,
 ) : PipelineArtifact()
@@ -41,7 +41,7 @@ data class NativeFrontendArtifact(
 
 data class NativeFir2IrArtifact(
     val fir2IrOutput: Fir2IrOutput,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
     val environment: KotlinCoreEnvironment,
     override val diagnosticsCollector: BaseDiagnosticsCollector,
     val phaseContext: NativeFirstStagePhaseContext,
@@ -52,13 +52,13 @@ data class NativeFir2IrArtifact(
 
 data class NativeSerializationArtifact(
     val serializerOutput: SerializerOutput,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
     val diagnosticsCollector: BaseDiagnosticsCollector,
     val phaseContext: NativeFirstStagePhaseContext,
 ) : PipelineArtifact()
 
 data class NativeKlibSerializedArtifact(
     val outputKlibPath: String,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
     val diagnosticsCollector: BaseDiagnosticsCollector,
 ) : PipelineArtifact()

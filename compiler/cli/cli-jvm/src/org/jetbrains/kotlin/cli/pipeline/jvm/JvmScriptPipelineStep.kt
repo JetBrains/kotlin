@@ -71,7 +71,7 @@ object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, Jvm
             }
             shell.run(argumentsStub, configuration, projectEnvironment)
         }
-        return JvmScriptPipelineArtifact(result)
+        return JvmScriptPipelineArtifact(result, configuration)
     }
 
 }

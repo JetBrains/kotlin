@@ -37,7 +37,7 @@ data class WebFrontendPipelineArtifact(
 data class JsFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
     val frontendOutput: AllModulesFrontendOutput,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
     override val diagnosticsCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
     val hasErrors: Boolean,
@@ -46,12 +46,12 @@ data class JsFir2IrPipelineArtifact(
 data class JsSerializedKlibPipelineArtifact(
     val outputKlibPath: String,
     val diagnosticsCollector: BaseDiagnosticsCollector,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
 ) : PipelineArtifact()
 
 data class JsLoadedKlibPipelineArtifact(
     val project: Project,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
 ) : PipelineArtifact()
 
 sealed class WebBackendPipelineArtifact : PipelineArtifact()
@@ -59,11 +59,11 @@ sealed class WebBackendPipelineArtifact : PipelineArtifact()
 data class JsBackendPipelineArtifact(
     val outputs: CompilationOutputs,
     val outputDir: File,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
 ) : WebBackendPipelineArtifact()
 
 data class WasmBackendPipelineArtifact(
     val result: List<WasmCompilerResult>,
     val outputDir: File,
-    val configuration: CompilerConfiguration
+    override val configuration: CompilerConfiguration
 ) : WebBackendPipelineArtifact()

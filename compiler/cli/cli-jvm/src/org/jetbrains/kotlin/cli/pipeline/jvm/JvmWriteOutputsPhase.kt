@@ -22,6 +22,6 @@ object JvmWriteOutputsPhase : PipelinePhase<JvmBackendPipelineArtifact, JvmBinar
             outputs,
             mainClassFqName
         )
-        return JvmBinaryPipelineArtifact(outputs)
+        return JvmBinaryPipelineArtifact(outputs, configuration)
     }
 }

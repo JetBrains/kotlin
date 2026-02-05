@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.cli
 
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
@@ -19,12 +21,16 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
  * If [diagnosticsCollector] is not provided, a new [DiagnosticsCollectorImpl] is created.
  */
 @JvmOverloads
-fun CompilerConfiguration.Companion.create(diagnosticsCollector: BaseDiagnosticsCollector? = null): CompilerConfiguration {
+fun CompilerConfiguration.Companion.create(
+    diagnosticsCollector: BaseDiagnosticsCollector? = null,
+    messageCollector: MessageCollector? = null,
+): CompilerConfiguration {
     @OptIn(CompilerConfiguration.Internals::class)
     return CompilerConfiguration().apply {
         registerExtensionStorage()
         initializeDiagnosticFactoriesStorageForCli()
         this.diagnosticsCollector = diagnosticsCollector ?: DiagnosticsCollectorImpl()
+        messageCollector?.let { this.messageCollector = it }
     }
 }
 

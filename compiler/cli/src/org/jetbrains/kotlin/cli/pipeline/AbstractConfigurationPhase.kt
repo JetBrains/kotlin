@@ -45,7 +45,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     val configurationUpdaters: List<ConfigurationUpdater<A>>
 ) : PipelinePhase<ArgumentsPipelineArtifact<A>, ConfigurationPipelineArtifact>(name, preActions, postActions) {
     override fun executePhase(input: ArgumentsPipelineArtifact<A>): ConfigurationPipelineArtifact? {
-        val configuration = CompilerConfiguration.create()
+        val configuration = input.configuration
         configuration.setupCommonConfiguration(input)
 
         for (filler in configurationUpdaters) {
@@ -63,8 +63,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     protected open fun provideCustomScriptingPluginOptions(arguments: A): List<String> = emptyList()
 
     private fun CompilerConfiguration.setupCommonConfiguration(input: ArgumentsPipelineArtifact<A>) {
-        val (arguments, _, _, messageCollector, performanceManager) = input
-        this.messageCollector = messageCollector
+        val (arguments, _, _, _, performanceManager) = input
         perfManager = performanceManager
         printVersion = arguments.version
         // TODO(KT-73711): move script-related configuration to JVM CLI

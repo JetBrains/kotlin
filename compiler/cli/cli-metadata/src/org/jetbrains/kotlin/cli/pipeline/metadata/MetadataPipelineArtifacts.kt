@@ -31,11 +31,11 @@ data class MetadataFrontendPipelineArtifact(
 
 data class MetadataInMemorySerializationArtifact(
     val metadata: SerializedMetadata,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
 ) : PipelineArtifact()
 
 data class MetadataSerializationArtifact(
     val outputInfo: OutputInfo?,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
     val destination: String,
 ) : PipelineArtifact()
