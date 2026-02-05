@@ -1,5 +1,7 @@
 import gradle.GradlePluginVariant
+import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -10,9 +12,27 @@ plugins {
     kotlin("plugin.serialization")
     id("android-sdk-provisioner")
     id("gradle-plugin-published-compiler-dependency-configuration") // the test compilation's output is injected into test project's build classpath for the buildscript injection
+    id("org.jetbrains.kotlinx.kover") version "0.9.4"
 }
 
 testsJar()
+
+// Configuration to resolve Kover JVM agent for TestKit coverage collection
+val koverAgent: Configuration by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+// Configuration to resolve Kover CLI for generating reports
+val koverCli: Configuration by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+dependencies {
+    koverAgent("org.jetbrains.kotlinx:kover-jvm-agent:0.9.4")
+    koverCli("org.jetbrains.kotlinx:kover-cli:0.9.4")
+}
 
 kotlin {
     jvmToolchain(17)
@@ -426,6 +446,23 @@ tasks.withType<Test>().configureEach {
     systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.snapshot.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
 
+    // Kover agent configuration for TestKit coverage collection
+    val koverEnabled = project.providers.gradleProperty("kover.enabled").orNull?.toBoolean() ?: false
+    systemProperty("koverEnabled", koverEnabled)
+
+    if (koverEnabled) {
+        val koverAgentJar = koverAgent.singleFile
+        val koverOutputDir = layout.buildDirectory.dir("kover/testkit")
+
+        inputs.files(koverAgent)
+
+        doFirst {
+            koverOutputDir.get().asFile.mkdirs()
+            systemProperty("koverAgentJar", koverAgentJar.absolutePath)
+            systemProperty("koverOutputDir", koverOutputDir.get().asFile.absolutePath)
+        }
+    }
+
     val classpathVariables = configurationToBeConsumedInTests
         .mapKeys { (configurationName, _) -> "${configurationName}Classpath" }
         .mapValues { (_, configuration) -> provider { configuration.files.joinToString(":") } }
@@ -437,6 +474,11 @@ tasks.withType<Test>().configureEach {
                 classpath.get(),
             )
         }
+    }
+
+    filter {
+        //include specific method in any of the tests
+//        includeTestsMatching("*ExplicitApiIT*")
     }
 
     // Add kotlin.gradle.autoDebugIT=false to local.properties to opt out of implicit withDebug when debugging the tests in IDE
@@ -542,3 +584,101 @@ tasks.withType<Test>().configureEach {
 }
 
 excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()
+
+tasks.register<Sync>("collectKoverIcReports") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Collect Kover .ic reports from integration and functional tests into a single directory"
+
+    dependsOn(":kotlin-gradle-plugin:functionalTest")
+    dependsOn("kgpAllParallelTests")
+
+    val integrationTestReportsDir = layout.buildDirectory.dir("kover/testkit")
+    val functionalTestReportsDir = project(":kotlin-gradle-plugin").layout.buildDirectory.dir("kover/bin-reports")
+    val combinedReportsDir = layout.buildDirectory.dir("kover/combined-ic")
+
+    from(integrationTestReportsDir) {
+        include("*.ic")
+        eachFile { name = "integration-${name}" }
+    }
+    from(functionalTestReportsDir) {
+        include("*.ic")
+        eachFile { name = "functional-${name}" }
+    }
+    into(combinedReportsDir)
+
+    inputs.dir(integrationTestReportsDir)
+    inputs.dir(functionalTestReportsDir)
+    outputs.dir(combinedReportsDir)
+}
+
+tasks.register<JavaExec>("koverCustomHtmlReport") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Generate HTML coverage report from Kover TestKit data using kover-cli"
+
+    dependsOn("collectKoverIcReports")
+
+    val kgpProject = project(":kotlin-gradle-plugin")
+    val kgpApiProject = project(":kotlin-gradle-plugin-api")
+
+    val koverReportsDir = layout.buildDirectory.dir("kover/combined-ic")
+    val htmlReportDir = layout.buildDirectory.dir("reports/kover/html")
+    val reportTitle = "Kotlin Gradle Plugin Integration Tests Coverage"
+
+    val classesDirs = listOf(
+        kgpProject.layout.buildDirectory.dir("classes/kotlin"),
+        kgpApiProject.layout.buildDirectory.dir("classes/kotlin"),
+    )
+
+    val sourceDirs = listOf(
+        kgpProject.projectDir.resolve("src/common/kotlin"),
+        kgpProject.projectDir.resolve("src/main/kotlin"),
+        kgpApiProject.projectDir.resolve("src/common/kotlin"),
+    )
+
+    val koverReportFiles = koverReportsDir.map { it.asFileTree.matching { include("*.ic") } }
+
+    classpath(koverCli)
+    mainClass = "kotlinx.kover.cli.MainKt"
+
+    inputs.files(koverReportFiles)
+    classesDirs.forEach { inputs.dir(it) }
+    sourceDirs.forEach { inputs.dir(it) }
+    inputs.property("reportTitle", reportTitle)
+
+    argumentProviders.add(CommandLineArgumentProvider {
+        val reportFiles = koverReportFiles.get().files.sortedBy { it.name }
+        check(reportFiles.isNotEmpty()) {
+            "No Kover .ic reports found in ${koverReportsDir.get().asFile.absolutePath}"
+        }
+
+        val classSubDirs = classesDirs.flatMap { dir ->
+            dir.get().asFile.listFiles()
+                ?.filter { it.isDirectory }
+                ?.sortedBy { it.name }
+                .orEmpty()
+        }
+
+        buildList {
+            add("report")
+            reportFiles.forEach { add(it.absolutePath) }
+            classSubDirs.forEach { dir ->
+                add("--classfiles")
+                add(dir.absolutePath)
+            }
+            sourceDirs.forEach { src ->
+                add("--src")
+                add(src.absolutePath)
+            }
+            add("--html")
+            add(htmlReportDir.get().asFile.absolutePath)
+            add("--title")
+            add(reportTitle)
+        }
+    })
+
+    outputs.dir(htmlReportDir)
+
+    doLast {
+        logger.lifecycle("Kover HTML report generated at: ${htmlReportDir.get().asFile.absolutePath}/index.html")
+    }
+}

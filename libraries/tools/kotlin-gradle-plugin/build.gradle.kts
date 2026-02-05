@@ -691,3 +691,12 @@ tasks.withType<Jar>().configureEach {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
+
+val koverEnabled = project.properties.getOrDefault("kover.enabled", false).toString().toBoolean()
+kover {
+    currentProject {
+        instrumentation {
+            disabledForAll = !koverEnabled
+        }
+    }
+}
