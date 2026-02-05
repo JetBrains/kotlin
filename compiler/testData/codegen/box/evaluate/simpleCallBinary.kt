@@ -11,11 +11,11 @@ annotation class Ann(
         val p5: Int
 )
 
-const val prop1: Int = 1.plus(1)
-const val prop2: Int = 1.minus(1)
-const val prop3: Int = 1.times(1)
-const val prop4: Int = 1.div(1)
-const val prop5: Int = 1.rem(1)
+const val prop1: Int = <!EVALUATED("2")!>1.<!EVALUATED("2")!>plus(1)<!><!>
+const val prop2: Int = <!EVALUATED("0")!>1.<!EVALUATED("0")!>minus(1)<!><!>
+const val prop3: Int = <!EVALUATED("1")!>1.<!EVALUATED("1")!>times(1)<!><!>
+const val prop4: Int = <!EVALUATED("1")!>1.<!EVALUATED("1")!>div(1)<!><!>
+const val prop5: Int = <!EVALUATED("0")!>1.<!EVALUATED("0")!>rem(1)<!><!>
 
 @Ann(prop1, prop2, prop3, prop4, prop5) class MyClass
 
