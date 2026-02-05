@@ -105,9 +105,9 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
         }
 
         val message = if (isTeamCityBuild) {
-            "Please remove `${testDataFile.path}`"
+            "Please remove `${firFileToCompare.path}`"
         } else {
-            "Deleted `${testDataFile.path}`"
+            "Deleted `${firFileToCompare.path}`"
         }
 
         testServices.assertions.fail {
