@@ -100,7 +100,7 @@ object KeysContainerGenerator {
 
     private fun SmartPrinter.generateSimpleKeyAccessors(container: KeysContainer, key: SimpleKey) {
         val booleanFlag = key.typeString == "Boolean"
-        val nullable = !booleanFlag && key.defaultValue == null
+        val nullable = !booleanFlag && key.defaultValue == null && key.lazyDefaultValue == null
         val returnType = key.typeString.applyIf(nullable) { "$this?"}
 
         generateOptIns(key)
@@ -110,6 +110,7 @@ object KeysContainerGenerator {
             val getterBody = when {
                 booleanFlag -> "getBoolean($keyAccess)"
                 key.defaultValue != null -> "get($keyAccess, ${key.defaultValue})"
+                key.lazyDefaultValue != null -> "getOrDefault($keyAccess) { ${key.lazyDefaultValue} }"
                 else -> "get($keyAccess)"
             }
             println("get() = $getterBody")

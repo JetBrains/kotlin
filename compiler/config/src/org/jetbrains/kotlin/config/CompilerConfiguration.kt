@@ -36,6 +36,10 @@ class CompilerConfiguration {
         return getValue(key) ?: defaultValue
     }
 
+    fun <T : Any> getOrDefault(key: CompilerConfigurationKey<T>, defaultValue: () -> T): T {
+        return getValue(key) ?: defaultValue()
+    }
+
     fun <T : Any> getNotNull(key: CompilerConfigurationKey<T>): T {
         return getValue(key) ?: error("No value for configuration key: $key")
     }

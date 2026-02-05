@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 object CLIConfigurationKeys {
@@ -38,6 +39,9 @@ object CLIConfigurationKeys {
     // Used by compiler plugins to access delegated message collector in GroupingMessageCollector.
     @JvmField
     val ORIGINAL_MESSAGE_COLLECTOR_KEY = CompilerConfigurationKey.create<MessageCollector>("ORIGINAL_MESSAGE_COLLECTOR_KEY")
+
+    @JvmField
+    val DIAGNOSTICS_COLLECTOR = CompilerConfigurationKey.create<BaseDiagnosticsCollector>("DIAGNOSTICS_COLLECTOR")
 
     @JvmField
     val RENDER_DIAGNOSTIC_INTERNAL_NAME = CompilerConfigurationKey.create<Boolean>("RENDER_DIAGNOSTIC_INTERNAL_NAME")
@@ -98,6 +102,10 @@ var CompilerConfiguration.contentRoots: List<ContentRoot>
 var CompilerConfiguration.originalMessageCollectorKey: MessageCollector?
     get() = get(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY)
     set(value) { put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.diagnosticsCollector: BaseDiagnosticsCollector
+    get() = getOrDefault(CLIConfigurationKeys.DIAGNOSTICS_COLLECTOR) { error("diagnostic collector is not initialized") }
+    set(value) { put(CLIConfigurationKeys.DIAGNOSTICS_COLLECTOR, value) }
 
 var CompilerConfiguration.renderDiagnosticInternalName: Boolean
     get() = getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
