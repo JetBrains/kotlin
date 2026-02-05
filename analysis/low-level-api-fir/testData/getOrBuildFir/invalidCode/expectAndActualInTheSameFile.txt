@@ -10,6 +10,6 @@ FILE: [ResolvedTo(IMPORTS)] expectAndActualInTheSameFile.kt
     public? final? [ResolvedTo(RAW_FIR)] fun main(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? expect [ResolvedTo(RAW_FIR)] fun f(): R|kotlin/Unit|
     public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
-    public final actual [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] fun f(): R|kotlin/Unit| {
+    public final actual [ResolvedTo(BODY_RESOLVE)] fun f(): R|kotlin/Unit| {
         <Unresolved name: println>#(String(Hello))
     }
