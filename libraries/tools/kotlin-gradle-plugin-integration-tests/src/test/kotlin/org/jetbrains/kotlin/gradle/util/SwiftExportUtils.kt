@@ -27,6 +27,7 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.readText
+import kotlin.test.assertTrue
 
 @OptIn(EnvironmentalVariablesOverride::class)
 internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
@@ -115,7 +116,7 @@ private fun swiftSymbolgraphExtract(
         listOf("xcrun", "--sdk", sdk, "--show-sdk-path"),
         workingDir
     )
-    require(sdkPathResult.isSuccessful) { "Failed to get SDK path: ${sdkPathResult.output}" }
+    sdkPathResult.assertProcessRunResult { assertTrue(isSuccessful, "Failed to get SDK path") }
     val sdkPath = sdkPathResult.output.trim()
 
     val outputDir = workingDir.resolve("symbolgraph-output")

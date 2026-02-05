@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import java.io.Closeable
@@ -191,9 +192,7 @@ private fun runProcessAndReturnStdoutWithoutTimeout(arguments: List<String>): St
         arguments, File("."),
         redirectErrorStream = false, // Keep false to see stderr on failure
     )
-    assertProcessRunResult(
-        result
-    ) {
+    result.assertProcessRunResult {
         assert(isSuccessful)
     }
 

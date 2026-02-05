@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SETUP_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.tasks.asValidFrameworkName
+
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -261,7 +262,7 @@ private fun gem(vararg args: String): String {
     println("Run command: ${command.joinToString(separator = " ")}")
     val result = runProcess(command, File("."))
 
-    assertProcessRunResult(result) {
+    result.assertProcessRunResult {
         assertTrue(
             result.isSuccessful,
             "Process 'gem ${args.joinToString(separator = " ")}' exited with error code ${result.exitCode}. See log for details."
