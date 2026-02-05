@@ -16,28 +16,32 @@ public abstract interface BaseIntProperty /* BaseIntProperty*/<T>  {
 
 public final class DelegatingBoolean /* DelegatingBoolean*/ implements BaseBoolean<@org.jetbrains.annotations.NotNull() java.lang.Boolean> {
   @java.lang.Override()
-  public boolean boolean();//  boolean()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Boolean boolean();//  boolean()
 
   public  DelegatingBoolean(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() BaseBoolean<@org.jetbrains.annotations.NotNull() java.lang.Boolean>);//  .ctor(@org.jetbrains.annotations.NotNull() BaseBoolean<@org.jetbrains.annotations.NotNull() java.lang.Boolean>)
 }
 
 public final class DelegatingBooleanProperty /* DelegatingBooleanProperty*/ implements BaseBooleanProperty<@org.jetbrains.annotations.NotNull() java.lang.Boolean> {
   @java.lang.Override()
-  public boolean getBooleanProperty();//  getBooleanProperty()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Boolean getBooleanProperty();//  getBooleanProperty()
 
   public  DelegatingBooleanProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() BaseBooleanProperty<@org.jetbrains.annotations.NotNull() java.lang.Boolean>);//  .ctor(@org.jetbrains.annotations.NotNull() BaseBooleanProperty<@org.jetbrains.annotations.NotNull() java.lang.Boolean>)
 }
 
 public final class DelegatingInt /* DelegatingInt*/ implements BaseInt<@org.jetbrains.annotations.NotNull() java.lang.Integer> {
   @java.lang.Override()
-  public int int();//  int()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer int();//  int()
 
   public  DelegatingInt(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() BaseInt<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  .ctor(@org.jetbrains.annotations.NotNull() BaseInt<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 }
 
 public final class DelegatingIntProperty /* DelegatingIntProperty*/ implements BaseIntProperty<@org.jetbrains.annotations.NotNull() java.lang.Integer> {
   @java.lang.Override()
-  public int getIntProperty();//  getIntProperty()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer getIntProperty();//  getIntProperty()
 
   public  DelegatingIntProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() BaseIntProperty<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  .ctor(@org.jetbrains.annotations.NotNull() BaseIntProperty<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 }
