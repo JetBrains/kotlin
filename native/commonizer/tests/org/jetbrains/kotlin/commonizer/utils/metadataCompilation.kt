@@ -180,10 +180,7 @@ fun serializeModuleToMetadata(
 
     val phaseConfig = PhaseConfig()
     val context = PipelineContext(
-        configuration.messageCollector,
-        diagnosticCollector,
         performanceManager,
-        renderDiagnosticInternalName = true,
         kaptMode = false,
     )
 

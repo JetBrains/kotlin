@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
@@ -103,10 +105,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
 
         val phaseConfig = PhaseConfig()
         val context = PipelineContext(
-            input.messageCollector,
-            input.diagnosticsCollector,
             input.performanceManager,
-            renderDiagnosticInternalName = input.arguments.renderInternalDiagnosticNames,
             kaptMode = isKaptMode(input.arguments)
         )
         return try {
@@ -132,7 +131,11 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         } catch (_: SuccessfulPipelineExecutionException) {
             ExitCode.OK
         } finally {
-            CheckCompilationErrors.CheckDiagnosticCollector.reportDiagnosticsToMessageCollector(context)
+            val configuration = input.configuration
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
+                configuration.diagnosticsCollector, configuration.messageCollector,
+                configuration.renderDiagnosticInternalName
+            )
         }
     }
 

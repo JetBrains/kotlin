@@ -436,10 +436,7 @@ abstract class AbstractInvalidationTest(
             klibSerializationCompoundPhase.invokeToplevel(
                 phaseConfig,
                 context = PipelineContext(
-                    configuration.messageCollector,
-                    diagnosticCollector,
                     performanceManager,
-                    renderDiagnosticInternalName = true,
                     kaptMode = false,
                 ),
                 input = ConfigurationPipelineArtifact(configuration, diagnosticCollector, rootDisposable),

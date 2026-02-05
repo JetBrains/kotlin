@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.cli.pipeline
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -22,10 +20,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  * [PipelinePhase] itself could be run without the context
  */
 class PipelineContext(
-    val messageCollector: MessageCollector,
-    val diagnosticsCollector: BaseDiagnosticsCollector,
     val performanceManager: PerformanceManager,
-    val renderDiagnosticInternalName: Boolean,
     val kaptMode: Boolean
 ) : LoggingContext {
     override var inVerbosePhase: Boolean = false

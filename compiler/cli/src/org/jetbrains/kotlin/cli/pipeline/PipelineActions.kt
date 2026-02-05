@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.cli.pipeline
 
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
 import org.jetbrains.kotlin.util.PhaseType
@@ -17,7 +19,7 @@ abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext
             output: PipelineArtifact,
             c: PipelineContext,
         ) {
-            if (c.messageCollector.hasErrors()) {
+            if (output.configuration.messageCollector.hasErrors()) {
                 throw PipelineStepException()
             }
         }
@@ -30,16 +32,10 @@ abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext
             c: PipelineContext,
         ) {
             if (c.kaptMode) return
-            if (c.diagnosticsCollector.hasErrors || c.messageCollector.hasErrors()) {
+            val configuration = output.configuration
+            if (configuration.diagnosticsCollector.hasErrors || configuration.messageCollector.hasErrors()) {
                 throw PipelineStepException()
             }
-        }
-
-        fun reportDiagnosticsToMessageCollector(c: PipelineContext) {
-            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-                c.diagnosticsCollector, c.messageCollector,
-                c.renderDiagnosticInternalName
-            )
         }
     }
 }
@@ -47,6 +43,7 @@ abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext
 object PerformanceNotifications {
     object InitializationStarted : AbstractNotification(PhaseType.Initialization, start = true)
     object InitializationFinished : AbstractNotification(PhaseType.Initialization, start = false)
+
     // frontend
     object AnalysisStarted : AbstractNotification(PhaseType.Analysis, start = true)
     object AnalysisFinished : AbstractNotification(PhaseType.Analysis, start = false)
