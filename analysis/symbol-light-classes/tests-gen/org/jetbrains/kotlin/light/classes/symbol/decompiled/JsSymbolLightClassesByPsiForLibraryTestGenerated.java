@@ -577,6 +577,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
+    @Test
+    @TestMetadata("delegateWithBoxedReturnType.kt")
+    public void testDelegateWithBoxedReturnType() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/delegateWithBoxedReturnType.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed")
     @TestDataPath("$PROJECT_ROOT")
