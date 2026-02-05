@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 
 import org.gradle.api.file.*
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
 import javax.inject.Inject
 
@@ -26,14 +28,27 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     @get:Inject
     abstract val fs: FileSystemOperations
 
-    @Input
-    var binaryenArgs: MutableList<String> = BinaryenConfig.binaryenArgs.toMutableList()
-
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:NormalizeLineEndings
     @get:SkipWhenEmpty
     abstract val inputFiles: ConfigurableFileCollection
+
+    @Internal
+    @Deprecated("Use binaryenArguments instead. Scheduled for removal in Kotlin 2.5.")
+    var binaryenArgs: MutableList<String> = BinaryenConfig.binaryenArgs.toMutableList()
+
+    @Suppress("DEPRECATION")
+    @get:Input
+    val binaryenArguments: ListProperty<String> = project.objects.listProperty(String::class.java).value(
+        inputFiles.elements.map {
+            if (it.count() == 1) {
+                binaryenArgs
+            } else {
+                BinaryenConfig.binaryenMultimoduleArgs
+            }
+        }
+    )
 
     @Deprecated("Use inputFiles instead", replaceWith = ReplaceWith("inputFiles"))
     @get:Internal
@@ -62,7 +77,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
 
         inputFiles.forEach { inputFile ->
             val newArgs = mutableListOf<String>()
-            newArgs.addAll(binaryenArgs)
+            newArgs.addAll(binaryenArguments.get())
             newArgs.add(inputFile.absolutePath)
             newArgs.add("-o")
             newArgs.add(outputDirectory.file(inputFile.name).getFile().absolutePath)
