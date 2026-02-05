@@ -347,7 +347,7 @@ class KonanConfig(
     }
 
     val preCodegenInlineThreshold: UInt by lazy {
-        configuration.get(BinaryOptions.preCodegenInlineThreshold) ?: 0U
+        configuration.get(BinaryOptions.preCodegenInlineThreshold) ?: 40U
     }
 
     val enableDebugTransparentStepping: Boolean
