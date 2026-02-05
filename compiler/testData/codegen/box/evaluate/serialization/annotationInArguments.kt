@@ -13,10 +13,10 @@ annotation class AnnotationWithAnnotation(val anno: Annotation)
 @Retention(AnnotationRetention.BINARY)
 annotation class AnnotationWithAnnotationWithAnnotation(val anno: AnnotationWithAnnotation)
 
-@AnnotationWithAnnotation(Annotation(<!EVALUATED("String")!>"Str" + "ing"<!>))
+@AnnotationWithAnnotation(Annotation("Str" + "ing"))
 class A
 
-@AnnotationWithAnnotationWithAnnotation(AnnotationWithAnnotation(Annotation(<!EVALUATED("String")!>"Str" + "ing"<!>)))
+@AnnotationWithAnnotationWithAnnotation(AnnotationWithAnnotation(Annotation("Str" + "ing")))
 class B
 
 // MODULE: main(lib)

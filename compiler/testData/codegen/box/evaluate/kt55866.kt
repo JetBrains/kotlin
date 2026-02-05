@@ -1,10 +1,10 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
-@file:JvmName(<!EVALUATED("Tagged")!>TAG<!>)
+@file:JvmName(TAG)
 package root
 
-private const val TAG = <!EVALUATED("Tagged")!>"Tagged"<!>
+private const val TAG = "Tagged"
 
 class ConstParamFiller
 

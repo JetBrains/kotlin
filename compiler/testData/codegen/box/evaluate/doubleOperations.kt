@@ -1,93 +1,93 @@
 fun <T> T.id() = this
 
-const val minusOneVal = <!EVALUATED("-1.0")!>-1.0<!>
-const val oneVal = <!EVALUATED("1.0")!>1.0<!>
-const val twoVal = <!EVALUATED("2.0")!>2.0<!>
-const val threeVal = <!EVALUATED("3.0")!>3.0<!>
-const val fourVal = <!EVALUATED("4.0")!>4.0<!>
-const val oneAndAHalf = <!EVALUATED("1.5")!>1.5<!>
+const val minusOneVal = -1.0
+const val oneVal = 1.0
+const val twoVal = 2.0
+const val threeVal = 3.0
+const val fourVal = 4.0
+const val oneAndAHalf = 1.5
 
-const val byteVal = 2.<!EVALUATED("2")!>toByte()<!>
-const val shortVal = 2.<!EVALUATED("2")!>toShort()<!>
-const val intVal = <!EVALUATED("2")!>2<!>
-const val longVal = <!EVALUATED("2")!>2L<!>
-const val floatVal = <!EVALUATED("2.0")!>2.0f<!>
-const val doubleVal = <!EVALUATED("2.0")!>2.0<!>
+const val byteVal = 2.toByte()
+const val shortVal = 2.toShort()
+const val intVal = 2
+const val longVal = 2L
+const val floatVal = 2.0f
+const val doubleVal = 2.0
 
-const val funCompareTo1 = oneVal.<!EVALUATED("-1")!>compareTo(twoVal)<!>
-const val funCompareTo2 = twoVal.<!EVALUATED("0")!>compareTo(twoVal)<!>
-const val funCompareTo3 = threeVal.<!EVALUATED("1")!>compareTo(twoVal)<!>
-const val funCompareTo4 = twoVal.<!EVALUATED("0")!>compareTo(byteVal)<!>
-const val funCompareTo5 = twoVal.<!EVALUATED("0")!>compareTo(shortVal)<!>
-const val funCompareTo6 = twoVal.<!EVALUATED("0")!>compareTo(intVal)<!>
-const val funCompareTo7 = twoVal.<!EVALUATED("0")!>compareTo(longVal)<!>
-const val funCompareTo8 = twoVal.<!EVALUATED("0")!>compareTo(floatVal)<!>
+const val funCompareTo1 = oneVal.compareTo(twoVal)
+const val funCompareTo2 = twoVal.compareTo(twoVal)
+const val funCompareTo3 = threeVal.compareTo(twoVal)
+const val funCompareTo4 = twoVal.compareTo(byteVal)
+const val funCompareTo5 = twoVal.compareTo(shortVal)
+const val funCompareTo6 = twoVal.compareTo(intVal)
+const val funCompareTo7 = twoVal.compareTo(longVal)
+const val funCompareTo8 = twoVal.compareTo(floatVal)
 
-const val singCompareTo1 = <!EVALUATED("false")!>oneVal >= twoVal<!>
-const val singCompareTo2 = <!EVALUATED("false")!>twoVal > twoVal<!>
-const val singCompareTo3 = <!EVALUATED("false")!>threeVal <= twoVal<!>
-const val singCompareTo4 = <!EVALUATED("false")!>twoVal < byteVal<!>
+const val singCompareTo1 = oneVal >= twoVal
+const val singCompareTo2 = twoVal > twoVal
+const val singCompareTo3 = threeVal <= twoVal
+const val singCompareTo4 = twoVal < byteVal
 
-const val plus1 = oneVal.<!EVALUATED("3.0")!>plus(twoVal)<!>
-const val plus2 = twoVal.<!EVALUATED("4.0")!>plus(twoVal)<!>
-const val plus3 = threeVal.<!EVALUATED("5.0")!>plus(twoVal)<!>
-const val plus4 = twoVal.<!EVALUATED("4.0")!>plus(byteVal)<!>
-const val plus5 = twoVal.<!EVALUATED("4.0")!>plus(shortVal)<!>
-const val plus6 = twoVal.<!EVALUATED("4.0")!>plus(intVal)<!>
-const val plus7 = twoVal.<!EVALUATED("4.0")!>plus(longVal)<!>
-const val plus8 = twoVal.<!EVALUATED("4.0")!>plus(floatVal)<!>
+const val plus1 = oneVal.plus(twoVal)
+const val plus2 = twoVal.plus(twoVal)
+const val plus3 = threeVal.plus(twoVal)
+const val plus4 = twoVal.plus(byteVal)
+const val plus5 = twoVal.plus(shortVal)
+const val plus6 = twoVal.plus(intVal)
+const val plus7 = twoVal.plus(longVal)
+const val plus8 = twoVal.plus(floatVal)
 
-const val minus1 = oneVal.<!EVALUATED("-1.0")!>minus(twoVal)<!>
-const val minus2 = twoVal.<!EVALUATED("0.0")!>minus(twoVal)<!>
-const val minus3 = threeVal.<!EVALUATED("1.0")!>minus(twoVal)<!>
-const val minus4 = twoVal.<!EVALUATED("0.0")!>minus(byteVal)<!>
-const val minus5 = twoVal.<!EVALUATED("0.0")!>minus(shortVal)<!>
-const val minus6 = twoVal.<!EVALUATED("0.0")!>minus(intVal)<!>
-const val minus7 = twoVal.<!EVALUATED("0.0")!>minus(longVal)<!>
-const val minus8 = twoVal.<!EVALUATED("0.0")!>minus(floatVal)<!>
+const val minus1 = oneVal.minus(twoVal)
+const val minus2 = twoVal.minus(twoVal)
+const val minus3 = threeVal.minus(twoVal)
+const val minus4 = twoVal.minus(byteVal)
+const val minus5 = twoVal.minus(shortVal)
+const val minus6 = twoVal.minus(intVal)
+const val minus7 = twoVal.minus(longVal)
+const val minus8 = twoVal.minus(floatVal)
 
-const val times1 = oneVal.<!EVALUATED("2.0")!>times(twoVal)<!>
-const val times2 = twoVal.<!EVALUATED("4.0")!>times(twoVal)<!>
-const val times3 = threeVal.<!EVALUATED("6.0")!>times(twoVal)<!>
-const val times4 = twoVal.<!EVALUATED("4.0")!>times(byteVal)<!>
-const val times5 = twoVal.<!EVALUATED("4.0")!>times(shortVal)<!>
-const val times6 = twoVal.<!EVALUATED("4.0")!>times(intVal)<!>
-const val times7 = twoVal.<!EVALUATED("4.0")!>times(longVal)<!>
-const val times8 = twoVal.<!EVALUATED("4.0")!>times(floatVal)<!>
+const val times1 = oneVal.times(twoVal)
+const val times2 = twoVal.times(twoVal)
+const val times3 = threeVal.times(twoVal)
+const val times4 = twoVal.times(byteVal)
+const val times5 = twoVal.times(shortVal)
+const val times6 = twoVal.times(intVal)
+const val times7 = twoVal.times(longVal)
+const val times8 = twoVal.times(floatVal)
 
-const val div1 = oneVal.<!EVALUATED("0.5")!>div(twoVal)<!>
-const val div2 = twoVal.<!EVALUATED("1.0")!>div(twoVal)<!>
-const val div3 = threeVal.<!EVALUATED("1.5")!>div(twoVal)<!>
-const val div4 = twoVal.<!EVALUATED("1.0")!>div(byteVal)<!>
-const val div5 = twoVal.<!EVALUATED("1.0")!>div(shortVal)<!>
-const val div6 = twoVal.<!EVALUATED("1.0")!>div(intVal)<!>
-const val div7 = twoVal.<!EVALUATED("1.0")!>div(longVal)<!>
-const val div8 = twoVal.<!EVALUATED("1.0")!>div(floatVal)<!>
+const val div1 = oneVal.div(twoVal)
+const val div2 = twoVal.div(twoVal)
+const val div3 = threeVal.div(twoVal)
+const val div4 = twoVal.div(byteVal)
+const val div5 = twoVal.div(shortVal)
+const val div6 = twoVal.div(intVal)
+const val div7 = twoVal.div(longVal)
+const val div8 = twoVal.div(floatVal)
 
-const val rem1 = oneVal.<!EVALUATED("1.0")!>rem(twoVal)<!>
-const val rem2 = twoVal.<!EVALUATED("0.0")!>rem(twoVal)<!>
-const val rem3 = threeVal.<!EVALUATED("1.0")!>rem(twoVal)<!>
-const val rem4 = twoVal.<!EVALUATED("0.0")!>rem(byteVal)<!>
-const val rem5 = twoVal.<!EVALUATED("0.0")!>rem(shortVal)<!>
-const val rem6 = twoVal.<!EVALUATED("0.0")!>rem(intVal)<!>
-const val rem7 = twoVal.<!EVALUATED("0.0")!>rem(longVal)<!>
-const val rem8 = twoVal.<!EVALUATED("0.0")!>rem(floatVal)<!>
+const val rem1 = oneVal.rem(twoVal)
+const val rem2 = twoVal.rem(twoVal)
+const val rem3 = threeVal.rem(twoVal)
+const val rem4 = twoVal.rem(byteVal)
+const val rem5 = twoVal.rem(shortVal)
+const val rem6 = twoVal.rem(intVal)
+const val rem7 = twoVal.rem(longVal)
+const val rem8 = twoVal.rem(floatVal)
 
-const val unaryPlus1 = oneVal.<!EVALUATED("1.0")!>unaryPlus()<!>
-const val unaryPlus2 = minusOneVal.<!EVALUATED("-1.0")!>unaryPlus()<!>
-const val unaryMinus1 = oneVal.<!EVALUATED("-1.0")!>unaryMinus()<!>
-const val unaryMinus2 = minusOneVal.<!EVALUATED("1.0")!>unaryMinus()<!>
+const val unaryPlus1 = oneVal.unaryPlus()
+const val unaryPlus2 = minusOneVal.unaryPlus()
+const val unaryMinus1 = oneVal.unaryMinus()
+const val unaryMinus2 = minusOneVal.unaryMinus()
 
-const val convert1 = oneVal.toInt().<!EVALUATED("")!>toChar()<!>
-const val convert2 = oneVal.<!EVALUATED("1")!>toInt()<!>
-const val convert3 = oneVal.<!EVALUATED("1")!>toLong()<!>
-const val convert4 = oneVal.<!EVALUATED("1.0")!>toFloat()<!>
-const val convert5 = oneVal.<!EVALUATED("1.0")!>toDouble()<!>
+const val convert1 = oneVal.toInt().toChar()
+const val convert2 = oneVal.toInt()
+const val convert3 = oneVal.toLong()
+const val convert4 = oneVal.toFloat()
+const val convert5 = oneVal.toDouble()
 
-const val equals1 = <!EVALUATED("false")!>oneVal == twoVal<!>
-const val equals2 = <!EVALUATED("true")!>twoVal == twoVal<!>
-const val equals3 = <!EVALUATED("false")!>threeVal == twoVal<!>
-const val equals4 = <!EVALUATED("false")!>fourVal == twoVal<!>
+const val equals1 = oneVal == twoVal
+const val equals2 = twoVal == twoVal
+const val equals3 = threeVal == twoVal
+const val equals4 = fourVal == twoVal
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

@@ -228,6 +228,13 @@ fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration()
             +WITH_STDLIB
         }
     }
+
+    forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
+        defaultDirectives {
+            +FIR_DUMP
+            +RENDER_FIR_DECLARATION_ATTRIBUTES
+        }
+    }
 }
 
 /**
@@ -270,16 +277,6 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
         defaultDirectives {
             +ENABLE_FOREIGN_ANNOTATIONS
             ForeignAnnotationsDirectives.ANNOTATIONS_PATH with JavaForeignAnnotationType.Annotations
-        }
-    }
-
-    forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
-        defaultDirectives {
-            +FIR_DUMP
-            +RENDER_FIR_DECLARATION_ATTRIBUTES
-        }
-        configureFirHandlersStep {
-            useHandlers(::FirInterpreterDumpHandler)
         }
     }
 }

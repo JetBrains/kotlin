@@ -19,11 +19,11 @@ package one.two
 
 class Foo {
     companion object {
-        const val FOO = <!EVALUATED("1")!>1<!>
+        const val FOO = 1
 
-        const val BAZ = <!EVALUATED("3")!>Bar.BAR + 1<!>
+        const val BAZ = Bar.BAR + 1
 
-        const val DOO = <!EVALUATED("5")!>Boo.BOO + 1<!>
+        const val DOO = Boo.BOO + 1
     }
 }
 

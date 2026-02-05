@@ -24,29 +24,29 @@ annotation class BinaryAnnotation(val str: String)
 
 // 1. CLASS
 // 8. CONSTRUCTOR
-@BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>)
-class A @BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>) constructor(val i: Int) {
-    @BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>) constructor() : this(0)
+@BinaryAnnotation("Str" + "ing")
+class A @BinaryAnnotation("Str" + "ing") constructor(val i: Int) {
+    @BinaryAnnotation("Str" + "ing") constructor() : this(0)
 }
 
 // 2. ANNOTATION_CLASS
-@BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>)
+@BinaryAnnotation("Str" + "ing")
 annotation class Anno
 
 // 3. TYPE_PARAMETER
-fun <@BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>) T, U> fooWithTypeParam(a: T, b: U) {}
+fun <@BinaryAnnotation("Str" + "ing") T, U> fooWithTypeParam(a: T, b: U) {}
 
 // 4. PROPERTY
-@BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>)
+@BinaryAnnotation("Str" + "ing")
 val prop: Int = 0
 
 // 5. FIELD
 enum class SomeEnum {
-    @BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>) A,
+    @BinaryAnnotation("Str" + "ing") A,
     B;
 }
 
-@field:BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>)
+@field:BinaryAnnotation("Str" + "ing")
 var x: Int = 5
 
 object Delegate {
@@ -54,42 +54,42 @@ object Delegate {
     operator fun setValue(instance: Any?, property: Any, value: String) {}
 }
 
-@delegate:BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>)
+@delegate:BinaryAnnotation("Str" + "ing")
 val p: String by Delegate
 
 
 // 7. VALUE_PARAMETER
-fun @receiver:BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>) String.myExtension() {  }
-fun foo(@BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>) a: Int) {  }
+fun @receiver:BinaryAnnotation("Str" + "ing") String.myExtension() {  }
+fun foo(@BinaryAnnotation("Str" + "ing") a: Int) {  }
 
-val @receiver:BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>) String.a: Int
+val @receiver:BinaryAnnotation("Str" + "ing") String.a: Int
     get() = 0
 
 class WithConstructorArgumentAnnotation(
-    @BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>)
+    @BinaryAnnotation("Str" + "ing")
     val a: Int
 )
 
-@setparam:BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>)
+@setparam:BinaryAnnotation("Str" + "ing")
 var setParamProp: Int = 0
     get() = field + 1
     set(x: Int) { field = x * 2 }
 
 var mutablePropWithAnnotationOnSetterParam = 0
-    set(@BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>) x: Int) { field = x * 2 }
+    set(@BinaryAnnotation("Str" + "ing") x: Int) { field = x * 2 }
 
 // 9. FUNCTION
-@BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>)
+@BinaryAnnotation("Str" + "ing")
 fun bar() {}
 
 // 10. PROPERTY_GETTER
 // 11. PROPERTY_SETTER
 var b: Int
-    @BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>) get() = 0
-    @BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>) set(value) {}
+    @BinaryAnnotation("Str" + "ing") get() = 0
+    @BinaryAnnotation("Str" + "ing") set(value) {}
 
 // 15. TYPEALIAS
-@BinaryAnnotation(<!EVALUATED("String")!>"Str" + "ing"<!>)
+@BinaryAnnotation("Str" + "ing")
 typealias C = Int
 
 // MODULE: main(lib)

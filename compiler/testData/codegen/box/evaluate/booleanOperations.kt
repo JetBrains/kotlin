@@ -1,38 +1,38 @@
 fun <T> T.id() = this
 
-const val trueVal = <!EVALUATED("true")!>true<!>
-const val falseVal = <!EVALUATED("false")!>false<!>
+const val trueVal = true
+const val falseVal = false
 
-const val not1 = trueVal.<!EVALUATED("false")!>not()<!>
-const val not2 = falseVal.<!EVALUATED("true")!>not()<!>
+const val not1 = trueVal.not()
+const val not2 = falseVal.not()
 
-const val and1 = trueVal.<!EVALUATED("true")!>and(trueVal)<!>
-const val and2 = trueVal.<!EVALUATED("false")!>and(falseVal)<!>
-const val and3 = falseVal.<!EVALUATED("false")!>and(trueVal)<!>
-const val and4 = falseVal.<!EVALUATED("false")!>and(falseVal)<!>
+const val and1 = trueVal.and(trueVal)
+const val and2 = trueVal.and(falseVal)
+const val and3 = falseVal.and(trueVal)
+const val and4 = falseVal.and(falseVal)
 
-const val or1 = trueVal.<!EVALUATED("true")!>or(trueVal)<!>
-const val or2 = trueVal.<!EVALUATED("true")!>or(falseVal)<!>
-const val or3 = falseVal.<!EVALUATED("true")!>or(trueVal)<!>
-const val or4 = falseVal.<!EVALUATED("false")!>or(falseVal)<!>
+const val or1 = trueVal.or(trueVal)
+const val or2 = trueVal.or(falseVal)
+const val or3 = falseVal.or(trueVal)
+const val or4 = falseVal.or(falseVal)
 
-const val xor1 = trueVal.<!EVALUATED("false")!>xor(trueVal)<!>
-const val xor2 = trueVal.<!EVALUATED("true")!>xor(falseVal)<!>
-const val xor3 = falseVal.<!EVALUATED("true")!>xor(trueVal)<!>
-const val xor4 = falseVal.<!EVALUATED("false")!>xor(falseVal)<!>
+const val xor1 = trueVal.xor(trueVal)
+const val xor2 = trueVal.xor(falseVal)
+const val xor3 = falseVal.xor(trueVal)
+const val xor4 = falseVal.xor(falseVal)
 
-const val compareTo1 = trueVal.<!EVALUATED("0")!>compareTo(trueVal)<!>
-const val compareTo2 = trueVal.<!EVALUATED("1")!>compareTo(falseVal)<!>
-const val compareTo3 = falseVal.<!EVALUATED("-1")!>compareTo(trueVal)<!>
-const val compareTo4 = falseVal.<!EVALUATED("0")!>compareTo(falseVal)<!>
+const val compareTo1 = trueVal.compareTo(trueVal)
+const val compareTo2 = trueVal.compareTo(falseVal)
+const val compareTo3 = falseVal.compareTo(trueVal)
+const val compareTo4 = falseVal.compareTo(falseVal)
 
-const val equals1 = <!EVALUATED("true")!>trueVal == trueVal<!>
-const val equals2 = <!EVALUATED("false")!>trueVal == falseVal<!>
-const val equals3 = <!EVALUATED("false")!>falseVal == trueVal<!>
-const val equals4 = <!EVALUATED("true")!>falseVal == falseVal<!>
+const val equals1 = trueVal == trueVal
+const val equals2 = trueVal == falseVal
+const val equals3 = falseVal == trueVal
+const val equals4 = falseVal == falseVal
 
-const val toString1 = trueVal.<!EVALUATED("true")!>toString()<!>
-const val toString2 = falseVal.<!EVALUATED("false")!>toString()<!>
+const val toString1 = trueVal.toString()
+const val toString2 = falseVal.toString()
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

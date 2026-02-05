@@ -5,13 +5,13 @@
 package java.lang
 
 object Math {
-    const val E: Double = kotlin.math.<!EVALUATED("2.718281828459045")!>E<!>
-    const val PI: Double = kotlin.math.<!EVALUATED("3.141592653589793")!>PI<!>
-    const val OK: String = <!EVALUATED("OK")!>"OK"<!>
+    const val E: Double = kotlin.math.E
+    const val PI: Double = kotlin.math.PI
+    const val OK: String = "OK"
 }
 
-const val usageE = Math.<!EVALUATED("2.718281828459045")!>E<!>
-const val usagePI = Math.<!EVALUATED("3.141592653589793")!>PI<!>
+const val usageE = Math.E
+const val usagePI = Math.PI
 
 fun box(): String {
     return Math.OK

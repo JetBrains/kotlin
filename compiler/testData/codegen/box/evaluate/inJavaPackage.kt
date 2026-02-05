@@ -4,7 +4,7 @@ class A {
     fun getConst() = OK
 
     companion object {
-        const val OK = <!EVALUATED("OK")!>"OK"<!>
+        const val OK = "OK"
     }
 }
 
