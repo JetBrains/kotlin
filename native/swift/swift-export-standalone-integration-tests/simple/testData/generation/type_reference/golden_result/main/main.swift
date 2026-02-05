@@ -672,11 +672,49 @@ extension ExportedKotlinPackages.ignored {
             }
         }
     }
+    public final class VALUE_CLASS: KotlinRuntime.KotlinBase {
+        public var a: Swift.Int32 {
+            get {
+                return ignored_VALUE_CLASS_a_get(self.__externalRCRef())
+            }
+        }
+        public init(
+            a: Swift.Int32
+        ) {
+            if Self.self != ExportedKotlinPackages.ignored.VALUE_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.ignored.VALUE_CLASS ") }
+            let __kt = ignored_VALUE_CLASS_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+            ignored_VALUE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a)
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.ignored.VALUE_CLASS,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return ignored_VALUE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return ignored_VALUE_CLASS_hashCode(self.__externalRCRef())
+        }
+        public func toString() -> Swift.String {
+            return ignored_VALUE_CLASS_toString(self.__externalRCRef())
+        }
+    }
     public static func produce_ENUM() -> ExportedKotlinPackages.ignored.ENUM {
         return ExportedKotlinPackages.ignored.ENUM(__externalRCRefUnsafe: ignored_produce_ENUM(), options: .asBestFittingWrapper)
     }
-    public static func produce_VALUE_CLASS() -> Swift.Never {
-        fatalError()
+    public static func produce_VALUE_CLASS() -> ExportedKotlinPackages.ignored.VALUE_CLASS {
+        return ExportedKotlinPackages.ignored.VALUE_CLASS.__createClassWrapper(externalRCRef: ignored_produce_VALUE_CLASS())
     }
     public static func receive_ENUM(
         x: ExportedKotlinPackages.ignored.ENUM
@@ -684,8 +722,8 @@ extension ExportedKotlinPackages.ignored {
         return ignored_receive_ENUM__TypesOfArguments__ExportedKotlinPackages_ignored_ENUM__(x.__externalRCRef())
     }
     public static func receive_VALUE_CLASS(
-        x: Swift.Never
+        x: ExportedKotlinPackages.ignored.VALUE_CLASS
     ) -> Swift.Void {
-        fatalError()
+        return ignored_receive_VALUE_CLASS__TypesOfArguments__ExportedKotlinPackages_ignored_VALUE_CLASS__(x.__externalRCRef())
     }
 }

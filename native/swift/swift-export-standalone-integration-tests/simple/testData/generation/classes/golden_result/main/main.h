@@ -85,6 +85,22 @@ int64_t Foo_my_variable_get(void * self);
 
 void Foo_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
 
+_Bool INLINE_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+int32_t INLINE_CLASS_WITH_REF_hashCode(void * self);
+
+void * INLINE_CLASS_WITH_REF_i_get(void * self);
+
+NSString * INLINE_CLASS_WITH_REF_toString(void * self);
+
+int32_t INLINE_CLASS_a_get(void * self);
+
+_Bool INLINE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+int32_t INLINE_CLASS_hashCode(void * self);
+
+NSString * INLINE_CLASS_toString(void * self);
+
 void * OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate();
 
 void OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -166,6 +182,14 @@ void __root___INHERITANCE_GENERIC_init_initialize__TypesOfArguments__Swift_Unsaf
 void * __root___INHERITANCE_UNSUPPORTED_BASE_init_allocate();
 
 void __root___INHERITANCE_UNSUPPORTED_BASE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___INLINE_CLASS_WITH_REF_init_allocate();
+
+void __root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_DATA_CLASS_WITH_REF__(void * __kt, void * i);
+
+void * __root___INLINE_CLASS_init_allocate();
+
+void __root___INLINE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
 
 void * __root___OBJECT_NO_PACKAGE_get();
 

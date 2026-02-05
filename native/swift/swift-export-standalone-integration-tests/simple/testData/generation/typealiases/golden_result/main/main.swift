@@ -89,6 +89,8 @@ public typealias deeper_closure_typealias = main.closure
 public typealias enumClass = main.ENUM
 public typealias generic = main.GENERIC_CLASS
 public typealias inheritanceSingleClass = main.INHERITANCE_SINGLE_CLASS
+public typealias inlineClass = main.INLINE_CLASS
+public typealias inlineClassWithRef = main.INLINE_CLASS_WITH_REF
 public typealias never = Swift.Never
 public typealias nullable_class = ExportedKotlinPackages.typealiases.Foo?
 public typealias nullable_primitive = Swift.Int32?
@@ -275,6 +277,82 @@ public final class INHERITANCE_SINGLE_CLASS: main.OPEN_CLASS {
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+}
+public final class INLINE_CLASS: KotlinRuntime.KotlinBase {
+    public var a: Swift.Int32 {
+        get {
+            return INLINE_CLASS_a_get(self.__externalRCRef())
+        }
+    }
+    public init(
+        a: Swift.Int32
+    ) {
+        if Self.self != main.INLINE_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.INLINE_CLASS ") }
+        let __kt = __root___INLINE_CLASS_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___INLINE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public static func ==(
+        this: main.INLINE_CLASS,
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Bool {
+        this.equals(other: other)
+    }
+    public func equals(
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Bool {
+        return INLINE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+    }
+    public func hashCode() -> Swift.Int32 {
+        return INLINE_CLASS_hashCode(self.__externalRCRef())
+    }
+    public func toString() -> Swift.String {
+        return INLINE_CLASS_toString(self.__externalRCRef())
+    }
+}
+public final class INLINE_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
+    public var i: main.DATA_CLASS_WITH_REF {
+        get {
+            return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: INLINE_CLASS_WITH_REF_i_get(self.__externalRCRef()))
+        }
+    }
+    public init(
+        i: main.DATA_CLASS_WITH_REF
+    ) {
+        if Self.self != main.INLINE_CLASS_WITH_REF.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.INLINE_CLASS_WITH_REF ") }
+        let __kt = __root___INLINE_CLASS_WITH_REF_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_DATA_CLASS_WITH_REF__(__kt, i.__externalRCRef())
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public static func ==(
+        this: main.INLINE_CLASS_WITH_REF,
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Bool {
+        this.equals(other: other)
+    }
+    public func equals(
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Bool {
+        return INLINE_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+    }
+    public func hashCode() -> Swift.Int32 {
+        return INLINE_CLASS_WITH_REF_hashCode(self.__externalRCRef())
+    }
+    public func toString() -> Swift.String {
+        return INLINE_CLASS_WITH_REF_toString(self.__externalRCRef())
     }
 }
 public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
