@@ -96,9 +96,6 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
                 +FIR_DUMP
                 +RENDER_FIR_DECLARATION_ATTRIBUTES
             }
-            configureFirHandlersStep {
-                useHandlers(::FirInterpreterDumpHandler)
-            }
         }
     }
 }

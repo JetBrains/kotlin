@@ -17,7 +17,7 @@ class E : B
 
 // MODULE: platform()()(common)
 // FILE: B.kt
-actual interface B { @A(<!EVALUATED("12345678")!>"12345678"<!>) fun foo() {} }
+actual interface B { @A("12345678") fun foo() {} }
 
 fun box(): String {
     return "OK"

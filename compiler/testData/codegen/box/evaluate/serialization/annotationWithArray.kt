@@ -9,10 +9,10 @@ annotation class AnnotationWithVararg(vararg val array: String)
 @Retention(AnnotationRetention.BINARY)
 annotation class AnnotationWithArray(val array: Array<String>)
 
-@AnnotationWithVararg(<!EVALUATED("String")!>"Str" + "ing"<!>, <!EVALUATED("String2")!>"String2"<!>, <!EVALUATED("String3")!>"String${3}"<!>)
+@AnnotationWithVararg("Str" + "ing", "String2", "String${3}")
 class A
 
-@AnnotationWithArray([<!EVALUATED("String")!>"Str" + "ing"<!>, <!EVALUATED("String2")!>"String2"<!>, <!EVALUATED("String3")!>"String${3}"<!>])
+@AnnotationWithArray(["Str" + "ing", "String2", "String${3}"])
 class B
 
 // MODULE: main(lib)

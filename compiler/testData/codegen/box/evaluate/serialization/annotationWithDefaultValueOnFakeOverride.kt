@@ -1,7 +1,7 @@
 // ISSUE: KT-72356
 // STOP_EVALUATION_CHECKS
 // FILE: A.kt
-annotation class A(val x: String = <!EVALUATED("123")!>"12" + "3"<!>)
+annotation class A(val x: String = "12" + "3")
 
 annotation class Something
 

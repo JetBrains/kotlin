@@ -12,12 +12,12 @@ annotation class Ann(
         val p6: Float
 )
 
-const val prop1: Byte = <!EVALUATED("-1")!>-1<!>
-const val prop2: Short = <!EVALUATED("-1")!>-1<!>
-const val prop3: Int = <!EVALUATED("-1")!>-1<!>
-const val prop4: Long = <!EVALUATED("-1")!>-1<!>
-const val prop5: Double = <!EVALUATED("-1.0")!>-1.0<!>
-const val prop6: Float = <!EVALUATED("-1.0")!>-1.0.toFloat()<!>
+const val prop1: Byte = -1
+const val prop2: Short = -1
+const val prop3: Int = -1
+const val prop4: Long = -1
+const val prop5: Double = -1.0
+const val prop6: Float = -1.0.toFloat()
 
 @Ann(prop1, prop2, prop3, prop4, prop5, prop6) class MyClass
 

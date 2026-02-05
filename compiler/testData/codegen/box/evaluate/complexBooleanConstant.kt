@@ -1,6 +1,6 @@
-const val BOOL = <!EVALUATED("true")!>true<!>
-const val BOOL_OR = <!EVALUATED("false")!>false && BOOL<!>
-const val BOOL_AND = <!EVALUATED("true")!>true || BOOL<!>
-const val BOOL_AND_OR = <!EVALUATED("true")!>true || false && BOOL<!>
+const val BOOL = true
+const val BOOL_OR = false && BOOL
+const val BOOL_AND = true || BOOL
+const val BOOL_AND_OR = true || false && BOOL
 
 fun box() = "OK"

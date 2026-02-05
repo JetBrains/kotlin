@@ -1,31 +1,31 @@
 // WITH_STDLIB
 fun <T> T.id() = this
 
-const val someStr = <!EVALUATED("123")!>"123"<!>
-const val otherStr = <!EVALUATED("other")!>"other"<!>
+const val someStr = "123"
+const val otherStr = "other"
 
-const val oneVal = <!EVALUATED("1")!>1<!>
-const val oneUnsignedVal = <!EVALUATED("1")!>1u<!>
+const val oneVal = 1
+const val oneUnsignedVal = 1u
 
-const val plus1 = someStr.<!EVALUATED("123other")!>plus(otherStr)<!>
-const val plus2 = someStr.<!EVALUATED("1231")!>plus(oneVal)<!>
-const val plus3 = someStr.<!EVALUATED("1231")!>plus(oneUnsignedVal)<!>
+const val plus1 = someStr.plus(otherStr)
+const val plus2 = someStr.plus(oneVal)
+const val plus3 = someStr.plus(oneUnsignedVal)
 
-const val length1 = someStr.<!EVALUATED("3")!>length<!>
-const val length2 = otherStr.<!EVALUATED("5")!>length<!>
+const val length1 = someStr.length
+const val length2 = otherStr.length
 
-const val get1 = someStr.<!EVALUATED("1")!>get(0)<!>
-const val get2 = otherStr.<!EVALUATED("t")!>get(oneVal)<!>
+const val get1 = someStr.get(0)
+const val get2 = otherStr.get(oneVal)
 
-const val compareTo1 = someStr.<!EVALUATED("0")!>compareTo("123")<!>
-const val compareTo2 = someStr.<!EVALUATED("-62")!>compareTo(otherStr)<!>
-const val compareTo3 = otherStr.<!EVALUATED("62")!>compareTo(someStr)<!>
+const val compareTo1 = someStr.compareTo("123")
+const val compareTo2 = someStr.compareTo(otherStr)
+const val compareTo3 = otherStr.compareTo(someStr)
 
-const val equals1 = <!EVALUATED("true")!>someStr == "123"<!>
-const val equals2 = <!EVALUATED("false")!>someStr == otherStr<!>
-const val equals3 = <!EVALUATED("false")!>otherStr == someStr<!>
+const val equals1 = someStr == "123"
+const val equals2 = someStr == otherStr
+const val equals3 = otherStr == someStr
 
-const val toString1 = someStr.<!EVALUATED("123")!>toString()<!>
+const val toString1 = someStr.toString()
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

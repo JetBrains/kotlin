@@ -1,9 +1,9 @@
 // WITH_STDLIB
 fun <T> T.id() = this
 
-const val simple = <!EVALUATED("OK 3.5")!>"O${'K'} ${1.toLong() + 2.5}"<!>
-const val withInnerConcatenation = <!EVALUATED("1 2 3 4 5 6")!>"1 ${"2 ${3} ${4} 5"} 6"<!>
-const val withNull = <!EVALUATED("1 null")!>"1 ${null}"<!> // but `"1" + null` is invalid
+const val simple = "O${'K'} ${1.toLong() + 2.5}"
+const val withInnerConcatenation = "1 ${"2 ${3} ${4} 5"} 6"
+const val withNull = "1 ${null}" // but `"1" + null` is invalid
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

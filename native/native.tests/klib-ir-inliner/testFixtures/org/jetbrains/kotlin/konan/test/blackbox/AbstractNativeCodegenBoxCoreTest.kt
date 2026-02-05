@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.konan.test.services.FileCheckTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.backend.handlers.FirInterpreterDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
@@ -107,9 +106,6 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
             defaultDirectives {
                 +FIR_DUMP
                 +RENDER_FIR_DECLARATION_ATTRIBUTES
-            }
-            configureFirHandlersStep {
-                useHandlers(::FirInterpreterDumpHandler)
             }
         }
     }

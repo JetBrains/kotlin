@@ -11,15 +11,15 @@ class A(val OK: Int, val somePropertyWithLongName: String) {
 val topLevelProp = 1
 fun Int.baz() {}
 
-const val propertyName1 = A::OK.<!EVALUATED("OK")!>name<!>
-const val propertyName2 = A::somePropertyWithLongName.<!EVALUATED("somePropertyWithLongName")!>name<!>
-const val methodName1 = A::foo.<!EVALUATED("foo")!>name<!>
-const val methodName2 = A::A.<!EVALUATED("A")!>name<!>
-const val extensionFunName = 42::baz.<!EVALUATED("baz")!>name<!>
-const val suspendMethodName = A::bar.<!EVALUATED("bar")!>name<!>
-const val className = ::A.<!EVALUATED("<init>")!>name<!>
-const val topLevelPropName = ::topLevelProp.<!EVALUATED("topLevelProp")!>name<!>
-const val nameInComplexExpression = <!EVALUATED("OK!")!>A::OK.name + "!"<!>
+const val propertyName1 = A::OK.name
+const val propertyName2 = A::somePropertyWithLongName.name
+const val methodName1 = A::foo.name
+const val methodName2 = A::A.name
+const val extensionFunName = 42::baz.name
+const val suspendMethodName = A::bar.name
+const val className = ::A.name
+const val topLevelPropName = ::topLevelProp.name
+const val nameInComplexExpression = A::OK.name + "!"
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

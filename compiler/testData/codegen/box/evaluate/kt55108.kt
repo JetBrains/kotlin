@@ -4,19 +4,19 @@
 
 annotation class A(vararg val strings: String)
 
-@A(*arrayOf(<!EVALUATED("foo")!>"foo"<!>, <!EVALUATED("bar")!>"bar"<!>), <!EVALUATED("baz")!>"baz"<!>)
+@A(*arrayOf("foo", "bar"), "baz")
 class B
 
-@A(<!EVALUATED("baz")!>"baz"<!>, *arrayOf(<!EVALUATED("foo")!>"foo"<!>, <!EVALUATED("bar")!>"bar"<!>), <!EVALUATED("xyz")!>"xyz"<!>)
+@A("baz", *arrayOf("foo", "bar"), "xyz")
 class C
 
-@A(*arrayOf(<!EVALUATED("foo")!>"foo"<!>, <!EVALUATED("bar")!>"bar"<!>, <!EVALUATED("xyz")!>"xyz"<!>))
+@A(*arrayOf("foo", "bar", "xyz"))
 class D
 
-@A(<!EVALUATED("foo")!>"foo"<!>, <!EVALUATED("baz")!>"baz"<!>, <!EVALUATED("bar")!>"bar"<!>)
+@A("foo", "baz", "bar")
 class E
 
-@A(*arrayOf(<!EVALUATED("foo")!>"foo"<!>, <!EVALUATED("bar")!>"bar"<!>), *arrayOf(<!EVALUATED("baz")!>"baz"<!>, <!EVALUATED("xyz")!>"xyz"<!>))
+@A(*arrayOf("foo", "bar"), *arrayOf("baz", "xyz"))
 class F
 
 fun box(): String {

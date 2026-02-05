@@ -4,7 +4,7 @@
 
 // On runtime JVM it will be "0.3"
 // On runtime JS it will be "0.30000000000000004"
-const val a = <!EVALUATED("0.3")!>0.1f + 0.2f<!>
+const val a = 0.1f + 0.2f
 val number = 0.1f
 
 fun box(): String {

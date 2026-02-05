@@ -3,30 +3,30 @@
 // WITH_STDLIB
 fun <T> T.id() = this
 
-const val trimMargin1 = "123".<!EVALUATED("123")!>trimMargin()<!>
+const val trimMargin1 = "123".trimMargin()
 const val trimMargin2 = """ABC
                 |123
-                |456""".<!EVALUATED("ABC\n123\n456")!>trimMargin()<!>
+                |456""".trimMargin()
 const val trimMargin3 = """
     #XYZ
     #foo
     #bar
-""".<!EVALUATED("XYZ\nfoo\nbar")!>trimMargin("#")<!>
+""".trimMargin("#")
 
 
-const val trimIndent1 = "123".<!EVALUATED("123")!>trimIndent()<!>
+const val trimIndent1 = "123".trimIndent()
 const val trimIndent2 =
     """
             ABC
             123
             456
-        """.<!EVALUATED("ABC\n123\n456")!>trimIndent()<!>
+        """.trimIndent()
 
 const val trimIndentMarginChain = """
 	# apfelstrudel
     #  apfelradl
     # krapfen
-""".trimIndent().<!EVALUATED(" apfelstrudel\n  apfelradl\n krapfen")!>trimMargin("#")<!>
+""".trimIndent().trimMargin("#")
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {
