@@ -388,6 +388,7 @@
 /native/native.tests/klib-ir-inliner/ @JetBrains/kotlin-common-backend
 /native/objcexport-header-generator/ @JetBrains/kotlin-native
 /native/objcexport-header-generator/impl/analysis-api/ @JetBrains/kotlin-native
+/native/swift/ @mMaxy @glukianets
 
 /plugins/allopen/ @JetBrains/kotlin-frontend
 /plugins/assign-plugin/ @JetBrains/kotlin-frontend
