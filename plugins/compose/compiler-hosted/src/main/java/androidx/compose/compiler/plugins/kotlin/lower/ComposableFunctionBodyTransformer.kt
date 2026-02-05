@@ -631,11 +631,11 @@ class ComposableFunctionBodyTransformer(
 
     private fun visitFunctionInScope(declaration: IrFunction): IrStatement {
         val scope = currentFunctionScope
-        // if the function isn't composable, there's nothing to do
         if (!scope.isComposable) {
-            if (scope.isInlinedLambda) {
-                return visitInlinedLambda(declaration)
+            if (scope.isInlinedLambda && scope.isInComposable) {
+                return visitInlinedLambdaInComposableScope(declaration)
             } else {
+                // if the function isn't composable, there's nothing to do
                 return super.visitFunction(declaration)
             }
         }
@@ -1283,7 +1283,7 @@ class ComposableFunctionBodyTransformer(
         return declaration
     }
 
-    private fun visitInlinedLambda(declaration: IrFunction): IrStatement {
+    private fun visitInlinedLambdaInComposableScope(declaration: IrFunction): IrStatement {
         val scope = currentFunctionScope
         val parentScope = scope.parent
         val outerGroupRequired = parentScope is Scope.CaptureScope && parentScope.forceInlinedLambdaGroup

@@ -1,0 +1,20 @@
+MODULE_FRAGMENT
+  FILE fqName:com.example.home fileName:main.kt
+    FUN name:getOrElse visibility:internal modality:FINAL returnType:R of com.example.home.getOrElse [inline]
+      TYPE_PARAMETER name:I index:0 variance: superTypes:[kotlin.Any?] reified:false
+      TYPE_PARAMETER name:T index:1 variance: superTypes:[R of com.example.home.getOrElse] reified:false
+      TYPE_PARAMETER name:R index:2 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:com.example.home.Outcome<I of com.example.home.getOrElse, T of com.example.home.getOrElse>
+      VALUE_PARAMETER kind:Regular name:onIncomplete index:1 type:kotlin.Function1<@[ParameterName(name = "incomplete")] I of com.example.home.getOrElse, R of com.example.home.getOrElse>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='internal final fun getOrElse <I, T, R> (<this>: com.example.home.Outcome<I of com.example.home.getOrElse, T of com.example.home.getOrElse>, onIncomplete: kotlin.Function1<@[ParameterName(name = "incomplete")] I of com.example.home.getOrElse, R of com.example.home.getOrElse>): R of com.example.home.getOrElse [inline] declared in com.example.home'
+          CALL 'public final fun fold <R> (onComplete: kotlin.Function1<@[ParameterName(name = "value")] T of com.example.home.Outcome, R of com.example.home.Outcome.fold>, onIncomplete: kotlin.Function1<@[ParameterName(name = "incomplete")] I of com.example.home.Outcome, R of com.example.home.Outcome.fold>): R of com.example.home.Outcome.fold [inline] declared in com.example.home.Outcome' type=R of com.example.home.getOrElse origin=null
+            TYPE_ARG R: R of com.example.home.getOrElse
+            ARG <this>: GET_VAR '<this>: com.example.home.Outcome<I of com.example.home.getOrElse, T of com.example.home.getOrElse> declared in com.example.home.getOrElse' type=com.example.home.Outcome<I of com.example.home.getOrElse, T of com.example.home.getOrElse> origin=IMPLICIT_ARGUMENT
+            ARG onComplete: FUN_EXPR type=kotlin.Function1<T of com.example.home.getOrElse, R of com.example.home.getOrElse> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:R of com.example.home.getOrElse
+                VALUE_PARAMETER kind:Regular name:it index:0 type:T of com.example.home.getOrElse
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: T of com.example.home.getOrElse): R of com.example.home.getOrElse declared in com.example.home.getOrElse'
+                    GET_VAR 'it: T of com.example.home.getOrElse declared in com.example.home.getOrElse.<anonymous>' type=T of com.example.home.getOrElse origin=null
+            ARG onIncomplete: GET_VAR 'onIncomplete: kotlin.Function1<@[ParameterName(name = "incomplete")] I of com.example.home.getOrElse, R of com.example.home.getOrElse> declared in com.example.home.getOrElse' type=kotlin.Function1<@[ParameterName(name = "incomplete")] I of com.example.home.getOrElse, R of com.example.home.getOrElse> origin=null
