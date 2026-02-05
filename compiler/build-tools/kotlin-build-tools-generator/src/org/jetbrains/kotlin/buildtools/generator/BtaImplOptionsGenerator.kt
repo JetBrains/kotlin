@@ -89,7 +89,7 @@ internal class BtaImplOptionsGenerator(
                 val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
                 val constructorSpecBuilder = constructorSpecBuilder(argumentTypeNameString)
 
-                generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
+                generateGetPutFunctions(argumentTypeName, argumentImplTypeName, level)
 
                 addType(TypeSpec.companionObjectBuilder().apply {
                     property(
@@ -534,7 +534,7 @@ internal class BtaImplOptionsGenerator(
         }
     }
 
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, implParameter: ClassName) {
+    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, implParameter: ClassName, level: KotlinCompilerArgumentsLevel) {
         val mapProperty = property(
             "optionsMap",
             ClassName("kotlin.collections", "MutableMap").parameterizedBy(typeNameOf<String>(), ANY.copy(nullable = true))
@@ -598,19 +598,21 @@ internal class BtaImplOptionsGenerator(
             addStatement("%N[key.id] = adapter?.mapTo(%N, key) ?: %N", mapProperty, "value", "value")
         }
 
-        withDeprecationCycle(
-            compatLayerConfig?.currentKotlinVersion ?: kotlinVersion,
-            warnFrom = KotlinReleaseVersion.v2_4_0,
-            errorFrom = KotlinReleaseVersion.v2_5_0,
-            removeFrom = KotlinReleaseVersion.v2_6_0,
-            deprecationMessage = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments."
-        ) { annotation ->
-            function("contains") {
-                annotation?.let { addAnnotation(it) }
-                addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
-                returns(BOOLEAN)
-                addParameter("key", parameter.parameterizedBy(STAR))
-                addStatement("return key.id in optionsMap")
+        if (levelsSince[level.name] == KDOC_SINCE_2_3_0) {
+            withDeprecationCycle(
+                compatLayerConfig?.currentKotlinVersion ?: kotlinVersion,
+                warnFrom = KotlinReleaseVersion.v2_4_0,
+                errorFrom = KotlinReleaseVersion.v2_5_0,
+                removeFrom = KotlinReleaseVersion.v2_6_0,
+                deprecationMessage = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments."
+            ) { annotation ->
+                function("contains") {
+                    annotation?.let { addAnnotation(it) }
+                    addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
+                    returns(BOOLEAN)
+                    addParameter("key", parameter.parameterizedBy(STAR))
+                    addStatement("return key.id in optionsMap")
+                }
             }
         }
 

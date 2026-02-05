@@ -79,8 +79,18 @@ internal val KDOC_OPTIONS_CONTAINS = """
 internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.commonKlibBasedArguments,
     CompilerArgumentsLevelNames.jsArguments,
-    CompilerArgumentsLevelNames.nativeArguments,
-    CompilerArgumentsLevelNames.legacyWasmArguments,
+    CompilerArgumentsLevelNames.commonJsAndWasmArguments,
+    CompilerArgumentsLevelNames.wasmArguments,
+)
+
+internal val levelsSince = mapOf(
+    CompilerArgumentsLevelNames.commonToolArguments to KDOC_SINCE_2_3_0,
+    CompilerArgumentsLevelNames.commonCompilerArguments to KDOC_SINCE_2_3_0,
+    CompilerArgumentsLevelNames.jvmCompilerArguments to KDOC_SINCE_2_3_0,
+    CompilerArgumentsLevelNames.jsArguments to KDOC_SINCE_2_4_0,
+    CompilerArgumentsLevelNames.wasmArguments to KDOC_SINCE_2_4_0,
+    CompilerArgumentsLevelNames.commonJsAndWasmArguments to KDOC_SINCE_2_4_0,
+    CompilerArgumentsLevelNames.commonKlibBasedArguments to KDOC_SINCE_2_4_0,
 )
 
 internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().replace("-", "_").let {
