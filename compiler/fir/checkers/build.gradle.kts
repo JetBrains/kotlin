@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":compiler:psi:parser"))
+    implementation(project(":compiler:fir:resolve"))
 
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(intellijCore())

@@ -60,7 +60,7 @@ private fun testWithClient() = barRegular {
     var another = "hello"
 
     barRegularString(clientvar) {
-        barRegularString(<!CV_DIAGNOSTIC!>another<!>) {
+        barRegularString(another) {
             println("Hi")
         }
     }
@@ -103,7 +103,7 @@ fun foo() {
     }
 
     barRegular {
-        baz(<!CV_DIAGNOSTIC!>x<!>)
+        baz(x)
     }
 
     // OK
@@ -154,16 +154,16 @@ fun foo() {
 
     var count = false
     barRegular {
-            if (!<!CV_DIAGNOSTIC!>count<!>) {
+            if (!count) {
             print(2)
         }
     }
     var accumulator = ""
     processChunked { chunk ->
         val newChunk = chunk
-        val combinedData = <!CV_DIAGNOSTIC!>accumulator<!>+newChunk
+        val combinedData = accumulator+newChunk
 
-        if (<!CV_DIAGNOSTIC!>accumulator<!> == "") {
+        if (accumulator == "") {
             print(1)
         }
     }
@@ -184,6 +184,12 @@ fun foo() {
         val res = <!CV_DIAGNOSTIC!>nullableStr<!> ?: "default"
     }
 
+    barRegular {
+        <!CV_DIAGNOSTIC!>flag<!> = true
+        <!CV_DIAGNOSTIC!>name<!> += "a"
+        <!CV_DIAGNOSTIC!>obj<!> = "text"
+        <!CV_DIAGNOSTIC!>nullableStr<!> = null
+    }
 }
 
 fun doSomethingBig() {
