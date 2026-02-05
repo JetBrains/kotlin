@@ -143,7 +143,7 @@ private fun getModulesASTFilesSkipNonImportableModules(index: CXIndex, compilati
     if (moduleImportErrors.isNotEmpty()) {
         val truncatedErrors = roundRobinTake(
                 input = moduleImportErrors.associateWith { it.errors },
-                outputLimit = ERROR_COUNT_LIMIT,
+                outputLimit = maxOf(ERROR_COUNT_LIMIT, moduleImportErrors.size),
         )
         val error = Error(
                 truncatedErrors.flatMap { (module, errors) ->
