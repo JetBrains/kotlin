@@ -7,10 +7,12 @@
 
 
 
+
+
 * @JetBrains/kotlin
 
 /.idea/ @JetBrains/kotlin-build-infrastructure
-/.idea/kotlinTestDataPluginTestDataPaths.xml dmitriy.novozhilov@jetbrains.com kirill.rakhman@jetbrains.com sergej.jaskiewicz@jetbrains.com
+/.idea/kotlinTestDataPluginTestDataPaths.xml @demiurg906 @cypressious @broadwaylamb
 
 /.fleet/ @JetBrains/kotlin-build-infrastructure
 
@@ -59,11 +61,11 @@
 /compiler/container/ @JetBrains/kotlin-frontend
 /compiler/daemon/ @JetBrains/kotlin-build-tools @JetBrains/build-tools-api
 /compiler/fir/ @JetBrains/kotlin-frontend
-/compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
-/compiler/fir/checkers/checkers.jvm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
-/compiler/fir/checkers/checkers.native/src/org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
-/compiler/fir/checkers/checkers.wasm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
-/compiler/fir/raw-fir/raw-fir.common/src/org/jetbrains/kotlin/fir/builder/FirSyntaxErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
+/compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt @serras @bnorm @ligee @cypressious
+/compiler/fir/checkers/checkers.jvm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmErrorsDefaultMessages.kt @serras @bnorm @ligee @cypressious
+/compiler/fir/checkers/checkers.native/src/org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages.kt @serras @bnorm @ligee @cypressious
+/compiler/fir/checkers/checkers.wasm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErrorsDefaultMessages.kt @serras @bnorm @ligee @cypressious
+/compiler/fir/raw-fir/raw-fir.common/src/org/jetbrains/kotlin/fir/builder/FirSyntaxErrorsDefaultMessages.kt @serras @bnorm @ligee @cypressious
 /compiler/frontend/ @JetBrains/kotlin-frontend
 /compiler/frontend.common/ @JetBrains/kotlin-frontend
 /compiler/frontend.common.jvm/ @JetBrains/kotlin-frontend
@@ -80,7 +82,7 @@
 /compiler/ir/ir.interpreter/ @JetBrains/kotlin-common-backend
 /compiler/ir/ir.psi2ir/ @JetBrains/kotlin-jvm
 /compiler/ir/ir.tree/ @JetBrains/kotlin-common-backend
-/compiler/ir/ir.tree/tree-generator @JetBrains/kotlin-common-backend sergej.jaskiewicz@jetbrains.com
+/compiler/ir/ir.tree/tree-generator @JetBrains/kotlin-common-backend @broadwaylamb
 /compiler/ir/ir.objcinterop/ @JetBrains/kotlin-native
 /compiler/ir/serialization.common/ @JetBrains/kotlin-common-backend
 /compiler/ir/serialization.js/ @JetBrains/kotlin-js
@@ -120,7 +122,7 @@
 /compiler/testData/cli/metadata/ @JetBrains/kotlin-frontend
 /compiler/testData/codegen/asmLike/ @JetBrains/kotlin-jvm
 /compiler/testData/codegen/box/ @JetBrains/kotlin-compiler
-/compiler/testData/codegen/box/size/ zalim.bashorov@jetbrains.com
+/compiler/testData/codegen/box/size/ @bashor
 /compiler/testData/codegen/boxInline/ @JetBrains/kotlin-jvm @JetBrains/kotlin-native @JetBrains/kotlin-wasm @JetBrains/kotlin-common-backend @JetBrains/kotlin-js
 /compiler/testData/codegen/boxKlib/ @JetBrains/kotlin-jvm
 /compiler/testData/codegen/boxModernJdk/ @JetBrains/kotlin-jvm
@@ -135,7 +137,7 @@
 /compiler/testData/codegen/notNullAssertions/ @JetBrains/kotlin-jvm
 /compiler/testData/codegen/outerClassInfo/ @JetBrains/kotlin-jvm
 /compiler/testData/codegen/properties/ @JetBrains/kotlin-jvm
-/compiler/testData/codegen/reflection/ @JetBrains/kotlin-libraries alexander.udalov@jetbrains.com
+/compiler/testData/codegen/reflection/ @JetBrains/kotlin-libraries @udalov
 /compiler/testData/codegen/script/ @JetBrains/kotlin-frontend
 /compiler/testData/codegen/scriptCustom/ @JetBrains/kotlin-frontend
 /compiler/testData/compileJavaAgainstKotlin/ @JetBrains/kotlin-frontend @JetBrains/kotlin-jvm
@@ -170,7 +172,7 @@
 /compiler/testData/psi/ @JetBrains/kotlin-analysis-api
 /compiler/testData/psiUtil/ @JetBrains/kotlin-analysis-api
 /compiler/testData/recursiveProcessor/ @JetBrains/kotlin-frontend
-/compiler/testData/reflection/ @JetBrains/kotlin-libraries alexander.udalov@jetbrains.com
+/compiler/testData/reflection/ @JetBrains/kotlin-libraries @udalov
 /compiler/testData/repl/ @JetBrains/kotlin-frontend
 /compiler/testData/resolve/ @JetBrains/kotlin-frontend
 /compiler/testData/resolveAnnotations/ @JetBrains/kotlin-frontend
@@ -221,24 +223,24 @@
 /core/compiler.common.web/ @JetBrains/kotlin-frontend
 /core/descriptors/ @JetBrains/kotlin-frontend
 /core/descriptors.jvm/ @JetBrains/kotlin-frontend
-/core/descriptors.runtime/ @JetBrains/kotlin-libraries alexander.udalov@jetbrains.com
+/core/descriptors.runtime/ @JetBrains/kotlin-libraries @udalov
 /core/deserialization/ @JetBrains/kotlin-frontend
 /core/deserialization.common/ @JetBrains/kotlin-frontend
 /core/deserialization.common.jvm/ @JetBrains/kotlin-frontend
 /core/metadata/ @JetBrains/kotlin-frontend
 /core/metadata.jvm/ @JetBrains/kotlin-jvm
-/core/reflection.jvm/ @JetBrains/kotlin-libraries alexander.udalov@jetbrains.com
+/core/reflection.jvm/ @JetBrains/kotlin-libraries @udalov
 /core/script.runtime/ @JetBrains/kotlin-frontend
 /core/util.runtime/ @JetBrains/kotlin-frontend
 
 /dependencies/ @JetBrains/kotlin-build-infrastructure
 
-/docs/code_authoring_and_core_review.md vsevolod.tolstopyatov@jetbrains.com simon.ogorodnik@jetbrains.com
+/docs/code_authoring_and_core_review.md @qwwdfsad @semoro
 /docs/changelogs/ @JetBrains/kotlin-release
 
 /generators/ReadMe.md @JetBrains/kotlin-build-infrastructure
 /generators/analysis-api-generator/ @JetBrains/kotlin-analysis-api
-/generators/builtins/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
+/generators/builtins/ @qwwdfsad @ilya-g @fzhinkin @DmitryNekrasov
 /generators/evaluate/ @JetBrains/kotlin-frontend
 /generators/ide-iml-to-gradle-generator/ @JetBrains/kotlin-build-infrastructure
 /generators/interpreter/ @JetBrains/kotlin-common-backend
@@ -248,7 +250,7 @@
 /generators/protobuf/ @JetBrains/kotlin-build-infrastructure
 /generators/test-generator/ @JetBrains/kotlin-compiler
 /generators/tests/ @JetBrains/kotlin-compiler
-/generators/tree-generator-common/ @JetBrains/kotlin-frontend @JetBrains/kotlin-common-backend sergej.jaskiewicz@jetbrains.com
+/generators/tree-generator-common/ @JetBrains/kotlin-frontend @JetBrains/kotlin-common-backend @broadwaylamb
 /generators/wasm/ @JetBrains/kotlin-wasm
 
 /gradle/ @JetBrains/kotlin-build-infrastructure
@@ -262,11 +264,11 @@
 /js/js.tests/testFixtures/org/jetbrains/kotlin/js/test/klib/ @JetBrains/kotlin-common-backend
 /js/js.translator/testData/ @JetBrains/kotlin-js @JetBrains/kotlin-wasm
 
-/kotlin-js-store/ ilya.goncharov@jetbrains.com
+/kotlin-js-store/ @ilgonmic
 
 /kotlin-native/ @JetBrains/kotlin-native
-/kotlin-native/runtime/src/main/kotlin/ @JetBrains/kotlin-native vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
-/kotlin-native/runtime/test @JetBrains/kotlin-native vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
+/kotlin-native/runtime/src/main/kotlin/ @JetBrains/kotlin-native @qwwdfsad @ilya-g @fzhinkin @DmitryNekrasov
+/kotlin-native/runtime/test @JetBrains/kotlin-native @qwwdfsad @ilya-g @fzhinkin @DmitryNekrasov
 /kotlin-native/licenses/ @JetBrains/kotlin-build-infrastructure
 /kotlin-native/klib/ @JetBrains/kotlin-common-backend
 /kotlin-native/performance @JetBrains/kotlin-native
@@ -275,12 +277,12 @@
 /libraries/examples/kotlin-gradle-subplugin-example/ @JetBrains/kotlin-frontend
 /libraries/examples/kotlin-java-example/ @JetBrains/kotlin-jvm
 /libraries/examples/scripting/ @JetBrains/kotlin-frontend
-/libraries/kotlin.test/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
-/libraries/kotlinx-metadata/ alexander.udalov@jetbrains.com vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com leonid.startsev@jetbrains.com
+/libraries/kotlin.test/ @qwwdfsad @ilya-g @fzhinkin @DmitryNekrasov
+/libraries/kotlinx-metadata/ @udalov @qwwdfsad @ilya-g @sandwwraith
 /libraries/lib/ @JetBrains/kotlin-build-infrastructure
-/libraries/reflect/ @JetBrains/kotlin-libraries alexander.udalov@jetbrains.com
+/libraries/reflect/ @JetBrains/kotlin-libraries @udalov
 /libraries/scripting/ @JetBrains/kotlin-frontend
-/libraries/stdlib/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
+/libraries/stdlib/ @qwwdfsad @ilya-g @fzhinkin @DmitryNekrasov
 /libraries/stdlib/wasm/builtins/ @JetBrains/kotlin-wasm
 /libraries/stdlib/wasm/internal/ @JetBrains/kotlin-wasm
 /libraries/stdlib/wasm/src/generated/wasm/internal/ @JetBrains/kotlin-wasm
@@ -293,7 +295,7 @@
 /libraries/tools/abi-validation/ @JetBrains/kotlin-libraries
 /libraries/tools/dukat/ @JetBrains/kotlin-wasm @JetBrains/kotlin-js
 /libraries/tools/ide-plugin-dependencies-validator @JetBrains/kotlin-analysis-api
-/libraries/kotlin-dom-api-compat/ ilya.goncharov@jetbrains.com stanislav.erokhin@jetbrains.com
+/libraries/kotlin-dom-api-compat/ @ilgonmic @erokhins
 /libraries/tools/kotlin-build-tools-enum-compat/ @JetBrains/kotlin-build-tools
 /libraries/tools/gradle/ @JetBrains/kotlin-build-tools
 /libraries/tools/jdk-api-validator/ @JetBrains/kotlin-libraries
@@ -324,7 +326,7 @@
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/js-*/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kotlin-js-*/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-js-*/ @JetBrains/kotlin-build-tools
-/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen/ ilya.goncharov@jetbrains.com
+/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen/ @ilgonmic
 /libraries/tools/kotlin-gradle-plugin-test-utils-embeddable/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-tcs-android/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-statistics/ @JetBrains/kotlin-build-tools
@@ -348,9 +350,9 @@
 /libraries/tools/kotlin-sam-with-receiver/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-serialization/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-serialization-unshaded/ @JetBrains/kotlin-build-tools
-/libraries/tools/kotlin-stdlib-docs/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
-/libraries/tools/kotlin-stdlib-docs-legacy/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
-/libraries/tools/kotlin-stdlib-gen/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
+/libraries/tools/kotlin-stdlib-docs/ @qwwdfsad @ilya-g @fzhinkin @DmitryNekrasov
+/libraries/tools/kotlin-stdlib-docs-legacy/ @qwwdfsad @ilya-g @fzhinkin @DmitryNekrasov
+/libraries/tools/kotlin-stdlib-gen/ @qwwdfsad @ilya-g @fzhinkin @DmitryNekrasov
 /libraries/tools/kotlin-tooling-core/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-tooling-metadata/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlinp/ @JetBrains/kotlin-jvm @JetBrains/kotlin-common-backend
@@ -368,7 +370,7 @@
 /libraries/mvnw @JetBrains/kotlin-build-infrastructure
 /libraries/mvnw.cmd @JetBrains/kotlin-build-infrastructure
 /libraries/.mvn/ @JetBrains/kotlin-build-infrastructure
-/libraries/ReadMe.md vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
+/libraries/ReadMe.md @qwwdfsad @ilya-g @fzhinkin @DmitryNekrasov
 
 /license/ @JetBrains/kotlin-build-infrastructure
 
@@ -389,18 +391,18 @@
 /plugins/allopen/ @JetBrains/kotlin-frontend
 /plugins/assign-plugin/ @JetBrains/kotlin-frontend
 /plugins/atomicfu/ @JetBrains/kotlin-libraries
-/plugins/compose/ ashikov@google.com alanv@google.com bentrengrove@google.com anbailey@google.com chuckj@google.com derekx@google.com
+/plugins/compose/ @ShikaSD @bentrengrove @andrewbailey @chuckjaz @derekxu16
 /plugins/plugin-sandbox/ @JetBrains/kotlin-frontend
 /plugins/jvm-abi-gen/ @JetBrains/kotlin-jvm
 /plugins/kapt/ @JetBrains/kotlin-jvm
-/plugins/kotlinx-serialization/ sergey.shanshin@jetbrains.com leonid.startsev@jetbrains.com
-/plugins/kotlinx-serialization/kotlinx-serialization.k2/src/org/jetbrains/kotlinx/serialization/compiler/fir/checkers/KtDefaultErrorMessagesSerialization.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
+/plugins/kotlinx-serialization/ @shanshin @sandwwraith
+/plugins/kotlinx-serialization/kotlinx-serialization.k2/src/org/jetbrains/kotlinx/serialization/compiler/fir/checkers/KtDefaultErrorMessagesSerialization.kt @serras @bnorm @ligee @cypressious
 /plugins/js-plain-objects/ @JetBrains/kotlin-js
 /libraries/tools/js-plain-objects @JetBrains/kotlin-js
 /plugins/lombok/ @JetBrains/kotlin-frontend
 /plugins/noarg/ @JetBrains/kotlin-frontend
-/plugins/parcelize/ troels@google.com jpaupore@google.com jsjeon@google.com jaebaek@google.com laszio@google.com villumsen@google.com
-/plugins/power-assert/ brian.norman@jetbrains.com @JetBrains/kotlin-common-backend sergej.jaskiewicz@jetbrains.com
+/plugins/parcelize/ @troelsbjerre @blueshiftlabs @jsjeon @ting-yuan @jaschdoc
+/plugins/power-assert/ @bnorm @JetBrains/kotlin-common-backend @broadwaylamb
 /plugins/sam-with-receiver/ @JetBrains/kotlin-frontend
 /plugins/scripting/ @JetBrains/kotlin-frontend
 /plugins/plugins-interactions-testing/ @JetBrains/kotlin-frontend
