@@ -1,4 +1,4 @@
-// API_VERSION: LATEST
+// LANGUAGE: +WrapContinuationForTailCallFunctions
 // ISSUE: KT-83363
 
 // WITH_STDLIB
