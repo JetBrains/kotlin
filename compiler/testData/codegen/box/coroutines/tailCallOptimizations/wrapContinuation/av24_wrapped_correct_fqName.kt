@@ -3,7 +3,7 @@
 // FULL_JDK
 // WITH_STDLIB
 // WITH_COROUTINES
-// API_VERSION: LATEST
+// LANGUAGE: +WrapContinuationForTailCallFunctions
 
 // Using internal TailCallBaseContinuationImpl in stdlib replacement
 // DISABLE_IR_VISIBILITY_CHECKS: JVM_IR

@@ -4,7 +4,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_TAIL_CALL_OPTIMIZATION
-// API_VERSION: LATEST
+// LANGUAGE: +WrapContinuationForTailCallFunctions
 
 // Does not work with IR inliner: Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE:
 // IGNORE_INLINER: IR

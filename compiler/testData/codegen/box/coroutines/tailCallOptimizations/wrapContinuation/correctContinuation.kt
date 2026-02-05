@@ -4,7 +4,7 @@
 // WITH_COROUTINES
 // IGNORE_BACKEND: ANDROID
 // CHECK_TAIL_CALL_OPTIMIZATION
-// API_VERSION: LATEST
+// LANGUAGE: +WrapContinuationForTailCallFunctions
 
 // Using internal ModuleNameRetriever in stdlib replacement
 // DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
