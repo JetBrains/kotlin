@@ -37,7 +37,6 @@ internal fun TestServices.createUnmutingErrorIfNeeded(stringDirective: StringDir
  */
 internal fun TestServices.versionAndTargetAreIgnored(directive: StringDirective, defaultLanguageVersion: LanguageVersion): Boolean {
     val firstModule = moduleStructure.modules.first()
-    val platformName = firstModule.targetPlatform(this).componentPlatforms.single().platformName
     val versionString = defaultLanguageVersion.versionString
 
     for (maybeTuple in firstModule.directives[directive]) {
@@ -49,9 +48,15 @@ internal fun TestServices.versionAndTargetAreIgnored(directive: StringDirective,
             }) {
             when (parts.size) {
                 1 -> return true // no platform specification means any platform
-                2 -> // Check for a matching platform or ANY platform
-                    if (parts[0] == "ANY" || parts[0].split(TARGETS_SEPARATOR).map{ it.uppercase() }.contains(platformName.uppercase()))
+                2 -> { // Check for a matching platform or ANY platform
+                    if (parts[0] == "ANY") return true
+                    val targets = parts[0].split(TARGETS_SEPARATOR).map { it.uppercase() }
+                    val componentPlatformNames = firstModule.targetPlatform(this).componentPlatforms.map {
+                        it.platformName.uppercase()
+                    }
+                    if (componentPlatformNames.any(targets::contains))
                         return true
+                }
                 else -> error("Cannot parse `$maybeTuple`. See KDoc for `TestServices.versionAndTargetAreIgnored()`")
             }
         }
