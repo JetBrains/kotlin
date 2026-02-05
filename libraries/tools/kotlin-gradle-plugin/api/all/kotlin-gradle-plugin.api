@@ -5438,7 +5438,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/Binaryen
 	protected fun exec ()V
 	public final fun getBinaryenArgs ()Ljava/util/List;
 	public final fun getBinaryenArguments ()Lorg/gradle/api/provider/ListProperty;
-	public abstract fun getFs ()Lorg/gradle/api/file/FileSystemOperations;
 	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
 	public abstract fun getInputFiles ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;

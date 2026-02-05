@@ -12,6 +12,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -26,7 +27,10 @@ abstract class BinaryenExec
 @Inject
 constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     @get:Inject
-    abstract val fs: FileSystemOperations
+    internal abstract val workerExecutor: WorkerExecutor
+
+    @get:Inject
+    internal abstract val fs: FileSystemOperations
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -75,15 +79,16 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
             inputFiles.from(inputFileProperty)
         }
 
+        val workQueue = workerExecutor.noIsolation()
+
         inputFiles.forEach { inputFile ->
-            val newArgs = mutableListOf<String>()
-            newArgs.addAll(binaryenArguments.get())
-            newArgs.add(inputFile.absolutePath)
-            newArgs.add("-o")
-            newArgs.add(outputDirectory.file(inputFile.name).getFile().absolutePath)
-            workingDir = inputFile.parentFile
-            args = newArgs
-            super.exec()
+            workQueue.submit(BinaryenWorkAction::class.java) {
+                it.executable.set(this@BinaryenExec.executable)
+                it.workingDir.set(inputFile.parentFile)
+                it.args.set(binaryenArguments.get())
+                it.inputFile.set(inputFile)
+                it.outputFile.set(outputDirectory.file(inputFile.name).getFile())
+            }
         }
     }
 
