@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.native.resolve
 
+import org.jetbrains.kotlin.backend.konan.serialization.KonanLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
+import org.jetbrains.kotlin.config.klibAbiCompatibilityLevel
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanLibraries
@@ -67,6 +70,11 @@ class KonanLibrariesResolveSupport(
             ),
         ).also { resolvedLibraries ->
             validateNoLibrariesWerePassedViaCliByUniqueName(libraryPaths, resolvedLibraries.getFullList(), resolver.logger)
+            KonanLibrarySpecialCompatibilityChecker.check(
+                resolvedLibraries.getFullList(),
+                configuration.messageCollector,
+                configuration.klibAbiCompatibilityLevel
+            )
         }
     }
 }

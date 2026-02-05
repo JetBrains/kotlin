@@ -12,11 +12,7 @@ import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.MavenComparableVersion
-import org.jetbrains.kotlin.library.KlibComponent
-import org.jetbrains.kotlin.library.KlibComponentLayout
-import org.jetbrains.kotlin.library.KlibLayoutReader
-import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.*
 import java.io.ByteArrayInputStream
 import java.util.jar.Manifest
 import org.jetbrains.kotlin.konan.file.File as KlibFile
@@ -59,6 +55,11 @@ abstract class LibrarySpecialCompatibilityChecker {
         }
     }
 
+    protected open fun libraryVersion(library: KotlinLibrary): Version? =
+        library.getComponent(JarManifestComponent.Kind)?.jarManifest?.let { jarManifest ->
+            Version.parseVersion(jarManifest.mainAttributes.getValue(KLIB_JAR_LIBRARY_VERSION))
+        }
+
     fun check(
         libraries: Collection<KotlinLibrary>,
         messageCollector: MessageCollector,
@@ -75,9 +76,7 @@ abstract class LibrarySpecialCompatibilityChecker {
         for (library in libraries) {
             val checkedLibrary = library.toCheckedLibrary() ?: continue
 
-            val libraryVersion = library.getComponent(JarManifestComponent.Kind)?.jarManifest?.let { jarManifest ->
-                Version.parseVersion(jarManifest.mainAttributes.getValue(KLIB_JAR_LIBRARY_VERSION))
-            }
+            val libraryVersion = libraryVersion(library)
 
             val libraryAbiVersion = library.versions.abiVersion ?: continue
 
