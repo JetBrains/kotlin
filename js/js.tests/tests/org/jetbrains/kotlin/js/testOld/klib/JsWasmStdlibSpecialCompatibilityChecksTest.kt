@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.js.testOld.klib
 
-abstract class WebStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
+import org.jetbrains.kotlin.js.testOld.klib.LibrarySpecialCompatibilityChecksTest.Companion.SORTED_TEST_COMPILER_VERSION_GROUPS
+import org.jetbrains.kotlin.js.testOld.klib.LibrarySpecialCompatibilityChecksTest.Companion.SORTED_TEST_OLD_LIBRARY_VERSION_GROUPS
+
+interface StdlibSpecialCompatibilityChecksTest : DummyLibraryCompiler {
     fun testExportToOlderAbiVersionWithOlderLibrary() {
         for (compilerVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
             for (libraryVersion in SORTED_TEST_OLD_LIBRARY_VERSION_GROUPS) {
@@ -33,8 +36,7 @@ abstract class WebStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibi
     }
 }
 
-@Suppress("JUnitTestCaseWithNoTests")
-class JsStdlibSpecialCompatibilityChecksTest : WebStdlibSpecialCompatibilityChecksTest() {
+class JsStdlibSpecialCompatibilityChecksTest : StdlibSpecialCompatibilityChecksTest, WebLibrarySpecialCompatibilityChecksTest() {
     override val isWasm: Boolean = false
 
     override val originalLibraryPath: String
@@ -42,10 +44,17 @@ class JsStdlibSpecialCompatibilityChecksTest : WebStdlibSpecialCompatibilityChec
 
     override val libraryDisplayName: String
         get() = "standard"
+
+    override fun testExportToOlderAbiVersionWithCurrentLibrary() {
+        super.testExportToOlderAbiVersionWithCurrentLibrary()
+    }
+
+    override fun testExportToOlderAbiVersionWithOlderLibrary() {
+        super.testExportToOlderAbiVersionWithOlderLibrary()
+    }
 }
 
-@Suppress("JUnitTestCaseWithNoTests")
-class WasmStdlibSpecialCompatibilityChecksTest : WebStdlibSpecialCompatibilityChecksTest() {
+class WasmStdlibSpecialCompatibilityChecksTest : StdlibSpecialCompatibilityChecksTest, WebLibrarySpecialCompatibilityChecksTest() {
     override val isWasm: Boolean = true
 
     override val originalLibraryPath: String
@@ -53,4 +62,12 @@ class WasmStdlibSpecialCompatibilityChecksTest : WebStdlibSpecialCompatibilityCh
 
     override val libraryDisplayName: String
         get() = "standard"
+
+    override fun testExportToOlderAbiVersionWithCurrentLibrary() {
+        super.testExportToOlderAbiVersionWithCurrentLibrary()
+    }
+
+    override fun testExportToOlderAbiVersionWithOlderLibrary() {
+        super.testExportToOlderAbiVersionWithOlderLibrary()
+    }
 }
