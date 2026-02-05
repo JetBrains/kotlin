@@ -77,7 +77,7 @@ Key points (not exhaustive):
 | Standard library     |                        | libraries/stdlib/                                         | —                                      |
 | Test infrastructure  |                        | compiler/test-infrastructure/, compiler/tests-common-new/ | [testing.md](testing.md)               |
 
-> **Adding new area docs:** Create `AGENTS.md` with content and `CLAUDE.md` containing only `@AGENTS.md`
+> **Adding new area docs:** Create `AGENTS.md` with content and `CLAUDE.md` and `JUNIE.md` containing only `@AGENTS.md`
 
 ## JetBrains IDE MCP - MANDATORY for the project files and operations
 
