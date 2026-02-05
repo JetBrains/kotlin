@@ -25,14 +25,24 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.util.*
 import java.util.jar.Manifest
+import kotlin.test.fail
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
     abstract val isWasm: Boolean
+
+    private lateinit var testName: String
+
+    @BeforeEach
+    fun setUp(testInfo: TestInfo) {
+        testName = testInfo.testMethod.get().name
+    }
 
     override fun compileDummyLibrary(
         libraryVersion: TestVersion?,
@@ -132,7 +142,7 @@ abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatib
         val outputDir = createDir("build")
 
         val sourceFile = sourcesDir.resolve("file.kt").apply { writeText("fun foo() = 42\n") }
-        val moduleName = getTestName(true)
+        val moduleName = testName
 
         val messageCollector = MessageCollectorImpl()
 
