@@ -170,11 +170,17 @@ internal fun assertSwiftModuleSymbols(
 
     val outputDir = workingDir.resolve("symbolgraph-output")
 
-    // Try to find all symbol graph files (including extension files like Module@Extension.symbols.json)
+    // First verify the output directory was created
+    assert(outputDir.exists() && outputDir.isDirectory) {
+        "symbolgraph-output directory was not created at: ${outputDir.absolutePath}"
+    }
+
+    // Then check for symbol graph files (including extension files like Module@Extension.symbols.json)
     val allSymbolGraphFiles = outputDir.listFiles()?.filter { it.name.endsWith(".symbols.json") } ?: emptyList()
 
     assert(allSymbolGraphFiles.isNotEmpty()) {
-        "No symbol graph files found in: ${outputDir.absolutePath}. Search paths: $searchPaths"
+        "No symbol graph files found in: ${outputDir.absolutePath}. " +
+                "Directory exists but contains no .symbols.json files. Search paths: $searchPaths"
     }
 
     // Collect symbols from all symbol graph files
