@@ -183,6 +183,12 @@ fun foo() {
         val res = nullableStr ?: "default"
     }
 
+    barRegular {
+        flag = true
+        name += "a"
+        obj = "text"
+        nullableStr = null
+    }
 }
 
 fun doSomethingBig() {

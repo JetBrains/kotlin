@@ -13,11 +13,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
  *  [isUnstableInCurrentScope] only works for an access during the natural FIR tree traversal. This class will not work if one
  *  queries after the traversal is done.
  **/
-internal class FirLocalVariableAssignmentAnalyzer private constructor(
+class FirLocalVariableAssignmentAnalyzer private constructor(
     /**
      * Symbol of a topmost declaration containing a code block which is under analysis
      */
@@ -52,7 +51,7 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
     // from the result of `run` to the result of `genericFunction` so smart casts should be prohibited in `a.x`.
     //
     // This mirrors `ControlFlowGraphBuilder.postponedLambdaExits`.
-    private val postponedLambdas: Stack<MutableMap<Fork, Boolean /* data-flow only */>>
+    private val postponedLambdas: Stack<MutableMap<Fork, Boolean /* data-flow only */>>,
 ) {
     constructor() : this(
         rootSymbol = null,
@@ -118,6 +117,18 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
             // that is currently being analyzed, and assignments in it are, in fact, totally fine.
             lambdas.any { (lambda, dataFlowOnly) -> dataFlowOnly && declaration in lambda.assignedInside }
         }
+    }
+
+    fun isUnstableInCurrentScopeWithoutPreservingType(
+        declaration: FirDeclaration
+    ): Boolean {
+        if (assignedLocalVariablesByDeclaration == null) return false
+        if (declaration !is FirProperty || !declaration.isEffectivelyLocal || !declaration.isVar) return false
+        val hasAnyAssignmentAfterOrInOtherScopes = !scopes.top().second[declaration].isNullOrEmpty()
+        val hasAssignmentInPostponedLambda = postponedLambdas.all().any { lambdas ->
+            lambdas.any { (lambda, dataFlowOnly) -> dataFlowOnly && declaration in lambda.assignedInside }
+        }
+        return hasAnyAssignmentAfterOrInOtherScopes || hasAssignmentInPostponedLambda
     }
 
     // Variables are only stable for smart casting if there are no assignments that could make the smart
@@ -504,6 +515,7 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
                 visitLocalDeclaration(anonymousObject, data)
 
             private fun visitLocalDeclaration(declaration: FirDeclaration, data: MiniCfgData) {
+                println("visitLocalDeclaration: ${declaration.render()}")
                 val flow = data.flow
                 val assignedInside = visitElementWithLexicalScope(declaration, data)
                 // Now that the inner variables have been discarded, the rest can be propagated to prevent smartcasts

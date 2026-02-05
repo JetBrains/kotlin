@@ -16,17 +16,36 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.collectors.components.ControlFlowAnalysisDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirAugmentedAssignment
+import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
+import org.jetbrains.kotlin.fir.expressions.calleeReference
+import org.jetbrains.kotlin.fir.expressions.explicitReceiver
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.renderControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.refinedTypeForDataFlowOrSelf
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import kotlin.reflect.full.memberProperties
 
@@ -39,9 +58,11 @@ object FirCapturedVariableStabilityFunctionChecker : FirFunctionChecker(MppCheck
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
         // process functions, inside which can be FirAnonymousFunction
+        println("my tree : ${declaration.renderControlFlowGraph()}")
         if (declaration is FirAnonymousFunction) return
+        val analyzer = FirLocalVariableAssignmentAnalyzer()
         val visitor = FirFunctionDeepVisitorWithData()
-        declaration.accept(visitor, CapturedVariableCheckerData(context, reporter))
+        visitor.visitFunction(declaration, CapturedVariableCheckerData(context, reporter, analyzer = analyzer))
     }
 }
 
@@ -49,6 +70,7 @@ data class CapturedVariableCheckerData(
     val context: CheckerContext,
     val reporter: DiagnosticReporter,
     val propertiesStack: MutableList<Set<FirPropertySymbol>> = mutableListOf(),
+    val analyzer: FirLocalVariableAssignmentAnalyzer,
 )
 
 class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableCheckerData>() {
@@ -56,7 +78,18 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
         element.acceptChildren(this, data)
     }
 
+
+    override fun visitFunction(function: FirFunction, data: CapturedVariableCheckerData) {
+        data.analyzer.enterFunction(function)
+        super.visitFunction(function, data)
+        data.analyzer.exitFunction()
+    }
+
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CapturedVariableCheckerData) {
+        println("visitAnonymousFunction: ${anonymousFunction.render()}")
+
+        data.analyzer.enterFunction(anonymousFunction)
+
         val lambdaSymbol = anonymousFunction.symbol
         if (lambdaSymbol.inlineStatus == InlineStatus.Inline) return
         val invocationKind = anonymousFunction.invocationKind
@@ -71,10 +104,27 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
         data.propertiesStack.add(collector.properties)
         super.visitAnonymousFunction(anonymousFunction, data)
         data.propertiesStack.removeLast()
+
+        data.analyzer.exitFunction()
     }
 
+    // -------------------------
+    // Assignments: attach RHS types to assignments recorded by the analyzer’s mini-CFG
+    // -------------------------
+
+    @OptIn(SymbolInternals::class)
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: CapturedVariableCheckerData) {
-        variableAssignment.rValue.accept(this, data)
+        // variableAssignment.rValue.accept(this, data)
+
+        super.visitVariableAssignment(variableAssignment, data)
+
+        if (variableAssignment.explicitReceiver != null) return
+        val property = variableAssignment.calleeReference
+            ?.toResolvedPropertySymbol()
+            ?.fir
+            ?: return
+
+        data.analyzer.visitAssignment(property, variableAssignment.rValue.resolvedType)
     }
 
     override fun visitQualifiedAccessExpression(
@@ -86,6 +136,100 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
         checkCapturedVariable(variableSymbol, data, qualifiedAccessExpression.source)
     }
 
+    // -------------------------
+    // Top-level scopes (when traversal starts from non-function root)
+    // -------------------------
+
+    override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: CapturedVariableCheckerData) {
+        data.analyzer.enterAnonymousInitializer(anonymousInitializer)
+        try {
+            super.visitAnonymousInitializer(anonymousInitializer, data)
+        } finally {
+            data.analyzer.exitAnonymousInitializer(anonymousInitializer)
+        }
+    }
+
+    override fun visitCodeFragment(codeFragment: FirCodeFragment, data: CapturedVariableCheckerData) {
+        data.analyzer.enterCodeFragment(codeFragment)
+        try {
+            super.visitCodeFragment(codeFragment, data)
+        } finally {
+            data.analyzer.exitCodeFragment(codeFragment)
+        }
+    }
+
+    override fun visitReplSnippet(replSnippet: FirReplSnippet, data: CapturedVariableCheckerData) {
+        data.analyzer.enterReplSnippet(replSnippet)
+        try {
+            super.visitReplSnippet(replSnippet, data)
+        } finally {
+            data.analyzer.exitReplSnippet(replSnippet)
+        }
+    }
+
+    override fun visitClass(klass: FirClass, data: CapturedVariableCheckerData) {
+        data.analyzer.enterClass(klass)
+        try {
+            super.visitClass(klass, data)
+        } finally {
+            data.analyzer.exitClass()
+        }
+    }
+
+    // -------------------------
+    // Loops
+    // -------------------------
+
+    override fun visitWhileLoop(
+        whileLoop: FirWhileLoop,
+        data: CapturedVariableCheckerData,
+    ) {
+        data.analyzer.enterLoop(whileLoop)
+        try {
+            super.visitWhileLoop(whileLoop, data)
+        } finally {
+            data.analyzer.exitLoop()
+        }
+    }
+
+    override fun visitDoWhileLoop(
+        doWhileLoop: FirDoWhileLoop,
+        data: CapturedVariableCheckerData,
+    ) {
+        data.analyzer.enterLoop(doWhileLoop)
+        try {
+            super.visitDoWhileLoop(doWhileLoop, data)
+        } finally {
+            data.analyzer.exitLoop()
+        }
+    }
+
+    // -------------------------
+    // Function calls (postponed lambdas)
+    // -------------------------
+
+    override fun visitFunctionCall(
+        functionCall: FirFunctionCall,
+        data: CapturedVariableCheckerData,
+    ) {
+        val lambdaArgs = functionCall.argumentList.arguments
+            .asSequence()
+            .filterIsInstance<FirAnonymousFunctionExpression>()
+            .map { it.anonymousFunction }
+            .toList()
+
+        data.analyzer.enterFunctionCall(lambdaArgs)
+
+        var completed = false
+        try {
+            super.visitFunctionCall(functionCall, data)
+            completed = true
+        } finally {
+            data.analyzer.exitFunctionCall(callCompleted = completed)
+        }
+    }
+
+    @OptIn(SymbolInternals::class)
     private fun checkCapturedVariable(variableSymbol: FirVariableSymbol<*>, data: CapturedVariableCheckerData, source: KtSourceElement?) {
         if (data.propertiesStack.isEmpty()) return
         if (variableSymbol.isVal) return
@@ -93,9 +237,12 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
         if (!variableSymbol.isLocal) return
         if (variableSymbol in data.propertiesStack.last()) return
         val report = IEReporter(source, data.context, data.reporter, FirErrors.CV_DIAGNOSTIC)
+        val declaration = variableSymbol.fir as? FirDeclaration ?: return
+        val isUnstable = data.analyzer.isUnstableInCurrentScopeWithoutPreservingType(declaration)
+        if (!isUnstable) return
         report(
             IEData(
-                info = "Variable is captured from outer scope",
+                info = "Variable is captured from outer scope and is unstable in current scope",
                 variableName = variableSymbol.name.toString(),
             )
         )
