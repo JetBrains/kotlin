@@ -44,8 +44,6 @@ sourceSets {
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)) {
-        workingDir = rootDir
-
         extensions.configure<TestInputsCheckExtension> {
             allowFlightRecorder = true
         }

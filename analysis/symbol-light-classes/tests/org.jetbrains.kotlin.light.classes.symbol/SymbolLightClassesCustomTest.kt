@@ -23,9 +23,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.junit.jupiter.api.Test
 
-class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(
-    testDirPathString = "analysis/symbol-light-classes/testData/custom",
-) {
+class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPathString = "testData/custom") {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
     @Test

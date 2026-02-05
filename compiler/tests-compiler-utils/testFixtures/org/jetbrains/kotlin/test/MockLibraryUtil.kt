@@ -53,7 +53,7 @@ object MockLibraryUtil : AbstractMockLibraryUtil() {
 
 object NoPreloadingMockLibraryUtil : AbstractMockLibraryUtil() {
     override fun createCompilerClassLoader(): ClassLoader {
-        val compilerJarFile = PathUtil.kotlinPathsForDistDirectoryForTests.compilerPath
+        val compilerJarFile = KotlinPathsFromHomeDir(ForTestCompileRuntime.distKotlincForTests()).compilerPath
         val compilerJarFolder = compilerJarFile.parentFile
 
         val additionalCompilerClasspath = ZipFile(compilerJarFile).use { zipFile ->
