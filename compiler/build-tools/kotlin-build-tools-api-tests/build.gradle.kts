@@ -23,6 +23,15 @@ val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplRe
     extendsFrom(buildToolsApiImpl.get())
 }
 
+val jsStdlibImpl = configurations.dependencyScope("jsStdlibImpl")
+val jsStdlibImplResolvable = configurations.resolvable("jsStdlibImplResolvable") {
+    extendsFrom(jsStdlibImpl.get())
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
+        attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "js")
+    }
+}
+
 val scriptingCompilerPlugin = configurations.dependencyScope("scriptingCompilerPlugin")
 val scriptingCompilerPluginResolvable = configurations.resolvable("scriptingCompilerPluginResolvable") {
     extendsFrom(scriptingCompilerPlugin.get())
@@ -45,6 +54,7 @@ dependencies {
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+    jsStdlibImpl(project(":kotlin-stdlib"))
 }
 
 kotlin {
@@ -69,6 +79,7 @@ class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolea
 }
 
 val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
+val JS_STDLIB_CLASSSPATH_PROPERTY = "kotlin.build-tools-api.test.jsStdlibClasspath"
 
 fun Test.ensureExecutedAgainstExpectedBuildToolsImplVersion(version: BuildToolsVersion) {
     if (version.isCurrent) return
@@ -125,6 +136,7 @@ fun JvmTestSuite.addSnapshotBuildToolsImpl() {
     targets.all {
         testTask.configure {
             addClasspathProperty(buildToolsApiImplResolvable.get(), COMPILER_CLASSPATH_PROPERTY)
+            addClasspathProperty(jsStdlibImplResolvable.get(), JS_STDLIB_CLASSSPATH_PROPERTY)
         }
     }
 }
@@ -151,6 +163,7 @@ fun JvmTestSuite.addSpecificBuildToolsImpl(version: String) {
     targets.all {
         testTask.configure {
             addClasspathProperty(resolvableConfiguration.get(), COMPILER_CLASSPATH_PROPERTY)
+            addClasspathProperty(jsStdlibImplResolvable.get(), JS_STDLIB_CLASSSPATH_PROPERTY)
         }
     }
 }
