@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.config.keys.generator
 
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
@@ -33,6 +34,7 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
     )
 
     val DIAGNOSTICS_COLLECTOR by key<BaseDiagnosticsCollector>(lazyDefaultValue = """error("diagnostic collector is not initialized")""")
+    val CLI_DIAGNOSTICS_REPORTER by key<CliDiagnosticReporter>(lazyDefaultValue = """error("CLI diagnostic reporter is not initialized")""")
 
     val RENDER_DIAGNOSTIC_INTERNAL_NAME by key<Boolean>()
 

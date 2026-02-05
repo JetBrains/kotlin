@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli
 
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -30,6 +31,7 @@ fun CompilerConfiguration.Companion.create(
         registerExtensionStorage()
         initializeDiagnosticFactoriesStorageForCli()
         this.diagnosticsCollector = diagnosticsCollector ?: DiagnosticsCollectorImpl()
+        this.cliDiagnosticsReporter = CliDiagnosticReporter(this)
         messageCollector?.let { this.messageCollector = it }
     }
 }

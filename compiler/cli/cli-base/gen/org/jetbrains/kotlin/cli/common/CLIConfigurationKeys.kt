@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.cli.common
  */
 
 import java.io.File
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
@@ -42,6 +43,9 @@ object CLIConfigurationKeys {
 
     @JvmField
     val DIAGNOSTICS_COLLECTOR = CompilerConfigurationKey.create<BaseDiagnosticsCollector>("DIAGNOSTICS_COLLECTOR")
+
+    @JvmField
+    val CLI_DIAGNOSTICS_REPORTER = CompilerConfigurationKey.create<CliDiagnosticReporter>("CLI_DIAGNOSTICS_REPORTER")
 
     @JvmField
     val RENDER_DIAGNOSTIC_INTERNAL_NAME = CompilerConfigurationKey.create<Boolean>("RENDER_DIAGNOSTIC_INTERNAL_NAME")
@@ -106,6 +110,10 @@ var CompilerConfiguration.originalMessageCollectorKey: MessageCollector?
 var CompilerConfiguration.diagnosticsCollector: BaseDiagnosticsCollector
     get() = getOrDefault(CLIConfigurationKeys.DIAGNOSTICS_COLLECTOR) { error("diagnostic collector is not initialized") }
     set(value) { put(CLIConfigurationKeys.DIAGNOSTICS_COLLECTOR, value) }
+
+var CompilerConfiguration.cliDiagnosticsReporter: CliDiagnosticReporter
+    get() = getOrDefault(CLIConfigurationKeys.CLI_DIAGNOSTICS_REPORTER) { error("CLI diagnostic reporter is not initialized") }
+    set(value) { put(CLIConfigurationKeys.CLI_DIAGNOSTICS_REPORTER, value) }
 
 var CompilerConfiguration.renderDiagnosticInternalName: Boolean
     get() = getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
