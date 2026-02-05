@@ -1,0 +1,22 @@
+FILE: cornerCaseInFloat.kt
+    public final const [EvaluatedValue=Float(0.3)] val a: R|kotlin/Float| = Float(0.1).R|kotlin/Float.plus|(Float(0.2))
+        public get(): R|kotlin/Float|
+    public final val number: R|kotlin/Float| = Float(0.1)
+        public get(): R|kotlin/Float|
+    public final fun box(): R|kotlin/String| {
+        lval b: R|kotlin/Float| = Float(0.1).R|kotlin/Float.plus|(Float(0.2))
+        lval c: R|kotlin/Float| = R|/number|.R|kotlin/Float.plus|(Float(0.2))
+        when () {
+            ==(R|/a|.R|kotlin/Float.toString|(), R|<local>/b|.R|kotlin/Float.toString|()) ->  {
+                ^box String(Fail 1: unexpected optimization)
+            }
+        }
+
+        when () {
+            ==(R|/a|.R|kotlin/Float.toString|(), R|<local>/c|.R|kotlin/Float.toString|()) ->  {
+                ^box String(Fail 2: unexpected equality of compile time and runtime results)
+            }
+        }
+
+        ^box String(OK)
+    }

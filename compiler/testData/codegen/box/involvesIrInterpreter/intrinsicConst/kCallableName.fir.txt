@@ -1,0 +1,98 @@
+FILE: kCallableName.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final class A : R|kotlin/Any| {
+        public [ContainingClassKey=A] constructor([CorrespondingProperty=/A.OK] OK: R|kotlin/Int|, [CorrespondingProperty=/A.somePropertyWithLongName] somePropertyWithLongName: R|kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val OK: R|kotlin/Int| = R|<local>/OK|
+            public [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public final [IsFromPrimaryConstructor=true] val somePropertyWithLongName: R|kotlin/String| = R|<local>/somePropertyWithLongName|
+            public [ContainingClassKey=A] get(): R|kotlin/String|
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+        public final fun A(): R|kotlin/Unit| {
+        }
+
+        public final suspend fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final val topLevelProp: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
+    public final fun R|kotlin/Int|.baz(): R|kotlin/Unit| {
+    }
+    public final const [EvaluatedValue=String(OK)] val propertyName1: R|kotlin/String| = Q|A|::R|/A.OK|.R|SubstitutionOverride<kotlin/reflect/KProperty1.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(somePropertyWithLongName)] val propertyName2: R|kotlin/String| = Q|A|::R|/A.somePropertyWithLongName|.R|SubstitutionOverride<kotlin/reflect/KProperty1.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(foo)] val methodName1: R|kotlin/String| = Q|A|::R|/A.foo|.R|SubstitutionOverride<kotlin/reflect/KFunction1.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(A)] val methodName2: R|kotlin/String| = Q|A|::R|/A.A|.R|SubstitutionOverride<kotlin/reflect/KFunction1.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(baz)] val extensionFunName: R|kotlin/String| = Int(42)::R|/baz|.R|SubstitutionOverride<kotlin/reflect/KFunction0.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(bar)] val suspendMethodName: R|kotlin/String| = Q|A|::R|/A.bar|.R|SubstitutionOverride<kotlin/reflect/KSuspendFunction1.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(<init>)] val className: R|kotlin/String| = ::R|/A.A|.R|SubstitutionOverride<kotlin/reflect/KFunction2.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(topLevelProp)] val topLevelPropName: R|kotlin/String| = ::R|/topLevelProp|.R|SubstitutionOverride<kotlin/reflect/KProperty0.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(OK!)] val nameInComplexExpression: R|kotlin/String| = Q|A|::R|/A.OK|.R|SubstitutionOverride<kotlin/reflect/KProperty1.name: R|kotlin/String|>|.R|kotlin/String.plus|(String(!))
+        public get(): R|kotlin/String|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/propertyName1|.R|/id|<R|kotlin/String|>(), String(OK)) ->  {
+                ^box String(Fail propertyName1)
+            }
+        }
+
+        when () {
+            !=(R|/propertyName2|.R|/id|<R|kotlin/String|>(), String(somePropertyWithLongName)) ->  {
+                ^box String(Fail propertyName2)
+            }
+        }
+
+        when () {
+            !=(R|/methodName1|.R|/id|<R|kotlin/String|>(), String(foo)) ->  {
+                ^box String(Fail methodName1)
+            }
+        }
+
+        when () {
+            !=(R|/methodName2|.R|/id|<R|kotlin/String|>(), String(A)) ->  {
+                ^box String(Fail methodName2)
+            }
+        }
+
+        when () {
+            !=(R|/suspendMethodName|.R|/id|<R|kotlin/String|>(), String(bar)) ->  {
+                ^box String(Fail suspendMethondName)
+            }
+        }
+
+        when () {
+            !=(R|/className|.R|/id|<R|kotlin/String|>(), String(<init>)) ->  {
+                ^box String(Fail className)
+            }
+        }
+
+        when () {
+            !=(R|/topLevelPropName|.R|/id|<R|kotlin/String|>(), String(topLevelProp)) ->  {
+                ^box String(Fail topLevelPropName)
+            }
+        }
+
+        when () {
+            !=(R|/nameInComplexExpression|.R|/id|<R|kotlin/String|>(), String(OK!)) ->  {
+                ^box String(Fail nameInComplexExpression)
+            }
+        }
+
+        ^box String(OK)
+    }

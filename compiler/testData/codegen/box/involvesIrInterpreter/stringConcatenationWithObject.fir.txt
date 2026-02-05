@@ -1,0 +1,36 @@
+FILE: stringConcatenationWithObject.kt
+    public final object K : R|Code| {
+        private [ContainingClassKey=K] constructor(): R|K| {
+            super<R|Code|>(String(K))
+        }
+
+    }
+    public open class Code : R|kotlin/Any| {
+        public [ContainingClassKey=Code] constructor([CorrespondingProperty=/Code.x] x: R|kotlin/String|): R|Code| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val x: R|kotlin/String| = R|<local>/x|
+            public [ContainingClassKey=Code] get(): R|kotlin/String|
+
+        public open override fun toString(): R|kotlin/String| {
+            ^toString <strcat>(this@R|/Code|.R|/Code.x|)
+        }
+
+    }
+    public final class O : R|kotlin/Any| {
+        public [ContainingClassKey=O] constructor(): R|O| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|Code| {
+            private [ContainingClassKey=Companion] constructor(): R|O.Companion| {
+                super<R|Code|>(String(O))
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box <strcat>(<strcat>(Q|O|), <strcat>(Q|K|))
+    }

@@ -1,0 +1,40 @@
+FILE: thisPlusString.kt
+    public final object Test : R|kotlin/Any| {
+        private [ContainingClassKey=Test] constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/String| {
+            ^foo String(foo ).R|kotlin/String.plus|(this@R|/Test|)
+        }
+
+        public final fun bar(): R|kotlin/String| {
+            ^bar <strcat>(String(bar ), this@R|/Test|)
+        }
+
+        public final fun baz(): R|kotlin/String| {
+            ^baz String(baz ).R|kotlin/String.plus|(this@R|/Test|.R|kotlin/Any.toString|())
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            Q|Test|.R|/Test.foo|().R|kotlin/text/startsWith|(String(foo )).R|kotlin/Boolean.not|() ->  {
+                ^box <strcat>(String(Fail ), Q|Test|.R|/Test.foo|())
+            }
+        }
+
+        when () {
+            Q|Test|.R|/Test.bar|().R|kotlin/text/startsWith|(String(bar )).R|kotlin/Boolean.not|() ->  {
+                ^box <strcat>(String(Fail ), Q|Test|.R|/Test.bar|())
+            }
+        }
+
+        when () {
+            Q|Test|.R|/Test.baz|().R|kotlin/text/startsWith|(String(baz )).R|kotlin/Boolean.not|() ->  {
+                ^box <strcat>(String(Fail ), Q|Test|.R|/Test.baz|())
+            }
+        }
+
+        ^box String(OK)
+    }

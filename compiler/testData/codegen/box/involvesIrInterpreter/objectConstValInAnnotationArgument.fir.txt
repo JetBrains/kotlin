@@ -1,0 +1,26 @@
+FILE: objectConstValInAnnotationArgument.kt
+    public final annotation class Key : R|kotlin/Annotation| {
+        public [ContainingClassKey=Key] constructor([CorrespondingProperty=/Key.value] value: R|kotlin/String|): R|Key| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val value: R|kotlin/String| = R|<local>/value|
+            public [ContainingClassKey=Key] get(): R|kotlin/String|
+
+    }
+    public final object Messanger : R|kotlin/Any| {
+        private [ContainingClassKey=Messanger] constructor(): R|Messanger| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final const [EvaluatedValue=String(OK)] val DEFAULT_TEXT: R|kotlin/String| = String(OK)
+            public [ContainingClassKey=Messanger] get(): R|kotlin/String|
+
+        public final fun message(@R|Key|(value = this@R|/Messanger|.R|/Messanger.DEFAULT_TEXT| [evaluated = String(OK)]) text: R|kotlin/String| = this@R|/Messanger|.R|/Messanger.DEFAULT_TEXT|): R|kotlin/String| {
+            ^message R|<local>/text|
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box Q|Messanger|.R|/Messanger.message|()
+    }

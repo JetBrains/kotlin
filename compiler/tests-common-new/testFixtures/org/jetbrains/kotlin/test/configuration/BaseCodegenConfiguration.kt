@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKE
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -272,6 +274,10 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
     }
 
     forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+        defaultDirectives {
+            +FIR_DUMP
+            +RENDER_FIR_DECLARATION_ATTRIBUTES
+        }
         configureFirHandlersStep {
             useHandlers(::FirInterpreterDumpHandler)
         }

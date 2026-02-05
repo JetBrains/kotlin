@@ -1,0 +1,30 @@
+FILE: enumRecursiveName.kt
+    public final enum class TestEnum : R|kotlin/Enum<TestEnum>| {
+        private [ContainingClassKey=TestEnum] constructor([CorrespondingProperty=/TestEnum.testNaming] testNaming: R|kotlin/String|): R|TestEnum| {
+            super<R|kotlin/Enum<TestEnum>|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val testNaming: R|kotlin/String| = R|<local>/testNaming|
+            public [ContainingClassKey=TestEnum] get(): R|kotlin/String|
+
+        public final static [ContainingClassKey=TestEnum] enum entry OK: R|TestEnum| = object : R|TestEnum| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|TestEnum|>(R|/TestEnum.OK|.R|SubstitutionOverride</TestEnum.name: R|kotlin/String|>|)
+            }
+
+        }
+
+        public final static [ContainingClassKey=TestEnum] fun values(): R|kotlin/Array<TestEnum>| {
+        }
+
+        public final static [ContainingClassKey=TestEnum] fun valueOf(value: R|kotlin/String|): R|TestEnum| {
+        }
+
+        public final static [ContainingClassKey=TestEnum] val entries: R|kotlin/enums/EnumEntries<TestEnum>|
+            public get(): R|kotlin/enums/EnumEntries<TestEnum>|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval name: R|kotlin/String| = Q|TestEnum|.R|/TestEnum.OK|.R|SubstitutionOverride</TestEnum.name: R|kotlin/String|>|
+        ^box R|<local>/name|
+    }

@@ -1,0 +1,31 @@
+FILE: stringConcatenation.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final const [EvaluatedValue=String(OK 3.5)] val simple: R|kotlin/String| = <strcat>(String(O), Char(K), String( ), Int(1).R|kotlin/Int.toLong|().R|kotlin/Long.plus|(Double(2.5)))
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(1 2 3 4 5 6)] val withInnerConcatenation: R|kotlin/String| = <strcat>(String(1 ), <strcat>(String(2 ), Int(3), String( ), Int(4), String( 5)), String( 6))
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(1 null)] val withNull: R|kotlin/String| = <strcat>(String(1 ), Null(null))
+        public get(): R|kotlin/String|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/simple|.R|/id|<R|kotlin/String|>(), String(OK 3.5)) ->  {
+                ^box String(Fail 1)
+            }
+        }
+
+        when () {
+            !=(R|/withInnerConcatenation|.R|/id|<R|kotlin/String|>(), String(1 2 3 4 5 6)) ->  {
+                ^box String(Fail 2)
+            }
+        }
+
+        when () {
+            !=(R|/withNull|.R|/id|<R|kotlin/String|>(), String(1 null)) ->  {
+                ^box String(Fail 3)
+            }
+        }
+
+        ^box String(OK)
+    }

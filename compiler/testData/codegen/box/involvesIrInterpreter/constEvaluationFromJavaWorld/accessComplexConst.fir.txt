@@ -1,0 +1,10 @@
+FILE: Main.kt
+    package one.two
+
+    public final const [EvaluatedValue=String(123)] val FOO: R|kotlin/String| = String(123).R|kotlin/text/trimIndent|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(123 JavaString KotlinString)] val BAZ: R|kotlin/String| = Q|Bar|.R|/Bar.BAR*s|.R|kotlin/String.plus|(String( KotlinString))
+        public get(): R|kotlin/String|
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

@@ -1,0 +1,18 @@
+FILE: useCorrectToString.kt
+    public final object Obj : R|kotlin/Any| {
+        private [ContainingClassKey=Obj] constructor(): R|Obj| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun toString(): R|kotlin/String| {
+            ^toString String(OK)
+        }
+
+        public final fun R|kotlin/Int|.toString(): R|kotlin/String| {
+            ^toString String(Not OK)
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box <strcat>(String(), <strcat>(Q|Obj|))
+    }
