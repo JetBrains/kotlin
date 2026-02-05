@@ -3,10 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.testOld.klib
+package org.jetbrains.kotlin.test.klib.compatibility
 
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,31 +14,11 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 import java.util.*
 
-enum class WarningStatus { NO_WARNINGS, OLD_LIBRARY_WARNING, TOO_NEW_LIBRARY_WARNING }
-
-class TestVersion(val basicVersion: KotlinVersion, val postfix: String) : Comparable<TestVersion> {
-    constructor(major: Int, minor: Int, patch: Int, postfix: String = "") : this(KotlinVersion(major, minor, patch), postfix)
-
-    override fun compareTo(other: TestVersion) = basicVersion.compareTo(other.basicVersion)
-    override fun equals(other: Any?) = (other as? TestVersion)?.basicVersion == basicVersion
-    override fun hashCode() = basicVersion.hashCode()
-    override fun toString() = basicVersion.toString() + postfix
-}
-
-interface DummyLibraryCompiler {
-    fun compileDummyLibrary(
-        libraryVersion: TestVersion?,
-        compilerVersion: TestVersion?,
-        expectedWarningStatus: WarningStatus,
-        exportKlibToOlderAbiVersion: Boolean = false,
-    )
-}
-
 @Execution(ExecutionMode.SAME_THREAD)
 abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
     /**
      * Since the ABI version is bumped after the language version, it may happen that after bumping the language version
-     * [KotlinAbiVersion.CURRENT] != [LanguageVersion.LATEST_STABLE]. This can cause issues in library compatibility tests: for example,
+     * [KotlinAbiVersion.Companion.CURRENT] != [LanguageVersion.LATEST_STABLE]. This can cause issues in library compatibility tests: for example,
      * when exporting a klib to the previous ABI version, we may use a 2.X compiler while the previous ABI version is 2.(X − 2).
      * Since this is only a temporary situation (the ABI version is usually bumped shortly after the language version),
      * we simply ignore these tests when this happens.
@@ -105,8 +83,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
         }
     }
 
-    private fun abiAndLanguageAreAligned(): Boolean =
-        LanguageVersion.LATEST_STABLE.major == KotlinAbiVersion.CURRENT.major && LanguageVersion.LATEST_STABLE.minor == KotlinAbiVersion.CURRENT.minor
+    protected abstract fun abiAndLanguageAreAligned(): Boolean
 
     private inline fun testCurrentAndNextBasicVersions(block: (currentVersion: TestVersion, nextVersion: TestVersion) -> Unit) {
         for (i in 0..SORTED_TEST_COMPILER_VERSION_GROUPS.size - 2) {
