@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) NSMutableArray<Int *> *a __attribute__((swift_name("a")));
+@property (class, readonly) NSMutableArray<Int *> *a;
 @end
 
 #pragma pop_macro("_Nullable_result")

@@ -14,39 +14,33 @@ class ObjCPropertyMangler {
     private val mangledProperties = hashSetOf<String>()
 
     fun mangle(member: ObjCExportStub, containingStub: ObjCExportStub): ObjCExportStub {
-        return if (member.isSwiftNameProperty()) {
-            val key = getSwiftNameAttribute(member as ObjCProperty)
-            if (mangledProperties.contains(key)) {
+        return if (member is ObjCProperty) {
+            val name = member.name
+            if (mangledProperties.contains(name)) {
                 val copy = if (containingStub.isExtensionFacade) {
-                    val attr = parseSwiftPropertyNameAttribute(getSwiftNameAttribute(member))
                     member.copy(
-                        name = member.name + "_",
+                        name = name + "_",
                         propertyAttributes = null,
-                        declarationAttributes = listOf(buildMangledSwiftNamePropertyAttribute(attr.mangleAttribute()))
+                        declarationAttributes = null
                     )
                 } else {
                     member.copy(
-                        name = member.name,
-                        propertyAttributes = "getter=${member.name}_",
+                        name = name,
+                        propertyAttributes = "getter=${name}_",
                         declarationAttributes = null
                     )
                 }
-                mangledProperties.add(getSwiftNameAttribute(copy))
                 copy
             } else {
-                mangledProperties.add(key)
+                mangledProperties.add(name)
                 member
             }
-        } else if (member.isSwiftNameMethod()) {
-            mangledProperties.add(getSwiftNameAttribute(member as ObjCMethod).replace("()", ""))
+        } else if (member is ObjCMethod && member.selectors.size == 1 && member.parameters.isEmpty()) {
+            mangledProperties.add(member.selectors[0])
             member
         } else {
             // Leave it as it is since it is neither property, nor method
             member
         }
     }
-}
-
-private fun buildMangledSwiftNamePropertyAttribute(attribute: ObjCMemberDetails): String {
-    return "swift_name(\"${attribute.name + attribute.postfix}\")"
 }

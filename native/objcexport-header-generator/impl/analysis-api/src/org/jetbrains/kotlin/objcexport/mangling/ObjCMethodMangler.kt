@@ -18,37 +18,35 @@ import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
  */
 internal class ObjCMethodMangler {
 
-    private val mangledMethods = mutableMapOf<String, ObjCMemberDetails>()
+    private val mangledMethods = mutableSetOf<String>()
 
     fun mangle(member: ObjCExportStub, containingStub: ObjCExportStub): ObjCExportStub {
-        if (!member.isSwiftNameMethod()) return member
-        require(member is ObjCMethod)
-        if (!contains(member)) {
-            cacheMember(member)
-            return member
-        } else {
-            val key = getMemberKey(member)
-            val attribute = mangledMethods[key] ?: error("No cached item for $member")
-            val mangledAttribute = attribute.mangleAttribute()
-            val cloned = member.copy(
-                mangledSelectors = buildMangledSelectors(mangledAttribute),
-                mangledParameters = buildMangledParameters(mangledAttribute),
-                swiftNameAttribute = buildMangledSwiftNameMethodAttribute(mangledAttribute, containingStub),
-                containingStubName = containingStub.name
-            )
-            mangledMethods[key] = mangledAttribute
-            return cloned
+        if (member is ObjCMethod) {
+            var cloned: ObjCMethod = member
+            while (true) {
+                val key = getMemberKey(cloned)
+                if (!mangledMethods.contains(key)) {
+                    mangledMethods.add(key)
+                    return cloned
+                }
+                val newSelectors = cloned.selectors.toMutableList()
+                val lastIndex = newSelectors.lastIndex
+                var lastSelector = newSelectors[lastIndex]
+                if (lastSelector.endsWith(":")) {
+                    // - (void)foo:; -> -(void)foo_:;
+                    // - (void)foo:bar:; -> -(void)foo:bar_:;
+                    lastSelector = lastSelector.dropLast(1) + "_:"
+                } else {
+                    // - (void)foo; -> -(void)foo_;
+                    lastSelector += "_"
+                }
+                newSelectors[lastIndex] = lastSelector
+                cloned = member.copy(
+                    mangledSelectors = newSelectors,
+                    containingStubName = containingStub.name
+                )
+            }
         }
-    }
-
-    private fun contains(member: ObjCExportStub): Boolean {
-        if (!member.isSwiftNameMethod()) return false
-        return mangledMethods[getMemberKey(member as ObjCMethod)] != null
-    }
-
-    private fun cacheMember(member: ObjCMethod) {
-        val memberKey = getMemberKey(member)
-        val swiftNameAttr = getSwiftNameAttribute(member)
-        mangledMethods[memberKey] = parseSwiftMethodNameAttribute(swiftNameAttr, member.returnType == ObjCInstanceType, member.parameters)
+        return member
     }
 }

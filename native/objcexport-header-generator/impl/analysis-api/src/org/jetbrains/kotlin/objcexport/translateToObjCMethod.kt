@@ -55,8 +55,6 @@ internal fun ObjCExportContext.buildObjCMethod(
     val parameters = translateToObjCParameters(symbol, bridge)
     val selector = getSelector(symbol, bridge)
     val selectors = splitSelector(selector)
-    val swiftName = getSwiftName(symbol, bridge)
-
     val returnBridge = bridge.returnBridge
     val comment = analysisSession.translateToObjCComment(symbol, bridge, parameters)
     val throws = analysisSession.getDefinedThrows(symbol).map { it }.toList()
@@ -65,8 +63,16 @@ internal fun ObjCExportContext.buildObjCMethod(
 
     fun buildAttributes(mangleNameAttribute: (String) -> String = { it }): List<String> {
         val attributes = mutableListOf<String>()
-        val swiftNameAttribute = symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(mangleNameAttribute(swiftName))
-        attributes += swiftNameAttribute
+        val privateAttribute = symbol.getSwiftPrivateAttribute()
+        if (privateAttribute != null) {
+            attributes.add(privateAttribute)
+        } else {
+            val swiftName = getSwiftName(symbol, bridge)
+            val mangledName = mangleNameAttribute(swiftName)
+            if ("$selector()" != mangledName || selector[0].isUpperCase()) {
+                attributes.add(swiftNameAttribute(mangledName))
+            }
+        }
 
         if (returnBridge is MethodBridge.ReturnValue.WithError.ZeroForError && returnBridge.successMayBeZero) {
             // Method may return zero on success, but

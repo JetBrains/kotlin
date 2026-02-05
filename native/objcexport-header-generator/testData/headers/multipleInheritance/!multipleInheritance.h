@@ -31,25 +31,25 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * inheritance chain: A > B > C
  */
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 
 /**
  * inheritance chain: A > B > C
  */
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (T _Nullable)foo __attribute__((swift_name("foo()")));
+- (T _Nullable)foo;
 @end
 
 @interface B<T> : A<Int *>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (Int *)foo __attribute__((swift_name("foo()")));
+- (Int *)foo;
 @end
 
 @interface C : B<Int *>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (Int *)foo __attribute__((swift_name("foo()")));
+- (Int *)foo;
 @end
 
 
@@ -61,20 +61,20 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol RootA
 @required
-- (id _Nullable)fooA __attribute__((swift_name("fooA()")));
+- (id _Nullable)fooA;
 @end
 
 @protocol RootB
 @required
-- (id _Nullable)fooB __attribute__((swift_name("fooB()")));
+- (id _Nullable)fooB;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface Tree : Base <RootA, RootB>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (Int *)fooA __attribute__((swift_name("fooA()")));
-- (NSString *)fooB __attribute__((swift_name("fooB()")));
+- (Int *)fooA;
+- (NSString *)fooB;
 @end
 
 #pragma pop_macro("_Nullable_result")

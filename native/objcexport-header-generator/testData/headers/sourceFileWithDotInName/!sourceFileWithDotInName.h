@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo_iosKt : Base
-+ (void)foo __attribute__((swift_name("foo()")));
++ (void)foo;
 @end
 
 #pragma pop_macro("_Nullable_result")

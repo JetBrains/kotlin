@@ -30,9 +30,9 @@ interface Foo {
 ```
 ```c
 @protocol
-    (void) bar
-    @property (readonly, getter=bar_) bar
-    @property (readonly) uniqProp
+    - (void)bar;
+    @property(readonly, getter=bar_) int bar;
+    @property(readonly) int uniqProp;
 @end
 ```
 ## Methods
@@ -47,9 +47,9 @@ class Foo {
 ```
 ```c
 @interface Foo
-    (void) barValue:(Int) value __attribute__((swift_name("bar(value:)")));
-    (void) barValue_:(String) value __attribute__((swift_name("bar(value_:)")));
-    (void) barValue__:(Boolean) value __attribute__((swift_name("bar(value__:)")));
+    (void)barValue:(int)value;
+    (void)barValue_:(NSString *)value;
+    (void)barValue__:(BOOL)value;
 @end
 ```
 ### More than 1 parameter: add `_` to the last parameter
@@ -62,9 +62,9 @@ class Foo {
 ```
 ```c
 @interface Foo
-    (void) barValue:(Int) value1 (String) value2 (Boolean) value3 __attribute__((swift_name("bar(value1:value2:value3:)")));
-    (void) barValue:(Boolean) value1 (Int) value2 (String) value3_ __attribute__((swift_name("bar(value1:value2:value3_:)")));
-    (void) barValue:(String) value1 (Boolean) value2 (Int) value3__ __attribute__((swift_name("bar(value1:value2:value3__:)")));
+    (void)barValue:(int)value1 value2:(NSString *)value2 value3:(BOOL)value3;
+    (void)barValue:(BOOL)value1 value2:(int)value2 value3_:(NSString *)value3;
+    (void)barValue:(NSString *)value1 value2:(BOOL)value2 value3__:(int)value3;
 @end
 ```
 
@@ -107,10 +107,10 @@ fun Bar.funcName() = Unit
 
 ```c
 @interface Foo
-- funcName __attribute__((swift_name("funcName()")));
+- (void)funcName;
 @end
 @interface Bar
-- funcName_ __attribute__((swift_name("funcName_()")));
+- (void)funcName_;
 @end
 ```
 
@@ -126,9 +126,9 @@ val Bar.prop: Int = 42
 
 ```c
 @interface Foo
-@property prop int __attribute__((swift_name("prop")));
+@property int prop ;
 @end
 @interface Bar
-@property prop_ int __attribute__((swift_name("prop_")));
+@property int prop_;
 @end
 ```

@@ -21,21 +21,21 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @interface A : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)a0 __attribute__((swift_name("a0()")));
+- (void)a0;
 - (void)a1I:(int32_t)i __attribute__((swift_name("a1(i:)")));
 - (void)a2B:(BOOL)b a:(id)a __attribute__((swift_name("a2(b:a:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface B : A
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)a0 __attribute__((swift_name("a0()")));
+- (void)a0;
 - (void)a1I:(int32_t)i __attribute__((swift_name("a1(i:)")));
 - (void)a2B:(BOOL)b a:(id)a __attribute__((swift_name("a2(b:a:)")));
-- (void)b0 __attribute__((swift_name("b0()")));
+- (void)b0;
 @end
 
 #pragma pop_macro("_Nullable_result")

@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) int32_t topLevelVal __attribute__((swift_name("topLevelVal")));
-@property (class) int32_t topLevelVar __attribute__((swift_name("topLevelVar")));
+@property (class, readonly) int32_t topLevelVal;
+@property (class) int32_t topLevelVar;
 @end
 
 #pragma pop_macro("_Nullable_result")

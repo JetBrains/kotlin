@@ -25,7 +25,7 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlin.SinceKotlin(version="1.4")
 */
-+ (void)foo __attribute__((swift_name("foo()")));
++ (void)foo;
 @end
 
 #pragma pop_macro("_Nullable_result")

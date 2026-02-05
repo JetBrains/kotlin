@@ -22,22 +22,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Clazz : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)memberFun __attribute__((swift_name("memberFun()")));
+- (void)memberFun;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) int32_t topLevelPropA __attribute__((swift_name("topLevelPropA")));
-@property (class, readonly) int32_t topLevelPropB __attribute__((swift_name("topLevelPropB")));
+@property (class, readonly) int32_t topLevelPropA;
+@property (class, readonly) int32_t topLevelPropB;
 @end
 
 @interface Clazz (Extensions)
-@property (readonly) int32_t extensionValA __attribute__((swift_name("extensionValA")));
-@property (readonly) int32_t extensionValB __attribute__((swift_name("extensionValB")));
-@property int32_t extensionVarA __attribute__((swift_name("extensionVarA")));
-@property int32_t extensionVarB __attribute__((swift_name("extensionVarB")));
+@property (readonly) int32_t extensionValA;
+@property (readonly) int32_t extensionValB;
+@property int32_t extensionVarA;
+@property int32_t extensionVarB;
 @end
 
 #pragma pop_macro("_Nullable_result")

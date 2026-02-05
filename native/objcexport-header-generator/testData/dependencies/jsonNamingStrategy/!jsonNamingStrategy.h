@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) id<Kotlinx_serialization_jsonJsonNamingStrategy> _Nullable strategy __attribute__((swift_name("strategy")));
+@property (class, readonly) id<Kotlinx_serialization_jsonJsonNamingStrategy> _Nullable strategy;
 @end
 
 
@@ -74,32 +74,32 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) NSArray<id<KotlinAnnotation>> *annotations __attribute__((swift_name("annotations")));
+@property (readonly) NSArray<id<KotlinAnnotation>> *annotations;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) int32_t elementsCount __attribute__((swift_name("elementsCount")));
-@property (readonly) BOOL isInline __attribute__((swift_name("isInline")));
+@property (readonly) int32_t elementsCount;
+@property (readonly) BOOL isInline;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) BOOL isNullable __attribute__((swift_name("isNullable")));
+@property (readonly) BOOL isNullable;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) Kotlinx_serialization_coreSerialKind *kind __attribute__((swift_name("kind")));
+@property (readonly) Kotlinx_serialization_coreSerialKind *kind;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) NSString *serialName __attribute__((swift_name("serialName")));
+@property (readonly) NSString *serialName;
 @end
 
 @protocol KotlinAnnotation
@@ -112,8 +112,8 @@ __attribute__((objc_subclassing_restricted))
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
 @interface Kotlinx_serialization_coreSerialKind : Base
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
+- (NSUInteger)hash;
+- (NSString *)description;
 @end
 
 #pragma pop_macro("_Nullable_result")

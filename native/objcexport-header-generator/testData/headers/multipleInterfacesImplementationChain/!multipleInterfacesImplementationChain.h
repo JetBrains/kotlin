@@ -22,16 +22,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol A
 @required
-- (id)funA __attribute__((swift_name("funA()")));
-- (id)funAForOverride __attribute__((swift_name("funAForOverride()")));
-@property (readonly) int32_t propertyA __attribute__((swift_name("propertyA")));
-@property (readonly) int32_t propertyAForOverride __attribute__((swift_name("propertyAForOverride")));
+- (id)funA;
+- (id)funAForOverride;
+@property (readonly) int32_t propertyA;
+@property (readonly) int32_t propertyAForOverride;
 @end
 
 @protocol B <A>
 @required
-- (void)funB __attribute__((swift_name("funB()")));
-@property (readonly) BOOL propertyB __attribute__((swift_name("propertyB")));
+- (void)funB;
+@property (readonly) BOOL propertyB;
 @end
 
 @protocol C <B>

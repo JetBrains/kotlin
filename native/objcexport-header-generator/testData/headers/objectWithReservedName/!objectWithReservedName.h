@@ -25,7 +25,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)getAlloc __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) alloc *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) alloc *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -33,7 +33,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)autorelease_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) autorelease *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) autorelease *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -41,7 +41,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)class_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) class *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) class *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -49,7 +49,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)classFallbacksForKeyedArchiver_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) classFallbacksForKeyedArchiver *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) classFallbacksForKeyedArchiver *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -57,7 +57,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)classForKeyedUnarchiver_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) classForKeyedUnarchiver *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) classForKeyedUnarchiver *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -65,7 +65,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)debugDescription_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) debugDescription *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) debugDescription *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -73,7 +73,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)description_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) description *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) description *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -81,7 +81,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)hash_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) hash *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) hash *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -89,7 +89,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)initialize_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) initialize *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) initialize *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -97,7 +97,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)load_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) load *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) load *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -105,7 +105,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)getNew __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) new *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) new *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -113,7 +113,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)release_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) release *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) release *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -121,7 +121,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)retain_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) retain *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) retain *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -129,7 +129,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)superclass_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) superclass *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) superclass *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -137,7 +137,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)useStoredAccessor_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) useStoredAccessor *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) useStoredAccessor *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -145,7 +145,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)version_ __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) version *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) version *shared;
 @end
 
 #pragma pop_macro("_Nullable_result")

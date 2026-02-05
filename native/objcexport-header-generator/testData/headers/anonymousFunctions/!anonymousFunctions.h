@@ -22,9 +22,9 @@ __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
 + (void)funParamParam:(void (^)(void))param __attribute__((swift_name("funParam(param:)")));
 + (void)funParamDefaultParam:(void (^)(void))param __attribute__((swift_name("funParamDefault(param:)")));
-+ (void (^)(void))funReturnsFun __attribute__((swift_name("funReturnsFun()")));
-+ (void (^ _Nullable)(void))funReturnsNullableFun __attribute__((swift_name("funReturnsNullableFun()")));
-@property (class, readonly) void (^funProperty)(void) __attribute__((swift_name("funProperty")));
++ (void (^)(void))funReturnsFun;
++ (void (^ _Nullable)(void))funReturnsNullableFun;
+@property (class, readonly) void (^funProperty)(void);
 @end
 
 #pragma pop_macro("_Nullable_result")

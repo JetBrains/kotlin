@@ -29,34 +29,34 @@ NS_ASSUME_NONNULL_BEGIN
  */
 __attribute__((objc_subclassing_restricted))
 @interface KDocExport : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 
 /** Non-primary ctor KDoc:*/
 - (instancetype)initWithName:(NSString *)name __attribute__((swift_name("init(name:)"))) __attribute__((objc_designated_initializer));
 
 /** @property xyzzy KDoc for foo?*/
-@property (readonly) NSString *foo __attribute__((swift_name("foo")));
+@property (readonly) NSString *foo;
 
 /**
  * @param xyzzy is documented.
  *
  * This is multi-line KDoc. See a blank line above.
  */
-@property (readonly) NSString *xyzzy __attribute__((swift_name("xyzzy")));
+@property (readonly) NSString *xyzzy;
 
 /** @property foo KDoc for yxxyz?*/
-@property int32_t yxxyz __attribute__((swift_name("yxxyz")));
+@property int32_t yxxyz;
 @end
 
 @interface SomeClassWithProperty : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 
 /**
  * Kdoc for a property
  */
-@property (readonly) SomeClassWithProperty *heavyFormattedKDocFoo __attribute__((swift_name("heavyFormattedKDocFoo")));
+@property (readonly) SomeClassWithProperty *heavyFormattedKDocFoo;
 @end
 
 __attribute__((objc_subclassing_restricted))

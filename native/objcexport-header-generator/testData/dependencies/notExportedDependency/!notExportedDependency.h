@@ -140,24 +140,24 @@ __attribute__((swift_name("KotlinBoolean")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("FooKt")))
 @interface MyAppFooKt : MyAppBase
-+ (MyAppTLAMyLibraryA *)foo __attribute__((swift_name("foo()")));
-+ (id<MyAppKotlinIterator>)withIterator __attribute__((swift_name("withIterator()")));
++ (MyAppTLAMyLibraryA *)foo;
++ (id<MyAppKotlinIterator>)withIterator;
 @end
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TLAMyLibraryA")))
 @interface MyAppTLAMyLibraryA : MyAppBase
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)returnInt __attribute__((swift_name("returnInt()")));
-- (MyAppTLAMyLibraryA *)returnMe __attribute__((swift_name("returnMe()")));
+- (int32_t)returnInt;
+- (MyAppTLAMyLibraryA *)returnMe;
 @end
 
 __attribute__((swift_name("KotlinIterator")))
 @protocol MyAppKotlinIterator
 @required
-- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
-- (id _Nullable)next __attribute__((swift_name("next()")));
+- (BOOL)hasNext;
+- (id _Nullable)next;
 @end
 
 @interface MyAppBase (MyAppBaseCopying) <NSCopying>

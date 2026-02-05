@@ -72,16 +72,26 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
     fun `test - simple function`() {
         val module = createModuleDescriptor("fun foo() = 42")
         val foo = module.getPackage(FqName.ROOT).memberScope.findSingleFunction(Name.identifier("foo"))
-        assertEquals("foo()", createObjCExportNamer().getSwiftName(foo))
-        assertEquals("foo", createObjCExportNamer().getSelector(foo))
+        val functionName = createObjCExportNamer().getFunctionName(foo)
+        assertEquals("foo()", functionName.swiftName)
+        assertEquals("foo", functionName.objCName)
+    }
+
+    @Test
+    fun `test - function starting with uppercase needs a swift name attribute`() {
+        val module = createModuleDescriptor("fun Foo() = 42")
+        val foo = module.getPackage(FqName.ROOT).memberScope.findSingleFunction(Name.identifier("Foo"))
+        val functionName = createObjCExportNamer().getFunctionName(foo)
+        assert(functionName.needsSwiftNameAttribute())
     }
 
     @Test
     fun `test - function with parameters`() {
         val module = createModuleDescriptor("fun foo(a: Int, b: Int) = a + b")
         val foo = module.getPackage(FqName.ROOT).memberScope.findSingleFunction(Name.identifier("foo"))
-        assertEquals("foo(a:b:)", createObjCExportNamer().getSwiftName(foo))
-        assertEquals("fooA:b:", createObjCExportNamer().getSelector(foo))
+        val functionName = createObjCExportNamer().getFunctionName(foo)
+        assertEquals("foo(a:b:)", functionName.swiftName)
+        assertEquals("fooA:b:", functionName.objCName)
     }
 
     @Test
@@ -89,6 +99,14 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
         val module = createModuleDescriptor("val foo = 42")
         val foo = module.getPackage(FqName.ROOT).memberScope.findFirstVariable("foo") { true }!!
         assertEquals(PropertyName("foo", "foo"), createObjCExportNamer().getPropertyName(foo))
+    }
+
+    @Test
+    fun `test - property starting with uppercase needs a swift name attribute`() {
+        val module = createModuleDescriptor("val Foo = 42")
+        val foo = module.getPackage(FqName.ROOT).memberScope.findFirstVariable("Foo") { true }!!
+        val propertyName = createObjCExportNamer().getPropertyName(foo)
+        assert(propertyName.needsSwiftNameAttribute())
     }
 
     @Test
@@ -114,8 +132,9 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
 
         val fooClass = module.findClassAcrossModuleDependencies(ClassId.fromString("bar/Foo"))!!
         val someFunction = fooClass.unsubstitutedMemberScope.findSingleFunction(Name.identifier("someFunction"))
-        assertEquals("someFunction(a:b:)", createObjCExportNamer().getSwiftName(someFunction))
-        assertEquals("someFunctionA:b:", createObjCExportNamer().getSelector(someFunction))
+        val functionName = createObjCExportNamer().getFunctionName(someFunction)
+        assertEquals("someFunction(a:b:)", functionName.swiftName)
+        assertEquals("someFunctionA:b:", functionName.objCName)
     }
 
     @Test
@@ -197,9 +216,9 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
         val foo = module.findClassAcrossModuleDependencies(ClassId.fromString("Foo"))!!
         val fooA = foo.enumEntries.find { it.name == Name.identifier("A") }!!
         val namer = createObjCExportNamer()
-
+        val enumEntryName = namer.getEnumEntryName(fooA)
         assertEquals(ClassOrProtocolName("Foo", "Foo"), namer.getClassOrProtocolName(foo))
-        assertEquals("a", namer.getEnumEntrySelector(fooA))
-        assertEquals("a", namer.getEnumEntrySwiftName(fooA))
+        assertEquals("a", enumEntryName.objCName)
+        assertEquals("a", enumEntryName.swiftName)
     }
 }

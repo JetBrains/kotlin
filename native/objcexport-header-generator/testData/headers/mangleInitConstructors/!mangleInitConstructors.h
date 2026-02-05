@@ -23,7 +23,7 @@ __attribute__((objc_subclassing_restricted))
 - (instancetype)initWithParam:(BOOL)param __attribute__((swift_name("init(param:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithParam_:(int32_t)param __attribute__((swift_name("init(param_:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithParam__:(NSString *)param __attribute__((swift_name("init(param__:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) NSString *param __attribute__((swift_name("param")));
+@property (readonly) NSString *param;
 @end
 
 #pragma pop_macro("_Nullable_result")

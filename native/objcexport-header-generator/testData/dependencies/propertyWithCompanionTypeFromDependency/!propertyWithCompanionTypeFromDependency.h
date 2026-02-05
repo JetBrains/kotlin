@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) KotlinDoubleCompanion *foo __attribute__((swift_name("foo")));
+@property (class, readonly) KotlinDoubleCompanion *foo;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -31,7 +31,7 @@ __attribute__((swift_name("KotlinDouble.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinDoubleCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinDoubleCompanion *shared;
 @property (readonly) double MAX_VALUE __attribute__((swift_name("MAX_VALUE")));
 @property (readonly) double MIN_VALUE __attribute__((swift_name("MIN_VALUE")));
 @property (readonly) double NEGATIVE_INFINITY __attribute__((swift_name("NEGATIVE_INFINITY")));
