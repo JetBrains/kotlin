@@ -14,7 +14,6 @@ class GitHubOwnersTest : TestCase() {
     fun testGitHubCodeOwnersWasGeneratedCorrectly() {
         val scriptFilePath = System.getProperty("codeOwnersTest.scriptFile") ?: error("Missing property")
         val spaceCodeOwnersFilePath = System.getProperty("codeOwnersTest.spaceCodeOwnersFile") ?: error("Missing property")
-        val virtualTeamMappingFilePath = System.getProperty("codeOwnersTest.virtualTeamMappingFile") ?: error("Missing property")
         val githubCodeOwnersFilePath = System.getProperty("codeOwnersTest.githubCodeOwnersFile") ?: error("Missing property")
 
         val scriptFile = File(scriptFilePath)
@@ -27,7 +26,6 @@ class GitHubOwnersTest : TestCase() {
         tempSpaceDir.mkdirs()
 
         File(spaceCodeOwnersFilePath).copyTo(File(tempSpaceDir, "CODEOWNERS"))
-        File(virtualTeamMappingFilePath).copyTo(File(tempSpaceDir, "codeowners-virtual-team-mapping.json"))
         scriptFile.copyTo(File(tempSpaceDir, "generate-github-codeowners.sh"))
 
         val tempGithubDir = File(tempDir, ".github")
