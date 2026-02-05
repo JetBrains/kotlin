@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.native.interop.indexer
 
 import clang.*
 import clang.CXIdxEntityKind.CXIdxEntity_ObjCClass
-import clang.CXIdxEntityKind.CXIdxEntity_CXXClass
 import clang.CXIdxEntityKind.CXIdxEntity_ObjCProtocol
-import clang.CXIdxEntityKind.CXIdxEntity_CXXInterface
 import clang.CXIdxEntityKind.CXIdxEntity_Typedef
+import clang.CXIdxEntityKind.CXIdxEntity_Struct
+import clang.CXIdxEntityKind.CXIdxEntity_Union
 import kotlinx.cinterop.*
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -684,9 +684,10 @@ internal class ModulesMap(
 }
 
 data class TypesDefinitions(
-        val protocolDefinitionByUsr: Map<String, CValue<CXCursor>>,
-        val classDefinitionByUsr: Map<String, CValue<CXCursor>>,
-        val typealiasDefinitionByName: Map<String, CValue<CXCursor>>,
+        val protocolDefinitionByName: Map<String, CValue<CXCursor>>,
+        val classDefinitionByName: Map<String, CValue<CXCursor>>,
+        val structDefinitionByName: Map<String, CValue<CXCursor>>,
+        val typedefDefinitionByName: Map<String, CValue<CXCursor>>,
 )
 
 fun indexTranslationUnitsForTypesDefinitions(
@@ -695,92 +696,53 @@ fun indexTranslationUnitsForTypesDefinitions(
         translationUnits: Collection<CXTranslationUnit>,
         tuToPcm: Map<CXTranslationUnit, String>
 ): TypesDefinitions {
-    val protocolDefinitionByUsr = mutableMapOf<String, CValue<CXCursor>>()
-    val classDefinitionByUsr = mutableMapOf<String, CValue<CXCursor>>()
-    val typealiasDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
+    val protocolDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
+    val classDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
+    val structDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
+    val typedefDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
 
     translationUnits.forEach {
-        if (!System.getenv("USE_VISIT_CHILDREN").toBoolean()) {
-            indexTranslationUnit(index, it, 0, object : Indexer {
-                override fun indexDeclaration(info: CXIdxDeclInfo) {
-                    val cursor = info.cursor.readValue()
-                    val entityInfo = info.entityInfo!!.pointed
-                    val kind = entityInfo.kind
+        indexTranslationUnit(index, it, CXIndexOpt_IndexGeneratedDeclarations, object : Indexer {
+            override fun indexDeclaration(info: CXIdxDeclInfo) {
+                val cursor = info.cursor.readValue()
+                if (!isAvailable(cursor)) return
 
-                    when (kind) {
-                        // FIXME: Discuss, CXIdxEntity_Enum and CXIdxEntity_Typedef vs CXCursor_TypedefDecl. Do we have the same redeclaration problem with enums?
-                        CXIdxEntity_Typedef -> {
-                            if (isAvailable(cursor)) {
-                                val type = clang_getCursorType(cursor)
-                                val declCursor = clang_getTypeDeclaration(type)
-                                val name = getCursorSpelling(declCursor)
-                                typealiasDefinitionByName[name] = declCursor
-                            }
-                        }
-                        CXIdxEntity_ObjCClass -> {
-                            val originalCursor = dereferenceObjCClassCursorIfNeeded(cursor)
-                            if (isAvailable(originalCursor) && !isObjCInterfaceDeclForward(originalCursor)) {
-                                // FIXME: To discuss: maybe just always use constructUsrFromObjCClassDecl?
-                                classDefinitionByUsr[getUsr(originalCursor)] = originalCursor
-                            }
-                        }
-                        CXIdxEntity_CXXClass -> {
-                            val originalCursor = dereferenceObjCClassCursorIfNeeded(cursor)
-                            if (isAvailable(originalCursor) && cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl && !isObjCInterfaceDeclForward(originalCursor)) {
-                                classDefinitionByUsr[constructUsrFromObjCClassDecl(originalCursor)] = originalCursor
-                            }
-                        }
-                        CXIdxEntity_ObjCProtocol -> {
-                            val originalCursor = dereferenceObjCProtocolCursorIfNeeded(cursor)
-                            if (isAvailable(originalCursor) && !isObjCProtocolDeclForward(originalCursor)) {
-                                protocolDefinitionByUsr[getUsr(originalCursor)] = originalCursor
-                            }
-                        }
-                        CXIdxEntity_CXXInterface -> {
-                            val originalCursor = dereferenceObjCProtocolCursorIfNeeded(cursor)
-                            if (isAvailable(originalCursor) && cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl && !isObjCProtocolDeclForward(originalCursor)) {
-                                protocolDefinitionByUsr[constructUsrFromObjCProtocolDecl(originalCursor)] = originalCursor
-                            }
-                        }
-                        else -> {}
+                val entityInfo = info.entityInfo!!.pointed
+                val kind = entityInfo.kind
+                when (kind) {
+                    // FIXME: Discuss, CXIdxEntity_Enum and CXIdxEntity_Typedef vs CXCursor_TypedefDecl. Do we have the same redeclaration problem with enums?
+                    CXIdxEntity_Typedef -> {
+                        val type = clang_getCursorType(cursor)
+                        val declCursor = clang_getTypeDeclaration(type)
+                        typedefDefinitionByName[getCursorSpelling(declCursor)] = declCursor
                     }
-                }
-            })
-        } else {
-            println("Visit children for: ${tuToPcm[it]}")
-            visitChildren(it) { cursor, _ ->
-                // FIXME: What exactly is includesDeclaration?
-                // FIXME: do we need to filter by allHeaders?
-                if (library.includesDeclaration(cursor)) {
-                    when (cursor.kind) {
-                        CXCursorKind.CXCursor_TypedefDecl -> {
-                            if (isAvailable(cursor)) {
-                                val type = clang_getCursorType(cursor)
-                                val declCursor = clang_getTypeDeclaration(type)
-                                val name = getCursorSpelling(declCursor)
-                                typealiasDefinitionByName[name] = declCursor
-                            }
+                    CXIdxEntity_Union, CXIdxEntity_Struct -> {
+                        if (cursor.kind == CXCursorKind.CXCursor_StructDecl && !isStructDeclForward(cursor)) {
+                            structDefinitionByName[getCursorSpelling(cursor)] = cursor
                         }
-                        CXCursorKind.CXCursor_ObjCInterfaceDecl -> {
-                            if (isAvailable(cursor) && !isObjCInterfaceDeclForward(cursor)) {
-                                classDefinitionByUsr[constructUsrFromObjCClassDecl(cursor)] = cursor
-                            }
-                        }
-                        CXCursorKind.CXCursor_ObjCProtocolDecl -> {
-                            if (isAvailable(cursor) && !isObjCProtocolDeclForward(cursor)) {
-                                protocolDefinitionByUsr[constructUsrFromObjCProtocolDecl(cursor)] = cursor
-                            }
-                        }
-
-                        else -> {}
                     }
+                    CXIdxEntity_ObjCClass -> {
+                        if (cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl && !isObjCInterfaceDeclForward(cursor)) {
+                            classDefinitionByName[getCursorSpelling(cursor)] = cursor
+                        }
+                    }
+                    CXIdxEntity_ObjCProtocol -> {
+                        if (cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl && !isObjCProtocolDeclForward(cursor)) {
+                            protocolDefinitionByName[getCursorSpelling(cursor)] = cursor
+                        }
+                    }
+                    else -> {}
                 }
-                CXChildVisitResult.CXChildVisit_Continue
             }
-        }
+        })
     }
 
-    return TypesDefinitions(protocolDefinitionByUsr, classDefinitionByUsr, typealiasDefinitionByName)
+    return TypesDefinitions(
+            protocolDefinitionByName = protocolDefinitionByName,
+            classDefinitionByName = classDefinitionByName,
+            structDefinitionByName = structDefinitionByName,
+            typedefDefinitionByName = typedefDefinitionByName,
+    )
 }
 
 internal fun getHeaderId(library: NativeLibrary, header: ClangFile?): HeaderId {
@@ -1122,7 +1084,10 @@ fun isObjCInterfaceDeclForward(cursor: CValue<CXCursor>): Boolean {
     return result
 }
 
-fun isObjCProtocolDeclForward(cursor: CValue<CXCursor>): Boolean = clang_isCursorDefinition(cursor) == 0
+// FIXME: Why don't we use this for the isObjCInterfaceDeclForward?
+private fun isDeclForward(cursor: CValue<CXCursor>): Boolean = clang_isCursorDefinition(cursor) == 0
+fun isObjCProtocolDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(cursor)
+fun isStructDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(cursor)
 
 // It is a class/protocol reference. To get the declaration cursor, we can use clang_getCursorReferenced.
 // If there is a real declaration besides this forward declaration, the function will automatically
@@ -1133,6 +1098,8 @@ fun dereferenceObjCProtocolCursorIfNeeded(cursor: CValue<CXCursor>): CValue<CXCu
         if (cursor.kind == CXCursorKind.CXCursor_ObjCProtocolRef) clang_getCursorReferenced(cursor) else cursor
 
 fun getUsr(cursor: CValue<CXCursor>): String = clang_getCursorUSR(cursor).convertAndDispose()
+
+fun isAnonymous(cursor: CValue<CXCursor>): Boolean = clang_Cursor_isAnonymous(cursor) != 0
 
 // These are used when we can't fetch USR directly in the case of "external_source_symbol"
 fun constructUsrFromObjCClassDecl(cursor: CValue<CXCursor>): String {

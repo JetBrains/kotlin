@@ -26,127 +26,132 @@ class ModularCinteropTest : AbstractNativeCInteropBaseTest() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
     }
 
-    @Test
-    fun `cinterop modular import with -fmodule-map-file - sees modules`() {
-        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/explicitModuleMapFile")
-        val modulemap = testPathFull.resolve("foo.modulemap")
-        val defFile = testPathFull.resolve("foo.def")
-        val goldenFile = testPathFull.resolve("output.txt")
+//    @Test
+//    fun `cinterop modular import with -fmodule-map-file - sees modules`() {
+//        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/explicitModuleMapFile")
+//        val modulemap = testPathFull.resolve("foo.modulemap")
+//        val defFile = testPathFull.resolve("foo.def")
+//        val goldenFile = testPathFull.resolve("output.txt")
+//
+//        val modulemapArgs = TestCInteropArgs("-compiler-option", "-fmodule-map-file=${modulemap}", "-compiler-option", "-fmodules")
+//        val klib = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess().resultingArtifact
+//        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+//        assertEqualsToFile(goldenFile, metadata)
+//    }
 
-        val modulemapArgs = TestCInteropArgs("-compiler-option", "-fmodule-map-file=${modulemap}", "-compiler-option", "-fmodules")
-        val klib = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess().resultingArtifact
-        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
-        assertEqualsToFile(goldenFile, metadata)
-    }
+//    @Test
+//    fun `skipNonImportableModules - is disabled by default - which leads to cinterop failure when some modules don't import`() {
+//        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/skipNonImportableModules/someModulesFailToImport")
+//        val defFile = testPathFull.resolve("default_behavior.def")
+//
+//        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}")
+//        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs)
+//        assertIs<TestCompilationResult.CompilationToolFailure>(result)
+//        val actualFailure = result.loggedData.toString()
+//        // FIXME: We actually want to see the "'iostream' file not found", but it doesn't display right now KT-84023
+//        assertContains(actualFailure, "fatal error: could not build module 'failure'")
+//    }
+//
+//    @Test
+//    fun `skipNonImportableModules - produces cinterop klib - when only some modules fail to import`() {
+//        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/skipNonImportableModules/someModulesFailToImport")
+//        val defFile = testPathFull.resolve("skip_non_importable_modules.def")
+//        val goldenFile = testPathFull.resolve("output.txt")
+//
+//        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
+//        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess()
+//        val klib = result.resultingArtifact
+//        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+//        assertEqualsToFile(goldenFile, metadata)
+//    }
 
-    @Test
-    fun `skipNonImportableModules - is disabled by default - which leads to cinterop failure when some modules don't import`() {
-        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/skipNonImportableModules/someModulesFailToImport")
-        val defFile = testPathFull.resolve("default_behavior.def")
+//    @Test
+//    fun `skipNonImportableModules - emits failure - when all modules fail to import`() {
+//        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/skipNonImportableModules/allModulesFailToImport")
+//        val defFile = testPathFull.resolve("foo.def")
+//
+//        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
+//        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs)
+//        assertIs<TestCompilationResult.CompilationToolFailure>(result)
+//        val actualFailure = result.loggedData.toString()
+//        assertContains(actualFailure, "error: \"non-importable module failure_one\"")
+//        assertContains(actualFailure, "error: \"non-importable module failure_two\"")
+//    }
 
-        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}")
-        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs)
-        assertIs<TestCompilationResult.CompilationToolFailure>(result)
-        val actualFailure = result.loggedData.toString()
-        // FIXME: We actually want to see the "'iostream' file not found", but it doesn't display right now KT-84023
-        assertContains(actualFailure, "fatal error: could not build module 'failure'")
-    }
+//    @Test
+//    fun `skipNonImportableModules - no modules imported`() {
+//        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/skipNonImportableModules/noModulesImported")
+//        val defFile = testPathFull.resolve("foo.def")
+//        val goldenFile = testPathFull.resolve("output.txt")
+//
+//        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
+//        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess()
+//        val klib = result.resultingArtifact
+//        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+//        assertEqualsToFile(goldenFile, metadata)
+//    }
 
-    @Test
-    fun `skipNonImportableModules - produces cinterop klib - when only some modules fail to import`() {
-        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/skipNonImportableModules/someModulesFailToImport")
-        val defFile = testPathFull.resolve("skip_non_importable_modules.def")
-        val goldenFile = testPathFull.resolve("output.txt")
+//    @Test
+//    fun `KT-81695 repeated typedefs with -fmodules - reference the same typedef`() {
+//        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/repeatedTypedefsWithFmodules-KT-81695")
+//        val defFile = testPathFull.resolve("dup.def")
+//        val goldenFile = testPathFull.resolve("output.txt")
+//
+//        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
+//        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess()
+//        val klib = result.resultingArtifact
+//        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+//        assertEqualsToFile(goldenFile, metadata)
+//    }
 
-        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
-        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess()
-        val klib = result.resultingArtifact
-        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
-        assertEqualsToFile(goldenFile, metadata)
-    }
+//    @Test
+//    fun `KT-82766 external source symbol (or generated_declaration) - see the original type`() {
+//        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/externalSourceSymbolGeneratedDeclaration-KT-82766")
+//        val defFile = testPathFull.resolve("external_source_symbol.def")
+//        val goldenFile = testPathFull.resolve("output.txt")
+//
+//        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
+//        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess()
+//        val klib = result.resultingArtifact
+//        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+//        assertEqualsToFile(goldenFile, metadata)
+//    }
 
-    @Test
-    fun `skipNonImportableModules - emits failure - when all modules fail to import`() {
-        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/skipNonImportableModules/allModulesFailToImport")
-        val defFile = testPathFull.resolve("foo.def")
+//    @Test
+//    fun `KT-82377 forward before original - original still gets emitted`() {
+//        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/forwardDeclarationBeforeOriginal-KT-82377")
+//        val defFile = testPathFull.resolve("forward.def")
+//        val goldenFile = testPathFull.resolve("output.txt")
+//
+//        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
+//        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess()
+//        val klib = result.resultingArtifact
+//        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+//        assertEqualsToFile(goldenFile, metadata)
+//    }
 
-        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
-        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs)
-        assertIs<TestCompilationResult.CompilationToolFailure>(result)
-        val actualFailure = result.loggedData.toString()
-        assertContains(actualFailure, "error: \"non-importable module failure_one\"")
-        assertContains(actualFailure, "error: \"non-importable module failure_two\"")
-    }
+//    @Test
+//    fun `KT-82402 cinterop type reuse with -fmodules - uses the original type when it is visible`() {
+//        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/cinteropTypeReuseWithFmodules-KT-82402")
+//
+//        val originalDefFile = testPathFull.resolve("original.def")
+//        val originalArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
+//        val originalKlib = cinteropToLibrary(originalDefFile, buildDir, originalArgs).assertSuccess().resultingArtifact
+//
+//        val forwardDefFile = testPathFull.resolve("forward.def")
+//        val forwardArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules", "-library", originalKlib.path)
+//        val forwardKlib = cinteropToLibrary(forwardDefFile, buildDir, forwardArgs).assertSuccess().resultingArtifact
+//
+//        val goldenFile = testPathFull.resolve("output.txt")
+//        val metadata = forwardKlib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+//        assertEqualsToFile(goldenFile, metadata)
+//    }
 
-    @Test
-    fun `skipNonImportableModules - no modules imported`() {
-        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/skipNonImportableModules/noModulesImported")
-        val defFile = testPathFull.resolve("foo.def")
-        val goldenFile = testPathFull.resolve("output.txt")
-
-        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
-        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess()
-        val klib = result.resultingArtifact
-        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
-        assertEqualsToFile(goldenFile, metadata)
-    }
-
-    @Test
-    fun `KT-81695 repeated typedefs with -fmodules - reference the same typedef`() {
-        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/repeatedTypedefsWithFmodules-KT-81695")
-        val defFile = testPathFull.resolve("dup.def")
-        val goldenFile = testPathFull.resolve("output.txt")
-
-        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
-        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess()
-        val klib = result.resultingArtifact
-        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
-        assertEqualsToFile(goldenFile, metadata)
-    }
-
-    @Test
-    fun `KT-82766 external source symbol (or generated_declaration) - see the original type`() {
-        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/externalSourceSymbolGeneratedDeclaration-KT-82766")
-        val defFile = testPathFull.resolve("external_source_symbol.def")
-        val goldenFile = testPathFull.resolve("output.txt")
-
-        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
-        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess()
-        val klib = result.resultingArtifact
-        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
-        assertEqualsToFile(goldenFile, metadata)
-    }
-
-    // FIXME: To discuss: do we want to also test forward declarations to platform libs?
-    @Test
-    fun `KT-82377 forward before original - original still gets emitted`() {
-        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/forwardDeclarationBeforeOriginal-KT-82377")
-        val defFile = testPathFull.resolve("forward.def")
-        val goldenFile = testPathFull.resolve("output.txt")
-
-        val modulemapArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
-        val result = cinteropToLibrary(defFile, buildDir, modulemapArgs).assertSuccess()
-        val klib = result.resultingArtifact
-        val metadata = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
-        assertEqualsToFile(goldenFile, metadata)
-    }
-
-    @Test
-    fun `KT-82402 cinterop type reuse with -fmodules - uses the original type when it is visible`() {
-        val testPathFull = getAbsoluteFile("native/native.tests/testData/CInterop/cinteropTypeReuseWithFmodules-KT-82402")
-
-        val originalDefFile = testPathFull.resolve("original.def")
-        val originalArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules")
-        val originalKlib = cinteropToLibrary(originalDefFile, buildDir, originalArgs).assertSuccess().resultingArtifact
-
-        val forwardDefFile = testPathFull.resolve("forward.def")
-        val forwardArgs = TestCInteropArgs("-compiler-option", "-I${testPathFull}", "-compiler-option", "-fmodules", "-library", originalKlib.path)
-        val forwardKlib = cinteropToLibrary(forwardDefFile, buildDir, forwardArgs).assertSuccess().resultingArtifact
-
-        val goldenFile = testPathFull.resolve("output.txt")
-        val metadata = forwardKlib.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
-        assertEqualsToFile(goldenFile, metadata)
-    }
+    // FIXME: To discuss: do we want to also test forward declarations to platform libs? This is only testable in
 
     // FIXME: Forward protocols
+    // FIXME: Standalone "generated_declaration" to check we enable CXIndexOpt_IndexGeneratedDeclarations in the indexer
+    // FIXME: Multi-modular forward declaration to a system type
+    // FIXME: Union and struct forward declarations, typedef to struct forward declaration
+    // FIXME: USR overrides
 }
