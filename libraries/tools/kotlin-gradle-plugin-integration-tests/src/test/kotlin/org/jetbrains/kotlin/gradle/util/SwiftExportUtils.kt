@@ -31,6 +31,7 @@ import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(EnvironmentalVariablesOverride::class)
 internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
@@ -117,7 +118,7 @@ private fun swiftSymbolgraphExtract(
         listOf("xcrun", "--sdk", sdk, "--show-sdk-path"),
         workingDir
     )
-    sdkPathResult.assertProcessRunResult { assert(isSuccessful) { "Failed to get SDK path" } }
+    sdkPathResult.assertProcessRunResult { assertTrue(isSuccessful, "Failed to get SDK path") }
     val sdkPath = sdkPathResult.output.trim()
 
     if (outputDir.exists()) {
