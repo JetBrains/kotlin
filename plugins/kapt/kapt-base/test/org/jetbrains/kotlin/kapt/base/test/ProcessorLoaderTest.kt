@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.kapt.base.test
 
 import org.jetbrains.kotlin.kapt.base.KaptOptions
-import org.jetbrains.kotlin.kapt.base.ProcessorLoader
+import org.jetbrains.kotlin.kapt.base.ProcessorLoaderImpl
 import org.jetbrains.kotlin.kapt.base.util.WriterBackedKaptLogger
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -38,7 +38,7 @@ class ProcessorLoaderTest {
             stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
-        val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
+        val loadedProcessors = ProcessorLoaderImpl(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
         assertTrue(loadedProcessors.processors.isEmpty())
     }
 
@@ -57,7 +57,7 @@ class ProcessorLoaderTest {
             stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
-        val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
+        val loadedProcessors = ProcessorLoaderImpl(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
         assertTrue(loadedProcessors.processors.isEmpty())
     }
 
@@ -69,7 +69,7 @@ class ProcessorLoaderTest {
             stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
-        val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
+        val loadedProcessors = ProcessorLoaderImpl(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
         assertTrue(loadedProcessors.processors.isEmpty())
     }
 
@@ -82,7 +82,7 @@ class ProcessorLoaderTest {
             stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
-        val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
+        val loadedProcessors = ProcessorLoaderImpl(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
         assertTrue(loadedProcessors.processors.isEmpty())
     }
 }

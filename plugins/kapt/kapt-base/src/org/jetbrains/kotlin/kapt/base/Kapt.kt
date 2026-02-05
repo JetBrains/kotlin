@@ -37,9 +37,7 @@ object Kapt {
 
             val javaSourceFiles = options.collectJavaSourceFiles(kaptContext.sourcesToReprocess)
 
-            val processorLoader = ProcessorLoader(options, logger)
-
-            processorLoader.use {
+            ProcessorLoaderImpl(options, logger).use { processorLoader ->
                 val processors = processorLoader.loadProcessors(findClassLoaderWithJavac())
 
                 val annotationProcessingTime = measureTimeMillis {

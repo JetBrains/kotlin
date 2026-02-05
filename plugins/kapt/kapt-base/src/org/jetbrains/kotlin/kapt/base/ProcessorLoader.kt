@@ -19,10 +19,14 @@ import javax.annotation.processing.Processor
 
 class LoadedProcessors(val processors: List<IncrementalProcessor>, val classLoader: ClassLoader)
 
-open class ProcessorLoader(private val options: KaptOptions, private val logger: KaptLogger) : Closeable {
+interface ProcessorLoader : Closeable {
+    fun loadProcessors(parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader()): LoadedProcessors
+}
+
+open class ProcessorLoaderImpl(private val options: KaptOptions, private val logger: KaptLogger) : ProcessorLoader {
     private var annotationProcessingClassLoader: URLClassLoader? = null
 
-    fun loadProcessors(parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader()): LoadedProcessors {
+    override fun loadProcessors(parentClassLoader: ClassLoader): LoadedProcessors {
         val classpath = LinkedHashSet<File>().apply {
             addAll(options.processingClasspath)
             if (options[KaptFlag.INCLUDE_COMPILE_CLASSPATH]) {
