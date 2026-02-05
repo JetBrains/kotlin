@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
+import org.jetbrains.kotlin.arguments.dsl.types.KlibIrInlinerMode
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
@@ -60,7 +61,8 @@ internal val KDOC_OPTIONS_CONTAINS = """
 internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.commonKlibBasedArguments,
     CompilerArgumentsLevelNames.jsArguments,
-    CompilerArgumentsLevelNames.nativeArguments,
+    CompilerArgumentsLevelNames.commonJsAndWasmArguments,
+    CompilerArgumentsLevelNames.wasmArguments,
     CompilerArgumentsLevelNames.legacyWasmArguments,
 )
 
@@ -77,7 +79,8 @@ internal val enumNameAccessors = mutableMapOf(
     JvmTarget::class to JvmTarget::targetName,
     ExplicitApiMode::class to ExplicitApiMode::modeName,
     KotlinVersion::class to KotlinVersion::versionName,
-    ReturnValueCheckerMode::class to ReturnValueCheckerMode::modeState
+    ReturnValueCheckerMode::class to ReturnValueCheckerMode::modeState,
+    KlibIrInlinerMode::class to KlibIrInlinerMode::modeState,
 )
 
 internal fun KClass<*>.toBtaEnumClassName(): ClassName = ClassName(API_ENUMS_PACKAGE, simpleName!!)

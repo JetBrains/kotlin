@@ -96,7 +96,7 @@ private fun KotlinCompilerArgumentsLevel.filterOutDroppedArguments(): List<Kotli
     arguments.filter { it.transform() != ArgumentTransform.Drop }
 
 private fun KotlinCompilerArgumentsLevel.generateCustomArguments(): List<BtaCompilerArgument<*>> {
-    val levelTransforms = levelsToArgumentTransforms[name] ?: error("Level $this is not found in levelsToArgumentTransforms")
+    val levelTransforms = levelsToArgumentTransforms[name] ?: emptyMap()
     return levelTransforms.values.filterIsInstance<ArgumentTransform.CustomArgument>().map { it.argument }
 }
 

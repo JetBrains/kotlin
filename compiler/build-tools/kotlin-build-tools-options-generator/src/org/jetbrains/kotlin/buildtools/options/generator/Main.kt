@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.buildtools.options.generator
 
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -87,10 +86,20 @@ fun main(args: Array<String>) {
             val output = generator.generateArgumentsForLevel(currentLevel.level, currentLevel.parentName)
             output.generatedFiles.forEach { (path, content) ->
                 val genFile = genDir.resolve(path)
-                GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false, forbidGenerationOnTeamcity = false)
+                GeneratorsFileUtil.writeFileIfContentChanged(
+                    genFile.toFile(),
+                    content,
+                    logNotChanged = false,
+                    forbidGenerationOnTeamcity = false
+                )
                 generatedFiles.add(genFile)
             }
-            levelsToProcess += currentLevel.level.nestedLevels.map { LevelWithParent(it, output.argumentTypeName) }
+            levelsToProcess += currentLevel.level.nestedLevels.flatMap {
+                if (it.name == "legacyWasmArguments") {
+                    it.nestedLevels.map { LevelWithParent(it, output.argumentTypeName) }
+                } else
+                    listOf(LevelWithParent(it, output.argumentTypeName))
+            }
         }
     }
     genDir.walk().filter { it.isRegularFile() }.forEach {
