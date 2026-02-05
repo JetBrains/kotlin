@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // WITH_REFLECT
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Foo<T: String>(val x: T) {

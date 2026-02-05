@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.getLibraryFromHome
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
@@ -125,6 +124,12 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
                         "Supported modes: ${JvmWhenGenerationScheme.entries.joinToString { it.description }}"
             )
         }
+    }
+
+    if (arguments.valueClasses) {
+        messageCollector.report(
+            ERROR, "This flag is deprecated, use -XXLanguage:+JvmInlineMultiFieldValueClasses instead"
+        )
     }
 
     handleClosureGenerationSchemeArgument("-Xsam-conversions", arguments.samConversions, JVMConfigurationKeys.SAM_CONVERSIONS)

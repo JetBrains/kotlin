@@ -2,7 +2,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 annotation class Ann(val value: String)
 

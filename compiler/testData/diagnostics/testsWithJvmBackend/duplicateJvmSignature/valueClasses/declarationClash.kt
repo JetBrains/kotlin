@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 // WITH_STDLIB
 
 @JvmInline

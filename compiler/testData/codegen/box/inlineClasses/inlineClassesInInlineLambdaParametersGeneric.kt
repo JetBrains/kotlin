@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
 // FILE: lib.kt
 inline fun <T, R> s0(x: T, fn: (Int, T) -> R) = fn(0, x)

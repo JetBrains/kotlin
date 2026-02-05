@@ -287,7 +287,7 @@ private fun AbstractInsnNode.isInlineClassUnboxing(state: GenerationState) =
     }
 
 private fun AbstractInsnNode.isMultiFieldValueClassUnboxing(state: GenerationState) =
-    state.config.supportMultiFieldValueClasses && isMethodInsnWith(Opcodes.INVOKEVIRTUAL) {
+    state.config.supportJvmInlineMultiFieldValueClasses && isMethodInsnWith(Opcodes.INVOKEVIRTUAL) {
         isMultiFieldValueClassUnboxingMethodDescriptor(state)
     }
 

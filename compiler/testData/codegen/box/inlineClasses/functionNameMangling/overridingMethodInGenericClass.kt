@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 abstract class GenericBase<T> {
     abstract fun foo(x: T): T

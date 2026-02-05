@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_REFLECT
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 package test
 

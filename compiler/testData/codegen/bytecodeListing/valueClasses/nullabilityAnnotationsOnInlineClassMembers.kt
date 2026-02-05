@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 // WITH_STDLIB
 
 @JvmInline

@@ -1,6 +1,6 @@
 // DECLARATION_TYPE: org.jetbrains.kotlin.psi.KtClass
 // MAIN_FILE_NAME: MyValueClass
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 package pack
 
 @JvmInline

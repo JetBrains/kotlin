@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
 interface IFoo<T : IFoo<T>> {
     fun foo(t: T): String = t.bar()

@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
 // FILE: lib.kt
 inline fun <T: Int> new(init: (Z<T>) -> Unit): Z<T> = Z(42) as Z<T>

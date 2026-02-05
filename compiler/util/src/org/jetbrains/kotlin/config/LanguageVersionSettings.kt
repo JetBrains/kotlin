@@ -566,7 +566,7 @@ enum class LanguageFeature(
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ContextParameters(sinceVersion = null, "KT-72222"),
     ExplicitContextArguments(sinceVersion = null, issue = "KT-81684"),
-    ValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
+    JvmInlineMultiFieldValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     PropertyParamAnnotationDefaultTargetMode(sinceVersion = null, "KT-73255"),
     AnnotationAllUseSiteTarget(sinceVersion = null, "KT-73256"),

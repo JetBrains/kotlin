@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class UInt(val x: Int)

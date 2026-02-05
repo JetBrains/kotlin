@@ -2,7 +2,7 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.javaMethod

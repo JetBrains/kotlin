@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  */
 internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
     override fun lower(irFile: IrFile) {
-        if (context.config.supportMultiFieldValueClasses) {
+        if (context.config.supportJvmInlineMultiFieldValueClasses) {
             super.lower(irFile)
         }
     }

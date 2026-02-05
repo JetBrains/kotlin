@@ -2,7 +2,7 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 @JvmInline
 value class A<T : Any>(val x: List<T>)

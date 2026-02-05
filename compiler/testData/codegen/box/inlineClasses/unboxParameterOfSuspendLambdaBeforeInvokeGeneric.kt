@@ -3,7 +3,7 @@
 // WITH_COROUTINES
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
 import helpers.*
 import kotlin.coroutines.*

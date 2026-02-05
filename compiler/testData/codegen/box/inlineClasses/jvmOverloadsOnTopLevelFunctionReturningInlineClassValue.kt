@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 @JvmInline
 value class Str(val s: String)

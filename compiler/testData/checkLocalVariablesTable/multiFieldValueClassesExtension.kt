@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 // IGNORE_K1
 
 @JvmInline

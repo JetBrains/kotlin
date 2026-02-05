@@ -179,7 +179,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         }
 
         if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted) || checkWithUseSiteTargets()) {
-            if (LanguageFeature.ValueClasses.isEnabled()) {
+            if (LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled()) {
                 checkMultiFieldValueClassAnnotationRestrictions(declaration, annotation)
             }
             return

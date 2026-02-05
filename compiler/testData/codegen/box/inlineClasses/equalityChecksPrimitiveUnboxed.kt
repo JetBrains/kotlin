@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 // The purpose of this test is to ensure that we don't generate any primitive boxing in the implementation
 // of a @JvmInline value class. See KT-48635.

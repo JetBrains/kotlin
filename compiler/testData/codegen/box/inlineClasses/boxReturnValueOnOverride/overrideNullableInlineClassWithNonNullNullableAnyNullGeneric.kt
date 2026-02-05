@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class X<T>(val x: T)

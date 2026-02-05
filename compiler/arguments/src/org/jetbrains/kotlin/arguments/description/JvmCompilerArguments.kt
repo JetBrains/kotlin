@@ -874,7 +874,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Enable experimental value classes.".asReleaseDependent()
         argumentType = BooleanType.defaultFalse
 
-        additionalAnnotations(Enables(LanguageFeature.ValueClasses))
+        additionalAnnotations(Enables(LanguageFeature.JvmInlineMultiFieldValueClasses))
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,

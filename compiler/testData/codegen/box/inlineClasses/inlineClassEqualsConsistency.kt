@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
 

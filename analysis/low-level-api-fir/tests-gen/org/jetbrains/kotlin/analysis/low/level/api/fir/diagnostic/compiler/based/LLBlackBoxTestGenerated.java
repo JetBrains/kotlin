@@ -40627,6 +40627,308 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JvmInlineMultiFieldValueClasses {
+    @Test
+    public void testAllFilesPresentInJvmInlineMultiFieldValueClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classFlattening.kt")
+    public void testClassFlattening() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/classFlattening.kt");
+    }
+
+    @Test
+    @TestMetadata("complex.kt")
+    public void testComplex() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/complex.kt");
+    }
+
+    @Test
+    @TestMetadata("conditionalExpressions.kt")
+    public void testConditionalExpressions() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/conditionalExpressions.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/contextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("defaultParameters.kt")
+    public void testDefaultParameters() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/defaultParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("delegating.kt")
+    public void testDelegating() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/delegating.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatingConstructors.kt")
+    public void testDelegatingConstructors() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/delegatingConstructors.kt");
+    }
+
+    @Test
+    @TestMetadata("equality.kt")
+    public void testEquality() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/equality.kt");
+    }
+
+    @Test
+    @TestMetadata("fakeOverrideCall.kt")
+    public void testFakeOverrideCall() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/fakeOverrideCall.kt");
+    }
+
+    @Test
+    @TestMetadata("forStatement.kt")
+    public void testForStatement() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/forStatement.kt");
+    }
+
+    @Test
+    @TestMetadata("functionReferences.kt")
+    public void testFunctionReferences() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/functionReferences.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineFunctions.kt")
+    public void testInlineFunctions() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/inlineFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("kt54897.kt")
+    public void testKt54897() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/kt54897.kt");
+    }
+
+    @Test
+    @TestMetadata("kt59079.kt")
+    public void testKt59079() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/kt59079.kt");
+    }
+
+    @Test
+    @TestMetadata("kt62455.kt")
+    public void testKt62455() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/kt62455.kt");
+    }
+
+    @Test
+    @TestMetadata("mfvcAndIcInsideConstructorsOfEachOther.kt")
+    public void testMfvcAndIcInsideConstructorsOfEachOther() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/mfvcAndIcInsideConstructorsOfEachOther.kt");
+    }
+
+    @Test
+    @TestMetadata("mfvcBothEqualsOverride.kt")
+    public void testMfvcBothEqualsOverride() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/mfvcBothEqualsOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("mfvcEqualsConsistency.kt")
+    public void testMfvcEqualsConsistency() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/mfvcEqualsConsistency.kt");
+    }
+
+    @Test
+    @TestMetadata("mfvcEqualsOverriddenForCollections.kt")
+    public void testMfvcEqualsOverriddenForCollections() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/mfvcEqualsOverriddenForCollections.kt");
+    }
+
+    @Test
+    @TestMetadata("mfvcEqualsOverride.kt")
+    public void testMfvcEqualsOverride() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/mfvcEqualsOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("mfvcFieldInitializationOrder.kt")
+    public void testMfvcFieldInitializationOrder() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/mfvcFieldInitializationOrder.kt");
+    }
+
+    @Test
+    @TestMetadata("mfvcHashCodeOverride.kt")
+    public void testMfvcHashCodeOverride() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/mfvcHashCodeOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("mfvcTypedEqualsGenerics.kt")
+    public void testMfvcTypedEqualsGenerics() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/mfvcTypedEqualsGenerics.kt");
+    }
+
+    @Test
+    @TestMetadata("mfvcUntypedEqualsOverriden.kt")
+    public void testMfvcUntypedEqualsOverriden() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/mfvcUntypedEqualsOverriden.kt");
+    }
+
+    @Test
+    @TestMetadata("multiModules.kt")
+    public void testMultiModules() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/multiModules.kt");
+    }
+
+    @Test
+    @TestMetadata("mutableSharedMfvcVar.kt")
+    public void testMutableSharedMfvcVar() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/mutableSharedMfvcVar.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedLoweringStart.kt")
+    public void testNestedLoweringStart() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/nestedLoweringStart.kt");
+    }
+
+    @Test
+    @TestMetadata("nothingAsParameterType.kt")
+    public void testNothingAsParameterType() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/nothingAsParameterType.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideFunctionWithDefaultParameter.kt")
+    public void testOverrideFunctionWithDefaultParameter() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/overrideFunctionWithDefaultParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideFunctionWithDefaultParameterGeneric.kt")
+    public void testOverrideFunctionWithDefaultParameterGeneric() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/overrideFunctionWithDefaultParameterGeneric.kt");
+    }
+
+    @Test
+    @TestMetadata("overrides.kt")
+    public void testOverrides() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/overrides.kt");
+    }
+
+    @Test
+    @TestMetadata("overrides_inlineClass.kt")
+    public void testOverrides_inlineClass() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/overrides_inlineClass.kt");
+    }
+
+    @Test
+    @TestMetadata("overrides_typeParameters.kt")
+    public void testOverrides_typeParameters() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/overrides_typeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("regularClassSecondaryConstructorWithMfvc.kt")
+    public void testRegularClassSecondaryConstructorWithMfvc() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/regularClassSecondaryConstructorWithMfvc.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructorExpectActual.kt")
+    public void testSecondaryConstructorExpectActual() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/secondaryConstructorExpectActual.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructorVisibilies.kt")
+    public void testSecondaryConstructorVisibilies() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/secondaryConstructorVisibilies.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructorWithVararg.kt")
+    public void testSecondaryConstructorWithVararg() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/secondaryConstructorWithVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructorWithVarargGeneric.kt")
+    public void testSecondaryConstructorWithVarargGeneric() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/secondaryConstructorWithVarargGeneric.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructorsWithBody.kt")
+    public void testSecondaryConstructorsWithBody() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/secondaryConstructorsWithBody.kt");
+    }
+
+    @Test
+    @TestMetadata("throwingMFVCReassignments.kt")
+    public void testThrowingMFVCReassignments() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/throwingMFVCReassignments.kt");
+    }
+
+    @Test
+    @TestMetadata("tryExpressions.kt")
+    public void testTryExpressions() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/tryExpressions.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassInValueClass.kt")
+    public void testValueClassInValueClass() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/valueClassInValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("visibility.kt")
+    public void testVisibility() {
+      runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/visibility.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/javaInterop")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JavaInterop {
+      @Test
+      public void testAllFilesPresentInJavaInterop() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("methodWithValueClassDeclaredInJava.kt")
+      public void testMethodWithValueClassDeclaredInJava() {
+        runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/javaInterop/methodWithValueClassDeclaredInJava.kt");
+      }
+
+      @Test
+      @TestMetadata("methodWithValueClassDeclaredInJavaOverriddenInKotlin.kt")
+      public void testMethodWithValueClassDeclaredInJavaOverriddenInKotlin() {
+        runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/javaInterop/methodWithValueClassDeclaredInJavaOverriddenInKotlin.kt");
+      }
+
+      @Test
+      @TestMetadata("methodWithValueClassInheritedBothFromJavaAndKotlin.kt")
+      public void testMethodWithValueClassInheritedBothFromJavaAndKotlin() {
+        runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/javaInterop/methodWithValueClassInheritedBothFromJavaAndKotlin.kt");
+      }
+
+      @Test
+      @TestMetadata("methodWithValueClassInheritedInJavaOverriddenInKotlin.kt")
+      public void testMethodWithValueClassInheritedInJavaOverriddenInKotlin() {
+        runTest("compiler/testData/codegen/box/jvmInlineMultiFieldValueClasses/javaInterop/methodWithValueClassInheritedInJavaOverriddenInKotlin.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/jvmName")
   @TestDataPath("$PROJECT_ROOT")
   public class JvmName {
@@ -65260,308 +65562,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       @TestMetadata("unsignedLongToString_jvm8.kt")
       public void testUnsignedLongToString_jvm8() {
         runTest("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics/unsignedLongToString_jvm8.kt");
-      }
-    }
-  }
-
-  @Nested
-  @TestMetadata("compiler/testData/codegen/box/valueClasses")
-  @TestDataPath("$PROJECT_ROOT")
-  public class ValueClasses {
-    @Test
-    public void testAllFilesPresentInValueClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("classFlattening.kt")
-    public void testClassFlattening() {
-      runTest("compiler/testData/codegen/box/valueClasses/classFlattening.kt");
-    }
-
-    @Test
-    @TestMetadata("complex.kt")
-    public void testComplex() {
-      runTest("compiler/testData/codegen/box/valueClasses/complex.kt");
-    }
-
-    @Test
-    @TestMetadata("conditionalExpressions.kt")
-    public void testConditionalExpressions() {
-      runTest("compiler/testData/codegen/box/valueClasses/conditionalExpressions.kt");
-    }
-
-    @Test
-    @TestMetadata("contextParameters.kt")
-    public void testContextParameters() {
-      runTest("compiler/testData/codegen/box/valueClasses/contextParameters.kt");
-    }
-
-    @Test
-    @TestMetadata("defaultParameters.kt")
-    public void testDefaultParameters() {
-      runTest("compiler/testData/codegen/box/valueClasses/defaultParameters.kt");
-    }
-
-    @Test
-    @TestMetadata("delegating.kt")
-    public void testDelegating() {
-      runTest("compiler/testData/codegen/box/valueClasses/delegating.kt");
-    }
-
-    @Test
-    @TestMetadata("delegatingConstructors.kt")
-    public void testDelegatingConstructors() {
-      runTest("compiler/testData/codegen/box/valueClasses/delegatingConstructors.kt");
-    }
-
-    @Test
-    @TestMetadata("equality.kt")
-    public void testEquality() {
-      runTest("compiler/testData/codegen/box/valueClasses/equality.kt");
-    }
-
-    @Test
-    @TestMetadata("fakeOverrideCall.kt")
-    public void testFakeOverrideCall() {
-      runTest("compiler/testData/codegen/box/valueClasses/fakeOverrideCall.kt");
-    }
-
-    @Test
-    @TestMetadata("forStatement.kt")
-    public void testForStatement() {
-      runTest("compiler/testData/codegen/box/valueClasses/forStatement.kt");
-    }
-
-    @Test
-    @TestMetadata("functionReferences.kt")
-    public void testFunctionReferences() {
-      runTest("compiler/testData/codegen/box/valueClasses/functionReferences.kt");
-    }
-
-    @Test
-    @TestMetadata("inlineFunctions.kt")
-    public void testInlineFunctions() {
-      runTest("compiler/testData/codegen/box/valueClasses/inlineFunctions.kt");
-    }
-
-    @Test
-    @TestMetadata("kt54897.kt")
-    public void testKt54897() {
-      runTest("compiler/testData/codegen/box/valueClasses/kt54897.kt");
-    }
-
-    @Test
-    @TestMetadata("kt59079.kt")
-    public void testKt59079() {
-      runTest("compiler/testData/codegen/box/valueClasses/kt59079.kt");
-    }
-
-    @Test
-    @TestMetadata("kt62455.kt")
-    public void testKt62455() {
-      runTest("compiler/testData/codegen/box/valueClasses/kt62455.kt");
-    }
-
-    @Test
-    @TestMetadata("mfvcAndIcInsideConstructorsOfEachOther.kt")
-    public void testMfvcAndIcInsideConstructorsOfEachOther() {
-      runTest("compiler/testData/codegen/box/valueClasses/mfvcAndIcInsideConstructorsOfEachOther.kt");
-    }
-
-    @Test
-    @TestMetadata("mfvcBothEqualsOverride.kt")
-    public void testMfvcBothEqualsOverride() {
-      runTest("compiler/testData/codegen/box/valueClasses/mfvcBothEqualsOverride.kt");
-    }
-
-    @Test
-    @TestMetadata("mfvcEqualsConsistency.kt")
-    public void testMfvcEqualsConsistency() {
-      runTest("compiler/testData/codegen/box/valueClasses/mfvcEqualsConsistency.kt");
-    }
-
-    @Test
-    @TestMetadata("mfvcEqualsOverriddenForCollections.kt")
-    public void testMfvcEqualsOverriddenForCollections() {
-      runTest("compiler/testData/codegen/box/valueClasses/mfvcEqualsOverriddenForCollections.kt");
-    }
-
-    @Test
-    @TestMetadata("mfvcEqualsOverride.kt")
-    public void testMfvcEqualsOverride() {
-      runTest("compiler/testData/codegen/box/valueClasses/mfvcEqualsOverride.kt");
-    }
-
-    @Test
-    @TestMetadata("mfvcFieldInitializationOrder.kt")
-    public void testMfvcFieldInitializationOrder() {
-      runTest("compiler/testData/codegen/box/valueClasses/mfvcFieldInitializationOrder.kt");
-    }
-
-    @Test
-    @TestMetadata("mfvcHashCodeOverride.kt")
-    public void testMfvcHashCodeOverride() {
-      runTest("compiler/testData/codegen/box/valueClasses/mfvcHashCodeOverride.kt");
-    }
-
-    @Test
-    @TestMetadata("mfvcTypedEqualsGenerics.kt")
-    public void testMfvcTypedEqualsGenerics() {
-      runTest("compiler/testData/codegen/box/valueClasses/mfvcTypedEqualsGenerics.kt");
-    }
-
-    @Test
-    @TestMetadata("mfvcUntypedEqualsOverriden.kt")
-    public void testMfvcUntypedEqualsOverriden() {
-      runTest("compiler/testData/codegen/box/valueClasses/mfvcUntypedEqualsOverriden.kt");
-    }
-
-    @Test
-    @TestMetadata("multiModules.kt")
-    public void testMultiModules() {
-      runTest("compiler/testData/codegen/box/valueClasses/multiModules.kt");
-    }
-
-    @Test
-    @TestMetadata("mutableSharedMfvcVar.kt")
-    public void testMutableSharedMfvcVar() {
-      runTest("compiler/testData/codegen/box/valueClasses/mutableSharedMfvcVar.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedLoweringStart.kt")
-    public void testNestedLoweringStart() {
-      runTest("compiler/testData/codegen/box/valueClasses/nestedLoweringStart.kt");
-    }
-
-    @Test
-    @TestMetadata("nothingAsParameterType.kt")
-    public void testNothingAsParameterType() {
-      runTest("compiler/testData/codegen/box/valueClasses/nothingAsParameterType.kt");
-    }
-
-    @Test
-    @TestMetadata("overrideFunctionWithDefaultParameter.kt")
-    public void testOverrideFunctionWithDefaultParameter() {
-      runTest("compiler/testData/codegen/box/valueClasses/overrideFunctionWithDefaultParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("overrideFunctionWithDefaultParameterGeneric.kt")
-    public void testOverrideFunctionWithDefaultParameterGeneric() {
-      runTest("compiler/testData/codegen/box/valueClasses/overrideFunctionWithDefaultParameterGeneric.kt");
-    }
-
-    @Test
-    @TestMetadata("overrides.kt")
-    public void testOverrides() {
-      runTest("compiler/testData/codegen/box/valueClasses/overrides.kt");
-    }
-
-    @Test
-    @TestMetadata("overrides_inlineClass.kt")
-    public void testOverrides_inlineClass() {
-      runTest("compiler/testData/codegen/box/valueClasses/overrides_inlineClass.kt");
-    }
-
-    @Test
-    @TestMetadata("overrides_typeParameters.kt")
-    public void testOverrides_typeParameters() {
-      runTest("compiler/testData/codegen/box/valueClasses/overrides_typeParameters.kt");
-    }
-
-    @Test
-    @TestMetadata("regularClassSecondaryConstructorWithMfvc.kt")
-    public void testRegularClassSecondaryConstructorWithMfvc() {
-      runTest("compiler/testData/codegen/box/valueClasses/regularClassSecondaryConstructorWithMfvc.kt");
-    }
-
-    @Test
-    @TestMetadata("secondaryConstructorExpectActual.kt")
-    public void testSecondaryConstructorExpectActual() {
-      runTest("compiler/testData/codegen/box/valueClasses/secondaryConstructorExpectActual.kt");
-    }
-
-    @Test
-    @TestMetadata("secondaryConstructorVisibilies.kt")
-    public void testSecondaryConstructorVisibilies() {
-      runTest("compiler/testData/codegen/box/valueClasses/secondaryConstructorVisibilies.kt");
-    }
-
-    @Test
-    @TestMetadata("secondaryConstructorWithVararg.kt")
-    public void testSecondaryConstructorWithVararg() {
-      runTest("compiler/testData/codegen/box/valueClasses/secondaryConstructorWithVararg.kt");
-    }
-
-    @Test
-    @TestMetadata("secondaryConstructorWithVarargGeneric.kt")
-    public void testSecondaryConstructorWithVarargGeneric() {
-      runTest("compiler/testData/codegen/box/valueClasses/secondaryConstructorWithVarargGeneric.kt");
-    }
-
-    @Test
-    @TestMetadata("secondaryConstructorsWithBody.kt")
-    public void testSecondaryConstructorsWithBody() {
-      runTest("compiler/testData/codegen/box/valueClasses/secondaryConstructorsWithBody.kt");
-    }
-
-    @Test
-    @TestMetadata("throwingMFVCReassignments.kt")
-    public void testThrowingMFVCReassignments() {
-      runTest("compiler/testData/codegen/box/valueClasses/throwingMFVCReassignments.kt");
-    }
-
-    @Test
-    @TestMetadata("tryExpressions.kt")
-    public void testTryExpressions() {
-      runTest("compiler/testData/codegen/box/valueClasses/tryExpressions.kt");
-    }
-
-    @Test
-    @TestMetadata("valueClassInValueClass.kt")
-    public void testValueClassInValueClass() {
-      runTest("compiler/testData/codegen/box/valueClasses/valueClassInValueClass.kt");
-    }
-
-    @Test
-    @TestMetadata("visibility.kt")
-    public void testVisibility() {
-      runTest("compiler/testData/codegen/box/valueClasses/visibility.kt");
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/valueClasses/javaInterop")
-    @TestDataPath("$PROJECT_ROOT")
-    public class JavaInterop {
-      @Test
-      public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, true);
-      }
-
-      @Test
-      @TestMetadata("methodWithValueClassDeclaredInJava.kt")
-      public void testMethodWithValueClassDeclaredInJava() {
-        runTest("compiler/testData/codegen/box/valueClasses/javaInterop/methodWithValueClassDeclaredInJava.kt");
-      }
-
-      @Test
-      @TestMetadata("methodWithValueClassDeclaredInJavaOverriddenInKotlin.kt")
-      public void testMethodWithValueClassDeclaredInJavaOverriddenInKotlin() {
-        runTest("compiler/testData/codegen/box/valueClasses/javaInterop/methodWithValueClassDeclaredInJavaOverriddenInKotlin.kt");
-      }
-
-      @Test
-      @TestMetadata("methodWithValueClassInheritedBothFromJavaAndKotlin.kt")
-      public void testMethodWithValueClassInheritedBothFromJavaAndKotlin() {
-        runTest("compiler/testData/codegen/box/valueClasses/javaInterop/methodWithValueClassInheritedBothFromJavaAndKotlin.kt");
-      }
-
-      @Test
-      @TestMetadata("methodWithValueClassInheritedInJavaOverriddenInKotlin.kt")
-      public void testMethodWithValueClassInheritedInJavaOverriddenInKotlin() {
-        runTest("compiler/testData/codegen/box/valueClasses/javaInterop/methodWithValueClassInheritedInJavaOverriddenInKotlin.kt");
       }
     }
   }

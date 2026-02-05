@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 // WORKS_WHEN_VALUE_CLASS
 
 OPTIONAL_JVM_INLINE_ANNOTATION

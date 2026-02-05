@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class UInt<T: Int>(val x: T)

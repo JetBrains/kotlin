@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 // FILE: R.kt
 import kotlin.jvm.JvmInline
 

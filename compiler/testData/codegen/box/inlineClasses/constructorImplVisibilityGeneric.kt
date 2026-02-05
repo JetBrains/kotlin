@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FULL_JDK
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
 import java.lang.reflect.Modifier
 

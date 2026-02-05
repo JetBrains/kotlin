@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*

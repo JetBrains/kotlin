@@ -682,7 +682,7 @@ This can be used in the event of problems with the new implementation.""",
         value = "-Xvalue-classes",
         description = "Enable experimental value classes.",
     )
-    @Enables(LanguageFeature.ValueClasses)
+    @Enables(LanguageFeature.JvmInlineMultiFieldValueClasses)
     var valueClasses: Boolean = false
         set(value) {
             checkFrozen()
