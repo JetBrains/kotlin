@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-41901, KT-57181
 
