@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,6 +26,18 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.KtNodeTypes.BLOCK;
 
+/**
+ * Represents a block of statements enclosed in curly braces.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ * fun foo() {
+ *     val x = 1
+ *     println(x)
+ * }
+ * // The entire block from the opening curly brace to the closing curly brace
+ * }</pre>
+ */
 @SuppressWarnings("deprecation")
 public class KtBlockExpression extends LazyParseablePsiElement implements KtElement, KtExpression, KtStatementExpression {
 

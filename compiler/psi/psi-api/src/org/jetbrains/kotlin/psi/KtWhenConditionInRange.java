@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 /**
- * The code example:
+ * Represents a {@code when} condition that checks membership using {@code in} or {@code !in}.
+ *
+ * <h3>Example:</h3>
  * <pre>{@code
- * fun main() {
- *   when (val f = 3) {
- *     in MyClass() -> false
- * // ^___________^
- *   }
+ * when (x) {
+ *     in 1..10 -> "small"
+ * //  ^______^
  * }
  * }</pre>
  */

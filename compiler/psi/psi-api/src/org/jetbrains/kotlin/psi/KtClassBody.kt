@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,20 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
+/**
+ * Represents the body of a class or object declaration enclosed in curly braces.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ *    class Foo {
+ *        val x = 1
+ *        fun bar() = 2
+ *    }
+ * // ^_________^
+ * // The block from '{' to '}'
+ * ```
+ */
 class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDeclarationContainer {
     private val lBraceTokenSet = TokenSet.create(KtTokens.LBRACE)
     private val rBraceTokenSet = TokenSet.create(KtTokens.RBRACE)

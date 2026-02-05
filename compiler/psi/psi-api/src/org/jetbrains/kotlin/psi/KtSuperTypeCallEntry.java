@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,16 +10,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * The code example:
+ * Represents a superclass constructor call in the super type list.
+ *
+ * <h3>Example:</h3>
  * <pre>{@code
- * class SimpleClass : Any()
- * //                 ^_____^
+ * class Foo : Bar()
+ * //          ^___^
  * }</pre>
  */
 public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCallElement {

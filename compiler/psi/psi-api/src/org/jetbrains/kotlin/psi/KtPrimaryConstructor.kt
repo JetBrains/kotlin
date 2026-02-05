@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,16 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 
+/**
+ * Represents a primary constructor explicitly declared in a class header.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * class Person constructor(val name: String)
+ * //           ^___________________________^
+ * ```
+ */
 class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinConstructorStub<KtPrimaryConstructor>) : super(stub, KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR)
