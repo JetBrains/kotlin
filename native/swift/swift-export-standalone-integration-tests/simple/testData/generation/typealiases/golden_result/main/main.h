@@ -47,6 +47,22 @@ void * ENUM_INSIDE_ENUM_init_allocate();
 
 void ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+_Bool INLINE_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+int32_t INLINE_CLASS_WITH_REF_hashCode(void * self);
+
+void * INLINE_CLASS_WITH_REF_i_get(void * self);
+
+NSString * INLINE_CLASS_WITH_REF_toString(void * self);
+
+int32_t INLINE_CLASS_a_get(void * self);
+
+_Bool INLINE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+int32_t INLINE_CLASS_hashCode(void * self);
+
+NSString * INLINE_CLASS_toString(void * self);
+
 _Bool OBJECT_WITH_GENERIC_INHERITANCE_hasNext(void * self);
 
 _Bool OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(void * self);
@@ -78,6 +94,14 @@ void __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutab
 void * __root___INHERITANCE_SINGLE_CLASS_init_allocate();
 
 void __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___INLINE_CLASS_WITH_REF_init_allocate();
+
+void __root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_DATA_CLASS_WITH_REF__(void * __kt, void * i);
+
+void * __root___INLINE_CLASS_init_allocate();
+
+void __root___INLINE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
 
 void * __root___OBJECT_WITH_CLASS_INHERITANCE_get();
 

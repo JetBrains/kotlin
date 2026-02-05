@@ -171,9 +171,25 @@ void __root___var_object_wp_set__TypesOfArguments__ExportedKotlinPackages_namesp
 
 void * ignored_ENUM_A();
 
+int32_t ignored_VALUE_CLASS_a_get(void * self);
+
+_Bool ignored_VALUE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+int32_t ignored_VALUE_CLASS_hashCode(void * self);
+
+void * ignored_VALUE_CLASS_init_allocate();
+
+void ignored_VALUE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
+
+NSString * ignored_VALUE_CLASS_toString(void * self);
+
 void * ignored_produce_ENUM();
 
+void * ignored_produce_VALUE_CLASS();
+
 void ignored_receive_ENUM__TypesOfArguments__ExportedKotlinPackages_ignored_ENUM__(void * x);
+
+void ignored_receive_VALUE_CLASS__TypesOfArguments__ExportedKotlinPackages_ignored_VALUE_CLASS__(void * x);
 
 void * namespace_deeper_Class_with_package_INNER_CLASS_init_allocate();
 

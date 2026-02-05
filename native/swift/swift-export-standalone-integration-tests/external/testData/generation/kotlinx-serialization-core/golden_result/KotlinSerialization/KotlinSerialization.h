@@ -105,7 +105,17 @@ void * kotlinx_serialization_builtins_serializer__TypesOfArguments__ExportedKotl
 
 void * kotlinx_serialization_builtins_serializer__TypesOfArguments__ExportedKotlinPackages_kotlin_String_Companion__(void * receiver);
 
+void * kotlinx_serialization_builtins_serializer__TypesOfArguments__ExportedKotlinPackages_kotlin_UByte_Companion__(void * receiver);
+
+void * kotlinx_serialization_builtins_serializer__TypesOfArguments__ExportedKotlinPackages_kotlin_UInt_Companion__(void * receiver);
+
+void * kotlinx_serialization_builtins_serializer__TypesOfArguments__ExportedKotlinPackages_kotlin_ULong_Companion__(void * receiver);
+
+void * kotlinx_serialization_builtins_serializer__TypesOfArguments__ExportedKotlinPackages_kotlin_UShort_Companion__(void * receiver);
+
 void * kotlinx_serialization_builtins_serializer__TypesOfArguments__Swift_Void__();
+
+void * kotlinx_serialization_builtins_serializer__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration_Companion__(void * receiver);
 
 NSArray<id> * kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder_annotations_get(void * self);
 

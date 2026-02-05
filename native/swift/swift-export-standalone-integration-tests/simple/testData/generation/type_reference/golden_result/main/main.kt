@@ -1,4 +1,5 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ignored.VALUE_CLASS::class, "22ExportedKotlinPackages7ignoredO4mainE11VALUE_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Class_with_package::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE18Class_with_packageC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Class_with_package.INNER_CLASS::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE18Class_with_packageC11INNER_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Class_with_package.INNER_OBJECT::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE18Class_with_packageC12INNER_OBJECTC")
@@ -574,9 +575,57 @@ public fun ignored_ENUM_A(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("ignored_VALUE_CLASS_a_get")
+public fun ignored_VALUE_CLASS_a_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ignored.VALUE_CLASS
+    val _result = __self.a
+    return _result
+}
+
+@ExportedBridge("ignored_VALUE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun ignored_VALUE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ignored.VALUE_CLASS
+    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
+    val _result = __self.equals(__other)
+    return _result
+}
+
+@ExportedBridge("ignored_VALUE_CLASS_hashCode")
+public fun ignored_VALUE_CLASS_hashCode(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ignored.VALUE_CLASS
+    val _result = __self.hashCode()
+    return _result
+}
+
+@ExportedBridge("ignored_VALUE_CLASS_init_allocate")
+public fun ignored_VALUE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<ignored.VALUE_CLASS>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("ignored_VALUE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+public fun ignored_VALUE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __a = a
+    kotlin.native.internal.initInstance(____kt, ignored.VALUE_CLASS(__a))
+}
+
+@ExportedBridge("ignored_VALUE_CLASS_toString")
+public fun ignored_VALUE_CLASS_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ignored.VALUE_CLASS
+    val _result = __self.toString()
+    return _result.objcPtr()
+}
+
 @ExportedBridge("ignored_produce_ENUM")
 public fun ignored_produce_ENUM(): kotlin.native.internal.NativePtr {
     val _result = ignored.produce_ENUM()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("ignored_produce_VALUE_CLASS")
+public fun ignored_produce_VALUE_CLASS(): kotlin.native.internal.NativePtr {
+    val _result = ignored.produce_VALUE_CLASS()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -584,6 +633,12 @@ public fun ignored_produce_ENUM(): kotlin.native.internal.NativePtr {
 public fun ignored_receive_ENUM__TypesOfArguments__ExportedKotlinPackages_ignored_ENUM__(x: kotlin.native.internal.NativePtr): Unit {
     val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as ignored.ENUM
     ignored.receive_ENUM(__x)
+}
+
+@ExportedBridge("ignored_receive_VALUE_CLASS__TypesOfArguments__ExportedKotlinPackages_ignored_VALUE_CLASS__")
+public fun ignored_receive_VALUE_CLASS__TypesOfArguments__ExportedKotlinPackages_ignored_VALUE_CLASS__(x: kotlin.native.internal.NativePtr): Unit {
+    val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as ignored.VALUE_CLASS
+    ignored.receive_VALUE_CLASS(__x)
 }
 
 @ExportedBridge("namespace_deeper_Class_with_package_INNER_CLASS_init_allocate")
