@@ -549,7 +549,9 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                     }
                 })
             }
-            +irReturn(genReturnValue())
+            // return Unit will be added anyway by ReturnsInsertionLowering.
+            if (!irConstructor.isPrimary)
+                +irReturn(genReturnValue())
         }
     }
 
