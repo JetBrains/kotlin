@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,6 +27,16 @@ import static org.jetbrains.kotlin.KtNodeTypes.PROPERTY_DELEGATE;
 import static org.jetbrains.kotlin.lexer.KtTokens.EQ;
 import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.isKtFile;
 
+/**
+ * Represents a property declaration with an optional getter and setter.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ *    val name: String = "Kotlin"
+ * // ^_________________________^
+ * // The entire property
+ * }</pre>
+ */
 public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         implements KtVariableDeclaration {
 

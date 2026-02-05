@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,16 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 /**
+ * Represents a single context receiver in a context receiver list.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * context(Logger)
+ * //      ^^^^^^
+ * fun log(message: String) {}
+ * ```
+ *
  * Deprecated in favor of context parameters.
  */
 class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {

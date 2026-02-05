@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,17 +9,18 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * The code example:
+ * Represents a constructor delegation call to {@code this()} or {@code super()}.
+ *
+ * <h3>Example:</h3>
  * <pre>{@code
  * class SimpleClass(i: Int) {
  *     constructor(s: String) : this(s.toInt())
- * //                          ^_______________^
+ * //                           ^_____________^
  * }
  * }</pre>
  */
