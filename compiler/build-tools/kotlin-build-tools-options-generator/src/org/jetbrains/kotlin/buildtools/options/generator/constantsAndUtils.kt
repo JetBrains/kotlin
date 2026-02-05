@@ -11,6 +11,11 @@ import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ProfileCompilerCommand
+import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
+import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
+import org.jetbrains.kotlin.arguments.dsl.types.KlibIrInlinerMode
+import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion
+import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import kotlin.math.max
 import kotlin.reflect.KClass
@@ -63,8 +68,8 @@ internal val KDOC_OPTIONS_CONTAINS = """
 internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.commonKlibBasedArguments,
     CompilerArgumentsLevelNames.jsArguments,
-    CompilerArgumentsLevelNames.nativeArguments,
-    CompilerArgumentsLevelNames.legacyWasmArguments,
+    CompilerArgumentsLevelNames.commonJsAndWasmArguments,
+    CompilerArgumentsLevelNames.wasmArguments,
 )
 
 internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().replace("-", "_").let {

@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.buildtools.options.generator
 
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -90,7 +89,15 @@ fun main(args: Array<String>) {
                 GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false, forbidGenerationOnTeamcity = false)
                 generatedFiles.add(genFile)
             }
-            levelsToProcess += currentLevel.level.nestedLevels.map { LevelWithParent(it, output.argumentTypeName) }
+            levelsToProcess += currentLevel.level.nestedLevels.flatMap { level ->
+                // "Skip" the deprecated and soon to be removed Wasm arguments level from the JS arguments hierarchy.
+                // There is a separate Wasm-only level in another arguments branch to avoid mixing JS and Wasm hierarchies.
+                if (level.name == "legacyWasmArguments") {
+                    level.nestedLevels.map { LevelWithParent(it, output.argumentTypeName) }
+                } else {
+                    listOf(LevelWithParent(level, output.argumentTypeName))
+                }
+            }
         }
     }
     genDir.walk().filter { it.isRegularFile() }.forEach {
