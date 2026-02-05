@@ -2089,6 +2089,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/reifiedIntersectionType.args");
     }
 
+    @TestMetadata("relativePathInXIncludeArgument.args")
+    public void testRelativePathInXIncludeArgument() {
+      runTest("compiler/testData/cli/js/relativePathInXIncludeArgument.args");
+    }
+
     @TestMetadata("reportDetailedPerf.args")
     public void testReportDetailedPerf() {
       runTest("compiler/testData/cli/js/reportDetailedPerf.args");
